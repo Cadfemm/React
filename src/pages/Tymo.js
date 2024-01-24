@@ -54,7 +54,7 @@ function Tymo() {
         console.log('Server response:', response.data);
         history.push({
           pathname: '/Output',
-          state: { updatedData: response.data.updatedData },
+          state: { updatedData: response.data.updatedData,timeBetweenTests: inputValues.Time_Between_Tests,  },
         });
       })
       .catch(error => {
@@ -272,7 +272,7 @@ function Tymo() {
               &times;
             </span>
             <video width="700" height="500" controls autoPlay >
-              <source src="/Issue.mp4" type="video/mp4" />
+              <source src="/90per.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
