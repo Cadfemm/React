@@ -12,6 +12,8 @@ import pablotests from "./pages/pablotests";
 import Tymo from "./pages/Tymo";
 import Plabo from "./pages/Plabo";
 import Output from"./pages/Output";
+import Login from"./pages/Signin";
+import Signup from"./pages/Signup";
 
 function App() {
   return (
@@ -19,7 +21,7 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
-          <Route path="/" exact component={Home} />
+          <Route path="/Home" exact component={Home} />
           <Route path="/menu" exact component={Menu} />
           <Route path="/about" exact component={About} />
           <Route path="/contact" exact component={Contact} />
@@ -29,6 +31,8 @@ function App() {
           <Route path="/treatment/Tymo" exact component={Tymo} />
           <Route path="/treatment/Plabo" exact component={Plabo} />
           <Route path="/Output" exact component={Output} />
+          <Route path="/" exact component={Login} />
+          <Route path="/Signup" exact component={Signup} />
           
         </Switch>
         <Footer />

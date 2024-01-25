@@ -1,0 +1,23 @@
+/* Signup.css */
+
+.signup-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the contents horizontally */
+  }
+  
+  .signup-image {
+    flex: 1; /* Take up 50% of the width */
+    padding: 20px; /* Adjust padding as needed */
+  }
+  
+  .signup-image img {
+    width: 100%; /* Ensure the image fills the container */
+    height: auto;
+  }
+  
+  .signup-content {
+    flex: 1; /* Take up 50% of the width */
+    padding: 20px; /* Adjust padding as needed */
+  }
+  

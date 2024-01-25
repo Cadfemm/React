@@ -1,0 +1,22 @@
+/* Signin.css */
+
+.login-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .login-image {
+    flex: 1;
+    padding: 20px; /* Adjust padding as needed */
+  }
+  
+  .login-image img {
+    width: 100%; /* Ensure the image fills the container */
+    height: auto;
+  }
+  
+  .login-content {
+    flex: 1;
+    padding: 20px; /* Adjust padding as needed */
+  }
+  
