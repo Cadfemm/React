@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import "../styles/Signin.css";
-import PizzaLeft from "../assets/contactus.png";
+import PizzaLeft from "../assets/login.jpg";
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -57,7 +57,7 @@ const Login = () => {
               onChange={handlePasswordChange}
             />
           </div>
-          <div>
+          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between", width:"50%"}}>
             <button type="button" onClick={handleSignIn}>Sign In</button>
             <button type="button" onClick={handleSignUp}>Sign Up</button>
           </div>

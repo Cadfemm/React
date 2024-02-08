@@ -5,7 +5,17 @@
     align-items: center;
     justify-content: center; /* Center the contents horizontally */
   }
-  
+  .signup-content form input {
+    width: 100%;
+}
+
+.signup-content h2 {
+  color:#00345f;
+  font-weight:bold;
+
+}
+
+
   .signup-image {
     flex: 1; /* Take up 50% of the width */
     padding: 20px; /* Adjust padding as needed */

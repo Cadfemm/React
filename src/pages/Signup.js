@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "../styles/Signup.css";
-import PizzaLeft from "../assets/contactus.png";
+import PizzaLeft from "../assets/signup.jpg";
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -41,7 +41,7 @@ const Signup = () => {
         <img src={PizzaLeft} alt="Signup Image" />
       </div>
       <div className="signup-content">
-        <h2>Sign Up</h2>
+        <h2>Register Here</h2>
         <form>
           <div>
             <label htmlFor="name">Name:</label>
@@ -61,16 +61,13 @@ const Signup = () => {
               onChange={handleEmailChange}
             />
           </div>
+         
+          <table>
+           
+              <tr>
+              <td>
           <div>
-            <label htmlFor="phoneNumber">Phone Number:</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-            />
-          </div>
-          <div>
+            
             <label htmlFor="age">Age:</label>
             <input
               type="number"
@@ -79,6 +76,8 @@ const Signup = () => {
               onChange={handleAgeChange}
             />
           </div>
+        </td>
+        <td>
           <div>
             <label htmlFor="gender">Gender:</label>
             <select
@@ -91,6 +90,19 @@ const Signup = () => {
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
+          </div>
+          </td>
+          </tr>
+         
+          </table>
+          <div>
+            <label htmlFor="phoneNumber">Phone Number:</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
+            />
           </div>
           <div>
             <button type="button" onClick={handleSignUp}>Sign Up</button>
