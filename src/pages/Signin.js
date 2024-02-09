@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import "../styles/Signin.css";
-import PizzaLeft from "../assets/signup.jpg";
+import PizzaLeft from "../assets/login.jpg";
 
 const Login = () => {
   const [username, setUsername] = useState('');
