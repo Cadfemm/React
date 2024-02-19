@@ -1,10 +1,10 @@
 import React from "react";
-
+import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import "../styles/Menu.css";
-
-
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function MenuItem({ image, title, text, to, backgroundColor }) {
   const linkStyle = {
@@ -17,38 +17,37 @@ function MenuItem({ image, title, text, to, backgroundColor }) {
     history.push(path);
   };
 
- 
-  
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
 
   return (
-    
-   
-    <Link to={to} style={linkStyle} className="menuCard">
-      
-      <div className="menuItem" style={{ backgroundColor }}>
-      
-        <div style={{ backgroundImage: `url(${image})` }}> </div>
-        <p style={{ color: '#00345f', marginTop:"15px" }}>{title}</p>
-        <div className="learnMoreLink" style={{border:"none"}}>
-                  <p>
-                    Know More{" "}
-                    <span
-                      className="arrowSymbol"
-                      onClick={() =>
-                        handleCardClick(`/treatment/Subtreatments`)
-                      }
-                    >
-                      &#8594;
-                    </span>
-                  </p>
-                </div>
-       
+    <Slider {...sliderSettings}>
+      <div>
+        <Link to={to} style={linkStyle} className="menuCard">
+          <div className="menuItem" style={{ backgroundColor }}>
+            <div className="imageContainer" style={{ backgroundImage: `url(${image})` }}></div>
+            <p className="title">{title}</p>
+            <div className="learnMoreLink" style={{ border: "none" }}>
+              <p>
+                Know More{" "}
+                <span
+                  className="arrowSymbol"
+                  onClick={() => handleCardClick(`/treatment/Subtreatments`)}
+                >
+                  &#8594;
+                </span>
+              </p>
+            </div>
+          </div>
+        </Link>
       </div>
-    
-    </Link>
-    
+    </Slider>
   );
- 
 }
 
 export default MenuItem;

@@ -9,6 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "../styles/Home.css";
 import Menu from "../pages/Menu.js";
 import Contact from "../pages/Contact.js";
+import CardsSlider from "../components/slick";
 
 const carouselImages = [
   BannerImage,
@@ -68,7 +69,7 @@ function Home() {
 
      
 
-      
+      <CardsSlider />
 
       <Menu />
 
