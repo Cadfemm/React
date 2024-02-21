@@ -30,7 +30,7 @@ export const MenuList = [
     image:paraplegia,
     title: "SPINAL CORD INJURY",
     text:"Read More",
-    to:"Subtreatments",
+    to:"SPINAL_CORD_INJURY",
   },
   {
     image:diplegia,
