@@ -616,6 +616,9 @@ const Dropdowns = () => {
                        
                                  </tbody>
                                </table>
+                               <button  >
+       Submit Data
+      </button>
                              </div>
         )}
         {cType === "C4" && (
