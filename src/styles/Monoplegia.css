@@ -67,13 +67,34 @@
    font-weight: 600;
    height:58px;
 }
+#tType, #cType{
+   margin:0 20px 0 0px;
+}
+.center{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   /* Set height and width as needed */
+  height:90px;
+  margin: 0 25px;
+   width: 100%; /* For example */
+}
 .Input_Area input {
    width: 100%;
    border-radius: 4px;
    border: 0.6px solid #00345f;
    height:30px;
 }
-
+td input{
+   width:100%;
+}
+td label{
+   height:50px;
+}
+td{
+   height:100px;
+   padding:10px;
+}
   .Input_Area h3{
    color:#00345f;
    font-size:24px;

@@ -14,6 +14,7 @@ import Plabo from "./pages/Plabo";
 import Output from"./pages/Output";
 import Login from"./pages/Signin";
 import Signup from"./pages/Signup";
+import SpinalInjury from"./pages/SpinalInjury";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/Output" exact component={Output} />
           <Route path="/" exact component={Login} />
           <Route path="/Signup" exact component={Signup} />
+          <Route path="/Spinalinjury" exact component={SpinalInjury} />
           
         </Switch>
         <Footer />

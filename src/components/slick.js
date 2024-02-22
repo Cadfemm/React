@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 // Sample data for the cards
 const cardsData = [
-  { id: 1, title: "ADHD", imageUrl: image1, backgroundColor: "White" },
+  { id: 1, title: "ADHD", imageUrl: image1, backgroundColor: "White"},
   { id: 2, title: "ALZHEIMER", imageUrl: image2, backgroundColor: "white" },
   { id: 3, title: "ANXIETY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#d9d9d9" },
   { id: 4, title: "ATAXIA", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#cccccc" },
@@ -25,7 +25,7 @@ const cardsData = [
 ];
 
 
-const Card = ({ title, imageUrl, backgroundColor, buttonLink = "/treatment/Subtreatments",onCardClick }) => (
+const Card = ({ title, imageUrl, backgroundColor, buttonLink="/Spinalinjury",onCardClick }) => (
     <div className="card" style={{ backgroundColor, width: "300px", height: "330px" }}onClick={onCardClick}>
       <img src={imageUrl} alt={title} style={{ width: "100%", height: "65%" }} />
       <p style={{ height: "35%", margin: 0, overflow: "hidden", textAlign: "center" }}>{title}</p>
@@ -79,7 +79,11 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink = "/treatment/Subtr
       MMT: "",
       MAS: "",
       FIST: "",
-      Wiscii: ""
+      Wiscii: "",
+      Bowel: "",
+      Bladder: "",
+      Shoulder: "",
+      Anal: ""
     });
 
     // Show input fields based on C-Type selection
@@ -159,6 +163,22 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink = "/treatment/Subtr
             <option value="C3">C3,C4</option>
             <option value="C4">C6,C7(ASIA-A)</option>
           </select>
+          {(cType === "C1" || cType === "C2") && (
+            <div>
+              <label htmlFor="MMT">MMT:</label>
+              <input type="text" id="MMT" name="MMT" value={inputFields.MMT} onChange={handleInputChange} />
+              <label htmlFor="MAS">MAS:</label>
+              <input type="text" id="MAS" name="MAS" value={inputFields.MAS} onChange={handleInputChange} />
+              </div>
+          )}
+          {(cType === "C3" || cType === "C4") && (
+             <div>
+             <label htmlFor="FIST">FIST:</label>
+             <input type="text" id="FIST" name="FIST" value={inputFields.FIST} onChange={handleInputChange} />
+             <label htmlFor="Wiscii">Wiscii:</label>
+             <input type="text" id="Wiscii" name="Wiscii" value={inputFields.Wiscii} onChange={handleInputChange} />
+           </div>
+          )}
           <label htmlFor="tType">T-Type:</label>
           <select id="tType" value={tType} onChange={handleTTypeChange}>
             <option value="">Select T-Type</option>
@@ -167,6 +187,22 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink = "/treatment/Subtr
             <option value="T3">T6,T7</option>
             <option value="T4">T6,T7</option>
           </select>
+          {(tType === "T1" || tType === "T2") && (
+            <div>
+              <label htmlFor="Bowel">Bowel:</label>
+              <input type="text" id="Bowel" name="Bowel" value={inputFields.Bowel} onChange={handleInputChange} />
+              <label htmlFor="Bladder">Bladder:</label>
+              <input type="text" id="Bladder" name="Bladder" value={inputFields.Bladder} onChange={handleInputChange} />
+              </div>
+          )}
+          {(tType === "T3" || tType === "T4") && (
+            <div>
+              <label htmlFor="Bowel">Bowel:</label>
+              <input type="text" id="Bowel" name="Bowel" value={inputFields.Bowel} onChange={handleInputChange} />
+              <label htmlFor="Bladder">Bladder:</label>
+              <input type="text" id="Bladder" name="Bladder" value={inputFields.Bladder} onChange={handleInputChange} />
+              </div>
+          )}
           <button onClick={handleClosePopup}>Close</button>
         </div>
       )}
