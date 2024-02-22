@@ -5,6 +5,10 @@ const Dropdowns = () => {
   const [tType, setTType] = useState("");
   const [isCTypeDisabled, setIsCTypeDisabled] = useState(false);
   const [isTTypeDisabled, setIsTTypeDisabled] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+  const [showC1Inputs, setShowC1Inputs] = useState(false);
+  const [showC2Inputs, setShowC2Inputs] = useState(false);
+  const [showC3Inputs, setShowC3Inputs] = useState(false);
   const [inputFields, setInputFields] = useState({
     MMT: "",
     MAS: "",
@@ -15,14 +19,22 @@ const Dropdowns = () => {
     Boss: "",
     Lady: ""
   });
-  const C1 = [
-    "Name", "Diagnosis", "Date", "Age", "Gender", 
-    "Fist Score", "WISCII", "ASIA Scale", "Light Touch Sensory", "Pin Prick Sensory", 
-    "Volutary Anal Contraction", "Deep Anal Pressure", "Hip Flexor", "Knee Extensor", "Ankle Dorsiflexor", 
-    "InputField16", "InputField17", "InputField18", "InputField19", "InputField20", 
-    "InputField21", "InputField22", "InputField23", "InputField24", "InputField25", 
-    "InputField26", "InputField27", "InputField28", "InputField29", "InputField30"
-  ];
+  const handleButtonClick = (buttonValue) => {
+    if (buttonValue === "B1") {
+      setShowC1Inputs(true);
+      setShowC2Inputs(false);
+      setShowC3Inputs(false);
+    } else if (buttonValue === "B2") {
+      setShowC1Inputs(false);
+      setShowC2Inputs(true);
+      setShowC3Inputs(false);
+    } else if(buttonValue === "B3") {
+      setShowC1Inputs(false);
+      setShowC2Inputs(false);
+      setShowC3Inputs(true);
+    }
+  };
+ 
   const C2 = [
     "InputC2", "InputField2", "InputField3", "InputField4", "InputField5", 
     "InputField6", "InputField7", "InputField8", "InputField9", "InputField10", 
@@ -124,6 +136,13 @@ const Dropdowns = () => {
     } else {
       setIsTTypeDisabled(false);
     }
+    if (value === "C1") {
+        // If "C1" is selected, set showButtons state to true
+        setShowButtons(true);
+      } else {
+        // If another option is selected, hide the buttons
+        setShowButtons(false);
+      }
   
     setCType(value);
 
@@ -188,7 +207,6 @@ const Dropdowns = () => {
           <option value="C3">C6C7</option>
           <option value="C4">C3C4(ASIA-A)</option>
         </select>
-      
     
         <label htmlFor="tType">T-Type:</label>
         <select id="tType" value={tType} onChange={handleTTypeChange} disabled={isTTypeDisabled}>
@@ -198,11 +216,29 @@ const Dropdowns = () => {
           <option value="T3">T6T7</option>
           <option value="T4">T6T7(ASIA-A)</option>
         </select>
+       
+        
+     
       </div>
+      {showButtons && (
+        <div className="center">
+        <button onClick={() => handleButtonClick("B1")}>Left Upper Limb</button>
+  <button onClick={() => handleButtonClick("B2")}>Right Upper Limb</button>
+  <button onClick={() => handleButtonClick("B3")}>Bowl & Bladder</button>
+      </div>
+      )}
+       {/* {showC2Inputs && (
+        <div className="center">
+          <label htmlFor="Bowel">Bowel:</label>
+          <input type="text" id="Bowel" name="Bowel" />
+          <label htmlFor="Bladder">Bladder:</label>
+          <input type="text" id="Bladder" name="Bladder" />
+        </div>
+      )} */}
       <div>
         
-        {cType === "C1" && (
-        <div style={{ marginBottom: "20px",padding:"10px",marginTop:"40px" }}>
+        {showC1Inputs  && (
+        <div style={{ marginBottom: "20px",padding:"10px",marginTop:"20px" }}>
         <table style={{ width: "100%" }}>
           <tbody>
             <tr>     
@@ -345,46 +381,241 @@ const Dropdowns = () => {
         </table>
       </div>
         )}
-        {cType === "C2" && (
-                               <div style={{ display: "flex", flexDirection: "column" }}>
-                               {[...Array(6)].map((_, rowIndex) => (
-                                 <div key={rowIndex} style={{ display: "flex", marginBottom: "10px" }}>
-                                   {C2.slice(rowIndex * 5, (rowIndex + 1) * 5).map((fieldName, index) => (
-                                     <div key={index} style={{ marginRight: "10px" }}>
-                                       <label htmlFor={fieldName}>{fieldName}</label>
-                                       <input
-                                         type="text"
-                                         id={fieldName}
-                                         name={fieldName}
-                                         value={inputFields[fieldName]}
-                                         onChange={handleInputChange}
-                                         
-                                       />
-                                     </div>
-                                   ))}
-                                 </div>
-                               ))}
+        {showC2Inputs   && (
+                               <div style={{ marginBottom: "20px",padding:"10px",marginTop:"20px" }}>
+                               <table style={{ width: "100%" }}>
+                                 <tbody>
+                                   <tr>     
+                                   <td>
+                                       <label htmlFor="Time_Between_Tests">Right Shoulder Flexion</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Right Shoulder Extension</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Right Shoulder Abduction</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                       
+                                     </tr>
+                                     <tr>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Right Shoulder Adduction</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Velocity">Right Shoulder Internal Rotation</label>
+                                       <input name="Initial_Velocity" value={inputValues.Initial_Velocity} onChange={handleChange}  id="Initial_Velocity" type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Cadence">Progress Expecting</label>
+                                       <input id="Initial_Cadence" name="Initial_Cadence" value={inputValues.Initial_Cadence} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Stride_Length">Right Shoulder External Rotation</label>
+                                       <input id="Initial_Stride_Length" name="Initial_Stride_Length" value={inputValues.Initial_Stride_Length} onChange={handleChange} type="number"/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Stride_Length">Progress Expecting</label>
+                                       <input id="Initial_Stride_Length" name="Initial_Stride_Length" value={inputValues.Initial_Stride_Length} onChange={handleChange} type="number"/>
+                                     </td>
+                                     </tr>
+                                     <tr>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Stance_Phase_Right">Right Elbow Joint Flexion</label>
+                                       <input id="Initial_Deviation_From_Ideal_Stance_Phase_Right" name="Initial_Deviation_From_Ideal_Stance_Phase_Right" value={inputValues.Initial_Deviation_From_Ideal_Stance_Phase_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Stance_Phase_Right">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Stance_Phase_Right" name="Initial_Deviation_From_Ideal_Stance_Phase_Right" value={inputValues.Initial_Deviation_From_Ideal_Stance_Phase_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     
+                                  
+                                   <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Loading_Response_Left">Right Elbow Joint Extension</label>
+                                       <input id="Initial_Deviation_From_Ideal_Loading_Response_Left" name="Initial_Deviation_From_Ideal_Loading_Response_Left" value={inputValues.Initial_Deviation_From_Ideal_Loading_Response_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Loading_Response_Right">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Loading_Response_Right" name="Initial_Deviation_From_Ideal_Loading_Response_Right" value={inputValues.Initial_Deviation_From_Ideal_Loading_Response_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Single_Support_Left">Right Wrist Joint Flexion</label>
+                                       <input id="Initial_Deviation_From_Ideal_Single_Support_Left" name="Initial_Deviation_From_Ideal_Single_Support_Left" value={inputValues.Initial_Deviation_From_Ideal_Single_Support_Left} onChange={handleChange} type="number"/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Single_Support_Left">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Single_Support_Left" name="Initial_Deviation_From_Ideal_Single_Support_Left" value={inputValues.Initial_Deviation_From_Ideal_Single_Support_Left} onChange={handleChange} type="number"/>
+                                     </td>
+                                     </tr>
+                                     <tr>
+                       
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Single_Support_Right">Right Wrist Joint Extension</label>
+                                       <input id="Initial_Deviation_From_Ideal_Single_Support_Right" name="Initial_Deviation_From_Ideal_Single_Support_Right" value={inputValues.Initial_Deviation_From_Ideal_Single_Support_Right} onChange={handleChange} type="number"/>
+                                     </td>
+                                     
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Pre_Swing_Left">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Pre_Swing_Left" name="Initial_Deviation_From_Ideal_Pre_Swing_Left" value={inputValues.Initial_Deviation_From_Ideal_Pre_Swing_Left} onChange={handleChange} type="number"/>
+                                     </td>
+                                    
+                                    
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Pre_Swing_Right">Right Fingers Flexion</label>
+                                       <input id="Initial_Deviation_From_Ideal_Pre_Swing_Right"name="Initial_Deviation_From_Ideal_Pre_Swing_Right" value={inputValues.Initial_Deviation_From_Ideal_Pre_Swing_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Swing_Left">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Swing_Left" name="Initial_Deviation_From_Ideal_Swing_Left" value={inputValues.Initial_Deviation_From_Ideal_Swing_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Swing_Right">Right Fingers Extension</label>
+                                       <input id="Initial_Deviation_From_Ideal_Swing_Right" name="Initial_Deviation_From_Ideal_Swing_Right" value={inputValues.Initial_Deviation_From_Ideal_Swing_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Swing_Right">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Swing_Right" name="Initial_Deviation_From_Ideal_Swing_Right" value={inputValues.Initial_Deviation_From_Ideal_Swing_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                   </tr>
+                                   <tr>
+                       
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Single_Support_Right">Right Fingers Abduction</label>
+                                       <input id="Initial_Deviation_From_Ideal_Single_Support_Right" name="Initial_Deviation_From_Ideal_Single_Support_Right" value={inputValues.Initial_Deviation_From_Ideal_Single_Support_Right} onChange={handleChange} type="number"/>
+                                     </td>
+                                     
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Pre_Swing_Left">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Pre_Swing_Left" name="Initial_Deviation_From_Ideal_Pre_Swing_Left" value={inputValues.Initial_Deviation_From_Ideal_Pre_Swing_Left} onChange={handleChange} type="number"/>
+                                     </td>
+                                    
+                                    
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Pre_Swing_Right">Right Fingers Adduction</label>
+                                       <input id="Initial_Deviation_From_Ideal_Pre_Swing_Right"name="Initial_Deviation_From_Ideal_Pre_Swing_Right" value={inputValues.Initial_Deviation_From_Ideal_Pre_Swing_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Swing_Left">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Swing_Left" name="Initial_Deviation_From_Ideal_Swing_Left" value={inputValues.Initial_Deviation_From_Ideal_Swing_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     </tr>
+                       
+                                 </tbody>
+                               </table>
                              </div>
         )}
-        {cType === "C3" && (
-                               <div style={{ display: "flex", flexDirection: "column" }}>
-                               {[...Array(6)].map((_, rowIndex) => (
-                                 <div key={rowIndex} style={{ display: "flex", marginBottom: "10px" }}>
-                                   {C3.slice(rowIndex * 5, (rowIndex + 1) * 5).map((fieldName, index) => (
-                                     <div key={index} style={{ marginRight: "10px" }}>
-                                       <label htmlFor={fieldName}>{fieldName}</label>
-                                       <input
-                                         type="text"
-                                         id={fieldName}
-                                         name={fieldName}
-                                         value={inputFields[fieldName]}
-                                         onChange={handleInputChange}
-                                         
-                                       />
-                                     </div>
-                                   ))}
-                                 </div>
-                               ))}
+        {showC3Inputs   && (
+                               <div style={{ marginBottom: "20px",padding:"10px",marginTop:"20px" }}>
+                               <table style={{ width: "100%" }}>
+                                 <tbody>
+                                   <tr>     
+                                   <td>
+                                       <label htmlFor="Time_Between_Tests">Fist Score</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">WISCI II</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">NBD Score</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                       
+                                     </tr>
+                                     <tr>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Incontinence</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Time_Between_Tests">Progress Expecting</label>
+                                       <input id="Time_Between_Tests" name = "Time_Between_Tests" type="number" value={inputValues.Time_Between_Tests}   onChange={handleChange}/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Velocity">Storage And Voiding</label>
+                                       <input name="Initial_Velocity" value={inputValues.Initial_Velocity} onChange={handleChange}  id="Initial_Velocity" type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Cadence">Progress Expecting</label>
+                                       <input id="Initial_Cadence" name="Initial_Cadence" value={inputValues.Initial_Cadence} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Stride_Length">Consequences</label>
+                                       <input id="Initial_Stride_Length" name="Initial_Stride_Length" value={inputValues.Initial_Stride_Length} onChange={handleChange} type="number"/>
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Stride_Length">Progress Expecting</label>
+                                       <input id="Initial_Stride_Length" name="Initial_Stride_Length" value={inputValues.Initial_Stride_Length} onChange={handleChange} type="number"/>
+                                     </td>
+                                     </tr>
+                                     <tr>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Stance_Phase_Right">Quality Of Life</label>
+                                       <input id="Initial_Deviation_From_Ideal_Stance_Phase_Right" name="Initial_Deviation_From_Ideal_Stance_Phase_Right" value={inputValues.Initial_Deviation_From_Ideal_Stance_Phase_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Stance_Phase_Right">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Stance_Phase_Right" name="Initial_Deviation_From_Ideal_Stance_Phase_Right" value={inputValues.Initial_Deviation_From_Ideal_Stance_Phase_Right} onChange={handleChange} type="number" />
+                                     </td>
+                                     
+                                  
+                                   <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Loading_Response_Left">Bladder Management</label>
+                                       <input id="Initial_Deviation_From_Ideal_Loading_Response_Left" name="Initial_Deviation_From_Ideal_Loading_Response_Left" value={inputValues.Initial_Deviation_From_Ideal_Loading_Response_Left} onChange={handleChange} type="number" />
+                                     </td>
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Loading_Response_Right">Progress Expecting</label>
+                                       <input id="Initial_Deviation_From_Ideal_Loading_Response_Right" name="Initial_Deviation_From_Ideal_Loading_Response_Right" value={inputValues.Initial_Deviation_From_Ideal_Loading_Response_Right} onChange={handleChange} type="number" />
+                                     </td>
+                        
+                                     
+                                     </tr>
+                                     <tr>
+                       
+                                     <td>
+                                       <label htmlFor="Initial_Deviation_From_Ideal_Single_Support_Right">Days Of Treatment</label>
+                                       <input id="Initial_Deviation_From_Ideal_Single_Support_Right" name="Initial_Deviation_From_Ideal_Single_Support_Right" value={inputValues.Initial_Deviation_From_Ideal_Single_Support_Right} onChange={handleChange} type="number"/>
+                                     </td>
+                                     
+                                    
+                                   </tr>
+                       
+                                 </tbody>
+                               </table>
                              </div>
         )}
         {cType === "C4" && (
