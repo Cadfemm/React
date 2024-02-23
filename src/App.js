@@ -15,6 +15,7 @@ import Output from"./pages/Output";
 import Login from"./pages/Signin";
 import Signup from"./pages/Signup";
 import SpinalInjury from"./pages/SpinalInjury";
+import latest from "./pages/Carddisplay.js";
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
           <Route path="/" exact component={Login} />
           <Route path="/Signup" exact component={Signup} />
           <Route path="/Spinalinjury" exact component={SpinalInjury} />
-          
+          <Route path="/Modalities" exact component={latest} />
         </Switch>
         <Footer />
       </Router>
