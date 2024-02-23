@@ -76,10 +76,12 @@
    align-items: center;
    /* Set height and width as needed */
   height:70px;
-  margin: 0 25px;
    width: 100%; /* For example */
-   margin-left: 30px;
+   
 
+}
+.center .B1{
+   margin-left:30px;
 }
 .Input_Area input {
    width: 100%;
@@ -90,9 +92,7 @@
 td input{
    width:100%;
 }
-.App button{
-   margin-left:30px;
-}
+
 td label{
    height:50px;
 }

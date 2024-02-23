@@ -1,36 +1,34 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import "../styles/Slider.css"; // Import your slider CSS file
-import image1 from "../assets/Brain.jpg";
-import image2 from "../assets/gait.jpg";
+import image1 from "../assets/incompletespinalcord.jpg";
+import image2 from "../assets/spine.jpg";
+import image6 from "../assets/old_recurrent.jpg";
+import image5 from "../assets/Multiplescelerosis.jpg";
 import { Link } from "react-router-dom";    
 
 // Sample data for the cards
 const cardsData = [
-  { id: 1, title: "ADHD", imageUrl: image1, backgroundColor: "White"},
-  { id: 2, title: "ALZHEIMER", imageUrl: image2, backgroundColor: "white" },
-  { id: 3, title: "ANXIETY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#d9d9d9" },
-  { id: 4, title: "ATAXIA", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#cccccc" },
-  { id: 5, title: "AUTISM", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#bfbfbf" },
-  { id: 6, title: "CEREBRAL PALSY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#b3b3b3" },
-  { id: 7, title: "DEPRESSION", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#a6a6a6" },
-  { id: 8, title: "MUSCULAR DYSTROPHY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#999999" },
-  { id: 9, title: "MUSCULAR SCLEROSIS", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 10, title: "OCD", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 11, title: "PARKINSONISM", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 12, title: "SCHIZOPHRENIA", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 13, title: "SPINAL CORD INJURY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 14, title: "STROKE", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" },
-  { id: 15, title: "TRAUMATIC BRAIN INJURY", imageUrl: "https://via.placeholder.com/150", backgroundColor: "#8c8c8c" }
+  { id: 1, title: "SPINAL CORD INJURY", imageUrl: image1},
+  { id: 2, title: "MUSCULAR DYSTROPHY", imageUrl: image2},
+  { id: 3, title: "MCA INFARCT", imageUrl: "https://via.placeholder.com/150" },
+  { id: 4, title: "CEREBRAL PALSY", imageUrl: "https://via.placeholder.com/150" },
+  { id: 5, title: "MOTOR NEURON DISEASE", imageUrl:image5},
+  { id: 6, title: "STROKE", imageUrl: image6 },
+  { id: 7, title: "PARAPARESIS", imageUrl: "https://via.placeholder.com/150"},
+  { id: 8, title: "MULTIPLE SCLEROSIS", imageUrl: "https://via.placeholder.com/150"},
+  { id: 9, title: "ACUTE MYELITIS", imageUrl: "https://via.placeholder.com/150"},
+  { id: 10, title: "GBS", imageUrl: "https://via.placeholder.com/150" },
+  { id: 11, title: "SPINO CEREBELLAR ATAXIA", imageUrl: "https://via.placeholder.com/150"},
 ];
 
 
-const Card = ({ title, imageUrl, backgroundColor, buttonLink="/Spinalinjury",onCardClick }) => (
+const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinjury",onCardClick }) => (
     <div className="card" style={{ backgroundColor, width: "300px", height: "330px" }}onClick={onCardClick}>
-      <img src={imageUrl} alt={title} style={{ width: "100%", height: "65%" }} />
+      <img className="image"src={imageUrl} alt={title}  />
       <p style={{ height: "35%", margin: 0, overflow: "hidden", textAlign: "center" }}>{title}</p>
       <Link to={buttonLink}>
-        <button>Know More</button>
+        <button className="Knowmore">Know More</button>
       </Link>
     </div>
   );
@@ -53,13 +51,13 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink="/Spinalinjury",onC
 
   const sliderSettings = {
     dots: true,
-    speed: 3000,
+    speed: 10000,
     infinite: true,
  
     slidesToShow: 3,
     slidesToScroll: 3,
     rows: 2,
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 3000, // Adjust autoplay speed as needed
     pauseOnHover: true // Pause autoplay on hover
   };
@@ -69,7 +67,13 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink="/Spinalinjury",onC
       setSelectedCardTitle(title);
     }
   };
+  const HiddenArrow = () => <></>;
 
+  const settings = {
+    // Other settings...
+    prevArrow: <HiddenArrow />, // Hide the previous arrow
+    nextArrow: <HiddenArrow />, // Hide the next arrow
+  };
   const handleCTypeChange = (e) => {
     const value = e.target.value;
     setCType(value);
@@ -140,6 +144,9 @@ const Card = ({ title, imageUrl, backgroundColor, buttonLink="/Spinalinjury",onC
 
   return (
     <div className="slider-container">
+      <div>
+        <p className="Heading">DIAGNOSIS</p>
+      </div>
       <Slider {...sliderSettings}>
         {cardsData.map((card) => (
           <div key={card.id}>

@@ -8,9 +8,32 @@
     margin: 10px;
     height:300px;
   }
+
   .slider-container {
     width: 80%;
     margin: 0 auto; /* Center the slider horizontally */
+    margin-bottom:50px;
+    MArgin-Top:10px;
+  }
+  button.slick-arrow.slick-next {
+    background-color: white;
+}
+button.slick-arrow.slick-prev{
+  background-color: white;
+}
+  .Heading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #00345f;
+    font-size: 46px;
+    font-family: roboto-sans;
+    margin-top:25px;
+
+  }
+  .Knowmore{
+    margin:0px;
   }
   .card {
     display: flex;
@@ -44,10 +67,15 @@
   .card img {
     width: 100%;
     height: auto;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     border-bottom: 1px solid #00345f;
+    object-fit: cover;
+    height: 300px;
+    width: 100%;
   }
   
   .card p {

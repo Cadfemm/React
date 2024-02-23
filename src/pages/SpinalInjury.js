@@ -237,9 +237,10 @@ Days_Of_Treatment:'2'
       </div>
       {showButtons && (
         <div className="center">
-          <button onClick={() => handleButtonClick("B1")}>Left Upper Limb</button>
-          <button onClick={() => handleButtonClick("B2")}>Right Upper Limb</button>
-          <button onClick={() => handleButtonClick("B3")}>Bowl & Bladder</button>
+          <button className="B1" onClick={() => handleButtonClick("B1")}>Left Upper Limb</button>
+          <button className="B1" onClick={() => handleButtonClick("B2")}>Right Upper Limb</button>
+          <button className="B1" onClick={() => handleButtonClick("B3")}>Bowl & Bladder</button>
+          <button className="B1" onClick={() => handleButtonClick("B4")}>Auto Fill</button>
         </div>
       )}
 

@@ -13,7 +13,9 @@
 
 .headerContainer {
   width: auto;
-  margin-left: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .headerContainer h1 {
