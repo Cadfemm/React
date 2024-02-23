@@ -71,7 +71,7 @@ function Home() {
 
       <CardsSlider />
 
-      <Menu />
+   
 
     
 

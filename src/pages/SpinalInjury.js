@@ -24,6 +24,7 @@ const Dropdowns = () => {
 
   });
   const history = useHistory();
+  
   const handleButtonClick = (buttonValue) => {
     if (buttonValue === "B1") {
       setShowC1Inputs(true);
@@ -112,13 +113,7 @@ const Dropdowns = () => {
   };
 
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputFields((prevInputs) => ({
-      ...prevInputs,
-      [name]: value
-    }));
-  };
+
   const handleRedirect = () => {
     console.log('Sending data to Flask server:', inputValues);
     axios.post('http://localhost:5000/process_data', { data: inputValues })
@@ -134,6 +129,8 @@ const Dropdowns = () => {
         console.error('Error:', error);
       });
   };
+  
+
   const [inputValues, setInputValues] = useState({
 Left_Shoulder_Flexion:'2',
 Left_Shoulder_Flexion_Progress:'2',
