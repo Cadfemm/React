@@ -608,7 +608,7 @@ Days_Of_Treatment:''
 
                   <td>
                     <label htmlFor="Bladder">Bladder Management</label>
-                    <input id="Bladder" name="Bladder_Management" value={inputValues.Bladder_Management} onChange={handleChange} type="number" />
+                    <input id="Bladder" name="Bladder_Management" value={inputValues.Bladder_Management} onChange={handleChange} type="text" />
                   </td>
                   <td>
                     <label htmlFor="BladderProgress">Progress Expecting</label>
