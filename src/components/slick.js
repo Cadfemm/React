@@ -64,7 +64,7 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
     slidesToShow: 3,
     slidesToScroll: 3,
     rows: 2,
-    autoplay: false,
+    autoplay: true,
     autoplaySpeed: 3000, // Adjust autoplay speed as needed
     pauseOnHover: true // Pause autoplay on hover
   };
