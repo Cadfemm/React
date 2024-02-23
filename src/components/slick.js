@@ -58,7 +58,7 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
 
   const sliderSettings = {
     dots: true,
-    speed: 10000,
+    speed: 4000,
     infinite: true,
  
     slidesToShow: 3,
