@@ -6,17 +6,17 @@ import hemiplegia from "../assets/motorneuron.jpg";
 import ataxia from "../assets/ataxia.jpg";
 import cerebral from "../assets/cerebralpalsy.jpg";
 import trauma from "../assets/traumaticbraininjury.jpg";
-import mono from "../assets/advance_neuro.jpg";
+import mono from "../assets/excersice.jpg";
 import parap from "../assets/rtms.jpg";
 import dip from "../assets/spinal_stimulation.jpg";
-import quadri from "../assets/botox.jpg";
-import hemi from "../assets/recoverixpro.jpg";
-import br from "../assets/luna_emg.jpg";
+import quadri from "../assets/pablo.jpg";
+import hemi from "../assets/gait.jpg";
+import br from "../assets/recoverixpro.jpg";
 import tymo from "../assets/TYMO.jpg";
 import grip from "../assets/grip.jpg";
 import range from "../assets/rangeofmotion.jpg";
 import gait from "../assets/gait.jpg"
-import vibro from "../assets/VIBRAMOOV.jpg"
+import vibro from "../assets/grip.jpg"
 export const MenuList = [
   {
     image:monoplegia2,
@@ -113,40 +113,40 @@ export const MenuList = [
 ];
 export const MenuList1 = [
   {
-    image:mono,
-    title: " CYBERDYNE HYBRID ASSISTED LIMB",
+    image:parap,
+    title: " LUNA EMG",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Tymo",
     backgroundColor:"black"
     
   },
   {
-    image:parap,
-    title: "LUNA EMG",
+    image:mono,
+    title: "POSTURAL TRAINING",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Luna",
   },
   {
     image:vibro,
-    title: "VIBRAMOOV",
+    title: "HAND OF HOPE",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"HAL_Lumbar_Type",
   },
   {
     image:quadri,
-    title: "RTMS",
+    title: "PABLO",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Vibramoov",
   },
   {
     image:hemi,
-    title:"RECOVERIX PRO",
+    title:"GAIT",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"neurotechnology",
   },
   {
     image:br,
-    title: "PABLO",
+    title: "EPIDURAL STIMULATION",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"pablotests",
   }

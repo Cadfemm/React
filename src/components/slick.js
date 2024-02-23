@@ -1,32 +1,39 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import "../styles/Slider.css"; // Import your slider CSS file
-import image1 from "../assets/incompletespinalcord.jpg";
-import image2 from "../assets/spine.jpg";
+import image1 from "../assets/SPI.jpg";
+import image2 from "../assets/MD.webp";
+import image3 from "../assets/mca.png";
+import image4 from "../assets/cerebralpalsy.jpg";
+import image5 from "../assets/MND.jpg";
+import image7 from "../assets/paraperisis.jpg";
+import image8 from "../assets/MS.webp";
+import image9 from "../assets/AM.webp";
+import image10 from "../assets/gbs.jpg";
 import image6 from "../assets/old_recurrent.jpg";
-import image5 from "../assets/Multiplescelerosis.jpg";
+import image11 from "../assets/SCA.jpg";
 import { Link } from "react-router-dom";    
 
 // Sample data for the cards
 const cardsData = [
   { id: 1, title: "SPINAL CORD INJURY", imageUrl: image1},
   { id: 2, title: "MUSCULAR DYSTROPHY", imageUrl: image2},
-  { id: 3, title: "MCA INFARCT", imageUrl: "https://via.placeholder.com/150" },
-  { id: 4, title: "CEREBRAL PALSY", imageUrl: "https://via.placeholder.com/150" },
+  { id: 3, title: "MCA INFARCT", imageUrl: image3},
+  { id: 4, title: "CEREBRAL PALSY", imageUrl: image4 },
   { id: 5, title: "MOTOR NEURON DISEASE", imageUrl:image5},
   { id: 6, title: "STROKE", imageUrl: image6 },
-  { id: 7, title: "PARAPARESIS", imageUrl: "https://via.placeholder.com/150"},
-  { id: 8, title: "MULTIPLE SCLEROSIS", imageUrl: "https://via.placeholder.com/150"},
-  { id: 9, title: "ACUTE MYELITIS", imageUrl: "https://via.placeholder.com/150"},
-  { id: 10, title: "GBS", imageUrl: "https://via.placeholder.com/150" },
-  { id: 11, title: "SPINO CEREBELLAR ATAXIA", imageUrl: "https://via.placeholder.com/150"},
+  { id: 7, title: "PARAPARESIS", imageUrl: image7},
+  { id: 8, title: "MULTIPLE SCLEROSIS", imageUrl: image8},
+  { id: 9, title: "ACUTE MYELITIS", imageUrl: image9},
+  { id: 10, title: "GBS", imageUrl: image10 },
+  { id: 11, title: "SPINO CEREBELLAR ATAXIA", imageUrl: image11},
 ];
 
 
 const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinjury",onCardClick }) => (
     <div className="card" style={{ backgroundColor, width: "300px", height: "330px" }}onClick={onCardClick}>
       <img className="image"src={imageUrl} alt={title}  />
-      <p style={{ height: "35%", margin: 0, overflow: "hidden", textAlign: "center" }}>{title}</p>
+      <p style={{ height: "35%", margin: "10px", overflow: "hidden", textAlign: "center" }}>{title}</p>
       <Link to={buttonLink}>
         <button className="Knowmore">Know More</button>
       </Link>

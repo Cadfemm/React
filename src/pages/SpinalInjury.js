@@ -23,6 +23,15 @@ const Dropdowns = () => {
     Lady: ""
 
   });
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
   const history = useHistory();
   
   const handleButtonClick = (buttonValue) => {
@@ -132,84 +141,92 @@ const Dropdowns = () => {
   
 
   const [inputValues, setInputValues] = useState({
-Left_Shoulder_Flexion:'2',
-Left_Shoulder_Flexion_Progress:'2',
-Left_Shoulder_Extension:'2',
-Left_Shoulder_Extension_Progress:'2',
-Left_Shoulder_Abduction:'2',
-Left_Shoulder_Abduction_Progress:'2',
-Left_Shoulder_Adduction:'2',
-Left_Shoulder_Adduction_Progress:'2',
-Left_Shoulder_Internal_Rotation:'2',
-Left_Shoulder_Internal_Rotation_Progress:'2',
-Left_Shoulder_External_Rotation:'2',
-Left_Shoulder_External_Rotation_Progress:'2',
-Left_Elbow_Joint_Flexion:'2',
-Left_Elbow_Joint_Flexion_Progress:'2',
-Left_Elbow_Joint_Extension:'2',
-Left_Elbow_Joint_Extension_Progress:'2',
-Left_Wrist_Joint_Flexion:'2',
-Left_Wrist_Joint_Flexion_Progress:'2',
-Left_Wrist_Joint_Extension:'2',
-Left_Wrist_Joint_Extension_Progress:'2',
-Left_Fingers_Flexion:'2',
-Left_Fingers_Flexion_Progress:'2',
-Left_Fingers_Extension:'2',
-Left_Fingers_Extension_Progress:'2',
-Left_Fingers_Abduction:'2',
-Left_Fingers_Abduction_Progress:'2',
-Left_Fingers_Adduction:'2',
-Left_Fingers_Adduction_Progress:'2',
-Right_Shoulder_Flexion:'2',
-Right_Shoulder_Flexion_Progress:'2',
-Right_Shoulder_Extension:'2',
-Right_Shoulder_Extension_Progress:'2',
-Right_Shoulder_Abduction:'2',
-Right_Shoulder_Abduction_Progress:'2',
-Right_Shoulder_Adduction:'2',
-Right_Shoulder_Adduction_Progress:'2',
-Right_Shoulder_Internal_Rotation:'2',
-Right_Shoulder_Internal_Rotation_Progress:'2',
-Right_Shoulder_External_Rotation:'2',
-Right_Shoulder_External_Rotation_Progress:'2',
-Right_Elbow_Joint_Flexion:'2',
-Right_Elbow_Joint_Flexion_Progress:'2',
-Right_Elbow_Joint_Extension:'2',
-Right_Elbow_Joint_Extension_Progress:'2',
-Right_Wrist_Joint_Flexion:'2',
-Right_Wrist_Joint_Flexion_Progress:'2',
-Right_Wrist_Joint_Extension:'2',
-Right_Wrist_Joint_Extension_Progress:'2',
-Right_Fingers_Flexion:'2',
-Right_Fingers_Flexion_Progress:'2',
-Right_Fingers_Extension:'2',
-Right_Fingers_Extension_Progress:'2',
-Right_Fingers_Abduction:'2',
-Right_Fingers_Abduction_Progress:'2',
-Right_Fingers_Adduction:'2',
-Right_Fingers_Adduction_Progress:'2',
-Fist_Score:'2',
-Fist_Progress:'2',
-WISCI:'2',
-WISCI_Progress:'1',
-NBD:'2',
-NBD_Progress:'2',
-Incontinence:'2',
-Incontinence_Progress:'2',
-Storage_And_Voiding:'2',
-Storage_Progress:'2',
-Consequences:'2',
-Consequences_Progress:'2',
-Quality_Of_Life:'2',
-Quality_Progress:'2',
-Bladder_Management:'a',
-Bladder_Management_Progress:'2',
-Days_Of_Treatment:'2'
-
-
-
+    Left_Shoulder_Flexion: '',
+    Left_Shoulder_Flexion_Progress: '',
+    Left_Shoulder_Extension: '',
+    Left_Shoulder_Extension_Progress: '',
+    Left_Shoulder_Abduction: '',
+    Left_Shoulder_Abduction_Progress: '',
+    Left_Shoulder_Adduction: '',
+    Left_Shoulder_Adduction_Progress: '',
+    Left_Shoulder_Internal_Rotation: '',
+    Left_Shoulder_Internal_Rotation_Progress: '',
+    Left_Shoulder_External_Rotation: '',
+    Left_Shoulder_External_Rotation_Progress: '',
+    Left_Elbow_Joint_Flexion: '',
+    Left_Elbow_Joint_Flexion_Progress: '',
+    Left_Elbow_Joint_Extension: '',
+    Left_Elbow_Joint_Extension_Progress: '',
+    Left_Wrist_Joint_Flexion: '',
+    Left_Wrist_Joint_Flexion_Progress: '',
+    Left_Wrist_Joint_Extension: '',
+    Left_Wrist_Joint_Extension_Progress: '',
+    Left_Fingers_Flexion: '',
+    Left_Fingers_Flexion_Progress: '',
+    Left_Fingers_Extension: '',
+    Left_Fingers_Extension_Progress: '',
+    Left_Fingers_Abduction: '',
+    Left_Fingers_Abduction_Progress: '',
+    Left_Fingers_Adduction: '',
+    Left_Fingers_Adduction_Progress: '',
+    Right_Shoulder_Flexion: '',
+    Right_Shoulder_Flexion_Progress: '',
+    Right_Shoulder_Extension: '',
+    Right_Shoulder_Extension_Progress: '',
+    Right_Shoulder_Abduction: '',
+    Right_Shoulder_Abduction_Progress: '',
+    Right_Shoulder_Adduction: '',
+    Right_Shoulder_Adduction_Progress: '',
+    Right_Shoulder_Internal_Rotation: '',
+    Right_Shoulder_Internal_Rotation_Progress: '',
+    Right_Shoulder_External_Rotation: '',
+    Right_Shoulder_External_Rotation_Progress: '',
+    Right_Elbow_Joint_Flexion: '',
+    Right_Elbow_Joint_Flexion_Progress: '',
+    Right_Elbow_Joint_Extension: '',
+    Right_Elbow_Joint_Extension_Progress: '',
+    Right_Wrist_Joint_Flexion: '',
+    Right_Wrist_Joint_Flexion_Progress: '',
+    Right_Wrist_Joint_Extension: '',
+    Right_Wrist_Joint_Extension_Progress: '',
+    Right_Fingers_Flexion: '',
+    Right_Fingers_Flexion_Progress: '',
+    Right_Fingers_Extension: '',
+    Right_Fingers_Extension_Progress: '',
+    Right_Fingers_Abduction: '',
+    Right_Fingers_Abduction_Progress: '',
+    Right_Fingers_Adduction: '',
+    Right_Fingers_Adduction_Progress: '',
+    Fist_Score: '',
+    Fist_Progress: '',
+    WISCI: '',
+    WISCI_Progress: '',
+    NBD: '',
+    NBD_Progress: '',
+    Incontinence: '',
+    Incontinence_Progress: '',
+    Storage_And_Voiding: '',
+    Storage_Progress: '',
+    Consequences: '',
+    Consequences_Progress: '',
+    Quality_Of_Life: '',
+    Quality_Progress: '',
+    Bladder_Management: '',
+    Bladder_Management_Progress: '',
+    Days_Of_Treatment: ''
   });
-
+  const handleButtonPress = () => {
+    const newInputValues = {};
+    for (const key in inputValues) {
+      if (key === 'Bladder_Management') {
+        newInputValues[key] = 'a'; 
+      } else {
+        newInputValues[key] = '2';
+      }
+    }
+    setInputValues(newInputValues);
+  };
+  
 
   return (
     <div>
@@ -240,7 +257,9 @@ Days_Of_Treatment:'2'
           <button className="B1" onClick={() => handleButtonClick("B1")}>Left Upper Limb</button>
           <button className="B1" onClick={() => handleButtonClick("B2")}>Right Upper Limb</button>
           <button className="B1" onClick={() => handleButtonClick("B3")}>Bowl & Bladder</button>
-          <button className="B1" onClick={() => handleButtonClick("B4")}>Auto Fill</button>
+          <button  className="B1" onClick={handleButtonPress}>
+              Auto Fill
+            </button>
         </div>
       )}
 
@@ -627,9 +646,28 @@ Days_Of_Treatment:'2'
 
               </tbody>
             </table>
+            <div style={{  marginTop: "20px",marginBottom: "40px", display: "flex",alignItems: "center",justifyContent: "space-between" }}>
             <button  onClick={handleRedirect}>
               Submit Data
             </button>
+            <div>
+      <button onClick={openModal}>Animate</button>
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <span className="close-button" onClick={closeModal}>
+              &times;
+            </span>
+            <video width="700" height="500" controls autoPlay >
+              <source src="/90per.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
+    </div>
+</div>
           </div>
         )}
       </div>
