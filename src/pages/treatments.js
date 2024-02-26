@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { MenuList1 } from "../helpers/MenuList";
 import MenuItem from "../components/Subtreatments";
+import Health from "../assets/background.jpg";
 import { useHistory } from "react-router-dom";
 import "../styles/Monoplegia.css";
 import "../styles/Menu.css";
@@ -40,7 +41,11 @@ function Menu() {
   };
 
   return (
-    <div>
+
+      <div>
+      <div class="banner"  style={{ backgroundImage: `url(${Health})` }}>
+
+</div>
       <div className="menu">
         <h1 className="menuTitle">Modalities</h1>
         <div className="menuList">

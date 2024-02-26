@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Health from "../assets/outputimage2.jpg";
+import Health from "../assets/spino.jpg";
 import "../styles/Monoplegia.css";
 import { useHistory,Link } from "react-router-dom";
 import axios from 'axios';
@@ -230,7 +230,12 @@ const Dropdowns = () => {
 
   return (
     <div>
+      <div class="banner"  style={{ backgroundImage: `url(${Health})` }}>
+  Spinalcord
+</div>
+<h2 className="Heading"> Type Of Injury</h2>
       <div className="center">
+      
         <label htmlFor="cType">C-Type:</label>
         <select id="cType" value={cType} onChange={handleCTypeChange} disabled={isCTypeDisabled}>
           <option value="">Select C-Type</option>
@@ -659,10 +664,11 @@ const Dropdowns = () => {
             <span className="close-button" onClick={closeModal}>
               &times;
             </span>
-            <video width="700" height="500" controls autoPlay >
+            <video width="400" height="300" controls autoPlay>
               <source src="/90per.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
+            <img src="../assets/spino.jpg" alt="Your Image" width="400" height="300" />
           </div>
         </div>
       )}
