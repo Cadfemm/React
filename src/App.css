@@ -19,9 +19,11 @@ body {
 }
 .footer-logo-container {
   max-width: 50px;
+  PADDING-LEFT:25px;
+  margin-left:15px;
 }
 .footer-icons {
-  padding-left: 150px;
+  padding-left: 100px;
   padding-top: 30px;
 }
 .footer-icons svg {

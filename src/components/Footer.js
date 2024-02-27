@@ -1,5 +1,6 @@
 import React from "react";
 import Logo from "../assets/cadfem-logo-white.png";
+import Logo2 from "../assets/strategic-ventures-logo-dark.png";
 import { BsTwitter } from "react-icons/bs";
 import { SiLinkedin } from "react-icons/si";
 import { BsYoutube } from "react-icons/bs";
@@ -12,7 +13,8 @@ function Footer() {
     <div className="footer-wrapper">
       <div className="footer-section-one">
         <div className="footer-logo-container">
-        <img src={Logo}/>
+        <img className="image1" src={Logo}/>
+        <img className="image2" src={Logo2}/>
         </div>
         <div className="footer-icons">
           <BsTwitter style={{ color: 'white' }}  />
@@ -31,10 +33,10 @@ function Footer() {
           <span>Work</span>
         </div>
         <div className="footer-section-columns">
-          <span>244-5333-7783</span>
-          <span>hello@helthcare.com</span>
-          <span>press@helthcare.com</span>
-          <span>contact@helthcare.com</span>
+        
+          <span>(+91) 40 49481005</span>
+          <span>services@cadfem.in</span>
+          
         </div>
         <div className="footer-section-columns">
           <span>Terms & Conditions</span>

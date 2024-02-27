@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { MenuList1 } from "../helpers/MenuList";
 import MenuItem from "../components/Subtreatments";
 import Health from "../assets/background.jpg";
+import graph1 from "../assets/graph1.png";
+import graph2 from "../assets/graph2.png";
+import graph3 from "../assets/graph3.png";
 import { useHistory } from "react-router-dom";
 import "../styles/Monoplegia.css";
 import "../styles/Menu.css";
@@ -10,6 +13,7 @@ import "../styles/Menu.css";
 function Menu() {
   const history = useHistory();
   const [updatedData, setUpdatedData] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('video');
 
   useEffect(() => {
     // Retrieve updated data from the history state
@@ -32,7 +36,9 @@ function Menu() {
     setModalOpen(false);
   };
   
-
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
  
 
 
@@ -70,28 +76,39 @@ function Menu() {
 
 <button onClick={handleRedirect}>Back</button>
 <div>
-<button onClick={openModal}>Animate</button>
+      <select value={selectedOption} onChange={handleOptionChange}>
+        <option value="video">Video</option>
+        <option value="graphs">Graphs</option>
+      </select>
 
-{isModalOpen && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <span className="close-button" onClick={closeModal}>
-        &times;
-      </span>
-      <video width="700" height="500" controls autoPlay>
-        <source
-          src={
-            "/Normal.mp4"
-                  
-          }
-          type="video/mp4"
-        />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  </div>
-)}
+      <button onClick={openModal}>Process</button>
 
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <span className="close-button" onClick={closeModal}>
+              &times;
+            </span>
+            {selectedOption === 'video' && (
+              <video width="700" height="500" controls autoPlay>
+                <source src="/Normal.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
+            {selectedOption === 'graphs' && (
+              <div>
+                <table>
+                  <tr>
+                <td><img src={graph1} alt="Graph 1" /></td>
+                <td> <img src={graph2} alt="Graph 2" /></td>
+                </tr>
+                <tr><td><img src={graph3} alt="Graph 1" /></td></tr>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
 
 

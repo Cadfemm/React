@@ -30,7 +30,11 @@ button.slick-arrow.slick-prev{
     font-size: 46px;
     font-family: roboto-sans;
     margin-top:25px;
+    text-decoration: underline;
 
+  }
+  .treat{
+    color:white;
   }
   .Knowmore{
     margin:0px;

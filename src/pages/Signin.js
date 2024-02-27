@@ -19,7 +19,7 @@ const Login = () => {
   const handleSignIn = () => {
     console.log(`Signing in with username: ${username} and password: ${password}`);
     
-    if ((username === "AnushaCad" && password === "cadcad") || (username === "AnushaCad2" && password === "CADCAD2")){
+    if ((username === "AnushaCad" && password === "cadcad") || (username === "CADFEM" && password === "Cadfem@2024")){
       history.push('/Home');
     } else {
         alert("Incorrect username or password. Please try again.");

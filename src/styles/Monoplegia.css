@@ -9,7 +9,11 @@
     width: 100%;
    
 }  
-
+.treat{
+   color:#00345f;
+   font-weight: bold;
+   font-size:28px;
+}
 .modal-overlay {
    position: fixed;
    top: 0;
@@ -35,7 +39,7 @@
    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
  }
  .modal-content {
-   background: white;
+   background: #a7a0a0;
    width: 65%;
    height:550px;
    padding: 20px;
@@ -51,7 +55,11 @@
    font-size: 20px;
    cursor: pointer;
  }
-
+ .slick-slider {
+  /* Enable vertical scrolling */
+   min-height: 350px; /* Set max height for the slider container */
+ }
+ 
 
 
 .Input_Area{
@@ -91,6 +99,39 @@
    width: 100%; /* For example */
    
 
+}
+.modal-content img {
+   display: flex;
+   flex-wrap: wrap;
+ }
+ 
+ .modal-content img {
+   width: calc(100% - 5px); /* Adjust width as needed */
+   margin: 5px; /* Adjust margin as needed */
+   height:220px;
+   
+   
+ }
+ 
+ .modal-content img:nth-child(3) {
+   width: 100%; /* Make the third image take full width */
+   margin-top: 10px; /* Adjust margin-top as needed */
+ }
+
+ .modal-content img:hover {
+   width: 100%; /* Increase width on hover */
+   height: 350px; /* Increase height on hover */
+ }
+
+
+
+td label{
+      height: 50px;
+      color: #00345f;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: poppins;
+      height: 50px;
 }
 .center .B1{
    margin-left:30px;

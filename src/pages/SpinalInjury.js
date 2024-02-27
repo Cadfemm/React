@@ -219,13 +219,18 @@ const Dropdowns = () => {
     const newInputValues = {};
     for (const key in inputValues) {
       if (key === 'Bladder_Management') {
-        newInputValues[key] = 'a'; 
+        newInputValues[key] = 'a';
       } else {
-        newInputValues[key] = '2';
+        newInputValues[key] = generateRandomValue(); 
       }
     }
     setInputValues(newInputValues);
   };
+  
+  const generateRandomValue = () => {
+    const randomNumber = Math.floor(Math.random() * 16); // Generates random number between 0 and 15
+    return randomNumber.toString();
+};
   
 
   return (
@@ -641,8 +646,8 @@ const Dropdowns = () => {
                 </tr>
                 <tr>
 
-                  <td>
-                    <label htmlFor="DaysForTreatment">Days Of Treatment</label>
+                <td  colSpan={3} style={{alignItems: 'center', justifyContent: 'center'}}> 
+                    <label className="treat" htmlFor="DaysForTreatment">Days Of Treatment</label>
                     <input id="DaysForTreatment" name="Days_Of_Treatment" value={inputValues.Days_Of_Treatment} onChange={handleChange} type="number" />
                   </td>
 
@@ -656,7 +661,7 @@ const Dropdowns = () => {
               Submit Data
             </button>
             <div>
-      <button onClick={openModal}>Animate</button>
+      <button onClick={openModal}>Process</button>
 
       {isModalOpen && (
         <div className="modal-overlay">
@@ -664,11 +669,11 @@ const Dropdowns = () => {
             <span className="close-button" onClick={closeModal}>
               &times;
             </span>
-            <video width="400" height="300" controls autoPlay>
+            <video width="700" height="500" controls autoPlay>
               <source src="/90per.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-            <img src="../assets/spino.jpg" alt="Your Image" width="400" height="300" />
+           
           </div>
         </div>
       )}

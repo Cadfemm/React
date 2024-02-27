@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Logo from "../assets/cadfem-logo-white.png";
+import Logo from "../assets/cadfem-logo.png";
+import Logo2 from "../assets/strategic-ventures-logo-dark.png";
 import { Link } from "react-router-dom";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import "../styles/Navbar.css";
@@ -16,20 +17,23 @@ function Navbar() {
          
       <Link to="/Home">
         
+      <div className="logo">
         <img
           src={Logo}
           alt="Description of the image"
           style={{ width: '100%', height: '40px' }}
         />
+      </div>
+      <div className="logo">
+        <img
+          src={Logo2}
+          alt="Description of the image"
+          style={{ width: '100%', height: '60px' }}
+        />
+      </div>
       </Link>
        
-        <div className="hiddenLinks">
-          <Link to="/Home"> Home </Link>
-          <Link to="/menu"> Treatments </Link>
-          <Link to="/about"> About </Link>
-          <Link to="/contact"> Contact </Link>
-
-        </div>
+        
       </div>
       <div className="rightSide">
         <Link to="/Home"> Home </Link>
