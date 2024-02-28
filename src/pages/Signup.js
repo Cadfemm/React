@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "../styles/Signup.css";
 import PizzaLeft from "../assets/signup.jpg";
+import {useHistory , Link} from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -34,6 +35,10 @@ const Signup = () => {
     console.log(`Signing up with name: ${name}, email: ${email}, phone number: ${phoneNumber}, age: ${age}, gender: ${gender}`);
     // You can add validation and actual sign-up logic here
   };
+  const history = useHistory();
+  const handleLogIn = () => {
+    history.push("/");
+  };
 
   return (
     <div className="signup-container">
@@ -65,7 +70,7 @@ const Signup = () => {
           <table>
            
               <tr>
-              <td>
+              <td style={{padding: '0px'}}>
           <div>
             
             <label htmlFor="age">Age:</label>
@@ -104,8 +109,9 @@ const Signup = () => {
               onChange={handlePhoneNumberChange}
             />
           </div>
-          <div>
+          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between", width:"100%", paddingTop:"40px"}}>
             <button type="button" onClick={handleSignUp}>Sign Up</button>
+            <button type="button" onClick={handleLogIn}>LogIn</button>
           </div>
         </form>
       </div>

@@ -1,27 +1,32 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Login from "./pages/Signin"; // Assuming useLocation is used in the Login component
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Cyberdyne from "./pages/Cyberdyne";
 import treatments from "./pages/treatments";
 import pablotests from "./pages/pablotests";
 import Tymo from "./pages/Tymo";
 import Plabo from "./pages/Plabo";
-import Output from"./pages/Output";
-import Login from"./pages/Signin";
-import Signup from"./pages/Signup";
-import SpinalInjury from"./pages/SpinalInjury";
+import Output from "./pages/Output";
+import Signup from "./pages/Signup";
+import SpinalInjury from "./pages/SpinalInjury";
 import latest from "./pages/Carddisplay.js";
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Navbar />
+        {/* Navbar */}
+        <Route
+          render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Navbar />}
+        />
+
+        {/* Switch and Routes */}
         <Switch>
           <Route path="/Home" exact component={Home} />
           <Route path="/menu" exact component={Menu} />
@@ -38,7 +43,11 @@ function App() {
           <Route path="/Spinalinjury" exact component={SpinalInjury} />
           <Route path="/Modalities" exact component={latest} />
         </Switch>
-        <Footer />
+
+        {/* Footer */}
+        <Route
+          render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Footer />}
+        />
       </Router>
     </div>
   );
