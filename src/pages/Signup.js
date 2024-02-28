@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import "../styles/Signup.css";
+import Loginnav from "../components/Loginnav";
+import "../styles/Signin.css";
 import PizzaLeft from "../assets/signup.jpg";
 import {useHistory , Link} from "react-router-dom";
 
@@ -41,6 +43,8 @@ const Signup = () => {
   };
 
   return (
+    <div>
+<Loginnav />
     <div className="signup-container">
       <div className="signup-image">
         <img src={PizzaLeft} alt="Signup Image" />
@@ -93,7 +97,6 @@ const Signup = () => {
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
-              <option value="other">Other</option>
             </select>
           </div>
           </td>
@@ -115,6 +118,7 @@ const Signup = () => {
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 };
