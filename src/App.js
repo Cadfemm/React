@@ -15,6 +15,7 @@ import Plabo from "./pages/Plabo";
 import Output from "./pages/Output";
 import Signup from "./pages/Signup";
 import SpinalInjury from "./pages/SpinalInjury";
+import stroke from "./pages/stroke";
 import latest from "./pages/Carddisplay.js";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/Signup" exact component={Signup} />
           <Route path="/Spinalinjury" exact component={SpinalInjury} />
           <Route path="/Modalities" exact component={latest} />
+          <Route path="/stroke" exact component={stroke} />
         </Switch>
 
         {/* Footer */}

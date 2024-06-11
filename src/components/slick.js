@@ -1,91 +1,57 @@
 import React, { useState } from "react";
-import Slider from "react-slick";
-import "../styles/Slider.css"; // Import your slider CSS file
+import { Link, useHistory } from "react-router-dom";
+import "../styles/Slider.css";
 import image1 from "../assets/SPI.jpg";
-import image2 from "../assets/MD.webp";
-import image3 from "../assets/mca.png";
-import image4 from "../assets/cerebralpalsy.jpg";
-import image5 from "../assets/MND.jpg";
-import image7 from "../assets/paraperisis.jpg";
-import image8 from "../assets/MS.webp";
-import image9 from "../assets/AM.webp";
-import image10 from "../assets/gbs.jpg";
-import image6 from "../assets/old_recurrent.jpg";
-import image11 from "../assets/SCA.jpg";
-import { Link } from "react-router-dom";    
+import image6 from "../assets/cerebralpalsy.jpg";
 
 // Sample data for the cards
 const cardsData = [
-  { id: 1, title: "SPINAL CORD INJURY", imageUrl: image1},
-  { id: 2, title: "MUSCULAR DYSTROPHY", imageUrl: image2},
-  { id: 3, title: "MCA INFARCT", imageUrl: image3},
-  { id: 4, title: "CEREBRAL PALSY", imageUrl: image4 },
-  { id: 5, title: "MOTOR NEURON DISEASE", imageUrl:image5},
-  { id: 6, title: "STROKE", imageUrl: image6 },
-  { id: 7, title: "PARAPARESIS", imageUrl: image7},
-  { id: 8, title: "MULTIPLE SCLEROSIS", imageUrl: image8},
-  { id: 9, title: "ACUTE MYELITIS", imageUrl: image9},
-  { id: 10, title: "GBS", imageUrl: image10 },
-  { id: 11, title: "SPINO CEREBELLAR ATAXIA", imageUrl: image11},
+  { id: 1, title: "STROKE", imageUrl: image6, link: "/stroke" },
+  { id: 2, title: "SPINAL CORD INJURY", imageUrl: image1, link: "/spinalcord" },
 ];
 
+const Card = ({ title, imageUrl, buttonLink = "/Spinalinjury", onCardClick }) => (
+  <div className="card" onClick={onCardClick}>
+    <img className="image" src={imageUrl} alt={title} />
+    <p className="title">{title}</p>
+    <Link to={buttonLink}>
+      <button className="know-more">Know More</button>
+    </Link>
+  </div>
+);
 
-const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinjury",onCardClick }) => (
-    <div className="card" style={{ backgroundColor, width: "300px", height: "330px" }}onClick={onCardClick}>
-      <img className="image"src={imageUrl} alt={title}  />
-      <p style={{ height: "35%", margin: "10px", overflow: "hidden", textAlign: "center" }}>{title}</p>
-      <Link to={buttonLink}>
-        <button className="Knowmore">Know More</button>
-      </Link>
-    </div>
-  );
+const CardsSlider = () => {
+  const history = useHistory();
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedCardTitle, setSelectedCardTitle] = useState("");
+  const [cType, setCType] = useState("");
+  const [tType, setTType] = useState("");
+  const [inputFields, setInputFields] = useState({
+    MMT: "",
+    MAS: "",
+    FIST: "",
+    Wiscii: "",
+    Bowel: "",
+    Bladder: "",
+    Shoulder: "",
+    Anal: ""
+  });
 
-  const CardsSlider = () => {
-    const [showPopup, setShowPopup] = useState(false);
-    const [selectedCardTitle, setSelectedCardTitle] = useState("");
-    const [cType, setCType] = useState(""); // State for C-Type dropdown value
-    const [tType, setTType] = useState(""); // State for T-Type dropdown value
-    const [inputFields, setInputFields] = useState({
-      MMT: "",
-      MAS: "",
-      FIST: "",
-      Wiscii: "",
-      Bowel: "",
-      Bladder: "",
-      Shoulder: "",
-      Anal: ""
-    });
-
-  const sliderSettings = {
-    dots: true,
-    speed: 4000,
-    infinite: true,
- 
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    rows: 4,
-    autoplay: true,
-    autoplaySpeed: 3000, // Adjust autoplay speed as needed
-    pauseOnHover: true // Pause autoplay on hover
-  };
   const handleCardClick = (title) => {
-    if (title === "ADHD") {
+    if (title === "STROKE") {
+      history.push("/stroke");
+    } else if (title === "SPINAL CORD INJURY") {
+      history.push("/Spinalinjury");
+    } else if (title === "ADHD") {
       setShowPopup(true);
       setSelectedCardTitle(title);
     }
   };
-  const HiddenArrow = () => <></>;
 
-  const settings = {
-    // Other settings...
-    prevArrow: <HiddenArrow />, // Hide the previous arrow
-    nextArrow: <HiddenArrow />, // Hide the next arrow
-  };
   const handleCTypeChange = (e) => {
     const value = e.target.value;
     setCType(value);
 
-    // Reset input fields when C-Type changes
     setInputFields({
       MMT: "",
       MAS: "",
@@ -97,17 +63,10 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
       Anal: ""
     });
 
-    // Show input fields based on C-Type selection
     if (value === "C1") {
-      setInputFields({
-        MMT: "",
-        MAS: ""
-      });
+      setInputFields({ MMT: "", MAS: "" });
     } else if (value === "C3") {
-      setInputFields({
-        FIST: "",
-        Wiscii: ""
-      });
+      setInputFields({ FIST: "", Wiscii: "" });
     }
   };
 
@@ -115,7 +74,6 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
     const value = e.target.value;
     setTType(value);
 
-    // Reset input fields when T-Type changes
     setInputFields({
       Bowel: "",
       Bladder: "",
@@ -123,17 +81,10 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
       Anal: ""
     });
 
-    // Show input fields based on T-Type selection
     if (value === "T1") {
-      setInputFields({
-        Bowel: "",
-        Bladder: ""
-      });
+      setInputFields({ Bowel: "", Bladder: "" });
     } else if (value === "T3") {
-      setInputFields({
-        Shoulder: "",
-        Anal: ""
-      });
+      setInputFields({ Shoulder: "", Anal: "" });
     }
   };
 
@@ -154,18 +105,16 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
       <div>
         <p className="Heading">DIAGNOSIS</p>
       </div>
-      <Slider {...sliderSettings}>
-        {cardsData.map((card) => (
-          <div key={card.id}>
-            <Card
-              title={card.title}
-              imageUrl={card.imageUrl}
-              backgroundColor={card.backgroundColor}
-              onCardClick={() => handleCardClick(card.title)}
-            />
-          </div>
+      <div className="cards-container">
+        {cardsData.slice(0, 2).map((card) => (
+          <Card
+            key={card.id}
+            title={card.title}
+            imageUrl={card.imageUrl}
+            onCardClick={() => handleCardClick(card.title)}
+          />
         ))}
-      </Slider>
+      </div>
       {showPopup && selectedCardTitle === "ADHD" && (
         <div className="popup">
           <h2>Spinal Cord Injury Popup</h2>
@@ -183,15 +132,15 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
               <input type="text" id="MMT" name="MMT" value={inputFields.MMT} onChange={handleInputChange} />
               <label htmlFor="MAS">MAS:</label>
               <input type="text" id="MAS" name="MAS" value={inputFields.MAS} onChange={handleInputChange} />
-              </div>
+            </div>
           )}
           {(cType === "C3" || cType === "C4") && (
-             <div>
-             <label htmlFor="FIST">FIST:</label>
-             <input type="text" id="FIST" name="FIST" value={inputFields.FIST} onChange={handleInputChange} />
-             <label htmlFor="Wiscii">Wiscii:</label>
-             <input type="text" id="Wiscii" name="Wiscii" value={inputFields.Wiscii} onChange={handleInputChange} />
-           </div>
+            <div>
+              <label htmlFor="FIST">FIST:</label>
+              <input type="text" id="FIST" name="FIST" value={inputFields.FIST} onChange={handleInputChange} />
+              <label htmlFor="Wiscii">Wiscii:</label>
+              <input type="text" id="Wiscii" name="Wiscii" value={inputFields.Wiscii} onChange={handleInputChange} />
+            </div>
           )}
           <label htmlFor="tType">T-Type:</label>
           <select id="tType" value={tType} onChange={handleTTypeChange}>
@@ -207,7 +156,7 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
               <input type="text" id="Bowel" name="Bowel" value={inputFields.Bowel} onChange={handleInputChange} />
               <label htmlFor="Bladder">Bladder:</label>
               <input type="text" id="Bladder" name="Bladder" value={inputFields.Bladder} onChange={handleInputChange} />
-              </div>
+            </div>
           )}
           {(tType === "T3" || tType === "T4") && (
             <div>
@@ -215,7 +164,7 @@ const Card = ({ title, imageUrl, backgroundColor="WHITE", buttonLink="/Spinalinj
               <input type="text" id="Bowel" name="Bowel" value={inputFields.Bowel} onChange={handleInputChange} />
               <label htmlFor="Bladder">Bladder:</label>
               <input type="text" id="Bladder" name="Bladder" value={inputFields.Bladder} onChange={handleInputChange} />
-              </div>
+            </div>
           )}
           <button onClick={handleClosePopup}>Close</button>
         </div>

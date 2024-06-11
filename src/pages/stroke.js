@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import Health from "../assets/spino.jpg";
+import Health from "../assets/Brain.jpg";
 import "../styles/Monoplegia.css";
 import { useHistory,Link } from "react-router-dom";
 import axios from 'axios';
@@ -245,27 +245,25 @@ const handleShowInputs = (disease) => {
   return (
     <div>
       <div class="banner"  style={{ backgroundImage: `url(${Health})` }}>
-  SPINAL CORD INJURY
+  STROKE
 </div>
 <h2 className="Heading"> Type Of Injury</h2>
 <div className="center">
   
-  <b><label htmlFor="cType">Level: </label></b>
+  <b><label htmlFor="cType">Types: </label></b>
         <select id="cType" value={cType} onChange={handleCTypeChange}>
           <option value="">Select Type</option>
-          <option value="C1">Cervical</option>
-          <option value="C2">Thoracic</option>
-          <option value="C3">Lumbar</option>
+          <option value="C1">Ischemic</option>
+          <option value="C2">Hemorrhagic</option>
+          {/* <option value="C3">Lumbar</option> */}
           {/* <option value="C4">C3C4(ASIA-A)</option> */}
         </select>
 
-   <b><label htmlFor="tType">Completeness Of Injury: </label></b>
+   <b><label htmlFor="tType">Location: </label></b>
         <select id="tType" value={tType} onChange={handleTTypeChange}>
-          <option value="">Select Injury</option>
-          <option value="T1">ASIA-A</option>
-          <option value="T2">ASIA-B</option>
-          <option value="T2">ASIA-C</option>
-          <option value="T2">ASIA-D</option>
+          <option value="">Select Location</option>
+          <option value="T1">Cerebral Hemipe</option>
+          <option value="T2">Brainsteam / Cerebellar</option>
           
         </select>
 
@@ -701,7 +699,7 @@ const handleShowInputs = (disease) => {
       )}
 {showInputsFor === 'Spasticity' && (
          <div style={{ marginBottom: "20px", padding: "10px", marginTop: "20px" }}>
-         <button className="center" onClick={handleClick4}>MAS</button>
+         <button onClick={handleClick4}>MAS</button>
          {showMASInputs && (
             <div id="input-container"style={{ marginBottom: "20px", padding: "10px", marginTop: "20px" }} >
   <table style={{ width: "100%" }}>

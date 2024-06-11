@@ -13,9 +13,9 @@ import "../styles/Home.css";
 import Contact from "../pages/Contact.js";
 
 const carouselImages = [
-  BannerImage,
-  BannerImage2,
   BannerImage3,
+  BannerImage2,
+  BannerImage,
 
   // Add more image URLs as needed
 ];
