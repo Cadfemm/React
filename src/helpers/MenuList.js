@@ -12,7 +12,7 @@ import dip from "../assets/spinal_stimulation.jpg";
 import quadri from "../assets/pablo.jpg";
 import hemi from "../assets/gait.jpg";
 import br from "../assets/recoverixpro.jpg";
-import tymo from "../assets/TYMO.jpg";
+import tymo from "../assets/tymo.jpg";
 import grip from "../assets/grip.jpg";
 import range from "../assets/rangeofmotion.jpg";
 import gait from "../assets/gait.jpg"
