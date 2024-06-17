@@ -8,6 +8,7 @@ const Droperdowns = () => {
   const [tType, setTType] = useState("");
   const [showInputsFor, setShowInputsFor] = useState(null);
   const [isModified, setIsModified] = useState("MMT");
+  const [autoFillDisplayed, setAutoFillDisplayed] = useState(false);
   const [isModifiedBBG, setIsModifiedBBG] = useState("BBG");
   const [isModifiedMas, setIsModifiedMas] = useState("Mas");
   const [isModifiedFist, setIsModifiedFist] = useState("Fist");
@@ -37,7 +38,10 @@ const Droperdowns = () => {
   const openModal = () => {
     setModalOpen(true);
   };
-  
+  const handleSubmitClick = () => {
+    alert(`Submit clicked with input values: ${JSON.stringify(inputValues)}`);
+    // Implement submit logic here if needed
+  };
    
   const handleClick = () => {
     setShowInputs(true);
@@ -221,6 +225,7 @@ const handleClick4 = () => {
   });
   const handleButtonPress = () => {
     const newInputValues = {};
+    
     for (const key in inputValues) {
      
         newInputValues[key] = generateRandomValue(); 
@@ -228,18 +233,27 @@ const handleClick4 = () => {
     
     setInputValues(newInputValues);
   };
+  
   const afterStrokeSubmit = () => {
     const newInputValues = {};
-    for (const key in inputValues) { // Correctly using `for...in` loop
-            const value = parseFloat(inputValues[key]) || 0; // Ensure the value is a number, defaulting to 0 if not
-            if(value == ''){
-            }else{
+    const daysOfTreatment = parseFloat(inputValues["Days_Of_Treatment"]) || 0;
+
+    for (const key in inputValues) {
+        const value = parseFloat(inputValues[key]) || 0;
+        
+        // Skip increment logic if the value is equal to "Days of Treatment"
+        if (value === daysOfTreatment) {
+            newInputValues[key] = value;
+        } else {
             newInputValues[key] = value + 2; // Increment the value by 2
-        setIsModified("Modified MMT");
-        setVideoSource("/Normal.mp4")
+        }
+    }
+
+    setIsModified("Modified MMT");
+    setVideoSource("/Normal.mp4");
     setInputValues(newInputValues);
-            }}
 };
+
 const afterFistSubmit = () => {
   const newInputValues = {};
   for (const key in inputValues) { // Correctly using `for...in` loop
@@ -267,8 +281,6 @@ const afterMasSubmit = () => {
            }
           
       }
-      
-
 };
   const generateRandomValue = () => {
     const randomNumber = Math.floor(Math.random() * 16)+1; // Generates random number between 0 and 15
@@ -280,6 +292,7 @@ const handleDiseaseChange = (event) => {
   const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value);
   setSelectedDiseases(selectedOptions);
   setShowInputsFor(false);
+  setAutoFillDisplayed(false); 
 }; // Define handleDiseaseChange function to manage state
 const handleShowInputs = (disease) => {
   const newInputValues = {};
@@ -338,13 +351,13 @@ const handleShowInputs = (disease) => {
         <option value="Bowl&Bladder">Bowl & Bladder</option>
         <option value="Cognitive">Cognitive Assessment</option>
       </select>
-      {selectedDiseases.map(disease => (
+      {selectedDiseases.length > 0 && !autoFillDisplayed && (
         
 <button className="B1" onClick={handleButtonPress}>
             Auto Fill
           
         </button>
-      ))}
+      )}
       
       
 </div>
@@ -979,7 +992,6 @@ const handleShowInputs = (disease) => {
             <div>
             <button className="B1" onClick={afterMasSubmit}>Submit Data</button>
       <button style={{float:'right'}} onClick={openModal}>Animate</button>
-
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -996,15 +1008,8 @@ const handleShowInputs = (disease) => {
     </div>
             </div>
         )}
-      
-      
-
-          
-          </div>
-          
-      
+  </div>     
       )}
-
 {showButtons && (
         <div className="center">
           {selectedDiseases.map((disease, index) => (
@@ -1015,9 +1020,8 @@ const handleShowInputs = (disease) => {
           
           
         </div>
-      )}
- 
-      
+      )}  
+
     </div>
   );
 };
