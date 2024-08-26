@@ -4,7 +4,7 @@ import "../styles/Monoplegia.css";
 
 const optionFieldsMap = {
   Strength: {
-    MMT: ['Hip Flexor Right', 'Hip Flexor Left', 'Knee Extensor Right', 'Knee Extensor Left', 'Ankle Dorsal Flexor Right', 'Ankle Dorsal Flexor Left','Long Toe Extensor Left','Long Toe Extensor Right','Ankle Plantar Flexor Right','Ankle Plantar Flexor Left','Upper Limb Shoulder Flexion Right','Upper Limb Shoulder Flexion Left','Upper Limb Shoulder Extension Right','Upper Limb Shoulder Extension Left','Upper Limb Shoulder Abduction Right','Upper Limb Shoulder Abduction Left','Upper Limb Shoulder Adduction Right','Upper Limb Shoulder Adduction Left','Upper Limb Shoulder Internal Rotation Left','Upper Limb Shoulder Internal Rotation Right','Upper Limb Shoulder External Rotation Right','Upper Limb Shoulder External Rotation Left','Upper Limb Elbow Flexion Right','Upper Limb Elbow Flexion Left','Upper Limb Elbow Extension Right','Upper Limb Elbow Extension Left','Upper Limb Wrist Flexion Right','Upper Limb Wrist Flexion Left','Upper Limb Wrist Extension Right','Upper Limb Wrist Extension Left','Upper Limb Finger Flexion Right','Upper Limb Finger Flexion Left','Upper Limb Finger Extension Right','Upper Limb Finger Extension Left','Upper Limb Finger Abduction Right','Upper Limb Finger Abduction Left','Upper Limb Finger Adduction Right','Upper Limb Finger Adduction Left','Lower Limb Hip Flexion Right','Lower Limb Hip Flexion Left','Lower Limb Hip Extension Right','Lower Limb Hip Extension Left','Lower Limb Hip Abduction Right','Lower Limb Hip Abduction Left','Lower Limb Hip Adduction Right','Lower Limb Hip Adduction Left','Lower Limb Internal Rotation Right','Lower Limb Internal Rotation Left','Lower Limb External Rotation Right','Lower Limb External Rotation Left','Lower Limb Knee Flexion Right','Lower Limb Knee Flexion Left','Lower Limb Knee Extension Right','Lower Limb Knee Extension Left','Lower Limb Ankle Plantar Flexion Right','Lower Ankle Plantar Flexion Left','Lower Limb Ankle Dorsal Flexion Right','Lower Ankle Dorsal Flexion Left','Lower Limb Inversion Right','Lower Limb Inversion Left','Lower Limb Eversion Right','Lower Limb Eversion Left','Lower Limb Toe Flexion Right','Lower Limb Toe Flexion Left','Lower Limb Inversion Right','Lower Limb Inversion Left','Lower Limb Eversion Right','Lower Limb Eversion Left','Lower Limb Toe Flexion Right','Lower Limb Toe Flexion Left','Lower Limb Toe Abduction Right','Lower Limb Toe Abduction Left','Lower Limb Toe Adduction Right','Lower Limb Toe Adduction Left'], 
+    MMT: ['Hip Flexor Right', 'Hip Flexor Left', 'Knee Extensor Right', 'Knee Extensor Left', 'Ankle Dorsal Flexor Right', 'Ankle Dorsal Flexor Left','Long Toe Extensor Left','Long Toe Extensor Right','Ankle Plantar Flexor Right','Ankle Plantar Flexor Left','Upper Limb Shoulder Flexion Right','Upper Limb Shoulder Flexion Left','Upper Limb Shoulder Extension Right','Upper Limb Shoulder Extension Left','Upper Limb Shoulder Abduction Right','Upper Limb Shoulder Abduction Left','Upper Limb Shoulder Adduction Right','Upper Limb Shoulder Adduction Left','Upper Limb Shoulder Internal Rotation Left','Upper Limb Shoulder Internal Rotation Right','Upper Limb Shoulder External Rotation Right','Upper Limb Shoulder External Rotation Left','Upper Limb Elbow Flexion Right','Upper Limb Elbow Flexion Left','Upper Limb Elbow Extension Right','Upper Limb Elbow Extension Left','Upper Limb Wrist Flexion Right','Upper Limb Wrist Flexion Left','Upper Limb Wrist Extension Right','Upper Limb Wrist Extension Left','Upper Limb Finger Flexion Right','Upper Limb Finger Flexion Left','Upper Limb Finger Extension Right','Upper Limb Finger Extension Left','Upper Limb Finger Abduction Right','Upper Limb Finger Abduction Left','Upper Limb Finger Adduction Right','Upper Limb Finger Adduction Left','Lower Limb Hip Flexion Right','Lower Limb Hip Flexion Left','Lower Limb Hip Extension Right','Lower Limb Hip Extension Left','Lower Limb Hip Abduction Right','Lower Limb Hip Abduction Left','Lower Limb Hip Adduction Right','Lower Limb Hip Adduction Left','Lower Limb Internal Rotation Right','Lower Limb Internal Rotation Left','Lower Limb External Rotation Right','Lower Limb External Rotation Left','Lower Limb Knee Flexion Right','Lower Limb Knee Flexion Left','Lower Limb Knee Extension Right','Lower Limb Knee Extension Left','Lower Limb Ankle Plantar Flexion Right','Lower Ankle Plantar Flexion Left','Lower Limb Ankle Dorsal Flexion Right','Lower Ankle Dorsal Flexion Left','Lower Limb Inversion Right','Lower Limb Inversion Left','Lower Limb Eversion Right','Lower Limb Eversion Left','Lower Limb Toe Flexion Right','Lower Limb Toe Flexion Left','Lower Limb Toe Abduction Right','Lower Limb Toe Abduction Left','Lower Limb Toe Adduction Right','Lower Limb Toe Adduction Left'], 
   },
   Balance: {
     BBG: ['Berg Balance Scale'],
@@ -20,6 +20,7 @@ const Dropdown = () => {
   const [selectedDiseases, setSelectedDiseases] = useState([]);
   const [visibleInput, setVisibleInput] = useState(null);
   const [cType, setCType] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
   const [showInputsFor, setShowInputsFor] = useState(null);
   const [isCTypeDisabled, setIsCTypeDisabled] = useState(false);
   const [isTTypeDisabled, setIsTTypeDisabled] = useState(false);
@@ -64,7 +65,7 @@ const Dropdown = () => {
   };
 
   const generateRandomValue = () => {
-    const randomNumber = Math.floor(Math.random() * 16) + 1; // Generates random number between 1 and 16
+    const randomNumber = Math.floor(Math.random() * 6) + 1; // Generates random number between 0 and 7
     return randomNumber.toString();
   };
 
@@ -129,12 +130,22 @@ const Dropdown = () => {
     } else {
       const updatedInputValues = {};
       for (const key in inputValues) {
-        updatedInputValues[key] = (parseInt(inputValues[key]) + 2).toString();
+        let value = parseInt(inputValues[key]);
+      
+        if (value < 5) {
+          value += 2;
+          updatedInputValues[key] = (value > 6 ? 6 : value).toString();  // Ensure the value doesn't exceed 6
+        } else if (value === 5) {
+          updatedInputValues[key] = '6';  // Directly set to 6
+        } else {
+          updatedInputValues[key] = value.toString();  // No change for values greater than 5
+        }
       }
       setInputValues(updatedInputValues);
       setIsModified(true);
       setVideoSource('Normal.mp4'); // Set video source to issue.mp4 after submit
       alert('Submit The Data');
+      setIsVisible(false);
     }
   };
 
@@ -233,7 +244,11 @@ const Dropdown = () => {
                   />
                 </div>
                
-                <button onClick={handleSubmit}>Submit</button>
+                {isVisible && (
+        <button onClick={handleSubmit} disabled={daysOfTreatment === '0'}>
+        Submit
+      </button>
+      )}
                 <button style={{ float: 'right' }} onClick={openModal}>
                   Animate
                 </button>
