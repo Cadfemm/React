@@ -2,19 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Health from "../assets/Brain.jpg";
 import "../styles/Monoplegia.css";
 
-const optionFieldsMap = {
-  Strength: {
-    MMT: ['Hip Flexor Right', 'Hip Flexor Left', 'Knee Extensor Right', 'Knee Extensor Left', 'Ankle Dorsal Flexor Right', 'Ankle Dorsal Flexor Left','Long Toe Extensor Left','Long Toe Extensor Right','Ankle Plantar Flexor Right','Ankle Plantar Flexor Left','Upper Limb Shoulder Flexion Right','Upper Limb Shoulder Flexion Left','Upper Limb Shoulder Extension Right','Upper Limb Shoulder Extension Left','Upper Limb Shoulder Abduction Right','Upper Limb Shoulder Abduction Left','Upper Limb Shoulder Adduction Right','Upper Limb Shoulder Adduction Left','Upper Limb Shoulder Internal Rotation Left','Upper Limb Shoulder Internal Rotation Right','Upper Limb Shoulder External Rotation Right','Upper Limb Shoulder External Rotation Left','Upper Limb Elbow Flexion Right','Upper Limb Elbow Flexion Left','Upper Limb Elbow Extension Right','Upper Limb Elbow Extension Left','Upper Limb Wrist Flexion Right','Upper Limb Wrist Flexion Left','Upper Limb Wrist Extension Right','Upper Limb Wrist Extension Left','Upper Limb Finger Flexion Right','Upper Limb Finger Flexion Left','Upper Limb Finger Extension Right','Upper Limb Finger Extension Left','Upper Limb Finger Abduction Right','Upper Limb Finger Abduction Left','Upper Limb Finger Adduction Right','Upper Limb Finger Adduction Left','Lower Limb Hip Flexion Right','Lower Limb Hip Flexion Left','Lower Limb Hip Extension Right','Lower Limb Hip Extension Left','Lower Limb Hip Abduction Right','Lower Limb Hip Abduction Left','Lower Limb Hip Adduction Right','Lower Limb Hip Adduction Left','Lower Limb Internal Rotation Right','Lower Limb Internal Rotation Left','Lower Limb External Rotation Right','Lower Limb External Rotation Left','Lower Limb Knee Flexion Right','Lower Limb Knee Flexion Left','Lower Limb Knee Extension Right','Lower Limb Knee Extension Left','Lower Limb Ankle Plantar Flexion Right','Lower Ankle Plantar Flexion Left','Lower Limb Ankle Dorsal Flexion Right','Lower Ankle Dorsal Flexion Left','Lower Limb Inversion Right','Lower Limb Inversion Left','Lower Limb Eversion Right','Lower Limb Eversion Left','Lower Limb Toe Flexion Right','Lower Limb Toe Flexion Left','Lower Limb Toe Abduction Right','Lower Limb Toe Abduction Left','Lower Limb Toe Adduction Right','Lower Limb Toe Adduction Left'], 
-  },
-  Balance: {
-    BBG: ['Berg Balance Scale'],
-    FIST: ['FIST Score'],
-  },
-  Spasticity: {
-    MAS: ['Ankle Plantar Left','Ankle Plantar Right','Hamstring Left','Hamstring Right','Adductor Right','Adductor Left','Elbow Flexor Right','Elbow Flexor Left','Wrist Flexor Right','Wrist Flexor Left','Pectoralis Major Right','Pectoralis Major Left','Biceps','Pronator','Knee Extensors','Plantar Flexors','Hip Flexion Right','Hip Flexion Left','Hip Extension Right','Hip Extension Left','Hip Abduction Right','Hip Abduction Left','Hip Adduction Right','Hip Adduction Left','Internal Rotation Left','Internal Rotation Right','External Rotation Right','External Rotation Left'],
-  },
-  // Add other diseases and their categories with fields here...
-};
+
+
 
 const Dropdown = () => {
   const [selectedDiseases, setSelectedDiseases] = useState([]);
@@ -22,6 +11,7 @@ const Dropdown = () => {
   const [cType, setCType] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [showInputsFor, setShowInputsFor] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isCTypeDisabled, setIsCTypeDisabled] = useState(false);
   const [isTTypeDisabled, setIsTTypeDisabled] = useState(false);
   const [tType, setTType] = useState("");
@@ -33,25 +23,95 @@ const Dropdown = () => {
   const [isModified, setIsModified] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoSource, setVideoSource] = useState('60per.mp4');
+  const [isPopupModalOpen, setIsPopupModalOpen] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [inputFields, setInputFields] = useState({});
+  const [showInputFields, setShowInputFields] = useState([]); // 
+
+  const [optionFieldsMap, setOptionFieldsMap] = useState({
+    Strength: {
+      MMT: {
+        HipFlexor: ['Hip Flexor Right', 'Hip Flexor Left'],
+        KneeExtensor: ['Knee Extensor Right', 'Knee Extensor Left'],
+        AnkleDorsalFlexor: ['Ankle Dorsal Flexor Right','Ankle Dorsal Flexor Left'],
+        UpperLimbLongToe: ['Upper Limb Long Toe Extensor Right','Upper Limb Long Toe Extensor Left'],
+        UpperLimbAnklePlantar:['Upper Limb Ankle Plantar Flexor Right','Upper Limb Ankle Plantar Flexor Left'],
+        UpperLimbShoulder:['Upper Limb Shoulder Flexion Right','Upper Limb Shoulder Flexion Left','Upper Limb Shoulder Extension Right','Upper Limb Shoulder Extension Left','Upper Limb Shoulder Abduction Right','Upper Limb Shoulder Abduction Left','Upper Limb Shoulder Adduction Right','Upper Limb Shoulder Adduction Left','Upper Limb Shoulder Internal Rotation Right','Upper Limb Shoulder Internal Rotation Left','Upper Limb Shoulder External Rotation Right','Upper Limb Shoulder External Rotation Left'],
+        UpperLimbElbow:['Upper Limb Elbow Flexion Right','Upper Limb Elbow Flexion Left','Upper Limb Elbow Extension Right','Upper Limb Elbow Extension Left'],
+        UpperLimbWrist:['Upper Limb Wrist Flexion Right','Upper Limb Wrist Flexion Left','Upper Limb Wrist Extension Right','Upper Limb Wrist Extension Left'],
+        UpperLimbFinger:['Upper Limb Finger Flexion Right','Upper Limb Finger Flexion Left','Upper Limb Finger Extension Right','Upper Limb Finger Extension Left','Upper Limb Finger Abduction Right','Upper Limb Finger Abduction Left','Upper Limb Finger Adduction Right','Upper Limb Finger Adduction Left'],
+        LowerLimb:['Lower Limb Internal Rotation Right','Lower Limb Internal Rotation Left','Lower Limb External Rotation Right','Lower Limb External Rotation Left','Lower Limb Inversion Right','Lower Limb Inversion Left','Lower Limb Eversion Right','Lower Limb Eversion Left'],
+        LowerLimbHip:['Lower Limb Hip Flexion Right','Lower Limb Hip Flexion Left','Lower Limb Hip Extension Right','Lower Limb Hip Extension Left','Lower Limb Hip Abduction Right','Lower Limb Hip Abduction Left','Lower Limb Hip Adduction Right','Lower Limb Hip Adduction Left'],
+        LowerLimbKnee:['Lower Limb Knee Flexion Right','Lower Limb Knee Flexion Left','Lower Limb Knee Extension Right','Lower Limb Knee Extension Left'],
+        LowerLimbAnkle:['Lower Limb Ankle Plantar Flexion Right','Lower Limb Ankle Plantar Flexion Left','Lower Limb Ankle Dorsal Flexion Right','Lower Limb Ankle Dorsal Flexion Left'],
+        LowerLimbToe:['Lower Limb Toe Flexion Right','Lower Limb Toe Flexion Left','Lower Limb Toe Abduction Right','Lower Limb Toe Abduction Left','Lower Limb Toe Adduction Right','Lower Limb Toe Adduction Left']
+      }
+    },
+    Balance: {
+      BBG: {
+        BBG: ['BBG'],
+      },
+      FIST: {
+        FIST: ['FIST'],
+      }
+    },
+    Spasticity: {
+      MAS: {
+        AnklePlantar: ['Ankle Plantar Right', 'Ankle Plantar Right Left'],
+        Hamstring: ['Hamstring Right', 'Hamstring Left'],
+        Adductor:['Adductor Right','Adductor Right'],
+        ElbowFlexor:['Elbow Flexor Right','Elbow Flexor Left'],
+        WristFlexor:['Wrist Flexor Right','WristFlexor Left'],
+        PectoralisMajor:['Pectoralis Major Right','Pectoralis Major Left'],
+        Biceps:['Biceps'],
+        Pronator:['Pronator'],
+        KneeExtensors:['Knee Extensors'],
+        PlantarFlexors:['Plantar Flexors'],
+        HipFlexion:['Hip Flexion Right','Hip Flexion Left'],
+        InternalRotation:['Internal Rotation Right','Internal Rotation Left'],
+        ExternalRotation:['External Rotation Right','External Rotation Left']
+
+      }
+    }
+    // Add other diseases and their categories with fields here...
+  });
 
   useEffect(() => {
+    // Reset allFieldsFilled to false whenever selectedDiseases, visibleInput, or visibleCategory changes
     setAllFieldsFilled(false);
+  
+    // Automatically trigger the modal if a visible category is selected
+    if (visibleCategory) {
+      setIsPopupModalOpen(true);
+    }
   }, [selectedDiseases, visibleInput, visibleCategory]);
+  useEffect(() => {
+    console.log('Updated input values in useEffect:', inputValues);
+  }, [inputValues]);
+  
 
   const handleButtonPress = () => {
     const newInputValues = {};
-
+  
     for (const disease in optionFieldsMap) {
       for (const category in optionFieldsMap[disease]) {
-        optionFieldsMap[disease][category].forEach((field) => {
-          newInputValues[field] = generateRandomValue();
-        });
+        for (const selectField in optionFieldsMap[disease][category]) {
+          const fields = optionFieldsMap[disease][category][selectField];
+          fields.forEach((field) => {
+            const value = generateRandomValue();
+            console.log(`Setting value for field ${field}: ${value}`);
+            newInputValues[field] = value;
+          });
+        }
       }
     }
-
-    setInputValues(newInputValues);
+  
+    console.log('New input values:', newInputValues);
+    setInputValues(prevInputValues => ({
+      ...prevInputValues,
+      ...newInputValues
+    }));
   };
-
   const handleDiseaseChange = (event) => {
     const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
     setSelectedDiseases(selectedValues);
@@ -63,12 +123,44 @@ const Dropdown = () => {
     setIsModified(false);
     setVideoSource('60per.mp4'); // Reset video source on disease change
   };
+const handlePopupSubmit = () => {
+  console.log('Selected Checkboxes:', selectedCheckboxes); // Debugging line
+  console.log('Visible Input:', visibleInput); // Debugging line
+  console.log('Visible Category:', visibleCategory); // Debugging line
 
-  const generateRandomValue = () => {
-    const randomNumber = Math.floor(Math.random() * 6) + 1; // Generates random number between 0 and 7
-    return randomNumber.toString();
+  // Ensure optionFieldsMap, visibleInput, and visibleCategory exist before accessing them
+  if (!optionFieldsMap[visibleInput] || !optionFieldsMap[visibleInput][visibleCategory]) {
+    console.error("Option fields not available for the current selection");
+    return;
+  }
+
+  // Use selectedCheckboxes to filter and flatMap the relevant fields
+  const inputsToShow = selectedCheckboxes
+    .filter(option => optionFieldsMap[visibleInput][visibleCategory]?.[option]) // Ensures valid options are selected
+    .flatMap(option => optionFieldsMap[visibleInput][visibleCategory][option]);
+
+  console.log('Inputs To Show:', inputsToShow); // Debugging line
+
+  // Update state with the selected fields
+  setShowInputFields(inputsToShow);
+
+  // Close the popup modal
+  setIsPopupModalOpen(false);
+};
+
+  
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    setSelectedCheckboxes((prev) =>
+      checked ? [...prev, name] : prev.filter((item) => item !== name)
+    );
   };
-
+  const generateRandomValue = () => {
+    return Math.floor(Math.random() * 6) + 1; // Generates a number between 1 and 7 inclusive
+  };
+  const handleCloseModal = () => {
+    setIsPopupModalOpen(false);
+  };
   const handleCTypeChange = (e) => {
     const value = e.target.value;
     setCType(value);
@@ -80,18 +172,15 @@ const Dropdown = () => {
     } else {
       setIsTTypeDisabled(false);
     }
-
     if (value === "C1" || value === "C2") {
       setShowInputsFor(true);
     } else {
       setShowButtons(false);
     }
   };
-
   const handleTTypeChange = (e) => {
     const value = e.target.value;
     setTType(value);
-
     // Disable T-Type dropdown when C-Type is selected
     if (value) {
       setIsCTypeDisabled(true);
@@ -100,6 +189,16 @@ const Dropdown = () => {
       setIsCTypeDisabled(false);
     }
   };
+  useEffect(() => {
+    const fieldsToShow = {};
+    selectedCheckboxes.forEach((checkbox) => {
+      const fields = optionFieldsMap.Strength.MMT[checkbox];
+      if (fields) {
+        fieldsToShow[checkbox] = fields;
+      }
+    });
+    setInputFields(fieldsToShow);
+  }, [selectedCheckboxes]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -108,7 +207,17 @@ const Dropdown = () => {
       [name]: value,
     });
   };
+  useEffect(() => {
+  if (visibleCategory === 'MMT') {
+    setIsPopupModalOpen(true);  // Ensure the popup opens when 'MMT' is selected
+  }
+}, [visibleCategory]); // Trigger whenever the visibleCategory changes
 
+// When closing the popup, reset state but keep the trigger condition active
+const handleClosePopup = () => {
+  setIsPopupModalOpen(false);
+  // Keep this logic intact so that it can re-trigger when 'MMT' is clicked again
+};
   const handleDaysOfTreatmentChange = (event) => {
     setDaysOfTreatment(event.target.value);
   };
@@ -117,39 +226,98 @@ const Dropdown = () => {
     setVisibleInput(disease);
     setVisibleCategory(null);
   };
-
   const handleCategoryButtonClick = (category) => {
+    // Categories that require a popup modal
+    const categoriesWithPopup = ['MMT', 'BBG','FIST', 'MAS'];
+  
+    // Set the visible category
     setVisibleCategory(category);
-  };
-
-  const handleSubmit = () => {
-    const isAnyFieldEmpty = Object.values(inputValues).some((value) => !value.trim()) || !daysOfTreatment.trim();
-
-    if (isAnyFieldEmpty) {
-      alert('Please fill in all required fields.');
+  
+    // Open the popup if the category is one that requires it
+    if (categoriesWithPopup.includes(category)) {
+      setIsPopupModalOpen(true);
     } else {
-      const updatedInputValues = {};
-      for (const key in inputValues) {
-        let value = parseInt(inputValues[key]);
-      
-        if (value < 5) {
-          value += 2;
-          updatedInputValues[key] = (value > 6 ? 6 : value).toString();  // Ensure the value doesn't exceed 6
-        } else if (value === 5) {
-          updatedInputValues[key] = '6';  // Directly set to 6
-        } else {
-          updatedInputValues[key] = value.toString();  // No change for values greater than 5
-        }
-      }
-      setInputValues(updatedInputValues);
-      setIsModified(true);
-      setVideoSource('Normal.mp4'); // Set video source to issue.mp4 after submit
-      alert('Submit The Data');
-      setIsVisible(false);
+      setIsPopupModalOpen(false); // Ensure the popup is closed if the category does not require it
     }
   };
+  const handleSubmit = () => {
+    const updatedInputValues = { ...inputValues };
+    let allFieldsFilled = true;
 
-  const openModal = () => {
+    // Gather all fields associated with selected diseases and categories
+    const fieldsToUpdate = {};
+
+    selectedDiseases.forEach((disease) => {
+      if (optionFieldsMap[disease]) {
+        Object.keys(optionFieldsMap[disease]).forEach((category) => {
+          const categoryFields = optionFieldsMap[disease][category];
+          Object.keys(categoryFields).forEach((selectField) => {
+            categoryFields[selectField].forEach((field) => {
+              fieldsToUpdate[field] = true; // Mark this field as needing update
+            });
+          });
+        });
+      }
+    });
+
+    // Check if all fields in fieldsToUpdate are filled and handle the input modifications
+    Object.keys(fieldsToUpdate).forEach((field) => {
+      const fieldValue = inputValues[field];
+
+      if (!fieldValue || (typeof fieldValue === 'string' && fieldValue.trim() === '')) {
+        alert(`Please fill in the required field for ${field}.`);
+        allFieldsFilled = false;
+      } else {
+        let value = parseInt(fieldValue, 10);
+        if (!isNaN(value)) {
+          if (value < 5) {
+            value += 2;
+            updatedInputValues[field] = value > 6 ? '6' : value.toString();
+          } else if (value === 5) {
+            updatedInputValues[field] = '6';
+          }
+        }
+      }
+    });
+
+    if (allFieldsFilled) {
+      const modifiedCategoryMap = {
+        MMT: 'Modified MMT',
+        BBG: 'Modified BBG',
+        FIST: 'Modified FIST',
+        MAS: 'Modified MAS'
+      };
+
+      const updatedOptionFieldsMap = { ...optionFieldsMap };
+
+      selectedDiseases.forEach((disease) => {
+        if (updatedOptionFieldsMap[disease]) {
+          Object.keys(updatedOptionFieldsMap[disease]).forEach((category) => {
+            if (modifiedCategoryMap[category]) {
+              updatedOptionFieldsMap[disease][modifiedCategoryMap[category]] =
+                updatedOptionFieldsMap[disease][category];
+
+              delete updatedOptionFieldsMap[disease][category];
+            }
+          });
+        }
+      });
+
+      setOptionFieldsMap(updatedOptionFieldsMap);
+      setInputValues(updatedInputValues);
+      setIsModified(true);
+      setVideoSource('Normal.mp4');
+      alert('Submit The Data');
+      setIsVisible(false); // Close the popup or modal
+      setIsSubmitted(true); // Disable the dropdown
+    }
+  };
+  
+  useEffect(() => {
+    console.log('Updated input values in useEffect:', inputValues);
+  }, [inputValues]);
+  
+    const openModal = () => {
     setIsModalOpen(true);
   };
 
@@ -188,7 +356,7 @@ const Dropdown = () => {
           multiple
           value={selectedDiseases}
           onChange={handleDiseaseChange}
-          disabled={!(cType && tType)}
+          disabled={!(cType && tType) || isSubmitted} // Disable the dropdown after submit
         >
           <option value="Strength">Strength</option>
           <option value="Balance">Balance</option>
@@ -205,33 +373,65 @@ const Dropdown = () => {
       </div>
 
       {visibleInput && (
-        <div>
-          {Object.keys(optionFieldsMap[visibleInput]).map((category) => (
-            <button key={category} onClick={() => handleCategoryButtonClick(category)}>
-              {isModified ? `Modified ${category}` : category}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {visibleInput && visibleCategory && (
-        <div className="input-group">
-          <div style={{ marginBottom: '20px', padding: '10px', marginTop: '20px' }} className="input-grid">
-            {optionFieldsMap[visibleInput][visibleCategory].map((field) => (
-              <div key={field} className="input-container">
-                <label htmlFor={field}>{field}</label>
-                <input
-                  id={field}
-                  name={field}
-                  type="text"
-                  value={inputValues[field] || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-            ))}
+  <div>
+    {Object.keys(optionFieldsMap[visibleInput] || {}).map((category) => (
+      <button key={category} onClick={() => handleCategoryButtonClick(category)}>
+        {category}
+      </button>
+    ))}
+  </div>
+)}
+{isPopupModalOpen && (
+  <div className={`popup ${isPopupModalOpen ? 'show' : ''}`}>
+    <div className="popup-content">
+     <div> <h3>Select Options</h3></div>
+     <div className="options">
+      {visibleCategory && optionFieldsMap[visibleInput] && optionFieldsMap[visibleInput][visibleCategory] && (
+        Object.keys(optionFieldsMap[visibleInput][visibleCategory] || {}).map((option) => (
+          <div key={option}>
+            <label>
+              <input
+                type="checkbox"
+                name={option}
+                checked={selectedCheckboxes.includes(option)}
+                onChange={handleCheckboxChange}
+              />
+              {option}
+            </label>
           </div>
-          {selectedDiseases[selectedDiseases.length - 1] === visibleInput &&
-            visibleCategory === Object.keys(optionFieldsMap[visibleInput]).slice(-1)[0] && (
+        ))
+      )}</div>
+      <button onClick={handlePopupSubmit}>Generate Fields</button>
+    </div>
+  </div>
+)}
+
+{/* Render Input Fields Based on Selections */}
+{!isPopupModalOpen && showInputFields.length > 0 && (
+  <div className="input-fields-container">
+    <h4 className="input-fields-heading">Related Input Fields</h4>
+    <div className="input-fields">
+      {showInputFields.map((field) => (
+        <div key={field} className="input-field">
+       <div> <label htmlFor={field}>
+            {field}: </label></div>
+           <div> <input 
+              type="number" 
+              id={field}
+              name={field}
+              value={inputValues[field] || ''}
+              onChange={handleInputChange}
+              style={{ borderRadius: '5px' }}
+            />
+            </div> 
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+     {selectedDiseases[selectedDiseases.length - 1] === visibleInput && 
+            // visibleCategory === Object.keys(optionFieldsMap[visibleInput]).slice(-1)[0] && (
               <div className="treatment-container">
                 <div>
                   <label htmlFor="daysOfTreatment">Days of Treatment</label>
@@ -245,14 +445,14 @@ const Dropdown = () => {
                 </div>
                
                 {isVisible && (
-        <button onClick={handleSubmit} disabled={daysOfTreatment === '0'}>
-        Submit
-      </button>
+       <button onClick={handleSubmit} disabled={!daysOfTreatment || daysOfTreatment === '0'}>
+       Submit
+     </button>
       )}
                 <button style={{ float: 'right' }} onClick={openModal}>
                   Animate
                 </button>
-                
+              
                 {isModalOpen && (
                   <div className="modal-overlay">
                     <div className="modal-content">
@@ -267,10 +467,7 @@ const Dropdown = () => {
                   </div>
                 )}
               </div>
-            )}
-        </div>
-      )}
-
+            }
       {selectedDiseases.length > 0 && (
         <button className="B1" onClick={handleButtonPress}>
           Auto Fill
