@@ -59,8 +59,21 @@
   /* Enable vertical scrolling */
    min-height: 350px; /* Set max height for the slider container */
  }
- 
-
+ .popup-content label input {
+  margin: 5px;
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 20px 0px 20px 0px;
+  /* width: 0px; */
+}
+ .input-field label {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  height: 55px;}
 
 .Input_Area{
    background-image: url('https://unsplash.com/photos/a-bunch-of-pink-donuts-are-stacked-on-top-of-each-other-obyYZVKwCNI'); /* Replace 'your-image.jpg' with your actual image path */
@@ -251,4 +264,143 @@ td{
    font-size: 20px;
    cursor: pointer;
  }
- 
+ .popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-group label {
+  margin-bottom: 10px;
+}
+
+.checkbox-group input {
+  margin-right: 10px;
+}
+/* Popup container */
+.popup {
+  position: fixed; /* Position fixed to cover the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's above other content */
+  display: none; /* Hide the popup by default */
+}
+
+/* Popup content */
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+}
+
+/* Show popup when isPopupOpen is true */
+.popup.show {
+  display: flex;
+}
+
+/* Checkbox container */
+.popup-content label {
+  display: block;
+  margin-bottom: 10px;
+  width:200px;
+}
+
+/* Submit button */
+.popup-content button {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #0056b3;
+}
+.input-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between heading and input fields */
+  padding:10px;
+}
+
+.input-fields-heading {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.input-fields {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping of input fields */
+
+}
+.input-field input {
+  border-radius: 5px; /* Adjust this value for the desired corner roundness */
+  border: 1px solid #ccc; /* Optional: Border around the input fields */
+  padding: 4px; /* Optional: Padding inside the input fields */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+}
+
+
+.input-field {
+  
+  min-width: 200px; /* Ensures each field has a minimum width */
+}
+
+.input-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; /* Adds space between the fields */
+  min-width: 200px; 
+  flex-wrap: wrap; /* Allows wrapping of input fields */
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-container label {
+  margin-right: 10px;
+}
+.popup-content h3{
+  font-size: 1.2em;
+  font-weight: bold;
+}
