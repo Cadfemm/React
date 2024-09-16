@@ -375,6 +375,7 @@ td{
   border: 1px solid #ccc; /* Optional: Border around the input fields */
   padding: 4px; /* Optional: Padding inside the input fields */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+  width:200px;
 }
 
 
