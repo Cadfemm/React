@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Health from "../assets/Brain.jpg";
 import "../styles/Monoplegia.css";
-
-
-
-
 const Dropdown = () => {
   const [selectedDiseases, setSelectedDiseases] = useState([]);
   const [visibleInput, setVisibleInput] = useState(null);
@@ -98,9 +94,12 @@ const Dropdown = () => {
         for (const selectField in optionFieldsMap[disease][category]) {
           const fields = optionFieldsMap[disease][category][selectField];
           fields.forEach((field) => {
-            const value = generateRandomValue();
+            let value = generateRandomValue();
+            if (value === 0) {
+              value = '0'; // Set zero explicitly as a string
+            }
             console.log(`Setting value for field ${field}: ${value}`);
-            newInputValues[field] = value;
+            newInputValues[field] = value.toString();
           });
         }
       }
@@ -112,6 +111,7 @@ const Dropdown = () => {
       ...newInputValues
     }));
   };
+  
   const handleDiseaseChange = (event) => {
     const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
     setSelectedDiseases(selectedValues);
@@ -143,7 +143,6 @@ const handlePopupSubmit = () => {
 
   // Update state with the selected fields
   setShowInputFields(inputsToShow);
-
   // Close the popup modal
   setIsPopupModalOpen(false);
 };
@@ -156,7 +155,7 @@ const handlePopupSubmit = () => {
     );
   };
   const generateRandomValue = () => {
-    return Math.floor(Math.random() * 6) + 1; // Generates a number between 1 and 7 inclusive
+    return Math.floor(Math.random() * 11) - 5; // Generates a number between 1 and 7 inclusive
   };
   const handleCloseModal = () => {
     setIsPopupModalOpen(false);
@@ -200,13 +199,18 @@ const handlePopupSubmit = () => {
     setInputFields(fieldsToShow);
   }, [selectedCheckboxes]);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setInputValues({
-      ...inputValues,
-      [name]: value,
-    });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Ensure the state is updated with the correct field and value
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [name]: value, // Update the specific field based on its 'name'
+    }));
   };
+  
+  
+  
   useEffect(() => {
   if (visibleCategory === 'MMT') {
     setIsPopupModalOpen(true);  // Ensure the popup opens when 'MMT' is selected
@@ -243,43 +247,51 @@ const handleClosePopup = () => {
   const handleSubmit = () => {
     const updatedInputValues = { ...inputValues };
     let allFieldsFilled = true;
-
-    // Gather all fields associated with selected diseases and categories
+  
+    // Object to hold the fields that need to be updated based on selected diseases
     const fieldsToUpdate = {};
-
+  
+    // Iterate over selected diseases and gather fields to update based on selected values
     selectedDiseases.forEach((disease) => {
       if (optionFieldsMap[disease]) {
         Object.keys(optionFieldsMap[disease]).forEach((category) => {
           const categoryFields = optionFieldsMap[disease][category];
+  
+          // Process only the categories that have input values
           Object.keys(categoryFields).forEach((selectField) => {
             categoryFields[selectField].forEach((field) => {
-              fieldsToUpdate[field] = true; // Mark this field as needing update
+              if (inputValues[field]) { // Only consider fields that are filled or selected
+                fieldsToUpdate[field] = true; // Mark this field for update
+              }
             });
           });
         });
       }
     });
-
-    // Check if all fields in fieldsToUpdate are filled and handle the input modifications
+  
+    // Validate and update only the selected fields that are being updated
     Object.keys(fieldsToUpdate).forEach((field) => {
-      const fieldValue = inputValues[field];
-
+      const fieldValue = inputValues[field]; // Get the manually entered value
+  
+      // Check if the field is filled
       if (!fieldValue || (typeof fieldValue === 'string' && fieldValue.trim() === '')) {
         alert(`Please fill in the required field for ${field}.`);
         allFieldsFilled = false;
       } else {
-        let value = parseInt(fieldValue, 10);
+        let value = parseInt(fieldValue, 10); // Convert the value to an integer
         if (!isNaN(value)) {
-          if (value < 5) {
+          // Modify the values by adding +2, ensuring no value exceeds 6
+          if (value < 4) {
             value += 2;
-            updatedInputValues[field] = value > 6 ? '6' : value.toString();
-          } else if (value === 5) {
-            updatedInputValues[field] = '6';
+            updatedInputValues[field] = value > 5 ? '5' : value.toString(); // Ensure the value doesn't exceed 6
+          } else if (value === 4) {
+            updatedInputValues[field] = '5'; // If it's 5, set it to 6
           }
         }
       }
     });
-
+  
+    // If all required fields are filled, update input values and modify categories
     if (allFieldsFilled) {
       const modifiedCategoryMap = {
         MMT: 'Modified MMT',
@@ -287,24 +299,26 @@ const handleClosePopup = () => {
         FIST: 'Modified FIST',
         MAS: 'Modified MAS'
       };
-
+  
       const updatedOptionFieldsMap = { ...optionFieldsMap };
-
+  
+      // Update the categories to their "Modified" versions
       selectedDiseases.forEach((disease) => {
         if (updatedOptionFieldsMap[disease]) {
           Object.keys(updatedOptionFieldsMap[disease]).forEach((category) => {
             if (modifiedCategoryMap[category]) {
               updatedOptionFieldsMap[disease][modifiedCategoryMap[category]] =
                 updatedOptionFieldsMap[disease][category];
-
+  
               delete updatedOptionFieldsMap[disease][category];
             }
           });
         }
       });
-
+  
+      // Set the updated values in the state
       setOptionFieldsMap(updatedOptionFieldsMap);
-      setInputValues(updatedInputValues);
+      setInputValues(updatedInputValues); // Update the input values
       setIsModified(true);
       setVideoSource('Normal.mp4');
       alert('Submit The Data');
@@ -312,6 +326,27 @@ const handleClosePopup = () => {
       setIsSubmitted(true); // Disable the dropdown
     }
   };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // Ensure the component re-renders when inputValues changes
+  useEffect(() => {
+    console.log('Updated input values in useEffect:', inputValues);
+  }, [inputValues]);
+  
+  // Ensure the component re-renders when optionFieldsMap changes
+  useEffect(() => {
+    console.log('Updated option fields map in useEffect:', optionFieldsMap);
+  }, [optionFieldsMap]);
+  
+  
+  
   
   useEffect(() => {
     console.log('Updated input values in useEffect:', inputValues);
@@ -415,14 +450,19 @@ const handleClosePopup = () => {
         <div key={field} className="input-field">
        <div> <label htmlFor={field}>
             {field}: </label></div>
-           <div> <input 
-              type="number" 
-              id={field}
-              name={field}
-              value={inputValues[field] || ''}
-              onChange={handleInputChange}
-              style={{ borderRadius: '5px' }}
-            />
+           <div>
+           <input 
+  type="number" 
+  id={field}
+  name={field} // Use the field name to match the state
+  value={inputValues[field] || ''} // Bind value to state
+  onChange={handleInputChange} // Call the handler on every input change
+  style={{ borderRadius: '5px' }}
+  min={-5} // Set minimum value
+  max={5}  // Set maximum value
+/>
+
+
             </div> 
         </div>
       ))}
