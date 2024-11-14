@@ -101,7 +101,7 @@ const Dropdown = () => {
         SARA:['SARA']
       }
     },
-    SensorimotorFunction: {
+    Sensory: {
       FuglMeyer: {
         FMAUE:['MotorFunction','Sensation','PassiveJointMotion','JointPain','Upper Extremity','Wrist','Hand','Coordination']
       },
@@ -112,14 +112,14 @@ const Dropdown = () => {
         DeepAnalPressure:['Deep Anal Pressure']
       }
     },
-    BowelBladderAssessment: {
+    BBA: {
       NeurogenicBladderSymptomsScore: {
         NBSS: ['Incontinence','Storage & Voiding','Consequences','Quality Of Life','Bladder Management'],
       },
-      NeurogenicBowelDysfunctionScore: {
-        NBD:['Neurogenic Bowel Dysfunction Score']}
+      NBD: {
+        NeurogenicBowelDysfunction:['Neurogenic Bowel Dysfunction Score']}
     },
-    CognitiveAssessment: {
+    Cognitive: {
       MontrealCognitiveAssessment: {
         MOCA:['Montreal Cognitive Assessment']
       },
@@ -137,8 +137,8 @@ const Dropdown = () => {
        Wrist:['Wrist Supination Right','Wrist Supination Left','Wrist Pronation Right','Wrist Pronation Left'],
       }
     },
-    GrossMotorFunctionMeasure: {
-      GMF: {
+    GMF: {
+      GrossMotorFunctionMeasure: {
        GMF:['Lying','Rolling','Sitting','Crawling','Kneeling','Standing','Walking','Running','Jumping']
       }
     },
@@ -150,7 +150,7 @@ const Dropdown = () => {
        BigToe: ['Proprioception BigToe Right','Proprioception BigToe Left']
       }
     },
-    PELMAassessment: {
+    PELMA: {
       PELMA: {
        BothLegAndEyeOpen: ['Both Leg & Eye Open Frontal Speed','Both Leg & Eye Open Lateral Speed','Both Leg & Eye Open Remark'],
        BothLegAndEyeClosed: ['Both Leg & Eye Closed Frontal Speed','Both Leg & Eye Closed Lateral Speed','Both Leg & Eye Closed Remark'],
@@ -158,7 +158,7 @@ const Dropdown = () => {
        OneLegAndEyeClosed: ['One Leg & Eye Closed Unstable Surface Frontal Speed','One Leg & Eye Closed Unstable Surface Lateral Speed','One Leg & Eye Closed Unstable Surface Remark'],
       }
     },
-    TymoBalanceTest: {
+    Tymo: {
       COPParameters: {
        Disatance: ['Eye Open Stable Surface','Eye Closed Stable Surface','Eye Open Unstable Surface','Eye Closed Unstable Surface'],
        MedioLateralDisplacement: ['Eye Open Stable Surface','Eye Closed Stable Surface','Eye Open Unstable Surface','Eye Closed Unstable Surface'],
@@ -171,7 +171,7 @@ const Dropdown = () => {
        FeedBackPaths: ['Visual','Vestibular','Somato Sensory','Central Reflex'],
       }
     },
-    PabloTest: {
+    Pablo: {
       PabloGripAssessment: {
        CylindricalGrip: ['Cylindrical Grip Flexion Right','Cylindrical Grip Flexion Left','Cylindrical Grip Extension Right','Cylindrical Grip Extension Left'],
        LateralGrip: ['Lateral Grip Right','Lateral Grip Left'],
@@ -180,8 +180,8 @@ const Dropdown = () => {
        ThreePointGrip:['Three Point Grip'],
       }
     },
-    MiniMentalStateExamination: {
-      MentalStateExamination: {
+    MMSE: {
+      MiniMentalStateExamination: {
         MMSE:['MMSE'],
       }
     },
@@ -538,16 +538,16 @@ const handleClosePopup = () => {
           <option value="Ambulation">Ambulation</option>
           <option value="FIS">Functional Independent Scale</option>
           <option value="Ataxia">Ataxia</option>
-          <option value="SensorimotorFunction">Sensorimotor Function</option>
-          <option value="BowelBladderAssessment">Bowel & Bladder Assessment</option>
-          <option value="CognitiveAssessment">Cognitive Assessment</option>
+          <option value="Sensory">Sensorimotor Function</option>
+          <option value="BBA">Bowel & Bladder Assessment</option>
+          <option value="Cognitive">Cognitive Assessment</option>
           <option value="LUNA">LUNA Assessment</option>
-          <option value="GrossMotorFunctionMeasure">Gross Motor Function Measure</option>
+          <option value="GMF">Gross Motor Function Measure</option>
           <option value="JoinPositionTest">Join Position Test</option>
-          <option value="PELMAassessment">PELMA Assessment</option>
-          <option value="TymoBalanceTest">Tymo Balance Test</option>
-          <option value="PabloTest">Pablo Test</option>
-          <option value="MiniMentalStateExamination">Mini Mental State Examination</option>
+          <option value="PELMA">PELMA Assessment</option>
+          <option value="Tymo">Tymo Balance Test</option>
+          <option value="Pablo">Pablo Test</option>
+          <option value="MMSE">Mini Mental State Examination</option>
         </select>
       </div>
       <div className="selected-diseases-container">
