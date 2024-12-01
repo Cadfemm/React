@@ -101,7 +101,7 @@ const DualPredictionForm = () => {
     // Handle submission for Model 1
     if (formData1 && !validateModel(formData1)) {
       try {
-        const response1 = await fetch("http://127.0.0.1:5000/predict_model1", {
+        const response1 = await fetch("https://python-g2zl.onrender.com/predict_model1", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +125,7 @@ const DualPredictionForm = () => {
     // Handle submission for Model 2
     if (formData2 && !validateModel(formData2)) {
       try {
-        const response2 = await fetch("http://127.0.0.1:5000/predict_model2", {
+        const response2 = await fetch("https://python-g2zl.onrender.com/predict_model2", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -149,7 +149,7 @@ const DualPredictionForm = () => {
     // Handle submission for Model 3 (same process as above)
     if (formData3 && !validateModel(formData3)) {
       try {
-        const response3 = await fetch("http://127.0.0.1:5000/predict_model3", {
+        const response3 = await fetch("https://python-g2zl.onrender.com/predict_model3", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -173,7 +173,7 @@ const DualPredictionForm = () => {
     // Handle submission for Model 4 (same process as above)
     if (formData4 && !validateModel(formData4)) {
       try {
-        const response4 = await fetch("http://127.0.0.1:5000/predict_model4", {
+        const response4 = await fetch("https://python-g2zl.onrender.com/predict_model4", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
