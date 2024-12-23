@@ -462,23 +462,33 @@ const DualPredictionForm = () => {
         {mmtData[limbCategory].map((field) => (
           <div key={field} className="input-field">
             <label>{field}</label>
-            {field === 'Gender' ? (
-              <select 
-                value={mmtValues[field] || ''} 
+            {field === "Gender" ? (
+              <select
+                value={mmtValues[field] || ""}
                 onChange={(e) => handleMMTValueChange(field, e.target.value)}
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-            ) : (
+            ) : field === "Days of treatment" || field === "Age" ? (
+              // Allow any valid number for "Days of treatment" and "Age"
               <input
                 type="number"
-                min="0"
-                max="5"
-                step="0.5"
                 value={mmtValues[field] || ""}
                 onChange={(e) => handleMMTValueChange(field, e.target.value)}
+              />
+            ) : (
+              // Restrict to -4 to +5 for all other fields
+              <input
+                type="number"
+                value={mmtValues[field] || ""}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  if (value >= -4 && value <= 5) {
+                    handleMMTValueChange(field, value);
+                  }
+                }}
               />
             )}
           </div>
@@ -494,6 +504,9 @@ const DualPredictionForm = () => {
     </div>
   ))}
 </div>
+
+
+
       {/* Submit Button */}
       <div className="submit-section">
   
