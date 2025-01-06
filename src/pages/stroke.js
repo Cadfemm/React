@@ -555,7 +555,6 @@ const DualPredictionForm = () => {
         </div>
       </form>
 
-      {/* Combined Results Display */}
 {/* Combined Results Display */}
 {(results.result1 !== null || results.result2 !== null || results.result3 !== null || results.result4 !== null) && (
   <div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px" }}>
@@ -568,17 +567,16 @@ const DualPredictionForm = () => {
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         backgroundColor: "#f9f9f9",
       }}>
-      
         {results.result1 !== null && (
           <div style={{ marginBottom: "10px" }}>
             <h4 style={{ color: "#2980b9" }}>TUG Result:</h4>
-            <p style={{ fontSize: "16px", color: "#34495e" }}>{results.result1}</p>
+            <p style={{ fontSize: "16px", color: "#34495e" }}>{Math.abs(results.result1)}</p>
           </div>
         )}
         {results.result2 !== null && (
           <div>
             <h4 style={{ color: "#2980b9" }}>10M Test Result:</h4>
-            <p style={{ fontSize: "16px", color: "#34495e" }}>{results.result2}</p>
+            <p style={{ fontSize: "16px", color: "#34495e" }}>{Math.abs(results.result2)}</p>
           </div>
         )}
       </div>
@@ -593,17 +591,16 @@ const DualPredictionForm = () => {
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         backgroundColor: "#f9f9f9",
       }}>
-        
         {results.result3 !== null && (
           <div style={{ marginBottom: "10px" }}>
-            <h4 style={{ color: "#2980b9", fontFamily:"poppins" }}>TUG Result:</h4>
-            <p style={{ fontSize: "16px", color: "#34495e" }}>{results.result3}</p>
+            <h4 style={{ color: "#2980b9", fontFamily: "poppins" }}>TUG Result:</h4>
+            <p style={{ fontSize: "16px", color: "#34495e" }}>{Math.abs(results.result3)}</p>
           </div>
         )}
         {results.result4 !== null && (
           <div>
             <h4 style={{ color: "#2980b9" }}>10M Test Result:</h4>
-            <p style={{ fontSize: "16px", color: "#34495e" }}>{results.result4}</p>
+            <p style={{ fontSize: "16px", color: "#34495e" }}>{Math.abs(results.result4)}</p>
           </div>
         )}
       </div>
@@ -624,7 +621,7 @@ const DualPredictionForm = () => {
             <h5 style={{ color: "#2c3e50", marginBottom: "10px" }}>
               Results for {limbCategory.replace(/([A-Z])/g, ' $1').trim()}
             </h5>
-            <p style={{ fontSize: "16px", color: "#34495e" }}>{results.mmtResults[limbCategory]}</p>
+            <p style={{ fontSize: "16px", color: "#34495e" }}>{Math.abs(results.mmtResults[limbCategory])}</p>
           </div>
         );
       }
@@ -632,6 +629,7 @@ const DualPredictionForm = () => {
     })}
   </div>
 )}
+
 
       {error && (
         <div className="error-message">
