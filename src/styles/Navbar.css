@@ -38,6 +38,8 @@
 .navbar a {
   color: #00345f;
   font-weight:bold;
+  font-size: 18px;
+  font-family: 'poppins', sans-serif;
   text-decoration: none;
   margin: 20px;
 }
