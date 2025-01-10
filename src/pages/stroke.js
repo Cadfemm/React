@@ -33,10 +33,12 @@ const mmtData = {
 };
 
 // Reusable form component
+
 const PredictionForm = ({ formData, handleChange, title, fields = [] }) => {
   return (
     <div className="form-container">
       <h3>{title}</h3>
+      
       <div className="form-grid">
       {fields.includes("Gender") && (
           <div className="form-group">
@@ -67,31 +69,7 @@ const PredictionForm = ({ formData, handleChange, title, fields = [] }) => {
               type="number"
               name="DaysOfTreatment"
               value={formData.DaysOfTreatment}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value);
-                if (!isNaN(value)) {
-                  handleChange({
-                    target: {
-                      name: "DaysOfTreatment",
-                      value: Math.max(-4, Math.min(5, value)), // Clamp value between -4 and 5
-                    },
-                  });
-                } else {
-                  handleChange(e);
-                }
-              }}
-              onBlur={(e) => {
-                const value = parseFloat(e.target.value);
-                // Ensure the value is within range on blur
-                if (!isNaN(value)) {
-                  handleChange({
-                    target: {
-                      name: "DaysOfTreatment",
-                      value: Math.max(-4, Math.min(5, value)),
-                    },
-                  });
-                }
-              }}
+              onChange={handleChange}
               placeholder="Enter Days of Treatment"
             />
           </div>
@@ -103,31 +81,7 @@ const PredictionForm = ({ formData, handleChange, title, fields = [] }) => {
               type="number"
               name="InitialAssesment"
               value={formData.InitialAssesment}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value);
-                if (!isNaN(value)) {
-                  handleChange({
-                    target: {
-                      name: "InitialAssesment",
-                      value: Math.max(-4, Math.min(5, value)), // Clamp value between -4 and 5
-                    },
-                  });
-                } else {
-                  handleChange(e);
-                }
-              }}
-              onBlur={(e) => {
-                const value = parseFloat(e.target.value);
-                // Ensure the value is within range on blur
-                if (!isNaN(value)) {
-                  handleChange({
-                    target: {
-                      name: "InitialAssesment",
-                      value: Math.max(-4, Math.min(5, value)),
-                    },
-                  });
-                }
-              }}
+              onChange={handleChange}
               placeholder="Enter Initial Assessment"
             />
           </div>
@@ -139,31 +93,7 @@ const PredictionForm = ({ formData, handleChange, title, fields = [] }) => {
       type="number"
       name="Days of treatment" // Match the key in formData5
       value={formData["Days of treatment"]}
-      onChange={(e) => {
-        const value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-          handleChange({
-            target: {
-              name: "Days of treatment",
-              value: Math.max(-4, Math.min(5, value)), // Clamp value between -4 and 5
-            },
-          });
-        } else {
-          handleChange(e);
-        }
-      }}
-      onBlur={(e) => {
-        const value = parseFloat(e.target.value);
-        // Ensure the value is within range on blur
-        if (!isNaN(value)) {
-          handleChange({
-            target: {
-              name: "Days of treatment",
-              value: Math.max(-4, Math.min(5, value)),
-            },
-          });
-        }
-      }}
+      onChange={handleChange}
       placeholder="Enter Days of treatment"
     />
   </div>
@@ -664,33 +594,23 @@ const DualPredictionForm = () => {
       <button onClick={togglePopup}>MMT</button> {/* Added MMT button here */}
     </div>
   )}
+  const [isSubmitted, setIsSubmitted] = useState(false); // Track form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
   
     try {
-      // Initialize an object to store the new results
       const newResults = {};
   
-      // Generate random results only for the selected forms
-      if (currentForm === 1) { // TUG for Left Hemiparesis
-        newResults.result1 = Math.random() * 25 - 5; // Random number between -5 and 20
-      }
+      // TUG and 10M Test Logic
+      if (currentForm === 1) newResults.result1 = Math.random() * 25 - 5;
+      if (currentForm === 2) newResults.result2 = Math.random() * 25 - 5;
+      if (currentForm === 3) newResults.result3 = Math.random() * 25 - 5;
+      if (currentForm === 4) newResults.result4 = Math.random() * 25 - 5;
   
-      if (currentForm === 2) { // 10M Test for Left Hemiparesis
-        newResults.result2 = Math.random() * 25 - 5; // Random number between -5 and 20
-      }
-  
-      if (currentForm === 3) { // TUG for Right Hemiparesis
-        newResults.result3 = Math.random() * 25 - 5; // Random number between -5 and 20
-      }
-  
-      if (currentForm === 4) { // 10M Test for Right Hemiparesis
-        newResults.result4 = Math.random() * 25 - 5; // Random number between -5 and 20
-      }
-  
-      // Handle MMT submission if limbs are selected
+      // MMT API Call
       if (selectedLimbs.includes("RightLowerLimb")) {
         const response = await fetch("https://python-g2zl.onrender.com/predict_model5", {
           method: "POST",
@@ -704,14 +624,15 @@ const DualPredictionForm = () => {
         }
   
         const data = await response.json();
-        newResults.result5 = data.result5; // Update result5 with API response
+        newResults.result5 = data.result5;
       }
   
-      // Update results state with the new results
+      // Update results and set submission state
       setResults((prevResults) => ({
         ...prevResults,
         ...newResults,
       }));
+      setIsSubmitted(true); // Mark the form as submitted
     } catch (err) {
       setError(err.message || "Failed to submit data");
     } finally {
@@ -720,10 +641,6 @@ const DualPredictionForm = () => {
   };
   
   
-
-  
-  
-
   return (
     <div>
       <div className="banner" style={{ backgroundImage: `url(${Health})` }}>
@@ -764,6 +681,7 @@ const DualPredictionForm = () => {
       <div>
         <button
           onClick={() => {
+            window.location.reload();
             setActiveSection("");
             setCurrentForm(null);
             setSelectedLimbs([]);
@@ -818,69 +736,49 @@ const DualPredictionForm = () => {
 )}
        {/* MMT Input Fields */}
 {/* MMT Input Fields */}
-<div className="mmt-inputs">
-  {selectedLimbs.map((limbCategory) => (
-    <div key={limbCategory} className="limb-section">
-      <h4>{limbCategory.replace(/([A-Z])/g, ' $1').trim()}</h4>
-      <div className="form-grid">
-        {limbCategory === "RightLowerLimb" ? (
-          <PredictionForm
-            formData={formData5}
-            handleChange={handleChange(setFormData5)}
-            
-            fields={[
-              "Gender",
-              "Age",
-              "Days of treatment",
-              "Initial Right Lower Limb Hip Flexion",
-              "Initial Right Lower Limb Hip Extension",
-              "Initial Right Lower Limb Hip Abduction",
-              "Initial Right Lower Limb Hip Adduction",
-              "Initial Right Lower Limb Knee Flexion",
-              "Initial Right Lower Limb Knee Extension",
-              "Initial Right Lower Limb Ankle Dorsiflexion",
-              "Initial Right Lower Limb Ankle Plantarflexion",
-            ]}
-          />
-        ) : (
-          mmtData[limbCategory].map((field) => (
-            <div key={field} className="input-field">
-              <label>{field}</label>
-              {field === "Gender" ? (
-                <select
-                  value={mmtValues[field] || ""}
-                  onChange={(e) => handleMMTValueChange(field, e.target.value)}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              ) : field === "Days of treatment" || field === "Age" ? (
+
+{!isSubmitted && (
+  <div className="mmt-inputs">
+    {selectedLimbs.map((limbCategory) => (
+      <div key={limbCategory} className="limb-section">
+        <h3>Inputs For {limbCategory.replace(/([A-Z])/g, " $1").trim()}</h3>
+        <div className="form-grid">
+          {limbCategory === "RightLowerLimb" ? (
+            <PredictionForm
+              formData={formData5}
+              handleChange={handleChange(setFormData5)}
+              fields={[
+                "Gender",
+                "Age",
+                "Days of treatment",
+                "Initial Right Lower Limb Hip Flexion",
+                "Initial Right Lower Limb Hip Extension",
+                "Initial Right Lower Limb Hip Abduction",
+                "Initial Right Lower Limb Hip Adduction",
+                "Initial Right Lower Limb Knee Flexion",
+                "Initial Right Lower Limb Knee Extension",
+                "Initial Right Lower Limb Ankle Dorsiflexion",
+                "Initial Right Lower Limb Ankle Plantarflexion",
+              ]}
+            />
+          ) : (
+            mmtData[limbCategory].map((field) => (
+              <div key={field} className="input-field">
+                <label>{field}</label>
                 <input
                   type="number"
                   value={mmtValues[field] || ""}
                   onChange={(e) => handleMMTValueChange(field, e.target.value)}
                 />
-              ) : (
-                <input
-              type="number"
-              value={mmtValues[field] || ""}
-              onChange={(e) => handleMMTValueChange(field, e.target.value)}
-            />
-              )}
-            </div>
-          ))
-        )}
-      </div>
-      {/* {results.mmtResults[limbCategory] && (
-        <div className="mmt-result">
-          <h5>Results for {limbCategory}:</h5>
-          <p>{results.mmtResults[limbCategory]}</p>
+              </div>
+            ))
+          )}
         </div>
-      )} */}
-    </div>
-  ))}
-</div>
+      </div>
+    ))}
+  </div>
+)}
+
 
 
 
@@ -892,7 +790,7 @@ const DualPredictionForm = () => {
 </div>
 
       <form onSubmit={handleSubmit}>
-      {currentForm === 1 && (
+      {!isSubmitted && currentForm === 1 && (
   <PredictionForm
     formData={formData1}
     handleChange={handleChange(setFormData1)}
@@ -901,15 +799,15 @@ const DualPredictionForm = () => {
   />
 )}
 
-        {currentForm === 2 && (
+{!isSubmitted && currentForm === 2 && (
           <PredictionForm
             formData={formData2}
-            handleChange={handleChange(setFormData2)}
+            handleChange={handleChange(setFormData2)} 
             title="Inputs for 10M"
             fields={["Gender", "Age", "DaysOfTreatment", "InitialAssesment"]}
           />
         )}
-        {currentForm === 3 && (
+        {!isSubmitted && currentForm === 3 && (
           <PredictionForm
             formData={formData3}
             handleChange={handleChange(setFormData3)}
@@ -917,7 +815,7 @@ const DualPredictionForm = () => {
             fields={["Gender", "Age", "DaysOfTreatment", "InitialAssesment"]}
           />
         )}
-        {currentForm === 4 && (
+        {!isSubmitted && currentForm === 4 && (
           <PredictionForm
             formData={formData4}
             handleChange={handleChange(setFormData4)}
@@ -943,7 +841,7 @@ const DualPredictionForm = () => {
               "Initial Right Lower Limb Ankle Dorsiflexion",
               "Initial Right Lower Limb Ankle Plantarflexion",
             ]}/>)}
-
+ {!isSubmitted && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
         <button 
     onClick={handleSubmit} 
@@ -954,10 +852,11 @@ const DualPredictionForm = () => {
   </button>
           {isButtonVisible && <button className="hide">Trained Model</button>}
         </div>
+ )}
       </form>
 
 {/* Combined Results Display */}
-<div style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px" }}>
+<div className="results" style={{ display: "flex", flexDirection: "column", gap: "20px", margin: "20px" }}>
   {/* TUG and 10M Results */}
   {(results.result1 !== null || results.result2 !== null || results.result3 !== null || results.result4 !== null) && (
     <div>
