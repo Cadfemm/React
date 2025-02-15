@@ -56,7 +56,7 @@ const DualPredictionForm = () => {
   const [isLowerInputsValid, setIsLowerInputsValid] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const checkboxOptions = ["Shoulder", "Elbow", "Wrist", "Finger"];
-  const lowercheckboxOptions = ["Shoulder", "Elbow", "Wrist", "Finger"];
+  const lowercheckboxOptions = ["Hip", "Knee", "Ankle", "Toes"];
     const [showImages, setShowImages] = useState(false);
     const [showTUGImages, setShowTUGImages] = useState(false);
     const [show10MImages, setShow10MImages] = useState(false);
@@ -1043,7 +1043,7 @@ const DualPredictionForm = () => {
           <div className="popup-content" style={{ background: "#fff", padding: "20px", borderRadius: "8px", textAlign: "center" }}>
             <h3>Select Lower Limb Condition</h3>
             <div style={{ display: "flex", justifyContent: "center", gap: "15px" }}>
-              {checkboxOptions.map((option) => (
+              {lowercheckboxOptions.map((option) => (
                 <label key={option} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                   <input
                     type="checkbox"
@@ -1610,7 +1610,7 @@ const DualPredictionForm = () => {
       background: "#f9f9f9"
     }}
   >
-    <h3>Improved LA Values</h3>
+    <h3>Improved Lower Limb Values</h3>
    
     {selectedLowerCategories.map((category) => (
       <div key={category}>
