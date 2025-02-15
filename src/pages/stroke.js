@@ -740,7 +740,7 @@ const DualPredictionForm = () => {
 {/* TUG Input Fields */}
 {showTugFields && (
        <div style={{backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}> 
-        <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
+        <div className="tug" style={{display:"flex",gap:"40px", padding:"20px",margin:"20px"}}>
           
           <label>
              Time In Seconds:
@@ -809,8 +809,8 @@ const DualPredictionForm = () => {
 {showImprovement && (
           <div> 
              <div >
-              <h3>Improved TUG Results</h3>
-              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start", padding:"20px"}}>
+              <h3 style={{padding:"20px"}}>Improved TUG Results</h3>
+              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start", padding:"30px", backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}>
               <label>
             Improved TUG:
             <input
@@ -918,7 +918,7 @@ const DualPredictionForm = () => {
       {/* 10M Input Fields */}
       {show10MFields && (
       <div style={{backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}> 
-         <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
+         <div className="tug" style={{display:"flex",gap:"40px", padding:"20px", margin:"20px"}}>
           <label>
              Time In Seconds:
             <input type="text" placeholder="Time In Seconds" style={{width:"100%"}} value={tugField3}
@@ -984,8 +984,8 @@ const DualPredictionForm = () => {
 {show10MImprovement && (
           <div>
               <div >
-              <h3>Improved 10M Results</h3>
-              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start",padding:"0px 20px 20px 20px"}}>
+              <h3 style={{padding:"20px"}}>Improved 10M Results</h3>
+              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start",padding:"30px", backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}>
               <label>
             Improved 10M (m/s):
             <input
