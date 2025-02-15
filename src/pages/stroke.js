@@ -11,6 +11,9 @@ const DualPredictionForm = () => {
   const [selectedDisease, setSelectedDisease] = useState("");
   const [assistivedevice, setAssistivedevice] = useState("");
   const [warning, setWarning] = useState(""); // State to store the warning message
+  const [tenMwarning, settenMWarning] = useState(""); // State to store the warning message
+  const [tugWarning, setTugWarning] = useState(""); // State to store the warning message
+  const [tenMBwarning, setTenMBwarning] = useState(""); // State to store the warning message
   const [assistive10mdevice, setAssistive10mdevice] = useState("");
   const [showLimbButtons, setShowLimbButtons] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -342,9 +345,34 @@ const DualPredictionForm = () => {
   
         // Update warning messages dynamically
         if (num >= 15) {
-          setWarning("Warning: High Risk of falling");
+          setWarning("Note: High Risk of falling");
         } else {
           setWarning(""); // No warning if within the valid range
+        }
+      }
+    }
+  };
+  const handle10MInput = (e, setValue) => {
+    let value = e.target.value;
+  
+    if (value === "") {
+      setValue(""); // Allow empty input
+      settenMWarning(""); // Clear warning if input is empty
+    } else {
+      let num = Number(value);
+  
+      if (!isNaN(num) && num >= 0 && num <= 1000) {
+        setValue(value);
+  
+        // Update warning messages dynamically
+        if (num >= 0 && num < 12) {
+          settenMWarning("Note: Community Ambulators");
+        } else if (num >= 12 && num < 25) {
+          settenMWarning("Note: Limited Community Ambulators");
+        } else if (num >= 25 && num < 100) {
+          settenMWarning("Note: Household Ambulators");
+        } else {
+          settenMWarning(""); // No warning if within the valid range
         }
       }
     }
@@ -352,11 +380,29 @@ const DualPredictionForm = () => {
   
   
   useEffect(() => {
-    setTugField2(Math.floor(Math.random() * 101)); // Generate random value once
+    const randomValue = Math.floor(Math.random() * 101); // Generate 0-100
+    setTugField2(randomValue);
+  
+    // Set warning based on the random value
+    if (randomValue >= 14) {
+      setTugWarning(" Note: High Risk Of Falling");
+    } else 
+      setTugWarning(" Note:Good Mobility");
+    
   }, []);
+
   useEffect(() => {
-    const randomValue = (Math.random() * 5).toFixed(2); // Generate between 0 and 5 with two decimals
-    setTugField4(parseFloat(randomValue)); // Convert to float
+    const randomValue = (Math.random() * 5).toFixed(2); // Generate between 0 and 5
+    setTugField4(parseFloat(randomValue));
+  
+    // Set warning based on the random value
+    if (parseFloat(randomValue) >= 0.8) {
+      setTenMBwarning(" Note: Community Ambulators");
+    } else if (parseFloat(randomValue) >= 0.4 && parseFloat(randomValue) < 0.8) {
+      setTenMBwarning(" Note: Limited Community Ambulators ");
+    } else {
+      setTenMBwarning("Note: Household Ambulators");
+    }
   }, []);
   const handleInputChange = (category, side, field, value) => {
     // Track manually entered fields
@@ -761,9 +807,10 @@ const DualPredictionForm = () => {
         </div></div><div className="warning">{warning}</div></div>
       )}
 {showImprovement && (
-            <div >
+          <div> 
+             <div >
               <h3>Improved TUG Results</h3>
-              <div className="inputsone" style={{display:"flex",justifyContent:"space-evenly"}}>
+              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start", padding:"20px"}}>
               <label>
             Improved TUG:
             <input
@@ -775,7 +822,7 @@ const DualPredictionForm = () => {
           </label>
               <button onClick={handleTUGClick}> Modalities</button>
               <button onClick={handleTUGAnimateClick}>Avatar</button>
-              <button onClick={() => window.location.reload()}>Reset</button></div></div>
+              <button onClick={() => window.location.reload()}>Reset</button></div></div><div className="warning">{tugWarning}</div></div>
               )}
               {showTUGImages && (
   <div 
@@ -870,11 +917,12 @@ const DualPredictionForm = () => {
 )}
       {/* 10M Input Fields */}
       {show10MFields && (
-        <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
+      <div> 
+         <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
           <label>
              Time In Seconds:
             <input type="text" placeholder="Time In Seconds" style={{width:"100%"}} value={tugField3}
-          onChange={(e) => handleTugInput(e, setTugField3)}/>
+          onChange={(e) => handle10MInput(e, setTugField3)}/>
           </label>
           <label>
          Assistive Device Used
@@ -931,12 +979,13 @@ const DualPredictionForm = () => {
         </div>
 
 )}
-        </div></div>
+        </div></div><div className="warning">{tenMwarning}</div></div>
       )}
 {show10MImprovement && (
-            <div >
+          <div>
+              <div >
               <h3>Improved 10M Results</h3>
-              <div className="inputsone" style={{display:"flex",justifyContent:"space-evenly"}}>
+              <div className="inputsone" style={{display:"flex",justifyContent:"flex-start",padding:"0px 20px 20px 20px"}}>
               <label>
             Improved 10M (m/s):
             <input
@@ -948,7 +997,7 @@ const DualPredictionForm = () => {
           </label>
               <button onClick={handle10MClick}> Modalities</button>
               <button onClick={handle10MAnimateClick}>Avatar</button>
-              <button onClick={() => window.location.reload()}>Reset</button></div></div>
+              <button onClick={() => window.location.reload()}>Reset</button></div></div><div className="warning">{tenMBwarning}</div></div>
               )}
               {show10MImages && (
   <div 
