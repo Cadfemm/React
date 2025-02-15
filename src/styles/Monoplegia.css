@@ -638,7 +638,7 @@ flex-direction: row;
 }
 label{
   color:#00345f;
-  font-size: 1.1rem;
+  
   font-weight: 600;
 }
 .inputsone input{
@@ -652,9 +652,7 @@ select{
 .popup-content{
   font-size: 1.2rem;;
 }
-.popup-content label{
-  font-size: 1.1rem;
-}
+
 .inputsone input{
   height:40px;
   width:200px;
