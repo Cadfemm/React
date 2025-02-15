@@ -739,7 +739,7 @@ const DualPredictionForm = () => {
       {/*TUG and 10M code starts here*/}
 {/* TUG Input Fields */}
 {showTugFields && (
-       <div> 
+       <div style={{backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}> 
         <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
           
           <label>
@@ -917,7 +917,7 @@ const DualPredictionForm = () => {
 )}
       {/* 10M Input Fields */}
       {show10MFields && (
-      <div> 
+      <div style={{backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}> 
          <div className="tug" style={{display:"flex",gap:"40px", padding:"20px"}}>
           <label>
              Time In Seconds:
