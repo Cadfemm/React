@@ -207,7 +207,6 @@ td{
  }
  
  .input-container label {
-   display: block;
    margin-bottom: 5px;
    height:40px;
  }
@@ -446,7 +445,7 @@ label {
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 5px;
-  display: inline-block;
+ 
 }
 
 form input {
@@ -628,4 +627,63 @@ button:disabled {
   border-radius: 10px;
   background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/*css of new project starts here feb 13 2025*/
+.inputsone {
+  display:flex;
+  align-items: center;
+justify-content: center;
+flex-direction: row;
+ gap: 60px;
+}
+label{
+  color:#00345f;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.inputsone input{
+  border-radius:6px;
+}
+select{
+  border-radius:6px;
+  height:40px;
+ width:200px;
+}
+.popup-content{
+  font-size: 1.2rem;;
+}
+.popup-content label{
+  font-size: 1.1rem;
+}
+.inputsone input{
+  height:40px;
+  width:200px;
+  border-radius:6px;
+}
+.input-section input{
+  height:40px;
+  width:200px;
+  border-radius:6px;
+}
+.input-card{
+  background: #ffffff;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+         
+          transition: transform 0.3s ease-in-out;
+}
+.input-inputs{
+  display: flex;
+  flex-direction: row;
+  gap:40px;
+}
+.tug input{
+  height:40px;
+  width:200px;
+  border-radius:6px;
+}
+.warning{
+  color:red;
+  padding:0px 20px 20px 20px;
 }
