@@ -165,34 +165,34 @@ const DualPredictionForm = () => {
       const averageLValue = parseFloat(calculateUserEnteredLowerAverage()); // Convert to number
     
       if (averageLValue >= 0 && averageLValue < 2) {
-        return "/movement100.mp4";
-      } else if (averageLValue >= 2 && averageLValue < 5) {
-        return "/movement80.mp4";
-      } else if (averageLValue >= 5 && averageLValue < 10) {
-        return "/movement60.mp4";
-      } else if (averageLValue >= 60 && averageLValue < 80) {
-        return "/movement40.mp4";
-      } else if (averageLValue >= 80 && averageLValue <= 100) {
         return "/movement20.mp4";
+      } else if (averageLValue >= 2 && averageLValue < 3) {
+        return "/movement40.mp4";
+      } else if (averageLValue >= 3 && averageLValue < 4) {
+        return "/movement60.mp4";
+      } else if (averageLValue >= 4 && averageLValue < 5) {
+        return "/movement80.mp4";
+      } else if (averageLValue >= 5 ) {
+        return "/movement100.mp4";
       } else {
-        return "/movement20.mp4"; // Default fallback video
+        return "/movement100.mp4"; // Default fallback video
       }
     };
     const getVideoMMTLASource = () => {
       const averageLAValue = parseFloat(calculateLowerAverage()); // Convert to number
     
       if (averageLAValue >= 0 && averageLAValue < 2) {
-        return "/movement100.mp4";
-      } else if (averageLAValue >= 2 && averageLAValue < 5) {
-        return "/movement80.mp4";
-      } else if (averageLAValue >= 5 && averageLAValue < 10) {
-        return "/movement60.mp4";
-      } else if (averageLAValue >= 60 && averageLAValue < 80) {
-        return "/movement40.mp4";
-      } else if (averageLAValue >= 80 && averageLAValue <= 100) {
         return "/movement20.mp4";
+      } else if (averageLAValue >= 2 && averageLAValue < 3) {
+        return "/movement40.mp4";
+      } else if (averageLAValue >= 3 && averageLAValue < 4) {
+        return "/movement60.mp4";
+      } else if (averageLAValue >= 4 && averageLAValue < 5) {
+        return "/movement80.mp4";
+      } else if (averageLAValue >= 5 ) {
+        return "/movement100.mp4";
       } else {
-        return "/movement20.mp4"; // Default fallback video
+        return "/movement100.mp4"; // Default fallback video
       }
     };
     const getVideo10MBSource = () => {
