@@ -86,19 +86,75 @@ const DualPredictionForm = () => {
         return "/Perturbedgait.mp4"; // Default fallback video
       }
     };
-    const getMessage = (value) => {
-      if (value >= 0 && value < 2) {
-        return "Very High Movement (100%)";
-      } else if (value >= 2 && value < 6) {
-        return "Moderate Movement (60%)";
-      } else if (value >= 6 && value < 14) {
-        return "Low Movement (20%)";
-      } else if (value >= 14 && value < 100) {
-        return "Perturbed Gait Detected";
-      } else {
-        return "Perturbed Gait (Default)"; // Default fallback message
-      }
-    };
+// Updated getMessage function to ensure numeric comparison
+const getMessage = (value) => {
+  // First check if the value is a string that shouldn't be converted to number
+  if (typeof value === 'string') {
+    // Handle specific string values - add your string cases here
+    switch (value.toLowerCase()) {
+      case '2+':
+        return "Moves Through partial ROM against gravity";
+      case '2-':
+        return "Moves through partial ROM gravity eliminated";
+      case '3-':
+        return "Gradual Release from test positon";
+      case '3+':
+        return "Holds test position against slight resistance";
+      case '4+':
+        return "Holds test position against moderate to strong pressure";
+        case '4-':
+        return "Holds test position against slight to moderate pressure";
+      // Add more string cases as needed
+      default:
+        // If it's not one of our known strings, try to convert to number
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue)) {
+          // Handle numeric values
+          switch (numValue) {
+            case 0:
+              return "No Palpable";
+            case 1:
+              return "No Visible Movement";
+            case 2:
+              return "Able to move through full ROM";
+            case 3:
+              return "Holds test position against gravity";
+            case 4:
+              return "Holds test position against moderate resistance";
+            case 5:
+              return "Holds test position against maximal resistance";
+            default:
+              return "Invalid Grade";
+          }
+        }
+        // If it's neither a known string nor a valid number
+        return value; // Return the original value as the message
+    }
+  }
+  
+  // If the value is already a number
+  const numValue = parseFloat(value);
+  if (!isNaN(numValue)) {
+    switch (numValue) {
+      case 0:
+              return "No Palpable";
+            case 1:
+              return "No Visible Movement";
+            case 2:
+              return "Able to move through full ROM";
+            case 3:
+              return "Holds test position against gravity";
+            case 4:
+              return "Holds test position against moderate resistance";
+            case 5:
+              return "Holds test position against maximal resistance";
+            default:
+        return "Invalid Grade";
+    }
+  }
+  
+  return "Invalid Value";
+};
     const getVideo10MSource = () => {
       if (tugField4 >= 0.8 && tugField4 < 5) {
         return "/movement100.mp4";
@@ -1540,26 +1596,45 @@ const DualPredictionForm = () => {
                         alignItems: "center"
                       }}
                     >
-                      {Object.entries(improvedValues[category][side]).map(
-                        ([field, value]) => (
-                          <div key={field}>
-                            <label style={{ fontWeight: "bold" }}>{field}</label>
-                            <input
-                              type="text"
-                              value={value}
-                              readOnly
-                              title={getMessage(value)} // Tooltip on hover
-                              style={{
-                                width: "100%",
-                                padding: "8px",
-                                border: "1px solid #ccc",
-                                borderRadius: "5px",
-                                background: "#fff"
-                              }}
-                            />
-                          </div>
-                        )
-                      )}
+{Object.entries(improvedValues[category][side]).map(([field, value]) => (
+  <div key={field}>
+    <label style={{ fontWeight: "bold" }}>{field}</label>
+    <div 
+      style={{ 
+        position: 'relative',
+        width: '100%' 
+      }}
+    >
+      <input
+        type="text"
+        value={value}
+        readOnly
+        title={getMessage(value)}
+        style={{
+          width: "100%",
+          padding: "8px",
+          border: "1px solid #ccc",
+          borderRadius: "5px",
+          background: "#fff",
+          cursor: "help" // Changes cursor to indicate hoverable
+        }}
+      />
+      {/* Optional: You can add a visible indicator that this is hoverable */}
+      <span 
+        style={{ 
+          position: 'absolute', 
+          right: '10px', 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          fontSize: '12px',
+          color: '#666'
+        }}
+      >
+        ℹ️
+      </span>
+    </div>
+  </div>
+))}
                     </div>
                   </div>
                 )
