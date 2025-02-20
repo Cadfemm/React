@@ -52,7 +52,7 @@ const DualPredictionForm = () => {
   const [manuallyEnteredFields, setManuallyEnteredFields] = useState(new Set());
   const [manuallyEnteredLowerFields, setManuallyEnteredLowerFields] = useState(new Set());
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const predefinedValues = ["0", "1", "1+", "2", "2+", "3", "3+", "4", "4+", "5"];
+  const predefinedValues = ["0", "1", "2-", "2", "2+","3-", "3", "3+", "4-","4", "4+", "5"];
   const [hideContent, setHideContent] = useState(false);
   const [hideTUGContent, setHideTUGContent] = useState(false);
   const [isInputsValid, setIsInputsValid] = useState(false);
@@ -86,6 +86,19 @@ const DualPredictionForm = () => {
         return "/Perturbedgait.mp4"; // Default fallback video
       }
     };
+    const getMessage = (value) => {
+      if (value >= 0 && value < 2) {
+        return "Very High Movement (100%)";
+      } else if (value >= 2 && value < 6) {
+        return "Moderate Movement (60%)";
+      } else if (value >= 6 && value < 14) {
+        return "Low Movement (20%)";
+      } else if (value >= 14 && value < 100) {
+        return "Perturbed Gait Detected";
+      } else {
+        return "Perturbed Gait (Default)"; // Default fallback message
+      }
+    };
     const getVideo10MSource = () => {
       if (tugField4 >= 0.8 && tugField4 < 5) {
         return "/movement100.mp4";
@@ -117,17 +130,17 @@ const DualPredictionForm = () => {
       const averageValue = parseFloat(calculateUserEnteredAverage()); // Convert to number
     
       if (averageValue >= 0 && averageValue < 2) {
-        return "/movement100.mp4";
-      } else if (averageValue >= 2 && averageValue < 5) {
-        return "/movement80.mp4";
-      } else if (averageValue >= 5 && averageValue < 10) {
-        return "/movement60.mp4";
-      } else if (averageValue >= 60 && averageValue < 80) {
-        return "/movement40.mp4";
-      } else if (averageValue >= 80 && averageValue <= 100) {
         return "/movement20.mp4";
+      } else if (averageValue >= 2 && averageValue < 3) {
+        return "/movement40.mp4";
+      } else if (averageValue >= 3 && averageValue < 4) {
+        return "/movement60.mp4";
+      } else if (averageValue >= 4 && averageValue < 5) {
+        return "/movement80.mp4";
+      } else if (averageValue >= 5) {
+        return "/movement100.mp4";
       } else {
-        return "/movement20.mp4"; // Default fallback video
+        return "/movement100.mp4"; // Default fallback video
       }
     };
 
@@ -135,17 +148,17 @@ const DualPredictionForm = () => {
       const averageAValue = parseFloat(calculateAverage()); // Convert to number
     
       if (averageAValue >= 0 && averageAValue < 2) {
-        return "/movement100.mp4";
-      } else if (averageAValue >= 2 && averageAValue < 5) {
-        return "/movement80.mp4";
-      } else if (averageAValue >= 5 && averageAValue < 10) {
-        return "/movement60.mp4";
-      } else if (averageAValue >= 60 && averageAValue < 80) {
-        return "/movement40.mp4";
-      } else if (averageAValue >= 80 && averageAValue <= 100) {
         return "/movement20.mp4";
+      } else if (averageAValue >= 2 && averageAValue < 3) {
+        return "/movement40.mp4";
+      } else if (averageAValue >= 3 && averageAValue < 4) {
+        return "/movement60.mp4";
+      } else if (averageAValue >= 4 && averageAValue < 5) {
+        return "/movement80.mp4";
+      } else if (averageAValue >= 5) {
+        return "/movement100.mp4";
       } else {
-        return "/movement20.mp4"; // Default fallback video
+        return "/movement100.mp4"; // Default fallback video
       }
     };
     const getVideoMMTLBSource = () => {
@@ -505,10 +518,10 @@ const DualPredictionForm = () => {
   const isDiseaseEnabled = gender !== "" && age !== "";
   const handleSubmit = () => {
     setIsSubmitting(true);
-    setHasSubmitted(true); // Set this to true when form is submitted
-    // Generate improved values only for manually entered fields
-    const newImprovedValues = {};
+    setHasSubmitted(true);
     
+    // Generate improved values for upper body
+    const newImprovedValues = {};
     selectedCategories.forEach(category => {
       newImprovedValues[category] = { Left: {}, Right: {} };
       
@@ -519,24 +532,11 @@ const DualPredictionForm = () => {
             newImprovedValues[category][side][field] = getRandomPredefinedValue();
           }
         });
-
       });
     });
-
-
-    setTimeout(() => {
-      setImprovedValues(newImprovedValues);
-      setShowImprovedValues(true);
-      setIsSubmitting(false);
-      setHideContent(true);
-    }, 2000);
-  };
-  const handleMMTSubmit = () => {
-    setIsSubmitting(true);
-    setHasSubmitted(true); // Set this to true when form is submitted
-    // Generate improved values only for manually entered fields
+  
+    // Generate improved values for lower body
     const newImprovedLowerValues = {};
-    
     selectedLowerCategories.forEach(category => {
       newImprovedLowerValues[category] = { Left: {}, Right: {} };
       
@@ -547,18 +547,33 @@ const DualPredictionForm = () => {
             newImprovedLowerValues[category][side][field] = getRandomPredefinedValue();
           }
         });
-
       });
     });
-
-
+  
+    // Helper function to check if there are any values
+    const hasValues = (obj) => {
+      return Object.keys(obj).some(category => 
+        Object.keys(obj[category].Left).length > 0 || 
+        Object.keys(obj[category].Right).length > 0
+      );
+    };
+  
     setTimeout(() => {
+      // Update both sets of values
+      setImprovedValues(newImprovedValues);
       setImprovedLowerValues(newImprovedLowerValues);
-      setShowImprovedLowerValues(true);
+      
+      // Only show sections that have values
+      setShowImprovedValues(hasValues(newImprovedValues));
+      setShowImprovedLowerValues(hasValues(newImprovedLowerValues));
+      
       setIsSubmitting(false);
       setHideContent(true);
     }, 2000);
   };
+  
+  // Make handleMMTSubmit do the same thing
+  const handleMMTSubmit = handleSubmit;
   useEffect(() => {
     setIsDaysOfTreatmentActive(tugField1 !== "");
     setIsSubmitActive(tugField1 !== "" && daysOfTreatment !== "");
@@ -771,7 +786,7 @@ const DualPredictionForm = () => {
           </label>
           <button  onClick={() => { setShowImprovemnt(true);setHideTUGContent(true); setShowTugFields(false)}}disabled={!daysOfTreatment} >TUG Submit</button>
           
-          <button onClick={handleTUGBAnimateClick} disabled={!daysOfTreatment}>TUG Animate</button>
+          <button onClick={handleTUGBAnimateClick} disabled={!daysOfTreatment}>TUG Avatar</button>
           
           {showTUGBVideo && (
         <div style={{
@@ -948,7 +963,7 @@ const DualPredictionForm = () => {
           </label>
           <button  onClick={() => { setShow10MImprovemnt(true);setHideTUGContent(true); setShow10MFields(false)}}disabled={!daysOfTreatment} >10M Submit</button>
           
-          <button onClick={handle10BAnimateClick} disabled={!daysOfTreatment}>10M Animate</button>
+          <button onClick={handle10BAnimateClick} disabled={!daysOfTreatment}>10M Avatar</button>
           {show10BVideo && (
         <div style={{position: "fixed",top: 0,left: 0,width: "100%",height: "100%",
           backgroundColor: "rgba(0, 0, 0, 0.8)",display: "flex",flexDirection: "column",justifyContent: "center",
@@ -1113,7 +1128,7 @@ const DualPredictionForm = () => {
   <div className="input-section" style={{ marginTop: "20px" }}>
     {selectedCategories.map((category, index) => (
       <div key={category} className="input-card" style={{ marginBottom: "15px" }}>
-        <div><h3>{category} Upper Inputs:</h3></div>
+        <div><h3> Upper {category} Inputs:</h3></div>
         <div>
           <div style={{ paddingBottom: "40px" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -1127,16 +1142,18 @@ const DualPredictionForm = () => {
                   <select
                     value={inputValues[category]?.Left?.[inputField] || ""}
                     onChange={(e) => handleInputChange(category, "Left", inputField, e.target.value)}
-                    style={{ width: "100%", border: "1px solid #ccc" }}
+                    style={{  border: "1px solid #ccc" }}
                   >
                     <option value="">Select</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
-                    <option value="1+">1+</option>
+                    <option value="2-">2-</option>
                     <option value="2">2</option>
                     <option value="2+">2+</option>
+                    <option value="3-">3-</option>
                     <option value="3">3</option>
                     <option value="3+">3+</option>
+                    <option value="4-">4-</option>
                     <option value="4">4</option>
                     <option value="4+">4+</option>
                     <option value="5">5</option>
@@ -1158,16 +1175,18 @@ const DualPredictionForm = () => {
                   <select
                     value={inputValues[category]?.Right?.[inputField] || ""}
                     onChange={(e) => handleInputChange(category, "Right", inputField, e.target.value)}
-                    style={{ width: "100%", border: "1px solid #ccc" }}
+                    style={{ border: "1px solid #ccc" }}
                   >
                     <option value="">Select</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
-                    <option value="1+">1+</option>
+                    <option value="2-">2-</option>
                     <option value="2">2</option>
                     <option value="2+">2+</option>
+                    <option value="3-">3-</option>
                     <option value="3">3</option>
                     <option value="3+">3+</option>
+                    <option value="4-">4-</option>
                     <option value="4">4</option>
                     <option value="4+">4+</option>
                     <option value="5">5</option>
@@ -1258,16 +1277,18 @@ const DualPredictionForm = () => {
                   <select
                     value={LowerinputValues[category]?.Left?.[inputField] || ""}
                     onChange={(e) => handleLowerInputChange(category, "Left", inputField, e.target.value)}
-                    style={{ width: "100%", border: "1px solid #ccc" }}
+                    style={{  border: "1px solid #ccc" }}
                   >
                     <option value="">Select</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
-                    <option value="1+">1+</option>
+                    <option value="2-">2-</option>
                     <option value="2">2</option>
                     <option value="2+">2+</option>
+                    <option value="3-">3-</option>
                     <option value="3">3</option>
                     <option value="3+">3+</option>
+                    <option value="4-">4-</option>
                     <option value="4">4</option>
                     <option value="4+">4+</option>
                     <option value="5">5</option>
@@ -1289,16 +1310,18 @@ const DualPredictionForm = () => {
                   <select
                     value={LowerinputValues[category]?.Right?.[inputField] || ""}
                     onChange={(e) => handleLowerInputChange(category, "Right", inputField, e.target.value)}
-                    style={{ width: "100%", border: "1px solid #ccc" }}
+                    style={{  border: "1px solid #ccc" }}
                   >
                     <option value="">Select</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
-                    <option value="1+">1+</option>
+                    <option value="2-">2-</option>
                     <option value="2">2</option>
                     <option value="2+">2+</option>
+                    <option value="3-">3-</option>
                     <option value="3">3</option>
                     <option value="3+">3+</option>
+                    <option value="4-">4-</option>
                     <option value="4">4</option>
                     <option value="4+">4+</option>
                     <option value="5">5</option>
@@ -1495,7 +1518,7 @@ const DualPredictionForm = () => {
       background: "#f9f9f9"
     }}
   >
-    <h3>Improved Values</h3>
+    <h3>Improved Upper Limb Values</h3>
     
     {selectedCategories.map((category) => (
       <div key={category}>
@@ -1525,6 +1548,7 @@ const DualPredictionForm = () => {
                               type="text"
                               value={value}
                               readOnly
+                              title={getMessage(value)} // Tooltip on hover
                               style={{
                                 width: "100%",
                                 padding: "8px",
@@ -1547,7 +1571,7 @@ const DualPredictionForm = () => {
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
       <div>
         <button onClick={handleClick}>Modalities</button>
-        <button onClick={handleMMTAnimateClick}>Animate</button>
+        <button onClick={handleMMTAnimateClick}>Avatar</button>
       </div>
       <div>
         <button onClick={() => window.location.reload()}>Reset</button>
@@ -1711,7 +1735,7 @@ const DualPredictionForm = () => {
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
       <div>
         <button onClick={handleClick}>Modalities</button>
-        <button onClick={handleMMTLAAnimateClick}>Animate</button>
+        <button onClick={handleMMTLAAnimateClick}>Avatar</button>
       </div>
       <div>
         <button onClick={() => window.location.reload()}>Reset</button>
