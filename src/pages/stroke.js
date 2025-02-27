@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Health from "../assets/Brain.jpg";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cell, ReferenceLine } from 'recharts';
 import "../styles/Monoplegia.css";
 import Luna from "../assets/luna_emg.jpg"
 import pablo from "../assets/pablo.jpg"
 import gait from "../assets/gait.jpg"
-import vibra from "../assets/VIBRAMOOV.jpg"
-import tymo from "../assets/TYMO.jpg"
-import rtms from "../assets/rtms.jpg"
-import hoh from "../assets/grip.jpg"
-import cyberdyne from "../assets/cyberdyna.jpg"
-import balance from "../assets/advance_neuro.jpg"
-
 
 const DualPredictionForm = () => {
   const [gender, setGender] = useState("");
-  const [totalSumMap, setTotalSumMap] = useState({});
   const [age, setAge] = useState("");
   const [selectedDisease, setSelectedDisease] = useState("");
   const [assistivedevice, setAssistivedevice] = useState("");
@@ -35,7 +26,6 @@ const DualPredictionForm = () => {
   const [show10BVideo, setShow10BVideo] = useState(false);
   const [daysOfTreatment, setDaysOfTreatment] = useState("");
   const [isDaysOfTreatmentActive, setIsDaysOfTreatmentActive] = useState(false);
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [isSubmitActive, setIsSubmitActive] = useState(false);
   const [tugField1, setTugField1] = useState("");
   const [tugField2, setTugField2] = useState(null);
@@ -49,7 +39,6 @@ const DualPredictionForm = () => {
   const [showLowerImprovement, setShowLowerImprovemnt] = useState(false);
   const [show10MImprovement, setShow10MImprovemnt] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [categorySums, setCategorySums] = useState({});
   const [showLowerPopup, setShowLowerPopup] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedLowerCategories, setSelectedLowerCategories] = useState([]);
@@ -74,8 +63,7 @@ const DualPredictionForm = () => {
     const [showImages, setShowImages] = useState(false);
     const [showTUGImages, setShowTUGImages] = useState(false);
     const [show10MImages, setShow10MImages] = useState(false);
-    const [TchartData, setTChartData] = useState([]);
-    const [tenchartData, settenChartData] = useState([]);
+   
     const handleClick = () => {
       setShowImages(true);
     };
@@ -229,15 +217,6 @@ const getMessage = (value) => {
         return "/movement100.mp4"; // Default fallback video
       }
     };
-    const convertMMTValue = (value) => {
-      const mmtMap = {
-        "0": 0, "1": 1, "2-": 1.67, "2": 2, "2+": 2.33,
-        "3-": 2.67, "3": 3, "3+": 3.33, "4-": 3.67, 
-        "4": 4, "4+": 4.33, "5": 5
-      };
-      return mmtMap[value] ?? 0; // Default to 0 if value is missing
-    };
-    
     const getVideoMMTLBSource = () => {
       const averageLValue = parseFloat(calculateUserEnteredLowerAverage()); // Convert to number
     
@@ -467,16 +446,7 @@ const getMessage = (value) => {
       }
     }
   };
-  useEffect(() => {
-    const updatedSums = {};
-    selectedCategories.forEach((category) => {
-      const leftValues = Object.values(improvedValues[category]?.Left || {}).map(convertMMTValue);
-      const rightValues = Object.values(improvedValues[category]?.Right || {}).map(convertMMTValue);
-      const totalSum = [...leftValues, ...rightValues].reduce((sum, num) => sum + num, 0);
-      updatedSums[category] = totalSum; // Store sum for each category
-    });
-    setTotalSumMap(updatedSums);
-  }, [improvedValues, selectedCategories]);
+  
   
   useEffect(() => {
     const randomValue = Math.floor(Math.random() * 101); // Generate 0-100
@@ -504,36 +474,25 @@ const getMessage = (value) => {
     }
   }, []);
   const handleInputChange = (category, side, field, value) => {
-    // Create a copy of the current manuallyEnteredFields and add the new field
-    const updatedManualFields = new Set(manuallyEnteredFields);
-    updatedManualFields.add(`${category}-${side}-${field}`);
-    
-    // Create a copy of current inputValues and update with the new value
-    const updatedInputValues = {
-      ...inputValues,
+    // Track manually entered fields
+    setManuallyEnteredFields(prev => {
+      const key = `${category}-${side}-${field}`;
+      const newSet = new Set(prev);
+      newSet.add(key);
+      return newSet;
+    });
+
+    setInputValues(prev => ({
+      ...prev,
       [category]: {
-        ...inputValues[category],
+        ...prev[category],
         [side]: {
-          ...inputValues[category]?.[side],
+          ...prev[category]?.[side],
           [field]: value
         }
       }
-    };
-    
-    // Update states
-    setManuallyEnteredFields(updatedManualFields);
-    setInputValues(updatedInputValues);
-    
-    // Calculate sum with the updated values immediately
-    const sum = calculateSumWithValues(category, updatedInputValues, updatedManualFields);
-    
-    // Update the sum
-    setCategorySums(prev => ({
-      ...prev,
-      [category]: sum
     }));
   };
-  
   const handleLowerInputChange = (category, side, field, value) => {
     // Track manually entered fields
     setManuallyEnteredLowerFields(prev => {
@@ -555,127 +514,30 @@ const getMessage = (value) => {
     }));
   };
 
-// Similarly update the setNormalValues function
-const setNormalValues = (category, side) => {
-  // Create a copy of current manuallyEnteredFields
-  const updatedManualFields = new Set(manuallyEnteredFields);
-  
-  // Remove fields for this category and side
-  categoryInputs[category][side].forEach(field => {
-    updatedManualFields.delete(`${category}-${side}-${field}`);
-  });
-  
-  // Create normal values
-  const normalValues = {};
-  categoryInputs[category][side].forEach(field => {
-    normalValues[field] = "5";
-  });
-  
-  // Create updated inputValues
-  const updatedInputValues = {
-    ...inputValues,
-    [category]: {
-      ...inputValues[category],
-      [side]: normalValues
-    }
-  };
-  
-  // Update states
-  setManuallyEnteredFields(updatedManualFields);
-  setInputValues(updatedInputValues);
-  
-  // Calculate sum with the updated values immediately
-  const sum = calculateSumWithValues(category, updatedInputValues, updatedManualFields);
-  
-  // Update the sum
-  setCategorySums(prev => ({
-    ...prev,
-    [category]: sum
-  }));
-};
-
-// Function to calculate sum using provided values rather than state
-const calculateSumWithValues = (category, values, manualFields) => {
-  let sum = 0;
-  
-  // Go through both sides (Left and Right)
-  ["Left", "Right"].forEach(side => {
-    if (values[category]?.[side]) {
-      // Go through each field in this category and side
-      Object.entries(values[category][side]).forEach(([field, value]) => {
-        // Check if this field was manually entered
-        const key = `${category}-${side}-${field}`;
-        
-        if (manualFields.has(key) && value) {
-          // Convert the MMT values to numbers
-          if (value === "0") sum += 0;
-          else if (value === "1") sum += 1;
-          else if (value === "2-") sum += 1.67;
-          else if (value === "2") sum += 2;
-          else if (value === "2+") sum += 2.33;
-          else if (value === "3-") sum += 2.67;
-          else if (value === "3") sum += 3;
-          else if (value === "3+") sum += 3.33;
-          else if (value === "4-") sum += 3.67;
-          else if (value === "4") sum += 4;
-          else if (value === "4+") sum += 4.33;
-          else if (value === "5") sum += 5;
-        }
+  const setNormalValues = (category, side) => {
+    // Remove fields from manually entered set when using "Normal" button
+    categoryInputs[category][side].forEach(field => {
+      setManuallyEnteredFields(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(`${category}-${side}-${field}`);
+        return newSet;
       });
-    }
-  });
-  
-  return Math.round(sum * 100) / 100; // Round to 2 decimal places
-};
-
-  
-  // Add this new function to calculate sums for manually entered values only
-  const calculateManualSum = (category) => {
-    let sum = 0;
-    
-    // Go through both sides (Left and Right)
-    ["Left", "Right"].forEach(side => {
-      if (inputValues[category]?.[side]) {
-        // Go through each field in this category and side
-        Object.entries(inputValues[category][side]).forEach(([field, value]) => {
-          // Check if this field was manually entered
-          const key = `${category}-${side}-${field}`;
-          
-          if (manuallyEnteredFields.has(key) && value) {
-            // Convert the MMT values to numbers
-            if (value === "0") sum += 0;
-            else if (value === "1") sum += 1;
-            else if (value === "2-") sum += 1.67;
-            else if (value === "2") sum += 2;
-            else if (value === "2+") sum += 2.33;
-            else if (value === "3-") sum += 2.67;
-            else if (value === "3") sum += 3;
-            else if (value === "3+") sum += 3.33;
-            else if (value === "4-") sum += 3.67;
-            else if (value === "4") sum += 4;
-            else if (value === "4+") sum += 4.33;
-            else if (value === "5") sum += 5;
-          }
-        });
-      }
     });
-    
-    // Update the sum state
-    setCategorySums(prev => ({
+
+
+    const normalValues = {};
+    categoryInputs[category][side].forEach(field => {
+      normalValues[field] = "5";
+    });
+
+    setInputValues(prev => ({
       ...prev,
-      [category]: Math.round(sum * 100) / 100 // Round to 2 decimal places
+      [category]: {
+        ...prev[category],
+        [side]: normalValues
+      }
     }));
   };
-  
-  // Make sure to call this function when component mounts to initialize sums
-  useEffect(() => {
-    // Initialize sums for all categories
-    if (selectedCategories.length > 0) {
-      selectedCategories.forEach(category => {
-        calculateManualSum(category);
-      });
-    }
-  }, [selectedCategories]);
   const setLowerNormalValues = (category, side) => {
     // Remove fields from manually entered set when using "Normal" button
     categoryLowerInputs[category][side].forEach(field => {
@@ -700,20 +562,8 @@ const calculateSumWithValues = (category, values, manualFields) => {
       }
     }));
   };
-  const calculateDifference = (timeInSeconds, improvedTUG) => {
-    return timeInSeconds - improvedTUG;
-  };
   const handleTUGSubmit = () => {
-   
-    if (tugField1 && tugField2) {
-      const difference = calculateDifference(parseFloat(tugField1), parseFloat(tugField2));
-      setTChartData([
-        { category: "Initial TUG", value: parseFloat(tugField1) },
-        { category: "Improved TUG", value: parseFloat(tugField2) },
-        { category: "Difference", value: difference }
-      ]);
-      setShowImprovemnt(true);
-    }
+    setIsOpen(!isOpen);
   };
 
   const getRandomPredefinedValue = () => {
@@ -796,7 +646,6 @@ const calculateSumWithValues = (category, values, manualFields) => {
   };
   const handleMMTAnimateClick = () => {
     setShowMMTVideo(true); // Show video on clicking "Animate"
-    setShowImages(false);
   };
   const handleMMTLBAnimateClick = () => {
     setShowMMTLBVideo(true); // Show video on clicking "Animate"
@@ -892,102 +741,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
   useEffect(() => {
     checkLowerInputsValidity();
   }, [LowerinputValues, selectedLowerCategories]);
-  const chartData = selectedCategories.map((category) => {
-    const initialValue = categorySums[category] || 0;
-    const improvedValue = totalSumMap[category] || 0;
-    const difference = improvedValue - initialValue; // Compute improvement or decrement
   
-    return {
-      category,
-      difference, // Improvement or decrement
-    };
-  });
-  const handleFetchValues = () => {
-    const updatedValues = { ...inputValues };
-    setIsButtonClicked(true);
-    const updatedManualFields = new Set(manuallyEnteredFields); // Create a copy of manuallyEnteredFields
-  
-    selectedCategories.forEach((category) => {
-      updatedValues[category] = {
-        Left: {},
-        Right: {},
-      };
-  
-      // Process Left side
-      categoryInputs[category]?.Left.forEach((inputField) => {
-        const randomValue = predefinedValues[Math.floor(Math.random() * predefinedValues.length)];
-        updatedValues[category].Left[inputField] = randomValue;
-  
-        // Add the field to manuallyEnteredFields
-        updatedManualFields.add(`${category}-Left-${inputField}`);
-      });
-  
-      // Process Right side
-      categoryInputs[category]?.Right.forEach((inputField) => {
-        const randomValue = predefinedValues[Math.floor(Math.random() * predefinedValues.length)];
-        updatedValues[category].Right[inputField] = randomValue;
-  
-        // Add the field to manuallyEnteredFields
-        updatedManualFields.add(`${category}-Right-${inputField}`);
-      });
-    });
-  
-    // Update both inputValues and manuallyEnteredFields
-    setInputValues(updatedValues);
-    setManuallyEnteredFields(updatedManualFields);
-  
-    // Recalculate sums for all categories
-    selectedCategories.forEach((category) => {
-      const sum = calculateSumWithValues(category, updatedValues, updatedManualFields);
-      setCategorySums((prev) => ({
-        ...prev,
-        [category]: sum,
-      }));
-    });
-  };
-  const images = [
-    { src: Luna, alt: "Luna EMG", label: "Luna EMG" },
-    { src: pablo, alt: "Pablo", label: "Pablo" },
-    { src: vibra, alt: "vibra", label: "Vibramoov" },
-    { src: tymo, alt: "tymo", label: "Tymo" },
-    { src: rtms, alt: "rtms", label: "RTMS" },
-    { src: hoh, alt: "hoh", label: "Hands Of Hope" },
-    { src: cyberdyne, alt: "cyberdyne", label: "Cyberdyne" },
-    { src: balance, alt: "balance", label: "Balance Motus" }
-  ];
-  
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
-  
-  // Generate a random number of images between 1 and 8
-  const randomNumberOfImages = Math.floor(Math.random() * 8) + 1; // Random number between 1 and 8
-  const shuffledImages = shuffleArray([...images]).slice(0, randomNumberOfImages);
-  const handleResetAndReload = () => {
-    setIsButtonClicked(false); // Reset the state
-    setShowImages(false);
-    window.location.reload(); // Reload the page
-
-  };
-
-  const handle10MSubmit = () => {
-    if (tugField3 && tugField4) {
-      const improvement = calculateImprovement(parseFloat(tugField3), parseFloat(tugField4));
-      settenChartData([
-        { category: "Time In Seconds", value: parseFloat(tugField3) },
-        { category: "Improved 10M (m/s)", value: parseFloat(tugField4) },
-        { category: "Improvement", value: improvement }
-      ]);
-      setShow10MImprovemnt(true);
-    }
-  };
-  const calculateImprovement = (timeInSeconds, improved10M) => {
-    return improved10M - (10/timeInSeconds);
-  };
   return (
     <div>
       <div className="banner" style={{ backgroundImage: `url(${Health})` }}>
@@ -1086,17 +840,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
                 disabled={!tugField1} // Disabled until TUG Field 1 has a value
            />
           </label>
-          <button
-  onClick={() => {
-    setShowImprovemnt(true);
-    setHideTUGContent(true);
-    setShowTugFields(false);
-    handleTUGSubmit(); // Call handleTUGSubmit here
-  }}
-  disabled={!daysOfTreatment || !tugField1 || !tugField2} // Combined disabled condition
->
-  TUG Submit
-</button>
+          <button  onClick={() => { setShowImprovemnt(true);setHideTUGContent(true); setShowTugFields(false)}}disabled={!daysOfTreatment} >TUG Submit</button>
           
           <button onClick={handleTUGBAnimateClick} disabled={!daysOfTreatment}>TUG Avatar</button>
           
@@ -1146,36 +890,10 @@ const calculateSumWithValues = (category, values, manualFields) => {
         value={tugField2 !== null ? tugField2 : ""}
         readOnly
       />
-          </label>      
-
+          </label>
               <button onClick={handleTUGClick}> Modalities</button>
               <button onClick={handleTUGAnimateClick}>Avatar</button>
-              <button onClick={() => window.location.reload()}>Reset</button>
-
-        </div></div><div className="warning">{tugWarning}
-        <div style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
-          <h3>Improvement/Decrement in TUG Results</h3>
-          <ResponsiveContainer width="30%" height={400}>
-            <BarChart data={TchartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <XAxis dataKey="category" />
-              <YAxis domain={['auto', 'auto']} />
-              <Tooltip />
-              <Legend />
-              <ReferenceLine y={0} stroke="#000" />
-              <Bar dataKey="value" fill="#8884d8">
-                {TchartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.category === "Difference" ? (entry.value >= 0 ? "#28a745" : "#dc3545") : "#8884d8"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div> 
-</div>   
-    
-</div>
+              <button onClick={() => window.location.reload()}>Reset</button></div></div><div className="warning">{tugWarning}</div></div>
               )}
               {showTUGImages && (
   <div 
@@ -1299,17 +1017,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
                 disabled={!tugField3} // Disabled until TUG Field 1 has a value
            />
           </label>
-          <button
-              onClick={() => {
-                setShow10MImprovemnt(true);
-                setHideTUGContent(true);
-                setShow10MFields(false);
-                handle10MSubmit(); // Call handle10MSubmit here
-              }}
-              disabled={!tugField3 || !tugField4} // Disabled if either field is empty
-            >
-              10M Submit
-            </button>
+          <button  onClick={() => { setShow10MImprovemnt(true);setHideTUGContent(true); setShow10MFields(false)}}disabled={!daysOfTreatment} >10M Submit</button>
           
           <button onClick={handle10BAnimateClick} disabled={!daysOfTreatment}>10M Avatar</button>
           {show10BVideo && (
@@ -1360,27 +1068,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
           </label>
               <button onClick={handle10MClick}> Modalities</button>
               <button onClick={handle10MAnimateClick}>Avatar</button>
-              <button onClick={() => window.location.reload()}>Reset</button></div></div><div className="warning">{tenMBwarning}
-              <div style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
-          <h3>Improvement in 10M Results</h3>
-          <ResponsiveContainer width="30%" height={400}>
-            <BarChart data={tenchartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <XAxis dataKey="category" />
-              <YAxis domain={['auto', 'auto']} />
-              <Tooltip />
-              <Legend />
-              <ReferenceLine y={0} stroke="#000" />
-              <Bar dataKey="value" fill="#8884d8">
-                {tenchartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.category === "Improvement" ? (entry.value >= 0 ? "#28a745" : "#dc3545") : "#8884d8"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div></div></div>
+              <button onClick={() => window.location.reload()}>Reset</button></div></div><div className="warning">{tenMBwarning}</div></div>
               )}
               {show10MImages && (
   <div 
@@ -1493,11 +1181,8 @@ const calculateSumWithValues = (category, values, manualFields) => {
       )}
       {/*Main DND starts here*/}
 {selectedCategories.length > 0 && !hideUpperInputs &&(
-  <div className="input-section" style={{ marginTop: "20px" }}>      <button onClick={handleFetchValues} disabled={isButtonClicked}>
-  Fetch Values
-</button>
+  <div className="input-section" style={{ marginTop: "20px" }}>
     {selectedCategories.map((category, index) => (
-      
       <div key={category} className="input-card" style={{ marginBottom: "15px" }}>
         <div><h3> Upper {category} Inputs:</h3></div>
         <div>
@@ -1566,9 +1251,6 @@ const calculateSumWithValues = (category, values, manualFields) => {
               ))}
             </div>
           </div>
-          {/* <div style={{ fontWeight: "bold", marginTop: "10px" }}>
-        Total Sum for {category}: {categorySums[category] || 0}
-      </div> */}
         </div>
       </div>
     ))}
@@ -1631,7 +1313,6 @@ const calculateSumWithValues = (category, values, manualFields) => {
         )}
       </div>
         </div>
-        
       )}
       {/*Main DND ends here*/}
 {selectedLowerCategories.length > 0 && !hideLowerInputs && (
@@ -1895,126 +1576,80 @@ const calculateSumWithValues = (category, values, manualFields) => {
   >
     <h3>Improved Upper Limb Values</h3>
     
-    {selectedCategories.map((category) => {
-  // Calculate sum for the category
-  const leftValues = Object.values(improvedValues[category]?.Left || {}).map(convertMMTValue);
-  const rightValues = Object.values(improvedValues[category]?.Right || {}).map(convertMMTValue);
-  
-  // Compute total sum
-
-
-      
-  return (
-    <div key={category}>
-
-
-
-      {(Object.keys(improvedValues[category]?.Left || {}).length > 0 ||
-        Object.keys(improvedValues[category]?.Right || {}).length > 0) && (
-        <div style={{ marginBottom: "20px" }}>
-         {/* <h4>{category} - Total Sum: {totalSumMap[category]?.toFixed(2) || "0.00"}</h4> */}
-<h4>{category}</h4>
-          {["Left", "Right"].map(
-            (side) =>
-              Object.keys(improvedValues[category]?.[side] || {}).length > 0 && (
-                <div key={side} style={{ marginBottom: "10px" }}>
-                  <h5>{side}</h5>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                      gap: "20px",
-                      alignItems: "center"
-                    }}
-                  >
-                    {Object.entries(improvedValues[category][side]).map(([field, value]) => (
-                      <div key={field}>
-                        <label style={{ fontWeight: "bold" }}>{field}</label>
-                        <div 
-                          style={{ 
-                            position: 'relative',
-                            width: '100%' 
-                          }}
-                        >
-                          <input
-                            type="text"
-                            value={value}
-                            readOnly
-                            title={getMessage(value)}
-                            style={{
-                              width: "100%",
-                              padding: "8px",
-                              border: "1px solid #ccc",
-                              borderRadius: "5px",
-                              background: "#fff",
-                              cursor: "help"
-                            }}
-                          />
-                          <span 
-                            style={{ 
-                              position: 'absolute', 
-                              right: '10px', 
-                              top: '50%', 
-                              transform: 'translateY(-50%)',
-                              fontSize: '12px',
-                              color: '#666'
-                            }}
-                          >
-                            ℹ️
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+    {selectedCategories.map((category) => (
+      <div key={category}>
+        {(Object.keys(improvedValues[category]?.Left || {}).length > 0 ||
+          Object.keys(improvedValues[category]?.Right || {}).length > 0) && (
+          <div style={{ marginBottom: "20px" }}>
+            <h4>{category}</h4>
+            {["Left", "Right"].map(
+              (side) =>
+                Object.keys(improvedValues[category]?.[side] || {}).length >
+                  0 && (
+                  <div key={side} style={{ marginBottom: "10px" }}>
+                    <h5>{side}</h5>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                        gap: "20px",
+                        alignItems: "center"
+                      }}
+                    >
+{Object.entries(improvedValues[category][side]).map(([field, value]) => (
+  <div key={field}>
+    <label style={{ fontWeight: "bold" }}>{field}</label>
+    <div 
+      style={{ 
+        position: 'relative',
+        width: '100%' 
+      }}
+    >
+      <input
+        type="text"
+        value={value}
+        readOnly
+        title={getMessage(value)}
+        style={{
+          width: "100%",
+          padding: "8px",
+          border: "1px solid #ccc",
+          borderRadius: "5px",
+          background: "#fff",
+          cursor: "help" // Changes cursor to indicate hoverable
+        }}
+      />
+      {/* Optional: You can add a visible indicator that this is hoverable */}
+      <span 
+        style={{ 
+          position: 'absolute', 
+          right: '10px', 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          fontSize: '12px',
+          color: '#666'
+        }}
+      >
+        ℹ️
+      </span>
+    </div>
+  </div>
+))}
+                    </div>
                   </div>
-                </div>
-              )
-          )}
-        </div>
-      )}
-    </div>
-  );
-})}
-<div>
-  {/* Display Bar Graph Only If There Are Values */}
-  {chartData.length > 0 && (
-    <div style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
-      <h3>Improvement/Decrement in Percentage</h3>
-
-      <ResponsiveContainer width="50%" height={400}>
-        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          {/* Set Y-axis domain to start from 0 */}
-          <YAxis domain={[0, 'auto']} />
-
-          {/* Add a reference line at y=0 */}
-          <ReferenceLine y={0} stroke="#000" strokeWidth={2} />
-
-          {/* Position XAxis at y=0 instead of bottom */}
-          <XAxis dataKey="category" axisLine={false} tickLine={false} />
-
-          {/* Format Tooltip to show whole numbers */}
-          <Tooltip formatter={(value) => Math.round(value)} />
-          <Legend />
-
-          <Bar dataKey="difference" name="Improvement">
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.difference >= 0 ? "#28a745" : "#dc3545"} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  )}
-</div>
-
+                )
+            )}
+          </div>
+        )}
+      </div>
+    ))}
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
       <div>
         <button onClick={handleClick}>Modalities</button>
         <button onClick={handleMMTAnimateClick}>Avatar</button>
       </div>
       <div>
-      <button onClick={handleResetAndReload} style={{ marginLeft: "10px" }}>
-        Reset
-      </button>
+        <button onClick={() => window.location.reload()}>Reset</button>
       </div></div>
 {/* Video Modal with
  Close Button */}
@@ -2081,23 +1716,31 @@ const calculateSumWithValues = (category, values, manualFields) => {
       border: "2px solid #ddd",
       borderRadius: "8px",
       display: "flex",
-      flexWrap:"wrap",
       justifyContent: "center",
-      gap: "40px",
+      gap: "20px",
       background: "#f9f9f9",
       textAlign: "center"
     }}
   >
-    {shuffledImages.map((image, index) => (
-      <div key={index}>
-        <img 
-          src={image.src} 
-          alt={image.alt} 
-          style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
-        />
-        <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>{image.label}</p>
-      </div>
-    ))}
+    {/* Image 1 */}
+    <div>
+      <img 
+        src={Luna} 
+        alt="Luna EMG" 
+        style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
+      />
+      <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>Luna EMG</p>
+    </div>
+
+    {/* Image 2 */}
+    <div>
+      <img 
+        src={pablo} 
+        alt="Pablo" 
+        style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
+      />
+      <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>Pablo</p>
+    </div>
   </div>
 )}
 
@@ -2238,21 +1881,30 @@ const calculateSumWithValues = (category, values, manualFields) => {
       borderRadius: "8px",
       display: "flex",
       justifyContent: "center",
-      gap: "40px",
+      gap: "20px",
       background: "#f9f9f9",
       textAlign: "center"
     }}
   >
-    {shuffledImages.map((image, index) => (
-      <div key={index}>
-        <img 
-          src={image.src} 
-          alt={image.alt} 
-          style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
-        />
-        <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>{image.label}</p>
-      </div>
-    ))}
+    {/* Image 1 */}
+    <div>
+      <img 
+        src={Luna} 
+        alt="Luna EMG" 
+        style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
+      />
+      <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>Luna EMG</p>
+    </div>
+
+    {/* Image 2 */}
+    <div>
+      <img 
+        src={pablo} 
+        alt="Pablo" 
+        style={{ width: "200px", height: "150px", objectFit: "cover", borderRadius: "6px" }} 
+      />
+      <p style={{ marginTop: "8px", fontSize: "16px", fontWeight: "bold" }}>Pablo</p>
+    </div>
   </div>
 )}
 
