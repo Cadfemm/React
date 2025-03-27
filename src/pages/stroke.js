@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import Health from "../assets/Brain.jpg";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cell, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis,PieChart,Pie, Tooltip, Legend, Cell, ReferenceLine } from 'recharts';
 import "../styles/Monoplegia.css";
 import Luna from "../assets/luna_emg.jpg"
 import pablo from "../assets/pablo.jpg"
@@ -25,6 +26,7 @@ const DualPredictionForm = () => {
   const [tenMBwarning, setTenMBwarning] = useState(""); // State to store the warning message
   const [assistive10mdevice, setAssistive10mdevice] = useState("");
   const [showLimbButtons, setShowLimbButtons] = useState(false);
+  const [TbChartData, setTbChartData] = useState([]);
   const [showVideo, setShowVideo] = useState(false);
   const [showMMTVideo, setShowMMTVideo] = useState(false);
   const [showMMTLAVideo, setShowMMTLAVideo] = useState(false);
@@ -43,6 +45,7 @@ const DualPredictionForm = () => {
   const [tugField4, setTugField4] = useState("");
   const [showTugFields, setShowTugFields] = useState(false);
   const [show10MFields, setShow10MFields] = useState(false);
+  const [ShowTymoFields, setShowTymoFields] = useState(false);
   const [showImprovement, setShowImprovemnt] = useState(false);
   const [hideLowerInputs, setHideLowerInputs] = useState(false);
   const [hideUpperInputs, setHideUpperInputs] = useState(false);
@@ -193,7 +196,51 @@ const getMessage = (value) => {
         return "/movement20.mp4"; // Default fallback video
       }
     };
+    const fields = [
+      'Eye Open Stable Surface Medio Lateral Displacement',
+      'Eye Open Stable Surface Anterior Posterior Displacement',
+      'Eye Close Stable Surface Medio Lateral Displacement',
+      'Eye Close Stable Surface Anterior Posterior Displacement',
+      'Eye Open Unstable Surface Medio Lateral Displacement',
+      'Eye Open Unstable Surface Anterior Posterior Displacement',
+      'Eye Close Unstable Surface Medio Lateral Displacement',
+      'Eye Close Unstable Surface Anterior Posterior Displacement',
+      'Visual Feedback Path',
+      'Vestibular Feedback Path',
+      'Somatosensory Feedback Path',
+      'Central',
+      'Reflex',
+      'M1 Frequency Analysis',
+      'M2 Frequency Analysis',
+      'M3 Frequency Analysis',
+      'M4 Frequency Analysis',
+      'Romberg Index (M1/M2)',
+      'Romberg Index (M3/M4)',
+    ];
+    const [values, setValues] = useState(Array(fields.length).fill(""));
+// Updated fetchTymoValues function
+const fetchTymoValues = async () => {
+  try {
+    const response = await axios.post('https://python-g2zl.onrender.com/get-tymo-values');
     
+    // Check if the response has the new structure with a "values" property
+    const valuesArray = response.data.values || response.data;
+    
+    // Update your state with the values
+    setValues(valuesArray);
+    
+    // Optionally, you can also display which file was processed
+    // if (response.data.source_file) {
+    //   console.log(`Data from: ${response.data.source_file} (${response.data.timestamp})`);
+    // }
+  } catch (error) {
+    console.error('Error fetching Tymo values:', error);
+    // Handle the error appropriately in your UI
+  }
+};
+  
+   
+
     const getVideoMMTSource = () => {
       const averageValue = parseFloat(calculateUserEnteredAverage()); // Convert to number
     
@@ -707,7 +754,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
    
     if (tugField1 && tugField2) {
       const difference = calculateDifference(parseFloat(tugField1), parseFloat(tugField2));
-      setTChartData([
+      setTbChartData([
         { category: "Initial TUG", value: parseFloat(tugField1) },
         { category: "Improved TUG", value: parseFloat(tugField2) },
         { category: "Difference", value: difference }
@@ -715,7 +762,23 @@ const calculateSumWithValues = (category, values, manualFields) => {
       setShowImprovemnt(true);
     }
   };
+  const barChartData = TbChartData.filter(item => 
+    item.category === "Initial TUG" || item.category === "Improved TUG"
+  );
 
+  // Get difference data for pie chart
+  const differenceData = TbChartData.find(item => item.category === "Difference");
+  const roundedDifference = differenceData ? Math.round(differenceData.value * 10) / 10 : 0;
+  
+  // Data for difference pie chart
+  const pieData = differenceData ? [
+    { name: "Difference", value: Math.abs(roundedDifference) },
+    { name: "Baseline", value: 100 - Math.abs(roundedDifference) } 
+  ] : [];
+  
+  // Determine if improvement or decrement
+  const isImprovement = differenceData ? differenceData.value >= 0 : false;
+  const differenceColor = isImprovement ? "#28a745" : "#dc3545";
   const getRandomPredefinedValue = () => {
     const randomIndex = Math.floor(Math.random() * predefinedValues.length);
     return predefinedValues[randomIndex];
@@ -1043,18 +1106,62 @@ const calculateSumWithValues = (category, values, manualFields) => {
         <div >
        {!hideTUGContent &&(
           <div className="section-buttons" style={{ justifyContent: "center", display: "flex", gap: "10px", marginTop: "20px" }}>
-          <button onClick={() => { setShowTugFields(true); setShow10MFields(false); setShowLimbButtons(false);setHideLowerInputs(true);setHideUpperInputs(true); }}>TUG</button>
-        <button onClick={() => { setShow10MFields(true); setShowTugFields(false);setHideLowerInputs(true);setHideUpperInputs(true); setShowLimbButtons(false) }}>10M</button>
-          <button onClick={() =>{ setShowLimbButtons(true); setShow10MFields(false); setShowTugFields(false);} }>MMT</button>
+          <button onClick={() => { setShowTugFields(true); setShow10MFields(false); setShowLimbButtons(false);setHideLowerInputs(true);setHideUpperInputs(true);setShowTymoFields(false) }}>TUG</button>
+        <button onClick={() => { setShow10MFields(true); setShowTugFields(false);setHideLowerInputs(true);setHideUpperInputs(true); setShowLimbButtons(false); setShowTymoFields(false) }}>10M</button>
+          <button onClick={() =>{ setShowLimbButtons(true); setShow10MFields(false); setShowTugFields(false); setShowTymoFields(false)} }>MMT</button>
+          <button onClick={() =>{ setShowTymoFields(true); setShow10MFields(false); setShowTugFields(false); setShowLimbButtons(false)} }>Tymo</button>
           </div>)}
           {showLimbButtons && (
-          <div>
-          <button onClick={() => {setShowPopup(true);setHideUpperInputs(false);}}>Upper Limb</button>
-          <button onClick={() => {setShowLowerPopup(true);setHideLowerInputs(false)}}>Lower Limb</button></div>)}
+          <div style={{backgroundColor:"#f3f6f9",margin:"20px 0px 20px 0px"}}>
+          <button className="tab" onClick={() => {setShowPopup(true);setHideUpperInputs(false);}}>Upper Limb</button>
+          <button  className="tab" onClick={() => {setShowLowerPopup(true);setHideLowerInputs(false)}}>Lower Limb</button></div>)}
         </div>
       )}
+    {ShowTymoFields && (
+      <div style={{ marginBottom: '30px' }}>
+      <h3>Tymo</h3>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {fields.map((field, index) => (
+          <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ fontWeight: 'bold' }}>{field}</label>
+            <input
+              type="text"
+              placeholder="Enter value"
+              value={values[index]}
+              onChange={(e) => {
+                const newValues = [...values];
+                newValues[index] = e.target.value;
+                setValues(newValues);
+              }}
+              style={{
+                padding: '6px 10px',
+                minWidth: '150px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
+            />
+          </div>
+        ))}
+        <button
+          onClick={fetchTymoValues}
+          style={{
+            backgroundColor: '#003366',
+            color: '#fff',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '5px',
+            height: '40px',
+            alignSelf: 'flex-end'
+          }}
+        >
+          Fetch Tymo Values
+        </button>
+      </div>
+    </div>
+               )}
       {/*TUG and 10M code starts here*/}
 {/* TUG Input Fields */}
+
 {showTugFields && (
        <div style={{backgroundColor:"#f3f6f9", boxShadow:"0 4px 10px rgba(0, 0, 0, 0.1)"}}> 
         <div className="tug" style={{display:"flex",gap:"40px", padding:"20px",margin:"20px"}}>
@@ -1155,23 +1262,38 @@ const calculateSumWithValues = (category, values, manualFields) => {
         </div></div><div className="warning">{tugWarning}
         <div style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
           <h3>Improvement/Decrement in TUG Results</h3>
-          <ResponsiveContainer width="30%" height={400}>
-            <BarChart data={TchartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <XAxis dataKey="category" />
-              <YAxis domain={['auto', 'auto']} />
-              <Tooltip />
-              <Legend />
-              <ReferenceLine y={0} stroke="#000" />
-              <Bar dataKey="value" fill="#8884d8">
-                {TchartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.category === "Difference" ? (entry.value >= 0 ? "#28a745" : "#dc3545") : "#8884d8"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div style={{display:"flex",}}> 
+          <ResponsiveContainer width="50%" height={400}>
+              <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <XAxis dataKey="category" />
+                <YAxis domain={['auto', 'auto']} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+            <ResponsiveContainer width="50%" height={400}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  startAngle={90}
+                  endAngle={-270}
+                  dataKey="value"
+                  label={({ name }) => name === "Difference" ? `${Math.abs(roundedDifference)}` : ''}
+                  labelLine={false}
+                >
+                  <Cell key="cell-0" fill={differenceColor} />
+                  <Cell key="cell-1" fill="#e0e0e0" />
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+            </div>
         </div> 
 </div>   
     
@@ -1447,6 +1569,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
         </div>
 
 )}
+
   {/*TUG and 10M code ends here*/}
     {/*MMT code starts here*/}
 {showPopup && (
@@ -1980,7 +2103,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
     <div style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
       <h3>Improvement/Decrement in Percentage</h3>
 
-      <ResponsiveContainer width="50%" height={400}>
+      <ResponsiveContainer width="30%" height={400}>
         <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           {/* Set Y-axis domain to start from 0 */}
           <YAxis domain={[0, 'auto']} />
