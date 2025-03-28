@@ -197,14 +197,14 @@ const getMessage = (value) => {
       }
     };
     const fields = [
-      'Eye Open Stable Surface Medio Lateral Displacement',
-      'Eye Open Stable Surface Anterior Posterior Displacement',
-      'Eye Close Stable Surface Medio Lateral Displacement',
-      'Eye Close Stable Surface Anterior Posterior Displacement',
-      'Eye Open Unstable Surface Medio Lateral Displacement',
-      'Eye Open Unstable Surface Anterior Posterior Displacement',
-      'Eye Close Unstable Surface Medio Lateral Displacement',
-      'Eye Close Unstable Surface Anterior Posterior Displacement',
+      'Medio Lateral Displacement',
+      'Anterior Posterior Displacement',
+      'Medio Lateral Displacement',
+      'Anterior Posterior Displacement',
+      'Medio Lateral Displacement',
+      'Anterior Posterior Displacement',
+      'Medio Lateral Displacement',
+      'Anterior Posterior Displacement',
       'Visual Feedback Path',
       'Vestibular Feedback Path',
       'Somatosensory Feedback Path',
@@ -216,7 +216,29 @@ const getMessage = (value) => {
       'M4 Frequency Analysis',
       'Romberg Index (M1/M2)',
       'Romberg Index (M3/M4)',
+      'Sitting To Standing',
+      'Standing Unsupported',
+      'Sitting With Back Unsupported But Feet Supported On Floor Or On A Stool',
+      'Standing To Sitting',
+      'Transfers',
+      'Standing Unsupported With Eye Closed',
+      'Standing Unsupported With Feet Together',
+      'Reaching Forward With Outstretched Arm While Standing',  
+'Pick Up Object From The Floor From A Standing Position',  
+'Turning To Look Behind Over Left And Right Shoulders While Standing',  
+'Turn 360 Degrees',  
+'Placing Alternate Foot On Step Or Stool While Standing Unsupported',  
+'Standing Unsupported One Foot In Front',  
+'Standing On One Leg'
     ];
+    const headingMap = {
+      0: "Eye Open Stable Surface",
+      2: "Eye Close Stable Surface",
+      4: "Eye Open Unstable Surface",
+      6:"Eye Close Unstable Surface",
+      19:"BBG" // Add more if needed
+    };
+    
     const [values, setValues] = useState(Array(fields.length).fill(""));
 // Updated fetchTymoValues function
 const fetchTymoValues = async () => {
@@ -1109,7 +1131,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
           <button onClick={() => { setShowTugFields(true); setShow10MFields(false); setShowLimbButtons(false);setHideLowerInputs(true);setHideUpperInputs(true);setShowTymoFields(false) }}>TUG</button>
         <button onClick={() => { setShow10MFields(true); setShowTugFields(false);setHideLowerInputs(true);setHideUpperInputs(true); setShowLimbButtons(false); setShowTymoFields(false) }}>10M</button>
           <button onClick={() =>{ setShowLimbButtons(true); setShow10MFields(false); setShowTugFields(false); setShowTymoFields(false)} }>MMT</button>
-          <button onClick={() =>{ setShowTymoFields(true); setShow10MFields(false); setShowTugFields(false); setShowLimbButtons(false)} }>Tymo</button>
+          <button onClick={() =>{ setShowTymoFields(true); setShow10MFields(false); setShowTugFields(false); setShowLimbButtons(false); setHideLowerInputs(true);setHideUpperInputs(true);} }>Tymo</button>
           </div>)}
           {showLimbButtons && (
           <div style={{backgroundColor:"#f3f6f9",margin:"20px 0px 20px 0px"}}>
@@ -1117,48 +1139,162 @@ const calculateSumWithValues = (category, values, manualFields) => {
           <button  className="tab" onClick={() => {setShowLowerPopup(true);setHideLowerInputs(false)}}>Lower Limb</button></div>)}
         </div>
       )}
-    {ShowTymoFields && (
-      <div style={{ marginBottom: '30px' }}>
-      <h3>Tymo</h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {fields.map((field, index) => (
-          <div key={field} style={{ display: 'flex', flexDirection: 'column' }}>
+{ShowTymoFields && (
+  <div style={{ marginBottom: '30px',margin:'10px' }}>
+   
+    <div style={{ marginTop: '20px',display:'flex' ,justifyContent:'space-between'}}>
+    <h3 style={{ fontWeight:'bold'}}>Tymo</h3>
+      <button
+        onClick={fetchTymoValues}
+        style={{
+          backgroundColor: '#003366',
+          color: '#fff',
+          border: 'none',
+          padding: '8px 16px',
+          borderRadius: '5px',
+        }}
+      >
+        Fetch Tymo Values
+      </button>
+    </div>
+    {/* First 8 fields in 4 vertical boxes */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '30px', marginBottom: '30px' }}>
+      {["Eye Open Stable Surface", "Eye Close Stable Surface", "Eye Open Unstable Surface", "Eye Close Unstable Surface"].map((heading, groupIndex) => (
+        <div key={heading} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: '1',
+          border: '1px solid #ccc',
+          padding: '15px',
+          borderRadius: '10px',
+          boxShadow: '0px 2px 5px rgba(0,0,0,0.1)'
+        }}>
+          <h4 style={{ color: '#003366', marginBottom: '15px' }}>{heading}</h4>
+          {[0, 1].map(offset => {
+            const index = groupIndex * 2 + offset;
+            return (
+              <div key={index} style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
+                <label style={{ fontWeight: 'bold' }}>{fields[index]}</label>
+                <input
+                  type="text"
+                  placeholder="Enter value"
+                  value={values[index]}
+                  onChange={(e) => {
+                    const newValues = [...values];
+                    newValues[index] = e.target.value;
+                    setValues(newValues);
+                  }}
+                  style={{
+                    padding: '6px 10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ccc',
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+
+{/* Remaining fields (BBG and more) */}
+<div style={{
+  display: 'flex',
+  flexWrap: 'wrap',
+
+  marginTop: '20px'
+}}>
+  {fields.slice(8).map((field, index) => {
+    const actualIndex = index + 8;
+    const isDropdown = actualIndex >= 19;
+    const isFirstDropdown = actualIndex === 19;
+
+    return (
+      <React.Fragment key={field}>
+        {/* Add section heading only once before the first BBG dropdown */}
+        {headingMap[actualIndex] && (
+          <div style={{ width: '100%' }}>
+            <h4 style={{ margin: '30px 0 20px 0', color: '#003366' }}>{headingMap[actualIndex]}</h4>
+          </div>
+        )}
+
+        {/* For BBG dropdowns - use grid layout */}
+        {isDropdown ? (
+          <div
+            style={{
+              width: 'calc(25% - 20px)', // roughly 4 columns, adjust as needed
+              minWidth: '250px',
+              marginBottom: '20px',
+              marginRight: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <label style={{ fontWeight: 'bold', marginBottom: '6px',height:'45px' }}>{field}</label>
+            <select 
+              value={values[actualIndex]}
+              onChange={(e) => {
+                const newValues = [...values];
+                newValues[actualIndex] = e.target.value;
+                setValues(newValues);
+              }}
+              style={{
+                padding: '8px 10px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                width:'100%'
+              }}
+            >
+              <option value="">Select</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        ) : (
+          // Regular input fields (before index 19)
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: '250px',
+              marginRight: '20px',
+              marginBottom: '20px',
+            }}
+          >
             <label style={{ fontWeight: 'bold' }}>{field}</label>
             <input
               type="text"
               placeholder="Enter value"
-              value={values[index]}
+              value={values[actualIndex]}
               onChange={(e) => {
                 const newValues = [...values];
-                newValues[index] = e.target.value;
+                newValues[actualIndex] = e.target.value;
                 setValues(newValues);
               }}
               style={{
                 padding: '6px 10px',
-                minWidth: '150px',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
               }}
             />
           </div>
-        ))}
-        <button
-          onClick={fetchTymoValues}
-          style={{
-            backgroundColor: '#003366',
-            color: '#fff',
-            border: 'none',
-            padding: '8px 16px',
-            borderRadius: '5px',
-            height: '40px',
-            alignSelf: 'flex-end'
-          }}
-        >
-          Fetch Tymo Values
-        </button>
-      </div>
-    </div>
-               )}
+        )}
+      </React.Fragment>
+    );
+  })}
+</div>
+
+
+    {/* Button */}
+
+  </div>
+)}
+
+
+
       {/*TUG and 10M code starts here*/}
 {/* TUG Input Fields */}
 
