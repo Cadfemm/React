@@ -1178,6 +1178,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
                 <input
                   type="text"
                   placeholder="Enter value"
+                  readOnly
                   value={values[index]}
                   onChange={(e) => {
                     const newValues = [...values];
@@ -1268,6 +1269,7 @@ const calculateSumWithValues = (category, values, manualFields) => {
             <input
               type="text"
               placeholder="Enter value"
+              readOnly
               value={values[actualIndex]}
               onChange={(e) => {
                 const newValues = [...values];
