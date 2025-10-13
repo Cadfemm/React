@@ -30,7 +30,7 @@ function App() {
         {/* Switch and Routes */}
         <Switch>
           <Route path="/Home" exact component={Home} />
-          <Route path="/menu" exact component={Menu} />
+          <Route path="/menu/:mode?" exact component={Menu} />
           <Route path="/about" exact component={About} />
           <Route path="/contact" exact component={Contact} />
           <Route path="/treatment/Subtreatments" exact component={treatments} />

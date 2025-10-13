@@ -42,8 +42,8 @@ font-family: roboto;
   font-family: "roboto sans";
   font-size: 45px;
   font-weight: bold;
-  color:#00345f;
-  border-bottom: 2px solid #00345f;
+  color:#000332;
+  border-bottom: 2px solid #000332;
 
 }
 
@@ -52,16 +52,13 @@ font-family: roboto;
 
 
 .App button{
-    padding:7px 10px 7px 10px;
-    background-color: #00345f;
-    border-color: #00345f;
-    border-radius: 6px;
-    color: white;
-    margin:8px;
+    /* padding:7px 10px 7px 10px; */
+   
+   
     
-
- 
-}
+    align-items: center;
+    display:flex;
+    }
 
 .menuList {
   width: 70vw;
@@ -79,7 +76,7 @@ font-family: roboto;
   height: 330px;
   margin: 20px;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
-  border: 1px solid #00345f;
+  border: 1px solid #000332;
 }
 
 
@@ -97,7 +94,7 @@ font-family: roboto;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border-bottom: 1px solid #00345f;
+  border-bottom: 1px solid #000332;
 }
 
 

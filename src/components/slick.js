@@ -10,7 +10,7 @@ const cardsData = [
   { id: 2, title: "SPINAL CORD INJURY", imageUrl: image1, link: "/spinalcord" },
 ];
 
-const Card = ({ title, imageUrl, buttonLink = "/Spinalinjury", onCardClick }) => (
+const Card = ({ title, imageUrl, buttonLink = "/stroke", onCardClick }) => (
   <div className="card" onClick={onCardClick}>
     <img className="image" src={imageUrl} alt={title} />
     <p className="title">{title}</p>
@@ -38,7 +38,7 @@ const CardsSlider = () => {
   });
 
   const handleCardClick = (title) => {
-    if (title === "STROKE") {
+    if (title === "BRAIN") {
       history.push("/stroke");
     } else if (title === "SPINAL CORD INJURY") {
       history.push("/Spinalinjury");

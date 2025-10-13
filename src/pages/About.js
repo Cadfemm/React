@@ -1,69 +1,163 @@
-import React from "react";
-import Health from "../assets/globe.png";
-import banner from "../assets/about_us.jpg";
-import "../styles/About.css";
-import Contact from "../pages/Contact.js";
-function About() {
+import * as React from "react";
+import { useHistory } from "react-router-dom";
+import {
+  User, ClipboardList, Layers, Stethoscope, Target, FileText, FileStack,
+  Briefcase, ShieldCheck, Activity, ClipboardCheck, Calendar, Package,
+  LineChart, Settings, Plus, Bell, Search, Users
+} from "lucide-react";
+
+export default function HomeDashboard() {
+  const history = useHistory();
   return (
-    <div >
-      <div class="banner"  style={{ backgroundImage: `url(${banner})`,height:"390px" }}>
-  ABOUT US
-</div>
-      <div className="aboutBottom">
-        <h3> CADFEM GLOBAL TECHNOLOGY PORTFOLIO</h3>
-        
-        <p>
-        Simulation is only the beginning. Choosing the right software is just the first step in your simulation journey. True success 
-comes from integrating these tools seamlessly into your development processes. Effective software deployment and adoption 
-will need the enablement from complementary solutions, which is why we offer a range of solutions including consulting, 
-training, and ongoing support. We're evolving to becoming a digital engineering solutions company, where simulation, 
-automation, and process optimization are crucial for product development. Our goal is to inspire and motivate customers to 
-push their limits in every field of engineering, and enable them to disrupt conventions. Virtualisation, numerical simulations and 
-other digital pathways are definitive vehicles which can help us catch up with the technological metamorphoses.
-        </p>
-       <ul> <li>ANSYS SOFTWARE SUITE OF PRODUCTS</li>
-        <li>ENGINEERING SERVICES</li>
-        <li>CUSTOM BUILD DIGITAL SOLUTIONS (SaaS and On-Premises) </li>
-        <li>DIGITAL ENGINEERING IT SOLUTIONS</li>
-       
-        </ul>
-        <h3 style={{height:'90px',padding:'20px'}}> <span className="years">40 YEARS OF</span>  RAPID INNOVATION AND EASY VALIDATION OF 
-DESIGN IDEAS</h3>
-        <div className="container">
-      <div className="image">
-        <img src={Health} alt="Company" />
+    <div className="home-wrap" style={{minHeight:"100vh", background:"#f6f8fb"}}>
+      {/* Top Navbar */}
+      {/* <header style={{background:"#fff", borderBottom:"1px solid #e6e9ef"}}>
+        <div style={{maxWidth:1280, margin:"0 auto", padding:"10px 16px", display:"flex", alignItems:"center", gap:18}}>
+          <div style={{display:"flex", alignItems:"center", gap:8, fontWeight:800}}>
+            <div style={{background:"#0b62ff", color:"#fff", padding:"6px 10px", borderRadius:8}}>PERKESO</div>
+            <div>Rehab</div>
+            <div className="dim" style={{marginLeft:8}}>— EMR · RAP · TPS</div>
+            <div className="dim" style={{marginLeft:8}}>— Admin Console</div>
+          </div>
+
+          <nav style={{display:"flex", gap:16, marginLeft:24}}>
+            {["Home","Patients","Appointments","Orders","TPS","RAP / RTW","Case Mgmt","Resources","Billing","Reports","Compliance","Integrations","Settings"].map(x=>(
+              <a key={x} className="top-link" href="#" style={{fontSize:14, color:"#0f172a", textDecoration:"none"}}>{x}</a>
+            ))}
+          </nav>
+
+          <div style={{marginLeft:"auto", display:"flex", alignItems:"center", gap:10}}>
+            <div style={{position:"relative"}}>
+              <Search size={16} style={{position:"absolute", left:10, top:10, opacity:.6}}/>
+              <input placeholder="Search (patients, orders, …)" style={{
+                padding:"8px 12px 8px 32px", border:"1px solid #e6e9ef", borderRadius:8, width:300, fontSize:13
+              }}/>
+            </div>
+            <button className="btn" style={{display:"flex", alignItems:"center", gap:6}}><Plus size={16}/>New</button>
+            <button className="btn">Admin</button>
+          </div>
+        </div>
+      </header> */}
+
+      {/* Body */}
+      <div style={{ margin:"16px auto", padding:"0 16px",}}>
+   <div style={{display:"flex", justifyContent:"flex-end", margin: "2px 12px"}}>
+<button onClick={() => history.push("/menu/new")}
+  className="btn topbtn" style={{padding: "5px 15px",marginBottom:15,
+    backgroundColor: "#3A3FAD",
+    color:" #fff",
+    margin: "5px",}}>
+  New Patient
+</button>
+
+  <button onClick={() => history.push("/menu/existing")} className="btn topbtn" style={{padding: "5px 15px",marginBottom:15,
+    backgroundColor: "#3A3FAD",
+    color:" #fff",
+    margin: "5px",}} >
+  Existing Patient
+</button>
+
+
+
+  </div> 
+
+        {/* RIGHT CONTENT (dashboard cards like image 1) */}
+        <main>
+          {/* Welcome + System status + Alerts column */}
+          <div >
+            <section style={{background:"#fff", border:"1px solid #e6e9ef", borderRadius:12, padding:16}}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                <div>
+                  <div style={{fontSize:18, fontWeight:700}}>Welcome, Therapist</div>
+                  <div className="dim" style={{fontSize:13}}>Overview — Integrated EMR · RAP · TPS (PERKESO)</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div className="dim" style={{fontSize:12}}>System status</div>
+                  <div style={{fontSize:13, fontWeight:600}}>All services operational <span style={{color:"#16a34a"}}>✔</span></div>
+                  <div className="dim" style={{fontSize:12}}>Last sync: 2025-09-08 08:12</div>
+                </div>
+              </div>
+
+              {/* KPI cards row */}
+              <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginTop:12}}>
+                {[
+                  {title:"Active Therapy Sessions (today)", value:"18", note:"Utilization: 82%"},
+                  {title:"Pending Appointments", value:"06", note:"No-shows: 2"},
+                  {title:"Investigation Orders (pending)", value:"19", note:"Awaiting scheduling / specimens"},
+                  {title:"Open RTW cases", value:"22", note:"30/60/90 tracking"}
+                ].map((c,i)=>(
+                  <div key={i} style={{border:"1px solid #eef1f6", borderRadius:10, padding:12}}>
+                    <div className="dim" style={{fontSize:12}}>{c.title}</div>
+                    <div style={{fontSize:28, fontWeight:800, margin:"6px 0"}}>{c.value}</div>
+                    <div className="dim" style={{fontSize:12}}>{c.note}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Clinics + Resource utilization */}
+              <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginTop:12}}>
+                <div style={{border:"1px solid #eef1f6", borderRadius:10, padding:12}}>
+                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                    <div style={{fontWeight:700}}>Today’s Clinics — Overview</div>
+                    <div className="dim" style={{fontSize:12}}>Filter: Dept</div>
+                  </div>
+                  <div className="dim" style={{fontSize:13, marginTop:6, lineHeight:1.6}}>
+                    • Physio AM — Slots 08:00–12:00 — Booked 18/20<br/>
+                    • OT PM — Slots 13:00–17:00 — Booked 10/12<br/>
+                    • Nursing — Procedures — Booked 6/8
+                  </div>
+                  <button className="btn" style={{marginTop:10}}>Open Scheduler</button>
+                </div>
+
+                <div style={{border:"1px solid #eef1f6", borderRadius:10, padding:12}}>
+                  <div style={{fontWeight:700}}>Resource Utilization</div>
+                  <div className="dim" style={{fontSize:12}}>Rooms / Equip</div>
+                  <div className="dim" style={{fontSize:13, marginTop:6, lineHeight:1.6}}>
+                    • TPS Lab — 75% booked<br/>
+                    • Hydrotherapy pool — 40% booked<br/>
+                    • DME inventory — Low: 3 items
+                  </div>
+                  <button className="btn" style={{marginTop:10}}>Manage Resources</button>
+                </div>
+              </div>
+
+              {/* Quick actions */}
+              <div style={{border:"1px solid #eef1f6", borderRadius:10, padding:12, marginTop:12}}>
+                <div style={{fontWeight:700, marginBottom:8}}>Quick actions</div>
+                <div style={{display:"flex", gap:10, flexWrap:"wrap"}}>
+                  <button className="btn">Bulk schedule</button>
+                  <button className="btn">Create RTW plan</button>
+                  <button className="btn">Audit & Compliance</button>
+                  <button className="btn">Generate report</button>
+                </div>
+              </div>
+
+              {/* Compliance */}
+              <div style={{border:"1px solid #eef1f6", borderRadius:10, padding:12, marginTop:12}}>
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                  <div style={{fontWeight:700}}>Compliance — CARF / RTW checks</div>
+                  <div className="dim" style={{fontSize:12}}>Next review: 30 days</div>
+                </div>
+                <ul className="dim" style={{fontSize:13, marginTop:6, lineHeight:1.7}}>
+                  <li>30-day follow-ups scheduled: 18/20</li>
+                  <li>60-day onsite checks pending: 5</li>
+                  <li>90-day sustainability reviews: 7</li>
+                </ul>
+              </div>
+
+              {/* Footer note */}
+              <div className="dim" style={{fontSize:12, marginTop:12}}>
+                PERKESO Rehab — Integrated EMR • RAP • TPS • Demo
+              </div>
+            </section>
+
+
+
+          </div>
+        </main>
       </div>
-      <div className="achievements">
-        
-        <ul>
-          <li><span className="number">19+</span> Companies</li>
-          <li><span className="number">450+</span> Employees</li>
-          <li><span className="number">35+</span> Locations</li>
-          <li><span className="number">30+</span> Countries</li>
-        </ul>
-      </div>
-    </div>
-    <h3>In India, CADFEM is an<span className="years"> ANSYS Elite Channel Partner.</span></h3>
-        <p>
-        Founded in 2007, CADFEM India Pvt. Ltd. is one of the pioneers of numerical simulation based on the Finite Element 
-Method (FEM) and is a part of CADFEM International - one of the largest European suppliers of Computer-Aided 
-Engineering (CAE), with Global Headquarters in Germany and Local Headquarters in Hyderabad. Since 1985, CADFEM 
-has continuously supported the practical use of advanced technology in business and science. Our name has always stood 
-for a close partnership with Ansys: CADFEM sells the entire Ansys simulation portfolio for structural mechanics, fluid 
-mechanics, electromechanics and magnetics, electronics and embedded software covering every industry and application. 
-        </p>
-        <p>
-        Effective software deployment and adoption will need the enablement from complementary solutions, which is why we 
-offer a range of solutions including consulting, training, and ongoing support. We're evolving to becoming a digital 
-engineering solutions company, where simulation, automation, and process optimization are crucial for product 
-development. Our goal is to inspire and motivate customers to push their limits in every field of engineering, and enable 
-them to disrupt conventions. Virtualisation, numerical simulations and other digital pathways are definitive vehicles which 
-can help us catch up with the technological metamorphoses.
-        </p>
-      </div>
-      <Contact />
     </div>
   );
 }
 
-export default About;
+/* Optional: a couple of light utility styles (or rely on your existing .btn/.dim) */

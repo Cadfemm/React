@@ -1,18 +1,22 @@
 import monoplegia2 from "../assets/old_recurrent.jpg";
-import paraplegia from "../assets/incompletespinalcord.jpg";
-import diplegia from "../assets/Multiplescelerosis.jpg";
-import quadriplegia from "../assets/parkinsons.jpg";
+import hemi from "../assets/gait.jpg";
+import tymo from "../assets/TYMO.jpg";
+import cerebral from "../assets/inputimage.jpg";
+import output from "../assets/outputimage2.jpg";
+import paraplegia from "../assets/luna_emg.jpg";
+import diplegia from "../assets/cyberdyna.jpg";
+import quadriplegia from "../assets/pablo.jpg";
 import hemiplegia from "../assets/motorneuron.jpg";
 import ataxia from "../assets/ataxia.jpg";
-import cerebral from "../assets/cerebralpalsy.jpg";
+
 import trauma from "../assets/traumaticbraininjury.jpg";
 import mono from "../assets/excersice.jpg";
 import parap from "../assets/rtms.jpg";
 import dip from "../assets/spinal_stimulation.jpg";
 import quadri from "../assets/pablo.jpg";
-import hemi from "../assets/gait.jpg";
+
 import br from "../assets/recoverixpro.jpg";
-import tymo from "../assets/TYMO.jpg";
+
 import grip from "../assets/grip.jpg";
 import range from "../assets/rangeofmotion.jpg";
 import gait from "../assets/gait.jpg"
@@ -160,24 +164,25 @@ export const MenuList1 = [
 
 export const MenuList2 =[
   {
-    image:grip,
-    title: "GRIP ASSESSMENT",
+    image:output,
+    title: "Assisted & Unassisted walking",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Tymo",
     backgroundColor:"black"
   },
   {
-    image:range,
-    title: "RANGE OF MOTION",
+    image:tymo,
+    title: "TYMO",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Tymo",
   },
   {
-    image:gait,
-    title: "GAIT ASSESSMENT",
+    image:hemi,
+    title: "GAIT",
     text:"The main objective is to develop an AI/ML algorithm which helps in predicting the treatment",
     to:"Tymo",
-  }
+  },
+ 
 
 
 ];

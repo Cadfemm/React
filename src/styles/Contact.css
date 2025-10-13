@@ -58,7 +58,7 @@
 
 .contact .rightSide h1 {
   font-family: "roboto sans";
-  color:#00345f;
+  color:#000332;
   font-weight: bold;
   font-size: 45px;
   margin-left: 30px;
@@ -71,7 +71,7 @@ form {
   flex-direction: column;
   width: auto;
   height: auto;
-  padding: 30px;
+ 
 }
 
 form input {
@@ -103,16 +103,16 @@ textarea:focus {
 
 form label {
   margin-top: 15px;
-  color: #00345f;
+  color: #000332;
   font-weight: bold;
 }
 
 form button {
   margin-top: 40px;
-  width: 140px;
+ 
   height: 40px;
   border: none;
-  background-color: #00345f;
+  background-color: #000332;
   color: whitesmoke;
   font-size: 15px;
   cursor: pointer;
