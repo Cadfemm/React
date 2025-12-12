@@ -1,0 +1,147 @@
+.menu {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top:40px ;
+}
+
+
+.content
+{
+  background-image: url('https://cdn-dhioc.nitrocdn.com/NjwAUSfwSCOTasUPzdkyxKRsPIOEePQl/assets/images/optimized/rev-8bcd2d1/wp-content/themes/reable/assets/images/shape1.png');
+  background-size: cover;
+  
+  background-position: center;
+  width:100%;
+ height:200px;
+ 
+}
+.points{
+  padding:30px;
+}
+.head{
+  padding-left:450px;
+  padding-bottom: 20px;
+}
+.content h1 {
+  padding-top:20px;
+  padding-left:450px;
+  font-size: 40px;
+  font-weight: 400;
+font-family: roboto;
+}
+.content p{
+  width:90vw;
+  padding-left:90px;
+
+}
+.menu .menuTitle {
+  font-family: "roboto sans";
+  font-size: 45px;
+  font-weight: bold;
+  color:#000332;
+  border-bottom: 2px solid #000332;
+
+}
+
+
+
+
+
+.App button{
+    /* padding:7px 10px 7px 10px; */
+   
+   
+    
+    align-items: center;
+    display:flex;
+    }
+
+.menuList {
+  width: 70vw;
+  height: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  place-items: center;
+}
+
+/* MENU ITEM STYLING */
+
+.menuItem {
+  border-radius: 15px;
+  width: 300px;
+  height: 330px;
+  margin: 20px;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid #000332;
+}
+
+
+.menuItem:hover {
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.5);
+  transition: 0.3s ease-in;
+  cursor: pointer;
+}
+
+.menuItem div {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  width: 100%;
+  height: 200px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-bottom: 1px solid #000332;
+}
+
+
+.menuItem p {
+  margin-left: 20px;
+ font-size: 18px;
+ font-weight: bold;
+ font-family: 'Poppins';
+ padding-top: 16px;
+ height:40px;
+ text-align: center;
+    width: 80%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+@media only screen and (max-width: 1300px) {
+  .menuList {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .menuList {
+    grid-template-columns: 1fr;
+  }
+}
+.learnMoreLink {
+  border:none;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+  color: #EC595B;
+}
+
+.arrowSymbol {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+   /* Change this to your desired background color */
+  color:  #EC595B; /* Change this to your desired text color */
+  text-align: center;
+  line-height: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}

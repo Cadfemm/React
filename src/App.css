@@ -1,0 +1,87 @@
+.App {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+/* Add to App.css */
+
+.main {
+  flex: 1;
+  overflow-x: hidden; /* Prevent main from scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+.main > section {
+  height: 100%;
+  overflow-x: hidden; /* Each section manages its own scroll */
+}
+
+/* Ensure body doesn't scroll when in doctor assessment */
+body {
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden; /* Change from overflow-x: hidden */
+  height: 100vh;
+}
+
+.page {
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+.footer-wrapper {
+  margin: 4rem 0rem;
+  display: flex;
+  margin-top: 10rem;
+}
+.footer-logo-container {
+  max-width: 50px;
+  PADDING-LEFT:25px;
+  margin-left:15px;
+}
+.footer-icons {
+  padding-left: 100px;
+  padding-top: 30px;
+}
+.footer-icons svg {
+  font-size: 1.5rem;
+  margin-right: 1.25rem;
+  color: #585858;
+}
+/* .footer-section-one {
+  border: 2px solid blue;
+} */
+.footer-section-two {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.footer-section-columns {
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+}
+.footer-section-columns span {
+  margin: 0.25rem 0rem;
+  font-weight: 600;
+  color: #4c4c4c;
+  cursor: pointer;
+}
+/* app.css */
+.btn{border:1px solid #e6e9ef;background:#fff;border-radius:8px;padding:8px 10px;font-size:13px;cursor:pointer}
+.btn:hover{background:#f2f5ff}
+.dim{color:#64748b}
+
+
+

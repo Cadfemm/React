@@ -1,0 +1,97 @@
+body {
+  background-color: #f7f9fc;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  color: #333;
+}
+
+.rehab-container {
+  padding-top: 40px;
+  text-align: center;
+}
+
+.rehab-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rehab-card {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 370px;
+  padding: 24px;
+  text-align: left;
+  transition: 0.3s ease all;
+}
+
+.rehab-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rehab-title {
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.rehab-desc {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.rehab-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom:0.8px dotted #ccc;
+}
+
+.rehab-btn {
+  background-color: #eef3fb;
+  border: 1px solid #d0defb;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 400;
+  padding: 4px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rehab-btn:hover {
+  background-color: #dde8ff;
+}
+
+.rehab-footer {
+  color: #3A3FAD;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.rehab-footer:hover {
+  text-decoration: underline;
+}
+
+.rehab-note {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.back-btn{
+    color:#3A3FAD;
+padding:0px;
+background-color: #3A3FAD00;
+}

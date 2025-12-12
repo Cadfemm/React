@@ -1,0 +1,118 @@
+.about {
+  width: 100%;
+  height: 150vh;
+  display: flex;
+  flex-direction: column;
+}
+
+ .aboutTop {
+  width: 100%;
+  height: 390px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.underline {
+  position: relative;
+  display: inline-block;
+}
+.banner{
+  justify-content: center; /* Centers the content horizontally */
+  align-items: center; /* Centers the content vertically */
+  text-align: center;
+  height:300px;
+}
+.underline::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2cm; /* Adjust width as needed */
+  height: 0.2cm; /* Adjust height as needed */
+  background-color: black; /* Adjust color as needed */
+}
+.aboutBottom {
+  display: flex;
+  flex-direction: column;
+
+ 
+  margin-top: 50px;
+}
+.aboutBottom p{
+color:#00345f;
+font-family: 'poppins';
+font-size:16px;
+padding-left:20px;
+line-height: 2.0em;
+}
+.aboutBottom h3{
+  font-weight: bold;
+  color:#00345f;
+  font-family:robotosans;
+  padding:20px 0px 20px 20px;
+
+ 
+
+}
+.years{
+  color:#FF5733;
+
+}
+.aboutBottom ul{
+  color:#00345f;
+font-family: 'poppins';
+font-size:16px;
+line-height: 2.0;
+}
+.container {
+  display: flex;
+}
+
+.image {
+  flex: 70%;
+}
+
+.image img {
+  width: 100%;
+  height: auto;
+}
+
+.achievements {
+  flex: 30%;
+  padding-left: 20px; /* Adjust spacing between image and achievements */
+  justify-content: center; /* Centers the content horizontally */
+  align-items: center; /* Centers the content vertically */
+  text-align: center;
+}
+
+.achievements h3 {
+  font-size: 20px; /* Adjust heading size */
+}
+
+.achievements ul {
+  list-style: none;
+  padding: 0;
+}
+
+.achievements ul li {
+  margin-bottom: 10px; /* Adjust spacing between list items */
+}
+
+.achievements ul li span {
+  font-size: 32px; /* Adjust size of numbers */
+  font-weight: bold;
+  color: #FF5733; /* Adjust color of numbers */
+}
+
+
+.about .aboutBottom h1 {
+  font-weight: 400;
+  font-size: 70px;
+  color: black;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  transform: translateY(-40px);
+  
+}

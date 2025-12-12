@@ -1,0 +1,261 @@
+/* Signin.css */
+
+.login-container {
+    display: flex;
+    align-items: center;
+    padding-top:50px;
+    justify-content: space-evenly;
+    width:100%;
+  }
+  
+  .login-image {
+    width:45%
+  
+  }
+  
+  .login-image img {
+    width: 100%; /* Ensure the image fills the container */
+    height: auto;
+  }
+  
+  .login-content {
+  width:450px;
+    padding: 20px; /* Adjust padding as needed */
+    background: linear-gradient(45deg, #ea8d8d85,  #a890fec7); /* Adjust colors and angle as needed */
+    border-radius:6px;
+    height:500px;
+    justify-content:center;
+     align-items:center;
+     margin-right:40px;
+    
+  }
+  .login-content h2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family:robotosans;
+    color:#00345f;
+    font-weight:bold;
+    font-size:40px;
+  }
+
+/* Navbar.css */
+.logo-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color:#f3f6f9;
+  color: white;
+  height:50px;
+  width:100%;
+  position:relative;
+}
+
+.bar {
+  position: relative;
+}
+
+.logo {
+  width: 100%px;
+  height: 40px;
+  margin-right: 10px;
+  
+}
+
+.logo2 {
+  
+  height: 55px;
+  margin-right: 10px;
+}
+/* Page gradient (diagonal) */
+.auth-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1565c0 0%, #00a8a8 100%);
+}
+
+/* centers the card */
+.auth-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 20px;
+}
+
+/* white split card */
+.auth-card {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  background: #fff;
+  height:500px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,.2);
+}
+.Title{
+  display: flex;
+    align-items: center !important;
+    height: 70px;
+    color: #fff;
+    padding: 20px;
+    background-color: #3A3FAD;
+}
+/* LEFT side */
+.auth-left {
+ 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+
+/* labels + inputs look like the mock (bottom border only) */
+.auth-label {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.srem;
+  color: #00345f;
+}
+
+.auth-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 2px 12px;
+  outline: none;
+  font-size: 0.98rem;
+  transition: border-color .2s, box-shadow .2s;
+  background: transparent;
+}
+
+.auth-input:focus {
+  border-bottom-color: #3b82f6;
+  box-shadow: 0 2px 0 0 #3b82f6;
+}
+
+/* actions */
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn-primary {
+  appearance: none;
+  border: none;
+  background: #3A3FAD;        /* green like the mock button */
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .05s ease, filter .2s ease;
+}
+
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:hover { filter: brightness(1.05); }
+
+.btn-ghost {
+  appearance: none;
+  background: transparent;
+  color: #3A3FAD;
+  border: 2px solid #7e81be;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .2s, color .2s, background .2s;
+}
+
+.btn-ghost:hover {
+  background: #ecf8ee;
+  border-color: #a8dbad;
+}
+
+/* RIGHT side image */
+.auth-right {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0));
+}
+
+.auth-hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fills like the reference */
+  display: block;
+}
+
+/* side-by-side fields */
+.auth-form {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr); /* label | input */
+ 
+  padding:90px 20px;;
+  
+  row-gap: 40px;
+  align-items: center;
+}
+
+/* override previous vertical label spacing for grid rows */
+.auth-form .auth-label {
+  margin: 0;               /* was margin-top: 10px */
+  text-align: left;
+ 
+}
+
+/* keep inputs full width within their column */
+.auth-form .auth-input {
+  width: 100%;
+}
+
+/* buttons row spans both columns */
+.auth-form .auth-actions {
+  grid-column: 1 / -1;
+}
+
+/* stack on small screens */
+@media (max-width: 480px) {
+  .auth-form { grid-template-columns: 1fr; }
+  .auth-form .auth-actions { grid-column: auto; }
+}
+
+
+/* Responsive */
+@media (max-width: 960px) {
+  .auth-card { grid-template-columns: 1fr; }
+  .auth-right { display: none; } /* hide image on small screens */
+  .auth-left { padding: 40px 28px; }
+}
+
+
+.heading {
+  margin: 0;
+  color:white;
+  background-color:#00345f;
+  height:150px;
+  font-size:38px;
+  align-items: center;
+  font-family:robotosans;
+  font-weight:bold;
+  display: flex;
+  justify-content: center;
+}
+
+#username {
+  width:100%;
+}
+
+
+
+#password {
+  width:100%;
+}
+
+  form input{
+    border-radius:6px;
+    margin-left:10px;
+    width:100%
+  }
+  form label{
+    font-size:20px;
+  }

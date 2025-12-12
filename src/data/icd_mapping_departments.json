@@ -1,0 +1,84 @@
+{
+  "icdMappings": [
+    {
+      "icdId": 1,
+      "icdName": "Stroke Comprehensive",
+      "departments": [1, 2, 4, 9, 10, 8, 5]
+    },
+    {
+      "icdId": 2,
+      "icdName": "Traumatic Brain Injury Comprehensive",
+      "departments": [1, 2, 4, 9, 10, 3, 8]
+    },
+    {
+      "icdId": 3,
+      "icdName": "Spinal Cord Injury Long-Term Comprehensive",
+      "departments": [1, 2, 4, 6, 10, 8]
+    },
+    {
+      "icdId": 4,
+      "icdName": "Multiple Sclerosis Comprehensive",
+      "departments": [1, 2, 4, 8, 10]
+    },
+    {
+      "icdId": 5,
+      "icdName": "Musculoskeletal post-Acute Comprehensive",
+      "departments": [2, 4, 6, 1]
+    },
+    {
+      "icdId": 6,
+      "icdName": "Low Back Pain Comprehensive",
+      "departments": [2, 4, 10, 8]
+    },
+    {
+      "icdId": 7,
+      "icdName": "Osteoarthritis Comprehensive",
+      "departments": [2, 4, 6, 8]
+    },
+    {
+      "icdId": 8,
+      "icdName": "Cardiopulmonary post-acute Comprehensive",
+      "departments": [1, 2, 8, 10]
+    },
+    {
+      "icdId": 9,
+      "icdName": "Diabetes Mellitus Comprehensive",
+      "departments": [1, 8, 5, 2]
+    },
+    {
+      "icdId": 10,
+      "icdName": "Children / Youth with Cerebral Palsy Comprehensive",
+      "departments": [2, 4, 9, 6, 10, 1]
+    },
+    {
+      "icdId": 11,
+      "icdName": "Vertigo Comprehensive",
+      "departments": [2, 7, 1]
+    },
+    {
+      "icdId": 12,
+      "icdName": "Hearing Loss Comprehensive",
+      "departments": [7, 9, 1]
+    },
+    {
+      "icdId": 13,
+      "icdName": "Vocational Rehabilitation Comprehensive",
+      "departments": [3, 10, 2, 4]
+    },
+    {
+      "icdId": 14,
+      "icdName": "Hand Condition Comprehensive",
+      "departments": [4, 2, 6, 1]
+    },
+    {
+      "icdId": 15,
+      "icdName": "Depression Comprehensive",
+      "departments": [10, 1]
+    },
+    {
+      "icdId": 16,
+      "icdName": "Bipolar Disorders Comprehensive",
+      "departments": [10, 1]
+    }
+  ]
+}

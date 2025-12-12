@@ -1,0 +1,202 @@
+.review-container {
+ 
+  color: #1e293b;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- Header ---------- */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.review-header h2 {
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.tag {
+  background-color: #eaf1ff;
+  border: 1px solid #d6e4ff;
+  color: #2563eb;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.currency {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2563eb;
+}
+
+.currency select {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #2563eb;
+  padding: 4px 8px;
+  font-weight: 500;
+}
+
+/* ---------- Subheaders ---------- */
+.subheader {
+  color: #475569;
+  margin: 16px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Buttons ---------- */
+.review-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.primary-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+}
+
+.primary-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.secondary-btn {
+  background-color: #f1f5f9;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+}
+
+.secondary-btn:hover {
+  background-color: #e2e8f0;
+}
+
+/* ---------- Sections ---------- */
+.review-section {
+  margin-top: 40px;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.review-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.review-box h3 {
+  color: #1e3a8a;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* ---------- Tables ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.data-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.data-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+/* ---------- Visuals ---------- */
+.chart-placeholder {
+  height: 120px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-line {
+  position: absolute;
+  bottom: 50%;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background-color: #2563eb;
+  transform: rotate(3deg);
+}
+
+.signoff {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.muted {
+  color: #94a3b8;
+}
+
+.green-text {
+  color: #059669;
+  font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+  .review-actions {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,362 @@
+.cse-container {
+
+ 
+  font-family: Arial, sans-serif;
+
+  padding: 20px;
+ 
+ 
+}
+
+h2 {
+  text-align: center;
+  color: #004080;
+}
+
+.timestamp {
+  text-align: right;
+  font-size: 13px;
+  color: gray;
+}
+
+.section {
+  border-left: 4px solid #0080ff;
+  padding-left: 12px;
+  margin-top: 25px;
+  background: #fafafa;
+  padding-bottom: 10px;
+}
+
+h3 {
+  margin-bottom: 8px;
+  color: #003366;
+}
+
+h4 {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-top: 6px;
+}
+
+
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.subheading {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.save-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 20px;
+  float: right;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
+}
+
+.subjective-container {
+  max-width: 750px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  padding: 20px 25px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+h2 {
+  text-align: center;
+  color: #004080;
+}
+
+.timestamp {
+  text-align: right;
+  color: #777;
+  font-size: 13px;
+}
+
+/* ---- MAIN CONTAINER ---- */
+.section-container {
+  max-width: 1000px;
+  margin: 20px auto;
+
+
+
+  padding: 20px 30px;
+
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+h2,
+h3 {
+  text-align: center;
+  color: #004080;
+  margin-bottom: 15px;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+/* ---- SECTION ---- */
+.sub-section {
+  background: #f9fbfd;
+  border-left: 4px solid #0078d7;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.sub-section h4 {
+  margin-bottom: 10px;
+  color: #003366;
+  font-size: 16px;
+}
+
+/* ---- FORM ELEMENTS ---- */
+label {
+  font-size: 13.5px;
+  color: #222;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* input,
+select,
+textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13.5px;
+  background: #fff;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+} */
+
+/* input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0078d7;
+  outline: none;
+  box-shadow: 0 0 3px rgba(0, 120, 215, 0.4);
+} */
+
+textarea {
+  min-height: 60px;
+}
+
+/* ---- GRID LAYOUT ---- */
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+/* For 3 items in one row */
+.triple-field {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* ---- SAVE BUTTON ---- */
+.save-btn {
+  background-color: #0078d7;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 15px;
+  float: right;
+  transition: background 0.2s ease;
+}
+
+.save-btn:hover {
+  background-color: #0056a4;
+}
+
+/* ---- KTC Tag ---- */
+.ktc-tag {
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+/* ---- TABS ---- */
+.tabb-container {
+  display: flex;
+  justify-content: center;
+  gap:20px;
+  margin-bottom: 20px;
+}
+
+.tabb {
+
+  gap:20px;
+  background-color: #f3f6f9;
+}
+
+.tabb-button {
+  background-color: #f2f4f800 !important;
+  border: 1px solid #ccc;
+  color: #004080;
+
+  border-radius: 6px 6px 0 0;
+  margin-right: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tabb-button.active {
+  background: #004080;
+  color: #fff;
+  border-color: #004080;
+}
+/* ---------------- Assessment Section Styling ---------------- */
+.sub-section {
+  background: #f9fbfd;
+  border-left: 4px solid #0078d7;
+  padding: 15px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sub-section h4 {
+  color: #004080;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.grid-row {
+  display: grid;
+ 
+  gap: 12px;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px 14px;
+  margin-top: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #dce3ea;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.checkbox-item:hover {
+  border-color: #007bff;
+  background: #f2f7ff;
+}
+
+.checkbox-item input {
+  margin-right: 8px;
+}
+
+/* -------------- FOIS Scale Styling -------------- */
+.fois-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fois-level {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.fois-level:hover {
+  opacity: 0.9;
+}
+
+.fois-level.selected {
+  box-shadow: inset 0 0 0 2px #fff;
+  font-weight: 600;
+}
+
+.fois-0 { background: #2e7d32; }
+.fois-1 { background: #66bb6a; }
+.fois-2 { background: #ffb300; }
+.fois-3 { background: #fb8c00; }
+.fois-4 { background: #f57c00; }
+.fois-5 { background: #ef5350; }
+.fois-6 { background: #c62828; }
+
+.fois-desc {
+  margin-top: 10px;
+  background: #eef5ff;
+  border-left: 3px solid #007bff;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 13.5px;
+  color: #333;
+}
+
+/* ---------- Save Button ---------- */
+.save-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  float: right;
+  transition: background 0.2s ease;
+}
+
+.save-btn:hover {
+  background-color: #005bb5;
+}
+
+.sub-section h4 {
+  margin-bottom: 10px;
+}
+
+.checkbox-grid {
+  margin-top: 8px;
+}

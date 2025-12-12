@@ -1,0 +1,55 @@
+/* Signup.css */
+
+.signup-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the contents horizontally */
+    
+  }
+  .signup-content form input {
+    width: 100%;
+    border-radius:6px;
+}
+.buttons{
+  padding-top:30px;
+  width:100%;
+}
+.signup-content h2 {
+  color:#00345f;
+  font-weight:bold;
+  font-family:robotosans;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family:robotosans;
+    color:#00345f;
+
+}
+form label{
+  font-family:'poppins';
+}
+form input{
+border:none;
+}
+.table td{
+  padding:0px;
+}
+
+  .signup-image {
+    flex: 1; /* Take up 50% of the width */
+    padding: 20px; /* Adjust padding as needed */
+  }
+  
+  .signup-image img {
+    width: 100%; /* Ensure the image fills the container */
+    height: auto;
+  }
+  
+  .signup-content {
+    flex: 1; /* Take up 50% of the width */
+    padding: 20px; /* Adjust padding as needed */
+    background: linear-gradient(45deg, #ea8d8d85,  #a890fec7); /* Adjust colors and angle as needed */
+    border-radius:6px;
+    margin-right:40px;
+  }
+  

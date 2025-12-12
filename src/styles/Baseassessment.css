@@ -1,0 +1,82 @@
+.base-container {
+  width: 100%;
+  background-color: #f9fafb;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* prevents content leaking outside container */
+  box-sizing: border-box;
+}
+
+/* === Scrollable Header Section === */
+.tab-header {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar appearance in most browsers but keep scroll functional */
+.tab-header::-webkit-scrollbar {
+  height: 6px;
+}
+.tab-header::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+.tab-header::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Tabs */
+.tab-button {
+  white-space: nowrap;
+  color: #3A3FAD !important;
+  background-color: #00000000 !important ;
+ 
+  margin-right: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.tab-button:hover {
+  background-color: #2f34a0;
+  color: #fff;
+}
+
+.tab-button.active {
+  background-color: #fff;
+  color: #3A3FAD;
+  border-bottom: 1px solid #3A3FAD;
+}
+
+/* === Tab Content === */
+.tab-content {
+  background-color: white;
+  padding: 16px;
+  border-radius: 0 0 6px 6px;
+  margin-top: 10px;
+  
+}
+
+.tab-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.tab-content p {
+  color: #4b5563;
+  font-size: 14px;
+}
