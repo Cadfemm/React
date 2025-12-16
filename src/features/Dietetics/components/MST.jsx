@@ -4,6 +4,8 @@
 // Parser-safe (no optional chaining / nullish coalescing).
 
 import React, { useEffect, useMemo, useState } from "react";
+import SelectField from "../../../shared/form/fields/SelectField";
+import TextField from "../../../shared/form/fields/TextField";
 
 export default function MST(props , onSave, assessmentName = "MST", initialFormData = null) {
   var patientProp = props && props.patient ? props.patient : {};
@@ -240,29 +242,51 @@ const handleSave = () => {
           <div style={styles.small}>Select 'Yes' to reveal amount options.</div>
 
           <div style={{ marginTop: 10, width: 320 }}>
-            <select style={styles.dropdown} value={weightLostYN} onChange={function (e) { setWeightLostYN(e.target.value); if (e.target.value !== "yes") { setWeightBand(""); setCustomPounds(""); } }}>
-              <option value="">Select</option>
-              <option value="no">No</option>
-              <option value="yes">Yes</option>
-            </select>
+<SelectField
+  label="Have you recently lost weight without trying?"
+  value={weightLostYN}
+  options={[
+    { label: "Select", value: "" },
+    { label: "No", value: "no" },
+    { label: "Yes", value: "yes" }
+  ]}
+  onChange={(val) => {
+    setWeightLostYN(val);
+    if (val !== "yes") {
+      setWeightBand("");
+      setCustomPounds("");
+    }
+  }}
+/>
           </div>
 
           {weightLostYN === "yes" && (
             <div style={{ marginTop: 12 }}>
-              <label style={{ display: "block", marginBottom: 6, fontWeight: 700 }}>If yes — select weight lost (lbs):</label>
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <select style={{ ...styles.dropdown, width: 240 }} value={weightBand} onChange={function (e) { setWeightBand(e.target.value); }}>
-                  <option value="">Select amount</option>
-                  <option value="2-13">2–13 lbs — 1 point</option>
-                  <option value="14-23">14–23 lbs — 2 points</option>
-                  <option value="24-33">24–33 lbs — 3 points</option>
-                  <option value=">=34">≥ 34 lbs — 4 points</option>
-                  <option value="unsure">Unsure — 2 points</option>
-                </select>
+<SelectField
+  label="If yes — select weight lost (lbs)"
+  value={weightBand}
+  options={[
+    { label: "Select amount", value: "" },
+    { label: "2–13 lbs — 1 point", value: "2-13" },
+    { label: "14–23 lbs — 2 points", value: "14-23" },
+    { label: "24–33 lbs — 3 points", value: "24-33" },
+    { label: "≥ 34 lbs — 4 points", value: ">=34" },
+    { label: "Unsure — 2 points", value: "unsure" }
+  ]}
+  onChange={setWeightBand}
+/>
+
 
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <label style={{ fontSize: 13 }}>Or exact lbs (optional)</label>
-                  <input type="number" min="0" style={{ width: 110, padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db" }} value={customPounds} onChange={function (e) { setCustomPounds(e.target.value); }} />
+                 <TextField
+  type="number"
+  label="Exact weight lost (lbs)"
+  value={customPounds}
+  onChange={setCustomPounds}
+/>
+
                 </div>
 
                 <div style={{ marginLeft: "auto", fontSize: 13, color: "#6b7280" }}>
@@ -281,11 +305,17 @@ const handleSave = () => {
           <div style={styles.small}>Choose the appropriate answer.</div>
 
           <div style={{ marginTop: 10, width: 220 }}>
-            <select style={styles.dropdown} value={appetiteStatus} onChange={function (e) { setAppetiteStatus(e.target.value); }}>
-              <option value="">Select</option>
-              <option value="no">No — 0 points</option>
-              <option value="yes">Yes — 1 point</option>
-            </select>
+<SelectField
+  label="Have you been eating poorly because of decreased appetite?"
+  value={appetiteStatus}
+  options={[
+    { label: "Select", value: "" },
+    { label: "No — 0 points", value: "no" },
+    { label: "Yes — 1 point", value: "yes" }
+  ]}
+  onChange={setAppetiteStatus}
+/>
+
           </div>
 
           <div style={{ marginTop: 10, fontSize: 13, color: "#6b7280" }}>
