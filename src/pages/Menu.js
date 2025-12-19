@@ -46,7 +46,8 @@ import { sx } from "../components/RowCard";
 import InvestigationsChecklist from "../components/InvestigationsChecklist";
 import BookAppointmentTab from "../components/BookAppointmentTab";
 import GasGoalsTab from "../components/GasGoalsTab";
-import PsychologyDepartmentPage from "../features/Psychology/pages/PsychologyPatientspage";
+import PsychologyDashboard from "../features/Psychology/components/PychologyDashboard";
+// import PsychologyDepartmentPage from "../features/Psychology/pages/PsychologyPatientspage";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -705,7 +706,7 @@ export function MainContent({
       return <DepartmentPage patients={patients} department="Physio Therapy" />;
 
     case "Psychology":
-      return <PsychologyDepartmentPage patients={patients} department="Psychology" />;
+      return <PsychologyDashboard />;
 
         case "Dietetics":
       return <DietDepartmentPage patients={patients} department="Dietetics" />;

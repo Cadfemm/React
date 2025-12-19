@@ -8,10 +8,7 @@
  
 }
 
-h2 {
-  text-align: center;
-  color: #004080;
-}
+
 
 .timestamp {
   text-align: right;
@@ -27,21 +24,8 @@ h2 {
   padding-bottom: 10px;
 }
 
-h3 {
-  margin-bottom: 8px;
-  color: #003366;
-}
 
-h4 {
-  margin-top: 12px;
-  margin-bottom: 6px;
-  color: #333;
-}
 
-label {
-  display: block;
-  margin-top: 6px;
-}
 
 
 
@@ -82,10 +66,7 @@ label {
   border: 1px solid #ccc;
 }
 
-h2 {
-  text-align: center;
-  color: #004080;
-}
+
 
 .timestamp {
   text-align: right;
@@ -105,12 +86,7 @@ h2 {
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
-h2,
-h3 {
-  text-align: center;
-  color: #004080;
-  margin-bottom: 15px;
-}
+
 
 .timestamp {
   font-size: 12px;

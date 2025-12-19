@@ -18,6 +18,8 @@ import SpinalInjury from "./pages/SpinalInjury";
 import stroke from "./pages/stroke";
 import latest from "./pages/Carddisplay.js";
 import PatientDetails from "./features/Psychology/components/PatientDetails.jsx";
+import PsychologyDashboard from "./features/Psychology/components/PychologyDashboard.jsx";
+import Patients from "./features/Psychology/components/PsychologyPatients.jsx";
 
 function App() {
   return (
@@ -44,15 +46,27 @@ function App() {
           <Route path="/Spinalinjury" exact component={SpinalInjury} />
           <Route path="/Output" exact component={Output} />
           <Route path="/Signup" exact component={Signup} />
+          <Route
+            path="/psychology-dashboard"
+            exact
+            component={PsychologyDashboard}
+          />
+
+          <Route
+            path="/psychologypatients"
+            exact
+            component={Patients}
+          />
+
           <Route path="/psychology/patient/:id" element={<PatientDetails />} />
           <Route path="/Modalities" exact component={latest} />
 
         </Switch>
 
         {/* Footer */}
-        <Route
+        {/* <Route
           render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Footer />}
-        />
+        /> */}
       </Router>
     </div>
   );
