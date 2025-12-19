@@ -11,7 +11,7 @@ const AssessmentComponents = {
   // ... other assessments
 };
 
-export default function AssessmentRenderer({ selected, onSave, initialFormData }) {
+export default function AssessmentRenderer({ selected, onSave,onBack, initialFormData }) {
   if (!selected) return <p>Select an assessment</p>;
   const Component = AssessmentComponents[selected];
   if (!Component) return <p>No component for {selected}</p>;
@@ -28,5 +28,6 @@ export default function AssessmentRenderer({ selected, onSave, initialFormData }
            onSubmit={handleOnSubmit}
            assessmentName={selected}
            initialFormData={initialFormData}
+            onBack={onBack} 
          />;
 }

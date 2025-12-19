@@ -11,6 +11,7 @@
 }  
 
 
+
 .treat{
    color:#00345f;
    font-weight: bold;
@@ -714,6 +715,10 @@ h3 {
 
 
 
+button:disabled {
+  /* background-color: #9b9b9b; */
+  cursor: not-allowed;
+}
 .form-grid {
   display: flex;
   flex-wrap: wrap; /* Allow items to wrap to the next line */

@@ -354,8 +354,7 @@ padding: 5px 15px;
       .icf-row { padding:10px; border:1px solid #e9eef7; border-radius:10px;  }
       .icf-head { margin-bottom:4px; }
       .icf-sub { color:#334155; }
-      .badge { display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:12px; background:#eef6ff; border:1px solid #cfe1ff;color:#000332; font-size:12px; }
-      .badge.soft { background:#f7fafc; border-color:#e5edf7; }
+     
  
       .pill { padding:8px 12px; border:1px solid #dbe6f3; border-radius:12px; background:#fff; }
      ul.flat { list-style:none; margin:0; padding-left:25px; }
