@@ -74,12 +74,12 @@ form {
  
 }
 
-form input {
+/* form input {
   height: 40px;
   border: none;
   border-bottom: 1px solid #121619;
   color: black;
-}
+} */
 
 form textarea {
   margin-top: 15px;
