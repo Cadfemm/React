@@ -5,27 +5,33 @@
   flex-direction: column;
   font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
-
-body {
-  padding: 0;
+ 
+body{
+  height: 100%;
+  overflow: hidden;
   margin: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
-/* Add to App.css */
 
+/* Add to App.css */
+ 
 .main {
   flex: 1;
   overflow-x: hidden; /* Prevent main from scrolling */
   display: flex;
   flex-direction: column;
 }
-
+ 
 .main > section {
   height: 100%;
   overflow-x: hidden; /* Each section manages its own scroll */
 }
+ 
+ 
+  .tabs-row::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+
+
 
 /* Ensure body doesn't scroll when in doctor assessment */
 body {
@@ -34,13 +40,13 @@ body {
   overflow-x: hidden; /* Change from overflow-x: hidden */
   height: 100vh;
 }
-
+ 
 .page {
   display: flex;
   height: 100vh;
   overflow-x: hidden;
 }
-
+ 
 .footer-wrapper {
   margin: 4rem 0rem;
   display: flex;
@@ -78,87 +84,4 @@ body {
   font-weight: 600;
   color: #4c4c4c;
   cursor: pointer;
-}
-/* app.css */
-/* .btn{border:1px solid #e6e9ef;background:#fff;border-radius:8px;padding:8px 10px;font-size:13px;cursor:pointer} */
-/* .btn:hover{background:#f2f5ff}
-.dim{color:#64748b} */
-
-h1 {
-  font-size: 28px;     /* Page title */
-  font-weight: 600;
-  line-height: 28px;
-  color:#0f172a;
-  margin: 0 0 16px 0;
-}
-
-h2 {
-  font-size: 24px;     /* Section title */
-  font-weight: 600;
-   color:#0f172a;
-  line-height: 24px;
-  margin: 0 0 12px 0;
-}
-
-h3 {
-  font-size: 20px;     /* Card title */
-  font-weight: 500;
-  line-height: 22px;
-   color:#0f172a;
-  margin: 0 0 8px 0;
-}
-
-p {
-  font-size: 14px;
-  line-height: 20px;
-  color: #0f172a;
-  margin: 0 0 8px 0;
-}
-
-.btn {
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #0f172a;
-}
-
-.btn:hover {
-  background: #f1f5f9;
-}
-
-/* Primary */
-.btn-primary {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background: #1e40af;
-}
-
-/* Danger */
-
-
-/* Success (rare) */
-.btn-success {
-  background: #16a34a;
-  border-color: #16a34a;
-  color: #ffffff;
-}
-
-.btn-success:hover {
-  background: #15803d;
-}
-
-/* Disabled */
-.btn:disabled {
-  background: #e5e7eb;
-  color: #94a3b8;
-  border-color: #e5e7eb;
-  cursor: not-allowed;
 }

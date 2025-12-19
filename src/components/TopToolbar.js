@@ -132,19 +132,19 @@ function TopToolbar({
       </div>
 
       {/* ---- Second row: Action buttons ---- */}
-      <div style={{ display: "flex", justifyContent: "flex-end", margin: "2px 12px" }}>
+      {/* <div style={{ display: "flex", justifyContent: "flex-end", margin: "2px 12px" }}> */}
         {/* <button className="btn topbtn" onClick={onBook}>
           Book Appointment
         </button> */}
 
-        <button className="btn topbtn" onClick={onOrder}>
+        {/* <button className="btn topbtn" onClick={onOrder}>
           Submit
         </button>
 
         <button className="btn topbtn" style={{backgroundColor:"#615c5cff"}} onClick={onSaveAll}>
           AI Prediction
         </button>
-      </div>
+      </div> */}
     </>
   );
 }
