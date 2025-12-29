@@ -12,7 +12,7 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
 
   /* ---------------- SCHEMA ---------------- */
   const PHQ9_SCHEMA = {
-    title: "Patient Health Questionnaire (PHQ)",
+    title: "Patient Health Questionnaire (PHQ-9)",
     actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -31,7 +31,7 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
       "Thoughts that you would be better off dead or of hurting yourself in some way."
     ].map((text, index) => ({
       name: `q${index + 1}`,
-      label: `${text}`,
+      label: `${index + 1}. ${text}`,
       type: "single-select",
       options: [
         { label: "Not at all (0)", value: 0 },
@@ -134,19 +134,25 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
         onAction={handleAction}
       >
         {/* ---------- SUMMARY ---------- */}
-        <div style={summaryWrap}>
-          <div style={scoreBox}>
-            Total Score: {totalScore}
-          </div>
+         <div style={summaryWrap}>
+  {/* Row 1: Score + Severity */}
+  <div style={scoreRow}>
+    <div style={scorePill}>
+      Total Score: {totalScore}
+    </div>
 
-          <div style={severityBox}>
-            Depression Severity: {severity}
-          </div>
+    <div style={severityPill}>
+      Anxiety Severity: {severity}
+    </div>
+  </div>
 
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit PHQ-9 Assessment
-          </button>
-        </div>
+  {/* Row 2: Submit button */}
+  <div style={submitRow}>
+    <button style={submitBtn} onClick={handleSubmit}>
+      Submit
+    </button>
+  </div>
+</div>
       </CommonFormBuilder>
     </div>
   );
@@ -159,38 +165,53 @@ const mainContent = {
 };
 
 const summaryWrap = {
-  marginTop: 20,
+  width: "90%",
+  margin: "24px auto 0",
+  padding: 20
+};
+
+const scoreRow = {
   display: "flex",
-  flexDirection: "column",
-  gap: 10
+  gap: 16,
+  flexWrap: "wrap"
+};
+const severityPill = {
+  flex: 1,
+  background: "#FFF7ED",        // light orange
+  border: "1px solid #FED7AA",  // orange border
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+   color: "#1f2937",         // dark orange text
+  minWidth: 260
 };
 
-const scoreBox = {
-  background: "#eef2ff",
-  border: "1px solid #c7d2fe",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+
+const scorePill = {
+  flex: 1,
+  background: "#f1f5ff",
+  border: "1px solid #d6e2ff",
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+  color: "#1f2937",
+  minWidth: 260
 };
 
-const severityBox = {
-  background: "#fff7ed",
-  border: "1px solid #fed7aa",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 24
 };
 
 const submitBtn = {
-  marginTop: 10,
-  padding: "12px 26px",
-  background: "#2563eb",
+  padding: "12px 34px",
+  background: "#2563EB",
   color: "#fff",
   border: "none",
   borderRadius: 10,
   fontSize: 15,
-  fontWeight: 700,
-  cursor: "pointer"
+  fontWeight: 700
 };

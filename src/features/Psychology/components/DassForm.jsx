@@ -16,7 +16,7 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
 
   /* ================= SCHEMA ================= */
   const DASS_SCHEMA = {
-    title: "Depression Anxiety Stress Scale (DASS)",
+    title: "Depression Anxiety Stress Scale (DASS-21)",
     actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -24,27 +24,27 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
       { type: "save", label: "Save" }
     ],
     fields: [
-      { name: "q1", label: "I found it hard to wind down." },
-      { name: "q2", label: "I was aware of dryness of my mouth." },
-      { name: "q3", label: "I couldn’t seem to experience any positive feeling at all." },
-      { name: "q4", label: "I experienced breathing difficulty." },
-      { name: "q5", label: "I found it difficult to work up the initiative to do things." },
-      { name: "q6", label: "I tended to over-react to situations." },
-      { name: "q7", label: "I experienced trembling." },
-      { name: "q8", label: "I felt that I was using a lot of nervous energy." },
-      { name: "q9", label: "I was worried about situations in which I might panic." },
-      { name: "q10", label: "I felt that I had nothing to look forward to." },
-      { name: "q11", label: "I found myself getting agitated." },
-      { name: "q12", label: "I found it difficult to relax." },
-      { name: "q13", label: "I felt down-hearted and blue." },
-      { name: "q14", label: "I was intolerant of anything that kept me from getting on." },
-      { name: "q15", label: "I felt I was close to panic." },
-      { name: "q16", label: "I was unable to become enthusiastic." },
-      { name: "q17", label: "I felt I wasn’t worth much as a person." },
-      { name: "q18", label: "I felt that I was rather touchy." },
-      { name: "q19", label: "I was aware of the action of my heart." },
-      { name: "q20", label: "I felt scared without any good reason." },
-      { name: "q21", label: "I felt that life was meaningless." }
+      { name: "q1", label: "1. I found it hard to wind down." },
+      { name: "q2", label: "2. I was aware of dryness of my mouth." },
+      { name: "q3", label: "3. I couldn’t seem to experience any positive feeling at all." },
+      { name: "q4", label: "4. I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)." },
+      { name: "q5", label: "5. I found it difficult to work up the initiative to do things." },
+      { name: "q6", label: "6. I tended to over-react to situations." },
+      { name: "q7", label: "7. I experienced trembling." },
+      { name: "q8", label: "8. I felt that I was using a lot of nervous energy." },
+      { name: "q9", label: "9. I was worried about situations in which I might panic and make a fool of myself." },
+      { name: "q10", label: "10. I felt that I had nothing to look forward to." },
+      { name: "q11", label: "11. I found myself getting agitated." },
+      { name: "q12", label: "12. I found it difficult to relax." },
+      { name: "q13", label: "13. I felt down-hearted and blue." },
+      { name: "q14", label: "14. I was intolerant of anything that kept me from getting on with what I was doing." },
+      { name: "q15", label: "15. I felt I was close to panic." },
+      { name: "q16", label: "16. I was unable to become enthusiastic." },
+      { name: "q17", label: "17. I felt I wasn’t worth much as a person." },
+      { name: "q18", label: "18. I felt that I was rather touchy." },
+      { name: "q19", label: "19. I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat)." },
+      { name: "q20", label: "20. I felt scared without any good reason." },
+      { name: "q21", label: "21. I felt that life was meaningless." }
     ].map(f => ({
       ...f,
       type: "single-select",
@@ -161,18 +161,19 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
         onAction={handleAction}
       >
         <div style={scoreRow}>
-          {["depression", "anxiety", "stress"].map(type => (
+          {["depression", "anxiety", "stress"].map((type) => (
             <div key={type} style={scoreBox}>
-              {type.toUpperCase()} SCORE : {scores[type]} ({severity(scores[type], type)})
+              {type.toUpperCase()} SCORE : {scores[type]} (
+              {severity(scores[type], type)})
             </div>
           ))}
         </div>
+
 
         <div style={submitRow}>
           <button
             style={{
               ...submitBtn,
-          
             }}
             disabled={!allRequiredFilled()}
             onClick={handleSubmit}
@@ -191,19 +192,25 @@ const mainContent = { margin: "0 auto" };
 
 const scoreRow = {
   display: "flex",
-  flexDirection: "column",
-  gap: 10,
-  marginTop: 16
+  gap: 16,
+  marginTop: 20,
+  flexWrap: "wrap",        // responsive on small screens
 };
 
 const scoreBox = {
+  flex: 1,
+  minWidth: 150,
   background: "#f1f5ff",
   border: "1px solid #d6e2ff",
-  borderRadius: 6,
-  padding: "6px 12px",
-  fontSize: 14,
-  fontWeight: 600
+  borderRadius: 10,
+  padding: "8px 12px",
+  fontSize: 15,
+  fontWeight: 600,
+  color: "#1f2937",
+  display: "flex",
+  alignItems: "center",
 };
+
 
 const submitRow = {
   display: "flex",

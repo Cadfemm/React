@@ -20,16 +20,16 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack }) {
       { type: "save", label: "Save" }
     ],
     fields: [
-      { name: "q1", label: "In the last month, how often have you been upset because of something that happened unexpectedly?" },
-      { name: "q2", label: "In the last month, how often have you felt that you were unable to control the important things in your life?" },
-      { name: "q3", label: "In the last month, how often have you felt nervous and stressed?" },
-      { name: "q4", label: "In the last month, how often have you felt confident about your ability to handle your personal problems?" },
-      { name: "q5", label: "In the last month, how often have you felt that things were going your way?" },
-      { name: "q6", label: "In the last month, how often have you found that you could not cope with all the things that you had to do?" },
-      { name: "q7", label: "In the last month, how often have you been able to control irritations in your life?" },
-      { name: "q8", label: "In the last month, how often have you felt that you were on top of things?" },
-      { name: "q9", label: "In the last month, how often have you been angered because of things that were outside of your control?" },
-      { name: "q10", label: "In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?" }
+      { name: "q1", label: "1. In the last month, how often have you been upset because of something that happened unexpectedly?" },
+      { name: "q2", label: "2. In the last month, how often have you felt that you were unable to control the important things in your life?" },
+      { name: "q3", label: "3. In the last month, how often have you felt nervous and stressed?" },
+      { name: "q4", label: "4. In the last month, how often have you felt confident about your ability to handle your personal problems?" },
+      { name: "q5", label: "5. In the last month, how often have you felt that things were going your way?" },
+      { name: "q6", label: "6. In the last month, how often have you found that you could not cope with all the things that you had to do?" },
+      { name: "q7", label: "7. In the last month, how often have you been able to control irritations in your life?" },
+      { name: "q8", label: "8. In the last month, how often have you felt that you were on top of things?" },
+      { name: "q9", label: "9. In the last month, how often have you been angered because of things that were outside of your control?" },
+      { name: "q10", label: "10. In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?" }
     ].map(f => ({
       ...f,
       type: "single-select",
@@ -136,19 +136,26 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack }) {
         onAction={handleAction}
       >
         {/* ---------- SUMMARY ---------- */}
-        <div style={summaryWrap}>
-          <div style={scoreBox}>
-            Total Score: {totalScore}
-          </div>
+      <div style={summaryWrap}>
+  {/* Row 1: Score + Severity */}
+  <div style={scoreRow}>
+    <div style={scorePill}>
+      Total Score: {totalScore}
+    </div>
 
-          <div style={severityBox}>
-            Stress Severity: {severity}
-          </div>
+    <div style={severityPill}>
+      Anxiety Severity: {severity}
+    </div>
+  </div>
 
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit PSS Assessment
-          </button>
-        </div>
+  {/* Row 2: Submit button */}
+  <div style={submitRow}>
+    <button style={submitBtn} onClick={handleSubmit}>
+      Submit
+    </button>
+  </div>
+</div>
+
       </CommonFormBuilder>
     </div>
   );
@@ -161,38 +168,54 @@ const mainContent = {
 };
 
 const summaryWrap = {
-  marginTop: 20,
+  width: "90%",
+  margin: "24px auto 0",
+  padding: 20
+};
+
+const scoreRow = {
   display: "flex",
-  flexDirection: "column",
-  gap: 10
+  gap: 16,
+  flexWrap: "wrap"
+};
+const severityPill = {
+  flex: 1,
+  background: "#FFF7ED",        // light orange
+  border: "1px solid #FED7AA",  // orange border
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+   color: "#1f2937",         // dark orange text
+  minWidth: 260
 };
 
-const scoreBox = {
-  background: "#eef2ff",
-  border: "1px solid #c7d2fe",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+
+const scorePill = {
+  flex: 1,
+  background: "#f1f5ff",
+  border: "1px solid #d6e2ff",
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+  color: "#1f2937",
+  minWidth: 260
 };
 
-const severityBox = {
-  background: "#fff7ed",
-  border: "1px solid #fed7aa",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 24
 };
 
 const submitBtn = {
-  marginTop: 10,
-  padding: "12px 26px",
-  background: "#2563eb",
+  padding: "12px 34px",
+  background: "#2563EB",
   color: "#fff",
   border: "none",
   borderRadius: 10,
   fontSize: 15,
-  fontWeight: 700,
-  cursor: "pointer"
+  fontWeight: 700
 };
+

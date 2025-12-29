@@ -1,140 +1,23 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import PsychologyAssessmentForm from "./PsychologyAssignments"
+import PsychologyAssessmentForm from "./PsychologyAssignments";
 
-
-export default function Patients() {
-  const history = useHistory();
+export default function Patients({ onBack }) {
   const [tab, setTab] = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   const newPatients = [
-    { id:2,name: "Asfas", icd: "Stroke", status: "New" },
-    { id:3,name: "Rahul", icd: "Depression", status: "New" }
+    { id: 2, name: "Asfas", icd: "Stroke", status: "New" },
+    { id: 3, name: "Rahul", icd: "Depression", status: "New" }
   ];
 
   const existingPatients = [
-    { id:4,name: "Anita", icd: "Anxiety", status: "Ongoing" },
-    { id:5,name: "Kiran", icd: "PTSD", status: "Follow-up" }
+    { id: 4, name: "Anita", icd: "Anxiety", status: "Ongoing" },
+    { id: 5, name: "Kiran", icd: "PTSD", status: "Follow-up" }
   ];
 
-  const data = tab === "new" ? newPatients : existingPatients;
+  const patients = tab === "new" ? newPatients : existingPatients;
 
-  const styles = {
-    wrapper: {
-      padding: 24,
-      background: "#F8FAFC",
-      minHeight: "100vh"
-    },
-
-    header: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: 18
-    },
-
-    back: {
-      cursor: "pointer",
-      color: "#2563EB",
-      fontWeight: 600,
-      fontSize: 14
-    },
-
-    title: {
-      fontSize: 20,
-      fontWeight: 700,
-      color: "#0F172A"
-    },
-
-    tabs: {
-      display: "flex",
-      gap: 20,
-      borderBottom: "1px solid #E5E7EB",
-      marginBottom: 20
-    },
-
-    tab: (active) => ({
-      paddingBottom: 10,
-      fontWeight: 600,
-      cursor: "pointer",
-      color: active ? "#2563EB" : "#64748B",
-      borderBottom: active ? "3px solid #2563EB" : "3px solid transparent"
-    }),
-
-    card: {
-      background: "#fff",
-      borderRadius: 16,
-      border: "1px solid #EEF2F7",
-      overflow: "hidden"
-    },
-
-    row: {
-      display: "grid",
-      gridTemplateColumns: "2fr 2fr 1.5fr 1fr",
-      padding: "14px 18px",
-      alignItems: "center"
-    },
-
-    headerRow: {
-      background: "#F9FAFB",
-      fontSize: 13,
-      fontWeight: 600,
-      color: "#6B7280"
-    },
-
-    bodyRow: {
-      borderTop: "1px solid #EEF2F7",
-      cursor: "pointer",
-      transition: "background 0.2s ease"
-    },
-
-    name: {
-      fontWeight: 600,
-      color: "#0F172A"
-    },
-
-    icd: {
-      color: "#475569",
-      fontSize: 14
-    },
-
-    badge: (status) => ({
-      display: "inline-block",
-      padding: "4px 10px",
-      borderRadius: 999,
-      fontSize: 12,
-      fontWeight: 600,
-      background:
-        status === "New"
-          ? "#EEF2FF"
-          : status === "Ongoing"
-            ? "#ECFDF5"
-            : "#FFF7ED",
-      color:
-        status === "New"
-          ? "#4338CA"
-          : status === "Ongoing"
-            ? "#047857"
-            : "#B45309"
-    }),
-
-    start: {
-      textAlign: "right"
-    },
-
-    startBtn: {
-      padding: "6px 14px",
-      borderRadius: 8,
-      background: "#2563EB",
-      color: "#fff",
-      fontSize: 13,
-      fontWeight: 600,
-      border: "none",
-      cursor: "pointer"
-    }
-  };
-
+  /* ---------------- RENDER ASSESSMENT ---------------- */
   if (selectedPatient) {
     return (
       <PsychologyAssessmentForm
@@ -145,33 +28,46 @@ export default function Patients() {
   }
 
   return (
-    <div style={styles.wrapper}>
-      {/* HEADER */}
+    <div style={styles.page}>
+      {/* ================= HEADER ================= */}
       <div style={styles.header}>
         <div>
-          <div style={styles.title}>Patients</div>
+          <h1 style={styles.title}>Patients</h1>
+          <p style={styles.subtitle}>
+            Manage and start psychology assessments
+          </p>
         </div>
-        <div style={styles.back} onClick={() => history.push("/psychologypatients")}>
+
+        <button style={styles.backBtn} onClick={onBack}>
           ← Back to Dashboard
-        </div>
+        </button>
       </div>
 
-      {/* TABS */}
+      {/* ================= TABS ================= */}
       <div style={styles.tabs}>
-        <div style={styles.tab(tab === "new")} onClick={() => setTab("new")}>
+        <button
+          style={{
+            ...styles.tab,
+            ...(tab === "new" ? styles.activeTab : {})
+          }}
+          onClick={() => setTab("new")}
+        >
           New Patients
-        </div>
-        <div
-          style={styles.tab(tab === "existing")}
+        </button>
+
+        <button
+          style={{
+            ...styles.tab,
+            ...(tab === "existing" ? styles.activeTab : {})
+          }}
           onClick={() => setTab("existing")}
         >
           Existing Patients
-        </div>
+        </button>
       </div>
 
-      {/* TABLE CARD */}
+      {/* ================= TABLE ================= */}
       <div style={styles.card}>
-        {/* HEADER ROW */}
         <div style={{ ...styles.row, ...styles.headerRow }}>
           <div>Patient</div>
           <div>ICD</div>
@@ -179,28 +75,31 @@ export default function Patients() {
           <div style={{ textAlign: "right" }}>Action</div>
         </div>
 
-        {/* DATA ROWS */}
-        {data.map((p, i) => (
+        {patients.map((p) => (
           <div
-            key={i}
+            key={p.id}
             style={styles.row}
-            className="row"
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#F8FAFC")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "#F8FAFC")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "#FFFFFF")
+            }
           >
             <div style={styles.name}>{p.name}</div>
             <div style={styles.icd}>{p.icd}</div>
+
             <div>
               <span style={styles.badge(p.status)}>{p.status}</span>
             </div>
-            <div style={styles.start}>
+
+            <div style={{ textAlign: "right" }}>
               <button
                 style={styles.startBtn}
                 onClick={() => setSelectedPatient(p)}
               >
                 Start →
               </button>
-
             </div>
           </div>
         ))}
@@ -208,3 +107,127 @@ export default function Patients() {
     </div>
   );
 }
+
+/* ================= STYLES ================= */
+
+const styles = {
+  page: {
+    padding: 32,
+    background: "#F8FAFC",
+    minHeight: "100vh"
+  },
+
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 28
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: 800,
+    color: "#0F172A",
+    marginBottom: 4
+  },
+
+  subtitle: {
+    fontSize: 14,
+    color: "#64748B"
+  },
+
+  backBtn: {
+    background: "transparent",
+    border: "1px solid #CBD5E1",
+    padding: "8px 14px",
+    borderRadius: 10,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    color: "#2563EB"
+  },
+
+  tabs: {
+    display: "flex",
+    gap: 20,
+    borderBottom: "1px solid #E5E7EB",
+    marginBottom: 24
+  },
+
+  tab: {
+    paddingBottom: 12,
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    color: "#64748B"
+  },
+
+  activeTab: {
+    color: "#2563EB",
+    borderBottom: "3px solid #2563EB"
+  },
+
+  card: {
+    background: "#FFFFFF",
+    borderRadius: 16,
+    border: "1px solid #E5E7EB",
+    overflow: "hidden"
+  },
+
+  row: {
+    display: "grid",
+    gridTemplateColumns: "2fr 2fr 1.5fr 1fr",
+    padding: "16px 20px",
+    alignItems: "center"
+  },
+
+  headerRow: {
+    background: "#F9FAFB",
+    fontSize: 13,
+    fontWeight: 700,
+    color: "#6B7280"
+  },
+
+  name: {
+    fontWeight: 700,
+    fontSize: 15,
+    color: "#0F172A"
+  },
+
+  icd: {
+    fontSize: 14,
+    color: "#475569"
+  },
+
+  badge: (status) => ({
+    padding: "5px 12px",
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 700,
+    background:
+      status === "New"
+        ? "#EEF2FF"
+        : status === "Ongoing"
+        ? "#ECFDF5"
+        : "#FFF7ED",
+    color:
+      status === "New"
+        ? "#4338CA"
+        : status === "Ongoing"
+        ? "#047857"
+        : "#B45309"
+  }),
+
+  startBtn: {
+    background: "#2563EB",
+    color: "#FFFFFF",
+    border: "none",
+    padding: "8px 16px",
+    borderRadius: 10,
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: "pointer"
+  }
+};

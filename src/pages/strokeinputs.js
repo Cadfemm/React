@@ -350,7 +350,7 @@ const handleShowInputs = (disease) => {
         <option value="Functional">Functional Independent Scale</option>
         <option value="Ataxia">Ataxia</option>
         <option value="Sensorimotor">Sensorimotor Function</option>
-        <option value="Bowl&Bladder">Bowl & Bladder</option>
+        <option value="Bowl&Bladder">Bowel & Bladder</option>
         <option value="Cognitive">Cognitive Assessment</option>
       </select>
       {selectedDiseases.length > 0 && !autoFillDisplayed && (

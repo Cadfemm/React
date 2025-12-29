@@ -20,20 +20,20 @@ export default function HAM_A_FormBuilder({ patient, onSubmit, onBack }) {
       { type: "save", label: "Save" }
     ],
     fields: [
-      "Anxious mood - Worries, anticipation of the worst, irritability",
-      "Tension - Feelings of tension, trembling, restlessness",
-      "Fears - Of dark, strangers, being alone, crowds",
-      "Insomnia - Difficulty falling or staying asleep",
+      "Anxious mood - Worries, anticipation of the worst, fearful anticipation, irritability",
+      "Tension - Feelings of tension, fatigability, startle response, moved to tears easily, trembling, feelings of restlessness, inability to relax",
+      "Fears - Of dark, of strangers, of being left alone, of animals, of traffic, of crowds",
+      "Insomnia - Difficulty in falling asleep, broken sleep, unsatisfying sleep and fatigue on waking, dreams, nightmares, night terrorsInsomnia - Difficulty falling or staying asleep",
       "Intellectual - Difficulty concentrating, poor memory",
-      "Depressed mood - Loss of interest, early waking",
-      "Somatic (muscular) - Aches, stiffness, twitching",
-      "Somatic (sensory) - Tinnitus, blurred vision, flushes",
-      "Cardiovascular - Palpitations, chest pain",
-      "Respiratory - Chest tightness, choking sensation",
-      "Gastrointestinal - Nausea, abdominal discomfort",
-      "Genitourinary - Urgency, loss of libido",
-      "Autonomic - Dry mouth, sweating, dizziness",
-      "Behavior at interview - Restlessness, tremor"
+      "Depressed mood - Loss of interest, lack of pleasure in hobbies, depression, early waking, diurnal swing",
+      "Somatic (muscular) - Pains and aches, twitching, stiffness, myoclonic jerks, grinding of teeth, unsteady voice, increased muscular toneSomatic (muscular) - Aches, stiffness, twitching",
+      "Somatic (sensory) - Tinnitus, blurring of vision, hot and cold flushes, feelings of weakness, pricking sensation",
+      "Cardiovascular symptoms - Tachycardia, palpitations, pain in chest, throbbing of vessels, fainting feelings, missing beat",
+      "Respiratory symptoms - Pressure or constriction in chest, choking feelings, sighing, dyspnea",
+      "Gastrointestinal symptoms - Difficulty in swallowing, wind abdominal pain, burning sensations, abdominal fullness, nausea, vomitting, borborygmi, looseness of bowels, loss of weight, constipation",
+      "Genitourinary symptoms - Frequency of micturition, urgency of micturition, amenorrhea, menorrhagia, development of frigidity, premature ejaculation, loss of libido, impotence",
+      "Autonomic symptoms - Dry mouth, flushing, pallor, tendency to sweat, giddiness, tension headache, raising of hair",
+      "Behavior at interview - Fidgeting, restlessness or pacing, tremor of hands, furrowed brow, strained face, sighing or rapid respiration, facial pallor, swallowing, etc."
     ].map((text, index) => ({
       name: `q${index + 1}`,
       label: `${index + 1}. ${text}`,
@@ -141,20 +141,24 @@ export default function HAM_A_FormBuilder({ patient, onSubmit, onBack }) {
         submitted={submitted}
         onAction={handleAction}
       >
-        {/* ---------- SUMMARY ---------- */}
-        <div style={summaryWrap}>
-          <div style={scoreBox}>
-            Total Score: {totalScore}
-          </div>
+      <div style={summaryWrap}>
+  <div style={scoreRow}>
+    <div style={scorePill}>
+      TOTAL SCORE : {totalScore}
+    </div>
 
-          <div style={severityBox}>
-            Anxiety Severity: {severity}
-          </div>
+    <div style={severityPill}>
+      ANXIETY SEVERITY : {severity}
+    </div>
+  </div>
 
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit HAM-A Assessment
-          </button>
-        </div>
+  <div style={submitRow}>
+    <button style={submitBtn} onClick={handleSubmit}>
+      Submit
+    </button>
+  </div>
+</div>
+
       </CommonFormBuilder>
     </div>
   );
@@ -167,38 +171,56 @@ const mainContent = {
 };
 
 const summaryWrap = {
-  marginTop: 20,
+  width: "90%",
+  margin: "24px auto 0",
+  padding: 20
+};
+
+const scoreRow = {
   display: "flex",
-  flexDirection: "column",
-  gap: 10
+  gap: 16,
+  flexWrap: "wrap"
+};
+const severityPill = {
+  flex: 1,
+  background: "#FFF7ED",        // light orange
+  border: "1px solid #FED7AA",  // orange border
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+   color: "#1f2937",         // dark orange text
+  minWidth: 260
 };
 
-const scoreBox = {
-  background: "#eef2ff",
-  border: "1px solid #c7d2fe",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+
+const scorePill = {
+  flex: 1,
+  background: "#f1f5ff",
+  border: "1px solid #d6e2ff",
+  borderRadius: 10,
+  padding: "14px 18px",
+  fontSize: 16,
+  fontWeight: 700,
+  color: "#1f2937",
+  minWidth: 260
 };
 
-const severityBox = {
-  background: "#fff7ed",
-  border: "1px solid #fed7aa",
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 15,
-  fontWeight: 700
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 24
 };
 
 const submitBtn = {
-  marginTop: 10,
-  padding: "12px 26px",
-  background: "#2563eb",
+  padding: "12px 34px",
+  background: "#2563EB",
   color: "#fff",
   border: "none",
   borderRadius: 10,
   fontSize: 15,
-  fontWeight: 700,
-  cursor: "pointer"
+  fontWeight: 700
 };
+
+
+

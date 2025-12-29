@@ -4,6 +4,7 @@ import PSSFormBuilder from "./PssForm";
 import PHQ9FormBuilder from "./PhqForm";
 import HAM_A_FormBuilder from "./HamaForm";
 import GAD7FormBuilder from "./GadForm";
+import HAMDFormBuilder from "./HamdForm";
 
 
 function ScaleWrapper({ title, children }) {
@@ -28,36 +29,33 @@ function DASS21({ patient, onChange, onBack }) {
 
 function HAMA({ onChange, patient, onBack }) {
   return (
-    <ScaleWrapper>
       <HAM_A_FormBuilder
         patient={patient}
        onSubmit={onChange}
         onBack={onBack}
       />
-    </ScaleWrapper>
   );
 }
 
-function HAMD({ onChange }) {
+function HAMD({ patient, onChange, onBack }) {
   return (
-    <ScaleWrapper >
-      <textarea
-        placeholder="Enter responses / score for HAM-D"
-        onChange={(e) => onChange(e.target.value)}
-        style={{ width: "100%", minHeight: 120 }}
+   
+      <HAMDFormBuilder
+        patient={patient}
+        onSubmit={onChange}
+        onBack={onBack}
       />
-    </ScaleWrapper>
   );
 }
+      
+
 
 function PSS({ patient, onChange, onBack }) {
   return (
-    <ScaleWrapper >
       <PSSFormBuilder
         patient={patient} onBack={onBack}     
        onSubmit={onChange}
       />
-    </ScaleWrapper>
   );
 }
 
@@ -65,24 +63,20 @@ function PSS({ patient, onChange, onBack }) {
 
 function GAD7({ patient, onChange, onBack }) {
   return (
-    <ScaleWrapper title="Generalized Anxiety Disorder (GAD-7)">
       <GAD7FormBuilder
        patient={patient}
       onSubmit={onChange}
       onBack={onBack}
       />
-    </ScaleWrapper>
   );
 }
 
 function PHQ9({ patient, onChange, onBack }) {
   return (
-    <ScaleWrapper>
       <PHQ9FormBuilder
         patient={patient} onBack={onBack}
         onSubmit={onChange}
       />
-    </ScaleWrapper>
   );
 }
 
@@ -92,7 +86,7 @@ function PHQ9({ patient, onChange, onBack }) {
 ------------------------------------------------------------- */
 
 export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
-  const tabs = ["Depression Anxiety Stress Scale (DASS)", "Hamilton Anxiety Rating Scale (HAM-A)", "Perceived Stress Scale (PSS)", "Generalized Anxiety Disorder (GAD)", "Patient Health Questionnaire (PHQ)"];
+  const tabs = ["Depression Anxiety Stress Scale (DASS-21)", "Perceived Stress Scale (PSS)", "Generalized Anxiety Disorder (GAD-7)", "Patient Health Questionnaire (PHQ-9)", "Hamilton Anxiety Rating Scale (HAM-A)", "Hamilton Depression Rating Scale (HAM-D)"];
   const [activeTab, setActiveTab] = useState(0);
   const scrollRef = useRef(null);
 
@@ -155,13 +149,7 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
       }}
     >
       {/* ================= SUBJECTIVE ================= */}
-      <h2 style={styles.sectionTitle}>Subjective</h2>
-
-      <textarea
-        placeholder="Enter subjective notes here..."
-        style={styles.subjectiveTextarea}
-      />
-
+      <h2 style={styles.sectionTitle}>Psychology Assessment</h2>
       {/* ================= TABS ================= */}
       <div style={{ marginTop: 24 }}>
         <div
@@ -192,12 +180,9 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
       {/* ================= DIVIDER ================= */}
       <div style={styles.divider} />
 
-      {/* ================= OBJECTIVE ================= */}
-      <h2 style={styles.sectionTitle}>Objective</h2>
-
       {/* ================= FORM CONTENT ================= */}
       <div >
-        {tabs[activeTab] === "Depression Anxiety Stress Scale (DASS)" && (
+        {tabs[activeTab] === "Depression Anxiety Stress Scale (DASS-21)" && (
           <DASS21
             patient={patient}
             onChange={setDass21}
@@ -205,7 +190,7 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
           />
         )}
 
-        {tabs[activeTab] === "Generalized Anxiety Disorder (GAD)" && (
+        {tabs[activeTab] === "Generalized Anxiety Disorder (GAD-7)" && (
           <GAD7
             patient={patient}
             onChange={setGad7}
@@ -214,16 +199,16 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
         )}
 
         {tabs[activeTab] === "Hamilton Anxiety Rating Scale (HAM-A)" && (
-          <HAMA onChange={setHama}    patient={patient} onBack={onBack} />
+          <HAMA onChange={setHama} patient={patient} onBack={onBack} />
         )}
-        {tabs[activeTab] === "HAM-D" && (
-          <HAMD onChange={setHamd} />
+        {tabs[activeTab] === "Hamilton Depression Rating Scale (HAM-D)" && (
+          <HAMD onChange={setHamd} patient={patient} onBack={onBack} />
         )}
         {tabs[activeTab] === "Perceived Stress Scale (PSS)" && (
           <PSS patient={patient}  onBack={onBack} onChange={setPss} />
         )}
 
-        {tabs[activeTab] === "Patient Health Questionnaire (PHQ)" && (
+        {tabs[activeTab] === "Patient Health Questionnaire (PHQ-9)" && (
           <PHQ9 patient={patient} onBack={onBack} onChange={setPhq9} />
         )}
       </div>
@@ -234,6 +219,7 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
 const styles = {
   sectionTitle: {
     textAlign: "center",
+    
    
   },
 

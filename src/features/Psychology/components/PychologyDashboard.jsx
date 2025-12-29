@@ -505,6 +505,123 @@ function PatientAttendanceCard() {
   );
 }
 
+function AppointmentCard() {
+  const styles = {
+    card: {
+      background: "#fff",
+      borderRadius: 18,
+      padding: 24,
+      minHeight: 360,
+      boxShadow: "none",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      alignItems: "center",
+      textAlign: "center"
+    },
+
+    header: {
+      fontSize: 18,
+      fontWeight: 600,
+      color: "#111827"
+    },
+
+    countWrap: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 6,
+      marginTop: 12
+    },
+
+    count: {
+      fontSize: 25,
+      fontWeight: 800,
+      color: "#2563EB",
+      lineHeight: 1
+    },
+
+    countLabel: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: "#070808ff"
+    },
+
+    infoBox: {
+      marginTop: 18,
+      background: "#F9FAFB",
+      borderRadius: 14,
+      padding: "14px 16px",
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      width: "100%",
+      color: "#374151",
+      fontSize: 13
+    },
+
+    micIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: "50%",
+      background: "#EEF2FF",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 18
+    },
+
+    button: {
+      marginTop: 24,
+      width: "100%",
+      padding: "12px 16px",
+      borderRadius: 12,
+      border: "1px solid #2563EB",
+      background: "#F5F8FF",
+      color: "#2563EB",
+      fontWeight: 600,
+      fontSize: 14,
+      cursor: "pointer",
+      transition: "all 0.2s ease"
+    }
+  };
+  return (
+        <div style={styles.card}>
+        {/* Header */}
+        <div style={styles.header}>Schedule Appointments</div>
+
+        {/* Count */}
+        <div style={styles.countWrap}>
+                    <div style={styles.micIcon}>📅</div>
+
+          <div style={styles.count}>{25}</div>
+          <div style={styles.countLabel}>Total Appointments</div>
+        </div>
+
+        {/* Info */}
+        {/* <div style={styles.infoBox}> */}
+          {/* <div>Session audio will be securely saved</div> */}
+        {/* </div> */}
+
+        {/* CTA */}
+        <button
+          style={styles.button}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#2563EB";
+            e.currentTarget.style.color = "#fff";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "#F5F8FF";
+            e.currentTarget.style.color = "#2563EB";
+          }}
+        >
+          Schedule  Appointment
+        </button>
+      </div>
+
+  );
+}
+
 export default function PsychologyDashboard({
   patients = [],
   onSelectPatient,
@@ -985,7 +1102,7 @@ const [showPatients, setShowPatients] = useState(false);
               <Line data={lineChartData} options={chartOptions} />
             </div>
           </div>
-          <RecordingCard />
+          <AppointmentCard />
 
         </div>
 
