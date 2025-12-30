@@ -39,6 +39,8 @@ const [showSecondary, setShowSecondary] = useState(false);
   return (
     <div>
       {/* PRIMARY ICD */}
+      <div><h3>Assessment</h3><textarea></textarea></div>
+      <div><h3>Plan</h3><textarea></textarea></div>
 <div style={{ marginBottom: 20 }}>
   <label style={{ fontWeight: 600 }}>Primary ICD</label>
   <select

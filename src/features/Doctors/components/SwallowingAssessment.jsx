@@ -93,7 +93,7 @@ export default function SwallowingAssessment({ onChange }) {
     },
     title: {
       fontSize: 16,
-      fontWeight: 700,
+      fontWeight: 500,
       marginTop: 20,
       marginBottom:20,
     },
@@ -146,7 +146,7 @@ export default function SwallowingAssessment({ onChange }) {
   // -------------------- Component --------------------
   return (
     <div style={styles.card}>
-      <h2 style={styles.title}>SWALLOWING</h2>
+      <h3>SWALLOWING</h3>
 
       {/* QUESTION 1 */}
       <div style={styles.row}>

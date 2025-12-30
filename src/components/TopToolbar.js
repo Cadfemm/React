@@ -25,19 +25,19 @@ function TopToolbar({
         {/* Left side - menu buttons */}
         <div style={{ display: "flex", gap: "20px" }}>
           <button
-            style={{ padding: "0px", background: "none", color: "#343FAC" }}
+            style={{ padding: "0px", background: "none", color: "#343FAC" ,border:"none"}}
             className="Globalmenu"
           >
             Home
           </button>
           <button
-            style={{ padding: "0px", background: "none", color: "#343FAC" }}
+            style={{ padding: "0px", background: "none", color: "#343FAC" ,border:"none" }}
             className="Globalmenu"
           >
             Files
           </button>
           <button
-            style={{ padding: "0px", background: "none", color: "#343FAC" }}
+            style={{ padding: "0px", background: "none", color: "#343FAC", border:"none" }}
             className="Globalmenu"
           >
             Upload

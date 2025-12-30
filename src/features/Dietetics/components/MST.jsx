@@ -225,10 +225,10 @@ const handleSave = () => {
   value={weightBand}
   options={[
     { label: "Select amount", value: "" },
-    { label: "2–13 lbs — 1 point", value: "2-13" },
-    { label: "14–23 lbs — 2 points", value: "14-23" },
-    { label: "24–33 lbs — 3 points", value: "24-33" },
-    { label: "≥ 34 lbs — 4 points", value: ">=34" },
+    { label: "2–13 lbs / 1-5 kg — 1 point", value: "2-13" },
+    { label: "14–23 lbs / 6-10 kg— 2 points", value: "14-23" },
+    { label: "24–33 lbs / 11- 15 kg — 3 points", value: "24-33" },
+    { label: "≥ 34 lbs / > 15 kg — 4 points", value: ">=34" },
     { label: "Unsure — 2 points", value: "unsure" }
   ]}
   onChange={setWeightBand}
@@ -294,6 +294,27 @@ const handleSave = () => {
               {totalScore >= 2 ? "AT RISK — action required" : "NOT AT RISK"}
             </div>
           </div>
+        </div>
+        <div>
+          <div>
+  <label style={{ fontWeight: 600, display: "block", marginBottom: 6 }}>
+   Clinical Notes
+  </label>
+  <textarea
+  
+    placeholder="Enter additional clinical notes here…"
+    style={{
+      width: "100%",
+      minHeight: 80,
+      padding: "10px 12px",
+      borderRadius: 6,
+      border: "1px solid #d1d5db",
+      fontSize: 14,
+      resize: "vertical",
+    }}
+  />
+</div>
+
         </div>
 </FormCard>
 
