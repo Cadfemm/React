@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import PsychologyAssessmentForm from "./PsychologyAssignments";
 
-export default function Patients({ onBack }) {
+import React, { useState } from "react";
+import SpeechAssessmentForm from "./SpeechAssessment";
+
+export default function SpeechPatients({ Patients,onBack }) {
   const [tab, setTab] = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
-
+  console.log("patients",Patients)
   const newPatients = [
     { id: 2, name: "Asfas", icd: "Stroke", status: "New" },
     { id: 3, name: "Rahul", icd: "Depression", status: "New" }
@@ -20,7 +21,7 @@ export default function Patients({ onBack }) {
   /* ---------------- RENDER ASSESSMENT ---------------- */
   if (selectedPatient) {
     return (
-      <PsychologyAssessmentForm
+      <SpeechAssessmentForm
         patient={selectedPatient}
         onBack={() => setSelectedPatient(null)}
       />

@@ -1,191 +1,93 @@
 import React, { useState } from "react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder"
+
 
 export default function VisualAssessment() {
-  // ---- Master list of questions grouped by categories ---- //
-  const sections = [
+  const [values, setValues] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const onChange = (name, value) => {
+    setValues(prev => ({ ...prev, [name]: value }));
+  };
+
+  const onAction = (type) => {
+    if (type === "submit") {
+      setSubmitted(true);
+      console.log("Visual Assessment Data:", values);
+    }
+  };
+  const yesNo = [
+  { label: "YES", value: "YES" },
+  { label: "NO", value: "NO" }
+];
+ const VISUAL_SCHEMA = {
+  title: "Visual Assessment",
+
+  sections: [
+    // ---------------- GATE QUESTION ----------------
     {
-      title: "Ocular Pain",
-      items: ["Ocular Pain"]
+      title: null,
+      fields: [
+        {
+          name: "ocularPain",
+          label: "Ocular Pain",
+          type: "radio",
+          options: [
+            { label: "YES", value: "YES" },
+            { label: "NO", value: "NO" }
+          ],
+          validation: { required: true }
+        }
+      ]
     },
+
+    // ---------------- VISUAL DISTURBANCE ----------------
     {
       title: "Visual Disturbance",
-      items: [
-        "Diplopia",
-        "Blurred Vision / Haloes around lights",
-        "Sudden onset visual loss",
-        "Gradual onset visual loss",
-        "Flashes and floaters",
-        "Blindness (complete, both eyes)",
-        "Severe visual impairment, monocular",
-        "Moderate visual impairment, monocular",
-        "Unspecified visual impairment (binocular)"
+      showIf: { field: "ocularPain", equals: "YES" },
+      fields: [
+        { name: "diplopia", label: "Diplopia", type: "radio", options: yesNo },
+        { name: "blurredVision", label: "Blurred vision / haloes around lights", type: "radio", options: yesNo },
+        { name: "suddenLoss", label: "Sudden onset visual loss", type: "radio", options: yesNo },
+        { name: "gradualLoss", label: "Gradual onset visual loss", type: "radio", options: yesNo },
+        { name: "floaters", label: "Flashes and floaters", type: "radio", options: yesNo }
       ]
     },
+
+    // ---------------- EYELID CONDITIONS ----------------
     {
       title: "Eyelid Conditions",
-      items: [
-        "Ptosis",
-        "Chalazion",
-        "Blepharitis",
-        "Entropion / Ectropion of eyelid",
-        "Lagophthalmos (lid lag)",
-        "Proptosis / Exophthalmos",
-        "Periorbital oedema / inflammation"
+      showIf: { field: "ocularPain", equals: "YES" },
+      fields: [
+        { name: "ptosis", label: "Ptosis", type: "radio", options: yesNo },
+        { name: "chalazion", label: "Chalazion", type: "radio", options: yesNo },
+        { name: "blepharitis", label: "Blepharitis", type: "radio", options: yesNo },
+        { name: "entropion", label: "Entropion / Ectropion", type: "radio", options: yesNo }
       ]
     },
+
+    // ---------------- VISUAL FIELD ----------------
     {
       title: "Visual Field Abnormalities",
-      items: [
-        "Normal visual field",
-        "Central visual field defect",
-        "Peripheral visual field loss",
-        "Bitemporal hemianopia",
-        "Homonymous hemianopia",
-        "Quadrantanopia",
-        "Tunnel vision",
-        "Blind spot enlargement",
-        "Colour desaturation (red desaturation)",
-        "Functional (non-organic) visual loss"
-      ]
-    },
-    {
-      title: "Eye Movement & Squint Disorders",
-      items: [
-        "Concomitant squint (strabismus)",
-        "Paralytic squint",
-        "Diplopia",
-        "Ocular muscle palsy (III, IV, VI)",
-        "Nystagmus",
-        "Oculocephalic (doll’s-eye) reflex"
-      ]
-    },
-    {
-      title: "Pupillary Abnormalities",
-      items: [
-        "Miosis",
-        "Mydriasis",
-        "Anisocoria",
-        "Fixed pupils",
-        "Relative Afferent Pupillary Defect (RAPD / Marcus Gunn pupil)",
-        "Light reflex (direct and consensual)",
-        "Accommodation reflex",
-        "Other congenital malformations of iris (coloboma)",
-        "Horner syndrome",
-        "III nerve palsy",
-        "Optic atrophy",
-        "Anomalies of pupillary function in diseases elsewhere"
-      ]
-    },
-    {
-      title: "Ocular Muscle Paralysis",
-      items: [
-        "Superior rectus palsy / paresis",
-        "Inferior rectus palsy / paresis",
-        "Medial rectus palsy / paresis",
-        "Inferior oblique palsy / paresis",
-        "Superior oblique palsy / paresis",
-        "Lateral rectus palsy / paresis",
-        "Combined or unspecified ocular muscle paralysis"
-      ]
-    },
-    {
-      title: "Vision Aids",
-      items: [
-        "Colour blindness / Colour vision defect",
-        "Presence of spectacles and contact lenses",
-        "Fitting and adjustment of spectacles and contact lenses"
+      showIf: { field: "ocularPain", equals: "YES" },
+      fields: [
+        { name: "centralDefect", label: "Central visual field defect", type: "radio", options: yesNo },
+        { name: "peripheralLoss", label: "Peripheral visual field loss", type: "radio", options: yesNo },
+        { name: "hemianopia", label: "Hemianopia", type: "radio", options: yesNo }
       ]
     }
-  ];
+  ]
+};
 
-  // ---- State for responses ---- //
-  const [responses, setResponses] = useState({});
-
-  const handleChange = (question, answer) => {
-    setResponses((prev) => ({ ...prev, [question]: answer }));
-  };
-
-  // ---- Internal CSS ---- //
-  const styles = {
-    container: {
-      background: "#fff",
-      padding: 20,
-      borderRadius: 8,
-      border: "1px solid #ddd",
-      fontFamily: "Inter, sans-serif",
-      margin: "20px auto"
-    },
-    section: {
-      marginBottom: 22,
-      paddingBottom: 10,
-      borderBottom: "1px solid #eee"
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: 700,
-      marginBottom: 12
-    },
-    questionRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "8px 0",
-      fontSize: 14
-    },
-    radios: {
-      display: "flex",
-      gap: 12,
-      alignItems: "center"
-    },
-    radioLabel: {
-      cursor: "pointer"
-    }
-  };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Visual Symptoms Assessment</h2>
-
-      {sections.map((section) => (
-        <div key={section.title} style={styles.section}>
-          <div style={styles.title}>{section.title}</div>
-
-          {section.items.map((q) => (
-            <div key={q} style={styles.questionRow}>
-              <div>{q}</div>
-
-              {/* YES/NO RADIO BUTTONS */}
-              <div style={styles.radios}>
-                <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name={q}
-                    value="YES"
-                    checked={responses[q] === "YES"}
-                    onChange={() => handleChange(q, "YES")}
-                  />{" "}
-                  YES
-                </label>
-
-                <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name={q}
-                    value="NO"
-                    checked={responses[q] === "NO"}
-                    onChange={() => handleChange(q, "NO")}
-                  />{" "}
-                  NO
-                </label>
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
-
-      {/* <pre style={{ background: "#f7f7f7", padding: 10, fontSize: 12 }}>
-        {JSON.stringify(responses, null, 2)}
-      </pre> */}
-    </div>
+    <CommonFormBuilder
+      schema={VISUAL_SCHEMA}
+      values={values}
+      onChange={onChange}
+      submitted={submitted}
+      onAction={onAction}
+    >
+    </CommonFormBuilder>
   );
 }

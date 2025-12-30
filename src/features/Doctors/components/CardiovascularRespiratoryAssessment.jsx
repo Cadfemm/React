@@ -1,612 +1,324 @@
 import React, { useState } from "react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-export default function CardiovascularRespiratoryAssessment() {
-  /* -------------------------------------------------------
-     INTERNAL CSS (Modern Card-Based, No Tables)
-  ------------------------------------------------------- */
-  const styles = {
-    container: {
-      margin: "0 auto",
-      fontFamily: "Arial, sans-serif",
-    },
-    card: {
-      background: "#fff",
-      borderRadius: 10,
-      border: "1px solid #ddd",
-      padding: 16,
-      marginBottom: 22,
-      boxShadow: "0 2px 4px rgba(0,0,0,0.06)",
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 700,
-      marginBottom: 10,
-    },
-    subtitle: {
-      fontSize: 16,
-      fontWeight: 700,
-      marginTop: 12,
-      marginBottom: 8,
-    },
-    row: {
-      display: "flex",
-      flexDirection: "row",
-      gap: 12,
-      marginBottom: 10,
-      flexWrap: "wrap",
-    },
-    col: {
-      flex: 1,
-      minWidth: "48%",
-    },
-    label: {
-      fontWeight: 600,
-      fontSize: 13,
-      marginBottom: 4,
-      display: "block",
-    },
-    select: {
-      width: "100%",
-      padding: 8,
-      borderRadius: 6,
-      border: "1px solid #bbb",
-      fontSize: 14,
-    },
-    input: {
-      width: "100%",
-      padding: 8,
-      borderRadius: 6,
-      border: "1px solid #bbb",
-      fontSize: 14,
-    },
-    textarea: {
-      width: "100%",
-      padding: 8,
-      borderRadius: 6,
-      border: "1px solid #bbb",
-      resize: "vertical",
-      minHeight: 70,
-      fontSize: 14,
-    },
-    note: {
-      padding: 10,
-      background: "#fff4d8",
-      borderLeft: "4px solid #f0a100",
-      marginBottom: 16,
-      fontSize: 13,
-      borderRadius: 6,
-    },
-    sectionHeader: {
-      marginTop: 20,
-      fontSize: 18,
-      fontWeight: 700,
-    },
+
+export default function CardioRespiratoryAssessment() {
+  const [values, setValues] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const [openNYHA, setOpenNYHA] = useState(false);
+  const [openSTOP, setOpenSTOP] = useState(false);
+
+  const [nyhaClass, setNyhaClass] = useState("");
+  const [stopBangScore, setStopBangScore] = useState(null);
+
+  const onChange = (name, value) =>
+    setValues(v => ({ ...v, [name]: value }));
+
+ 
+  const SCHEMA = {
+    title: "Cardiovascular & Respiratory Assessment",
+    sections: [
+      {
+        title: "Respiratory – Symptoms",
+        fields: [
+          yn("dyspnoea_rest", "Dyspnoea at rest"),
+          yn("dyspnoea_exertion", "Dyspnoea on exertion"),
+          yn("orthopnoea", "Orthopnoea"),
+          yn("pnd", "Paroxysmal nocturnal dyspnoea"),
+          yn("cough", "Cough"),
+          yn("sputum", "Sputum"),
+          yn("wheeze", "Wheeze"),
+          yn("chest_pain_resp", "Chest pain"),
+          yn("fatigue_resp", "Fatigue"),
+          yn("weight_loss", "Weight loss")
+        ]
+      },
+
+      /* ================= RESPIRATORY – PAST HISTORY ================= */
+      {
+        title: "Respiratory – Past History",
+        fields: [
+          yn("copd", "COPD"),
+          yn("asthma", "Asthma"),
+          yn("pneumonia", "Pneumonia"),
+          yn("smoking_resp", "Smoking"),
+          yn("environment_exposure", "Exposure to environmental pollutants"),
+          yn("recent_infections", "Recent infections"),
+          yn("aspiration_risk", "Aspiration risk"),
+          yn("tracheostomy", "Tracheostomy"),
+          yn("ventilation", "Ventilation")
+        ]
+      },
+
+      /* ================= RESPIRATORY – EXAMINATION ================= */
+      {
+        title: "Respiratory – Examination",
+        fields: [
+          yn("cyanosis", "Cyanosis"),
+          yn("clubbing", "Clubbing"),
+          yn("oedema_resp", "Oedema"),
+          yn("accessory_muscles", "Use of accessory muscles"),
+          yn("symmetry_expansion", "Symmetry of expansion"),
+          yn("auscultation_resp", "Auscultation"),
+          {
+            type: "textarea",
+            label: "Please specify",
+            name: "resp_ausc_notes"
+          },
+          yn("cough_strength", "Cough strength")
+        ]
+      },
+
+      {
+        title: "Cardiovascular – Symptoms",
+        fields: [
+          yn("chest_pain_cardio", "Chest pain"),
+          yn("palpitations", "Palpitations"),
+          yn("syncope", "Syncope / Pre syncope"),
+          yn("dyspnoea_exertion_cardio", "Dyspnoea on exertion"),
+          yn("orthopnea_cardio", "Orthopnea"),
+          yn("ankle_swelling", "Ankle swelling"),
+          yn("fatigue_cardio", "Fatigue"),
+          yn("exercise_tolerance", "Exercise tolerance")
+        ]
+      },
+
+      {
+        title: "Cardiovascular – Past History",
+        fields: [
+          yn("prior_mi", "Prior MI"),
+          yn("heart_failure", "Heart failure"),
+          yn("arrhythmias", "Arrhythmias"),
+          yn("hypertension", "Hypertension"),
+          yn("dyslipidaemia", "Dyslipidaemia"),
+          yn("valve_disease", "Valve disease"),
+          yn("echo_done", "ECHO done")
+        ]
+      },
+
+      {
+        title: "Cardiovascular – Risk Factors",
+        fields: [
+          yn("smoking_cardio", "Smoking"),
+          yn("dm", "DM"),
+          yn("dyslipidemia", "Dyslipidemia"),
+          yn("family_hx_cvd", "Family H/O CVD")
+        ]
+      },
+
+      {
+        title: "Vital Signs",
+        fields: [
+          {
+            type: "input",
+            label: "HEART RATE (beats/min)",
+            name: "heart_rate"
+          },
+          {
+            type: "input",
+            label: "ECG",
+            name: "ecg"
+          },
+          {
+            type: "input",
+            label: "BLOOD PRESSURE SITTING (mmHg)",
+            name: "bp_sitting"
+          },
+          {
+            type: "input",
+            label: "BLOOD PRESSURE STANDING (mmHg)",
+            name: "bp_standing"
+          },
+          {
+            type: "input",
+            label: "RESPIRATORY RATE (breath/min)",
+            name: "resp_rate"
+          },
+          yn("crt", "CRT <2SEC"),
+          {
+            type: "input",
+            label: "SKIN COLOUR",
+            name: "skin_colour"
+          },
+          yn("radial_pulse", "RADIAL PULSE"),
+          yn("dorsalis_pedis", "DORSALIS PEDIS"),
+          yn("posterior_tibialis", "POSTERIOR TIBIALIS"),
+          yn("jvp_raised", "JVP RAISED"),
+          yn("oedema", "OEDEMA"),
+          {
+            type: "single-select",
+            label: "PITTING / NON PITTING",
+            name: "oedema_type",
+            options: [
+              { label: "PITTING", value: "PITTING" },
+              { label: "NON PITTING", value: "NON PITTING" }
+            ]
+          }
+        ]
+      },
+
+      {
+        title: "Auscultation",
+        fields: [
+          yn("s1s2", "S1, S2"),
+          yn("extra_sounds", "EXTRA SOUNDS"),
+          yn("crepitations", "CREPITATIONS"),
+          yn("carotid_bruits", "CAROTID BRUITS"),
+          yn("abi_assessment", "FOR ABI ASSESSMENT")
+        ]
+      }
+    ]
   };
 
-  const yesNo = ["", "Yes", "No"];
-
-  /* -------------------------------------------------------
-     FORM STATE
-  ------------------------------------------------------- */
-  const [symptom, setSymptom] = useState({
-    dyspRest: "",
-    dyspExertion: "",
-    orthopnoea: "",
-    pnd: "",
-    cough: "",
-    sputum: "",
-    sputumColour: "",
-    sputumAmount: "",
-    wheeze: "",
-    chestPain: "",
-    fatigue: "",
-    weightLoss: "",
-  });
-
-  const [respPast, setRespPast] = useState({
-    copd: "",
-    asthma: "",
-    pneumonia: "",
-    smoking: "",
-    hazards: "",
-    infection: "",
-    aspiration: "",
-    tracheostomy: "",
-    ventilation: "",
-  });
-
-  const [nyha, setNyha] = useState("");
-  const [stopBang, setStopBang] = useState("");
-
-  const [respExam, setRespExam] = useState({
-    cyanosis: "",
-    clubbing: "",
-    oedema: "",
-    accessory: "",
-    symmetry: "",
-    ausc: "",
-    auscNotes: "",
-    coughStrength: "Good",
-  });
-
-  const [cardioSymptoms, setCardioSymptoms] = useState({
-    chestPain: "",
-    palpitations: "",
-    syncope: "",
-    dyspneaExertion: "",
-    orthopnea: "",
-    ankle: "",
-    fatigue: "",
-    exercise: "",
-  });
-
-  const [vitals, setVitals] = useState({
-    hr: "",
-    ecg: "",
-    bpSit: "",
-    bpStand: "",
-    rr: "",
-    crt: "",
-    skin: "",
-    radial: "",
-    dorsalis: "",
-    tibial: "",
-    jvp: "",
-    oedema: "",
-    oedemaType: "",
-  });
-
-  const [summary, setSummary] = useState({
-    breathing: "",
-    cough: "",
-    env: "",
-    vitals: "",
-    mechanics: "",
-    ausc: "",
-    pft: "",
-    exercise: "",
-    adl: "",
-    prelim: "",
-  });
-
-  /* Helper */
-  const update = (setter, field, value) =>
-    setter((prev) => ({ ...prev, [field]: value }));
-
-  /* -------------------------------------------------------
-     RENDER
-  ------------------------------------------------------- */
   return (
-    <div style={styles.container}>
-
-
-      {/* -----------------------------------------
-          SECTION 1 — SYMPTOMS
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <h2 style={styles.title}>Cardiovascular & Respiratory System</h2>
-
-        {/* Dyspnoea */}
-        {[
-          ["Dyspnoea at rest", "dyspRest"],
-          ["Dyspnoea on exertion", "dyspExertion"],
-          ["Orthopnoea", "orthopnoea"],
-          ["Paroxysmal nocturnal dyspnoea", "pnd"],
-          ["Cough", "cough"],
-          ["Wheeze", "wheeze"],
-          ["Chest pain", "chestPain"],
-          ["Fatigue", "fatigue"],
-          ["Weight loss", "weightLoss"],
-        ].map(([label, field]) => (
-          <div key={field} style={styles.row}>
-            <div style={styles.col}>
-              <label style={styles.label}>{label}</label>
-              <select
-                style={styles.select}
-                value={symptom[field]}
-                onChange={(e) => update(setSymptom, field, e.target.value)}
-              >
-                {yesNo.map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ))}
-
-        {/* Sputum special logic */}
-        <div style={styles.row}>
-          <div style={styles.col}>
-            <label style={styles.label}>Sputum</label>
-            <select
-              style={styles.select}
-              value={symptom.sputum}
-              onChange={(e) => update(setSymptom, "sputum", e.target.value)}
-            >
-              {yesNo.map((v) => (
-                <option key={v}>{v}</option>
-              ))}
-            </select>
-          </div>
+    <>
+      <CommonFormBuilder
+        schema={SCHEMA}
+        values={values}
+        onChange={onChange}
+        submitted={submitted}
+      >
+        <div style={btnRow}>
+          <button style={pillBtn} onClick={() => setOpenNYHA(true)}>
+            NYHA Classification
+          </button>
+          <button style={pillBtn} onClick={() => setOpenSTOP(true)}>
+            STOP-BANG Questionnaire
+          </button>
         </div>
 
-        {symptom.sputum === "Yes" && (
-          <>
-            <div style={styles.row}>
-              <div style={styles.col}>
-                <label style={styles.label}>Sputum Colour</label>
-                <input
-                  style={styles.input}
-                  value={symptom.sputumColour}
-                  onChange={(e) =>
-                    update(setSymptom, "sputumColour", e.target.value)
-                  }
-                />
-              </div>
-            </div>
-
-            <div style={styles.row}>
-              <div style={styles.col}>
-                <label style={styles.label}>Sputum Amount</label>
-                <input
-                  style={styles.input}
-                  value={symptom.sputumAmount}
-                  onChange={(e) =>
-                    update(setSymptom, "sputumAmount", e.target.value)
-                  }
-                />
-              </div>
-            </div>
-          </>
+        {nyhaClass && <Score label="NYHA Class" value={nyhaClass} />}
+        {stopBangScore !== null && (
+          <Score label="STOP-BANG Score" value={stopBangScore} />
         )}
-      </div>
 
-      {/* -----------------------------------------
-          SECTION 2 — RESPIRATORY PAST HISTORY
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <div style={styles.title}>Respiratory Past History</div>
+       
+      </CommonFormBuilder>
 
-        {[
-          ["COPD", "copd"],
-          ["Asthma", "asthma"],
-          ["Pneumonia", "pneumonia"],
-          ["Smoking", "smoking"],
-          ["Environmental / occupational hazards", "hazards"],
-          ["Recent infections", "infection"],
-          ["Aspiration risk", "aspiration"],
-          ["Tracheostomy", "tracheostomy"],
-          ["Ventilation", "ventilation"],
-        ].map(([label, key]) => (
-          <div key={key} style={styles.row}>
-            <div style={styles.col}>
-              <label style={styles.label}>{label}</label>
-              <select
-                style={styles.select}
-                value={respPast[key]}
-                onChange={(e) => update(setRespPast, key, e.target.value)}
-              >
-                {yesNo.map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ))}
-      </div>
+      {openNYHA && (
+        <NYHAModal
+          onSave={setNyhaClass}
+          onClose={() => setOpenNYHA(false)}
+        />
+      )}
 
-      {/* -----------------------------------------
-          SECTION 3 — NYHA & STOP-BANG
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <div style={styles.title}>Classification Scales</div>
+      {openSTOP && (
+        <STOPBangModal
+          onSave={setStopBangScore}
+          onClose={() => setOpenSTOP(false)}
+        />
+      )}
+    </>
+  );
+}
 
-        <div style={styles.row}>
-          <div style={styles.col}>
-            <label style={styles.label}>NYHA Class</label>
-            <select
-              style={styles.select}
-              value={nyha}
-              onChange={(e) => setNyha(e.target.value)}
-            >
-              <option value="">Select</option>
-              <option>I</option>
-              <option>II</option>
-              <option>III</option>
-              <option>IV</option>
-            </select>
-          </div>
+const yn = (name, label) => ({
+  type: "radio",
+  name,
+  label,
+  options: [
+    { label: "YES", value: "YES" },
+    { label: "NO", value: "NO" }
+  ]
+});
 
-          <div style={styles.col}>
-            <label style={styles.label}>STOP-BANG Score (1–8)</label>
-            <input
-              style={styles.input}
-              value={stopBang}
-              onChange={(e) => setStopBang(e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
+const Score = ({ label, value }) => (
+  <div style={scoreBox}>
+    <strong>{label}:</strong> {value}
+  </div>
+);
 
-      {/* -----------------------------------------
-          SECTION 4 — RESPIRATORY EXAM
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <div style={styles.title}>Respiratory Examination</div>
+function NYHAModal({ onSave, onClose }) {
+  const options = [
+    ["I", "Structural myocardial changes (e.g. left ventricular hypertrophy)"],
+    ["II", "Small decrease in exercise tolerance"],
+    ["III", "Significant decrease in exercise tolerance"],
+    ["IV", "Symptoms of heart failure at rest or during small exercise"]
+  ];
+  const [selected, setSelected] = useState("");
 
-        {[
-          ["Cyanosis", "cyanosis"],
-          ["Clubbing", "clubbing"],
-          ["Oedema", "oedema"],
-          ["Use of accessory muscles", "accessory"],
-          ["Symmetry of chest expansion", "symmetry"],
-        ].map(([label, key]) => (
-          <div key={key} style={styles.row}>
-            <div style={styles.col}>
-              <label style={styles.label}>{label}</label>
-              <select
-                style={styles.select}
-                value={respExam[key]}
-                onChange={(e) => update(setRespExam, key, e.target.value)}
-              >
-                {yesNo.map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ))}
-
-        <div style={styles.row}>
-          <div style={styles.col}>
-            <label style={styles.label}>Auscultation</label>
-            <input
-              style={styles.input}
-              placeholder="Clear / Wheeze / Rhonchi..."
-              value={respExam.ausc}
-              onChange={(e) => update(setRespExam, "ausc", e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div style={styles.row}>
-          <div style={styles.col}>
-            <label style={styles.label}>Auscultation Notes</label>
-            <textarea
-              style={styles.textarea}
-              value={respExam.auscNotes}
-              onChange={(e) => update(setRespExam, "auscNotes", e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* -----------------------------------------
-          SECTION 5 — CARDIOVASCULAR SYMPTOMS
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <div style={styles.title}>Cardiovascular Symptoms</div>
-
-        {[
-          ["Chest pain", "chestPain"],
-          ["Palpitations", "palpitations"],
-          ["Syncope / pre-syncope", "syncope"],
-          ["Dyspnoea on exertion", "dyspneaExertion"],
-          ["Orthopnea", "orthopnea"],
-          ["Ankle swelling", "ankle"],
-          ["Fatigue", "fatigue"],
-          ["Exercise intolerance", "exercise"],
-        ].map(([label, key]) => (
-          <div key={key} style={styles.row}>
-            <div style={styles.col}>
-              <label style={styles.label}>{label}</label>
-              <select
-                style={styles.select}
-                value={cardioSymptoms[key]}
-                onChange={(e) =>
-                  update(setCardioSymptoms, key, e.target.value)
-                }
-              >
-                {yesNo.map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* -----------------------------------------
-          SECTION 6 — VITAL SIGNS
-      ------------------------------------------ */}
-      <div style={styles.card}>
-        <div style={styles.title}>Vital Signs</div>
-
-        {[
-          ["Heart rate (bpm)", "hr"],
-          ["ECG", "ecg"],
-          ["BP Sitting (mmHg)", "bpSit"],
-          ["BP Standing (mmHg)", "bpStand"],
-          ["Respiratory rate", "rr"],
-          ["CRT < 2 sec (Y/N)", "crt"],
-          ["Skin colour", "skin"],
-        ].map(([label, key]) => (
-          <div key={key} style={styles.row}>
-            <div style={styles.col}>
-              <label style={styles.label}>{label}</label>
-
-              {key === "crt" ? (
-                <select
-                  style={styles.select}
-                  value={vitals[key]}
-                  onChange={(e) => update(setVitals, key, e.target.value)}
-                >
-                  {yesNo.map((v) => (
-                    <option key={v}>{v}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  style={styles.input}
-                  value={vitals[key]}
-                  onChange={(e) => update(setVitals, key, e.target.value)}
-                />
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* -----------------------------------------
-          SECTION 7 — RESPIRATORY SUMMARY
-      ------------------------------------------ */}
-{/* -----------------------------------------
-   SECTION — RESPIRATORY HISTORY & EXAM
------------------------------------------- */}
-<div style={styles.card}>
-  <div style={styles.title}>Respiratory – Structured Summary</div>
-
-  {/* ---------- HISTORY ---------- */}
-  <div style={styles.subtitle}>History</div>
-
-  {[
-    {
-      label: "Breathing symptoms",
-      key: "breathing",
-      options: [
-        "Shortness of breath",
-        "Dyspnoea on exertion",
-        "Orthopnoea",
-        "Nocturnal dyspnoea",
-      ],
-    },
-    {
-      label: "Cough and sputum",
-      key: "cough",
-      options: [
-        "Productive",
-        "Non-productive",
-        "Frequent cough",
-        "Coloured sputum",
-        "Thick / viscous sputum",
-      ],
-    },
-    {
-      label: "Environmental factors",
-      key: "env",
-      options: [
-        "Exposure to pollutants",
-        "Poor home ventilation",
-        "Occupational hazards",
-        "Limited home support",
-        "Poor access to rehab",
-      ],
-    },
-  ].map((item) => (
-    <div key={item.key} style={styles.row}>
-      <div style={styles.col}>
-        <label style={styles.label}>{item.label}</label>
-
-        {/* DROPDOWN FOR DETAILS */}
-        <select
-          style={styles.select}
-          value={summary[item.key]}
-          onChange={(e) => update(setSummary, item.key, e.target.value)}
+  return (
+    <Modal title="NYHA Classification">
+      {options.map(o => (
+        <div
+          key={o[0]}
+          style={{ ...nyhaRow, background: selected === o[0] ? "#eef6ff" : "#fafafa" }}
+          onClick={() => setSelected(o[0])}
         >
-          <option value="">Select</option>
-          {item.options.map((op) => (
-            <option key={op} value={op}>
-              {op}
-            </option>
-          ))}
-        </select>
+          <strong>{o[0]}</strong> – {o[1]}
+        </div>
+      ))}
+      <ModalFooter onCancel={onClose} onSave={() => { onSave(selected); onClose(); }} />
+    </Modal>
+  );
+}
+
+function STOPBangModal({ onSave, onClose }) {
+  const questions = [
+    "Snoring (Do you snore loudly?)",
+    "Tiredness (Do you often feel tired, fatigued, or sleepy during the daytime?)",
+    "Observed Apnea (Has anyone observed that you stop breathing during sleep?)",
+    "High Blood Pressure (Being treated for hypertension?)",
+    "BMI (Is your body mass index more than 35 kg per m²?)",
+    "Age (Are you older than 50 years?)",
+    "Neck Circumference (Is your neck circumference greater than 40 cm [15.75 inches]?)",
+    "Gender (Are you male?)"
+  ];
+
+  const [answers, setAnswers] = useState(Array(8).fill(null));
+  const score = answers.filter(v => v === true).length;
+
+  return (
+    <Modal title="STOP-BANG Questionnaire">
+      {questions.map((q, i) => (
+        <div key={i} style={stopRow}>
+          <span>{q}</span>
+          <label style={radioLabel}>
+            <input type="radio" checked={answers[i] === true} onChange={() => setAnswers(a => a.map((v, x) => x === i ? true : v))} /> YES
+          </label>
+          <label style={radioLabel}>
+            <input type="radio" checked={answers[i] === false} onChange={() => setAnswers(a => a.map((v, x) => x === i ? false : v))} /> NO
+          </label>
+        </div>
+      ))}
+      <ModalFooter onCancel={onClose} onSave={() => { onSave(score); onClose(); }} />
+    </Modal>
+  );
+}
+
+/* ================= MODAL BASE & STYLES ================= */
+function Modal({ title, children }) {
+  return (
+    <div style={overlay}>
+      <div style={modal}>
+        <h2 style={{ textAlign: "center" }}>{title}</h2>
+        {children}
       </div>
-    </div>
-  ))}
-
-  {/* ---------- EXAMINATION ---------- */}
-  <div style={styles.subtitle}>Examination</div>
-
-  {[
-    {
-      label: "Vital signs",
-      key: "vitals",
-      options: ["RR", "HR", "SpO₂", "BP"],
-    },
-    {
-      label: "Respiratory mechanics",
-      key: "mechanics",
-      options: [
-        "Chest expansion normal",
-        "Asymmetry present",
-        "Use of accessory muscles",
-      ],
-    },
-    {
-      label: "Lung auscultation",
-      key: "ausc",
-      options: [
-        "Wheezes",
-        "Crackles",
-        "Reduced breath sounds",
-        "Normal breath sounds",
-      ],
-    },
-    {
-      label: "Pulmonary function tests",
-      key: "pft",
-      options: [
-        "Spirometry (FVC)",
-        "Spirometry (FEV1)",
-        "Peak flow measurement",
-      ],
-    },
-    {
-      label: "Exercise tolerance / endurance",
-      key: "exercise",
-      options: [
-        "6-minute walk test",
-        "Timed up-and-go test",
-        "Oxygen desaturation on exertion",
-      ],
-    },
-    {
-      label: "Functional ADL assessment",
-      key: "adl",
-      options: [
-        "Independent ADLs",
-        "Reduced self-care ability",
-        "Difficulty in housework",
-      ],
-    },
-    {
-      label: "Preliminary Tests",
-      key: "prelim",
-      options: ["Chest X-ray", "ABG", "SpO₂ trend"],
-    },
-  ].map((item) => (
-    <div key={item.key} style={styles.row}>
-      <div style={styles.col}>
-        <label style={styles.label}>{item.label}</label>
-
-        {/* DROPDOWN FOR DETAILS */}
-        <select
-          style={styles.select}
-          value={summary[item.key]}
-          onChange={(e) => update(setSummary, item.key, e.target.value)}
-        >
-          <option value="">Select</option>
-          {item.options.map((op) => (
-            <option key={op} value={op}>
-              {op}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  ))}
-</div>
-
     </div>
   );
 }
+
+function ModalFooter({ onCancel, onSave }) {
+  return (
+    <div style={modalFooter}>
+      <button style={cancelBtn} onClick={onCancel}>Cancel</button>
+      <button style={saveBtnModal} onClick={onSave}>Save</button>
+    </div>
+  );
+}
+
+const btnRow = { display: "flex", gap: 12, marginTop: 20 };
+const pillBtn = { padding: "8px 16px", borderRadius: 999, border: "1px solid #c7d2fe", background: "#eef2ff", fontWeight: 600 };
+const saveBtn = { marginTop: 20, padding: "10px 18px", background: "#111827", color: "#fff", borderRadius: 8 };
+const scoreBox = { marginTop: 12, padding: 12, background: "#eef6ff", borderRadius: 8 };
+
+const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", justifyContent: "center", alignItems: "center" };
+const modal = { background: "#fff", padding: 24, borderRadius: 16, width: "90%", maxWidth: 800 };
+const modalFooter = { display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 24 };
+const cancelBtn = { padding: "10px 18px", borderRadius: 999, border: "1px solid #c7d2fe", background: "#eef2ff", fontWeight: 600 };
+const saveBtnModal = { padding: "10px 22px", borderRadius: 999, border: "none", background: "#2563eb", color: "#fff", fontWeight: 600 };
+
+const stopRow = { display: "grid", gridTemplateColumns: "1fr 90px 90px", alignItems: "center", marginBottom: 12 };
+const radioLabel = { display: "flex", alignItems: "center", gap: 6 };
+const nyhaRow = { padding: 12, border: "1px solid #e5e7eb", borderRadius: 10, marginBottom: 10, cursor: "pointer" };

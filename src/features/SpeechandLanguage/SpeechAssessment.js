@@ -1,11 +1,6 @@
 import React, { useState, useRef } from "react";
-import DASSFormBuilder from "./DassForm";
-import PSSFormBuilder from "./PssForm";
-import PHQ9FormBuilder from "./PhqForm";
-import HAM_A_FormBuilder from "./HamaForm";
-import GAD7FormBuilder from "./GadForm";
-import HAMDFormBuilder from "./HamdForm";
-
+import PaedIASpeechLanguage from "./PaedSpeechAssessment"
+import PaedIAFeeding from "./PaedFeedingAssessment"
 
 function ScaleWrapper({ title, children }) {
   return (
@@ -17,11 +12,7 @@ function ScaleWrapper({ title, children }) {
 
 function DASS21({ patient, onChange, onBack }) {
   return (
-    <DASSFormBuilder
-      patient={patient}
-      onSubmit={onChange}
-      onBack={onBack}
-    />
+       <></>
   );
 }
 
@@ -29,22 +20,13 @@ function DASS21({ patient, onChange, onBack }) {
 
 function HAMA({ onChange, patient, onBack }) {
   return (
-      <HAM_A_FormBuilder
-        patient={patient}
-       onSubmit={onChange}
-        onBack={onBack}
-      />
+    <></>
   );
 }
 
 function HAMD({ patient, onChange, onBack }) {
   return (
-   
-      <HAMDFormBuilder
-        patient={patient}
-        onSubmit={onChange}
-        onBack={onBack}
-      />
+       <></>
   );
 }
       
@@ -52,28 +34,24 @@ function HAMD({ patient, onChange, onBack }) {
 
 function PSS({ patient, onChange, onBack }) {
   return (
-      <PSSFormBuilder
-        patient={patient} onBack={onBack}     
-       onSubmit={onChange}
-      />
+        <></>
   );
 }
 
 
 
-function GAD7({ patient, onChange, onBack }) {
+function PaedIAFeed({ patient, onChange, onBack }) {
   return (
-      <GAD7FormBuilder
-       patient={patient}
-      onSubmit={onChange}
-      onBack={onBack}
+        <PaedIAFeeding
+        patient={patient} onBack={onBack}
+        onSubmit={onChange}
       />
   );
 }
 
-function PHQ9({ patient, onChange, onBack }) {
+function PaedIASpeech({ patient, onChange, onBack }) {
   return (
-      <PHQ9FormBuilder
+         <PaedIASpeechLanguage
         patient={patient} onBack={onBack}
         onSubmit={onChange}
       />
@@ -85,7 +63,7 @@ function PHQ9({ patient, onChange, onBack }) {
    MAIN PSYCHOLOGY ASSESSMENT FORM
 ------------------------------------------------------------- */
 
-export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
+export default function AssessmentForm({ patient, onSave, onBack }) {
   const tabs = ["Depression Anxiety Stress Scale (DASS-21)", "Perceived Stress Scale (PSS)", "Generalized Anxiety Disorder (GAD-7)", "Patient Health Questionnaire (PHQ-9)", "Hamilton Anxiety Rating Scale (HAM-A)", "Hamilton Depression Rating Scale (HAM-D)"];
   const [activeTab, setActiveTab] = useState(0);
   const scrollRef = useRef(null);
@@ -191,7 +169,7 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
         )}
 
         {tabs[activeTab] === "Generalized Anxiety Disorder (GAD-7)" && (
-          <GAD7
+          <PaedIAFeed
             patient={patient}
             onChange={setGad7}
             onBack={onBack}
@@ -209,7 +187,7 @@ export default function PsychologyAssessmentForm({ patient, onSave, onBack }) {
         )}
 
         {tabs[activeTab] === "Patient Health Questionnaire (PHQ-9)" && (
-          <PHQ9 patient={patient} onBack={onBack} onChange={setPhq9} />
+          <PaedIASpeech patient={patient} onBack={onBack} onChange={setPhq9} />
         )}
       </div>
     </div>

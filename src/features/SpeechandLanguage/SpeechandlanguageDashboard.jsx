@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Patients from "./PsychologyPatients.jsx";
+import SpeechPatients from "../SpeechandLanguage/SpeechandlanguagePatients";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -622,7 +622,7 @@ function AppointmentCard() {
   );
 }
 
-export default function PsychologyDashboard({
+export default function SpeechAndLanguage({
   patients = [],
   onSelectPatient,
   onOpenPatients,
@@ -950,7 +950,7 @@ const [showPatients, setShowPatients] = useState(false);
   return (
     <>
      {showPatients ? (
-      <Patients onBack={() => setShowPatients(false)} />
+      <SpeechPatients patient={patients} onBack={() => setShowPatients(false)} />
     ) : (
       <div style={styles.wrapper}>
         <div style={styles.row}>

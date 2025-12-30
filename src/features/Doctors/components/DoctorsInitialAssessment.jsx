@@ -387,9 +387,8 @@ const handleSubmitReferral = () => {
         flexDirection: "column",
       }}
     >
-      <div style={{paddingBottom:20}}>
-      <h3>Subjective</h3>
-      <textarea/></div>
+   
+
       {/* ------------------ TABS ------------------ */}
       <div style={{ flexShrink: 0, width: "100%", marginBottom: 20 }}>
         <div
@@ -442,7 +441,7 @@ const handleSubmitReferral = () => {
        
         }}
       >
-<h2>Objective</h2>
+{/* <h2>Objective</h2> */}
 
         {/* TAB CONTENT (only once now) */}
         {tabs[activeTab] === "Visual" ? (
@@ -475,7 +474,11 @@ const handleSubmitReferral = () => {
             </p>
           </div>
         )}
-
+         <div style={{paddingBottom:20}}>
+      <h3>Assessment</h3>
+      <textarea/></div> <div style={{paddingBottom:20}}>
+      <h3>Plan</h3>
+      <textarea/></div>
         {/* REFER TO DEPARTMENTS DROPDOWN */}
         <MultiSelectDropdown
           options={departmentOptions}
