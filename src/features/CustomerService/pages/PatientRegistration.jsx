@@ -22,6 +22,24 @@ export default function PatientRegister({ addPatient }) {
   });
 
   const ICD_LIST = Object.keys(GROUPED_ICD_TO_DEPT);
+const [carerCount, setCarerCount] = useState(0);
+const [carers, setCarers] = useState([]);
+const generateCarers = (count) => {
+  const list = Array.from({ length: count }, (_, i) => ({
+    id: "CARER-" + (i + 1) + "-" + Date.now(),
+    name: "",
+    phone: ""
+  }));
+  setCarers(list);
+};
+
+const updateCarer = (index, key, value) => {
+  setCarers(prev =>
+    prev.map((c, i) =>
+      i === index ? { ...c, [key]: value } : c
+    )
+  );
+};
 
   const setField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -55,7 +73,7 @@ export default function PatientRegister({ addPatient }) {
       // NEWLY ADDED FIELDS STORED HERE
       diagnosis_history: form.diagnosis_history,
       medical_history: form.medical_history,
-
+carers: carers,   
       departments: depts
     };
 
@@ -113,19 +131,74 @@ export default function PatientRegister({ addPatient }) {
         <option value="">Select ICD</option>
         {ICD_LIST.map(i => <option key={i} value={i}>{i}</option>)}
       </select>
+<h3 style={{ marginTop: 20 }}>Carer Information</h3>
+
+<label>Number of Carers</label>
+<select
+  value={carerCount}
+  onChange={(e) => {
+    const count = Number(e.target.value);
+    setCarerCount(count);
+    generateCarers(count);
+  }}
+  style={{ width: "100%" }}
+>
+  <option value={0}>Select</option>
+  <option value={1}>1</option>
+  <option value={2}>2</option>
+  <option value={3}>3</option>
+</select>
+{carers.map((carer, index) => (
+  <div
+    key={carer.id}
+    style={{
+      border: "1px solid #ddd",
+      padding: 12,
+      borderRadius: 6,
+      marginTop: 12
+    }}
+  >
+    <strong>Carer {index + 1}</strong>
+
+    <label>Carer ID</label>
+    <input
+      value={carer.id}
+      readOnly
+      style={{ width: "100%", background: "#eee" }}
+    />
+
+    <label>Carer Name</label>
+    <input
+      value={carer.name}
+      onChange={(e) =>
+        updateCarer(index, "name", e.target.value)
+      }
+      style={{ width: "100%" }}
+    />
+
+    <label>Carer Phone</label>
+    <input
+      value={carer.phone}
+      onChange={(e) =>
+        updateCarer(index, "phone", e.target.value)
+      }
+      style={{ width: "100%" }}
+    />
+  </div>
+))}
 
       {/* NEW FIELDS */}
       <h3 style={{ marginTop: 20 }}>Clinical Information</h3>
 
-      <label>Diagnosis History</label>
+      <label>Clinical Diagnosis</label>
       <textarea
         value={form.diagnosis_history}
         onChange={(e) => setField("diagnosis_history", e.target.value)}
         style={{ width: "100%" }}
-        placeholder="Enter diagnosis history..."
+        placeholder="Enter diagnosis..."
       />
 
-      <label>Medical History</label>
+      <label>Past Medical & Family History</label>
       <textarea
         value={form.medical_history}
         onChange={(e) => setField("medical_history", e.target.value)}

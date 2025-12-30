@@ -11,6 +11,7 @@
 }  
 
 
+
 .treat{
    color:#00345f;
    font-weight: bold;
@@ -661,13 +662,6 @@ input:focus {
   padding: 20px;
 }
 
-h3 {
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
-  color:#00345f;
-  font-weight:500;
-}
 
 .form-group {
   display: flex;
@@ -714,6 +708,10 @@ h3 {
 
 
 
+button:disabled {
+  /* background-color: #9b9b9b; */
+  cursor: not-allowed;
+}
 .form-grid {
   display: flex;
   flex-wrap: wrap; /* Allow items to wrap to the next line */

@@ -6,6 +6,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import SelectField from "../../../shared/form/fields/SelectField";
 import TextField from "../../../shared/form/fields/TextField";
+import FormCard from "../../../shared/form/fields/FormCard";
 
 export default function MST(props , onSave, assessmentName = "MST", initialFormData = null) {
   var patientProp = props && props.patient ? props.patient : {};
@@ -17,18 +18,7 @@ export default function MST(props , onSave, assessmentName = "MST", initialFormD
   // Patient info prefill
   var [patientName, setPatientName] = useState(patientProp && patientProp.name ? patientProp.name : "");
   var [patientId, setPatientId] = useState(patientProp && patientProp.id ? patientProp.id : "");
-  var [patientAge, setPatientAge] = useState(patientProp && patientProp.age ? patientProp.age : "");
-  var [patientSex, setPatientSex] = useState(patientProp && patientProp.sex ? patientProp.sex : "");
-  var [patientRace, setPatientRace] = useState(patientProp && patientProp.race ? patientProp.race : "");
-  var [patientAccommodation, setPatientAccommodation] = useState(patientProp && patientProp.accommodation ? patientProp.accommodation : "");
-  var [patientNkfa, setPatientNkfa] = useState(patientProp && patientProp.nkfa ? patientProp.nkfa : "");
-  var [patientResidence, setPatientResidence] = useState(patientProp && patientProp.residence ? patientProp.residence : "");
-  var [patientOccupation, setPatientOccupation] = useState(patientProp && patientProp.occupation ? patientProp.occupation : "");
-  var [patientMaritalStatus, setPatientMaritalStatus] = useState(patientProp && patientProp.marital_status ? patientProp.marital_status : "");
-  var [patientIcd, setPatientIcd] = useState(patientProp && patientProp.icd ? patientProp.icd : "");
-  var [patientUl, setPatientUl] = useState(patientProp && patientProp.ul ? patientProp.ul : "");
-  var [patientWeight, setPatientWeight] = useState(patientProp && patientProp.weight ? patientProp.weight : "");
-  var [patientHeight, setPatientHeight] = useState(patientProp && patientProp.height ? patientProp.height : "");
+
 
   // Weight loss controls
   var [weightLostYN, setWeightLostYN] = useState("");
@@ -52,15 +42,7 @@ export default function MST(props , onSave, assessmentName = "MST", initialFormD
 
   // BMI derived (read-only)
   var bmi = "-";
-  if (patientWeight && patientHeight) {
-    try {
-      var h = parseFloat(patientHeight);
-      var w = parseFloat(patientWeight);
-      if (!isNaN(h) && h > 0 && !isNaN(w)) {
-        bmi = (w / ((h / 100) * (h / 100))).toFixed(1);
-      }
-    } catch (err) { bmi = "-"; }
-  }
+
 
   function computeWeightScore(band, poundsStr, yn) {
     if (!yn || yn !== "yes") return 0;
@@ -97,19 +79,6 @@ export default function MST(props , onSave, assessmentName = "MST", initialFormD
       patient: {
         id: patientId,
         name: patientName,
-        age: patientAge,
-        sex: patientSex,
-        race: patientRace,
-        accommodation: patientAccommodation,
-        nkfa: patientNkfa,
-        residence: patientResidence,
-        occupation: patientOccupation,
-        marital_status: patientMaritalStatus,
-        icd: patientIcd,
-        ul: patientUl,
-        weight: patientWeight,
-        height: patientHeight,
-        bmi: bmi
       },
       screeningDate: new Date().toISOString(),
       weightLostYN: weightLostYN,
@@ -149,16 +118,7 @@ const handleSave = () => {
     handleSave();
   }
 
-  function handleExportJSON() {
-    var payload = buildPayload();
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
-    var a = document.createElement("a");
-    a.setAttribute("href", dataStr);
-    a.setAttribute("download", "MST_" + (patientId || "patient") + "_" + (new Date().toISOString().slice(0, 10)) + ".json");
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
+
 
   function handlePrint() {
     window.print();
@@ -215,33 +175,30 @@ const handleSave = () => {
 
       <div style={styles.headerRow}>
         <div style={styles.titleBlock}>
-          <div style={styles.title}>Malnutrition Screening Tool (MST)</div>
-          <div style={styles.subtitle}>Professional analysis sheet — bedside screening</div>
+
         </div>
 
-        <div className="no-print" style={{ textAlign: "right" }}>
-          <div style={{ marginBottom: 8 }}>
-            <button onClick={handlePrint} style={{ ...styles.btnNeutral, marginRight: 8 }}>Print</button>
-            <button onClick={handleExportJSON} style={{ ...styles.btnNeutral, marginRight: 8 }}>Export JSON</button>
-            <button onClick={handleSave} style={styles.btnPrimary}>Save</button>
-          </div>
-          <div style={styles.small}>Date: {new Date().toLocaleDateString()}</div>
-        </div>
+
       </div>
 
       {/* AUTO-GENERATED PATIENT DETAILS (read-only like InitialAssessmentForm) */}
 
 
       {/* MST Screening */}
-      <section style={styles.card}>
-        <div style={styles.label}>Step 1 — MST screening</div>
+<FormCard
+  title="Malnutrition Screening Tool (MST)"
+  onBack={onBack}
+  onSave={handleSave}
+  onClear={handleClear}
+  onSubmit={handleSubmit}
+  onPrint={handlePrint}
+>
+
 
         {/* Weight loss question */}
         <div style={{ marginTop: 8, marginBottom: 12 }}>
-          <div style={{ fontWeight: 700 }}>1. Have you recently lost weight without trying?</div>
-          <div style={styles.small}>Select 'Yes' to reveal amount options.</div>
 
-          <div style={{ marginTop: 10, width: 320 }}>
+          <div style={{ marginTop: 10 }}>
 <SelectField
   label="Have you recently lost weight without trying?"
   value={weightLostYN}
@@ -268,10 +225,10 @@ const handleSave = () => {
   value={weightBand}
   options={[
     { label: "Select amount", value: "" },
-    { label: "2–13 lbs — 1 point", value: "2-13" },
-    { label: "14–23 lbs — 2 points", value: "14-23" },
-    { label: "24–33 lbs — 3 points", value: "24-33" },
-    { label: "≥ 34 lbs — 4 points", value: ">=34" },
+    { label: "2–13 lbs / 1-5 kg — 1 point", value: "2-13" },
+    { label: "14–23 lbs / 6-10 kg— 2 points", value: "14-23" },
+    { label: "24–33 lbs / 11- 15 kg — 3 points", value: "24-33" },
+    { label: "≥ 34 lbs / > 15 kg — 4 points", value: ">=34" },
     { label: "Unsure — 2 points", value: "unsure" }
   ]}
   onChange={setWeightBand}
@@ -301,10 +258,8 @@ const handleSave = () => {
 
         {/* Appetite */}
         <div style={{ marginTop: 8, marginBottom: 12 }}>
-          <div style={{ fontWeight: 700 }}>2. Have you been eating poorly because of decreased appetite?</div>
-          <div style={styles.small}>Choose the appropriate answer.</div>
 
-          <div style={{ marginTop: 10, width: 220 }}>
+          <div style={{ marginTop: 10 }}>
 <SelectField
   label="Have you been eating poorly because of decreased appetite?"
   value={appetiteStatus}
@@ -340,95 +295,30 @@ const handleSave = () => {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Clinical actions */}
-      {/* <section style={styles.card}>
-        <div style={styles.label}>Step 3 — Clinical actions</div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, marginTop: 8 }}>
-          <label style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <input type="checkbox" checked={actionInitiateNutrition} onChange={function () { setActionInitiateNutrition(!actionInitiateNutrition); }} />
-            <div>
-              <div style={{ fontWeight: 700 }}>Initiate nutritional intervention</div>
-              <div style={styles.small}>Start targeted interventions (meals, supplements)</div>
-            </div>
-          </label>
-
-          <label style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <input type="checkbox" checked={actionOrderConsult} onChange={function () { setActionOrderConsult(!actionOrderConsult); }} />
-            <div>
-              <div style={{ fontWeight: 700 }}>Order nutrition consult</div>
-              <div style={styles.small}>Within 24–72 hours</div>
-            </div>
-          </label>
-
-          <label style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <input type="checkbox" checked={actionMonitorIntake} onChange={function () { setActionMonitorIntake(!actionMonitorIntake); }} />
-            <div>
-              <div style={{ fontWeight: 700 }}>Monitor oral intake</div>
-              <div style={styles.small}>Record intake daily</div>
-            </div>
-          </label>
-
-          <label style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-            <input type="checkbox" checked={actionSupplements} onChange={function () { setActionSupplements(!actionSupplements); }} />
-            <div>
-              <div style={{ fontWeight: 700 }}>Start supplements / consider enteral</div>
-              <div style={styles.small}>If intake insufficient</div>
-            </div>
-          </label>
-
-          <label style={{ display: "flex", gap: 10, alignItems: "flex-start", gridColumn: "1 / -1" }}>
-            <input type="checkbox" checked={actionDocumentPlan} onChange={function () { setActionDocumentPlan(!actionDocumentPlan); }} />
-            <div>
-              <div style={{ fontWeight: 700 }}>Document follow-up plan</div>
-              <div style={styles.small}>Include re-screen schedule & responsible clinician</div>
-            </div>
-          </label>
-        </div>
-      </section> */}
-
-      {/* Clinician & notes */}
-      {/* <section style={styles.card}>
-        <div style={styles.label}>Follow-up & clinician notes</div>
-        <div style={styles.grid2}>
-          <div>
-            <label style={{ display: "block", marginBottom: 6 }}>Clinician</label>
-            <input style={styles.input} value={clinician} onChange={function (e) { setClinician(e.target.value); }} />
-          </div>
-
-          <div>
-            <label style={{ display: "block", marginBottom: 6 }}>Next re-screen (if LOS &gt; 7 days)</label>
-            <input
-              type="date"
-              style={styles.input}
-              value={nextRescreen}
-              onChange={function (e) { setNextRescreen(e.target.value); }}
-            />
-          </div>
-        </div>
-
-        <div style={{ marginTop: 12 }}>
-          <label style={{ display: "block", marginBottom: 6 }}>Clinical notes</label>
-          <textarea style={{ width: "100%", minHeight: 90, padding: 10, borderRadius: 8, border: "1px solid #e6e9ee" }} value={notes} onChange={function (e) { setNotes(e.target.value); }} />
-        </div>
-      </section> */}
-
-      {/* Footer actions including Back + Submit Assessment */}
-      <div className="no-print" style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 12, alignItems: "center" }}>
         <div>
-          <button onClick={function() { if (onBack) { try { onBack(); } catch (err) {} } }} style={{ padding: "10px 18px", borderRadius: 6, background: "#ddd", color: "#000", cursor: "pointer", border: "1px solid #999" }}>
-            ← Back
-          </button>
-        </div>
+          <div>
+  <label style={{ fontWeight: 600, display: "block", marginBottom: 6 }}>
+   Clinical Notes
+  </label>
+  <textarea
+  
+    placeholder="Enter additional clinical notes here…"
+    style={{
+      width: "100%",
+      minHeight: 80,
+      padding: "10px 12px",
+      borderRadius: 6,
+      border: "1px solid #d1d5db",
+      fontSize: 14,
+      resize: "vertical",
+    }}
+  />
+</div>
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={handleClear} style={styles.btnNeutral}>Clear</button>
-         
-          <button onClick={handleSubmit} style={styles.btnPrimary}>Submit Assessment →</button>
         </div>
-      </div>
+</FormCard>
+
+
     </div>
   );
 }

@@ -1194,7 +1194,7 @@ function saveProgressReport() {
                 <div style={{ marginTop: 8 }}>You cannot save new assessments. Use Patient Summary to export or wait for an admin to reopen editing.</div>
               </div>
             ) : (
-              <AssessmentRenderer selected={selectedAssessment} onSave={saveAssessment} initialFormData={formDataByAssessment[selectedAssessment] || null} />
+              <AssessmentRenderer selected={selectedAssessment} onBack={() => setSelectedAssessment(null)} onSave={saveAssessment} initialFormData={formDataByAssessment[selectedAssessment] || null} />
             )}
           </div>
         </div>
@@ -1526,7 +1526,7 @@ function saveProgressReport() {
         </div>
 
 
-<h3 style={{ padding: 20 }}>Short Term Goals</h3>
+<h3 style={{ paddingTop: 20 }}>Short Term Goals</h3>
 
 <textarea
   style={styles.textarea}
@@ -1541,6 +1541,14 @@ function saveProgressReport() {
   value={longTermGoals}
   onChange={(e) => setLongTermGoals(e.target.value)}
 />
+
+<h3 style={{ paddingTop: 40 }}>Assessment</h3>
+
+<textarea
+  style={styles.textarea}
+
+/>
+
 <h3 style={{ paddingTop: 40 }}>Plan</h3>
 
 <textarea

@@ -5,14 +5,18 @@
   flex-direction: column;
   font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
- 
+  
 body{
   height: 100%;
   overflow: hidden;
   margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Add to App.css */
+ 
  
 .main {
   flex: 1;
@@ -20,6 +24,7 @@ body{
   display: flex;
   flex-direction: column;
 }
+ 
  
 .main > section {
   height: 100%;
@@ -41,11 +46,13 @@ body {
   height: 100vh;
 }
  
+ 
 .page {
   display: flex;
   height: 100vh;
   overflow-x: hidden;
 }
+ 
  
 .footer-wrapper {
   margin: 4rem 0rem;
@@ -84,4 +91,106 @@ body {
   font-weight: 600;
   color: #4c4c4c;
   cursor: pointer;
+}
+/* app.css */
+/* button{border:1px solid #e6e9ef;background:#fff;border-radius:8px;padding:8px 10px;font-size:13px;cursor:pointer} */
+/* button:hover{background:#f2f5ff}
+.dim{color:#64748b} */
+ 
+h1 {
+  font-size: 28px;     /* Page title */
+  font-weight: 600;
+  line-height: 40px;
+  color:#0f172a;
+  margin: 0 0 16px 0;
+}
+ 
+h2 {
+  font-size: 24px;     /* Section title */
+  font-weight: 600;
+   color:#0f172a;
+  line-height: 40px;
+  margin: 0 0 12px 0;
+}
+ 
+h3 {
+  font-size: 20px;     /* Card title */
+  font-weight: 500;
+  line-height: 40px;
+   color:#0f172a;
+  margin: 0 0 8px 0;
+}
+ 
+p {
+  font-size: 14px;
+  line-height: 20px;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+}
+ 
+button {
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #007BFF;
+  background: #007BFF;
+  color: #fff;
+}
+ 
+.darkbutton{
+  border: 1px solid #0f172a;
+  background: #0f172a;
+  color: #fff;
+}
+ 
+.whitebutton{
+  border: 1px solid #0f172a;
+  background: #fff;
+  color: #0f172a;
+}
+ 
+ 
+button:hover {
+  background: #0f172a;
+ 
+  color:#fff
+}
+ 
+/* Primary */
+button-primary {
+  background: #007BFF;
+  border-color: #007BFF;
+  color: #ffffff;
+}
+ 
+button-primary:hover {
+  background: #1e40af;
+}
+ 
+/* Danger */
+ 
+ 
+/* Success (rare) */
+button-success {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+.redbutton {
+  background: #cf401c;
+  border-color: #cf401c;
+  color: #ffffff;
+}
+button-success:hover {
+  background: #15803d;
+}
+ 
+/* Disabled */
+button:disabled {
+  background: #e5e7eb;
+  color: #94a3b8;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
 }

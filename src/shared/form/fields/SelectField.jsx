@@ -8,11 +8,23 @@ export default function SelectField({
   options = [],
   onChange,
   disabled = false,
-  helperText
+  helperText,
+  labelPosition = "inline" // inline | block
 }) {
   return (
     <div className="form-field">
-      {label && <label className="form-label">{label}</label>}
+      {label && (
+        <label
+          className="form-label"
+          style={
+            labelPosition === "block"
+              ? { display: "block", width: "100%", marginBottom: 6 }
+              : {}
+          }
+        >
+          {label}
+        </label>
+      )}
 
       <select
         className="form-input"
@@ -27,9 +39,8 @@ export default function SelectField({
         ))}
       </select>
 
-      {helperText && (
-        <div className="form-helper">{helperText}</div>
-      )}
+      {helperText && <div className="form-helper">{helperText}</div>}
     </div>
   );
 }
+

@@ -2,16 +2,20 @@
 import React from "react";
 import PGSGAMetric from "../components/PGSGAMetric";
 import MST from "../components/MST";
-import NRS from "../components/NRS"
+import NRS from "../components/NRS";
+import BIA from "../components/BIA"
+import GrowthChartAssessment from "../components/GrowthChart"
 
 const AssessmentComponents = {
   "PG-SGA-Metric-version": PGSGAMetric,
   "MST": MST,
-  "NRS": NRS
+  "NRS": NRS,
+  "Growth Chart":GrowthChartAssessment,
+  "BIA":BIA
   // ... other assessments
 };
 
-export default function AssessmentRenderer({ selected, onSave, initialFormData }) {
+export default function AssessmentRenderer({ selected, onSave,onBack, initialFormData }) {
   if (!selected) return <p>Select an assessment</p>;
   const Component = AssessmentComponents[selected];
   if (!Component) return <p>No component for {selected}</p>;
@@ -28,5 +32,6 @@ export default function AssessmentRenderer({ selected, onSave, initialFormData }
            onSubmit={handleOnSubmit}
            assessmentName={selected}
            initialFormData={initialFormData}
+            onBack={onBack} 
          />;
 }
