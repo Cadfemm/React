@@ -344,7 +344,7 @@ padding: 5px 15px;
     background:#000;
     color:#fff;}
     .ms-btn:hover { background: transparent !important; }
-    h2{font-size:1.5rem !important;  }
+   
       .kv { display:flex; justify-content:space-between; gap:14px; padding:6px 0; border-bottom:1px dashed #edf2fb; }
       .kv:last-child { border-bottom:0; }
       .kv > span { color:#4b5563; }

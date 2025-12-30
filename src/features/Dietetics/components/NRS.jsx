@@ -20,6 +20,16 @@ export default function NRS({
       age: "",
     }
   );
+const descBox = {
+  marginTop: 6,
+  padding: "8px 10px",
+  background: "#fafafa",
+  border: "1px solid #ddd",
+  borderRadius: 6,
+  fontSize: 13,
+  lineHeight: 1.4,
+  color: "#444",
+};
 
   const setField = (name, value) =>
     setForm((p) => ({ ...p, [name]: value }));
@@ -134,67 +144,113 @@ export default function NRS({
 
       {/* ------------------- TABLE 2 ------------------- */}
       {anyTable1Yes && (
-        <div style={sec}>
-          <h3 style={{ marginTop: 0 }}>Table 2 — Final Screening</h3>
+<div style={sec}>
+  <h3 style={{ marginTop: 0 }}>Table 2 — Final Screening</h3>
 
-          <label style={label}>Impaired Nutritional Status</label>
-          <select
-            style={{ width: "100%", padding: 8, borderRadius: 6 }}
-            value={form.nutStatus}
-            onChange={(e) => setField("nutStatus", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="0">0 — Normal</option>
-            <option value="1">1 — Mild impairment</option>
-            <option value="2">2 — Moderate impairment</option>
-            <option value="3">3 — Severe impairment</option>
-          </select>
+  {/* -------------------------------
+      IMPAIRED NUTRITIONAL STATUS
+  -------------------------------- */}
+  <label style={label}>Impaired Nutritional Status</label>
+  <select
+    style={{ width: "100%", padding: 8, borderRadius: 6 }}
+    value={form.nutStatus}
+    onChange={(e) => setField("nutStatus", e.target.value)}
+  >
+    <option value="">Select...</option>
+    <option value="0">Score 0 — Normal</option>
+    <option value="1">Score 1 — Mild</option>
+    <option value="2">Score 2 — Moderate</option>
+    <option value="3">Score 3 — Severe</option>
+  </select>
 
-          <label style={{ ...label, marginTop: 14 }}>
-            Severity of Disease (↑ nutritional requirements)
-          </label>
-          <select
-            style={{ width: "100%", padding: 8, borderRadius: 6 }}
-            value={form.diseaseSeverity}
-            onChange={(e) => setField("diseaseSeverity", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="0">0 — Normal</option>
-            <option value="1">1 — Mild</option>
-            <option value="2">2 — Moderate</option>
-            <option value="3">3 — Severe</option>
-          </select>
+  {/* DESCRIPTION */}
+  {form.nutStatus && (
+    <div style={descBox}>
+      {form.nutStatus === "0" && "Normal nutritional status."}
 
-          <label style={{ ...label, marginTop: 14 }}>Patient Age</label>
-          <input
-            type="number"
-            value={form.age}
-            onChange={(e) => setField("age", e.target.value)}
-            style={{
-              width: "100%",
-              padding: 8,
-              borderRadius: 6,
-              border: "1px solid #ccc",
-            }}
-          />
+      {form.nutStatus === "1" &&
+        "Weight loss >5% in 3 months OR food intake 50–75% of normal requirement in preceding week."}
 
-          <div
-            style={{
-              marginTop: 16,
-              padding: 12,
-              background: "#f7f9ff",
-              borderRadius: 6,
-              border: "1px solid #d8e2ff",
-            }}
-          >
-            <div>
-              <strong>Total Score: </strong> {finalScore}
-            </div>
-            <div style={{ marginTop: 4 }}>
-              <strong>Status:</strong> {riskStatus}
-            </div>
-          </div>
-        </div>
+      {form.nutStatus === "2" &&
+        "Weight loss >5% in 2 months OR BMI 18.5–20.5 with impaired general condition OR food intake 25–60% of normal requirement in preceding week."}
+
+      {form.nutStatus === "3" &&
+        "Weight loss >5% in 1 month (>15% in 3 months) OR BMI <18.5 with impaired general condition OR food intake 0–25% of normal requirement in preceding week."}
+    </div>
+  )}
+
+  {/* -------------------------------
+      SEVERITY OF DISEASE
+  -------------------------------- */}
+  <label style={{ ...label, marginTop: 14 }}>
+    Severity of Disease (↑ nutritional requirements)
+  </label>
+  <select
+    style={{ width: "100%", padding: 8, borderRadius: 6 }}
+    value={form.diseaseSeverity}
+    onChange={(e) => setField("diseaseSeverity", e.target.value)}
+  >
+    <option value="">Select...</option>
+    <option value="0">Score 0 — Normal</option>
+    <option value="1">Score 1 — Mild</option>
+    <option value="2">Score 2 — Moderate</option>
+    <option value="3">Score 3 — Severe</option>
+  </select>
+
+  {/* DESCRIPTION */}
+  {form.diseaseSeverity && (
+    <div style={descBox}>
+      {form.diseaseSeverity === "0" &&
+        "Normal nutritional requirements."}
+
+      {form.diseaseSeverity === "1" &&
+        "Hip fracture, chronic patients with acute complications (cirrhosis, COPD), chronic hemodialysis, diabetes, oncology."}
+
+      {form.diseaseSeverity === "2" &&
+        "Major abdominal surgery, stroke, severe pneumonia, hematologic malignancy."}
+
+      {form.diseaseSeverity === "3" &&
+        "Head injury, bone marrow transplantation, intensive care patients (APACHE >10)."}
+    </div>
+  )}
+
+  {/* -------------------------------
+      AGE
+  -------------------------------- */}
+  <label style={{ ...label, marginTop: 14 }}>Patient Age</label>
+  <input
+    type="number"
+    value={form.age}
+    onChange={(e) => setField("age", e.target.value)}
+    style={{
+      width: "100%",
+      padding: 8,
+      borderRadius: 6,
+      border: "1px solid #ccc",
+    }}
+  />
+
+  {/* -------------------------------
+      FINAL SCORE
+  -------------------------------- */}
+  <div
+    style={{
+      marginTop: 16,
+      padding: 12,
+      background: "#f7f9ff",
+      borderRadius: 6,
+      border: "1px solid #d8e2ff",
+    }}
+  >
+    <div>
+      <strong>Total Score:</strong> {finalScore}
+    </div>
+    <div style={{ marginTop: 4 }}>
+      <strong>Status:</strong> {riskStatus}
+    </div>
+  </div>
+</div>
+
       )}
 
       {/* ------------------- SUBMIT ------------------- */}

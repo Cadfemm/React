@@ -2,12 +2,16 @@
 import React from "react";
 import PGSGAMetric from "../components/PGSGAMetric";
 import MST from "../components/MST";
-import NRS from "../components/NRS"
+import NRS from "../components/NRS";
+import BIA from "../components/BIA"
+import GrowthChartAssessment from "../components/GrowthChart"
 
 const AssessmentComponents = {
   "PG-SGA-Metric-version": PGSGAMetric,
   "MST": MST,
-  "NRS": NRS
+  "NRS": NRS,
+  "Growth Chart":GrowthChartAssessment,
+  "BIA":BIA
   // ... other assessments
 };
 

@@ -58,7 +58,6 @@ const filteredPatients = useMemo(() => {
     <div style={{ padding: 20 }}>
       {/* HEADER */}
       <header style={{ marginBottom: 24 }}>
-        <h2>Doctors System Dashboard</h2>
       </header>
 
       {/* NAVIGATION TILES */}
