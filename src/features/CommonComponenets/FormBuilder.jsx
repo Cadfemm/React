@@ -39,87 +39,87 @@ export default function CommonFormBuilder({
             )}
           </div>
 
-         <div style={styles.body}>
-  {sections.map((section, sIdx) => {
+          <div style={styles.body}>
+            {sections.map((section, sIdx) => {
 
-    /* ===== SECTION-LEVEL VISIBILITY ===== */
-    if (section.showIf) {
-      const depVal = values[section.showIf.field];
+              /* ===== SECTION-LEVEL VISIBILITY ===== */
+              if (section.showIf) {
+                const depVal = values[section.showIf.field];
 
-      if ("equals" in section.showIf && depVal !== section.showIf.equals) {
-        return null;
-      }
+                if ("equals" in section.showIf && depVal !== section.showIf.equals) {
+                  return null;
+                }
 
-      if ("exists" in section.showIf && !depVal) {
-        return null;
-      }
-    }
+                if ("exists" in section.showIf && !depVal) {
+                  return null;
+                }
+              }
 
-    return (
-      <div key={sIdx} style={styles.sectionCard}>
+              return (
+                <div key={sIdx} style={styles.sectionCard}>
 
-        {section.title && (
-          <div style={styles.sectionTitle}>
-            {section.title}
-          </div>
-        )}
-
-        {section.fields.map(field => {
-
-          /* ===== FIELD-LEVEL VISIBILITY ===== */
-          if (field.showIf) {
-            const depVal = values[field.showIf.field];
-
-            if ("equals" in field.showIf && depVal !== field.showIf.equals) {
-              return null;
-            }
-
-            if ("exists" in field.showIf && !depVal) {
-              return null;
-            }
-          }
-
-          const value = values[field.name];
-          const error = submitted
-            ? validateField(value, field.validation)
-            : null;
-
-          return (
-            <div key={field.name} style={styles.field}>
-
-              {field.type === "radio" ? (
-                <div style={styles.radioRow}>
-                  <div style={styles.radioLabel}>
-                    {field.label}
-                  </div>
-                  {renderField(field, value, onChange, onAction)}
-                </div>
-              ) : (
-                <>
-                  {field.type !== "button" && (
-                    <label style={styles.label}>
-                      {field.label}
-                    </label>
+                  {section.title && (
+                    <div style={styles.sectionTitle}>
+                      {section.title}
+                    </div>
                   )}
-                  {renderField(field, value, onChange, onAction)}
-                </>
-              )}
 
-              {field.helper && (
-                <div style={styles.helper}>{field.helper}</div>
-              )}
+                  {section.fields.map(field => {
 
-              {error && (
-                <div style={styles.error}>{error}</div>
-              )}
+                    /* ===== FIELD-LEVEL VISIBILITY ===== */
+                    if (field.showIf) {
+                      const depVal = values[field.showIf.field];
 
-            </div>
-          );
-        })}
-      </div>
-    );
-  })}
-</div>
+                      if ("equals" in field.showIf && depVal !== field.showIf.equals) {
+                        return null;
+                      }
+
+                      if ("exists" in field.showIf && !depVal) {
+                        return null;
+                      }
+                    }
+
+                    const value = values[field.name];
+                    const error = submitted
+                      ? validateField(value, field.validation)
+                      : null;
+
+                    return (
+                      <div key={field.name} style={styles.field}>
+
+                        {field.type === "radio" ? (
+                          <div style={styles.radioRow}>
+                            <div style={styles.radioLabel}>
+                              {field.label}
+                            </div>
+                            {renderField(field, value, onChange, onAction)}
+                          </div>
+                        ) : (
+                          <>
+                            {field.type !== "button" && field.type !== "subheading" && (
+                              <label style={styles.label}>
+                                {field.label}
+                              </label>
+                            )}
+                            {renderField(field, value, onChange, onAction)}
+                          </>
+                        )}
+
+                        {field.helper && (
+                          <div style={styles.helper}>{field.helper}</div>
+                        )}
+
+                        {error && (
+                          <div style={styles.error}>{error}</div>
+                        )}
+
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
 
 
           {/* ================= FOOTER ================= */}
@@ -131,6 +131,64 @@ export default function CommonFormBuilder({
   );
 }
 
+function MultiSelectDropdown({ field, value, onChange }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleValue = (val) => {
+    const next = value.includes(val)
+      ? value.filter(v => v !== val)
+      : [...value, val];
+    onChange(field.name, next);
+  };
+
+  const selectedLabels =
+    value.length === 0
+      ? "Select"
+      : field.options
+          .filter(o => value.includes(o.value))
+          .map(o => o.label)
+          .join(", ");
+
+  return (
+    <div ref={ref} style={styles.multiSelectWrap}>
+      <div
+        style={styles.multiSelectControl}
+        onClick={() => setOpen(o => !o)}
+      >
+        <span style={{ color: value.length ? "#111827" : "#9ca3af" }}>
+          {selectedLabels}
+        </span>
+        <span style={styles.caret}>▾</span>
+      </div>
+
+      {open && (
+        <div style={styles.multiSelectMenu}>
+          {field.options.map(opt => (
+            <label key={opt.value} style={styles.multiSelectItem}>
+              <input
+                type="checkbox"
+                checked={value.includes(opt.value)}
+                onChange={() => toggleValue(opt.value)}
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 function renderField(field, value, onChange, onAction) {
@@ -178,7 +236,7 @@ function renderField(field, value, onChange, onAction) {
             alignItems: "center"
           }}
         >
-          <div /> 
+          <div />
           <div style={styles.inlineGroup}>
             {(field.options || []).map(opt => (
               <label key={opt.value} style={styles.inlineItem}>
@@ -215,6 +273,34 @@ function renderField(field, value, onChange, onAction) {
           ))}
         </div>
       );
+    case "subheading":
+      return (
+        <div style={styles.subheading}>
+          {field.label}
+        </div>
+      );
+
+   case "multi-select-dropdown":
+  return (
+    <MultiSelectDropdown
+      field={field}
+      value={value || []}
+      onChange={onChange}
+    />
+  );
+  case "inline-input":
+  return (
+    <div style={styles.inlineRow}>
+      <div style={styles.inlineLabel}>{field.inlineLabel}</div>
+      <input
+        style={styles.inlineInput}
+        value={value || ""}
+        onChange={e => onChange(field.name, e.target.value)}
+        placeholder={field.placeholder || ""}
+      />
+    </div>
+  );
+
 
     case "button":
       return (
@@ -365,7 +451,80 @@ const styles = {
     fontSize: 15,
     color: "#0F172A"
   },
+  subheading: {
+    marginTop: 20,
+    marginBottom: 10,
+    fontWeight: 700,
+    fontSize: 15,
+    color: "#0F172A",
+    borderBottom: "1px solid #e5e7eb",
+    paddingBottom: 4
+  },
 
+multiSelectWrap: {
+  position: "relative",
+  width: "100%"
+},
+
+multiSelectControl: {
+  border: "1px solid #d1d5db",
+  borderRadius: 6,
+  padding: "10px 12px",
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  background: "#fff"
+},
+
+caret: {
+  fontSize: 12,
+  color: "#6b7280"
+},
+
+multiSelectMenu: {
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  right: 0,
+  zIndex: 20,
+  background: "#fff",
+  border: "1px solid #d1d5db",
+  borderRadius: 6,
+  marginTop: 4,
+  maxHeight: 220,
+  overflowY: "auto",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+},
+inlineRow: {
+  display: "grid",
+  gridTemplateColumns: "120px 1fr",
+  alignItems: "center",
+  gap: 12,
+  marginBottom: 12
+},
+
+inlineLabel: {
+  fontWeight: 500,
+  color: "#111827"
+},
+
+inlineInput: {
+  width: "100%",
+  padding: "8px 10px",
+  borderRadius: 6,
+  border: "1px solid #d1d5db"
+},
+
+
+
+multiSelectItem: {
+  display: "flex",
+  gap: 8,
+  padding: "8px 12px",
+  cursor: "pointer",
+  alignItems: "center"
+},
 
   inlineItem: {
     display: "flex",

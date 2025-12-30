@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const Card = ({ title, children }) => (
   <div style={styles.card}>
@@ -6,9 +6,6 @@ const Card = ({ title, children }) => (
     {children}
   </div>
 );
-
-
-
 
 const RadioRow = ({ label, value, onChange, options }) => (
   <div style={styles.row}>
@@ -68,7 +65,12 @@ const Select = ({ label, value, onChange, options }) => (
     </select>
   </div>
 );
-
+const TextArea = ({ placeholder }) => (
+  <textarea
+    placeholder={placeholder}
+    style={styles.textArea}
+  />
+);
 export default function CognitiveSoapAssessment() {
 
   const [hasCognitiveImpairment, setHasCognitiveImpairment] = useState("");
@@ -94,13 +96,20 @@ export default function CognitiveSoapAssessment() {
 
   const [language, setLanguage] = useState({
     cmd3: "",
-    cmd3How: "",
+    cmd3Clue: "",
+    cmd3CueType: "",
+
     cmd2: "",
-    cmd2How: "",
+    cmd2Clue: "",
+    cmd2CueType: "",
+
     cmd1: "",
-    cmd1How: "",
+    cmd1Clue: "",
+    cmd1CueType: "",
+
     consistency: ""
   });
+
 
   const [sleepFall, setSleepFall] = useState("");
   const [sleepQuality, setSleepQuality] = useState("");
@@ -135,12 +144,22 @@ export default function CognitiveSoapAssessment() {
     q6: null,
     q7: null
   });
-  const COMMAND_HOW_OPTIONS = [
-    "Independently",
-    "With verbal cues",
-    "With visual cues",
-  ];
+  const CLUE_OPTIONS = ["With Clues", "Without Clues"];
 
+  const CUE_TYPE_OPTIONS = [
+    "With verbal cues",
+    "With visual cues"
+  ];
+  const [showMMSE, setShowMMSE] = useState(false);
+  const [showMOCA, setShowMOCA] = useState(false);
+  const [showRLAR, setShowRLAR] = useState(false);
+
+  const [mmseScore, setMmseScore] = useState(null);
+  const [rlarScore, setRlarScore] = useState(null);
+
+
+  const CONSISTENCY_OPTIONS = ["Consistent", "Inconsistent"];
+  const [gcs, gcsotal] = useState({ multi: "", jfk: "", gcs: "" });
   const [isiTotal, setIsiTotal] = useState(null);
   const ISI_SEVERITY_OPTIONS = [
     { label: "None", value: 0 },
@@ -210,6 +229,32 @@ export default function CognitiveSoapAssessment() {
   const [showPsqi, setShowPsqi] = useState(false);
   const [psqiScore, setPsqiScore] = useState(null);
   const [psqiData, setPsqiData] = useState({});
+  const [showPhq9, setShowPhq9] = useState(false);
+  const [showGad7, setShowGad7] = useState(false);
+  const [showDass, setShowDass] = useState(false);
+
+  const [phq9Values, setPhq9Values] = useState(Array(9).fill(null));
+  const [gad7Values, setGad7Values] = useState(Array(7).fill(null));
+  const [dassValues, setDassValues] = useState({
+    depression: Array(7).fill(null),
+    anxiety: Array(7).fill(null),
+    stress: Array(7).fill(null)
+  });
+
+  const [phq9Score, setPhq9Score] = useState(null);
+  const [gad7Score, setGad7Score] = useState(null);
+  const [dassScore, setDassScore] = useState(null);
+  const MOOD_OPTIONS = [
+    { label: "Not at all (0)", value: 0 },
+    { label: "Several days (1)", value: 1 },
+    { label: "More than half the days (2)", value: 2 },
+    { label: "Nearly every day (3)", value: 3 }
+  ];
+
+
+  const [phqResult, setPhqResult] = useState(null);
+  const [gadResult, setGadResult] = useState(null);
+  const [dassResult, setDassResult] = useState(null);
 
 
   const [jfkTotal, setJfkTotal] = useState(null);
@@ -219,6 +264,49 @@ export default function CognitiveSoapAssessment() {
     { label: "Moderate chance of nodding off", value: 2 },
     { label: "High chance of nodding off", value: 3 }
   ];
+  const PSQI_QUESTIONS = [
+    "Cannot fall asleep within 30 minutes",
+    "Wake up in the middle of the night",
+    "Have to get up to use the bathroom",
+    "Cannot breathe comfortably",
+    "Cough or snore loudly",
+    "Feel too cold",
+    "Feel too hot",
+    "Have bad dreams",
+    "Have pain"
+  ];
+  const PSQI_OPTIONS = [
+    { value: 0, label: "0 – Not during the past month" },
+    { value: 1, label: "1 – Less than once a week" },
+    { value: 2, label: "2 – Once or twice a week" },
+    { value: 3, label: "3 – Three or more times a week" }
+  ];
+  const isiInterpretation = (score) => {
+    if (score <= 7) return "No clinically significant insomnia";
+    if (score <= 14) return "Subthreshold insomnia";
+    if (score <= 21) return "Clinical insomnia (moderate severity)";
+    return "Clinical insomnia (severe)";
+  };
+  const psqiInterpretation = (score) => {
+    if (score <= 5) {
+      return "Good sleep quality ";
+    }
+    if (score <= 10) {
+      return "Mild sleep difficulties";
+    }
+    if (score <= 15) {
+      return "Moderate sleep difficulties";
+    }
+    return "Severe sleep difficulties ";
+  };
+
+
+  const essInterpretation = (score) => {
+    if (score <= 10) return "Normal";
+    if (score <= 14) return "Mild Sleepiness";
+    if (score <= 17) return "Moderate Sleepiness";
+    return "Severe Sleepiness";
+  };
 
   const ESS_QUESTIONS = [
     "Sitting and reading",
@@ -230,6 +318,594 @@ export default function CognitiveSoapAssessment() {
     "Sitting quietly after a meal without alcohol",
     "In a car, while stopped for a few minutes in traffic or at a light"
   ];
+  const Phq9Modal = () => {
+    const questions = [
+      "1.Little interest or pleasure in doing things.",
+      "2.Feeling down, depressed, or hopeless.",
+      "3.Trouble falling or staying asleep, or sleeping too much.",
+      "4. tired or having little energy.",
+      "5.Poor appetite or overeating.",
+      "6.Feeling bad about yourself — or that you are a failure or have let yourself or your family down.",
+      "7.Trouble concentrating on things, such as reading the newspaper or watching television.",
+      "8.Moving or speaking so slowly that other people could have noticed? Or being so fidgety or restless that you have been moving more than usual.",
+      "9.Thoughts that you would be better off dead or of hurting yourself in some way."
+    ];
+
+
+
+    const total = phq9Values.reduce((s, v) => s + (v ?? 0), 0);
+
+
+    return (
+      <div style={styles.modalOverlay}>
+        <div style={styles.modal}>
+          <h3>Patient Health Questionnaire (PHQ-9)</h3>
+
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            {questions.map((q, i) => (
+              <Select
+                key={i}
+                label={q}
+                value={phq9Values[i]}
+                onChange={v => {
+                  const copy = [...phq9Values];
+                  copy[i] = v;
+                  setPhq9Values(copy);
+                }}
+                options={MOOD_OPTIONS}
+              />
+            ))}
+          </div>
+
+          <div style={styles.modalFooter}>
+            <div>Total Score: {total}</div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button style={styles.secondaryBtn} onClick={() => setShowPhq9(false)}>Cancel</button>
+              <button
+                style={styles.primaryBtn}
+                onClick={() => {
+                  const severity =
+                    total <= 4 ? "Minimal / None" :
+                      total <= 9 ? "Mild" :
+                        total <= 14 ? "Moderate" :
+                          total <= 19 ? "Moderately Severe" :
+                            "Severe";
+
+                  setPhqResult({
+                    total,
+                    severity
+                  });
+
+                  setPhq9Score(total);
+                  setShowPhq9(false);
+                }}
+              >
+                Save
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const Gad7Modal = () => {
+    const questions = [
+      "1.Feeling nervous, anxious, or on edge.",
+      "2.Not being able to stop or control worrying.",
+      "3.Worrying too much about different things.",
+      "4.Trouble relaxing.",
+      "5.Being so restless that it is hard to sit still.",
+      "6.Becoming easily annoyed or irritable.",
+      "7.Feeling afraid, as if something awful might happen."
+    ];
+
+
+    const total = gad7Values.reduce((s, v) => s + (v ?? 0), 0);
+
+    return (
+      <div style={styles.modalOverlay}>
+        <div style={styles.modal}>
+          <h3>Generalized Anxiety Disorder (GAD-7)</h3>
+
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            {questions.map((q, i) => (
+              <Select
+                key={i}
+                label={q}
+                value={gad7Values[i]}
+                onChange={v => {
+                  const copy = [...gad7Values];
+                  copy[i] = v;
+                  setGad7Values(copy);
+                }}
+                options={MOOD_OPTIONS}
+              />
+            ))}
+          </div>
+
+          <div style={styles.modalFooter}>
+            <div>Total Score: {total}</div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button style={styles.secondaryBtn} onClick={() => setShowGad7(false)}>Cancel</button>
+              <button
+
+                style={styles.primaryBtn}
+                onClick={() => {
+                  const severity =
+                    total <= 4 ? "Minimal / None" :
+                      total <= 9 ? "Mild" :
+                        total <= 14 ? "Moderate" :
+                          "Severe";
+
+                  setGadResult({ total, severity });
+                  setGad7Score(total);
+                  setShowGad7(false);
+                }}
+              >
+                Save
+              </button>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  const DassModal = () => {
+    /* ================= QUESTION MAP ================= */
+    const QUESTIONS = [
+      { q: "1. I found it hard to wind down.", type: "stress", i: 0 },
+      { q: "2. I was aware of dryness of my mouth.", type: "anxiety", i: 0 },
+      { q: "3. I couldn’t seem to experience any positive feeling at all.", type: "depression", i: 0 },
+      { q: "4. I experienced breathing difficulty.", type: "anxiety", i: 1 },
+      { q: "5. I found it difficult to work up the initiative to do things.", type: "depression", i: 1 },
+      { q: "6. I tended to over-react to situations.", type: "stress", i: 1 },
+      { q: "7. I experienced trembling.", type: "anxiety", i: 2 },
+      { q: "8. I felt that I was using a lot of nervous energy.", type: "stress", i: 2 },
+      { q: "9. I was worried about situations in which I might panic.", type: "anxiety", i: 3 },
+      { q: "10. I felt that I had nothing to look forward to.", type: "depression", i: 2 },
+      { q: "11. I found myself getting agitated.", type: "stress", i: 3 },
+      { q: "12. I found it difficult to relax.", type: "stress", i: 4 },
+      { q: "13. I felt down-hearted and blue.", type: "depression", i: 3 },
+      { q: "14. I was intolerant of anything that kept me from getting on with what I was doing.", type: "stress", i: 5 },
+      { q: "15. I felt I was close to panic.", type: "anxiety", i: 4 },
+      { q: "16. I was unable to become enthusiastic about anything.", type: "depression", i: 4 },
+      { q: "17. I felt I wasn’t worth much as a person.", type: "depression", i: 5 },
+      { q: "18. I felt that I was rather touchy.", type: "stress", i: 6 },
+      { q: "19. I was aware of the action of my heart.", type: "anxiety", i: 5 },
+      { q: "20. I felt scared without any good reason.", type: "anxiety", i: 6 },
+      { q: "21. I felt that life was meaningless.", type: "depression", i: 6 }
+    ];
+
+    /* ================= TOTAL ================= */
+    const sum = arr =>
+      arr.reduce((s, v) => s + (Number(v) || 0), 0);
+
+    const total = {
+      depression: sum(dassValues.depression),
+      anxiety: sum(dassValues.anxiety),
+      stress: sum(dassValues.stress)
+    };
+
+    return (
+      <div style={styles.modalOverlay}>
+        <div style={styles.modal}>
+          <h3>DASS-21</h3>
+
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            {QUESTIONS.map((item, idx) => (
+              <Select
+                key={idx}
+                label={item.q}
+                value={dassValues[item.type][item.i]}
+                onChange={val => {
+                  setDassValues(prev => {
+                    const updated = [...prev[item.type]];
+                    updated[item.i] = Number(val);
+
+                    return {
+                      ...prev,
+                      [item.type]: updated
+                    };
+                  });
+                }}
+
+
+                options={MOOD_OPTIONS}
+              />
+            ))}
+          </div>
+
+          <div style={styles.modalFooter}>
+            <div>
+              D:{total.depression} | A:{total.anxiety} | S:{total.stress}
+            </div>
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button
+                style={styles.secondaryBtn}
+                onClick={() => setShowDass(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                style={styles.primaryBtn}
+                onClick={() => {
+                  setDassResult({
+                    depression: {
+                      score: total.depression,
+                      severity:
+                        total.depression <= 9 ? "Normal" :
+                          total.depression <= 13 ? "Mild" :
+                            total.depression <= 20 ? "Moderate" :
+                              total.depression <= 27 ? "Severe" :
+                                "Extremely Severe"
+                    },
+                    anxiety: {
+                      score: total.anxiety,
+                      severity:
+                        total.anxiety <= 7 ? "Normal" :
+                          total.anxiety <= 9 ? "Mild" :
+                            total.anxiety <= 14 ? "Moderate" :
+                              total.anxiety <= 19 ? "Severe" :
+                                "Extremely Severe"
+                    },
+                    stress: {
+                      score: total.stress,
+                      severity:
+                        total.stress <= 14 ? "Normal" :
+                          total.stress <= 18 ? "Mild" :
+                            total.stress <= 25 ? "Moderate" :
+                              total.stress <= 33 ? "Severe" :
+                                "Extremely Severe"
+                    }
+                  });
+
+                  setDassScore(total);
+                  setShowDass(false);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const MOCAModal = () => (
+    <div style={styles.modalOverlay}>
+      <div style={styles.modal}>
+        <h3>Montreal Cognitive Assessment (MOCA)</h3>
+
+        <div style={{ padding: 20, fontSize: 15 }}>
+          <p>
+            MOCA assessment is performed using the standardized questionnaire
+            prepared by the rehabilitation team.
+          </p>
+
+          <p style={{ fontWeight: 600 }}>
+            Please refer to the MOCA assessment sheet for scoring and interpretation.
+          </p>
+        </div>
+
+        <div style={styles.modalFooter}>
+          <button style={styles.primaryBtn} onClick={() => setShowMOCA(false)}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const MMSEModal = ({ onClose, onSave }) => {
+    const canvasRef = React.useRef(null);
+    const drawing = React.useRef(false);
+
+    const [score, setScore] = React.useState({
+      registration: 0,
+      attention: 0,
+      recall: 0,
+      language: 0,
+      copy: 0
+    });
+
+    const totalScore = Object.values(score).reduce((a, b) => a + b, 0);
+
+    /* ================= DRAWING ================= */
+    const startDraw = e => {
+      drawing.current = true;
+      draw(e);
+    };
+
+    const stopDraw = () => {
+      drawing.current = false;
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.beginPath();
+    };
+
+    const draw = e => {
+      if (!drawing.current) return;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const rect = canvas.getBoundingClientRect();
+
+      const x =
+        (e.clientX || e.touches?.[0]?.clientX) - rect.left;
+      const y =
+        (e.clientY || e.touches?.[0]?.clientY) - rect.top;
+
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    };
+
+    const clearCanvas = () => {
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.clearRect(0, 0, 320, 220);
+    };
+
+    /* ================= UI ================= */
+    return (
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15,23,42,.4)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1000
+      }}>
+        <div style={{
+          background: "#fff",
+          width: 900,
+          maxHeight: "90vh",
+          borderRadius: 16,
+          display: "flex",
+          flexDirection: "column"
+        }}>
+
+          {/* HEADER */}
+          <div style={{
+            padding: 18,
+            borderBottom: "1px solid #E5E7EB",
+            fontSize: 18,
+            fontWeight: 700
+          }}>
+            Mini Mental State Examination (MMSE)
+          </div>
+
+          {/* BODY */}
+          <div style={{ padding: 20, overflowY: "auto" }}>
+
+            {/* ORIENTATION – TIME */}
+            <Section title="Orientation – Time (5)">
+              <Q text="What is the (year) (season) (date) (day) (month)?" />
+              <Row cols={5}>
+                {["Year", "Season", "Date", "Day", "Month"].map(p => (
+                  <input key={p} placeholder={p} style={input} />
+                ))}
+              </Row>
+            </Section>
+
+            {/* ORIENTATION – PLACE */}
+            <Section title="Orientation – Place (5)">
+              <Q text="Where are we (state) (country) (town) (hospital) (floor)?" />
+              <Row cols={5}>
+                {["State", "Country", "Town", "Hospital", "Floor"].map(p => (
+                  <input key={p} placeholder={p} style={input} />
+                ))}
+              </Row>
+            </Section>
+
+            {/* REGISTRATION */}
+            <Section title="Registration (3)">
+              <Q text="Name 3 objects: 1 second to say each. Then ask the patient to repeat all 3." />
+              <Row cols={3}>
+                <input style={input} />
+                <input style={input} />
+                <input style={input} />
+              </Row>
+              <YesNo onYes={() => setScore(s => ({ ...s, registration: 3 }))} />
+            </Section>
+
+            {/* ATTENTION */}
+            <Section title="Attention & Calculation (5)">
+              <Q text="Serial 7’s OR spell “WORLD” backward." />
+              <input placeholder="WORLD backward" style={{ ...input, maxWidth: 260 }} />
+              <YesNo onYes={() => setScore(s => ({ ...s, attention: 5 }))} />
+            </Section>
+
+            {/* RECALL */}
+            <Section title="Recall (3)">
+              <Q text="Ask for the 3 objects repeated above." />
+              <Row cols={3}>
+                <input style={input} />
+                <input style={input} />
+                <input style={input} />
+              </Row>
+              <YesNo onYes={() => setScore(s => ({ ...s, recall: 3 }))} />
+            </Section>
+
+            {/* LANGUAGE */}
+            <Section title="Language (8)">
+              <Q text="Name a pencil and a watch." />
+              <Row cols={2}>
+                <input placeholder="Pencil" style={input} />
+                <input placeholder="Watch" style={input} />
+              </Row>
+
+              <Q text='Repeat the following: “No ifs, ands, or buts”' />
+              <input style={input} />
+
+              <Q text="Follow a 3-stage command:" />
+              <div style={helper}>
+                Take a paper in your hand, fold it in half, and put it on the floor.
+              </div>
+              <textarea style={textarea} rows={2} />
+
+              <Q text="Read and obey the following:" />
+              <div style={readBox}>CLOSE YOUR EYES</div>
+
+              <Q text="Write a sentence." />
+              <textarea style={textarea} rows={2} />
+
+              <YesNo onYes={() => setScore(s => ({ ...s, language: 8 }))} />
+            </Section>
+
+            {/* COPY DESIGN */}
+            <Section title="Copy the design shown (1)">
+              <Row cols={2}>
+                <div style={designBox}>
+                  <img src="/mmse-pentagon.png" alt="MMSE" style={{ width: "100%" }} />
+                </div>
+                <div style={designBox}>
+                  <canvas
+                    ref={canvasRef}
+                    width={320}
+                    height={220}
+                    style={canvas}
+                    onMouseDown={startDraw}
+                    onMouseMove={draw}
+                    onMouseUp={stopDraw}
+                    onTouchStart={startDraw}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDraw}
+                  />
+                  <button onClick={clearCanvas} style={clearBtn}>
+                    Clear drawing
+                  </button>
+                </div>
+              </Row>
+              <YesNo onYes={() => setScore(s => ({ ...s, copy: 1 }))} />
+            </Section>
+
+          </div>
+
+          {/* FOOTER */}
+          <div style={{
+            padding: 16,
+            borderTop: "1px solid #E5E7EB",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <div style={{ fontSize: 14 }}>
+              Total MMSE Score: <strong>{totalScore} / 30</strong>
+            </div>
+            <div>
+              <button style={secondaryBtn} onClick={() => setShowMMSE(false)}
+              >Cancel</button>
+              <button
+                style={primaryBtn}
+               onClick={() => {
+                  setMmseScore(totalScore);
+                  setShowMMSE(false);
+                }}
+              >
+                Save MMSE
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  };
+
+  /* ================= HELPERS & STYLES ================= */
+
+  const Section = ({ title, children }) => (
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>{title}</div>
+      {children}
+    </div>
+  );
+
+  const Q = ({ text }) => (
+    <div style={{ fontSize: 13, color: "#334155", marginBottom: 8 }}>{text}</div>
+  );
+
+  const Row = ({ cols, children }) => (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: `repeat(${cols},1fr)`,
+      gap: 12,
+      marginBottom: 8
+    }}>
+      {children}
+    </div>
+  );
+
+  const YesNo = ({ onYes }) => (
+    <div style={{ display: "flex", gap: 20, marginTop: 6 }}>
+      <label><input type="radio" onChange={onYes} /> Yes</label>
+      <label><input type="radio" /> No</label>
+    </div>
+  );
+
+  const input = {
+    padding: "9px 12px",
+    borderRadius: 8,
+    border: "1px solid #CBD5E1",
+    fontSize: 13
+  };
+
+  const textarea = { ...input, width: "100%" };
+
+  const helper = { fontSize: 12, color: "#64748B", marginBottom: 6 };
+
+  const readBox = {
+    border: "1px dashed #CBD5E1",
+    padding: 10,
+    borderRadius: 8,
+    fontWeight: 700,
+    textAlign: "center",
+    marginBottom: 8
+  };
+
+  const designBox = {
+    border: "1px solid #CBD5E1",
+    borderRadius: 10,
+    padding: 10
+  };
+
+  const canvas = {
+    width: "100%",
+    border: "1px solid #CBD5E1",
+    borderRadius: 8
+  };
+
+  const clearBtn = {
+    marginTop: 6,
+    fontSize: 12
+  };
+
+  const primaryBtn = {
+    background: "#2563EB",
+    color: "#fff",
+    border: "none",
+    borderRadius: 10,
+    padding: "10px 22px",
+    fontWeight: 700,
+    marginLeft: 10
+  };
+
+  const secondaryBtn = {
+    background: "#F1F5F9",
+    border: "1px solid #CBD5E1",
+    borderRadius: 10,
+    padding: "10px 18px"
+  };
+
+
 
 
   const IsiModal = () => {
@@ -377,88 +1053,88 @@ export default function CognitiveSoapAssessment() {
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Auditory Function"
+                label="Auditory Function Scale"
                 value={jfkValues.auditory}
                 onChange={v => setJfkValues({ ...jfkValues, auditory: v })}
                 options={[
                   { label: "0 – None", value: 0 },
                   { label: "1 – Auditory startle", value: 1 },
                   { label: "2 – Localization to sound", value: 2 },
-                  { label: "3 – Reproducible command following", value: 3 },
-                  { label: "4 – Consistent command following", value: 4 }
+                  { label: "3 – Reproducible movement to command*", value: 3 },
+                  { label: "4 – Consistent  movement to command*", value: 4 }
                 ]}
               />
             </div>
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Visual Function"
+                label="Visual Function Scale"
                 value={jfkValues.visual}
                 onChange={v => setJfkValues({ ...jfkValues, visual: v })}
                 options={[
-                  { label: "0 – None", value: 0 },
-                  { label: "1 – Visual startle", value: 1 },
-                  { label: "2 – Fixation", value: 2 },
-                  { label: "3 – Visual pursuit", value: 3 },
-                  { label: "4 – Reaching", value: 4 },
-                  { label: "5 – Object recognition", value: 5 }
+                  { label: "0 – None*", value: 0 },
+                  { label: "1 – Visual startle*", value: 1 },
+                  { label: "2 – Fixation*", value: 2 },
+                  { label: "3 – Visual pursuit*", value: 3 },
+                  { label: "4 – Object localization:Reaching*", value: 4 },
+                  { label: "5 – Object recognition*", value: 5 }
                 ]}
               />
             </div>
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Motor Function"
+                label="Motor Function Scale"
                 value={jfkValues.motor}
                 onChange={v => setJfkValues({ ...jfkValues, motor: v })}
                 options={[
                   { label: "0 – None", value: 0 },
                   { label: "1 – Abnormal posturing", value: 1 },
                   { label: "2 – Flexion withdrawal", value: 2 },
-                  { label: "3 – Localization to pain", value: 3 },
-                  { label: "4 – Object manipulation", value: 4 },
-                  { label: "5 – Automatic motor response", value: 5 },
-                  { label: "6 – Functional object use", value: 6 }
+                  { label: "3 – Localization to Noxious stimulation*", value: 3 },
+                  { label: "4 – Object manipulation*", value: 4 },
+                  { label: "5 – Automatic motor response*", value: 5 },
+                  { label: "6 – Functional object use+", value: 6 }
                 ]}
               />
             </div>
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Verbal Function"
+                label="Oromotor/Verbal Function Scale"
                 value={jfkValues.verbal}
                 onChange={v => setJfkValues({ ...jfkValues, verbal: v })}
                 options={[
                   { label: "0 – None", value: 0 },
                   { label: "1 – Oral reflexive movement", value: 1 },
-                  { label: "2 – Vocalization", value: 2 },
-                  { label: "3 – Intelligible verbalization", value: 3 }
+                  { label: "2 – Vocalization/Oral movement", value: 2 },
+                  { label: "3 – Intelligible verbalization*", value: 3 }
                 ]}
               />
             </div>
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Communication"
+                label="Communication Scale"
                 value={jfkValues.communication}
                 onChange={v => setJfkValues({ ...jfkValues, communication: v })}
                 options={[
                   { label: "0 – None", value: 0 },
-                  { label: "1 – Intentional but non-functional", value: 1 },
-                  { label: "2 – Functional accurate", value: 2 }
+                  { label: "1 – Non-functional:intentional", value: 1 },
+                  { label: "2 – Functional accurate*", value: 2 }
                 ]}
               />
             </div>
 
             <div style={SECTION_STYLE}>
               <Select
-                label="Arousal"
+                label="Arousal Scale"
                 value={jfkValues.arousal}
                 onChange={v => setJfkValues({ ...jfkValues, arousal: v })}
                 options={[
                   { label: "0 – Unresponsive", value: 0 },
-                  { label: "1 – Eye opening with stimulation", value: 1 },
-                  { label: "2 – Eye opening without stimulation", value: 2 },
+                  { label: "1 – Eye opening w/o stimulation", value: 1 },
+                  { label: "2 – Eye opening with stimulation", value: 2 },
                   { label: "3 – Attention", value: 3 }
                 ]}
               />
@@ -504,7 +1180,6 @@ export default function CognitiveSoapAssessment() {
       </div>
     );
   };
-
 
   const RanchoModal = ({ onClose, onSave, value }) => {
     const [selected, setSelected] = useState(value);
@@ -748,7 +1423,7 @@ export default function CognitiveSoapAssessment() {
 
           {/* EYE */}
           <Select
-            label="Eye Response"
+            label="Eye Opening"
             value={gcsValues.eye}
             onChange={v =>
               setGcsValues({
@@ -757,16 +1432,14 @@ export default function CognitiveSoapAssessment() {
               })
             }
             options={[
-              { label: "1-No eye opening", value: 1 },
+              { label: "1-None", value: 1 },
               { label: "2-To pain", value: 2 },
               { label: "3-To speech", value: 3 },
               { label: "4-Spontaneous", value: 4 }
             ]}
           />
 
-          {/* MOTOR */}
 
-          {/* VERBAL */}
           <Select
             label="Verbal Response"
             value={gcsValues.verbal}
@@ -796,8 +1469,8 @@ export default function CognitiveSoapAssessment() {
             options={[
               { label: "1-No movement", value: 1 },
               { label: "2-Extension", value: 2 },
-              { label: "3-Flexion", value: 3 },
-              { label: "4-Withdrawal", value: 4 },
+              { label: "3-Abnormal flexion", value: 3 },
+              { label: "4-Withdrawal(from painful stimulus)", value: 4 },
               { label: "5-Localizes pain", value: 5 },
               { label: "6-Obeys commands", value: 6 }
             ]}
@@ -840,552 +1513,747 @@ export default function CognitiveSoapAssessment() {
     );
   };
 
-  const PsqiModal = ({ onClose, onSave, initialValues = {} }) => {
-    const [values, setValues] = useState(initialValues);
+  const PsqiModal = ({ onClose, onSave }) => {
+    const [answers, setAnswers] = useState({});
 
-    const freqOptions = [
-      { label: "Not during past month", value: 0 },
-      { label: "Less than once a week", value: 1 },
-      { label: "Once or twice a week", value: 2 },
-      { label: "Three or more times a week", value: 3 }
-    ];
+    const total = Object.values(answers).reduce((s, v) => s + (v ?? 0), 0);
 
-    const calcScore = () =>
-      Object.values(values).reduce((s, v) => s + (v ?? 0), 0);
+    const interpretation =
+      total <= 5 ? "Good sleep quality" :
+        total <= 10 ? "Mild disturbance" :
+          total <= 15 ? "Moderate disturbance" :
+            "Severe sleep disturbance";
 
     return (
       <div style={styles.modalOverlay}>
-        <div style={{ ...styles.modal, maxHeight: "85vh" }}>
+        <div style={{ ...styles.modal, width: 820 }}>
 
           <h3>Pittsburgh Sleep Quality Index (PSQI)</h3>
 
-          {/* BODY */}
-          <div style={{ flex: 1, overflowY: "auto", paddingRight: 8 }}>
-            {[
-              "Cannot get to sleep within 30 minutes",
-              "Wake up in the middle of the night",
-              "Have to get up to use the bathroom",
-              "Cannot breathe comfortably",
-              "Cough or snore loudly",
-              "Feel too cold",
-              "Feel too hot",
-              "Have bad dreams",
-              "Have pain"
-            ].map((q, i) => (
-              <Select
-                key={i}
-                label={q}
-                value={values[i]}
-                onChange={v => setValues(p => ({ ...p, [i]: v }))}
-                options={freqOptions}
-              />
-            ))}
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                tableLayout: "fixed"   // 🔑 CRITICAL for alignment
+              }}
+            >
+              {/* ===== HEADER (FIXED) ===== */}
+              <thead style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                <tr>
+                  <th style={{ ...styles.th, width: "38%" }}></th>
+
+                  {PSQI_OPTIONS.map(opt => (
+                    <th key={opt.value} style={styles.th}>
+                      <div style={{ fontWeight: 700 }}>{opt.value}</div>
+                      <div style={{ fontSize: 12 }}>{opt.label.replace(/^\d+\s*–\s*/, "")}</div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              {/* ===== BODY (SCROLLS) ===== */}
+              <tbody>
+                {PSQI_QUESTIONS.map((q, i) => (
+                  <tr key={i}>
+                    {/* QUESTION */}
+                    <td style={styles.tdLabel}>{q}</td>
+
+                    {/* OPTIONS */}
+                    {PSQI_OPTIONS.map(opt => (
+                      <td key={opt.value} style={styles.td}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name={`psqi-${i}`}
+                            checked={answers[i] === opt.value}
+                            onChange={() =>
+                              setAnswers(prev => ({
+                                ...prev,
+                                [i]: opt.value
+                              }))
+                            }
+                          />
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          {/* FOOTER */}
+
           <div style={styles.modalFooter}>
-            <div style={{ fontWeight: 700 }}>
-              PSQI Score: {calcScore()}
+            <div>
+              Total PSQI Score: {total} ({interpretation})
             </div>
 
             <div style={{ display: "flex", gap: 12 }}>
-              <button style={styles.secondaryBtn} onClick={onClose}>
-                Cancel
-              </button>
+              <button style={styles.secondaryBtn} onClick={onClose}>Cancel</button>
               <button
                 style={styles.primaryBtn}
                 onClick={() =>
-                  onSave({ score: calcScore(), values })
+                  onSave({
+                    score: total,
+                    interpretation,
+                    values: answers
+                  })
                 }
               >
                 Save
               </button>
+
             </div>
           </div>
-
         </div>
       </div>
     );
   };
 
 
+
   return (
     <div style={styles.container}>
 
-      <Card title="Subjective">
+      <Card >
         <RadioRow
-          label="Is there any cognitive impairment?"
+          label="Cognitive"
           value={hasCognitiveImpairment}
           onChange={setHasCognitiveImpairment}
-          options={["YES", "NO"]}
+          options={["Intact", "Impaired"]}
         />
-            <RadioRow
-              label="State of consciousness is Alert"
-              value={alert}
-              onChange={setAlert}
-              options={["YES", "NO"]}
+
+        <RadioRow
+          label="Altered consciousness?"
+          value={alert}
+          onChange={setAlert}
+          options={["Alert", "Altered consciousness"]}
+        />
+
+        {alert === "Altered consciousness" && (
+          <>
+            <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+              <button style={styles.secondaryBtn} onClick={() => setShowGcs(true)}>
+                Glasgow Coma Scale chart
+              </button>
+              {(gcsValues.eye || gcsValues.verbal || gcsValues.motor) && (
+                <div style={{ fontWeight: 600 }}>
+                  E{gcsValues.eye || 0} V{gcsValues.verbal || 0} M{gcsValues.motor || 0}
+                  {" = "}
+                  {gcsScore}/15
+                </div>
+              )}
+
+            </div>
+
+            <div style={{ display: "flex", gap: 16, marginTop: 8, paddingBottom: 10 }}>
+              <button style={styles.secondaryBtn} onClick={() => setShowJfk(true)}>
+                JFK CRS-R chart
+              </button>
+              {jfkTotal !== null && <div style={{ fontWeight: 600 }}>JFK Score: {jfkTotal}</div>}
+            </div>
+            <span style={styles.rowLabel}>Please specify</span>
+
+            <TextArea />
+
+            <SelectRow
+              label="Monitor GCS"
+              value={gcs.monitor}
+              onChange={gcsotal}
+              options={["Per shift", "Daily", "Weekly"]}
             />
 
-            {alert === "NO" && (
-              <div>
+            <SelectRow
+              label="Repeat JFK Coma Recovery Scale"
+              value={gcs.jfk}
+              onChange={gcsotal}
+              options={["Weekly", "2 weekly"]}
+            />
 
-                <div
-                  style={{
-                    marginTop: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 20
-                  }}
-                >
-                  <button
-                    style={styles.secondaryBtn}
-                    onClick={() => setShowGcs(true)}
-                  >
-                    Glasgow Coma Scale (GCS) Chart
-                  </button>
+            <SelectRow
+              label="For multimodal sensory stimulation"
+              value={gcs.multi}
+              onChange={gcsotal}
+              options={["OD", "BD", "TDS", "QID"]}
+            />
+            <span style={styles.rowLabel}>Plan To teach carer regarding multimodal sensory stimulation</span>
+            <TextArea />
+            <span style={styles.rowLabel}>Others</span>
+            <TextArea />
+          </>
+        )}
 
-                  {gcsValues.eye && <div>Eye Score: {gcsValues.eye}</div>}
-                  {gcsValues.verbal && <div>Verbal Score: {gcsValues.verbal}</div>}
-                  {gcsValues.motor && <div>Motor Score: {gcsValues.motor}</div>}
-                </div>
+        <div>
+          <h3 style={styles.cardTitle}>Orientation</h3>
+          <RadioRow
+            label="Orientation functions"
+            value={orientation.status}
+            onChange={v => setOrientation({ ...orientation, status: v })}
+            options={["Intact", "Impaired"]}
+          />
 
-                <div
-                  style={{
-                    marginTop: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 20
-                  }}
-                >
-                  <button
-                    style={styles.secondaryBtn}
-                    onClick={() => setShowRancho(true)}
-                  >
-                    Ranchos Los Amigos Revised Scale (RLAR-S) Chart
-                  </button>
-
-                  {ranchoValue && (
-                    <div >
-                      RLAR-S Level: {ranchoValue}
-                    </div>
-                  )}
-
-
-                </div>
-
-                <div
-                  style={{
-                    marginTop: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 20
-                  }}
-                >
-
-                  <button
-                    style={styles.secondaryBtn}
-                    onClick={() => setShowJfk(true)}
-                  >
-                    JFK Coma Recovery Scale (CRS-R)
-                  </button>
-
-                  {jfkTotal !== null && (
-                    <div >
-                      CRS-R Score: {jfkTotal}
-                    </div>
-                  )}
-
-
-
-
-                </div>
-              </div>
-            )}
-
-            <div>
-              <h3 style={styles.cardTitle}>Orientation</h3>
-              <RadioRow
-                label="Orientation to person"
-                value={orientation.person}
-                onChange={v => setOrientation({ ...orientation, person: v })}
-                options={["YES", "NO"]}
-              />
-              <RadioRow
-                label="Orientation to place"
-                value={orientation.place}
-                onChange={v => setOrientation({ ...orientation, place: v })}
-                options={["YES", "NO"]}
-              />
+          {orientation.status === "Impaired" && (
+            <>
               <RadioRow
                 label="Orientation to time"
                 value={orientation.time}
                 onChange={v => setOrientation({ ...orientation, time: v })}
-                options={["YES", "NO"]}
+                options={["Yes", "No"]}
               />
-            </div>
-           
-            <div>
-              <h3 style={styles.cardTitle}>Memory</h3>
+
               <RadioRow
-                label="Immediate memory"
-                value={memory.immediate}
-                onChange={v => setMemory({ ...memory, immediate: v })}
-                options={["YES", "NO"]}
+                label="Orientation to place"
+                value={orientation.place}
+                onChange={v => setOrientation({ ...orientation, place: v })}
+                options={["Yes", "No"]}
               />
+
               <RadioRow
-                label="Recent memory"
-                value={memory.recent}
-                onChange={v => setMemory({ ...memory, recent: v })}
-                options={["YES", "NO"]}
+                label="Orientation to person"
+                value={orientation.person}
+                onChange={v => setOrientation({ ...orientation, person: v })}
+                options={["Yes", "No"]}
               />
-              <RadioRow
-                label="Remote memory"
-                value={memory.remote}
-                onChange={v => setMemory({ ...memory, remote: v })}
-                options={["YES", "NO"]}
-              />
-            </div>
-           
-            <div>
-              <h3 style={styles.cardTitle}>Attention</h3>
+              <span style={styles.rowLabel}>Please specify</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}> Orientation board</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+
+              <TextArea />
+            </>
+          )}
+
+        </div>
+        <div>
+          <h3 style={styles.cardTitle}>Ability to obey command </h3>
+
+          {/* -------- 3 STEP -------- */}
+          <RadioRow
+            label="Obey 3-step command"
+            value={language.cmd3}
+            onChange={v =>
+              setLanguage({
+                ...language,
+                cmd3: v,
+                cmd3Clue: "",
+                cmd3CueType: "",
+                cmd2: "",
+                cmd2Clue: "",
+                cmd2CueType: "",
+                cmd1: "",
+                cmd1Clue: "",
+                cmd1CueType: "",
+                consistency: ""
+              })
+            }
+            options={["YES", "NO"]}
+          />
+
+          {language.cmd3 === "YES" && (
+            <>
               <SelectRow
-                label="Status of attention"
-                value={attention}
-                onChange={setAttention}
-                options={["Able to focus", "Easily distracted"]}
+                label="How did the patient obey the 3-step command?"
+                value={language.cmd3Clue}
+                onChange={v =>
+                  setLanguage({ ...language, cmd3Clue: v, cmd3CueType: "" })
+                }
+                options={CLUE_OPTIONS}
               />
-            </div>
-          
-            <div>
-              <h3 style={styles.cardTitle}>Emotional</h3>
+
+              {language.cmd3Clue === "With Clues" && (
+                <SelectRow
+                  label="Type of cues used"
+                  value={language.cmd3CueType}
+                  onChange={v =>
+                    setLanguage({ ...language, cmd3CueType: v })
+                  }
+                  options={CUE_TYPE_OPTIONS}
+                />
+              )}
+            </>
+          )}
+
+          {/* -------- 2 STEP -------- */}
+          {language.cmd3 === "NO" && (
+            <RadioRow
+              label="Obey 2-step command"
+              value={language.cmd2}
+              onChange={v =>
+                setLanguage({
+                  ...language,
+                  cmd2: v,
+                  cmd2Clue: "",
+                  cmd2CueType: "",
+                  cmd1: "",
+                  cmd1Clue: "",
+                  cmd1CueType: "",
+                  consistency: ""
+                })
+              }
+              options={["YES", "NO"]}
+            />
+          )}
+
+          {language.cmd3 === "NO" && language.cmd2 === "YES" && (
+            <>
               <SelectRow
-                label="Emotional / Mood functions"
-                value={mood}
-                onChange={setMood}
-                options={["Good mood", "Euthymic", "Distress", "Stress"]}
+                label="How did the patient obey the 2-step command?"
+                value={language.cmd2Clue}
+                onChange={v =>
+                  setLanguage({ ...language, cmd2Clue: v, cmd2CueType: "" })
+                }
+                options={CLUE_OPTIONS}
               />
-            </div>
-          
-            <div>
-              <h3 style={styles.cardTitle}>Perceptual Skills</h3>
+
+              {language.cmd2Clue === "With Clues" && (
+                <SelectRow
+                  label="Type of cues used"
+                  value={language.cmd2CueType}
+                  onChange={v =>
+                    setLanguage({ ...language, cmd2CueType: v })
+                  }
+                  options={CUE_TYPE_OPTIONS}
+                />
+              )}
+            </>
+          )}
+
+          {/* -------- 1 STEP -------- */}
+          {language.cmd3 === "NO" && language.cmd2 === "NO" && (
+            <RadioRow
+              label="Obey 1-step command"
+              value={language.cmd1}
+              onChange={v =>
+                setLanguage({
+                  ...language,
+                  cmd1: v,
+                  cmd1Clue: "",
+                  cmd1CueType: "",
+                  consistency: ""
+                })
+              }
+              options={["YES", "NO"]}
+            />
+          )}
+
+          {language.cmd3 === "NO" &&
+            language.cmd2 === "NO" &&
+            language.cmd1 === "YES" && (
+              <>
+                <SelectRow
+                  label="How did the patient obey the 1-step command?"
+                  value={language.cmd1Clue}
+                  onChange={v =>
+                    setLanguage({ ...language, cmd1Clue: v, cmd1CueType: "" })
+                  }
+                  options={CLUE_OPTIONS}
+                />
+
+                {language.cmd1Clue === "With Clues" && (
+                  <SelectRow
+                    label="Type of cues used"
+                    value={language.cmd1CueType}
+                    onChange={v =>
+                      setLanguage({ ...language, cmd1CueType: v })
+                    }
+                    options={CUE_TYPE_OPTIONS}
+                  />
+                )}
+              </>
+            )}
+
+          {/* -------- CONSISTENCY -------- */}
+          {(language.cmd3 === "YES" ||
+            language.cmd2 === "YES" ||
+            language.cmd1 === "YES") && (
+              <SelectRow
+                label="Consistency"
+                value={language.consistency}
+                onChange={v =>
+                  setLanguage({ ...language, consistency: v })
+                }
+                options={CONSISTENCY_OPTIONS}
+              />
+            )}
+          <span style={styles.rowLabel}>To use simple command in all activities</span>
+
+          <TextArea />
+          <span style={styles.rowLabel}>Others</span>
+
+          <TextArea />
+        </div>
+
+
+        <div>
+          <h3 style={styles.cardTitle}>Memory</h3>
+          <RadioRow
+            label="Memory function"
+            value={memory.status}
+            onChange={v => setMemory({ ...memory, status: v })}
+            options={["Intact", "Impaired"]}
+          />
+          {memory.status === "Impaired" && (
+            <>
+
+              <span style={styles.rowLabel}>Please specify</span>
+              <TextArea />
+              <span style={styles.rowLabel}>To use simple command in all activities</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+
+              <TextArea />
+
+            </>
+          )}
+
+        </div>
+
+        <div>
+          <h3 style={styles.cardTitle}>Attention</h3>
+          <RadioRow
+            label="Attention function"
+            value={attention}
+            onChange={setAttention}
+            options={["Good", "Poor"]}
+          />
+
+          {attention === "Poor" && (
+            <>
+
+              <span style={styles.rowLabel}>Please specify</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>To do activities in low stimulus environment to reduce distraction</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+
+              <TextArea />
+            </>
+          )}
+
+        </div>
+
+        <div>
+          <h3 style={styles.cardTitle}>Emotional</h3>
+          <RadioRow
+            label="Emotional / Mood functions"
+            value={mood}
+            onChange={setMood}
+            options={["Normal mood", "Altered mood"]}
+          />
+          {mood === "Altered mood" && (
+            <>
+              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                <button style={styles.secondaryBtn} onClick={() => setShowPhq9(true)}>Patient Health Questionnaire (PHQ-9)</button>
+                {phqResult && (
+                  <div style={{ fontWeight: 600 }}>
+                    <div>Total Score: {phqResult.total}</div>
+                    <div>Depression Severity: {phqResult.severity}</div>
+                  </div>
+                )}
+
+
+              </div>
+              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+
+                <button style={styles.secondaryBtn} onClick={() => setShowGad7(true)}>Generalized Anxiety Disorder (GAD-7)</button>
+                {gadResult && (
+                  <div style={{ fontWeight: 600 }}>
+                    <div>Total Score: {gadResult.total}</div>
+                    <div>Anxiety Severity: {gadResult.severity}</div>
+                  </div>
+                )}
+
+
+              </div>
+              <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+
+                <button style={styles.secondaryBtn} onClick={() => setShowDass(true)}>Depression Anxiety Stress Scale (DASS-21)</button>
+                {dassResult && (
+                  <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
+                    <div style={{ fontWeight: 600 }}>
+                      DEPRESSION SCORE : {dassResult.depression.score}
+                      ({dassResult.depression.severity})
+                    </div>
+                    <div style={{ fontWeight: 600 }}>
+                      ANXIETY SCORE : {dassResult.anxiety.score}
+                      ({dassResult.anxiety.severity})
+                    </div>
+                    <div style={{ fontWeight: 600 }}>
+                      STRESS SCORE : {dassResult.stress.score}
+                      ({dassResult.stress.severity})
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+
+              <span style={styles.rowLabel}>Please specify</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Monitor patient's mood</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Inform if patient exhibit abnormal behaviour</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Repeat assessment weekly / when needed</span>
+
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+              <TextArea />
+
+            </>
+          )}
+
+
+        </div>
+
+        <div>
+          <h3 style={styles.cardTitle}>Perceptual Skills</h3>
+
+
+          <RadioRow
+            label="Perceptual functions"
+            value={visuo.status}
+            onChange={v => setVisuo({ ...visuo, status: v })}
+            options={["Intact", "Impaired"]}
+          />
+
+          {visuo.status === "Impaired" && (
+            <>
               <RadioRow
                 label="Neglect"
                 value={visuo.neglect}
                 onChange={v => setVisuo({ ...visuo, neglect: v })}
                 options={["YES", "NO"]}
               />
+
               <RadioRow
                 label="Apraxia"
                 value={visuo.apraxia}
                 onChange={v => setVisuo({ ...visuo, apraxia: v })}
                 options={["YES", "NO"]}
               />
-            </div>
-      
-            <div>
-              <h3 style={styles.cardTitle}>Language & Communication</h3>
 
-              <RadioRow
-                label="Obey 3-step command"
-                value={language.cmd3}
-                onChange={v =>
-                  setLanguage({
-                    ...language,
-                    cmd3: v,
-                    cmd3How: "",
-                    cmd2: "",
-                    cmd2How: "",
-                    cmd1: "",
-                    cmd1How: ""
-                  })
-                }
-                options={["YES", "NO"]}
-              />
+              <span style={styles.rowLabel}>Please specify</span>
 
-              {language.cmd3 === "YES" && (
-                <SelectRow
-                  label="How did the patient obey the 3-step command?"
-                  value={language.cmd3How}
-                  onChange={v =>
-                    setLanguage({ ...language, cmd3How: v })
-                  }
-                  options={COMMAND_HOW_OPTIONS}
-                />
-              )}
+              <TextArea />
+              <span style={styles.rowLabel}>To give more stimulation and aproach from patient's left side</span>
 
-              {language.cmd3 === "NO" && (
-                <RadioRow
-                  label="Obey 2-step command"
-                  value={language.cmd2}
-                  onChange={v =>
-                    setLanguage({
-                      ...language,
-                      cmd2: v,
-                      cmd2How: "",
-                      cmd1: "",
-                      cmd1How: ""
-                    })
-                  }
-                  options={["YES", "NO"]}
-                />
-              )}
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+              <TextArea />
+            </>
+          )}
 
-              {language.cmd3 === "NO" && language.cmd2 === "YES" && (
-                <SelectRow
-                  label="How did the patient obey the 2-step command?"
-                  value={language.cmd2How}
-                  onChange={v =>
-                    setLanguage({ ...language, cmd2How: v })
-                  }
-                  options={COMMAND_HOW_OPTIONS}
-                />
-              )}
+        </div>
 
-              {language.cmd3 === "NO" && language.cmd2 === "NO" && (
-                <RadioRow
-                  label="Obey 1-step command"
-                  value={language.cmd1}
-                  onChange={v =>
-                    setLanguage({
-                      ...language,
-                      cmd1: v,
-                      cmd1How: ""
-                    })
-                  }
-                  options={["YES", "NO"]}
-                />
-              )}
+        <div>
+          <h3 style={styles.cardTitle}>Sleep</h3>
+          <RadioRow
+            label="Sleep Quality"
+            value={sleepQuality}
+            onChange={setSleepQuality}
+            options={["Good", "Poor"]}
+          />
 
-              {language.cmd3 === "NO" &&
-                language.cmd2 === "NO" &&
-                language.cmd1 === "YES" && (
-                  <SelectRow
-                    label="How did the patient obey the 1-step command?"
-                    value={language.cmd1How}
-                    onChange={v =>
-                      setLanguage({ ...language, cmd1How: v })
-                    }
-                    options={COMMAND_HOW_OPTIONS}
-                  />
+          {(sleepFall === "NO" || sleepQuality === "Poor") && (
+            <>
+              <div style={{ marginTop: 10, display: "flex", gap: 20 }}>
+                <button
+                  style={styles.secondaryBtn}
+                  onClick={() => setShowIsi(true)}
+                >
+                  Insomnia Severity Index (ISI)
+                </button>
+
+                {isiTotal !== null && (
+                  <div style={{ fontWeight: 600 }}>
+                    ISI Score: {isiTotal} <br />
+                    Interpretation: {isiInterpretation(isiTotal)}
+                  </div>
                 )}
+              </div>
 
-              <RadioRow
-                label="Consistency"
-                value={language.consistency}
-                onChange={v =>
-                  setLanguage({ ...language, consistency: v })
-                }
-                options={["YES", "NO"]}
-              />
-            </div>
+              <div style={{ marginTop: 10, display: "flex", gap: 20 }}>
+                <button
+                  style={styles.secondaryBtn}
+                  onClick={() => setShowEss(true)}
+                >
+                  Epworth Sleepiness Scale (ESS)
+                </button>
 
-          
-            <div>
-              <h3 style={styles.cardTitle}>Sleep</h3>
-              <RadioRow
-                label="Able to fall asleep ?"
-                value={sleepFall}
-                onChange={setSleepFall}
-                options={["YES", "NO"]}
-              />
-
-              <RadioRow
-                label="Quality of sleep?"
-                value={sleepQuality}
-                onChange={setSleepQuality}
-                options={["Good", "Poor"]}
-              />
-
-              {(sleepFall === "NO" || sleepQuality === "Poor") && (
-                <div>
-
-                  <div
-                    style={{
-                      marginTop: 10,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 20
-                    }}
-                  >
-                    <button
-                      style={styles.secondaryBtn}
-                      onClick={() => setShowIsi(true)}
-                    >
-                      Insomnia Severity Index (ISI) Chart
-                    </button>
-
-                    {isiTotal !== null && (
-                      <div >
-                        ISI Score: {isiTotal}
-                      </div>
-                    )}
+                {essTotal !== null && (
+                  <div style={{ fontWeight: 600 }}>
+                    ESS Score: {essTotal} <br />
+                    Interpretation: {essInterpretation(essTotal)}
                   </div>
-                  <div
-                    style={{
-                      marginTop: 10,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 20
-                    }}
-                  >
-                    <button
-                      style={styles.secondaryBtn}
-                      onClick={() => setShowEss(true)}
-                    >
-                      Epworth Sleepiness Scale (ESS) Chart
-                    </button>
+                )}
+              </div>
 
-                    {essTotal !== null && (
-                      <div>
-                        ESS Score: {essTotal}
-                      </div>
-                    )}
+              <div style={{ marginTop: 10, display: "flex", gap: 20 }}>
+                <button
+                  style={styles.secondaryBtn}
+                  onClick={() => setShowPsqi(true)}
+                >
+                  Pittsburgh Sleep Quality Index (PSQI)
+                </button>
 
-
+                {psqiScore !== null && (
+                  <div style={{ fontWeight: 600 }}>
+                    PSQI Score: {psqiScore} <br />
+                    Interpretation: {psqiInterpretation(psqiScore)}
                   </div>
+                )}
+              </div>
+              <span style={styles.rowLabel}>Please specify</span>
+              <TextArea />
+              <span style={styles.rowLabel}>Education on sleep hygiene</span>
+              <TextArea />
+              <span style={styles.rowLabel}>To avoid caffein few hours before sleep time</span>
+              <TextArea />
+              <span style={styles.rowLabel}>For relaxation therapy</span>
+              <TextArea />
+              <span style={styles.rowLabel}>Others</span>
+              <TextArea />
+            </>
+          )}
 
-                  <div
-                    style={{
-                      marginTop: 10,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 20
-                    }}
-                  >
-                    <button
-                      style={styles.secondaryBtn}
-                      onClick={() => setShowPsqi(true)}
-                    >
-                      Pittsburgh Sleep Quality Index (PSQI) Chart
-                    </button>
-
-                    {psqiScore !== null && (
-                      <div>
-                        PSQI Score: {psqiScore}
-                      </div>
-                    )}
+        </div>
 
 
-                  </div>
-                </div>
+        <div>
+          <h3 style={styles.cardTitle}>Activity and Participation</h3>
 
+          <RadioRow
+            label="Problem solving"
+            value={activityParticipation.attentionPerson}
+            onChange={v =>
+              setActivityParticipation({
+                ...activityParticipation,
+                attentionPerson: v
+              })
+            }
+            options={["Intact", "Impaired"]} />
+          <RadioRow
+            label="Decision making"
+            value={activityParticipation.attentionEnvironment}
+            onChange={v =>
+              setActivityParticipation({
+                ...activityParticipation,
+                attentionEnvironment: v
+              })
+            }
+            options={["Intact", "Impaired"]}
+          />
 
-              )}
+        </div>
+
+        <div>
+          <h3 style={styles.cardTitle}>Activity and Participation</h3>
+
+          <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+            <button style={styles.secondaryBtn} onClick={() => setShowMMSE(true)}>
+              MMSE
+            </button>
+
+            {/* <button style={styles.secondaryBtn} onClick={() => setShowMOCA(true)}>
+              MOCA
+            </button> */}
+
+            <button style={styles.secondaryBtn} onClick={() => setShowRancho(true)}>
+              Rancho Los Amigos Revised Scale (RLAR-S)
+            </button>
+          </div>
+
+          {mmseScore !== null && (
+            <div style={{ fontWeight: 700, marginTop: 8 }}>
+              MMSE Total Score: {mmseScore}
             </div>
-           
-            <div>
-              <h3 style={styles.cardTitle}>Activity and Participation</h3>
+          )}
 
-              <RadioRow
-                label="Focusing attention on person"
-                value={activityParticipation.attentionPerson}
-                onChange={v =>
-                  setActivityParticipation({
-                    ...activityParticipation,
-                    attentionPerson: v
-                  })
-                }
-                options={["YES", "NO"]}
-              />
-
-              <RadioRow
-                label=" Focusing attention on environment"
-                value={activityParticipation.attentionEnvironment}
-                onChange={v =>
-                  setActivityParticipation({
-                    ...activityParticipation,
-                    attentionEnvironment: v
-                  })
-                }
-                options={["YES", "NO"]}
-              />
-
-
-
-              <RadioRow
-                label="Simple problem solving"
-                value={activityParticipation.simpleProblemSolving}
-                onChange={v =>
-                  setActivityParticipation({
-                    ...activityParticipation,
-                    simpleProblemSolving: v
-                  })
-                }
-                options={["YES", "NO"]}
-              />
-
-              <RadioRow
-                label=" Complex problem solving"
-                value={activityParticipation.complexProblemSolving}
-                onChange={v =>
-                  setActivityParticipation({
-                    ...activityParticipation,
-                    complexProblemSolving: v
-                  })
-                }
-                options={["YES", "NO"]}
-              />
-
-              <RadioRow
-                label=" Making decision"
-                value={activityParticipation.decisionMaking}
-                onChange={v =>
-                  setActivityParticipation({
-                    ...activityParticipation,
-                    decisionMaking: v
-                  })
-                }
-                options={["YES", "NO"]}
-              />
+          {rlarScore && (
+            <div style={{ fontWeight: 700, marginTop: 8 }}>
+              RLAR-S Level: {rlarScore}
             </div>
+          )}
 
-            {showGcs && <GcsModal />}
-            {showIsi && <IsiModal />}
-            {showRancho && (
-              <RanchoModal
-                value={ranchoValue}
-                onClose={() => setShowRancho(false)}
-                onSave={setRanchoValue}
-              />
-            )}
 
-            {showJfk && (
-              <JfkModal
-                onClose={() => setShowJfk(false)}
-                onSave={(data) => {
-                  console.log("CRS-R Score:", data);
-                }}
-              />
-            )}
-            {showEss && (
-              <EssModal
-                onClose={() => setShowEss(false)}
-                onSave={({ total, answers }) => {
-                  setEssTotal(total);
-                  setEssValues(answers);
-                  setShowEss(false);
-                }}
-              />
-            )}
+        </div>
+        {showGcs && <GcsModal />}
+        {showMMSE && <MMSEModal />}
+        {/* {showMOCA && <MOCAModal />} */}
 
-            {showPsqi && (
-              <PsqiModal
-                onClose={() => setShowPsqi(false)}
-                onSave={({ score, values }) => {
-                  setPsqiScore(score);
-                  setPsqiData(values);
-                  setShowPsqi(false);
-                }}
-                initialValues={psqiData}
-              />
-            )}
+        {showIsi && <IsiModal />}
+        {showPhq9 && <Phq9Modal />}
+        {showGad7 && <Gad7Modal />}
+        {showDass && <DassModal />}
 
-      </Card>
+        {
+          showRancho && (
+            <RanchoModal
+              value={ranchoValue}
+              onClose={() => setShowRancho(false)}
+              onSave={setRanchoValue}
+            />
+          )
+        }
 
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24 }}>
-        <button style={styles.submitBtn}>Save</button>
-      </div>
-    </div>
+        {
+          showJfk && (
+            <JfkModal
+              onClose={() => setShowJfk(false)}
+              onSave={(data) => {
+                console.log("CRS-R Score:", data);
+              }}
+            />
+          )
+        }
+        {
+          showEss && (
+            <EssModal
+              onClose={() => setShowEss(false)}
+              onSave={({ total, answers }) => {
+                setEssTotal(total);
+                setEssValues(answers);
+                setShowEss(false);
+              }}
+            />
+          )
+        }
+
+        {
+          showPsqi && (
+            <PsqiModal
+              onClose={() => setShowPsqi(false)}
+              onSave={({ score, values }) => {
+                setPsqiScore(score);
+                setPsqiData(values);
+                setShowPsqi(false);
+              }}
+              initialValues={psqiData}
+            />
+          )
+        }
+
+      </Card >
+
+
+    </div >
   );
 }
 
@@ -1399,8 +2267,24 @@ const styles = {
     paddingTop: 14,
     fontWeight: 700,
     marginBottom: 12,
-    textAlign: "left",      
+    textAlign: "left",
     alignSelf: "flex-start"
+  },
+  scoreBox: {
+    background: "#F1F5FF",
+    borderRadius: 12,
+    padding: 16,
+    fontWeight: 700,
+    marginTop: 12
+  },
+
+  scoreMini: {
+    background: "#F1F5FF",
+    padding: 14,
+    borderRadius: 12,
+    fontWeight: 700,
+    minWidth: 220,
+    textAlign: "center"
   },
 
   row: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
@@ -1437,8 +2321,8 @@ const styles = {
 
   primaryBtn: {
     padding: "10px 18px",
-    background: "#2563EB",  
-    border: "none",        
+    background: "#2563EB",
+    border: "none",
     borderRadius: 8,
     fontWeight: 700,
     cursor: "pointer"
@@ -1451,7 +2335,7 @@ const styles = {
     width: 720,
     maxHeight: "80vh",
     display: "flex",
-    flexDirection: "column" 
+    flexDirection: "column"
   },
   th: {
     border: "1px solid #CBD5E1",
@@ -1459,8 +2343,8 @@ const styles = {
     fontSize: 13,
     textAlign: "center",
     background: "#F8FAFC",
-    color: "#0F172A",       
-    fontWeight: 600          
+    color: "#0F172A",
+    fontWeight: 600
   },
 
 
@@ -1469,6 +2353,91 @@ const styles = {
     padding: 10,
     fontWeight: 600,
     width: "35%"
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 700,
+    marginTop: 24,
+    marginBottom: 12,
+    color: "#0F172A"
+  },
+
+  qLabel: {
+    fontSize: 13,
+    fontWeight: 600,
+    marginBottom: 6,
+    display: "block",
+    color: "#1E293B"
+  },
+
+  helperText: {
+    fontSize: 12,
+    fontWeight: 400,
+    color: "#475569",
+    marginTop: 4
+  },
+
+  languageGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 12
+  },
+
+  input: {
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: 8,
+    border: "1px solid #CBD5E1",
+    fontSize: 14
+  },
+
+  textarea: {
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: 8,
+    border: "1px solid #CBD5E1",
+    fontSize: 14,
+    resize: "none"
+  },
+
+  readBox: {
+    padding: "12px 14px",
+    borderRadius: 8,
+    border: "1px dashed #94A3B8",
+    fontWeight: 700,
+    letterSpacing: 1,
+    width: "fit-content"
+  },
+
+  copyRow: {
+    display: "flex",
+    gap: 20,
+    marginTop: 12
+  },
+
+  designBox: {
+    flex: 1,
+    height: 240,
+    border: "1px solid #CBD5E1",
+    borderRadius: 12,
+    padding: 10,
+    position: "relative",
+    background: "#fff"
+  },
+
+  canvas: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
+    cursor: "crosshair"
+  },
+
+  canvasHint: {
+    position: "absolute",
+    bottom: 8,
+    right: 12,
+    fontSize: 11,
+    color: "#64748B"
   },
 
   td: {

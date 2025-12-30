@@ -47,7 +47,7 @@ import InvestigationsChecklist from "../components/InvestigationsChecklist";
 import BookAppointmentTab from "../components/BookAppointmentTab";
 import GasGoalsTab from "../components/GasGoalsTab";
 import PsychologyDashboard from "../features/Psychology/components/PychologyDashboard";
-// import PsychologyDepartmentPage from "../features/Psychology/pages/PsychologyPatientspage";
+import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -707,6 +707,8 @@ export function MainContent({
 
     case "Psychology":
       return <PsychologyDashboard />;
+    case "Speech & Language Therapy":
+      return <SpeechAndLanguage patients={patients}/>;
 
         case "Dietetics":
       return <DietDepartmentPage patients={patients} department="Dietetics" />;

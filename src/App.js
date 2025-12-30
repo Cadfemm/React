@@ -46,17 +46,6 @@ function App() {
           <Route path="/Spinalinjury" exact component={SpinalInjury} />
           <Route path="/Output" exact component={Output} />
           <Route path="/Signup" exact component={Signup} />
-          <Route
-            path="/psychology-dashboard"
-            exact
-            component={PsychologyDashboard}
-          />
-
-          <Route
-            path="/psychologypatients"
-            exact
-            component={Patients}
-          />
 
           <Route path="/psychology/patient/:id" element={<PatientDetails />} />
           <Route path="/Modalities" exact component={latest} />
