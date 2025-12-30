@@ -106,9 +106,7 @@ const BLADDER_SCHEMA = {
     }
   ]
 };
-
-
-
+// bladder assesments
 const initialValues = {
   urinaryProblem: "",
   currentMethod: "",
