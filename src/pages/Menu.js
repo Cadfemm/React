@@ -47,6 +47,7 @@ import InvestigationsChecklist from "../components/InvestigationsChecklist";
 import BookAppointmentTab from "../components/BookAppointmentTab";
 import GasGoalsTab from "../components/GasGoalsTab";
 import PsychologyDashboard from "../features/Psychology/components/PychologyDashboard";
+import GlobalVitalsOverlay from "../components/GlobalVitalsOverlay";
 import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
@@ -60,6 +61,8 @@ export default function App() {
   const { mode } = useParams();
   const [userType, setUserType] = useState("");
   const [icdCode, setIcdCode] = useState(""); // deepest ICD from ICD tab
+  const [showVitals, setShowVitals] = useState(false);
+const [vitalsPatient, setVitalsPatient] = useState(null);
   const [icdPath, setIcdPath] = useState([]); // [{ depth, table, key, label }]
   const [financialState, setFinancialState] = useState(null);
   const [employmentState, setEmploymentState] = useState(null);
@@ -285,6 +288,16 @@ function updatePatientInMainList(updatedPatient) {
     }
     return () => clearTimeout(t);
   }, [mode]);
+useEffect(() => {
+  window.openVitals = (patient) => {
+    setVitalsPatient(patient);
+    setShowVitals(true);
+  };
+
+  return () => {
+    delete window.openVitals;
+  };
+}, []);
 
   return (
     <>
@@ -344,6 +357,11 @@ function updatePatientInMainList(updatedPatient) {
             />
           </section>
 
+<GlobalVitalsOverlay
+  open={showVitals}
+  patient={vitalsPatient}
+  onClose={() => setShowVitals(false)}
+/>
 
 <section style={{ display: tab === "ICD_EXISTING" ? "block" : "none" }}>
   <ICDExisting patientId={patient.patient_id} />

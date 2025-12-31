@@ -18,6 +18,53 @@ function VitalsTab({ patientId, encounterId, onSaved }) {
     const m = Number(cm) / 100;
     return m > 0 ? Number(kg) / (m * m) : "";
   };
+const [activeTab, setActiveTab] = React.useState("VITALS"); 
+// "VITALS" | "REPORTS"
+
+const [openReport, setOpenReport] = React.useState(null);
+const medicalReports = [
+  {
+    id: "cbc",
+    title: "Complete Blood Count (CBC)",
+    content: `
+Hemoglobin: 13.4 g/dL
+WBC: 7,800 /µL
+Platelets: 2.4 lakh /µL
+RBC Count: 4.8 million /µL
+Interpretation: Within normal limits
+    `,
+  },
+  {
+    id: "echo",
+    title: "2D Echocardiography",
+    content: `
+LV Ejection Fraction: 60%
+No regional wall motion abnormality
+Valves: Normal
+Impression: Normal cardiac function
+    `,
+  },
+  {
+    id: "urine",
+    title: "Urine Routine Examination",
+    content: `
+Color: Pale yellow
+Protein: Nil
+Sugar: Nil
+Pus cells: 1–2 / HPF
+Impression: Normal
+    `,
+  },
+  {
+    id: "xray",
+    title: "Chest X-Ray",
+    content: `
+Lung fields: Clear
+Cardiac silhouette: Normal
+No active pulmonary disease
+    `,
+  },
+];
 
   const [v, setV] = React.useState({
     ts: toLocalDT(),
@@ -130,9 +177,31 @@ function VitalsTab({ patientId, encounterId, onSaved }) {
       alert("Failed to save vitals.");
     }
   };
+return (
+  <section className="card vitals">
 
-  return (
-    <section className="card vitals">
+    {/* TAB HEADER */}
+    <div style={tabHeader}>
+      <button
+        style={activeTab === "VITALS" ? tabActive : tabBtn}
+        onClick={() => setActiveTab("VITALS")}
+      >
+        Vitals
+      </button>
+
+      <button
+        style={activeTab === "REPORTS" ? tabActive : tabBtn}
+        onClick={() => setActiveTab("REPORTS")}
+      >
+        Medical Reports
+      </button>
+    </div>
+
+  {activeTab === "VITALS" && (
+  <>
+    {
+   
+      <div>
       <div className="cardheading"><h2 className="title">Vitals — Rehab Capture</h2></div>
 
     {/* BASELINE */}
@@ -378,8 +447,96 @@ function VitalsTab({ patientId, encounterId, onSaved }) {
             : "Save"}
         </button>
       </div>
-    </section>
-  );
+      </div>
+   }
+      </>
+)}
+{activeTab === "REPORTS" && (
+  <div style={{ padding: 20 }}>
+
+    {/* REPORT BUTTONS */}
+    <div style={reportGrid}>
+      {medicalReports.map((r) => (
+        <button
+          key={r.id}
+          style={reportBtn}
+          onClick={() => setOpenReport(r)}
+        >
+          📄 {r.title}
+        </button>
+      ))}
+    </div>
+
+    {/* OPEN REPORT */}
+    {openReport && (
+      <div style={reportBox}>
+        <h3>{openReport.title}</h3>
+        <pre style={reportContent}>{openReport.content}</pre>
+
+        <button style={closeBtn} onClick={() => setOpenReport(null)}>
+          Close Report
+        </button>
+      </div>
+    )}
+  </div>
+)}
+  </section>
+);
+
+  
 }
+const tabHeader = {
+  display: "flex",
+  gap: 10,
+  borderBottom: "1px solid #ddd",
+  marginBottom: 12,
+};
+
+const tabBtn = {
+  padding: "8px 16px",
+  border: "none",
+ 
+  cursor: "pointer",
+  fontWeight: 600,
+};
+
+const tabActive = {
+  ...tabBtn,
+  backgroundColor:"#0f172a"
+};
+
+const reportGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 12,
+};
+
+const reportBtn = {
+  padding: "12px",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+  textAlign: "left",
+};
+
+const reportBox = {
+  marginTop: 20,
+  padding: 16,
+  border: "1px solid #ddd",
+  borderRadius: 8,
+  background: "#fff",
+};
+
+const reportContent = {
+  whiteSpace: "pre-wrap",
+  background: "#f9fafb",
+  padding: 12,
+  borderRadius: 6,
+};
+
+const closeBtn = {
+  marginTop: 10,
+  padding: "6px 14px",
+};
 
 export default VitalsTab;

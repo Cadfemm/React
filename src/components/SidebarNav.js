@@ -235,46 +235,46 @@ const departments = [
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
     </button>
 
-             <button className={`tab ${tab==="ICDNormal"?"active":""}`} onClick={()=>setTab("ICDNormal")} >
+             {/* <button className={`tab ${tab==="ICDNormal"?"active":""}`} onClick={()=>setTab("ICDNormal")} >
            <Layers className="icon" size={25} /> ICD<ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
-                <button
+         </button> */}
+                {/* <button
       className={`tab ${tab === "BASEASSESSMENT" ? "active" : ""}`}
       onClick={() => setTab("BASEASSESSMENT")}
     >
       <User className="icon" size={25} /> Initial Assessment{" "}
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-    </button>
-                <button
+    </button> */}
+                {/* <button
       className={`tab ${tab === "NurseBaseAssessment" ? "active" : ""}`}
       onClick={() => setTab("NurseBaseAssessment")}
     >
       <User className="icon" size={25} /> Nursing Assessment{" "}
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-    </button>
+    </button> */}
 
-                <button
+                {/* <button
       className={`tab ${tab === "ClinicalSwallowEvaluation" ? "active" : ""}`}
       onClick={() => setTab("ClinicalSwallowEvaluation")}
     >
       <User className="icon" size={25} /> Speech Assessment {" "}
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-    </button>
+    </button> */}
 
-        <button
+        {/* <button
       className={`tab ${tab === "NEWASSESSMENT" ? "active" : ""}`}
       onClick={() => setTab("NEWASSESSMENT")}
     >
       <ChartCandlestick className="icon" size={25} /> Assessment
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-    </button>
-    <button
+    </button> */}
+    {/* <button
       className={`tab ${tab === "VITALS" ? "active" : ""}`}
       onClick={() => setTab("VITALS")}
     >
       <SquareActivity className="icon" size={25} /> Vitals
       <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-    </button>
+    </button> */}
 
 
          <button className={`tab ${tab==="ICFNormal"?"active":""}`} onClick={()=>setTab("ICFNormal")}  >
@@ -284,7 +284,7 @@ const departments = [
            <Target className="icon" size={25} /> GAS Goals <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
 
-         <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")} disabled={!icfCode}>
+         <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")}>
            <Stethoscope className="icon" size={25} /> ICHI <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
          <button className={`tab ${tab==="PHARMACY"?"active":""}`} onClick={()=>setTab("PHARMACY")} >
@@ -300,11 +300,11 @@ const departments = [
          <ChevronRight size={20} style={{ marginLeft: "auto" }} 
          />
        </button>
-          <button className={`tab ${tab==="DOCUMENTS" ? "active" : ""}`} onClick={()=>setTab("DOCUMENTS")} disabled={!icdCode}>
+          <button className={`tab ${tab==="DOCUMENTS" ? "active" : ""}`} onClick={()=>setTab("DOCUMENTS")} >
            <FileStack className="icon" size={25} /> Documents<ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
        
-         <button className={`tab ${tab==="SUMMARY"?"active":""}`} onClick={()=>setTab("SUMMARY")} disabled={!icdCode}>
+         <button className={`tab ${tab==="SUMMARY"?"active":""}`} onClick={()=>setTab("SUMMARY")}>
            <FileText className="icon" size={25} /> Patient Summary <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
                <button className={`tab ${tab==="RAPFINAL" ? "active" : ""}`} onClick={()=>setTab("RAPFINAL")}>
@@ -312,7 +312,7 @@ const departments = [
          <ChevronRight size={20} style={{ marginLeft: "auto" }} 
          />
        </button>
-           <button className={`tab ${tab==="AUDIT"?"active":""}`} onClick={()=>setTab("AUDIT")} disabled={!icdCode}>
+           <button className={`tab ${tab==="AUDIT"?"active":""}`} onClick={()=>setTab("AUDIT")} >
            <ShieldCheck className="icon" size={25} /> Audit Trial <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
         </>)}
@@ -322,7 +322,7 @@ const departments = [
         <button className={`tab ${tab==="PatientsByDepartment" ? "active" : ""}`} onClick={()=>setTab("PatientsByDepartment")} >
            <Target className="icon" size={25} /> PatientsByDepartment <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
-         <button className={`tab ${tab==="ICDAD"?"active":""}`} onClick={()=>setTab("ICDAD")} disabled={!userType}>
+         <button className={`tab ${tab==="ICDAD"?"active":""}`} onClick={()=>setTab("ICDAD")} >
            <ClipboardList className="icon" size={25} /> ICD Assign Doctor <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
         </>)}

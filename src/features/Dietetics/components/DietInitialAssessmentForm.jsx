@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PatientReports from "../../PatientReports"; // ⬅ adjust path if needed
 import { BoldIcon } from "lucide-react";
 
+
 export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
   const [form, setForm] = useState({
     medical_history: patient.medical_history || "",
@@ -691,17 +692,18 @@ const submitAndSave = () => {
     <h5 style={{ margin: 0 }}>VItal Signs & Measurements</h5>
 
     {/* KNOW MORE LINK */}
-    <span
-      style={{
-        color: "#0050ff",
-        fontSize: 13,
-        cursor: "pointer",
-        fontWeight: 600,
-      }}
-      onClick={() => window.location.href = "/nursing"}
-    >
-      Know more →
-    </span>
+<span
+  style={{
+    color: "#0050ff",
+    fontSize: 13,
+    cursor: "pointer",
+    fontWeight: 600,
+  }}
+  onClick={() => window.openVitals?.(patient)}
+>
+  Know more →
+</span>
+
   </div>
 
   <div style={anthroGrid}>
