@@ -20,7 +20,6 @@ export default function PaedIASpeechLanguage() {
         title: "Paediatric Initial Assessment",
         subtitle: "Speech & Language",
 
-        actions: [{ type: "submit", label: "Save Assessment" }],
 
         sections: [
 

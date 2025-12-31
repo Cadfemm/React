@@ -1,18 +1,14 @@
 import React, { useState, useRef } from "react";
 import PaedIASpeechLanguage from "./PaedSpeechAssessment"
 import PaedIAFeeding from "./PaedFeedingAssessment"
+import FeedingAssessment from "./AdultSpeechAssessment"
 
-function ScaleWrapper({ title, children }) {
-  return (
-    <div style={{ padding: "10px 0" }}>
-      {children}
-    </div>
-  );
-}
 
-function DASS21({ patient, onChange, onBack }) {
+function AdultSpeech({ patient, onChange, onBack }) {
   return (
-       <></>
+       <>  <FeedingAssessment
+        patient={patient} onBack={onBack}
+        onSubmit={onChange}/></>
   );
 }
 
@@ -64,7 +60,7 @@ function PaedIASpeech({ patient, onChange, onBack }) {
 ------------------------------------------------------------- */
 
 export default function AssessmentForm({ patient, onSave, onBack }) {
-  const tabs = ["Depression Anxiety Stress Scale (DASS-21)", "Perceived Stress Scale (PSS)", "Generalized Anxiety Disorder (GAD-7)", "Patient Health Questionnaire (PHQ-9)", "Hamilton Anxiety Rating Scale (HAM-A)", "Hamilton Depression Rating Scale (HAM-D)"];
+  const tabs = ["SPEECH-LANGUAGE ASSESSMENT","PAEDIATRIC INITIAL FEEDING/SWALLOWING ASSESSMENT", "PAEDIATRIC INITIAL SPEECH-LANGUAGE ASSESSMENT"	  ];
   const [activeTab, setActiveTab] = useState(0);
   const scrollRef = useRef(null);
 
@@ -127,7 +123,7 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
       }}
     >
       {/* ================= SUBJECTIVE ================= */}
-      <h2 style={styles.sectionTitle}>Psychology Assessment</h2>
+      {/* <h2 style={styles.sectionTitle}>Psychology Assessment</h2> */}
       {/* ================= TABS ================= */}
       <div style={{ marginTop: 24 }}>
         <div
@@ -160,15 +156,15 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
 
       {/* ================= FORM CONTENT ================= */}
       <div >
-        {tabs[activeTab] === "Depression Anxiety Stress Scale (DASS-21)" && (
-          <DASS21
+        {tabs[activeTab] === "SPEECH-LANGUAGE ASSESSMENT" && (
+          <AdultSpeech
             patient={patient}
             onChange={setDass21}
             onBack={onBack}
           />
         )}
 
-        {tabs[activeTab] === "Generalized Anxiety Disorder (GAD-7)" && (
+        {tabs[activeTab] === "PAEDIATRIC INITIAL FEEDING/SWALLOWING ASSESSMENT"&& (
           <PaedIAFeed
             patient={patient}
             onChange={setGad7}
@@ -186,7 +182,7 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
           <PSS patient={patient}  onBack={onBack} onChange={setPss} />
         )}
 
-        {tabs[activeTab] === "Patient Health Questionnaire (PHQ-9)" && (
+        {tabs[activeTab] === "PAEDIATRIC INITIAL SPEECH-LANGUAGE ASSESSMENT" && (
           <PaedIASpeech patient={patient} onBack={onBack} onChange={setPhq9} />
         )}
       </div>

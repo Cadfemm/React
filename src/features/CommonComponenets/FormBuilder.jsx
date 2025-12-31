@@ -84,37 +84,59 @@ export default function CommonFormBuilder({
                       ? validateField(value, field.validation)
                       : null;
 
-                    return (
-                      <div key={field.name} style={styles.field}>
+                  return (
+  <div key={field.name} style={styles.field}>
 
-                        {field.type === "radio" ? (
-                          <div style={styles.radioRow}>
-                            <div style={styles.radioLabel}>
-                              {field.label}
-                            </div>
-                            {renderField(field, value, onChange, onAction)}
-                          </div>
-                        ) : (
-                          <>
-                            {field.type !== "button" && field.type !== "subheading" && (
-                              <label style={styles.label}>
-                                {field.label}
-                              </label>
-                            )}
-                            {renderField(field, value, onChange, onAction)}
-                          </>
-                        )}
+    {/* RADIO stays special (side layout) */}
+    {field.type === "radio" ? (
+      <div style={styles.radioRow}>
+        <div style={styles.radioLabel}>
+          {field.label}
+        </div>
+        {renderField(field, value, onChange, onAction)}
+      </div>
+    ) : field.type === "subheading" ? (
+      renderField(field)
+    ) : (
+      /* ✅ NORMAL FIELDS → LABEL ON TOP */
+      <div style={{ marginBottom: 16 }}>
 
-                        {field.helper && (
-                          <div style={styles.helper}>{field.helper}</div>
-                        )}
+        {field.label && field.type !== "inline-input" && (
+          <label
+            style={{
+              display: "block",
+              fontWeight: 600,
+              marginBottom: 6
+            }}
+          >
+            {field.label}
+          </label>
+        )}
 
-                        {error && (
-                          <div style={styles.error}>{error}</div>
-                        )}
+        {renderField(field, value, onChange, onAction)}
 
-                      </div>
-                    );
+        {field.helper && (
+          <div
+            style={{
+              fontSize: 12,
+              color: "#6b7280",
+              marginTop: 4
+            }}
+          >
+            {field.helper}
+          </div>
+        )}
+
+      </div>
+    )}
+
+    {error && (
+      <div style={styles.error}>{error}</div>
+    )}
+
+  </div>
+);
+
                   })}
                 </div>
               );

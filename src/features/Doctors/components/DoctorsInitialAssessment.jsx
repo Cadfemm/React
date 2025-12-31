@@ -39,8 +39,8 @@ const [showSecondary, setShowSecondary] = useState(false);
   return (
     <div>
       {/* PRIMARY ICD */}
-      <div><h3>Assessment</h3><textarea></textarea></div>
-      <div><h3>Plan</h3><textarea></textarea></div>
+      {/* <div><h3>Assessment</h3><textarea></textarea></div>
+      <div><h3>Plan</h3><textarea></textarea></div> */}
 <div style={{ marginBottom: 20 }}>
   <label style={{ fontWeight: 600 }}>Primary ICD</label>
   <select
@@ -474,11 +474,11 @@ const handleSubmitReferral = () => {
             </p>
           </div>
         )}
-         <div style={{paddingBottom:20}}>
+         {/* <div style={{paddingBottom:20}}>
       <h3>Assessment</h3>
       <textarea/></div> <div style={{paddingBottom:20}}>
       <h3>Plan</h3>
-      <textarea/></div>
+      <textarea/></div> */}
         {/* REFER TO DEPARTMENTS DROPDOWN */}
         <MultiSelectDropdown
           options={departmentOptions}
