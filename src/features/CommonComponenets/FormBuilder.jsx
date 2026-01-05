@@ -5,7 +5,9 @@ export default function CommonFormBuilder({
   onChange,
   submitted,
   onAction,
-  children
+  assessmentRegistry = {},
+  children,
+  layout = "root" 
 }) {
   const sections = schema.sections || [
     { title: null, fields: schema.fields }
@@ -14,7 +16,14 @@ export default function CommonFormBuilder({
   return (
     <div style={styles.page}>
       <div style={styles.content}>
-        <div style={styles.card}>
+        <div
+  style={
+    layout === "root"
+      ? styles.card
+      : styles.nestedContainer
+  }
+>
+
 
           <div style={styles.header}>
             <div>
@@ -56,28 +65,60 @@ export default function CommonFormBuilder({
               }
 
               return (
-                <div key={sIdx} style={styles.sectionCard}>
+                <div
+  key={sIdx}
+  style={
+    layout === "root"
+      ? styles.sectionCard
+      : styles.nestedSection
+  }
+>
+
 
                   {section.title && (
                     <div style={styles.sectionTitle}>
                       {section.title}
                     </div>
                   )}
+{/* ===== MATRIX HEADER ===== */}
+{section.fields.some(f => f.type === "radio-matrix") && (
+  <div style={styles.matrixHeader}>
+    <div />
+    <div style={styles.matrixOptions}>
+      {section.fields
+        .find(f => f.type === "radio-matrix")
+        .options.map(opt => (
+          <div key={opt.value} style={styles.matrixHeaderCell}>
+            {opt.label}
+          </div>
+        ))}
+    </div>
+  </div>
+)}
+
 
                   {section.fields.map(field => {
 
                     /* ===== FIELD-LEVEL VISIBILITY ===== */
-                    if (field.showIf) {
-                      const depVal = values[field.showIf.field];
+if (field.showIf) {
+  const depVal = values[field.showIf.field];
 
-                      if ("equals" in field.showIf && depVal !== field.showIf.equals) {
-                        return null;
-                      }
+  if ("equals" in field.showIf && depVal !== field.showIf.equals) {
+    return null;
+  }
 
-                      if ("exists" in field.showIf && !depVal) {
-                        return null;
-                      }
-                    }
+  if ("exists" in field.showIf && !depVal) {
+    return null;
+  }
+
+  // ✅ NEW: checkbox-array support
+  if ("includes" in field.showIf) {
+    if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
+      return null;
+    }
+  }
+}
+
 
                     const value = values[field.name];
                     const error = submitted
@@ -85,23 +126,46 @@ export default function CommonFormBuilder({
                       : null;
 
                     return (
-                      <div key={field.name} style={styles.field}>
+                     <div
+  key={field.name}
+  style={{
+    ...styles.field,
+    marginBottom: layout === "nested" ? 10 : 18
+  }}
+>
+
 
                         {field.type === "radio" ? (
                           <div style={styles.radioRow}>
                             <div style={styles.radioLabel}>
                               {field.label}
                             </div>
-                            {renderField(field, value, onChange, onAction)}
+                           {renderField(
+      field,
+      value,
+      values,
+      onChange,
+      onAction,
+      assessmentRegistry
+    )}
+ 
                           </div>
                         ) : (
                           <>
-                            {field.type !== "button" && field.type !== "subheading" && (
-                              <label style={styles.label}>
-                                {field.label}
-                              </label>
-                            )}
-                            {renderField(field, value, onChange, onAction)}
+{!["button", "subheading", "radio-matrix","score-box"].includes(field.type) && (
+  <label style={styles.label}>
+    {field.label}
+  </label>
+)}
+
+                             {renderField(
+      field,
+      value,
+      values,
+      onChange,
+      onAction,
+      assessmentRegistry
+    )}
                           </>
                         )}
 
@@ -130,6 +194,58 @@ export default function CommonFormBuilder({
     </div>
   );
 }
+function AssessmentLauncher({
+  field,
+  values,
+  onChange,
+  assessmentRegistry
+}) {
+  const activeKey = `${field.name}_active`;
+  const active = values[activeKey] || null;
+  const ActiveComponent = active
+    ? assessmentRegistry?.[active]
+    : null;
+
+  return (
+    <div>
+      <div style={styles.inlineGroup}>
+        {field.options.map(opt => (
+          <button
+            key={opt.value}
+            style={{
+              ...styles.btnOutline,
+              background:
+                active === opt.value ? "#2563EB" : "#fff",
+              color:
+                active === opt.value ? "#fff" : "#111827"
+            }}
+            onClick={() =>
+              onChange(
+                activeKey,
+                active === opt.value ? null : opt.value
+              )
+            }
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {ActiveComponent ? (
+        <div style={{ marginTop: 20 }}>
+          <ActiveComponent values={values} onChange={onChange} />
+        </div>
+      ) : active ? (
+        <div style={{ marginTop: 10, color: "red" }}>
+          ⚠ No component registered for: <b>{active}</b>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+
+
 
 function MultiSelectDropdown({ field, value, onChange }) {
   const [open, setOpen] = React.useState(false);
@@ -189,9 +305,37 @@ function MultiSelectDropdown({ field, value, onChange }) {
     </div>
   );
 }
+function RadioMatrixRow({ field, value, onChange }) {
+  return (
+    <div style={styles.matrixRow}>
+      <div style={styles.matrixLabel}>{field.label}</div>
+
+      <div style={styles.matrixOptions}>
+        {field.options.map(opt => (
+          <label key={opt.value} style={styles.matrixCell}>
+            <input
+              type="radio"
+              name={field.name}
+              checked={value === opt.value}
+              onChange={() => onChange(field.name, opt.value)}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 
-function renderField(field, value, onChange, onAction) {
+function renderField(
+  field,
+  value,
+  values,
+  onChange,
+  onAction,
+  assessmentRegistry
+) {
+
   switch (field.type) {
     case "input":
       return (
@@ -202,14 +346,98 @@ function renderField(field, value, onChange, onAction) {
         />
       );
 
-    case "textarea":
-      return (
-        <textarea
-          style={styles.textarea}
-          value={value || ""}
-          onChange={e => onChange(field.name, e.target.value)}
-        />
-      );
+case "score-box":
+  return (
+    <div style={styles.scoreBox}>
+      <div style={styles.scoreLabel}>
+        {field.label}
+      </div>
+      <div style={styles.scoreValue}>
+        {value ?? 0}
+      </div>
+    </div>
+  );
+
+
+case "paired-select":
+  return (
+    <div style={styles.pairedBlock}>
+      {/* ROW 1: TITLES */}
+      <div style={styles.pairedTitles}>
+        <div style={styles.pairedTitleCell}>
+          {field.right.title}
+        </div>
+        <div style={styles.pairedTitleCell}>
+          {field.left.title}
+        </div>
+      </div>
+
+      {/* ROW 2: DROPDOWNS */}
+      <div style={styles.pairedInputs}>
+        <select
+          style={styles.select}
+          value={values[field.right.name] || ""}
+          onChange={e =>
+            onChange(field.right.name, e.target.value)
+          }
+        >
+          <option value="">Select</option>
+          {field.options.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+
+        <select
+          style={styles.select}
+          value={values[field.left.name] || ""}
+          onChange={e =>
+            onChange(field.left.name, e.target.value)
+          }
+        >
+          <option value="">Select</option>
+          {field.options.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+
+
+case "radio-matrix":
+  return (
+    <RadioMatrixRow
+      field={field}
+      value={value}
+      onChange={onChange}
+    />
+  );
+case "textarea":
+  return (
+    <textarea
+      style={styles.textarea}
+      value={value || ""}
+      readOnly={field.readOnly}
+      onChange={e =>
+        !field.readOnly && onChange(field.name, e.target.value)
+      }
+    />
+  );
+case "date":
+  return (
+    <input
+      type="date"
+      style={styles.input}
+      value={value || ""}
+      onChange={e => onChange(field.name, e.target.value)}
+    />
+  );
+
+
 
     case "single-select":
       return (
@@ -226,6 +454,14 @@ function renderField(field, value, onChange, onAction) {
           ))}
         </select>
       );
+case "radio-matrix":
+  return (
+    <RadioMatrixRow
+      field={field}
+      value={value}
+      onChange={onChange}
+    />
+  );
 
     case "radio":
       return (
@@ -252,6 +488,16 @@ function renderField(field, value, onChange, onAction) {
           </div>
         </div>
       );
+case "assessment-launcher":
+  return (
+    <AssessmentLauncher
+      field={field}
+      values={values}                 // ✅ FIX
+      onChange={onChange}
+      assessmentRegistry={assessmentRegistry} // ✅ FIX
+    />
+  );
+
 
     case "checkbox-group":
       return (
@@ -329,7 +575,7 @@ function validateField(value, rules) {
 
 const styles = {
   page: {
-    minHeight: "100vh",
+    minHeight: "auto",
     fontFamily: "Inter, system-ui"
   },
 
@@ -367,10 +613,35 @@ const styles = {
     display: "flex",
     gap: 8
   },
+scoreBox: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "10px 14px",
+  borderRadius: 8,
+  margin:"20px 0px 5px 0px",
+  border: "1px solid #e5e7eb",
+  background: "#f9fafb",
+  fontWeight: 600,
+  fontSize: 14
+},
+
+scoreLabel: {
+  color: "#0F172A"
+},
+
+scoreValue: {
+  minWidth: 48,
+  textAlign: "right",
+  fontSize: 16,
+  fontWeight: 700,
+  color: "#111827"
+},
 
   mstBtn: {
     background: "#fff",
     border: "1.5px solid #111827",
+    color:"#0f172A",
     padding: "8px 14px",
     borderRadius: 999,
     fontWeight: 600,
@@ -402,7 +673,8 @@ const styles = {
   label: {
     fontWeight: 600,
     marginBottom: 6,
-    display: "block"
+    display: "block",
+    color:"#0F172A"
   },
 
   input: {
@@ -448,7 +720,7 @@ const styles = {
 
   radioLabel: {
     fontWeight: 600,
-    fontSize: 15,
+    fontSize: 14,
     color: "#0F172A"
   },
   subheading: {
@@ -503,6 +775,79 @@ inlineRow: {
   gap: 12,
   marginBottom: 12
 },
+matrixHeader: {
+  display: "grid",
+  gridTemplateColumns: "1fr auto",
+  marginBottom: 10,
+  borderBottom:"1px solid #0000002e",
+  fontSize: 14,
+  fontWeight:600,
+  paddingBottom:10,
+  color: "#0F172A"
+},
+
+matrixHeaderCell: {
+  width: 110,
+  textAlign: "center"
+},
+nestedContainer: {
+  border: "1px solid #e5e7eb",
+    borderRadius: "10px",
+    padding:"16px",
+    width:"100%",
+    background:" #fff"
+},
+nestedSection: {
+  border: "none",
+  padding: 0,
+  marginBottom: 8
+},
+pairedBlock: {
+  display: "grid",
+  gap: 6
+},
+
+pairedTitles: {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  fontSize: 13,
+  fontWeight: 600,
+  color: "#0F172A"
+},
+
+pairedTitleCell: {
+  textAlign: "left"
+},
+
+pairedInputs: {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 12
+},
+
+matrixRow: {
+  display: "grid",
+  gridTemplateColumns: "1fr auto",
+  alignItems: "center",
+  marginBottom: 14
+},
+
+matrixLabel: {
+  fontWeight: 600,
+  fontSize: 14,
+  color:"#0F172A",
+},
+
+matrixOptions: {
+  display: "flex",
+  gap: 22
+},
+
+matrixCell: {
+  width: 110,
+  display: "flex",
+  justifyContent: "center"
+},
 
 inlineLabel: {
   fontWeight: 500,
@@ -552,6 +897,35 @@ multiSelectItem: {
     fontWeight: 600,
     cursor: "pointer"
   },
+pairedRow: {
+  display: "grid",
+  gridTemplateColumns: "200px 1fr",
+  gap: 16,
+  alignItems: "center"
+},
+
+pairedLabel: {
+  fontWeight: 600,
+  color: "#0F172A"
+},
+
+pairedControls: {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 12
+},
+
+pairedSide: {
+  display: "flex",
+  flexDirection: "column",
+  gap: 4
+},
+
+sideLabel: {
+  fontSize: 12,
+  fontWeight: 600,
+  color: "#6b7280"
+},
 
   footer: {
     marginTop: 20

@@ -243,8 +243,8 @@ function NYHAModal({ onSave, onClose }) {
       {options.map(o => (
         <div
           key={o[0]}
-          style={{ ...nyhaRow, background: selected === o[0] ? "#eef6ff" : "#fafafa" }}
-          onClick={() => setSelected(o[0])}
+          style={{ ...nyhaRow, background: selected === o[0]+o[1] ? "#eef6ff" : "#fafafa" }}
+          onClick={() => setSelected(o[0]+o[1])}
         >
           <strong>{o[0]}</strong> – {o[1]}
         </div>
@@ -309,7 +309,7 @@ function ModalFooter({ onCancel, onSave }) {
 }
 
 const btnRow = { display: "flex", gap: 12, marginTop: 20 };
-const pillBtn = { padding: "8px 16px", borderRadius: 999, border: "1px solid #c7d2fe", background: "#eef2ff", fontWeight: 600 };
+const pillBtn = { padding: "8px 16px", borderRadius: 999,  fontWeight: 600 };
 const saveBtn = { marginTop: 20, padding: "10px 18px", background: "#111827", color: "#fff", borderRadius: 8 };
 const scoreBox = { marginTop: 12, padding: 12, background: "#eef6ff", borderRadius: 8 };
 

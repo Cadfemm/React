@@ -26,9 +26,9 @@ function App() {
     <div className="App">
       <Router>
         {/* Navbar */}
-        <Route
+        {/* <Route
           render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Navbar />}
-        />
+        /> */}
 
         {/* Switch and Routes */}
         <Switch>
