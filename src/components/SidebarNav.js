@@ -188,13 +188,13 @@ const departments = [
          <button className={`tab ${tab==="ICF"?"active":""}`} onClick={()=>setTab("ICF")}  >
            <Layers className="icon" size={25} /> ICF <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
-         <button className={`tab ${tab==="GAS" ? "active" : ""}`} onClick={()=>setTab("GAS")} >
+         {/* <button className={`tab ${tab==="GAS" ? "active" : ""}`} onClick={()=>setTab("GAS")} >
            <Target className="icon" size={25} /> GAS Goals <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
+         </button> */}
 
-         <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")} disabled={!icfCode}>
+         {/* <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")} disabled={!icfCode}>
            <Stethoscope className="icon" size={25} /> ICHI <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
+         </button> */}
          <button className={`tab ${tab==="PHARMACY"?"active":""}`} onClick={()=>setTab("PHARMACY")} >
            <Layers className="icon" size={25} /> Pharmacy <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>
@@ -277,16 +277,16 @@ const departments = [
     </button> */}
 
 
-         <button className={`tab ${tab==="ICFNormal"?"active":""}`} onClick={()=>setTab("ICFNormal")}  >
+         {/* <button className={`tab ${tab==="ICFNormal"?"active":""}`} onClick={()=>setTab("ICFNormal")}  >
            <Layers className="icon" size={25} /> ICF <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
-         <button className={`tab ${tab==="GASNA" ? "active" : ""}`} onClick={()=>setTab("GASNA")} >
+         </button> */}
+         {/* <button className={`tab ${tab==="GASNA" ? "active" : ""}`} onClick={()=>setTab("GASNA")} >
            <Target className="icon" size={25} /> GAS Goals <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
+         </button> */}
 
-         <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")}>
+         {/* <button className={`tab ${tab==="ICHI"?"active":""}`} onClick={()=>setTab("ICHI")}>
            <Stethoscope className="icon" size={25} /> ICHI <ChevronRight size={20} style={{ marginLeft: "auto" }} />
-         </button>
+         </button> */}
          <button className={`tab ${tab==="PHARMACY"?"active":""}`} onClick={()=>setTab("PHARMACY")} >
            <Layers className="icon" size={25} /> Pharmacy <ChevronRight size={20} style={{ marginLeft: "auto" }} />
          </button>

@@ -5,6 +5,7 @@ export default function PatientRegister({ addPatient }) {
 
   const [form, setForm] = useState({
     name: "",
+    dob: "", 
     age: "",
     sex: "",
     race: "",
@@ -14,6 +15,7 @@ export default function PatientRegister({ addPatient }) {
     occupation: "",
     marital_status: "",
     icd: "",
+    date_of_onset: "",
     weight: "",
     height: "",
     remarks: "",
@@ -40,6 +42,19 @@ const updateCarer = (index, key, value) => {
     )
   );
 };
+const calculateAge = (dob) => {
+  if (!dob) return "";
+  const birthDate = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
 
   const setField = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -55,6 +70,8 @@ const updateCarer = (index, key, value) => {
     const newPatient = {
       id: "MRN" + Date.now(),
       name: form.name,
+      dob: form.dob,
+  age: form.age,  
       age: form.age,
       sex: form.sex,
       race: form.race,
@@ -64,6 +81,7 @@ const updateCarer = (index, key, value) => {
       occupation: form.occupation,
       marital_status: form.marital_status,
       icd: form.icd,
+      date_of_onset: form.date_of_onset,
       ul: "-",
       weight: form.weight,
       height: form.height,
@@ -89,8 +107,32 @@ carers: carers,
       <label>Name</label>
       <input value={form.name} onChange={e => setField("name", e.target.value)} style={{ width:"100%" }}/>
 
-      <label>Age</label>
-      <input value={form.age} onChange={e => setField("age", e.target.value)} style={{ width:"100%" }}/>
+      <label>Date of Birth</label>
+<input
+  type="date"
+  value={form.dob}
+  onChange={(e) => {
+    const dob = e.target.value;
+    setForm(prev => ({
+      ...prev,
+      dob,
+      age: calculateAge(dob)
+    }));
+  }}
+  style={{ width: "100%" }}
+/>
+
+<label>Age</label>
+<input
+  value={form.age}
+  readOnly
+  style={{
+    width: "100%",
+    background: "#eee",
+    fontWeight: "bold"
+  }}
+/>
+
 
       <label>Sex</label>
       <select value={form.sex} onChange={e => setField("sex", e.target.value)} style={{ width:"100%" }}>
@@ -131,6 +173,14 @@ carers: carers,
         <option value="">Select ICD</option>
         {ICD_LIST.map(i => <option key={i} value={i}>{i}</option>)}
       </select>
+      <label>Date of Onset</label>
+<input
+  type="date"
+  value={form.date_of_onset}
+  onChange={e => setField("date_of_onset", e.target.value)}
+  style={{ width: "100%" }}
+/>
+
 <h3 style={{ marginTop: 20 }}>Carer Information</h3>
 
 <label>Number of Carers</label>
