@@ -5,7 +5,7 @@
   flex-direction: column;
   font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
-  
+ 
 body{
   height: 100%;
   overflow: hidden;
@@ -14,7 +14,7 @@ body{
   overflow-y: auto;
   font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
-
+ 
 /* Add to App.css */
  
  
@@ -35,9 +35,9 @@ body{
   .tabs-row::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
   }
-
-
-
+ 
+ 
+ 
 /* Ensure body doesn't scroll when in doctor assessment */
 body {
   padding: 0;
