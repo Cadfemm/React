@@ -11,6 +11,7 @@ import PatientsByDepartment from "../components/PatientsByDepartment";
 import VitalsTab from "../components/VitalsTab";
 import AssessmentsPanel from "../components/AssessmentsPanel";
 import DepartmentPage from "../features/PT/pages/Patientspage";
+import AudiologyDepartmentPage from "../features/Audiology/pages/AudioDashboard";
 import PatientRegister from "../features/CustomerService/pages/PatientRegistration"
 import BASEASSESSMENT from "../components/BASEASSESSMENT";
 import RAPTab from "../components/RAPTab";
@@ -58,6 +59,7 @@ const API = process.env.REACT_APP_API || "";
 const GAS_BASE = `${API}/gas`;
 export default function App() {
   const [tab, setTab] = useState(""); // "PERSONAL" | "ICD" | "ICF" | "ICHI" | "SUMMARY"
+
   const { mode } = useParams();
   const [userType, setUserType] = useState("");
   const [icdCode, setIcdCode] = useState(""); // deepest ICD from ICD tab
@@ -711,11 +713,13 @@ export function downloadBlob(content, filename, type) {
 
 
 export function MainContent({
+  
     tab,
     addPatient,
     patients,
     updatePatientInMainList
 }) {
+
   switch (tab) {
     case "Customer Service":
       return <PatientRegister addPatient={addPatient} />;
@@ -731,6 +735,10 @@ export function MainContent({
 
         case "Dietetics":
       return <DietDepartmentPage patients={patients} department="Dietetics" />;
+
+        case "Audiology":
+      return <AudiologyDepartmentPage patients={patients} department="Audiology" />;
+
 
     case "Doctor":
       return <DoctorsDepartmentPage

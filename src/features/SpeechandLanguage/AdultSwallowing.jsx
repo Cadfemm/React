@@ -577,24 +577,30 @@ export default function ClinicalSwallowingEvaluation({onBack}) {
         fields: [
 
 
-          {
-            name: "dysphagia_characteristics",
-            label: "The patient presents with dysphagia",
-            type: "multi-select-dropdown",
-            options: [
-              "Anterior spillage",
-              "Slow / ineffective mastication",
-              "Oral residue post swallow",
-              "Overt signs of aspiration",
-              "Suspected silent aspiration",
-              "Other(s)"
-            ].map(v => ({ label: v, value: v }))
-          },
-              {
-            name: "Others",
-            label: "Others",
-            type: "textarea"
-          },
+{
+  name: "dysphagia_characteristics",
+  label: "The patient presents with dysphagia",
+  type: "multi-select-dropdown",
+  options: [
+    "Anterior spillage",
+    "Slow / ineffective mastication",
+    "Oral residue post swallow",
+    "Overt signs of aspiration",
+    "Suspected silent aspiration",
+    "Other(s)"
+  ].map(v => ({ label: v, value: v }))
+},
+
+{
+  name: "dysphagia_other",
+  label: "Others",
+  type: "textarea",
+  showIf: {
+    field: "dysphagia_characteristics",
+    includes: "Other(s)"
+  }
+},
+
           { type: "subheading", label: "Functional Oral Intake Scale (FOIS)" },
 
 /* -------- TUBE DEPENDENT (Levels 1–3) -------- */

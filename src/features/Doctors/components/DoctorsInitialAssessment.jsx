@@ -7,6 +7,7 @@ import HearingAssessment from "./HearingAssessment";
 import CardiovascularRespiratoryAssessment from "./CardiovascularRespiratoryAssessment";
 import BowelAssessment from "./BowelAssessment";
 import BladderAssessment from "./BladderAssessment";
+import FunctionalAssessment from "./Functional";
 
 /* -------------------------------------------------------------
    MULTISELECT CHECKBOX DROPDOWN  (UI ONLY - NO BUSINESS LOGIC)
@@ -40,6 +41,8 @@ const [showSecondary, setShowSecondary] = useState(false);
     <div>
       {/* PRIMARY ICD */}
      
+      {/* <div><h3>Assessment</h3><textarea></textarea></div>
+      <div><h3>Plan</h3><textarea></textarea></div> */}
 <div style={{ marginBottom: 20 }}>
   <label style={{ fontWeight: 600 }}>Primary ICD</label>
   <select
@@ -257,6 +260,7 @@ const [CardiovascularRespiratoryAssessmentData, setCardiovascularRespiratoryAsse
 const [HearingAssessmentData, setHearingAssessmentData] = useState(null);
 const [BowelAssessmentData, setBowelAssessmentData] = useState(null);
 const [BladderAssessmentData, setBladderAssessmentData] = useState(null);
+const [FunctionalAssessmentData,setFunctionalAssessmentData] = useState(null);
   /* --------- Tabs --------- */
   const tabs = [
     "Cognitive",
@@ -459,6 +463,9 @@ const handleSubmitReferral = () => {
         tabs[activeTab] === "Hearing" ? (
           <HearingAssessment onChange={setHearingAssessmentData} />
         ) :
+                tabs[activeTab] === "Functional" ? (
+          <FunctionalAssessment onChange={setFunctionalAssessmentData} />
+        ) :
  tabs[activeTab] === "Bowel Issue" ? (
           <BowelAssessment onChange={setBowelAssessmentData} />
         ) :
@@ -474,6 +481,11 @@ const handleSubmitReferral = () => {
           </div>
         )}
        
+         {/* <div style={{paddingBottom:20}}>
+      <h3>Assessment</h3>
+      <textarea/></div> <div style={{paddingBottom:20}}>
+      <h3>Plan</h3>
+      <textarea/></div> */}
         {/* REFER TO DEPARTMENTS DROPDOWN */}
         <MultiSelectDropdown
           options={departmentOptions}

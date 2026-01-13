@@ -70,34 +70,41 @@ const existingPatients = []
           <div style={{ textAlign: "right" }}>Action</div>
         </div>
 
-        {patients.map((p) => (
-          <div
-            key={p.id}
-            style={styles.row}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "#F8FAFC")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.background = "#FFFFFF")
-            }
-          >
-            <div style={styles.name}>{p.name}</div>
-            <div style={styles.icd}>{p.icd}</div>
+      {patients.length === 0 ? (
+  <div style={styles.emptyState}>
+    Patients are not configured yet
+  </div>
+) : (
+  patients.map((p) => (
+    <div
+      key={p.id}
+      style={styles.row}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.background = "#F8FAFC")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.background = "#FFFFFF")
+      }
+    >
+      <div style={styles.name}>{p.name}</div>
+      <div style={styles.icd}>{p.icd}</div>
 
-            <div>
-              <span style={styles.badge(p.status)}>{p.status ?? "New"}</span>
-            </div>
+      <div>
+        <span style={styles.badge(p.status)}>{p.status ?? "New"}</span>
+      </div>
 
-            <div style={{ textAlign: "right" }}>
-              <button
-                style={styles.startBtn}
-                onClick={() => setSelectedPatient(p)}
-              >
-                Start →
-              </button>
-            </div>
-          </div>
-        ))}
+      <div style={{ textAlign: "right" }}>
+        <button
+          style={styles.startBtn}
+          onClick={() => setSelectedPatient(p)}
+        >
+          Start →
+        </button>
+      </div>
+    </div>
+  ))
+)}
+
       </div>
     </div>
   );
@@ -111,6 +118,13 @@ const styles = {
     background: "#F8FAFC",
     minHeight: "100vh"
   },
+emptyState: {
+  padding: "40px 20px",
+  textAlign: "center",
+  color: "#64748B",
+  fontSize: 15,
+  fontWeight: 500
+},
 
   header: {
     display: "flex",

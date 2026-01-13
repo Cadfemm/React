@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import PatientDetails from "../components/PatientDetails";
+import AudiologyDepartmentAdultPage from "../components/AudiologyAdultIA";
+import AudiologyDepartmentPediatricPage from "../components/AudiologyPediatricIA";
 
-export default function DepartmentPage({ patients = [], department }) {
+
+export default function AudiologyDepartmentPage({ patients = [], department }) {
   const [view, setView] = useState("dashboard"); // dashboard | patients | details
   const [selectedPatient, setSelectedPatient] = useState(null);
 
@@ -15,15 +17,24 @@ export default function DepartmentPage({ patients = [], department }) {
   );
 
   /* ================= PATIENT DETAILS ================= */
-  if (view === "details" && selectedPatient) {
-    return (
-      <PatientDetails
-        patient={selectedPatient}
-        department={department}
-        onBack={() => setView("patients")}
-      />
-    );
-  }
+if (view === "details" && selectedPatient) {
+  const age = selectedPatient.age; // or calculate from DOB if needed
+
+  return age > 20 ? (
+    <AudiologyDepartmentAdultPage
+      patient={selectedPatient}
+      department={department}
+      onBack={() => setView("patients")}
+    />
+  ) : (
+    <AudiologyDepartmentPediatricPage
+      patient={selectedPatient}
+      department={department}
+      onBack={() => setView("patients")}
+    />
+  );
+}
+
 
   /* ================= PATIENT LIST ================= */
   if (view === "patients") {
@@ -43,8 +54,11 @@ export default function DepartmentPage({ patients = [], department }) {
                 setView("details");
               }}
             >
-              <div style={{ fontWeight: 600 }}>{p.name}</div>
-              <div style={muted}>ICD: {p.icd}</div>
+<div style={{ fontWeight: 600 }}>
+  {p.name} <span style={{ fontSize: 12, color: "#6b7280" }}>({p.age} yrs)</span>
+</div>
+<div style={muted}>ICD: {p.icd}</div>
+
             </div>
           ))
         )}
@@ -60,7 +74,7 @@ export default function DepartmentPage({ patients = [], department }) {
       <div style={header}>
         <div>
           <h2 style={title}>Therapist Dashboard</h2>
-          <div style={subtitle}>Rehabilitation EMR</div>
+          <div style={subtitle}>Audiologist EMR</div>
         </div>
 
         <div style={searchWrap}>
@@ -77,9 +91,9 @@ export default function DepartmentPage({ patients = [], department }) {
 
         {/* -------- APPOINTMENTS -------- */}
         <Card title="Today's Appointments">
-          <Appointment time="09:00" name="John Lim" tag="PT" />
-          <Appointment time="10:00" name="Amina B" tag="OT" />
-          <Appointment time="11:00" name="Ravi K" tag="PT" />
+          <Appointment time="09:00" name="John Lim" tag="TM" />
+          <Appointment time="10:00" name="Amina B" tag="OAE" />
+          <Appointment time="11:00" name="Ravi K" tag="OAE" />
           <div style={muted}>+ more</div>
         </Card>
 
