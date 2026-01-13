@@ -134,7 +134,7 @@ carers: carers,
 />
 
 
-      <label>Sex</label>
+      <label>Gender</label>
       <select value={form.sex} onChange={e => setField("sex", e.target.value)} style={{ width:"100%" }}>
         <option value="">Select</option>
         <option>Male</option>

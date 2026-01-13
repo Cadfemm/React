@@ -38,7 +38,7 @@ export default function TUG() {
 
   return (
     <CommonFormBuilder
-      schema={ASSISTIVE_TUG_SCHEMA}
+      schema={TUG_SCHEMA}
       values={values}
       onChange={onChange}
       submitted={submitted}
