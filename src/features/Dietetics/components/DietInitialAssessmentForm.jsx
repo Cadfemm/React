@@ -523,8 +523,8 @@ const submitAndSave = () => {
 
           <div style={patientGrid}>
             <div><strong>Name:</strong> {patient.name}</div>
-            <div><strong>ID/MRN:</strong> {patient.id}</div>
-            <div><strong>Age/Sex:</strong> {patient.age} / {patient.sex}</div>
+            <div><strong>IC/MRN:</strong> {patient.id}</div>
+            <div><strong>Age/Gender:</strong> {patient.age} / {patient.sex}</div>
             <div><strong>Accommodation:</strong> {patient.accommodation}</div>
             <div><strong>Residence:</strong> {patient.residence}</div>
             <div><strong>NKFA:</strong> {patient.nkfa}</div>

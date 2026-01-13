@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
  // features/neuro/assessments/registry.js
 import MMTForm from "./MMTForm";
-// import ROMForm from "./ROMForm";
+import TUG from "./TUGForm";
 import MASForm from "./MASForm";
-// import FACForm from "./FACForm";
-// import BBSForm from "./BBSForm";
+import SARAForm from "./SARAForm";
+import BergBalanceScale from "./BBS";
 import FMALEForm from "./FMALEForm";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
-  // rom: ROMForm,
+  tug: TUG,
   mas: MASForm,
-  // fac: FACForm,
-  // bbs: BBSForm,
+  sara: SARAForm,
+  bbs: BergBalanceScale,
   fma_le: FMALEForm
 };
 
@@ -23,7 +23,20 @@ const YES_NO = [
   { label: "Yes", value: "yes" },
   { label: "No", value: "no" }
 ];
- 
+const Static_Dynamic = [
+  { label: "Static", value: "static" },
+  { label: "Dynamic", value: "dynamic" }
+];
+ const  Functional_assessment  = [
+  { label: "Independent", value: "independent" },
+  { label: "Supervision", value: "supervision" },
+  { label: "Minimal Assistance", value: "mia" },
+  { label: "Moderate Assistance", value: "moa" },
+  { label: "Maximal Assistance", value: "maa" },
+  { label: "Dependent", value: "dependent" },
+  { label: "Not Assessed / NotApplicable", value: "NA" },
+
+];
 const PROGNOSIS_OPTIONS = [
   { label: "Excellent", value: "excellent" },
   { label: "Good", value: "good" },
@@ -212,8 +225,6 @@ useEffect(() => {
   /* ===================== SCHEMAS ===================== */
  
   const SUBJECTIVE_SCHEMA = {
-    title: "Neuro Assessment",
-    subtitle: "Subjective",
     actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -266,29 +277,22 @@ useEffect(() => {
  
             {
         name: "Client_Expectations",
-        label: "Client Expectations",
+        label: "Client Goals",
         type: "textarea",
       },
  
       {
         name: "special_questions",
-        label: "Special Questions",
+        label: "Clinical Considerations",
         type: "checkbox-group",
         options: [
-          { label: "History of fall", value: "fall" },
-          { label: "Shoulder pain", value: "shoulder_pain" },
-          { label: "Incontinence (Bowel or bladder)", value: "incontinence" },
-          { label: "Pampers", value: "pampers" },
-          { label: "Seizure", value: "seizure" }
+          { label: "Fall risks", value: "fall" },
+          { label: "Shoulder pain (Hemiplegic shoulder)", value: "shoulder_pain" },
+          { label: "Incontinence (Bowel /Bladder)", value: "incontinence" },
+          { label: "Uses Diapers", value: "pampers" },
+          { label: "Seizure History", value: "seizure" }
         ]
       },
-        {
-          name: "special_questions_seizures",
-          label: "Seizure (specify)",
-          value:"seizure_specification",
-          type: "textarea",
- showIf: { field: "special_questions", includes: "seizure" }
-        },
       { name: "subjective_remark", label: "Remarks", type: "textarea" }
     ]
   };
@@ -299,9 +303,10 @@ const NEURO_CONTAINER_SCHEMA = {
   ]
 };
   const OBJECTIVE_SCHEMA = {
-    title: "Neuro Assessment",
-    subtitle: "Objective",
+title:"Functional and Mobility Status",
     actions: SUBJECTIVE_SCHEMA.actions,
+     sections: [
+      {
     fields: [
       {
         name: "dominant_side",
@@ -357,13 +362,13 @@ const NEURO_CONTAINER_SCHEMA = {
       name: "neuro_scales",
       type: "assessment-launcher",
       options: [
-        { label: "ROM (Active / Passive)", value: "rom" },
-        { label: "MMT", value: "mmt" },
+        { label: "Range of Motion (ROM)", value: "rom" },
+        { label: "Manual Muscle Test (MMT)", value: "mmt" },
         { label: "Muscle Tone (MAS)", value: "mas" },
         { label: "Functional Ambulation Category (FAC)", value: "fac" },
         { label: "Motor Assessment Scale", value: "motor_mas" },
-        { label: "Fugl Meyer Assessment – LE", value: "fma_le" },
-        { label: "SARA", value: "sara" },
+        { label: "Fugl Meyer Assessment – Lower Extremity (FMA-LE)", value: "fma_le" },
+        { label: "Stand and Reposition Aids (SARA)", value: "sara" },
         { label: "10 Meter Walk Test", value: "10mwt" },
         { label: "Berg Balance Scale (BBS)", value: "bbs" },
         { label: "Visual Analog Scale (VAS)", value: "vas" },
@@ -389,30 +394,7 @@ const NEURO_CONTAINER_SCHEMA = {
   type: "radio",
   options: YES_NO
 },
-{
-  name: "fa_sitting_balance_static",
-  label: "Sitting Balance – Static",
-  type: "radio",
-  options: YES_NO
-},
-{
-  name: "fa_sitting_balance_dynamic",
-  label: "Sitting Balance – Dynamic",
-  type: "radio",
-  options: YES_NO
-},
-{
-  name: "fa_standing_balance_static",
-  label: "Standing Balance – Static",
-  type: "radio",
-  options: YES_NO
-},
-{
-  name: "fa_standing_balance_dynamic",
-  label: "Standing Balance – Dynamic",
-  type: "radio",
-  options: YES_NO
-},
+
 {
   name: "fa_sit_to_stand",
   label: "Sit to Stand",
@@ -437,6 +419,18 @@ const NEURO_CONTAINER_SCHEMA = {
   type: "radio",
   options: YES_NO
 },
+{
+  name: "fa_sitting_balance_static",
+  label: "Sitting Balance",
+  type: "radio",
+  options: Static_Dynamic
+},
+{
+  name: "fa_standing_balance_static",
+  label: "Standing Balance",
+  type: "radio",
+  options: Static_Dynamic
+},
 
 {
   type: "subheading",
@@ -446,18 +440,95 @@ const NEURO_CONTAINER_SCHEMA = {
 {
   name: "gait_pattern",
   label: "Gait Pattern",
+          type: "single-select",
+      options: 
+[
+  { label: "Normal", value: "normal" },
+  { label: "Antalgic", value: "antalgic" },
+  { label: "Hemiplegic", value: "hemiplegic" },
+  { label: "Spastic (scissoring)", value: "spastic_scissoring" },
+  { label: "Ataxic", value: "ataxic" },
+  { label: "Parkinsonian", value: "parkinsonian" },
+  { label: "Steppage (high-stepping)", value: "steppage" },
+  { label: "Trendelenburg", value: "trendelenburg" },
+  { label: "Circumduction", value: "circumduction" },
+  { label: "Crouch gait", value: "crouch_gait" },
+  { label: "Others", value: "others" }
+]},
+{
+  name: "Gait_Other",
+  label: "Other",
   type: "textarea",
+  showIf: { field: "gait_pattern", equals: "others" }
 },
+
 
 {
   name: "weight_shifting",
   label: "Weight Shifting",
-  type: "textarea",
+          type: "single-select",
+      options: 
+[
+  { label: "Symmetrical", value: "symmetrical" },
+  { label: "Reduced", value: "reduced" },
+{ label: "Absent", value: "absent" }]
+},
+{
+  name: "reduced_specify",
+  label: "Specify Reduced",
+          type: "single-select",
+      options: 
+[
+  { label: "Left", value: "Rleft" },
+  { label: "Right", value: "Rright" },
+{ label: "Bilateral", value: "Rbilateral" },
+
+],  showIf: 
+  { field: "weight_shifting", equals: "reduced" }
 },
 
 {
-  name: "stance_swing_phase",
-  label: "Stance Phase / Swing Phase (Foot–Ground Clearance)",
+  name: "absent_specify",
+  label: "Specify Absent",
+          type: "single-select",
+      options: 
+[
+  { label: "Left", value: "left" },
+  { label: "Right", value: "right" },
+{ label: "Bilateral", value: "bilateral" },
+
+],  showIf: 
+  { field: "weight_shifting", equals: "absent" }
+},
+{
+  name: "stance_phase_left",
+  label: "Stance Phase Left",
+  type: "single-select",
+  options: 
+[
+  { label: "Normal", value: "normal" },
+  { label: "Prolonged", value: "prolonged" },
+{ label: "Reduced", value: "reduced" },
+{ label: "Instability noted", value: "instabilitynoted" },
+
+], 
+},
+{
+  name: "stance_phase_right",
+  label: "Stance Phase Right",
+  type: "single-select",
+  options: 
+[
+  { label: "Normal", value: "Rnormal" },
+  { label: "Prolonged", value: "Rprolonged" },
+{ label: "Reduced", value: "Rreduced" },
+{ label: "Instability noted", value: "Rinstabilitynoted" },
+
+], 
+},
+{
+  name: "swing_phase",
+  label: "Swing Phase (Foot–Ground Clearance)",
   type: "textarea",
   helper: "foot-ground clearance / without"
 },
@@ -487,16 +558,38 @@ const NEURO_CONTAINER_SCHEMA = {
     { label: "No", value: "no" }
   ]
 }
-
-
-
-
+    ]},
+  {
+      
+      fields: [
+        
+        { type: "radio-matrix", name: "rolling", label: "Rolling", options: Functional_assessment,info: {
+    title: "Functional Assessment",
+    content: [
+      "0 – Unable",
+      "1 – Needs assistance",
+      "2 – Independent"
     ]
+  } },
+        { type: "radio-matrix", name: "supinetosit", label: "Supine ↔ Sit", options: Functional_assessment }
+      ],
+    },
+    {
+      title: "Transfers",
+      fields: [
+        { type: "radio-matrix", name: "bedtochair", label: "Bed ↔ Chair", options: Functional_assessment },
+        { type: "radio-matrix", name: "sittostand", label: "Sit ↔ Stand", options: Functional_assessment },
+         { type: "radio-matrix", name: "floortostand", label: "Floor ↔ Stand", options: Functional_assessment }
+      ]
+    },
+
+  
+    
+  ]
   };
  
   const ASSESSMENT_SCHEMA = {
-    title: "Neuro Assessment",
-    subtitle: "Assessment",
+
     actions: SUBJECTIVE_SCHEMA.actions,
     fields: [
       { name: "problem_list", label: "Problem Listing", type: "textarea" },
@@ -538,8 +631,6 @@ const NEURO_CONTAINER_SCHEMA = {
   };
  
   const PLAN_SCHEMA = {
-    title: "Neuro Assessment",
-    subtitle: "Plan",
     actions: SUBJECTIVE_SCHEMA.actions,
     fields: [
  
@@ -637,9 +728,9 @@ return (
     <div style={patientGrid}>
  
       <div><b>Name:</b> {patient.name}</div>
-      <div><b>MRN:</b> {patient.id}</div>
+      <div><b>IC:</b> {patient.id}</div>
       <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-      <div><b>Age / Sex:</b> {patient.age} / {patient.sex}</div>
+      <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
             <div><b>ICD:</b> {patient.icd}</div>
       <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
       <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>

@@ -83,7 +83,18 @@ export default function CommonFormBuilder({
 {/* ===== MATRIX HEADER ===== */}
 {section.fields.some(f => f.type === "radio-matrix") && (
   <div style={styles.matrixHeader}>
-    <div />
+    <div style={styles.matrixLabel}>
+      Scale
+      {/* {(() => {
+        const matrix = section.fields.find(f => f.type === "radio-matrix");
+        if (!matrix?.info) return null;
+
+        return (
+          <InfoTooltip info={matrix.info} />
+        );
+      })()} */}
+    </div>
+
     <div style={styles.matrixOptions}>
       {section.fields
         .find(f => f.type === "radio-matrix")
@@ -95,6 +106,7 @@ export default function CommonFormBuilder({
     </div>
   </div>
 )}
+
 
 
                   {section.fields.map(field => {
@@ -152,11 +164,14 @@ if (field.showIf) {
                           </div>
                         ) : (
                           <>
-{!["button", "subheading", "radio-matrix","score-box"].includes(field.type) && (
+{!["button", "subheading", "radio-matrix","score-box"].includes(field.type)
+ && field.type !== "checkbox-group"
+ && (
   <label style={styles.label}>
     {field.label}
   </label>
 )}
+
 
                              {renderField(
       field,
@@ -194,6 +209,41 @@ if (field.showIf) {
     </div>
   );
 }
+function InfoTooltip({ info }) {
+  const [open, setOpen] = React.useState(false);
+
+  if (!info) return null;
+
+  const content = typeof info === "string" ? [info] : info.content;
+
+  return (
+    <span
+      style={styles.infoWrapper}
+      onClick={e => {
+        e.stopPropagation();       // ✅ prevent parent clicks
+        setOpen(o => !o);
+      }}
+    >
+      ⓘ
+      {open && (
+        <div style={styles.tooltip}>
+          {info.title && (
+            <div style={{ fontWeight: 700, marginBottom: 6 }}>
+              {info.title}
+            </div>
+          )}
+          <ul style={{ paddingLeft: 16, margin: 0 }}>
+            {content.map((line, i) => (
+              <li key={i}>{line}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </span>
+  );
+}
+
+
 function AssessmentLauncher({
   field,
   values,
@@ -308,7 +358,11 @@ function MultiSelectDropdown({ field, value, onChange }) {
 function RadioMatrixRow({ field, value, onChange }) {
   return (
     <div style={styles.matrixRow}>
-      <div style={styles.matrixLabel}>{field.label}</div>
+<div style={styles.matrixLabel}>
+  {field.label}
+  {field.info && <InfoTooltip info={field.info} />}
+</div>
+
 
       <div style={styles.matrixOptions}>
         {field.options.map(opt => (
@@ -488,6 +542,75 @@ case "radio-matrix":
           </div>
         </div>
       );
+case "attach-file": {
+  return (
+    <div style={styles.field}>
+      <label style={styles.label}>
+        {field.title}
+        {field.required && <span style={{ color: "red" }}> *</span>}
+      </label>
+
+      <input
+        type="file"
+        accept={field.accept}
+        multiple={field.multiple}
+        onChange={e => {
+          const files = field.multiple
+            ? Array.from(e.target.files || [])
+            : e.target.files?.[0] || null;
+
+          onChange(field.name, files);
+        }}
+        style={styles.fileInput}
+      />
+
+      {/* Preview / filename */}
+      {value && !Array.isArray(value) && (
+        <FilePreview file={value} />
+      )}
+
+      {Array.isArray(value) &&
+        value.map((file, idx) => (
+          <FilePreview key={idx} file={file} />
+        ))}
+    </div>
+  );
+}
+
+case "paired-text": {
+  const pairs = field.pairs || [];
+
+  return (
+    <div style={styles.field}>
+      <label style={styles.label}>{field.label}</label>
+
+      <div style={{ display: "flex", gap: 12 }}>
+        {pairs.map(pair => (
+          <div key={pair.name} style={{ flex: 1 }}>
+            <div style={{fontSize:"13px",fontWeight:"600",color:"#0f172a",}}>
+              {pair.title || pair.label}
+            </div>
+
+            <input
+              type="text"
+              value={value?.[pair.name] || ""}
+              onChange={e =>
+                onChange(field.name, {
+                  ...(value || {}),
+                  [pair.name]: e.target.value
+                })
+              }
+              style={styles.input}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+
 case "assessment-launcher":
   return (
     <AssessmentLauncher
@@ -499,9 +622,32 @@ case "assessment-launcher":
   );
 
 
-    case "checkbox-group":
-      return (
-        <div style={styles.inlineGroup}>
+case "checkbox-group": {
+  const inline = field.inlineWithLabel;
+
+  if (inline) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          gridTemplateColumns: "220px 1fr",
+          alignItems: "center",
+         justifyContent:"space-between"
+        }}
+      >
+        {/* LABEL */}
+        <div style={styles.label}>
+          {field.label}
+        </div>
+
+        {/* OPTIONS */}
+        <div
+          style={{
+            display: "flex",
+            gap: 28,
+            flexWrap: "wrap"
+          }}
+        >
           {(field.options || []).map(opt => (
             <label key={opt.value} style={styles.inlineItem}>
               <input
@@ -518,7 +664,33 @@ case "assessment-launcher":
             </label>
           ))}
         </div>
-      );
+      </div>
+    );
+  }
+
+  /* DEFAULT BEHAVIOUR (unchanged) */
+  return (
+    <div style={styles.inlineGroup}>
+      {(field.options || []).map(opt => (
+        <label key={opt.value} style={styles.inlineItem}>
+          <input
+            type="checkbox"
+            checked={(value || []).includes(opt.value)}
+            onChange={() => {
+              const next = value?.includes(opt.value)
+                ? value.filter(v => v !== opt.value)
+                : [...(value || []), opt.value];
+              onChange(field.name, next);
+            }}
+          />
+          {opt.label}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+
     case "subheading":
       return (
         <div style={styles.subheading}>
@@ -563,6 +735,30 @@ case "assessment-launcher":
   }
 }
 
+function FilePreview({ file }) {
+  const isImage = file.type.startsWith("image/");
+
+  return (
+    <div style={{ marginTop: 6 }}>
+      {isImage ? (
+        <img
+          src={URL.createObjectURL(file)}
+          alt={file.name}
+          style={{
+            maxWidth: 160,
+            maxHeight: 120,
+            borderRadius: 6,
+            border: "1px solid #ddd"
+          }}
+        />
+      ) : (
+        <div style={{ fontSize: 13, color: "#2563eb" }}>
+          📄 {file.name}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function validateField(value, rules) {
   if (!rules) return null;
@@ -888,7 +1084,10 @@ multiSelectItem: {
     color: "#dc2626",
     marginTop: 4
   },
-
+fileInput: {
+  fontSize: 14,
+  padding: "6px 0"
+},
   btnOutline: {
     padding: "8px 14px",
     borderRadius: 999,
@@ -929,5 +1128,30 @@ sideLabel: {
 
   footer: {
     marginTop: 20
-  }
+  },
+  infoWrapper: {
+  position: "relative",
+  marginLeft: 6,
+  cursor: "pointer",
+  fontWeight: "bold"
+},
+
+tooltip: {
+
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  background: "#222",
+  color: "#fff",
+  padding: "8px 10px",
+  borderRadius: 4,
+  fontSize: 12,
+  width: 220,
+  zIndex: 100
+},
+
+infoWrapperHover: {
+  display: "block"
+}
+
 };

@@ -166,7 +166,7 @@ const renderDoctorReportDetails = (r) => {
             <strong>ID:</strong> {p.id || patient?.id || "—"}
           </div>
           <div>
-            <strong>Age / Sex:</strong>{" "}
+            <strong>Age / Gender:</strong>{" "}
             {(p.age || patient?.age || "—") +
               " / " +
               (p.sex || patient?.gender || patient?.sex || "—")}
