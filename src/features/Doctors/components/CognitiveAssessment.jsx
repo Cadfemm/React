@@ -1,5 +1,98 @@
 import React, { useState, useRef, useEffect } from "react";
 
+const ComponentStyles = () => (
+  <style>{`
+    .jfk-info .jfk-tooltip {
+      position: absolute;
+      top: 30px;
+      right: 0;
+      width: 320px;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #111827;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      border: 1px solid #E5E7EB;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: all 0.2s ease;
+      z-index: 1000;
+    }
+    
+    .jfk-info:hover .jfk-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .jfk-tooltip div {
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    
+    .jfk-tooltip div:last-child {
+      margin-bottom: 0;
+      color: #374151;
+    }
+    
+    .scale-info {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+    }
+    
+    .scale-info-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .scale-tooltip {
+      position: absolute;
+      top: 26px;
+      right: 0;
+      width: 280px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      color: #111827;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: all 0.2s ease;
+      z-index: 2000;
+    }
+    
+    .scale-info:hover .scale-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .scale-tooltip div {
+      margin-bottom: 6px;
+    }
+    
+    .scale-tooltip div:last-child {
+      margin-bottom: 0;
+    }
+  `}</style>
+);
+
 const Card = ({ title, children }) => (
   <div style={styles.card}>
     <h3 style={styles.title}>{title}</h3>
@@ -2652,7 +2745,9 @@ const PsqiModal = ({ onClose, onSave }) => {
 
 
   return (
-    <div style={styles.container}>
+    <>
+      <ComponentStyles />
+      <div style={styles.container}>
 
       <Card >
         <Card title="Cognitive">
@@ -3499,6 +3594,7 @@ const PsqiModal = ({ onClose, onSave }) => {
 
 
     </div >
+    </>
   );
 }
 
