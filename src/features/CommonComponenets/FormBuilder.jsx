@@ -66,18 +66,32 @@ export default function CommonFormBuilder({
 
                   {section.fields.map(field => {
 
-                    /* ===== FIELD-LEVEL VISIBILITY ===== */
                     if (field.showIf) {
                       const depVal = values[field.showIf.field];
 
-                      if ("equals" in field.showIf && depVal !== field.showIf.equals) {
-                        return null;
+                      // equals (works for single-select / radio)
+                      if ("equals" in field.showIf) {
+                        if (Array.isArray(depVal)) {
+                          if (!depVal.includes(field.showIf.equals)) return null;
+                        } else {
+                          if (depVal !== field.showIf.equals) return null;
+                        }
                       }
 
+                      // includes (works for multi-select / checkbox-group)
+                      if ("includes" in field.showIf) {
+                        if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
+                          return null;
+                        }
+                      }
+
+                      // exists
                       if ("exists" in field.showIf && !depVal) {
                         return null;
                       }
                     }
+
+
 
                     const value = values[field.name];
                     const error = submitted
@@ -87,26 +101,46 @@ export default function CommonFormBuilder({
                     return (
                       <div key={field.name} style={styles.field}>
 
-                        {field.type === "radio" ? (
+                        {/* RADIO stays special (side layout) */}
+                        {field.type === "radio" && !field.inRow ? (
                           <div style={styles.radioRow}>
-                            <div style={styles.radioLabel}>
-                              {field.label}
-                            </div>
-                            {renderField(field, value, onChange, onAction)}
+                            <div style={styles.radioLabel}>{field.label}</div>
+                            {renderField(field, value, onChange, onAction, values)}
                           </div>
+                        ) : field.type === "subheading" ? (
+
+                          renderField(field)
                         ) : (
-                          <>
-                            {field.type !== "button" && field.type !== "subheading" && (
-                              <label style={styles.label}>
+                          /* ✅ NORMAL FIELDS → LABEL ON TOP */
+                          <div style={{ marginBottom: 16 }}>
+
+                            {field.label && field.type !== "inline-input" && (
+                              <label
+                                style={{
+                                  display: "block",
+                                  fontWeight: 600,
+                                  marginBottom: 6
+                                }}
+                              >
                                 {field.label}
                               </label>
                             )}
-                            {renderField(field, value, onChange, onAction)}
-                          </>
-                        )}
 
-                        {field.helper && (
-                          <div style={styles.helper}>{field.helper}</div>
+                            {renderField(field, value, onChange, onAction, values)}
+
+                            {field.helper && (
+                              <div
+                                style={{
+                                  fontSize: 12,
+                                  color: "#6b7280",
+                                  marginTop: 4
+                                }}
+                              >
+                                {field.helper}
+                              </div>
+                            )}
+
+                          </div>
                         )}
 
                         {error && (
@@ -115,6 +149,7 @@ export default function CommonFormBuilder({
 
                       </div>
                     );
+
                   })}
                 </div>
               );
@@ -156,9 +191,9 @@ function MultiSelectDropdown({ field, value, onChange }) {
     value.length === 0
       ? "Select"
       : field.options
-          .filter(o => value.includes(o.value))
-          .map(o => o.label)
-          .join(", ");
+        .filter(o => value.includes(o.value))
+        .map(o => o.label)
+        .join(", ");
 
   return (
     <div ref={ref} style={styles.multiSelectWrap}>
@@ -191,7 +226,7 @@ function MultiSelectDropdown({ field, value, onChange }) {
 }
 
 
-function renderField(field, value, onChange, onAction) {
+function renderField(field, value, onChange, onAction, values) {
   switch (field.type) {
     case "input":
       return (
@@ -200,6 +235,133 @@ function renderField(field, value, onChange, onAction) {
           value={value || ""}
           onChange={e => onChange(field.name, e.target.value)}
         />
+      );
+    case "milestone-grid":
+      return (
+        <div>
+          <div style={styles.subheading}>{field.heading}</div>
+
+          {field.rows.map((row, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: "grid",
+                gridTemplateColumns: row.right ? "1fr 1fr" : "1fr",
+                gap: 24,
+                marginBottom: 16
+              }}
+            >
+              {/* LEFT */}
+              <div>
+                <div style={styles.milestoneLabel}>{row.left.label}</div>
+                <input
+                  style={styles.input}
+                  value={values[row.left.name] || ""}
+                  placeholder={row.left.placeholder}
+                  onChange={e =>
+                    onChange(row.left.name, e.target.value)
+                  }
+                />
+              </div>
+
+              {/* RIGHT (only if present) */}
+              {row.right && (
+                <div>
+                  <div style={styles.milestoneLabel}>{row.right.label}</div>
+                  <input
+                    style={styles.input}
+                    value={values[row.right.name] || ""}
+                    placeholder={row.right.placeholder}
+                    onChange={e =>
+                      onChange(row.right.name, e.target.value)
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+
+
+    case "multi-select-details": {
+      const selected = values[field.sourceField] || [];
+
+      if (!Array.isArray(selected) || selected.length === 0) {
+        return null;
+      }
+
+      return (
+        <div style={{ marginTop: 12 }}>
+          {selected.map(option => (
+            <div key={option} style={{ marginBottom: 14 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 600,
+                  marginBottom: 6
+                }}
+              >
+                {field.labelPrefix} {option}
+              </label>
+
+              <input
+                style={styles.textarea}
+                value={values[`${field.namePrefix}_${option}`] || ""}
+                onChange={e =>
+                  onChange(
+                    `${field.namePrefix}_${option}`,
+                    e.target.value
+                  )
+                }
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+    case "row":
+      return (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          {field.fields.map(f => {
+            const v = values[f.name];
+            return (
+              <div key={f.name}>
+                {f.label && (
+                  <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
+                    {f.label}
+                  </label>
+                )}
+                {renderField(f, v, onChange, onAction)}
+              </div>
+            );
+          })}
+        </div>
+      );
+    case "multi-notes":
+      const selected = values[field.source] || [];
+      if (!selected.length) return null;
+
+      return (
+        <div style={{ display: "grid", gap: 12 }}>
+          {selected.map(val => (
+            <div key={val}>
+              <label style={{ fontWeight: 600, display: "block", marginBottom: 4 }}>
+                {val} – Notes
+              </label>
+              <textarea
+                style={styles.textarea}
+                value={(value || {})[val] || ""}
+                onChange={e =>
+                  onChange(field.name, {
+                    ...(value || {}),
+                    [val]: e.target.value
+                  })
+                }
+              />
+            </div>
+          ))}
+        </div>
       );
 
     case "textarea":
@@ -229,14 +391,7 @@ function renderField(field, value, onChange, onAction) {
 
     case "radio":
       return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <div />
+        <div style={{ marginTop: 6 }}>
           <div style={styles.inlineGroup}>
             {(field.options || []).map(opt => (
               <label key={opt.value} style={styles.inlineItem}>
@@ -252,6 +407,7 @@ function renderField(field, value, onChange, onAction) {
           </div>
         </div>
       );
+
 
     case "checkbox-group":
       return (
@@ -280,27 +436,72 @@ function renderField(field, value, onChange, onAction) {
         </div>
       );
 
-   case "multi-select-dropdown":
-  return (
-    <MultiSelectDropdown
-      field={field}
-      value={value || []}
-      onChange={onChange}
-    />
-  );
-  case "inline-input":
-  return (
-    <div style={styles.inlineRow}>
-      <div style={styles.inlineLabel}>{field.inlineLabel}</div>
-      <input
-        style={styles.inlineInput}
-        value={value || ""}
-        onChange={e => onChange(field.name, e.target.value)}
-        placeholder={field.placeholder || ""}
-      />
-    </div>
-  );
+    case "multi-select-dropdown":
+      return (
+        <MultiSelectDropdown
+          field={field}
+          value={value || []}
+          onChange={onChange}
+        />
+      );
+    case "inline-input":
+      return (
+        <div style={styles.inlineRow}>
+          <div style={styles.inlineLabel}>{field.inlineLabel}</div>
+          <input
+            style={styles.inlineInput}
+            value={value || ""}
+            onChange={e => onChange(field.name, e.target.value)}
+            placeholder={field.placeholder || ""}
+          />
+        </div>
+      );
 
+    case "dual-radio-row":
+      return (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 200px 200px",
+          alignItems: "center",
+          gap: 16
+        }}>
+          <div style={{ fontWeight: 600 }}>{field.label}</div>
+
+          {/* Right Ear */}
+          <div style={styles.inlineGroup}>
+            {["yes", "no"].map(v => (
+              <label key={v} style={styles.inlineItem}>
+                <input
+                  type="radio"
+                  name={field.rightName}
+                  checked={value?.right === v}
+                  onChange={() =>
+                    onChange(field.name, { ...(value || {}), right: v })
+                  }
+                />
+                {v === "yes" ? "Yes" : "No"}
+              </label>
+            ))}
+          </div>
+
+          {/* Left Ear */}
+          <div style={styles.inlineGroup}>
+            {["yes", "no"].map(v => (
+              <label key={v} style={styles.inlineItem}>
+                <input
+                  type="radio"
+                  name={field.leftName}
+                  checked={value?.left === v}
+                  onChange={() =>
+                    onChange(field.name, { ...(value || {}), left: v })
+                  }
+                />
+                {v === "yes" ? "Yes" : "No"}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
 
     case "button":
       return (
@@ -331,6 +532,12 @@ const styles = {
   page: {
     minHeight: "100vh",
     fontFamily: "Inter, system-ui"
+  },
+  milestoneLabel: {
+    fontSize: 14,
+    fontWeight: 600,
+    marginBottom: 6,
+    color: "#0F172A"
   },
 
   content: {
@@ -374,7 +581,8 @@ const styles = {
     padding: "8px 14px",
     borderRadius: 999,
     fontWeight: 600,
-    cursor: "pointer"
+    cursor: "pointer",
+    color: "#111827"
   },
 
   body: {
@@ -461,70 +669,70 @@ const styles = {
     paddingBottom: 4
   },
 
-multiSelectWrap: {
-  position: "relative",
-  width: "100%"
-},
+  multiSelectWrap: {
+    position: "relative",
+    width: "100%"
+  },
 
-multiSelectControl: {
-  border: "1px solid #d1d5db",
-  borderRadius: 6,
-  padding: "10px 12px",
-  cursor: "pointer",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  background: "#fff"
-},
+  multiSelectControl: {
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    padding: "10px 12px",
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#fff"
+  },
 
-caret: {
-  fontSize: 12,
-  color: "#6b7280"
-},
+  caret: {
+    fontSize: 12,
+    color: "#6b7280"
+  },
 
-multiSelectMenu: {
-  position: "absolute",
-  top: "100%",
-  left: 0,
-  right: 0,
-  zIndex: 20,
-  background: "#fff",
-  border: "1px solid #d1d5db",
-  borderRadius: 6,
-  marginTop: 4,
-  maxHeight: 220,
-  overflowY: "auto",
-  boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
-},
-inlineRow: {
-  display: "grid",
-  gridTemplateColumns: "120px 1fr",
-  alignItems: "center",
-  gap: 12,
-  marginBottom: 12
-},
+  multiSelectMenu: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    background: "#fff",
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    marginTop: 4,
+    maxHeight: 220,
+    overflowY: "auto",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+  },
+  inlineRow: {
+    display: "grid",
+    gridTemplateColumns: "120px 1fr",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 12
+  },
 
-inlineLabel: {
-  fontWeight: 500,
-  color: "#111827"
-},
+  inlineLabel: {
+    fontWeight: 500,
+    color: "#111827"
+  },
 
-inlineInput: {
-  width: "100%",
-  padding: "8px 10px",
-  borderRadius: 6,
-  border: "1px solid #d1d5db"
-},
+  inlineInput: {
+    width: "100%",
+    padding: "8px 10px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db"
+  },
 
 
 
-multiSelectItem: {
-  display: "flex",
-  gap: 8,
-  padding: "8px 12px",
-  cursor: "pointer",
-  alignItems: "center"
-},
+  multiSelectItem: {
+    display: "flex",
+    gap: 8,
+    padding: "8px 12px",
+    cursor: "pointer",
+    alignItems: "center"
+  },
 
   inlineItem: {
     display: "flex",

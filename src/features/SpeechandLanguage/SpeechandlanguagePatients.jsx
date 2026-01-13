@@ -6,15 +6,9 @@ export default function SpeechPatients({ Patients,onBack }) {
   const [tab, setTab] = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
   console.log("patients",Patients)
-  const newPatients = [
-    { id: 2, name: "Asfas", icd: "Stroke", status: "New" },
-    { id: 3, name: "Rahul", icd: "Depression", status: "New" }
-  ];
+ const newPatients = (Patients || []).filter(p => p.status !== "Old");
+const existingPatients = []
 
-  const existingPatients = [
-    { id: 4, name: "Anita", icd: "Anxiety", status: "Ongoing" },
-    { id: 5, name: "Kiran", icd: "PTSD", status: "Follow-up" }
-  ];
 
   const patients = tab === "new" ? newPatients : existingPatients;
 
@@ -91,7 +85,7 @@ export default function SpeechPatients({ Patients,onBack }) {
             <div style={styles.icd}>{p.icd}</div>
 
             <div>
-              <span style={styles.badge(p.status)}>{p.status}</span>
+              <span style={styles.badge(p.status)}>{p.status ?? "New"}</span>
             </div>
 
             <div style={{ textAlign: "right" }}>

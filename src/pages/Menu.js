@@ -726,6 +726,7 @@ export function MainContent({
     case "Psychology":
       return <PsychologyDashboard />;
     case "Speech & Language Therapy":
+      console.log('dddddddd',patients)
       return <SpeechAndLanguage patients={patients}/>;
 
         case "Dietetics":

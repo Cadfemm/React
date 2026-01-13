@@ -628,7 +628,7 @@ export default function SpeechAndLanguage({
   onOpenPatients,
   onOpenFollowUps
 }) {
-
+  console.log('dashboard',patients)
   const cards = [
     {
       title: "My Appointments",
@@ -946,11 +946,11 @@ const [showPatients, setShowPatients] = useState(false);
   };
 
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "" });
-
+  console.log('--------',patients)
   return (
     <>
      {showPatients ? (
-      <SpeechPatients patient={patients} onBack={() => setShowPatients(false)} />
+      <SpeechPatients Patients={patients} onBack={() => setShowPatients(false)} />
     ) : (
       <div style={styles.wrapper}>
         <div style={styles.row}>
