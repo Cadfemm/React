@@ -36,7 +36,7 @@ export default function ClinicalSwallowingEvaluation({onBack}) {
 
           },
 
-         { type: "subheading", label: "Presenting Complaints" },
+         { type: "subheading", label: "Chief Complaint" },
 
 {
   name: "presenting_complaints",
@@ -573,9 +573,15 @@ export default function ClinicalSwallowingEvaluation({onBack}) {
          A – ANALYSIS / ASSESSMENT
       ====================================================== */
       {
-        title: "Analysis / Assessment",
+        title: "Assessment",
         fields: [
 
+{
+  name: "noSwallowingImpairment",
+  label: "No swallowing impairment observed",
+  type: "checkbox-group",
+  options: [{ label: "No swallowing impairment observed", value: "no_impairment" }]
+},
 
 {
   name: "dysphagia_characteristics",
@@ -585,8 +591,8 @@ export default function ClinicalSwallowingEvaluation({onBack}) {
     "Anterior spillage",
     "Slow / ineffective mastication",
     "Oral residue post swallow",
-    "Overt signs of aspiration",
-    "Suspected silent aspiration",
+    "Overt signs of aspiration (coughing, wet voice, increased work of breathing)",
+    "Suspected silent aspiration (reduced cough response)",
     "Other(s)"
   ].map(v => ({ label: v, value: v }))
 },
