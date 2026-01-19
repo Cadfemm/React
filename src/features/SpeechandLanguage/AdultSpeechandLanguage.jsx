@@ -38,7 +38,7 @@ export default function SpeechLanguageAssessment({ onBack }) {
             type: "textarea",
           },
 
-          { type: "subheading", label: "Presenting Complaints" },
+          { type: "subheading", label: "Chief Complaint" },
 
    {
   name: "presenting_complaints",
@@ -508,10 +508,15 @@ export default function SpeechLanguageAssessment({ onBack }) {
          A – ANALYSIS / ASSESSMENT
       ====================================================== */
       {
-        title: "Analysis / Assessment",
+        title: "Assessment",
         fields: [
 
-
+{
+  name: "noSpeechLanguageImpairment",
+  label: "No speech and language impairment observed",
+  type: "checkbox-group",
+  options: [{ label: "No speech and language impairment observed", value: "no_impairment" }]
+},
 
      {
   name: "diagnoses",
@@ -625,6 +630,15 @@ export default function SpeechLanguageAssessment({ onBack }) {
       {
         title: "Plan",
         fields: [
+          { type: "subheading", label: "Referral" },
+
+          {
+            name: "referral_specialist",
+            label: "Specialist:",
+            type: "textarea",
+            placeholder: "Free text"
+          },
+
           {
             name: "Others",
             label: "Others",

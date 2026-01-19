@@ -862,7 +862,7 @@ export default function PaedIASpeechLanguage({onBack}) {
                 ]
             },
             {
-                title: "Analysis / Assessment",
+                title: "Assessment",
                 fields: [
 
                     /* ================= DIAGNOSES / FINDINGS ================= */

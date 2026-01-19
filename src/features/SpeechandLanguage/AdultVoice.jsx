@@ -37,7 +37,7 @@ export default function VoiceAssessment(onBack) {
 
           },
 
-          { type: "subheading", label: "Presenting Complaints" },
+          { type: "subheading", label: "Chief Complaint" },
 
           {
             name: "presenting_complaints",
@@ -205,6 +205,8 @@ export default function VoiceAssessment(onBack) {
             options: ["Sips frequently", "Long gaps without drinking"]
               .map(v => ({ label: v, value: v }))
           },
+
+          { type: "subheading", label: "Diet Intake" },
 
           {
             name: "alcohol",
@@ -453,7 +455,7 @@ export default function VoiceAssessment(onBack) {
           /* /a/ trials */
           {
             type: "milestone-grid",
-            heading: " 3 trials",
+            heading: "/a/",
             rows: [
               {
                 left: { name: "a_trial_1", label: "Trial 1", placeholder: "s" },
@@ -468,7 +470,7 @@ export default function VoiceAssessment(onBack) {
           /* /s/ trials */
           {
             type: "milestone-grid",
-            heading: " 3 trials",
+            heading: "/s/",
             rows: [
               {
                 left: { name: "s_trial_1", label: "Trial 1", placeholder: "s" },
@@ -483,7 +485,7 @@ export default function VoiceAssessment(onBack) {
           /* /z/ trials */
           {
             type: "milestone-grid",
-            heading: " 3 trials",
+            heading: "/z/",
             rows: [
               {
                 left: { name: "z_trial_1", label: "Trial 1", placeholder: "s" },
@@ -511,17 +513,17 @@ export default function VoiceAssessment(onBack) {
           },
           {
             name: "jitter",
-            label: "Jitter ",
+            label: "Jitter(%)",
             type: "input"
           },
           {
             name: "shimmer",
-            label: "Shimmer%",
+            label: "Shimmer(%)",
             type: "input"
           },
           {
             name: "hnr_cpp",
-            label: "HNR / CPP ",
+            label: "HNR / CPP (dB)",
             type: "input"
           },
           {
@@ -577,7 +579,7 @@ export default function VoiceAssessment(onBack) {
          A – ANALYSIS / ASSESSMENT
       ====================================================== */
       {
-        title: "Analysis / Assessment",
+        title: "Assessment",
         fields: [
 
 { type: "subheading", label: "Diagnoses / Findings" },
@@ -600,11 +602,11 @@ export default function VoiceAssessment(onBack) {
     "Dysphonia",
     "Aphonia",
     "Hypernasality / Hyponasality",
-    "Other and unspecified voice",
+    "Other and unspecified voice disturbances",
       "Breathy dysphonia",
     "Strained / rough voicing",
     "Reduced loudness",
-    "Possible VP pathology"
+    "Possible VF pathology"
   ].map(v => ({ label: v, value: v })),
  
 },

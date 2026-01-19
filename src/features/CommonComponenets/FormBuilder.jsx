@@ -157,7 +157,7 @@ export default function CommonFormBuilder({
                         {field.type === "radio" && !field.inRow ? (
                           <div style={styles.radioRow}>
                             <div style={styles.radioLabel}>{field.label}</div>
-                            {renderField(field, value, onChange, onAction, values)}
+                            {renderField(field, value, values, onChange, onAction, assessmentRegistry)}
                           </div>
                         ) : field.type === "subheading" ? (
 
