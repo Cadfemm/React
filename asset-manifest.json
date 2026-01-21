@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/React/static/css/main.a24c7bd0.css",
+    "main.js": "/React/static/js/main.def00ee0.js",
+    "static/js/239.bbc076ce.chunk.js": "/React/static/js/239.bbc076ce.chunk.js",
+    "static/js/977.8f327253.chunk.js": "/React/static/js/977.8f327253.chunk.js",
+    "static/js/455.47a3f9d0.chunk.js": "/React/static/js/455.47a3f9d0.chunk.js",
+    "static/js/453.9bc5b469.chunk.js": "/React/static/js/453.9bc5b469.chunk.js",
+    "static/media/output11.jpg": "/React/static/media/output11.f53ab7326baaf66c3bfa.jpg",
+    "static/media/signup.jpg": "/React/static/media/signup.1e4196abf5971dfd59cc.jpg",
+    "static/media/spino.jpg": "/React/static/media/spino.45465bffbf2169b238cf.jpg",
+    "static/media/contactus.png": "/React/static/media/contactus.4ae7be48e8ec0605d58f.png",
+    "static/media/bg1.jpg": "/React/static/media/bg1.671c9bc696f8c28ff2c3.jpg",
+    "static/media/hero.webp": "/React/static/media/hero.840735f2c8948f6d50d4.webp",
+    "static/media/cadfem-logo-white.png": "/React/static/media/cadfem-logo-white.e896810d2599aec66eec.png",
+    "static/media/CADFEM_NEW_Logo.png": "/React/static/media/CADFEM_NEW_Logo.a937ac703727eb0337e8.png",
+    "index.html": "/React/index.html",
+    "main.a24c7bd0.css.map": "/React/static/css/main.a24c7bd0.css.map",
+    "main.def00ee0.js.map": "/React/static/js/main.def00ee0.js.map",
+    "239.bbc076ce.chunk.js.map": "/React/static/js/239.bbc076ce.chunk.js.map",
+    "977.8f327253.chunk.js.map": "/React/static/js/977.8f327253.chunk.js.map",
+    "455.47a3f9d0.chunk.js.map": "/React/static/js/455.47a3f9d0.chunk.js.map",
+    "453.9bc5b469.chunk.js.map": "/React/static/js/453.9bc5b469.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a24c7bd0.css",
+    "static/js/main.def00ee0.js"
+  ]
+}
