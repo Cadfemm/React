@@ -50,6 +50,7 @@ import GasGoalsTab from "../components/GasGoalsTab";
 import PsychologyDashboard from "../features/Psychology/components/PychologyDashboard";
 import GlobalVitalsOverlay from "../components/GlobalVitalsOverlay";
 import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
+import OptometryDashboard from "../features/Optometry/OptometryDashboard";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -64,7 +65,7 @@ export default function App() {
   const [userType, setUserType] = useState("");
   const [icdCode, setIcdCode] = useState(""); // deepest ICD from ICD tab
   const [showVitals, setShowVitals] = useState(false);
-const [vitalsPatient, setVitalsPatient] = useState(null);
+  const [vitalsPatient, setVitalsPatient] = useState(null);
   const [icdPath, setIcdPath] = useState([]); // [{ depth, table, key, label }]
   const [financialState, setFinancialState] = useState(null);
   const [employmentState, setEmploymentState] = useState(null);
@@ -108,12 +109,12 @@ const [vitalsPatient, setVitalsPatient] = useState(null);
     nationality: "",
     occupation: "",
   });
-const [patients, setPatients] = useState([]);
-function updatePatientInMainList(updatedPatient) {
-  setPatients(prev =>
-    prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
-  );
-}
+  const [patients, setPatients] = useState([]);
+  function updatePatientInMainList(updatedPatient) {
+    setPatients(prev =>
+      prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
+    );
+  }
 
 
   // Summaries emitted from sub-tabs
@@ -161,8 +162,8 @@ function updatePatientInMainList(updatedPatient) {
     const rows = Array.isArray(icfSummary)
       ? icfSummary
       : Array.isArray(icfSummary?.selected)
-      ? icfSummary.selected
-      : [];
+        ? icfSummary.selected
+        : [];
 
     // map both possible key names & make unique
     const codes = rows
@@ -275,10 +276,10 @@ function updatePatientInMainList(updatedPatient) {
   const toggleProfileMenu = () => {
     setShowProfileMenu((prev) => !prev);
   };
-          function addPatient(p) {
-  setPatients(prev => [...prev, p]);
-}
-  
+  function addPatient(p) {
+    setPatients(prev => [...prev, p]);
+  }
+
   const [showAllergy, setShowAllergy] = React.useState(false);
 
   React.useEffect(() => {
@@ -290,16 +291,16 @@ function updatePatientInMainList(updatedPatient) {
     }
     return () => clearTimeout(t);
   }, [mode]);
-useEffect(() => {
-  window.openVitals = (patient) => {
-    setVitalsPatient(patient);
-    setShowVitals(true);
-  };
+  useEffect(() => {
+    window.openVitals = (patient) => {
+      setVitalsPatient(patient);
+      setShowVitals(true);
+    };
 
-  return () => {
-    delete window.openVitals;
-  };
-}, []);
+    return () => {
+      delete window.openVitals;
+    };
+  }, []);
 
   return (
     <>
@@ -316,7 +317,7 @@ useEffect(() => {
           icfCode={icfCode}
           rapPercent={rapPercent}
           username={username}
-  userRole={userRole}
+          userRole={userRole}
         />
 
         {/* Main area */}
@@ -336,12 +337,12 @@ useEffect(() => {
 
 
 
-<MainContent 
-    tab={tab}
-    addPatient={addPatient}
-    patients={patients}
-    updatePatientInMainList={updatePatientInMainList}
-/>
+          <MainContent
+            tab={tab}
+            addPatient={addPatient}
+            patients={patients}
+            updatePatientInMainList={updatePatientInMainList}
+          />
 
 
           {/* PERSONAL */}
@@ -359,61 +360,61 @@ useEffect(() => {
             />
           </section>
 
-<GlobalVitalsOverlay
-  open={showVitals}
-  patient={vitalsPatient}
-  onClose={() => setShowVitals(false)}
-/>
+          <GlobalVitalsOverlay
+            open={showVitals}
+            patient={vitalsPatient}
+            onClose={() => setShowVitals(false)}
+          />
 
-<section style={{ display: tab === "ICD_EXISTING" ? "block" : "none" }}>
-  <ICDExisting patientId={patient.patient_id} />
-</section>
+          <section style={{ display: tab === "ICD_EXISTING" ? "block" : "none" }}>
+            <ICDExisting patientId={patient.patient_id} />
+          </section>
 
-<section style={{ display: tab === "NurseBaseAssessment" ? "block" : "none" }}>
-  <NurseBaseAssessment />
-</section>
+          <section style={{ display: tab === "NurseBaseAssessment" ? "block" : "none" }}>
+            <NurseBaseAssessment />
+          </section>
 
-<section style={{ display: tab === "ClinicalSwallowEvaluation" ? "block" : "none" }}>
-  <ClinicalSwallowEvaluation />
-</section>
+          <section style={{ display: tab === "ClinicalSwallowEvaluation" ? "block" : "none" }}>
+            <ClinicalSwallowEvaluation />
+          </section>
 
-          <section style={{display: tab==="ICDNormal" ? "block" : "none"}}>
+          <section style={{ display: tab === "ICDNormal" ? "block" : "none" }}>
             <ICDNormal
               onDeepestICDChange={(code) => { setIcdCode(code); setIcfCode(""); }}
               onPathChange={setIcdPath}
             />
           </section>
 
-          <section style={{display: tab==="ICFNormal" ? "block" : "none"}}>
+          <section style={{ display: tab === "ICFNormal" ? "block" : "none" }}>
             <ICFNormal
               icdCode={icdCode}
               onSummaryChange={setIcfSummary}
               onSelectICF={setIcfCode}   // keep a single ICF child context for ICHI (optional)
             />
           </section>
-<section style={{ display: tab === "PTD" ? "block" : "none" }}>
-  <PatientsToDepartments patientId={patient.patient_id} setTab={setTab} />
-</section>
+          <section style={{ display: tab === "PTD" ? "block" : "none" }}>
+            <PatientsToDepartments patientId={patient.patient_id} setTab={setTab} />
+          </section>
 
-<section style={{ display: tab === "BASEASSESSMENT" ? "block" : "none" }}>
-  <BASEASSESSMENT />
-</section>
+          <section style={{ display: tab === "BASEASSESSMENT" ? "block" : "none" }}>
+            <BASEASSESSMENT />
+          </section>
 
-<section style={{ display: tab === "PatientsByDepartment" ? "block" : "none" }}>
-  <PatientsByDepartment setTab={setTab} department="Neurophysics"  />
-</section>
-<section style={{ display: tab === "NEWPATIENTS" ? "block" : "none" }}>
-  {/* Only the patient list shown here */}
-  <div style={{ padding: 16 }}>
-    <PablotList
-      onSelectPatient={(pid, icd) => {
-        setPatient((p) => ({ ...p, patient_id: pid }));
-        setIcdCode(icd);
-        setTab("ICF"); // ✅ after clicking "Edit", go directly to ICF tab
-      }}
-    />
-  </div>
-</section>
+          <section style={{ display: tab === "PatientsByDepartment" ? "block" : "none" }}>
+            <PatientsByDepartment setTab={setTab} department="Neurophysics" />
+          </section>
+          <section style={{ display: tab === "NEWPATIENTS" ? "block" : "none" }}>
+            {/* Only the patient list shown here */}
+            <div style={{ padding: 16 }}>
+              <PablotList
+                onSelectPatient={(pid, icd) => {
+                  setPatient((p) => ({ ...p, patient_id: pid }));
+                  setIcdCode(icd);
+                  setTab("ICF"); // ✅ after clicking "Edit", go directly to ICF tab
+                }}
+              />
+            </div>
+          </section>
 
 
           <section style={{ display: tab === "PERSONAL" ? "block" : "none" }}>
@@ -426,7 +427,7 @@ useEffect(() => {
           </section>
 
           <section style={{ display: tab === "VITALS" ? "block" : "none" }}>
-            <VitalsTab patientId={patient?.id} onSaved={() => {}} />
+            <VitalsTab patientId={patient?.id} onSaved={() => { }} />
           </section>
           {/* ICD */}
           <section style={{ display: tab === "ICD" ? "block" : "none" }}>
@@ -443,21 +444,21 @@ useEffect(() => {
               onDeepestICDChange={(code) => {
                 setIcdCode(code);
                 setIcfCode("");
-                
+
               }}
               onPathChange={setIcdPath}
             />
           </section>
 
           {/* ICF */}
-<section style={{ display: tab === "ICF" ? "block" : "none" }}>
-  <ICFTab
-    patientId={patient.patient_id}  // ✅ Use existing patient state
-    icdCode={icdCode}
-    onSummaryChange={setIcfSummary}
-    onSelectICF={setIcfCode}
-  />
-</section>
+          <section style={{ display: tab === "ICF" ? "block" : "none" }}>
+            <ICFTab
+              patientId={patient.patient_id}  // ✅ Use existing patient state
+              icdCode={icdCode}
+              onSummaryChange={setIcfSummary}
+              onSelectICF={setIcfCode}
+            />
+          </section>
 
           {/* ICHI */}
           <section style={{ display: tab === "ICHI" ? "block" : "none" }}>
@@ -538,9 +539,9 @@ useEffect(() => {
               ichiOptions={
                 Array.isArray(ichiSummary?.selected)
                   ? ichiSummary.selected.map((s) => ({
-                      value: s.ichi_code,
-                      label: `${s.ichi_code} — ${s.ichi_name}`,
-                    }))
+                    value: s.ichi_code,
+                    label: `${s.ichi_code} — ${s.ichi_name}`,
+                  }))
                   : []
               }
               icdContext={icdCode || ""}
@@ -558,7 +559,7 @@ useEffect(() => {
               }
             />
           </section>
- <section style={{ display: tab === "PHARMACY" ? "block" : "none" }}>
+          <section style={{ display: tab === "PHARMACY" ? "block" : "none" }}>
             <PharmacyDetailsCaptureTab />
           </section>
           {/* RAP • Case & RTW */}
@@ -645,7 +646,7 @@ useEffect(() => {
 <DashboardTab />;
 
 /* ---------------- ICF Tab: parent ICF -> child ICF -> ranges ---------------- */
-<PablotList/>;
+<PablotList />;
 <ICFTab />;
 
 /* ---------------- ICHI Tab: multi-select, modalities, note ---------------- */
@@ -713,11 +714,11 @@ export function downloadBlob(content, filename, type) {
 
 
 export function MainContent({
-  
-    tab,
-    addPatient,
-    patients,
-    updatePatientInMainList
+
+  tab,
+  addPatient,
+  patients,
+  updatePatientInMainList
 }) {
 
   switch (tab) {
@@ -729,24 +730,25 @@ export function MainContent({
 
     case "Psychology":
       return <PsychologyDashboard />;
+    case "Optometry":
+      return <OptometryDashboard patients={patients} />;
     case "Speech & Language Therapy":
-      console.log('dddddddd',patients)
-      return <SpeechAndLanguage patients={patients}/>;
+      return <SpeechAndLanguage patients={patients} />;
 
-        case "Dietetics":
+    case "Dietetics":
       return <DietDepartmentPage patients={patients} department="Dietetics" />;
 
-        case "Audiology":
+    case "Audiology":
       return <AudiologyDepartmentPage patients={patients} department="Audiology" />;
 
 
     case "Doctor":
       return <DoctorsDepartmentPage
-   patients={patients}
-   department="Doctor"
-   updatePatientInMainList={updatePatientInMainList}
-/>
-;
+        patients={patients}
+        department="Doctor"
+        updatePatientInMainList={updatePatientInMainList}
+      />
+        ;
 
     default:
       return <div>Select a department</div>;

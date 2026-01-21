@@ -1,4 +1,5 @@
 import React from "react";
+
 export default function CommonFormBuilder({
   schema,
   values,
@@ -81,7 +82,7 @@ export default function CommonFormBuilder({
                     </div>
                   )}
                   {/* ===== MATRIX HEADER ===== */}
-                  {section.fields.some(f => f.type === "radio-matrix") && (
+                  {section.fields && section.fields.some(f => f.type === "radio-matrix" && !f.hideMatrixHeader) && (
                     <div style={styles.matrixHeader}>
                       <div style={styles.matrixLabel}>
                         Scale
@@ -109,7 +110,7 @@ export default function CommonFormBuilder({
 
 
 
-                  {section.fields.map(field => {
+                  {section.fields && section.fields.map(field => {
 
                     if (field.showIf) {
                       const depVal = values[field.showIf.field];
@@ -157,17 +158,22 @@ export default function CommonFormBuilder({
                         {field.type === "radio" && !field.inRow ? (
                           <div style={styles.radioRow}>
                             <div style={styles.radioLabel}>{field.label}</div>
-                            {renderField(field, value, values, onChange, onAction, assessmentRegistry)}
-                          </div>
+                            {renderField(
+                              field,
+                              value,
+                              values,
+                              onChange,
+                              onAction,
+                              assessmentRegistry
+                            )}                          </div>
                         ) : field.type === "subheading" ? (
 
                           renderField(field)
                         ) : (
-                          /* ✅ NORMAL FIELDS → LABEL ON TOP */
                           <div style={{ marginBottom: 16 }}>
 
                             <>
-                              {!["button", "subheading", "radio-matrix", "score-box","inline-input"].includes(field.type)
+                              {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row"].includes(field.type)
                                 && field.type !== "checkbox-group"
                                 && (
                                   <label style={styles.label}>
@@ -371,6 +377,178 @@ function MultiSelectDropdown({ field, value, onChange }) {
     </div>
   );
 }
+
+function FileUploadModal({ field, value, onChange }) {
+  const [showModal, setShowModal] = React.useState(false);
+  const inputRef = React.useRef();
+
+  const handleFile = file => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      onChange(field.name, {
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+        data: reader.result
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <>
+      <div style={{ width: "100%", maxWidth: 320 }}>
+        {/* Hidden native input */}
+        <input
+          ref={inputRef}
+          type="file"
+          accept={field.accept || "image/*,.pdf"}
+          onChange={e => handleFile(e.target.files?.[0])}
+          style={{ display: "none" }}
+        />
+
+        {/* Upload box */}
+        {!value?.data && (
+          <div
+            onClick={() => inputRef.current?.click()}
+            style={{
+              border: "1px dashed #cbd5e1",
+              borderRadius: 8,
+              padding: "10px 12px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "#f8fafc"
+            }}
+          >
+            <span style={{ fontSize: 12, color: "#475569" }}>
+              Upload file
+            </span>
+            <span
+              style={{
+                fontSize: 11,
+                padding: "2px 8px",
+                borderRadius: 4,
+                background: "#e2e8f0",
+                color: "#334155",
+                fontWeight: 500
+              }}
+            >
+              Choose
+            </span>
+          </div>
+        )}
+
+        {/* Selected file pill */}
+        {value?.data && (
+          <div
+            style={{
+              marginTop: 6,
+              border: "1px solid #e5e7eb",
+              borderRadius: 8,
+              padding: "6px 8px",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#fff"
+            }}
+          >
+            <span
+              style={{
+                fontSize: 12,
+                color: "#1f2937",
+                flex: 1,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {value.filename}
+            </span>
+
+            <button
+              onClick={() => setShowModal(true)}
+              title="View"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                color: "#2563eb",
+                fontSize: 14
+              }}
+            >
+              👁️
+            </button>
+
+            <button
+              onClick={() => onChange(field.name, null)}
+              title="Remove"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                color: "#ef4444",
+                fontSize: 14
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Modal (unchanged) */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: "85%",
+              maxHeight: "85%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 16
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <strong>{value?.filename}</strong>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{ border: "none", background: "none", fontSize: 20 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <img
+              src={value?.data}
+              alt=""
+              style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain" }}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+
 function RadioMatrixRow({ field, value, onChange }) {
   return (
     <div style={styles.matrixRow}>
@@ -378,6 +556,7 @@ function RadioMatrixRow({ field, value, onChange }) {
         {field.label}
         {field.info && <InfoTooltip info={field.info} />}
       </div>
+
 
 
       <div style={styles.matrixOptions}>
@@ -406,92 +585,85 @@ function renderField(
   assessmentRegistry
 ) {
 
-    switch (field.type) {
-      case "input":
-        return (
-          <input
-            style={styles.input}
-            value={value || ""}
-            onChange={e => onChange(field.name, e.target.value)}
-          />
-        );
-      case "milestone-grid":
-        return (
-          <div>
-            <div style={styles.subheading}>{field.heading}</div>
+  switch (field.type) {
+    case "input":
+      return (
+        <input
+          style={styles.input}
+          value={value || ""}
+          onChange={e => onChange(field.name, e.target.value)}
+        />
+      );
+    case "milestone-grid":
+      return (
+        <div>
+          <div style={styles.subheading}>{field.heading}</div>
 
-            {field.rows.map((row, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: row.right ? "1fr 1fr" : "1fr",
-                  gap: 24,
-                  marginBottom: 16
-                }}
-              >
-                {/* LEFT */}
+          {field.rows.map((row, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: "grid",
+                gridTemplateColumns: row.right ? "1fr 1fr" : "1fr",
+                gap: 24,
+                marginBottom: 16
+              }}
+            >
+              {/* LEFT */}
+              <div>
+                <div style={styles.milestoneLabel}>{row.left.label}</div>
+                <input
+                  style={styles.input}
+                  value={values[row.left.name] || ""}
+                  placeholder={row.left.placeholder}
+                  onChange={e =>
+                    onChange(row.left.name, e.target.value)
+                  }
+                />
+              </div>
+
+              {/* RIGHT (only if present) */}
+              {row.right && (
                 <div>
-                  <div style={styles.milestoneLabel}>{row.left.label}</div>
+                  <div style={styles.milestoneLabel}>{row.right.label}</div>
                   <input
                     style={styles.input}
-                    value={values[row.left.name] || ""}
-                    placeholder={row.left.placeholder}
+                    value={values[row.right.name] || ""}
+                    placeholder={row.right.placeholder}
                     onChange={e =>
-                      onChange(row.left.name, e.target.value)
+                      onChange(row.right.name, e.target.value)
                     }
                   />
                 </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
 
-                {/* RIGHT (only if present) */}
-                {row.right && (
-                  <div>
-                    <div style={styles.milestoneLabel}>{row.right.label}</div>
-                    <input
-                      style={styles.input}
-                      value={values[row.right.name] || ""}
-                      placeholder={row.right.placeholder}
-                      onChange={e =>
-                        onChange(row.right.name, e.target.value)
-                      }
-                    />
-                  </div>
-                )}
-              </div>
+    case "grid-table-flat":
+      return (
+        <div style={styles.tableWrap}>
+          {/* Header row */}
+          <div style={styles.tableHeaderFlat}>
+            <div></div>
+            {field.headers.map(h => (
+              <div key={h} style={styles.tableHeaderCell}>{h}</div>
             ))}
           </div>
-        );
 
+          {/* Data rows */}
+          {field.rows.map(row => (
+            <div key={row.key} style={styles.tableRowFlat}>
+              <div style={styles.tableRowLabel}>{row.label}</div>
 
-      case "multi-select-details": {
-        const selected = values[field.sourceField] || [];
-
-        if (!Array.isArray(selected) || selected.length === 0) {
-          return null;
-        }
-
-        return (
-          <div style={{ marginTop: 12 }}>
-            {selected.map(option => (
-              <div key={option} style={{ marginBottom: 14 }}>
-                <label
-                  style={{
-                    display: "block",
-                    fontWeight: 600,
-                    marginBottom: 6
-                  }}
-                >
-                  {field.labelPrefix} {option}
-                </label>
-
+              {field.headers.map(h => (
                 <input
-                  style={styles.textarea}
-                  value={values[`${field.namePrefix}_${option}`] || ""}
+                  key={`${row.key}_${h}`}
+                  style={styles.tableInput}
+                  value={values[`${field.name}_${row.key}_${h}`] || ""}
                   onChange={e =>
-                    onChange(
-                      `${field.namePrefix}_${option}`,
-                      e.target.value
-                    )
+                    onChange(`${field.name}_${row.key}_${h}`, e.target.value)
                   }
                 />
               </div>
@@ -523,174 +695,430 @@ function renderField(
         const selected = values[field.source] || [];
         if (!selected.length) return null;
 
-        return (
-          <div style={{ display: "grid", gap: 12 }}>
-            {selected.map(val => (
-              <div key={val}>
-                <label style={{ fontWeight: 600, display: "block", marginBottom: 4 }}>
-                  {val} – Notes
-                </label>
-                <textarea
-                  style={styles.textarea}
-                  value={(value || {})[val] || ""}
-                  onChange={e =>
-                    onChange(field.name, {
-                      ...(value || {}),
-                      [val]: e.target.value
-                    })
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        );
-
-      case "score-box":
-        return (
-          <div style={styles.scoreBox}>
-            <div style={styles.scoreLabel}>
-              {field.label}
-            </div>
-            <div style={styles.scoreValue}>
-              {value ?? 0}
-            </div>
-          </div>
-        );
 
 
-      case "paired-select":
-        return (
-          <div style={styles.pairedBlock}>
-            {/* ROW 1: TITLES */}
-            <div style={styles.pairedTitles}>
-              <div style={styles.pairedTitleCell}>
-                {field.right.title}
-              </div>
-              <div style={styles.pairedTitleCell}>
-                {field.left.title}
-              </div>
-            </div>
+    case "scale-table":
+      return (
+       <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+  <colgroup>
+    <col style={{ width: "45%" }} />
+    {field.columns.map((_, i) => (
+      <col key={i} style={{ width: `${55 / field.columns.length}%` }} />
+    ))}
+  </colgroup>
 
-            {/* ROW 2: DROPDOWNS */}
-            <div style={styles.pairedInputs}>
-              <select
-                style={styles.select}
-                value={values[field.right.name] || ""}
-                onChange={e =>
-                  onChange(field.right.name, e.target.value)
-                }
+  <thead>
+    <tr>
+      <th style={styles.th}></th>
+      {field.columns.map(col => (
+        <th key={col.value} style={styles.th}>
+          {col.label}
+          <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
+        </th>
+      ))}
+    </tr>
+  </thead>
+
+  <tbody>
+    {field.rows.map((rowLabel, rIdx) => {
+      const rowKey = `${field.name}_${rIdx}`;
+      return (
+        <tr key={rowKey}>
+          <td style={styles.tdLabel}>{rowLabel}</td>
+          {field.columns.map(col => (
+            <td key={col.value} style={styles.td}>
+              <input
+                type="radio"
+                name={rowKey}
+                checked={values[rowKey] === col.value}
+                onChange={() => onChange(rowKey, col.value)}
+              />
+            </td>
+          ))}
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+
+
+      );
+
+
+
+
+    case "multi-select-details": {
+      const selected = values[field.sourceField] || [];
+
+      if (!Array.isArray(selected) || selected.length === 0) {
+        return null;
+      }
+
+      return (
+        <div style={{ marginTop: 12 }}>
+          {selected.map(option => (
+            <div key={option} style={{ marginBottom: 14 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 600,
+                  marginBottom: 6
+                }}
               >
-                <option value="">Select</option>
-                {field.options.map(opt => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                {field.labelPrefix} {option}
+              </label>
 
-              <select
-                style={styles.select}
-                value={values[field.left.name] || ""}
+              <input
+                style={styles.textarea}
+                value={values[`${field.namePrefix}_${option}`] || ""}
                 onChange={e =>
-                  onChange(field.left.name, e.target.value)
+                  onChange(
+                    `${field.namePrefix}_${option}`,
+                    e.target.value
+                  )
                 }
-              >
-                <option value="">Select</option>
-                {field.options.map(opt => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
-          </div>
-        );
+          ))}
+        </div>
+      );
+    }
+    case "row":
+      return (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          {field.fields.map(f => {
+            // Check showIf visibility condition
+            if (f.showIf) {
+              const depVal = values[f.showIf.field];
 
+              if ("equals" in f.showIf && depVal !== f.showIf.equals) {
+                return null;
+              }
 
-      case "radio-matrix":
-        return (
-          <RadioMatrixRow
-            field={field}
-            value={value}
-            onChange={onChange}
-          />
-        );
-      case "textarea":
-        return (
-          <textarea
-            style={styles.textarea}
-            value={value || ""}
-            readOnly={field.readOnly}
-            onChange={e =>
-              !field.readOnly && onChange(field.name, e.target.value)
+              if ("exists" in f.showIf && !depVal) {
+                return null;
+              }
+
+              if ("includes" in f.showIf) {
+                if (!Array.isArray(depVal) || !depVal.includes(f.showIf.includes)) {
+                  return null;
+                }
+              }
             }
+
+            const v = values[f.name];
+            return (
+              <div key={f.name}>
+                {f.label && (
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 600,
+                      marginBottom: 6
+                    }}
+                  >
+                    {f.label}
+                  </label>
+                )}
+
+                {/* ✅ Pass correct arguments */}
+                {renderField(
+                  f,
+                  v,
+                  values,
+                  onChange,
+                  onAction,
+                  assessmentRegistry
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+
+    case "multi-notes":
+      const selected = values[field.source] || [];
+      if (!selected.length) return null;
+
+      return (
+        <div style={{ display: "grid", gap: 12 }}>
+          {selected.map(val => (
+            <div key={val}>
+              <label style={{ fontWeight: 600, display: "block", marginBottom: 4 }}>
+                {val} – Notes
+              </label>
+              <textarea
+                style={styles.textarea}
+                value={(value || {})[val] || ""}
+                onChange={e =>
+                  onChange(field.name, {
+                    ...(value || {}),
+                    [val]: e.target.value
+                  })
+                }
+              />
+            </div>
+          ))}
+        </div>
+      );
+
+    case "score-box":
+      return (
+        <div style={styles.scoreBox}>
+          <div style={styles.scoreLabel}>
+            {field.label}
+          </div>
+          <div style={styles.scoreValue}>
+            {value ?? 0}
+          </div>
+        </div>
+      );
+
+    case "grid-header": {
+      const colsCount = field.cols.length;
+      const template = `180px repeat(${colsCount}, 1fr)`;
+
+      return (
+        <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
+          <div></div>
+          {field.cols.map(col => (
+            <div key={col} style={styles.gridHeaderCell}>
+              {col}
+            </div>
+          ))}
+        </div>
+      );
+    }
+    case "custom-image":
+      return (
+        <div>
+          {/* <div style={styles.label}>{field.label}</div> */}
+          <img
+            src={field.src}
+            alt={field.label}
+            style={{
+              width: "100%",
+              maxWidth: 600,
+              height: "auto",
+              maxHeight: 300,
+              objectFit: "contain",
+              border: "1px solid #e5e7eb",
+              borderRadius: 6,
+              marginTop: 8
+            }}
           />
-        );
-      case "date":
-        return (
-          <input
-            type="date"
-            style={styles.input}
-            value={value || ""}
-            onChange={e => onChange(field.name, e.target.value)}
-          />
-        );
+        </div>
+      );
 
 
+    case "grid-row": {
+      const colsCount = field.cols.length;
+      const template = `180px repeat(${colsCount}, 1fr)`;
 
-      case "single-select":
-        return (
-          <select
-            style={styles.select}
-            value={value ?? ""}
-            onChange={e => onChange(field.name, e.target.value)}
-          >
-            <option value="">Select</option>
-            {(field.options || []).map(opt => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        );
-      case "radio-matrix":
-        return (
-          <RadioMatrixRow
-            field={field}
-            value={value}
-            onChange={onChange}
-          />
-        );
+      return (
+        <div style={{ ...styles.gridRow, gridTemplateColumns: template }}>
+          <div style={styles.gridLabel}>{field.label}</div>
+          {field.cols.map((col, idx) => {
+            const fieldKey = `${field.name}_${idx}`;
 
-      case "radio":
-        return (
-          <div style={{ marginTop: 6 }}>
-            <div style={styles.inlineGroup}>
-              {(field.options || []).map(opt => (
-                <label key={opt.value} style={styles.inlineItem}>
-                  <input
-                    type="radio"
-                    name={field.name}
-                    checked={value === opt.value}
-                    onChange={() => onChange(field.name, opt.value)}
-                  />
-                  {opt.label}
-                </label>
-              ))}
+            // Handle object column type (e.g., single-select with options)
+            if (typeof col === "object" && col.type === "single-select") {
+              return (
+                <select
+                  key={fieldKey}
+                  style={styles.gridInput}
+                  value={values[fieldKey] || ""}
+                  onChange={e => onChange(fieldKey, e.target.value)}
+                >
+                  <option value="">Select</option>
+                  {col.options.map(opt => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              );
+            }
+
+            // Handle file-upload-modal type
+            if (typeof col === "object" && col.type === "file-upload-modal") {
+              return (
+                <div key={fieldKey} style={styles.gridInput}>
+                  {renderField(
+                    { ...col, name: col.name },
+                    values[col.name],
+                    values,
+                    onChange,
+                    onAction,
+                    assessmentRegistry
+                  )}
+                </div>
+              );
+            }
+
+            // Handle string column type (e.g., "textarea", "input")
+            return (
+              <input
+                key={fieldKey}
+                style={styles.gridInput}
+                value={values[fieldKey] || ""}
+                onChange={e => onChange(fieldKey, e.target.value)}
+              />
+            );
+          })}
+        </div>
+      );
+    }
+
+
+    case "nested":
+      return (
+        <CommonFormBuilder
+          schema={{
+            title: field.title,
+            fields: field.fields
+          }}
+          values={values}
+          onChange={onChange}
+          onAction={onAction}
+          assessmentRegistry={assessmentRegistry}
+          layout="nested"
+        />
+      );
+
+    case "paired-select":
+      return (
+        <div style={styles.pairedBlock}>
+          {/* ROW 1: TITLES */}
+          <div style={styles.pairedTitles}>
+            <div style={styles.pairedTitleCell}>
+              {field.right.title}
+            </div>
+            <div style={styles.pairedTitleCell}>
+              {field.left.title}
             </div>
           </div>
-        );
-      case "attach-file":
-        return (
-          <div style={styles.field}>
-            <label style={styles.label}>
-              {field.title}
-              {field.required && <span style={{ color: "red" }}> *</span>}
-            </label>
+
+          {/* ROW 2: DROPDOWNS */}
+          <div style={styles.pairedInputs}>
+            <select
+              style={styles.select}
+              value={values[field.right.name] || ""}
+              onChange={e =>
+                onChange(field.right.name, e.target.value)
+              }
+            >
+              <option value="">Select</option>
+              {field.options.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              style={styles.select}
+              value={values[field.left.name] || ""}
+              onChange={e =>
+                onChange(field.left.name, e.target.value)
+              }
+            >
+              <option value="">Select</option>
+              {field.options.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      );
+
+
+    case "radio-matrix":
+      return (
+        <RadioMatrixRow
+          field={field}
+          value={value}
+          onChange={onChange}
+        />
+      );
+    case "textarea":
+      return (
+        <textarea
+          style={styles.textarea}
+          value={value || ""}
+          readOnly={field.readOnly}
+          onChange={e =>
+            !field.readOnly && onChange(field.name, e.target.value)
+          }
+        />
+      );
+    case "date":
+      return (
+        <input
+          type="date"
+          style={styles.input}
+          value={value || ""}
+          onChange={e => onChange(field.name, e.target.value)}
+        />
+      );
+
+
+
+    case "single-select":
+      return (
+        <select
+          style={styles.select}
+          value={value ?? ""}
+          onChange={e => onChange(field.name, e.target.value)}
+        >
+          <option value="">Select</option>
+          {(field.options || []).map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      );
+    case "radio-matrix":
+      return (
+        <RadioMatrixRow
+          field={field}
+          value={value}
+          onChange={onChange}
+        />
+      );
+
+    case "radio":
+      return (
+        <div style={{ marginTop: 6 }}>
+          <div style={styles.inlineGroup}>
+            {(field.options || []).map(opt => (
+              <label key={opt.value} style={styles.inlineItem}>
+                <input
+                  type="radio"
+                  name={field.name}
+                  checked={value === opt.value}
+                  onChange={() => onChange(field.name, opt.value)}
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    case "attach-file":
+      return (
+        <div style={styles.field}>
+          <label style={styles.label}>
+            {field.title}
+            {field.required && <span style={{ color: "red" }}> *</span>}
+          </label>
 
 
           <div style={styles.inlineGroup}>
-      <input
+            <input
               type="file"
               accept={field.accept}
               multiple={field.multiple}
@@ -714,11 +1142,11 @@ function renderField(
                 <FilePreview key={idx} file={file} />
               ))}
           </div>
-          </div>
-        );
-    
+        </div>
+      );
 
-case "paired-text": 
+
+    case "paired-text":
       const pairs = field.pairs || [];
 
       return (
@@ -748,22 +1176,22 @@ case "paired-text":
           </div>
         </div>
       );
-    
 
 
 
-case "assessment-launcher":
-    return (
-      <AssessmentLauncher
-        field={field}
-        values={values}                 // ✅ FIX
-        onChange={onChange}
-        assessmentRegistry={assessmentRegistry} // ✅ FIX
-      />
-    );
+
+    case "assessment-launcher":
+      return (
+        <AssessmentLauncher
+          field={field}
+          values={values}                 // ✅ FIX
+          onChange={onChange}
+          assessmentRegistry={assessmentRegistry} // ✅ FIX
+        />
+      );
 
 
-case "checkbox-group": 
+    case "checkbox-group":
       const inline = field.inlineWithLabel;
 
       if (inline) {
@@ -829,95 +1257,429 @@ case "checkbox-group":
           ))}
         </div>
       );
-    
+
 
 
     case "subheading":
-    return (
-      <div style={styles.subheading}>
-        {field.label}
-      </div>
-    );
+      return (
+        <div style={styles.subheading}>
+          {field.label}
+        </div>
+      );
 
     case "multi-select-dropdown":
-    return (
-      <MultiSelectDropdown
-        field={field}
-        value={value || []}
-        onChange={onChange}
-      />
-    );
-    case "inline-input":
-    return (
-      <div style={styles.inlineRow}>
-        <div style={styles.inlineLabel}>{field.inlineLabel}</div>
-        <input
-          style={styles.inlineInput}
-          value={value || ""}
-          onChange={e => onChange(field.name, e.target.value)}
-          placeholder={field.placeholder || ""}
+      return (
+        <MultiSelectDropdown
+          field={field}
+          value={value || []}
+          onChange={onChange}
         />
-      </div>
-    );
+      );
+    case "inline-input":
+      return (
+        <div style={styles.inlineRow}>
+          <div style={styles.inlineLabel}>{field.inlineLabel}</div>
+          <input
+            style={styles.inlineInput}
+            value={value || ""}
+            onChange={e => onChange(field.name, e.target.value)}
+            placeholder={field.placeholder || ""}
+          />
+        </div>
+      );
 
     case "dual-radio-row":
-    return (
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 200px 200px",
-        alignItems: "center",
-        gap: 16
-      }}>
-        <div style={{ fontWeight: 600 }}>{field.label}</div>
+      return (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 200px 200px",
+          alignItems: "center",
+          gap: 16
+        }}>
+          <div style={{ fontWeight: 600 }}>{field.label}</div>
 
-        {/* Right Ear */}
-        <div style={styles.inlineGroup}>
-          {["yes", "no"].map(v => (
-            <label key={v} style={styles.inlineItem}>
-              <input
-                type="radio"
-                name={field.rightName}
-                checked={value?.right === v}
-                onChange={() =>
-                  onChange(field.name, { ...(value || {}), right: v })
-                }
-              />
-              {v === "yes" ? "Yes" : "No"}
-            </label>
-          ))}
-        </div>
+          {/* Right Ear */}
+          <div style={styles.inlineGroup}>
+            {["yes", "no"].map(v => (
+              <label key={v} style={styles.inlineItem}>
+                <input
+                  type="radio"
+                  name={field.rightName}
+                  checked={value?.right === v}
+                  onChange={() =>
+                    onChange(field.name, { ...(value || {}), right: v })
+                  }
+                />
+                {v === "yes" ? "Yes" : "No"}
+              </label>
+            ))}
+          </div>
 
-        {/* Left Ear */}
-        <div style={styles.inlineGroup}>
-          {["yes", "no"].map(v => (
-            <label key={v} style={styles.inlineItem}>
-              <input
-                type="radio"
-                name={field.leftName}
-                checked={value?.left === v}
-                onChange={() =>
-                  onChange(field.name, { ...(value || {}), left: v })
-                }
-              />
-              {v === "yes" ? "Yes" : "No"}
-            </label>
-          ))}
+          {/* Left Ear */}
+          <div style={styles.inlineGroup}>
+            {["yes", "no"].map(v => (
+              <label key={v} style={styles.inlineItem}>
+                <input
+                  type="radio"
+                  name={field.leftName}
+                  checked={value?.left === v}
+                  onChange={() =>
+                    onChange(field.name, { ...(value || {}), left: v })
+                  }
+                />
+                {v === "yes" ? "Yes" : "No"}
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
-    );
+      );
 
     case "button":
-    return (
-      <button
-        style={styles.btnOutline}
-        onClick={() => onAction?.(field.action)}
-      >
-        {field.label}
-      </button>
-    );
+      return (
+        <button
+          style={styles.btnOutline}
+          onClick={() => onAction?.(field.action)}
+        >
+          {field.label}
+        </button>
+      );
 
+    case "file-upload":
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <input
+            type="file"
+            accept={field.accept || "image/*,.pdf"}
+            onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) {
+                onChange(field.name, {
+                  filename: file.name,
+                  size: file.size,
+                  type: file.type,
+                  lastModified: file.lastModified
+                });
+              }
+            }}
+            style={{
+              flex: 1,
+              padding: "8px 10px",
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+              cursor: "pointer"
+            }}
+          />
+          {value?.filename && (
+            <span style={{ fontSize: 13, color: "#6b7280" }}>
+              ✓ {value.filename}
+            </span>
+          )}
+        </div>
+      );
+
+    case "file-upload-modal":
+      return (
+        <FileUploadModal
+          field={field}
+          value={value}
+          onChange={onChange}
+        />
+      );
+
+    case "refraction-table": {
+      const rows = field.rows || [];
+      const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
+      const extraColumns = field.extraColumns || [];
+
+      return (
+        <div style={styles.refractionTableWrapper}>
+          {/* Header Row 1: Eye labels */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Right Eye</div>
+            </div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Left Eye</div>
+            </div>
+            {extraColumns.length > 0 && (
+              <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${extraColumns.length}, 1fr)` }}>
+                {extraColumns.map(col => (
+                  <div key={col} style={styles.refractionTableEyeLabel}>{col}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Header Row 2: Column labels */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            {[0, 1].map(eye => (
+              <div key={eye} style={styles.refractionTableHeaderGroup}>
+                {eyeColumns.map(col => (
+                  <div key={col} style={styles.refractionTableColumnHeader}>
+                    {col}
+                  </div>
+                ))}
+              </div>
+            ))}
+            {extraColumns.length > 0 && (
+              <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${extraColumns.length}, 1fr)` }}>
+                {extraColumns.map(col => (
+                  <div key={col} style={styles.refractionTableColumnHeader}>
+                    {col}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Data Rows */}
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} style={styles.refractionTableRow}>
+              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              {[0, 1].map(eye => (
+                <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
+                  {eyeColumns.map((col, colIdx) => {
+                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
+                    const fieldValue = values[fieldName] || "";
+                    return (
+                      <input
+                        key={fieldName}
+                        style={styles.refractionTableInput}
+                        value={fieldValue}
+                        onChange={e => onChange(fieldName, e.target.value)}
+                        placeholder=""
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+              {extraColumns.length > 0 && (
+                <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${extraColumns.length}, 1fr)` }}>
+                  {extraColumns.map((col, colIdx) => {
+                    const fieldName = `${field.name}_${row.value}_extra_${colIdx}`;
+                    const fieldValue = values[fieldName] || "";
+                    return (
+                      <input
+                        key={fieldName}
+                        style={styles.refractionTableInput}
+                        value={fieldValue}
+                        onChange={e => onChange(fieldName, e.target.value)}
+                        placeholder=""
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    case "refraction-table-full": {
+      const rows = field.rows || [];
+      const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
+
+      return (
+        <div style={styles.refractionTableWrapper}>
+          {/* Header Row 1: Eye labels */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Right Eye</div>
+            </div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Left Eye</div>
+            </div>
+          </div>
+
+          {/* Header Row 2: Column labels */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            {[0, 1].map(eye => (
+              <div key={eye} style={styles.refractionTableHeaderGroup}>
+                {eyeColumns.map(col => (
+                  <div key={col} style={styles.refractionTableColumnHeader}>
+                    {col}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Data Rows */}
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} style={styles.refractionTableRow}>
+              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              {[0, 1].map(eye => (
+                <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
+                  {eyeColumns.map((col, colIdx) => {
+                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
+                    const fieldValue = values[fieldName] || "";
+                    return (
+                      <input
+                        key={fieldName}
+                        style={styles.refractionTableInput}
+                        value={fieldValue}
+                        onChange={e => onChange(fieldName, e.target.value)}
+                        placeholder=""
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+
+    case "refraction-12col": {
+      const rows = field.rows || [];
+      const groups = field.groups || [];
+
+      // flatten all columns
+      const flatCols = groups.flatMap(g => g.columns);
+
+      return (
+        <div style={styles.refraction12Wrapper}>
+          {/* Header Row 1 – Group Labels */}
+          <div style={styles.refraction12Row}>
+            <div style={styles.refraction12LabelCell}></div>
+
+            {groups.map((g, i) => (
+              <div
+                key={i}
+                style={{
+                  ...styles.refraction12GroupHeader,
+                  gridColumn: `span ${g.columns.length}`
+                }}
+              >
+                {g.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Header Row 2 – Column Labels */}
+          <div style={styles.refraction12Row}>
+            <div style={styles.refraction12LabelCell}></div>
+            {flatCols.map((c, i) => (
+              <div key={i} style={styles.refraction12ColHeader}>
+                {c}
+              </div>
+            ))}
+          </div>
+
+          {/* Data Rows */}
+          {rows.map(r => (
+            <div key={r.value} style={styles.refraction12Row}>
+              <div style={styles.refraction12RowLabel}>{r.label}</div>
+
+              {flatCols.map((_, i) => {
+                const key = `${field.name}_${r.value}_${i}`;
+                return (
+                  <input
+                    key={key}
+                    style={styles.refraction12Input}
+                    value={values[key] || ""}
+                    onChange={e => onChange(key, e.target.value)}
+                  />
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    case "final-prescription-table": {
+      const rows = field.rows || [];
+      const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
+      const pupilColumns = field.pupilColumns || ["Distance", "Height"];
+
+      return (
+        <div style={styles.refractionTableWrapper}>
+          {/* Header Row 1: Eye labels and Pupil label */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Right Eye</div>
+            </div>
+            <div style={styles.refractionTableHeaderGroup}>
+              <div style={styles.refractionTableEyeLabel}>Left Eye</div>
+            </div>
+            <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
+              <div style={styles.refractionTableEyeLabel}>Pupil</div>
+            </div>
+          </div>
+
+          {/* Header Row 2: Column labels */}
+          <div style={styles.refractionTableRow}>
+            <div style={styles.refractionTableCell}></div>
+            {[0, 1].map(eye => (
+              <div key={eye} style={styles.refractionTableHeaderGroup}>
+                {eyeColumns.map(col => (
+                  <div key={col} style={styles.refractionTableColumnHeader}>
+                    {col}
+                  </div>
+                ))}
+              </div>
+            ))}
+            <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
+              {pupilColumns.map(col => (
+                <div key={col} style={styles.refractionTableColumnHeader}>
+                  {col}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Data Rows */}
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} style={styles.refractionTableRow}>
+              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              {[0, 1].map(eye => (
+                <div key={eye} style={styles.refractionTableHeaderGroup}>
+                  {eyeColumns.map((col, colIdx) => {
+                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
+                    const fieldValue = values[fieldName] || "";
+                    return (
+                      <input
+                        key={colIdx}
+                        style={styles.refractionTableInput}
+                        value={fieldValue}
+                        onChange={e => onChange(fieldName, e.target.value)}
+                        placeholder=""
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+              <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
+                {pupilColumns.map((col, colIdx) => {
+                  const fieldName = `${field.name}_${row.value}_pupil_${colIdx}`;
+                  const fieldValue = values[fieldName] || "";
+                  return (
+                    <input
+                      key={colIdx}
+                      style={styles.refractionTableInput}
+                      value={fieldValue}
+                      onChange={e => onChange(fieldName, e.target.value)}
+                      placeholder=""
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
     default:
-    return null;
+      return null;
   }
 }
 
@@ -977,24 +1739,159 @@ const styles = {
     background: "#fff",
     border: "1px solid #e5e7eb",
     borderRadius: 12,
-    padding: 20,
+    padding: 24,
     boxShadow: "0 4px 14px rgba(15,23,42,0.04)"
   },
+  gridHeaderRow: {
+    display: "grid",
+    alignItems: "center",
+    marginBottom: 8,
+    columnGap: 12,
+    paddingBottom: 12,
+    fontWeight: 700,
+    fontSize: 13,
+    color: "#0F172A"
+  },
+
+  gridRow: {
+    display: "grid",
+    alignItems: "center",
+    marginBottom: 12,
+    columnGap: 12,
+    paddingBottom: 8,
+    borderBottom: "1px solid #f0f0f0"
+  },
+
+  refraction12Wrapper: {
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    overflow: "hidden",
+    marginTop: 8
+  },
+
+  refraction12Row: {
+    display: "grid",
+    gridTemplateColumns: "120px repeat(12, 1fr)",
+    borderBottom: "1px solid #e5e7eb"
+  },
+
+  refraction12LabelCell: {
+    background: "#f9fafb",
+    borderRight: "1px solid #e5e7eb"
+  },
+
+  refraction12GroupHeader: {
+    gridColumn: "span 1",
+    textAlign: "center",
+    padding: "10px 6px",
+    fontWeight: 700,
+    background: "#f3f4f6",
+    borderRight: "1px solid #e5e7eb"
+  },
+
+  refraction12ColHeader: {
+    textAlign: "center",
+    padding: "8px 4px",
+    fontWeight: 600,
+    background: "#f3f4f6",
+    borderRight: "1px solid #e5e7eb",
+    fontSize: 13
+  },
+
+  refraction12RowLabel: {
+    padding: "10px",
+    fontWeight: 600,
+    background: "#f9fafb",
+    borderRight: "1px solid #e5e7eb"
+  },
+
+  refraction12Input: {
+    width: "100%",
+    border: "none",
+    padding: "8px 4px",
+    textAlign: "center",
+    borderRight: "1px solid #e5e7eb",
+    boxSizing: "border-box"
+  },
+  gridHeaderCell: {
+    textAlign: "center",
+    fontWeight: 700,
+    color: "#0F172A",
+    fontSize: 13
+  },
+
+  gridLabel: {
+    fontWeight: 600,
+    color: "#0F172A",
+    fontSize: 14
+  },
+
+  gridInput: {
+    width: "100%",
+    padding: "8px 10px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db",
+    boxSizing: "border-box",
+    fontSize: 14,
+    textAlign: "center",
+    fontFamily: "inherit",
+    lineHeight: "1.5"
+  },
+
+
+  tableWrap: { marginTop: 10 },
+
+  tableHeaderFlat: {
+    display: "grid",
+    gridTemplateColumns: "120px repeat(10, 1fr)",
+    fontWeight: 600,
+    fontSize: 12,
+    marginBottom: 6
+  },
+
+  tableRowFlat: {
+    display: "grid",
+    gridTemplateColumns: "120px repeat(10, 1fr)",
+    gap: 6,
+    marginBottom: 6,
+    alignItems: "center"
+  },
+
+  tableHeaderCell: {
+    textAlign: "center"
+  },
+
+  tableRowLabel: {
+    fontWeight: 500
+  },
+
+  tableInput: {
+    padding: "6px",
+    border: "1px solid #d1d5db",
+    borderRadius: 4,
+    textAlign: "center"
+  },
+
 
   header: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: 20
+    alignItems: "flex-start",
+    marginBottom: 24,
+    paddingBottom: 16,
+    borderBottom: "1px solid #e5e7eb"
   },
 
   title: {
-    fontSize: 20,
-    fontWeight: 700
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827"
   },
 
   subtitle: {
-    fontSize: 13,
-    color: "#6b7280"
+    fontSize: 14,
+    color: "#6b7280",
+    marginTop: 4
   },
 
   actions: {
@@ -1016,6 +1913,30 @@ const styles = {
 
   scoreLabel: {
     color: "#0F172A"
+  },
+
+ th : {
+  border: "1px solid #CBD5E1",
+  padding: "10px 6px",
+  fontSize: 13,
+  textAlign: "center",
+  background: "#F1F5F9",   
+  color: "#0F172A",        
+  fontWeight: 700,
+  lineHeight: 1.2
+},
+
+  tdLabel: {
+    border: "1px solid #CBD5E1",
+    padding: 10,
+    fontWeight: 600,
+    width: "40%"
+  },
+
+  td: {
+    border: "1px solid #CBD5E1",
+    textAlign: "center",
+    padding: 8
   },
 
   scoreValue: {
@@ -1044,7 +1965,7 @@ const styles = {
   sectionCard: {
     border: "1px solid #e5e7eb",
     borderRadius: 10,
-    padding: 16,
+    padding: 18,
     marginBottom: 20,
     background: "#fafafa"
   },
@@ -1052,7 +1973,10 @@ const styles = {
   sectionTitle: {
     fontSize: 16,
     fontWeight: 700,
-    marginBottom: 12
+    marginBottom: 16,
+    color: "#111827",
+    paddingBottom: 8,
+    borderBottom: "2px solid #e5e7eb"
   },
 
   field: {
@@ -1061,31 +1985,40 @@ const styles = {
 
   label: {
     fontWeight: 600,
-    marginBottom: 6,
+    marginBottom: 8,
     display: "block",
-    color: "#0F172A"
+    color: "#0F172A",
+    fontSize: 14
   },
 
   input: {
     width: "100%",
     padding: "10px 12px",
     borderRadius: 6,
-    border: "1px solid #d1d5db"
+    border: "1px solid #d1d5db",
+    fontSize: 14,
+    fontFamily: "inherit"
   },
 
   textarea: {
     width: "100%",
-    minHeight: 90,
+    minHeight: 100,
     padding: "10px 12px",
     borderRadius: 6,
-    border: "1px solid #d1d5db"
+    border: "1px solid #d1d5db",
+    fontSize: 14,
+    fontFamily: "inherit",
+    resize: "vertical"
   },
 
   select: {
     width: "100%",
     padding: "10px 12px",
     borderRadius: 6,
-    border: "1px solid #d1d5db"
+    border: "1px solid #d1d5db",
+    fontSize: 14,
+    fontFamily: "inherit",
+    lineHeight: "1.5"
   },
 
   inlineGroup: {
@@ -1102,9 +2035,9 @@ const styles = {
 
   radioRow: {
     display: "grid",
-    gridTemplateColumns: "1fr auto",
+    gridTemplateColumns: "200px 1fr",
     alignItems: "center",
-    gap: 20
+    gap: 24
   },
 
   radioLabel: {
@@ -1113,13 +2046,13 @@ const styles = {
     color: "#0F172A"
   },
   subheading: {
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 24,
+    marginBottom: 14,
     fontWeight: 700,
     fontSize: 15,
     color: "#0F172A",
-    borderBottom: "1px solid #e5e7eb",
-    paddingBottom: 4
+    borderBottom: "2px solid #e5e7eb",
+    paddingBottom: 8
   },
 
   multiSelectWrap: {
@@ -1135,7 +2068,8 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "#fff"
+    background: "#fff",
+    fontSize: 14
   },
 
   caret: {
@@ -1157,6 +2091,7 @@ const styles = {
     overflowY: "auto",
     boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
   },
+
   inlineRow: {
     display: "grid",
     gridTemplateColumns: "120px 1fr",
@@ -1164,100 +2099,87 @@ const styles = {
     gap: 12,
     marginBottom: 12
   },
-multiSelectMenu: {
-  position: "absolute",
-  top: "100%",
-  left: 0,
-  right: 0,
-  zIndex: 20,
-  background: "#fff",
-  border: "1px solid #d1d5db",
-  borderRadius: 6,
-  marginTop: 4,
-  maxHeight: 220,
-  overflowY: "auto",
-  boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
-},
-inlineRow: {
-  display: "grid",
-  gridTemplateColumns: "120px 1fr",
-  alignItems: "center",
-  gap: 12,
-  marginBottom: 12
-},
-matrixHeader: {
-  display: "grid",
-  gridTemplateColumns: "1fr auto",
-  marginBottom: 10,
-  borderBottom:"1px solid #0000002e",
-  fontSize: 14,
-  fontWeight:600,
-  paddingBottom:10,
-  color: "#0F172A"
-},
+  matrixHeader: {
+    display: "grid",
+    gridTemplateColumns: "1fr auto",
+    marginBottom: 12,
+    borderBottom: "2px solid #d1d5db",
+    fontSize: 14,
+    fontWeight: 600,
+    paddingBottom: 12,
+    color: "#0F172A"
+  },
 
-matrixHeaderCell: {
-  width: 110,
-  textAlign: "center"
-},
-nestedContainer: {
-  border: "1px solid #e5e7eb",
+  matrixHeaderCell: {
+    width: 110,
+    textAlign: "center",
+    padding: "0 8px"
+  },
+  nestedContainer: {
+    border: "1px solid #e5e7eb",
     borderRadius: "10px",
-    padding:"16px",
-    width:"100%",
-    background:" #fff"
-},
-nestedSection: {
-  border: "none",
-  padding: 0,
-  marginBottom: 8
-},
-pairedBlock: {
-  display: "grid",
-  gap: 6
-},
+    padding: "16px",
+    width: "100%",
+    background: " #fff"
+  },
+  nestedSection: {
+    border: "none",
+    padding: 0,
+    marginBottom: 8
+  },
+  pairedBlock: {
+    display: "grid",
+    gap: 6
+  },
 
-pairedTitles: {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  fontSize: 13,
-  fontWeight: 600,
-  color: "#0F172A"
-},
+  pairedTitles: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#0F172A"
+  },
 
-pairedTitleCell: {
-  textAlign: "left"
-},
+  pairedTitleCell: {
+    textAlign: "left"
+  },
 
-pairedInputs: {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: 12
-},
+  pairedInputs: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 12
+  },
 
-matrixRow: {
-  display: "grid",
-  gridTemplateColumns: "1fr auto",
-  alignItems: "center",
-  marginBottom: 14
-},
+  matrixRow: {
+    display: "grid",
+    gridTemplateColumns: "1fr auto",
+    alignItems: "center",
+    marginBottom: 16,
+    paddingBottom: 8,
+    borderBottom: "1px solid #f0f0f0"
+  },
 
-matrixLabel: {
-  fontWeight: 600,
-  fontSize: 14,
-  color:"#0F172A",
-},
+  matrixLabel: {
+    fontWeight: 600,
+    fontSize: 14,
+    color: "#0F172A",
+    display: "flex",
+    alignItems: "center",
+    gap: 8
+  },
 
-matrixOptions: {
-  display: "flex",
-  gap: 22
-},
+  matrixOptions: {
+    display: "flex",
+    gap: 16,
+    justifyContent: "center"
+  },
 
-matrixCell: {
-  width: 110,
-  display: "flex",
-  justifyContent: "center"
-},
+  matrixCell: {
+    width: 110,
+    display: "flex",
+    justifyContent: "center",
+    padding: "8px"
+  },
 
   inlineLabel: {
     fontWeight: 500,
@@ -1313,13 +2235,16 @@ matrixCell: {
   pairedRow: {
     display: "grid",
     gridTemplateColumns: "200px 1fr",
-    gap: 16,
-    alignItems: "center"
+    gap: 24,
+    alignItems: "flex-start",
+    marginBottom: 12
   },
 
   pairedLabel: {
     fontWeight: 600,
-    color: "#0F172A"
+    color: "#0F172A",
+    fontSize: 14,
+    paddingTop: 2
   },
 
   pairedControls: {
@@ -1366,6 +2291,102 @@ matrixCell: {
 
   infoWrapperHover: {
     display: "block"
-  }
+  },
 
+  refractionTableWrapper: {
+    width: "100%",
+    borderCollapse: "collapse",
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    overflow: "hidden",
+    marginTop: 8
+  },
+
+  refractionTableRow: {
+    display: "grid",
+    gridTemplateColumns: "120px repeat(2, 1fr)",
+    borderBottom: "1px solid #e5e7eb"
+  },
+
+  refractionTableCell: {
+    padding: "12px",
+    borderRight: "1px solid #e5e7eb",
+    fontWeight: 600,
+    backgroundColor: "#f9fafb"
+  },
+
+  refractionTableRowLabel: {
+    padding: "12px",
+    borderRight: "1px solid #e5e7eb",
+    fontWeight: 600,
+    color: "#0F172A",
+    fontSize: 14,
+    backgroundColor: "#f9fafb"
+  },
+
+  refractionTableHeaderGroup: {
+    display: "grid",
+    gridTemplateColumns: "repeat(5, 1fr)",
+    borderRight: "1px solid #e5e7eb"
+  },
+
+  refractionTableEyeLabel: {
+    gridColumn: "1 / -1",
+    padding: "10px 12px",
+    fontWeight: 700,
+    textAlign: "center",
+    color: "#0F172A",
+    backgroundColor: "#f3f4f6",
+    borderBottom: "1px solid #d1d5db",
+    fontSize: 14
+  },
+
+  refractionTableColumnHeader: {
+    padding: "10px 6px",
+    fontWeight: 700,
+    textAlign: "center",
+    color: "#0F172A",
+    backgroundColor: "#f3f4f6",
+    fontSize: 13,
+    borderRight: "1px solid #e5e7eb"
+  },
+
+  refractionTableInput: {
+    width: "100%",
+    padding: "8px 4px",
+    border: "none",
+    textAlign: "center",
+    fontSize: 13,
+    borderRight: "1px solid #e5e7eb",
+    boxSizing: "border-box"
+  },
+
+  fundusTableWrapper: {
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    overflow: "hidden",
+    marginTop: 8
+  },
+
+  fundusTableRow: {
+    display: "grid",
+    gridTemplateColumns: "150px 1fr 1fr",
+    borderBottom: "1px solid #e5e7eb",
+    alignItems: "center"
+  },
+
+  fundusTableRowLabel: {
+    padding: "12px",
+    fontWeight: 600,
+    color: "#0F172A",
+    fontSize: 14,
+    backgroundColor: "#f9fafb",
+    borderRight: "1px solid #e5e7eb",
+    textAlign: "left"
+  },
+
+  fundusTableColumn: {
+    padding: "12px",
+    borderRight: "1px solid #e5e7eb"
+  }
 };
