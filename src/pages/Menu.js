@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as React from "react";
-import { FaBell, FaUserCircle } from "react-icons/fa"; // Font Awesome icons
+// Font Awesome icons
 import { useParams } from "react-router-dom";
 import DashboardTab from "../components/DashboardTab";
 import ClinicalSwallowEvaluation from "../components/ClinicalSwallowEvaluation";
@@ -56,7 +56,6 @@ const userRole = localStorage.getItem("userRole");
 /* If CRA proxy set to http://127.0.0.1:5000 keep API="". Otherwise set REACT_APP_API. */
 const API = process.env.REACT_APP_API || "";
 
-const GAS_BASE = `${API}/gas`;
 export default function App() {
   const [tab, setTab] = useState(""); // "PERSONAL" | "ICD" | "ICF" | "ICHI" | "SUMMARY"
 
@@ -73,7 +72,7 @@ const [vitalsPatient, setVitalsPatient] = useState(null);
   const [soap, setSoap] = useState({}); // Assessment & Encounter (SOAP)
 
   const [tps, setTps] = useState({}); // TPS
-  const [rap, setRap] = useState({}); // RAP
+  // RAP state removed (unused)
   const [rapPercent, setRapPercent] = useState(0); // show "60%" in left rail
   const handleUserSelection = (type) => {
     setUserType(type);
@@ -279,17 +278,6 @@ function updatePatientInMainList(updatedPatient) {
   setPatients(prev => [...prev, p]);
 }
   
-  const [showAllergy, setShowAllergy] = React.useState(false);
-
-  React.useEffect(() => {
-    let t;
-    if (mode === "existing") {
-      t = setTimeout(() => setShowAllergy(true), 3000); // show after 3s
-    } else {
-      setShowAllergy(false);
-    }
-    return () => clearTimeout(t);
-  }, [mode]);
 useEffect(() => {
   window.openVitals = (patient) => {
     setVitalsPatient(patient);
