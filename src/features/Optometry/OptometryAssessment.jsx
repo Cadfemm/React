@@ -10,6 +10,7 @@ import OcularHealthAssessment from "./OcularHealthAssessment";
 import OptometryIAAssessment from "./OptometryIA";
 import SpecialDiagnosticAssessment from "./SpecialDiagnostic";
 import LVQoLForm from "./LowVisionQualityAssessment";
+import BrainVisionInjury from "./BrainVisionInjury";
 // import SpeechLanguageAssessment from "./AdultSpeechandLanguage";
 // import VoiceAssessment from "./AdultVoice";
 // import TracheostomyWeaningEvaluation from "./AdultTracheostomy";
@@ -60,6 +61,7 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
     "Ocular Health/Structure",
     "Special Diagnostic",
     "Low Vision Quality of Life Questionnaire (LVQoL)",
+    "Brain Vision Injury"
   ]
 
   const [activeTab, setActiveTab] = useState(0);
@@ -196,6 +198,13 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
 
             {tabs[activeTab] === "Low Vision Quality of Life Questionnaire (LVQoL)" && (
             <LVQoLForm
+                patient={patient}
+                onChange={setPaedFeeding}
+                onBack={onBack}
+            />
+            )}
+            {tabs[activeTab] === "Brain Vision Injury" && (
+            <BrainVisionInjury
                 patient={patient}
                 onChange={setPaedFeeding}
                 onBack={onBack}

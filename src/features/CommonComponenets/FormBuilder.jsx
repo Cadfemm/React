@@ -676,55 +676,49 @@ function renderField(
 
     case "scale-table":
       return (
-        <div style={{ marginBottom: 24 }}>
-          {field.title && (
-            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10 }}>
-              {field.title}
-            </div>
-          )}
+       <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+  <colgroup>
+    <col style={{ width: "45%" }} />
+    {field.columns.map((_, i) => (
+      <col key={i} style={{ width: `${55 / field.columns.length}%` }} />
+    ))}
+  </colgroup>
 
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              tableLayout: "fixed"
-            }}
-          >
-            <thead>
-              <tr>
-                <th style={styles.th}></th>
-                {field.columns.map(col => (
-                  <th key={col.value} style={styles.th}>
-                    {col.label}
-                    <div style={{ fontWeight: 700 }}>({col.value})</div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
+  <thead>
+    <tr>
+      <th style={styles.th}></th>
+      {field.columns.map(col => (
+        <th key={col.value} style={styles.th}>
+          {col.label}
+          <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
+        </th>
+      ))}
+    </tr>
+  </thead>
 
-            <tbody>
-              {field.rows.map((rowLabel, rIdx) => {
-                const rowKey = `${field.name}_${rIdx}`;
-                return (
-                  <tr key={rowKey}>
-                    <td style={styles.tdLabel}>{rowLabel}</td>
+  <tbody>
+    {field.rows.map((rowLabel, rIdx) => {
+      const rowKey = `${field.name}_${rIdx}`;
+      return (
+        <tr key={rowKey}>
+          <td style={styles.tdLabel}>{rowLabel}</td>
+          {field.columns.map(col => (
+            <td key={col.value} style={styles.td}>
+              <input
+                type="radio"
+                name={rowKey}
+                checked={values[rowKey] === col.value}
+                onChange={() => onChange(rowKey, col.value)}
+              />
+            </td>
+          ))}
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
 
-                    {field.columns.map(col => (
-                      <td key={col.value} style={styles.td}>
-                        <input
-                          type="radio"
-                          name={rowKey}
-                          checked={values[rowKey] === col.value}
-                          onChange={() => onChange(rowKey, col.value)}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+
       );
 
 
@@ -1898,28 +1892,29 @@ const styles = {
     color: "#0F172A"
   },
 
-  // styles (can be reused from your DASS modal)
-  th: {
+ th : {
   border: "1px solid #CBD5E1",
-  padding: 10,
+  padding: "10px 6px",
   fontSize: 13,
   textAlign: "center",
-  background: "#F8FAFC",
-  fontWeight: 600
+  background: "#F1F5F9",   
+  color: "#0F172A",        
+  fontWeight: 700,
+  lineHeight: 1.2
 },
 
   tdLabel: {
-  border: "1px solid #CBD5E1",
-  padding: 10,
-  fontWeight: 600,
-  width: "40%"
-},
+    border: "1px solid #CBD5E1",
+    padding: 10,
+    fontWeight: 600,
+    width: "40%"
+  },
 
   td: {
-  border: "1px solid #CBD5E1",
-  textAlign: "center",
-  padding: 8
-},
+    border: "1px solid #CBD5E1",
+    textAlign: "center",
+    padding: 8
+  },
 
   scoreValue: {
     minWidth: 48,
