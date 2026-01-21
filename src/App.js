@@ -18,47 +18,58 @@ import SpinalInjury from "./pages/SpinalInjury";
 import stroke from "./pages/stroke";
 import latest from "./pages/Carddisplay.js";
 import PatientDetails from "./features/Psychology/components/PatientDetails.jsx";
-import PsychologyDashboard from "./features/Psychology/components/PychologyDashboard.jsx";
-import Patients from "./features/Psychology/components/PsychologyPatients.jsx";
 
 function App() {
-  return (
-    <div className="App">
-      <Router>
-        {/* Navbar */}
-        {/* <Route
-          render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Navbar />}
-        /> */}
+  console.log("App component rendering...");
+  
+  try {
+    return (
+      <div className="App">
+        <Router basename="/React">
+          {/* Navbar */}
+          {/* <Route
+            render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Navbar />}
+          /> */}
 
-        {/* Switch and Routes */}
-        <Switch>
-          <Route path="/Home" exact component={Home} />
-          <Route path="/menu/:mode?" exact component={Menu} />
-          <Route path="/about" exact component={About} />
-          <Route path="/Patients" exact component={Cyberdyne} />
-          <Route path="/Neurophysics" exact component={pablotests} />
-          <Route path="/" exact component={Login} />
-          <Route path="/contact" exact component={Contact} />
-          <Route path="/AdminTherapist" exact component={treatments} />
-          <Route path="/CMO" exact component={Tymo} />
-          <Route path="/HOD" exact component={Plabo} />
-          <Route path="/Doctor" exact component={stroke} />
-          <Route path="/Spinalinjury" exact component={SpinalInjury} />
-          <Route path="/Output" exact component={Output} />
-          <Route path="/Signup" exact component={Signup} />
+          {/* Switch and Routes */}
+          <Switch>
+            <Route path="/Home" exact component={Home} />
+            <Route path="/menu/:mode?" exact component={Menu} />
+            <Route path="/about" exact component={About} />
+            <Route path="/Patients" exact component={Cyberdyne} />
+            <Route path="/Neurophysics" exact component={pablotests} />
+            <Route path="/" exact component={Login} />
+            <Route path="/contact" exact component={Contact} />
+            <Route path="/AdminTherapist" exact component={treatments} />
+            <Route path="/CMO" exact component={Tymo} />
+            <Route path="/HOD" exact component={Plabo} />
+            <Route path="/Doctor" exact component={stroke} />
+            <Route path="/Spinalinjury" exact component={SpinalInjury} />
+            <Route path="/Output" exact component={Output} />
+            <Route path="/Signup" exact component={Signup} />
 
-          <Route path="/psychology/patient/:id" element={<PatientDetails />} />
-          <Route path="/Modalities" exact component={latest} />
+            <Route path="/psychology/patient/:id" exact component={PatientDetails} />
+            <Route path="/Modalities" exact component={latest} />
 
-        </Switch>
+          </Switch>
 
-        {/* Footer */}
-        {/* <Route
-          render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Footer />}
-        /> */}
-      </Router>
-    </div>
-  );
+          {/* Footer */}
+          {/* <Route
+            render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Footer />}
+          /> */}
+        </Router>
+      </div>
+    );
+  } catch (error) {
+    console.error("App rendering error:", error);
+    return (
+      <div style={{ padding: "20px", color: "red", backgroundColor: "white" }}>
+        <h1>Application Error</h1>
+        <p>{error.toString()}</p>
+        <pre>{error.stack}</pre>
+      </div>
+    );
+  }
 }
 
 export default App;
