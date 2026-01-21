@@ -694,7 +694,7 @@ function renderField(
               <tr>
                 <th style={styles.th}></th>
                 {field.columns.map(col => (
-                  <th key={col.value} style={th}>
+                  <th key={col.value} style={styles.th}>
                     {col.label}
                     <div style={{ fontWeight: 700 }}>({col.value})</div>
                   </th>
@@ -707,10 +707,10 @@ function renderField(
                 const rowKey = `${field.name}_${rIdx}`;
                 return (
                   <tr key={rowKey}>
-                    <td style={tdLabel}>{rowLabel}</td>
+                    <td style={styles.tdLabel}>{rowLabel}</td>
 
                     {field.columns.map(col => (
-                      <td key={col.value} style={td}>
+                      <td key={col.value} style={styles.td}>
                         <input
                           type="radio"
                           name={rowKey}
