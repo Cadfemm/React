@@ -3,7 +3,7 @@ import "../styles/Signup.css";
 import Loginnav from "../components/Loginnav";
 import "../styles/Signin.css";
 import PizzaLeft from "../assets/signup.jpg";
-import {useHistory , Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -47,7 +47,7 @@ const Signup = () => {
 <Loginnav />
     <div className="signup-container">
       <div className="signup-image">
-        <img src={PizzaLeft} alt="Signup Image" />
+        <img src={PizzaLeft} alt="Signup" />
       </div>
       <div className="signup-content">
         <h2>Register Here</h2>
