@@ -69,12 +69,7 @@ const btnReport = {
   ];
 
   const meals = [
-    { key: "breakfast", label: "BREAKFAST" },
-    { key: "morning_tea", label: "MORNING TEA" },
-    { key: "lunch", label: "LUNCH" },
-    { key: "afternoon_tea", label: "AFTERNOON TEA" },
-    { key: "dinner", label: "DINNER" },
-    { key: "supper", label: "SUPPER" },
+    { key: "breakfast", label: "Meal Plan" },
   ];
   // selection UI (single ICD kept for compatibility)
   var [selectedICD, setSelectedICD] = useState("");
@@ -1484,12 +1479,6 @@ function saveProgressReport() {
                   ))}
                 </select>
 
-                <input
-                  type="time"
-                  style={styles.input}
-                  value={form[`${meal.key}_time`]}
-                  onChange={(e) => setField(`${meal.key}_time`, e.target.value)}
-                />
               </div>
             </div>
           ))}
