@@ -44,7 +44,7 @@ export default function ICDInfinite({ onDeepestICDChange, onPathChange }) {
         setBusy(false);
       }
     })();
-  }, []);
+}, [onDeepestICDChange, onPathChange]);
 
   const ensureLevel = (idx) => {
     setLevels((prev) => {
