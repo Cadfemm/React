@@ -37,7 +37,7 @@ export default function TracheostomyWeaningEvaluation({onBack}) {
 
           },
 
-          { type: "subheading", label: "Presenting Complaints" },
+          { type: "subheading", label: "Chief Complaint" },
 
 {
   name: "presenting_complaints",
@@ -527,9 +527,22 @@ export default function TracheostomyWeaningEvaluation({onBack}) {
          A – ANALYSIS / ASSESSMENT
       ====================================================== */
       {
-        title: "Analysis / Assessment",
+        title: "Assessment",
         fields: [
 
+{
+  name: "noDifficulties",
+  label: "No difficulties observed during tracheostomy weaning. The patient is a suitable candidate to proceed with the tracheostomy weaning programme.",
+  type: "checkbox-group",
+  options: [{ label: "No difficulties observed during tracheostomy weaning. The patient is a suitable candidate to proceed with the tracheostomy weaning programme.", value: "no_difficulties" }]
+},
+
+{
+  name: "patientPresents",
+  label: "The patient presents with poor tolerance to tracheostomy capping and currently requires full tracheostomy dependence.",
+  type: "checkbox-group",
+  options: [{ label: "The patient presents with poor tolerance to tracheostomy capping and currently requires full tracheostomy dependence.", value: "patient_presents" }]
+},
 
           {
             name: "associated_conditions",

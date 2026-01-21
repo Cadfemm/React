@@ -870,7 +870,7 @@ const FEEDING_SCHEMA = {
            A – ANALYSIS
         ====================== */
 
-        { type: "subheading", label: "Analysis / Assessment" },
+        { type: "subheading", label: "Assessment" },
 
         {
           name: "feedingDiagnosis",

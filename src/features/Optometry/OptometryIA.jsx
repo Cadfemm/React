@@ -536,50 +536,50 @@ export default function OptometryIAAssessment({ onBack }) {
 
                     {
                         type: "grid-header",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_aided_distance",
                         label: "Distance",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_aided_near",
                         label: "Near",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_aided_remark",
                         label: "Remark",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
 
                     { type: "subheading", label: "Visual Acuity – Unaided" },
 
                     {
                         type: "grid-header",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_unaided_distance",
                         label: "Distance",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_unaided_near",
                         label: "Near",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
                     {
                         type: "grid-row",
                         name: "va_unaided_remark",
                         label: "Remark",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["RE", "Left Eye (LE)", "BE"]
                     },
 
                     {
@@ -682,7 +682,7 @@ export default function OptometryIAAssessment({ onBack }) {
                         type: "row",
                         fields: [
                             { type: "input", name: "tonometry_re", label: "Tonometry RE (mmHg @ time)" },
-                            { type: "input", name: "tonometry_le", label: "Tonometry LE (mmHg @ time)" }
+                            { type: "input", name: "tonometry_le", label: "Tonometry Left Eye (LE) (mmHg @ time)" }
                         ]
                     },
 
