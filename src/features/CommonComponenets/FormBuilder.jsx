@@ -666,11 +666,34 @@ function renderField(
                     onChange(`${field.name}_${row.key}_${h}`, e.target.value)
                   }
                 />
-              ))}
-            </div>
-          ))}
-        </div>
-      );
+              </div>
+            ))}
+          </div>
+        );
+      }
+      case "row":
+        const columns = field.columns || 2;
+        const gridCols = `repeat(${columns}, 1fr)`;
+        return (
+          <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 16 }}>
+            {field.fields.map(f => {
+              const v = values[f.name];
+              return (
+                <div key={f.name}>
+                  {f.label && (
+                    <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
+                      {f.label}
+                    </label>
+                  )}
+                  {renderField(f, v, values, onChange, onAction, assessmentRegistry)}
+                </div>
+              );
+            })}
+          </div>
+        );
+      case "multi-notes":
+        const selected = values[field.source] || [];
+        if (!selected.length) return null;
 
 
 
