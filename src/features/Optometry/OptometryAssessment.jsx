@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState } from "react";
 
 // import PaedIASpeechLanguage from "./PaedSpeechAssessment";
 // import PaedIAFeeding from "./PaedFeedingAssessment";
@@ -11,6 +11,8 @@ import OptometryIAAssessment from "./OptometryIA";
 import SpecialDiagnosticAssessment from "./SpecialDiagnostic";
 import LVQoLForm from "./LowVisionQualityAssessment";
 import BrainVisionInjury from "./BrainVisionInjury";
+import VisualFunctionForm from "./VisionFunctionalAssessmenmt";
+import BVDAssessment from "./BvdqAssessment";
 // import SpeechLanguageAssessment from "./AdultSpeechandLanguage";
 // import VoiceAssessment from "./AdultVoice";
 // import TracheostomyWeaningEvaluation from "./AdultTracheostomy";
@@ -52,20 +54,7 @@ import BrainVisionInjury from "./BrainVisionInjury";
 
 export default function AssessmentForm({ patient, onSave, onBack }) {
   const isAdult = patient?.age >= 20;
-
-  const tabs = [
-    "Optometry Initial Assessment",
-    "BINOCULAR VISION",
-    "VISION FOR DRIVING",
-    "REFRACTION ASSESSMENT",
-    "Ocular Health/Structure",
-    "Special Diagnostic",
-    "Low Vision Quality of Life Questionnaire (LVQoL)",
-    "Brain Vision Injury"
-  ]
-
-  const [activeTab, setActiveTab] = useState(0);
-  const scrollRef = useRef(null);
+  const [activeAssessmentKey, setActiveAssessmentKey] = useState(null);
 
   /* --------- Store Form Results --------- */
   const [adultCSE, setAdultCSE] = useState(null);
@@ -77,15 +66,62 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
   const [paedSpeech, setPaedSpeech] = useState(null);
   const [paedFeeding, setPaedFeeding] = useState(null);
 
-  const handleTabClick = (index) => {
-    setActiveTab(index);
-    if (scrollRef.current && scrollRef.current.children[index]) {
-      scrollRef.current.children[index].scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-      });
-    }
-  };
+  const objectiveAssessments = [
+    {
+      key: "BINOCULAR_VISION",
+      label: "Binocular Vision",
+      Component: BinocularVisionAssessment,
+      onChange: setBinocularVision,
+    },
+    {
+      key: "REFRACTION",
+      label: "Refraction Assessment",
+      Component: RefractionAssessment,
+      onChange: setAdultSpeech,
+    },
+    {
+      key: "VISION_DRIVING",
+      label: "Vision For Driving",
+      Component: VisionAssessment,
+      onChange: setAdultVoice,
+    },
+    {
+      key: "OCULAR_HEALTH",
+      label: "Ocular Health / Structure",
+      Component: OcularHealthAssessment,
+      onChange: setAdultTrache,
+    },
+    {
+      key: "SPECIAL_DIAGNOSTIC",
+      label: "Special Diagnostic",
+      Component: SpecialDiagnosticAssessment,
+      onChange: setPaedFeeding,
+    },
+    {
+      key: "LVQOL",
+      label: "Low Vision Quality of Life Questionnaire (LVQoL)",
+      Component: LVQoLForm,
+      onChange: setPaedFeeding,
+    },
+    {
+      key: "BRAIN_VISION",
+      label: "Brain Vision Injury",
+      Component: BrainVisionInjury,
+      onChange: setPaedFeeding,
+    },
+    {
+      key: "VISUAL_FUNCTION",
+      label: "Visual Function Questionnaire",
+      Component: VisualFunctionForm,
+      onChange: setPaedFeeding,
+    },
+    {
+      key: "BVDQ",
+      label: "BVDQ Assessment",
+      Component: BVDAssessment,
+      onChange: setPaedFeeding,
+    },
+  ];
 
   const handleSaveAssessment = () => {
     if (!patient) {
@@ -119,100 +155,85 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
     alert("Assessment saved successfully");
   };
 
+  const handleObjectiveAction = (action) => {
+    if (action?.startsWith("open_obj_")) {
+      const key = action.replace("open_obj_", "");
+      setActiveAssessmentKey(key);
+    }
+  };
+
   return (
     <div style={styles.container}>
-      {/* ================= TABS ================= */}
-      <div style={{ marginTop: 12 }}>
-        <div ref={scrollRef} style={styles.tabsRow}>
-          {tabs.map((tab, index) => (
+      {/* Objective assessments quick access (always visible)
+      <div style={styles.objectiveWrapper}>
+        <div style={styles.objectiveTitle}>Objective Assessments</div>
+        <div style={styles.objectiveRow}>
+          {objectiveAssessments.map((item) => (
             <button
-              key={index}
-              onClick={() => handleTabClick(index)}
-              style={{
-                ...styles.tabBtn,
-                background: activeTab === index ? "#2563EB" : "transparent",
-                color: activeTab === index ? "#fff" : "#111827",
-                border:
-                  activeTab === index
-                    ? "2px solid #2563EB"
-                    : "1px solid #E5E7EB",
-              }}
+              key={item.key}
+              style={styles.objectiveBtn}
+              onClick={() =>
+                setActiveAssessmentKey((prev) =>
+                  prev === item.key ? null : item.key
+                )
+              }
             >
-              {tab}
+              {item.label}
             </button>
           ))}
         </div>
+        <div style={styles.helperText}>
+          Click an assessment to open it right below.
+        </div>
       </div>
 
-      <div style={styles.divider} />
-
-      {/* ================= FORM CONTENT ================= */}
-      <div>
-        {tabs[activeTab] === "BINOCULAR VISION" && (
-          <BinocularVisionAssessment
-            patient={patient}
-            onBack={onBack}
-            onSubmit={setBinocularVision}
-          />
-        )}
-
-        {tabs[activeTab] === "REFRACTION ASSESSMENT" && (
-          <RefractionAssessment
-            patient={patient}
-            onChange={setAdultSpeech}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "VISION FOR DRIVING" && (
-          <VisionAssessment
-            patient={patient}
-            onChange={setAdultVoice}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "Ocular Health/Structure" && (
-          <OcularHealthAssessment
-            patient={patient}
-            onChange={setAdultTrache}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "Optometry Initial Assessment" && (
-          <OptometryIAAssessment
-            patient={patient}
-            onChange={setPaedSpeech}
-            onBack={onBack}
-          />
-        )}
-
-            {tabs[activeTab] === "Special Diagnostic" && (
-            <SpecialDiagnosticAssessment
+      {activeAssessmentKey && (
+        <InlineAssessmentCard
+          title={
+            objectiveAssessments.find((a) => a.key === activeAssessmentKey)
+              ?.label || "Assessment"
+          }
+          onClose={() => setActiveAssessmentKey(null)}
+        >
+          {(() => {
+            const item = objectiveAssessments.find(
+              (a) => a.key === activeAssessmentKey
+            );
+            if (!item) return null;
+            const { Component, onChange } = item;
+            return (
+              <Component
                 patient={patient}
-                onChange={setPaedFeeding}
-                onBack={onBack}
-            />
-            )}
+                onBack={() => setActiveAssessmentKey(null)}
+                onChange={onChange}
+                onSubmit={onChange}
+              />
+            );
+          })()}
+        </InlineAssessmentCard>
+      )} */}
 
-            {tabs[activeTab] === "Low Vision Quality of Life Questionnaire (LVQoL)" && (
-            <LVQoLForm
-                patient={patient}
-                onChange={setPaedFeeding}
-                onBack={onBack}
-            />
-            )}
-            {tabs[activeTab] === "Brain Vision Injury" && (
-            <BrainVisionInjury
-                patient={patient}
-                onChange={setPaedFeeding}
-                onBack={onBack}
-            />
-            )}
+      {/* Primary: Optometry Initial Assessment */}
+      <OptometryIAAssessment
+        patient={patient}
+        onChange={setPaedSpeech}
+        onBack={onBack}
+        onAction={handleObjectiveAction}
+      />
+    </div>
+  );
+}
+
+function InlineAssessmentCard({ title, children, onClose }) {
+  return (
+    <div style={styles.inlineCard}>
+      <div style={styles.inlineHeader}>
+        <div style={styles.inlineTitle}>{title}</div>
+        <button style={styles.closeBtn} onClick={onClose}>
+          ✕
+        </button>
       </div>
-
-     
+      <div style={styles.inlineBody}>{children}</div>
     </div>
   );
 }
@@ -224,29 +245,6 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     boxSizing: "border-box",
-  },
-
-  tabsRow: {
-    display: "flex",
-    gap: 14,
-    overflowX: "auto",
-    scrollbarWidth: "none",
-    msOverflowStyle: "none",
-  },
-
-  tabBtn: {
-    padding: "10px 18px",
-    borderRadius: 8,
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 500,
-    whiteSpace: "nowrap",
-    background: "transparent",
-  },
-
-  divider: {
-    margin: "12px 0",
-    borderBottom: "2px solid #E5E7EB",
   },
 
   saveBtn: {
@@ -265,5 +263,85 @@ const styles = {
     background: "#F3F4F6",
     border: "1px solid #E5E7EB",
     cursor: "pointer",
+  },
+
+  objectiveWrapper: {
+    marginTop: 20,
+    padding: 16,
+    border: "1px solid #E5E7EB",
+    borderRadius: 10,
+    background: "#F8FAFC",
+  },
+
+  objectiveTitle: {
+    fontSize: 16,
+    fontWeight: 700,
+    marginBottom: 12,
+    color: "#0F172A",
+  },
+
+  objectiveRow: {
+    display: "flex",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+
+  objectiveBtn: {
+    padding: "10px 14px",
+    borderRadius: 8,
+    border: "1px solid #CBD5E1",
+    background: "#fff",
+    cursor: "pointer",
+    fontWeight: 600,
+    color: "#0F172A",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+  },
+
+  helperText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: "#475569",
+  },
+
+  inlineCard: {
+    marginTop: 16,
+    border: "1px solid #E5E7EB",
+    borderRadius: 8,
+    background: "#fff",
+    overflow: "visible",
+    boxShadow: "none",
+  },
+
+  inlineHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 14px",
+    borderBottom: "1px solid #E5E7EB",
+    background: "#F8FAFC",
+  },
+
+  inlineTitle: {
+    fontSize: 17,
+    fontWeight: 700,
+    color: "#0F172A",
+  },
+
+  closeBtn: {
+    border: "1px solid #CBD5E1",
+    background: "#fff",
+    fontSize: 16,
+    cursor: "pointer",
+    color: "#0F172A",
+    padding: "6px 10px",
+    borderRadius: 999,
+    transition: "all 0.2s ease",
+  },
+
+  inlineBody: {
+    padding: 14,
+    background: "#fff",
+    maxHeight: "none",
+    overflowY: "visible",
   },
 };

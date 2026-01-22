@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function RefractionAssessment({ onBack }) {
+export default function RefractionAssessment({ onBack , layout = "root"}) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const RefractionAssessmentSchema ={
@@ -12,7 +12,22 @@ export default function RefractionAssessment({ onBack }) {
         title: "Subjective",
         fields: [
           { type: "subheading", label: "Refraction Assessment" },
- 
+{
+  type: "row",
+  fields: [
+    {
+      type: "file-upload-modal",
+      label: "Auto-refractor File",
+      name: "auto_refractor_file"
+    },
+    {
+      type: "file-upload-modal",
+      label: "Keratometry Reading File",
+      name: "keratometry_reading_file"
+    }
+  ]
+},
+
           {
                 type: "textarea",
                 name: "auto_refractor",
@@ -129,6 +144,7 @@ export default function RefractionAssessment({ onBack }) {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
+        layout={layout}
     />
   );
 }

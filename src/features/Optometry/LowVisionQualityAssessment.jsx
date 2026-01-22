@@ -49,7 +49,7 @@ const questions = [
 
 
 const schema ={
-  title: "LVQoL",
+  title: "Low Vision Quality of Life Questionnaire (LVQoL)",
   sections: [
     {
       title: "Distance, Mobility & Lighting",
@@ -334,7 +334,7 @@ function calculateLVQoL(values) {
 }
 
 
-export default function LVQoLForm() {
+export default function LVQoLForm( layout = "root") {
   const [values, setValues] = React.useState({});
 
  const handleChange = (name, value) => {
@@ -361,6 +361,7 @@ export default function LVQoLForm() {
         values={values}
         onChange={handleChange}
         submitted={false}
+          layout={layout}
       />
 
       {/* ===== SUMMARY (Outside Schema) ===== */}

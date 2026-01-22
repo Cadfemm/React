@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function BrainVisionInjury ({ onBack }) {
+export default function BrainVisionInjury ({ onBack, layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
  const scaleColumns = [
@@ -13,7 +13,7 @@ export default function BrainVisionInjury ({ onBack }) {
 ];
 
 const schema = {
-  title: "Visual Symptoms Frequency",
+  title: "Brain Injury Vision Symptoms Survey (BIVSS)",
   sections: [
     {
       title: "VISION CLARITY",
@@ -172,6 +172,7 @@ const schema = {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
+        layout={layout}
     />
   );
 }

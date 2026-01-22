@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function SpecialDiagnosticAssessment({ onBack }) {
+export default function SpecialDiagnosticAssessment({ onBack, layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const OcularHealthAssessmentSchema ={
@@ -255,6 +255,7 @@ export default function SpecialDiagnosticAssessment({ onBack }) {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
+        layout={layout}
     />
   );
 }

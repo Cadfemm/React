@@ -2,24 +2,20 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function OcularHealthAssessment({ onBack }) {
+export default function OcularHealthAssessment({ onBack , layout = "root"}) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const OcularHealthAssessmentSchema ={
   title: "Ocular Health / Structure",
   fields: [
-  {
+
+
+ {
       type: "row",
       fields: [
-         {
-      type: "date",
-      name: "anterior_date",
-      label: "Date"
-    },
+        { type: "date", name: "anterior_date", label: "Date", format: "DD/MM/YYYY" }
       ]
     },
-
-
 
     // {
     //   type: "row",
@@ -32,6 +28,16 @@ export default function OcularHealthAssessment({ onBack }) {
     {
       type: "grid-header",
       cols: ["Right Eye (RE)", "Left Eye (LE)", "Comment / Remark"]
+    },
+     {
+      type: "grid-row",
+      name: "Eyelashes_Images",
+      label: "Eyelashes Images",
+      cols: [
+        { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
+        { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
+        "textarea"
+      ]
     },
 
     // ===== FREE TEXT =====
@@ -232,6 +238,7 @@ export default function OcularHealthAssessment({ onBack }) {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
+        layout={layout}
     />
   );
 }

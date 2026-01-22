@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function BinocularVisionAssessment({ onBack }) {
+export default function BinocularVisionAssessment({ onBack,  layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const VisionTherapyAssessmentSchema = {
@@ -18,7 +18,7 @@ export default function BinocularVisionAssessment({ onBack }) {
               {
                 type: "radio",
                 name: "which_eye",
-                label: "Which eye",
+                label: "Eye",
                 options: [
                   { label: "Right", value: "right" },
                   { label: "Left", value: "left" },
@@ -45,10 +45,7 @@ export default function BinocularVisionAssessment({ onBack }) {
  
           { type: "subheading", label: "History" },
  
-          {
-            type: "row",
-            fields: [
-              {
+      {
                 type: "radio",
                 name: "onset",
                 label: "Onset",
@@ -66,29 +63,24 @@ export default function BinocularVisionAssessment({ onBack }) {
                   { label: "Intermittent", value: "intermittent" },
                   { label: "Alternating", value: "alternating" }
                 ]
-              }
-            ]
-          },
- 
-          {
-            type: "row",
-            fields: [
+              },
+          
+      
               {
                 type: "radio",
                 name: "was_he_been",
-                label: "Was he / she been",
+                label: "Neurological disease",
                 options: [
                   { label: "Yes", value: "yes" },
                   { label: "No", value: "no" }
                 ]
-              }
-            ]
-          },
+              },
+       
  
           {
             type: "textarea",
             name: "was_he_been_specify",
-            label: "Please specify",
+            label: "Neurologica - specify",
             showIf: {
               field: "was_he_been",
               equals: "yes"
@@ -730,6 +722,7 @@ export default function BinocularVisionAssessment({ onBack }) {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
+        layout={layout}
     />
   );
 }

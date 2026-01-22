@@ -266,56 +266,6 @@ function InfoTooltip({ info }) {
 }
 
 
-function AssessmentLauncher({
-  field,
-  values,
-  onChange,
-  assessmentRegistry
-}) {
-  const activeKey = `${field.name}_active`;
-  const active = values[activeKey] || null;
-  const ActiveComponent = active
-    ? assessmentRegistry?.[active]
-    : null;
-
-  return (
-    <div>
-      <div style={styles.inlineGroup}>
-        {field.options.map(opt => (
-          <button
-            key={opt.value}
-            style={{
-              ...styles.btnOutline,
-              background:
-                active === opt.value ? "#2563EB" : "#fff",
-              color:
-                active === opt.value ? "#fff" : "#111827"
-            }}
-            onClick={() =>
-              onChange(
-                activeKey,
-                active === opt.value ? null : opt.value
-              )
-            }
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
-      {ActiveComponent ? (
-        <div style={{ marginTop: 20 }}>
-          <ActiveComponent values={values} onChange={onChange} />
-        </div>
-      ) : active ? (
-        <div style={{ marginTop: 10, color: "red" }}>
-          ⚠ No component registered for: <b>{active}</b>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
 
 
 
@@ -548,6 +498,49 @@ function FileUploadModal({ field, value, onChange }) {
   );
 }
 
+function AssessmentLauncher({
+  field,
+  values,
+  onChange,
+  assessmentRegistry
+}) {
+  const activeKey = `${field.name}_active`;
+  const active = values[activeKey] || null;
+  const ActiveComponent = active
+    ? assessmentRegistry?.[active]
+    : null;
+
+  return (
+    <div>
+      <div style={styles.inlineGroup}>
+        {field.options.map(opt => (
+          <button
+            key={opt.value}
+            style={{
+              ...styles.btnOutline,
+              background: active === opt.value ? "#2563EB" : "#fff",
+              color: active === opt.value ? "#fff" : "#111827"
+            }}
+            onClick={() =>
+              onChange(
+                activeKey,
+                active === opt.value ? null : opt.value
+              )
+            }
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {ActiveComponent ? (
+        <div style={{ marginTop: 20, width: '100%' }}>
+          <ActiveComponent values={values} onChange={onChange}  layout="nested" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 function RadioMatrixRow({ field, value, onChange }) {
   return (
@@ -676,47 +669,51 @@ function renderField(
 
     case "scale-table":
       return (
-       <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
-  <colgroup>
-    <col style={{ width: "45%" }} />
-    {field.columns.map((_, i) => (
-      <col key={i} style={{ width: `${55 / field.columns.length}%` }} />
-    ))}
-  </colgroup>
 
-  <thead>
-    <tr>
-      <th style={styles.th}></th>
-      {field.columns.map(col => (
-        <th key={col.value} style={styles.th}>
-          {col.label}
-          <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
-        </th>
-      ))}
-    </tr>
-  </thead>
+        <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+          <colgroup>
+            <col style={{ width: "45%" }} />
+            {field.columns.map((_, i) => (
+              <col key={i} style={{ width: `${55 / field.columns.length}%` }} />
+            ))}
+          </colgroup>
 
-  <tbody>
-    {field.rows.map((rowLabel, rIdx) => {
-      const rowKey = `${field.name}_${rIdx}`;
-      return (
-        <tr key={rowKey}>
-          <td style={styles.tdLabel}>{rowLabel}</td>
-          {field.columns.map(col => (
-            <td key={col.value} style={styles.td}>
-              <input
-                type="radio"
-                name={rowKey}
-                checked={values[rowKey] === col.value}
-                onChange={() => onChange(rowKey, col.value)}
-              />
-            </td>
-          ))}
-        </tr>
-      );
-    })}
-  </tbody>
-</table>
+          <thead>
+            <tr>
+              <th style={styles.th}></th>
+              {field.columns.map(col => (
+                <th key={col.value} style={styles.th}>
+                  {col.label}
+                  {!col?.required && (
+                    <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
+                  )}
+
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {field.rows.map((rowLabel, rIdx) => {
+              const rowKey = `${field.name}_${rIdx}`;
+              return (
+                <tr key={rowKey}>
+                  <td style={styles.tdLabel}>{rowLabel}</td>
+                  {field.columns.map(col => (
+                    <td key={col.value} style={styles.td}>
+                      <input
+                        type="radio"
+                        name={rowKey}
+                        checked={values[rowKey] === col.value}
+                        onChange={() => onChange(rowKey, col.value)}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
 
 
       );
@@ -761,8 +758,27 @@ function renderField(
       );
     }
     case "row":
+      // If this row is only buttons, pack them tightly like a toolbar (no big gaps)
+      // Otherwise, keep a responsive grid for typical form fields.
+      const rowAllButtons = (field.fields || []).every(f => f?.type === "button");
       return (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div
+          style={{
+            ...(rowAllButtons
+              ? {
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 16,
+                alignItems: "center",
+                justifyContent: "flex-start"
+              }
+              : {
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 16
+              })
+          }}
+        >
           {field.fields.map(f => {
             // Check showIf visibility condition
             if (f.showIf) {
@@ -785,8 +801,8 @@ function renderField(
 
             const v = values[f.name];
             return (
-              <div key={f.name}>
-                {f.label && (
+              <div key={f.name} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
+                {f.label && f.type !== "button" && (
                   <label
                     style={{
                       display: "block",
@@ -1455,6 +1471,7 @@ function renderField(
       );
     }
 
+
     case "refraction-table-full": {
       const rows = field.rows || [];
       const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
@@ -1892,16 +1909,16 @@ const styles = {
     color: "#0F172A"
   },
 
- th : {
-  border: "1px solid #CBD5E1",
-  padding: "10px 6px",
-  fontSize: 13,
-  textAlign: "center",
-  background: "#F1F5F9",   
-  color: "#0F172A",        
-  fontWeight: 700,
-  lineHeight: 1.2
-},
+  th: {
+    border: "1px solid #CBD5E1",
+    padding: "10px 6px",
+    fontSize: 13,
+    textAlign: "center",
+    background: "#F1F5F9",
+    color: "#0F172A",
+    fontWeight: 700,
+    lineHeight: 1.2
+  },
 
   tdLabel: {
     border: "1px solid #CBD5E1",
@@ -2010,12 +2027,12 @@ const styles = {
     justifyContent: "space-between"
   },
 
-  radioRow: {
-    display: "grid",
-    gridTemplateColumns: "200px 1fr",
-    alignItems: "center",
-    gap: 24
-  },
+radioRow: {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between", 
+  gap: 24
+},
 
   radioLabel: {
     fontWeight: 600,
@@ -2202,12 +2219,21 @@ const styles = {
     padding: "6px 0"
   },
   btnOutline: {
-    padding: "8px 14px",
+    padding: "10px 16px",
     borderRadius: 999,
     border: "1.5px solid #111827",
     background: "#fff",
     fontWeight: 600,
-    cursor: "pointer"
+    fontSize: 14,
+    cursor: "pointer",
+    color: "#0F172A",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    minWidth: 140,
+    lineHeight: 1.3,
+    boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
   },
   pairedRow: {
     display: "grid",
