@@ -18,6 +18,7 @@ export default function PatientRegister({ addPatient }) {
     date_of_onset: "",
     weight: "",
     height: "",
+    weight_record_date: "",  // Auto-captured when weight/height is entered
     remarks: "",
     diagnosis_history: "",     // NEW FIELD
     medical_history: ""        // NEW FIELD
@@ -86,6 +87,7 @@ const calculateAge = (dob) => {
       weight: form.weight,
       height: form.height,
       bmi: bmi,
+      weight_record_date: form.weight_record_date,  // Date when weight/height was recorded
       remarks: form.remarks,
 
       // NEWLY ADDED FIELDS STORED HERE
@@ -263,7 +265,13 @@ carers: carers,
       <input
         type="number"
         value={form.weight}
-        onChange={e => setField("weight", e.target.value)}
+        onChange={e => {
+          setField("weight", e.target.value);
+          // Auto-capture date when weight is entered
+          if (e.target.value && !form.weight_record_date) {
+            setField("weight_record_date", new Date().toISOString().split('T')[0]);
+          }
+        }}
         style={{ width:"100%" }}
       />
 
@@ -271,7 +279,13 @@ carers: carers,
       <input
         type="number"
         value={form.height}
-        onChange={e => setField("height", e.target.value)}
+        onChange={e => {
+          setField("height", e.target.value);
+          // Auto-capture date when height is entered
+          if (e.target.value && !form.weight_record_date) {
+            setField("weight_record_date", new Date().toISOString().split('T')[0]);
+          }
+        }}
         style={{ width:"100%" }}
       />
 

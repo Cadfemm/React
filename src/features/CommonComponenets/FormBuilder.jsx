@@ -123,6 +123,17 @@ export default function CommonFormBuilder({
                         }
                       }
 
+                      // oneOf (checks if value is one of the provided array of values)
+                      if ("oneOf" in field.showIf) {
+                        const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
+                        if (Array.isArray(depVal)) {
+                          const hasMatch = depVal.some(val => allowedValues.includes(val));
+                          if (!hasMatch) return null;
+                        } else {
+                          if (!allowedValues.includes(depVal)) return null;
+                        }
+                      }
+
                       // includes (works for multi-select / checkbox-group)
                       if ("includes" in field.showIf) {
                         if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {

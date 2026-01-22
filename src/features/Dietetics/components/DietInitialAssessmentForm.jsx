@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PatientReports from "../../PatientReports"; // ⬅ adjust path if needed
 import { BoldIcon } from "lucide-react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 
 export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
@@ -15,28 +16,39 @@ export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
     appetite: "",
     bo: "",
     bo_details: "",
+    bo_pattern_details: "",
     pu: "",
     pu_details: "",
     sleep: "",
     nausea: "",
     vomiting: "",
     other_complaints: "",
-    breakfast_diet: "", breakfast_time: "",
-    morning_tea_diet: "", morning_tea_time: "",
-    lunch_diet: "", lunch_time: "",
-    afternoon_tea_diet: "", afternoon_tea_time: "",
-    dinner_diet: "", dinner_time: "",
-    supper_diet: "", supper_time: "",
+    breakfast_diet: [], breakfast_time: "",
+    morning_tea_diet: [], morning_tea_time: "",
+    lunch_diet: [], lunch_time: "",
+    afternoon_tea_diet: [], afternoon_tea_time: "",
+    dinner_diet: [], dinner_time: "",
+    supper_diet: [], supper_time: "",
+    meal_plan_feeding_type: [],
+    meal_plan_enteral_details: "",
+    meal_plan_mixed_details: "",
+    meal_plan_fluid_details: "",
     from_date: "", to_date: "",
-    diagnosis_problem: "",
+    diagnosis_problems: [], // Array of {problem, etiology, signs}
     diet_breakfast: "",
 diet_morning_tea: "",
 diet_lunch: "",
 diet_afternoon_tea: "",
 diet_supper: "",
+diet_dinner: "",
+feeding_type: [],
+enteral_feeding_details: "",
+mixed_feeding_details: "",
+fluid_intake_details: "",
 ons_regime: "",
-    diagnosis_etiology: "",
-    diagnosis_signs: "",
+    weight_record_date: "",
+    wheelchair_weight: patient.wheelchair_weight || "30",
+    wheelchair_type: patient.wheelchair_type || "light",
   });
 // ----------------------------------------------
 // DOCTOR REPORTS STATE + LOAD
@@ -218,110 +230,110 @@ const IDNT_PROBLEM_CHART = {
 
 "5.9 Inadequate vitamin intake": [
   {
-      label: "Vitamin A",
+      label: "Inadequate - Vitamin A",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin C",
+      label: "Inadequate - Vitamin C",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin D",
+      label: "Inadequate - Vitamin D",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin E",
+      label: "Inadequate - Vitamin E",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin K",
+      label: "Inadequate - Vitamin K",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Thiamin",
+      label: "Inadequate - Thiamin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Riboflavin",
+      label: "Inadequate - Riboflavin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Niacin",
+      label: "Inadequate - Niacin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Folate",
+      label: "Inadequate - Folate",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin B6",
+      label: "Inadequate - Vitamin B6",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin B12",
+      label: "Inadequate - Vitamin B12",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Pantothenic acid",
+      label: "Inadequate - Pantothenic acid",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Biotin",
+      label: "Inadequate - Biotin",
       etiology: "related to poor protein food choices",
     },
 ],
 
-"5.9 Excessive vitamin intake": [
+"5.10 Excessive vitamin intake": [
   {
-      label: "Vitamin A",
+      label: "Excessive - Vitamin A",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin C",
+      label: "Excessive - Vitamin C",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin D",
+      label: "Excessive - Vitamin D",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin E",
+      label: "Excessive - Vitamin E",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin K",
+      label: "Excessive - Vitamin K",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Thiamin",
+      label: "Excessive - Thiamin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Riboflavin",
+      label: "Excessive - Riboflavin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Niacin",
+      label: "Excessive - Niacin",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Folate",
+      label: "Excessive - Folate",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin B6",
+      label: "Excessive - Vitamin B6",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Vitamin B12",
+      label: "Excessive - Vitamin B12",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Pantothenic acid",
+      label: "Excessive - Pantothenic acid",
       etiology: "related to poor protein food choices",
     },
     {
-      label: "Biotin",
+      label: "Excessive - Biotin",
       etiology: "related to poor protein food choices",
     },
 ]
@@ -332,9 +344,9 @@ const vitals = {
   bp: "120 / 80 mmHg",
   pulse: "78 bpm",
   rr: "18 / min",
-  temp: "98.6 °F",
+  temp: "36.6 °C",
   spo2: "98 %",
-  rbs: "110 mg/dL",
+  rbs: "5.4 mmol/L",
   pain: "2 / 10",
 };
 
@@ -366,7 +378,7 @@ const btnReport = {
   const saveOnly = () => {
     const timestamp = new Date().toLocaleString();
 
-    if (form.swallowing_issue?.toUpperCase() === "YES") {
+    if (form.swallowing_issue?.toUpperCase() === "Yes") {
       const newRow = {
         time: timestamp,
         assessment: "IA",
@@ -449,7 +461,7 @@ const submitAndSave = () => {
 
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f9fc", fontFamily: "'Inter', sans-serif" }}>
+    <div >
       <div style={{ maxWidth: 900, margin: "0 auto", padding: 20 }}>
 
         {/* HEADER */}
@@ -517,10 +529,15 @@ const submitAndSave = () => {
   </div>
 )}
 
-        {/* PATIENT INFO */}
-        <div className="card">
-          <h3>Patient Information</h3>
-
+        {/* PATIENT INFO - Using FormBuilder */}
+        <CommonFormBuilder
+          schema={{
+            title: "Patient Information",
+            sections: []
+          }}
+          values={{}}
+          onChange={() => {}}
+        >
           <div style={patientGrid}>
             <div><strong>Name:</strong> {patient.name}</div>
             <div><strong>IC/MRN:</strong> {patient.id}</div>
@@ -558,140 +575,254 @@ const submitAndSave = () => {
     </div>
   </div>
 )}
-
           </div>
-        </div>
+        </CommonFormBuilder>
 
-        {/* NEW SECTION — AUTO-FETCHED HISTORY */}
-        <div className="card">
-          <h3>Past Medical & Family History</h3>
-
-          <label>Medical History (From Registration)</label>
-          <textarea
-            style={styles.readonlyInput}
-            value={patient.medical_history || "No data"}
-            readOnly
-          />
-
-          <label style={{ marginTop: 10 }}>Family History (From Registration)</label>
-          <textarea
-            style={styles.readonlyInput}
-            value={patient.diagnosis_history || "No data"}
-            readOnly
-          />
-        </div>
-          <h2 style={{textAlign:"left"}}>Nutrition Assessment</h2>
-        {/* A. MEDICAL HISTORY (editable for dietitian notes) */}
-        <div className="card">
-          <h3>History of Presenting Illness</h3>
-       
-
-          {/* <label>History of Presenting illness (HPI)</label> */}
-          <textarea
-            style={styles.textarea}
-            value={form.medical_history}
-            onChange={(e) => setField("medical_history", e.target.value)}
-          />
-        </div>
-
-        {/* ANTHROPOMETRY */}
-<div className="card">
-  <h5>Anthropometric Measurement</h5>
-
-  <div style={anthroGrid}>
-    {/* WEIGHT */}
-    <div>
-      <label>Weight (kg) – Auto filled from Nursing</label>
-      <input
-        style={styles.readonlyInput}
-        value={patient.weight || "-"}
-        readOnly
-      />
-    </div>
-
-    {/* HEIGHT */}
-    <div>
-      <label>Height (cm) – Auto filled from Nursing</label>
-      <input
-        style={styles.readonlyInput}
-        value={patient.height || "-"}
-        readOnly
-      />
-    </div>
-
-    {/* BMI */}
-    <div>
-      <label>BMI – Auto calculated</label>
-      <input
-        style={styles.readonlyInput}
-        value={bmi}
-        readOnly
-      />
-    </div>
-
-    {/* WHEELCHAIR WEIGHT */}
-
-
-
-    {/* WEIGHT CHANGE */}
-    <div>
-      <label>Weight Changes</label>
-      <select
-        style={styles.input}
-        value={form.weight_change}
-        onChange={(e) => setField("weight_change", e.target.value)}
-      >
-        <option value="">Select…</option>
-        <option value="YES">Yes</option>
-        <option value="NO">No</option>
-      </select>
-    </div>
-
-    {/* PREVIOUS WEIGHT (CONDITIONAL) */}
-    {form.weight_change === "YES" && (
-      <div>
-        <label>Previous Weight (kg)</label>
-        <input
-          style={styles.input}
-          value={form.previous_weight}
-          onChange={(e) => setField("previous_weight", e.target.value)}
-          placeholder="Enter previous weight"
+        {/* PAST MEDICAL & FAMILY HISTORY - Using FormBuilder */}
+        <CommonFormBuilder
+          schema={{
+            title: "Past Medical & Family History",
+            sections: [
+              {
+                fields: [
+                  {
+                    name: "pmh_from_registration",
+                    label: "Medical History (From Doctor)",
+                    type: "textarea",
+                    readOnly: true
+                  },
+                  {
+                    name: "family_social_from_registration",
+                    label: "Family History (From Doctor)",
+                    type: "textarea",
+                    readOnly: true
+                  }
+                ]
+              }
+            ]
+          }}
+          values={{
+            pmh_from_registration: patient.medical_history || "No data",
+            family_social_from_registration: patient.diagnosis_history || "No data"
+          }}
+          onChange={() => {}}
         />
-      </div>
-    )}
-{/* WHEELCHAIR WEIGHT – DISPLAY ONLY */}
-<div style={{ gridColumn: "1 / -1", marginTop: 6 }}>
-  <strong>Wheelchair Weight:</strong>{" "}
-  {patient.wheelchair_weight
-    ? `${patient.wheelchair_weight} kg`
-    : "Not Applicable"}
-</div>
-    {/* REMARKS – FULL WIDTH */}
-    <div style={{ gridColumn: "1 / -1" }}>
-      <label>Remarks</label>
-      <textarea
-        style={styles.textarea}
-        value={form.anthro_remarks}
-        onChange={(e) => setField("anthro_remarks", e.target.value)}
-        placeholder="Add remarks if any…"
-      />
-    </div>
-  </div>
-</div>
+        {/* A. MEDICAL HISTORY (editable for dietitian notes) - Using FormBuilder */}
+        <div style={{ width: "100%" }}>
+          <CommonFormBuilder
+            schema={{
+              title: "Nutrition Assessment",
+              sections: [
+                {
+                  fields: [
+                    {
+                      name: "medical_history",
+                      label: "History of Presenting illness (HPI)",
+                      type: "textarea"
+                    }
+                  ]
+                }
+              ]
+            }}
+            values={{ medical_history: form.medical_history }}
+            onChange={(name, value) => setField(name, value)}
+          />
+        </div>
 
-{/* VITALS INFORMATION */}
-<div className="card">
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 10,
+        {/* ANTHROPOMETRY - Using FormBuilder */}
+  <div style={{ width: "100%" }}>
+    <CommonFormBuilder
+      schema={{
+        title: "Anthropometric Measurement",
+        sections: [
+        {
+          fields: [
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  name: "weight",
+                  label: "Weight (kg) – Auto filled from Nursing",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "height",
+                  label: "Height (cm) – Auto filled from Nursing",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "bmi",
+                  label: "BMI – Auto calculated",
+                  type: "input",
+                  readOnly: true
+                }
+              ]
+            },
+            {
+              name: "weight_record_date",
+              label: "Date of Weight/Height Record",
+              type: "input",
+              readOnly: true
+            },
+            {
+              name: "weight_change",
+              label: "Weight Changes",
+              type: "radio",
+              options: [
+                { label: "Yes", value: "Yes" },
+                { label: "No", value: "No" }
+              ]
+            },
+            {
+              name: "previous_weight",
+              label: "Previous Weight (kg)",
+              type: "input",
+              placeholder: "Enter previous weight",
+              showIf: {
+                field: "weight_change",
+                equals: "Yes"
+              }
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "wheelchair_weight",
+                  label: "Wheelchair Weight",
+                  type: "input",
+                  placeholder: "Enter weight in kg"
+                },
+                {
+                  name: "wheelchair_type",
+                  label: "Wheelchair Type",
+                  type: "single-select",
+                  options: [
+                    { label: "Heavy", value: "heavy" },
+                    { label: "Light", value: "light" },
+                    { label: "Overloaded", value: "overloaded" }
+                  ]
+                }
+              ]
+            },
+            {
+              name: "anthro_remarks",
+              label: "Remarks",
+              type: "textarea",
+              placeholder: "Add remarks if any…"
+            }
+          ]
+        }
+      ]
     }}
-  >
-    <h5 style={{ margin: 0 }}>VItal Signs & Measurements</h5>
+    values={{
+      weight: patient.weight || "-",
+      height: patient.height || "-",
+      bmi: bmi,
+      weight_record_date: (() => {
+        const dateStr = patient.weight_record_date || patient.weight_height_date;
+        if (!dateStr) return "-";
+        try {
+          const date = new Date(dateStr);
+          if (isNaN(date.getTime())) return dateStr; // Return as-is if invalid date
+          return date.toLocaleDateString('en-GB', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric' 
+          });
+        } catch (e) {
+          return dateStr; // Return as-is if parsing fails
+        }
+      })(),
+      weight_change: form.weight_change,
+      previous_weight: form.previous_weight,
+      wheelchair_weight: form.wheelchair_weight || patient.wheelchair_weight || "30",
+      wheelchair_type: form.wheelchair_type || patient.wheelchair_type || "light",
+      anthro_remarks: form.anthro_remarks
+    }}
+    onChange={(name, value) => {
+      if (name === "weight" || name === "height" || name === "bmi" || name === "weight_record_date") {
+        // These are readonly, don't update
+        return;
+      }
+      setField(name, value);
+    }}
+          />
+        </div>
 
-    {/* KNOW MORE LINK */}
+{/* VITALS INFORMATION - Using FormBuilder */}
+<div style={{ width: "100%" }}>
+  <CommonFormBuilder
+    schema={{
+      title: "Vital Signs & Measurements",
+      sections: [
+        {
+          fields: [
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "bp",
+                  label: "Blood Pressure",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "pulse",
+                  label: "Heart Rate (Pulse)",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "rr",
+                  label: "Respiratory Rate",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "temp",
+                  label: "Temperature",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "spo2",
+                  label: "SpO₂",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "rbs",
+                  label: "Random Blood Sugar",
+                  type: "input",
+                  readOnly: true
+                },
+                {
+                  name: "pain",
+                  label: "Pain Score",
+                  type: "input",
+                  readOnly: true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }}
+    values={{
+      bp: vitals.bp,
+      pulse: vitals.pulse,
+      rr: vitals.rr,
+      temp: vitals.temp,
+      spo2: vitals.spo2,
+      rbs: vitals.rbs,
+      pain: vitals.pain
+    }}
+    onChange={() => {}}
+  >
+    <div style={{ textAlign: "right", marginTop: -40, marginBottom: 20 }}>
 <span
   style={{
     color: "#0050ff",
@@ -703,359 +834,352 @@ const submitAndSave = () => {
 >
   Know more →
 </span>
-
   </div>
+  </CommonFormBuilder>
+    </div>
 
-  <div style={anthroGrid}>
-    <div>
-      <label>Blood Pressure</label>
-      <input
-        style={styles.readonlyInput}
-        value="120 / 80 mmHg"
-        readOnly
+
+        {/* PHYSICAL FINDINGS - Using FormBuilder */}
+        <div style={{ width: "100%" }}>
+          <CommonFormBuilder
+            schema={{
+              title: "Initial Evaluation - Screening",
+              subtitle: "Nutrition-Focused Physical Findings",
+              sections: [
+                {
+                  fields: [
+                    {
+                      name: "oral_intake",
+                      label: "Oral Intake",
+                      type: "radio",
+                      options: [
+                        { label: "Normal", value: "Yes" },
+                        { label: "Impaired", value: "No" }
+                      ]
+                    },
+                    {
+                      name: "tube_type",
+                      label: "NG / PEG / Others",
+                      type: "input",
+                      showIf: {
+                        field: "oral_intake",
+                        equals: "NO"
+                      }
+                    },
+                    {
+                      name: "swallowing_issue",
+                      label: "Swallowing",
+                      type: "radio",
+                      options: [
+                        { label: "Normal", value: "No" },
+                        { label: "Impaired", value: "Yes" }
+                      ]
+                    },
+                    {
+                      name: "chewing_issue",
+                      label: "Chewing",
+                      type: "radio",
+                      options: [
+                        { label: "Normal", value: "No" },
+                        { label: "Impaired", value: "Yes" }
+                      ]
+                    },
+                    {
+                      name: "dentition_issue",
+                      label: "Dentition",
+                      type: "radio",
+                      options: [
+                        { label: "Normal", value: "No" },
+                        { label: "Impaired", value: "Yes" }
+                      ]
+                    },
+                    {
+                      name: "appetite",
+                      label: "Appetite",
+                      type: "radio",
+                      options: [
+                        { label: "Good", value: "Good" },
+                        { label: "Poor", value: "Poor" }
+                      ]
+                    },
+                    {
+                      type: "subheading",
+                      label: "Bowel Status"
+                    },
+                    {
+                      type: "row",
+                      fields: [
+                        {
+                          name: "bo",
+                          label: "Bowel Control",
+                          type: "radio",
+                          options: [
+                            { label: "Continent", value: "CONTINENT" },
+                            { label: "Incontinent", value: "INCONTINENT" }
+                          ]
+                        },
+                        {
+                          name: "bo_details",
+                          label: "Bowel Pattern",
+                          type: "single-select",
+                          options: [
+                            { label: "Normal", value: "NORMAL" },
+                            { label: "Constipation", value: "CONSTIPATION" },
+                            { label: "Diarrhea", value: "DIARRHEA" },
+                            { label: "Others", value: "OTHERS" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      name: "bo_pattern_details",
+                      label: "Details",
+                      type: "textarea",
+                      placeholder: "Please provide details...",
+                      showIf: {
+                        field: "bo_details",
+                        oneOf: ["CONSTIPATION", "DIARRHEA", "OTHERS"]
+                      }
+                    },
+                    {
+                      name: "pu",
+                      label: "Bladder Control",
+                      type: "radio",
+                      options: [
+                        { label: "Continent", value: "CONTINENT" },
+                        { label: "Incontinent", value: "INCONTINENT" }
+                      ]
+                    },
+                    {
+                      name: "sleep",
+                      label: "Sleeping Pattern",
+                      type: "single-select",
+                      options: [
+                        { label: "Good", value: "Good" },
+                        { label: "Difficulty in sleeping due to Pain", value: "PAIN" },
+                        { label: "Difficulty in sleeping due to other reason", value: "OTHER" },
+                        { label: "Difficulty in sleeping", value: "NOREASON" }
+                      ]
+                    },
+                    {
+                      name: "nausea",
+                      label: "Nausea",
+                      type: "radio",
+                      options: [
+                        { label: "Yes", value: "Yes" },
+                        { label: "No", value: "No" }
+                      ]
+                    },
+                    {
+                      name: "vomiting",
+                      label: "Vomiting",
+                      type: "radio",
+                      options: [
+                        { label: "Yes", value: "Yes" },
+                        { label: "No", value: "No" }
+                      ]
+                    },
+                    {
+                      name: "hypoglycemic_episode",
+                      label: "Hypoglycemic Episode",
+                      type: "single-select",
+                      options: [
+                        { label: "Never", value: "Never" },
+                        { label: "Occasional", value: "Occasional" },
+                        { label: "Frequent", value: "Frequent" },
+                        { label: "Unknown", value: "UNKNOWN" },
+                        { label: "Not Relevant", value: "NOT_RELEVANT" }
+                      ]
+                    },
+                    {
+                      name: "other_complaints",
+                      label: "Other Complaints",
+                      type: "textarea"
+                    }
+                  ]
+                }
+              ]
+            }}
+            values={{
+              oral_intake: form.oral_intake,
+              tube_type: form.tube_type,
+              swallowing_issue: form.swallowing_issue,
+              chewing_issue: form.chewing_issue,
+              dentition_issue: form.dentition_issue,
+              appetite: form.appetite,
+              bo: form.bo,
+              bo_details: form.bo_details,
+              bo_pattern_details: form.bo_pattern_details,
+              pu: form.pu,
+              sleep: form.sleep,
+              nausea: form.nausea,
+              vomiting: form.vomiting,
+              hypoglycemic_episode: form.hypoglycemic_episode || "",
+              other_complaints: form.other_complaints
+            }}
+            onChange={(name, value) => setField(name, value)}
       />
     </div>
 
-    <div>
-      <label>Heart Rate (Pulse)</label>
-      <input
-        style={styles.readonlyInput}
-        value="78 bpm"
-        readOnly
-      />
-    </div>
-
-    <div>
-      <label>Respiratory Rate</label>
-      <input
-        style={styles.readonlyInput}
-        value="18 / min"
-        readOnly
-      />
-    </div>
-
-    <div>
-      <label>Temperature</label>
-      <input
-        style={styles.readonlyInput}
-        value="98.6 °F"
-        readOnly
-      />
-    </div>
-
-    <div>
-      <label>SpO₂</label>
-      <input
-        style={styles.readonlyInput}
-        value="98 %"
-        readOnly
-      />
-    </div>
-
-    <div>
-      <label>Random Blood Sugar</label>
-      <input
-        style={styles.readonlyInput}
-        value="110 mg/dL"
-        readOnly
-      />
-    </div>
-
-    <div>
-      <label>Pain Score</label>
-      <input
-        style={styles.readonlyInput}
-        value="2 / 10"
-        readOnly
-      />
-    </div>
-  </div>
-</div>
-
-
-        {/* PHYSICAL FINDINGS */}
-        <div className="card">
-          <h3 style={{ textAlign: "center" }}>       Initial Evaluation - Screening</h3>
-       <h3>     Nutrition-Focused Physical Findings</h3>
-          <label>Oral Intake</label>
-          <select
-            style={styles.input}
-            value={form.oral_intake}
-            onChange={(e) => setField("oral_intake", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="YES">Normal</option>
-            <option value="NO">Impaired</option>
-          </select>
-
-          {form.oral_intake === "NO" && (
-            <>
-              <label>NG / PEG / Others</label>
-              <input
-                style={styles.input}
-                value={form.tube_type}
-                onChange={(e) => setField("tube_type", e.target.value)}
-              />
-            </>
-          )}
-
-          {/* SWALLOWING ISSUE */}
-          <label style={{ marginTop: 14 }}>Swallowing</label>
-          <select
-            style={styles.input}
-            value={form.swallowing_issue}
-            onChange={(e) => setField("swallowing_issue", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="NO">Normal</option>
-            <option value="YES">Impaired</option>
-          </select>
-
-          {/* CHEWING ISSUE */}
-          <label>Chewing</label>
-          <select
-            style={styles.input}
-            value={form.chewing_issue}
-            onChange={(e) => setField("chewing_issue", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="NO">Normal</option>
-            <option value="YES">Impaired</option>
-          </select>
-
-          <label>Dentition</label>
-          <select
-            style={styles.input}
-            value={form.chewing_issue}
-            onChange={(e) => setField("chewing_issue", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="NO">Normal</option>
-            <option value="YES">Impaired</option>
-          </select>
-
-
-          {/* REST FIELDS SAME… */}
-          <label>Appetite</label>
-          <select
-            style={styles.input}
-            value={form.appetite}
-            onChange={(e) => setField("appetite", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="GOOD">GOOD</option>
-            <option value="POOR">POOR</option>
-          </select>
-<label style={{paddingTop:10}}>Bowel Status:</label>
-     <div style={{display :"flex", gap:20}}>  
-      <div style={{width: "50%"}}>
-         <label style={{fontSize:"13px"}}>Bowel Control</label>
-          <select
-            style={styles.input}
-            value={form.bo}
-            onChange={(e) => setField("bo", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="CONTINENT">Continent</option>
-            <option value="INCONTINENT">Incontinent</option>
-          </select></div> 
-<div style={{width: "50%"}}><label style={{fontSize:"13px"}}>Bowel Pattern</label>
-          <select
-            style={styles.input}
-            value={form.bo}
-            onChange={(e) => setField("bo", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="NORMAL">Normal</option>
-            <option value="CONSTIPATION">Constipation</option>
-            <option value="DIARRHEA">Diarrhea</option>
-          </select></div></div>
-<label style={{paddingTop:10}}>Bladder Status:</label>
-<div style={{display :"flex", gap:20}}>
-          <div style={{width: "50%"}}><label style={{fontSize:"13px"}}>Bladder Control</label>
-          <select
-            style={styles.input}
-            value={form.pu}
-            onChange={(e) => setField("pu", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="CONTINENT">Continent</option>
-            <option value="INCONTINENT">Incontinent</option>
-          </select></div>
-          <div style={{width: "50%"}}><label style={{fontSize:"13px"}}>Voiding Pattern</label>
-          <select
-            style={styles.input}
-            value={form.pu}
-            onChange={(e) => setField("pu", e.target.value)}
-          >
-            <option value="">Select...</option>
-             <option value="NORMAL">Normal</option>
-            <option value="FREQUENCY">Frequency</option>
-            <option value="RETENTION">Retention</option>
-          </select></div>
-</div>
-          <label style={{paddingTop:10}}>Sleeping Pattern</label>
-          <select
-            style={styles.input}
-            value={form.sleep}
-            onChange={(e) => setField("sleep", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="GOOD">GOOD</option>
-            <option value="PAIN">Difficulty in sleeping due to Pain</option>
-            <option value="OTHER">Difficulty in sleeping due to other reason</option>
-            <option value="NOREASON">Difficulty in sleeping</option>
-          </select>
-
-          <label>Nausea</label>
-          <select
-            style={styles.input}
-            value={form.nausea}
-            onChange={(e) => setField("nausea", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="YES">YES</option>
-            <option value="NO">NO</option>
-          </select>
-
-          <label>Vomiting</label>
-          <select
-            style={styles.input}
-            value={form.vomiting}
-            onChange={(e) => setField("vomiting", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="YES">YES</option>
-            <option value="NO">NO</option>
-          </select>
-
-          <label>Hypoglycemic Episode</label>
-          <select
-            style={styles.input}
-            value={form.vomiting}
-            onChange={(e) => setField("vomiting", e.target.value)}
-          >
-            <option value="">Select...</option>
-            <option value="Never">Never</option>
-            <option value="Occasional">Occasional</option>
-            <option value="Frequent">Frequent</option>
-            <option value="UNKNOWN">Unknown</option>
-          </select>
-
-          <label>Other Complaints</label>
-          <textarea
-            style={styles.textarea}
-            value={form.other_complaints}
-            onChange={(e) => setField("other_complaints", e.target.value)}
-          />
-        </div>
-
-        {/* FOOD / NUTRITION RELATED HISTORY */}
-<div className="card">
-  <h5>Food / Nutrition Related History</h5>
-
-  {/* LIST OF MEDICATION – READ ONLY */}
-  <div style={{ marginBottom: 14 }}>
-    <label>List of Medication</label>
-    <textarea
-      style={styles.readonlyInput}
-      value={
-        patient.medications
+        {/* FOOD / NUTRITION RELATED HISTORY - Using FormBuilder */}
+        <div style={{ width: "100%" }}>
+          <CommonFormBuilder
+            schema={{
+              title: "Food / Nutrition Related History",
+              sections: [
+                {
+                  fields: [
+                    {
+                      name: "medications",
+                      label: "List of Medication",
+                      type: "textarea",
+                      readOnly: true
+                    },
+                    {
+                      type: "subheading",
+                      label: "Diet Recall / History"
+                    },
+                    {
+                      name: "feeding_type",
+                      label: "Feeding Type",
+                      type: "checkbox-group",
+                      inlineWithLabel: true,
+                      options: [
+                        { label: "Oral Feeding", value: "oral" },
+                        { label: "Enteral Feeding", value: "enteral" },
+                        { label: "Mixed Feeding", value: "mixed" },
+                        { label: "Fluid Intake", value: "fluid" }
+                      ]
+                    },
+                    {
+                      type: "subheading",
+                      label: "Oral Feeding",
+                      showIf: {
+                        field: "feeding_type",
+                        includes: "oral"
+                      }
+                    },
+                    {
+                      type: "row",
+                      fields: [
+                        {
+                          name: "diet_breakfast",
+                          label: "Breakfast",
+                          type: "textarea",
+                          placeholder: "Enter breakfast details…"
+                        },
+                        {
+                          name: "diet_morning_tea",
+                          label: "Morning Tea",
+                          type: "textarea",
+                          placeholder: "Enter morning tea details…"
+                        },
+                        {
+                          name: "diet_lunch",
+                          label: "Lunch",
+                          type: "textarea",
+                          placeholder: "Enter lunch details…"
+                        },
+                        {
+                          name: "diet_afternoon_tea",
+                          label: "Afternoon Tea",
+                          type: "textarea",
+                          placeholder: "Enter afternoon tea details…"
+                        },
+                        {
+                          name: "diet_supper",
+                          label: "Supper",
+                          type: "textarea",
+                          placeholder: "Enter supper details…"
+                        },
+                        {
+                          name: "diet_dinner",
+                          label: "Dinner",
+                          type: "textarea",
+                          placeholder: "Enter dinner details…"
+                        }
+                      ],
+                      showIf: {
+                        field: "feeding_type",
+                        includes: "oral"
+                      }
+                    },
+                    {
+                      name: "enteral_feeding_details",
+                      label: "Enteral Feeding Details",
+                      type: "textarea",
+                      placeholder: "Enter enteral feeding details…",
+                      showIf: {
+                        field: "feeding_type",
+                        includes: "enteral"
+                      }
+                    },
+                    {
+                      name: "mixed_feeding_details",
+                      label: "Mixed Feeding Details",
+                      type: "textarea",
+                      placeholder: "Enter mixed feeding details…",
+                      showIf: {
+                        field: "feeding_type",
+                        includes: "mixed"
+                      }
+                    },
+                    {
+                      name: "fluid_intake_details",
+                      label: "Fluid Intake Details",
+                      type: "textarea",
+                      placeholder: "Enter fluid intake details…",
+                      showIf: {
+                        field: "feeding_type",
+                        includes: "fluid"
+                      }
+                    },
+                    {
+                      name: "ffq",
+                      label: "Food Frequency Questionnaire (FFQ)",
+                      type: "textarea",
+                      readOnly: true,
+                      placeholder: "List will be coming soon"
+                    },
+                    {
+                      name: "ons_regime",
+                      label: "Oral Nutrition Supplement Regime (If relevant)",
+                      type: "textarea",
+                      placeholder: "Enter supplement details, dosage, frequency…"
+                    }
+                  ]
+                }
+              ]
+            }}
+            values={{
+              medications: patient.medications
           ? patient.medications.join(", ")
-          : "Dolo 650, Aspirin"
-      }
-      readOnly
+                : "Dolo 650, Aspirin",
+              feeding_type: form.feeding_type || [],
+              diet_breakfast: form.diet_breakfast,
+              diet_morning_tea: form.diet_morning_tea,
+              diet_lunch: form.diet_lunch,
+              diet_afternoon_tea: form.diet_afternoon_tea,
+              diet_supper: form.diet_supper,
+              diet_dinner: form.diet_dinner,
+              enteral_feeding_details: form.enteral_feeding_details,
+              mixed_feeding_details: form.mixed_feeding_details,
+              fluid_intake_details: form.fluid_intake_details,
+              ffq: "List will be coming soon",
+              ons_regime: form.ons_regime
+            }}
+            onChange={(name, value) => {
+              if (name === "medications" || name === "ffq") {
+                return; // readonly
+              }
+              setField(name, value);
+            }}
     />
-  </div>
-
-  {/* DIET RECALL / HISTORY */}
-  <h6 style={{ marginTop: 10 }}>Diet Recall / History</h6>
-
-  <div style={anthroGrid}>
-    <div>
-      <label>Breakfast</label>
-      <textarea
-        style={styles.textarea}
-        value={form.diet_breakfast}
-        onChange={(e) => setField("diet_breakfast", e.target.value)}
-        placeholder="Enter breakfast details…"
-      />
-    </div>
-
-    <div>
-      <label>Morning Tea</label>
-      <textarea
-        style={styles.textarea}
-        value={form.diet_morning_tea}
-        onChange={(e) => setField("diet_morning_tea", e.target.value)}
-        placeholder="Enter morning tea details…"
-      />
-    </div>
-
-    <div>
-      <label>Lunch</label>
-      <textarea
-        style={styles.textarea}
-        value={form.diet_lunch}
-        onChange={(e) => setField("diet_lunch", e.target.value)}
-        placeholder="Enter lunch details…"
-      />
-    </div>
-
-    <div>
-      <label>Afternoon Tea</label>
-      <textarea
-        style={styles.textarea}
-        value={form.diet_afternoon_tea}
-        onChange={(e) => setField("diet_afternoon_tea", e.target.value)}
-        placeholder="Enter afternoon tea details…"
-      />
-    </div>
-
-    <div>
-      <label>Dinner/Supper</label>
-      <textarea
-        style={styles.textarea}
-        value={form.diet_supper}
-        onChange={(e) => setField("diet_supper", e.target.value)}
-        placeholder="Enter supper details…"
-      />
-    </div>
-  </div>
-
-  {/* FFQ – PLACEHOLDER */}
-  <div style={{ marginTop: 14 }}>
-    <label>Food Frequency Questionnaire (FFQ)</label>
-    <div
-      style={{
-        padding: "10px 12px",
-        border: "1px dashed #bbb",
-        borderRadius: 6,
-        background: "#fafafa",
-        color: "#555",
-        fontSize: 14,
-      }}
-    >
-      List will be coming soon 
-    </div>
-  </div>
-
-  {/* ORAL NUTRITION SUPPLEMENT */}
-  <div style={{ marginTop: 14 }}>
-    <label>Oral Nutrition Supplement Regime (If relevant)</label>
-    <textarea
-      style={styles.textarea}
-      value={form.ons_regime}
-      onChange={(e) => setField("ons_regime", e.target.value)}
-      placeholder="Enter supplement details, dosage, frequency…"
-    />
-  </div>
 </div>
 
-
-                {/* B. NUTRITION DIAGNOSIS */}
-<div className="card">
-  <h5>Nutrition Diagnosis</h5>
+                {/* B. NUTRITION DIAGNOSIS - Using FormBuilder */}
+<div style={{ width: "100%" }}>
+  <div style={{ textAlign: "center", padding: 10 }}>
 <button
   type="button"
   style={btnBlue}
@@ -1063,41 +1187,91 @@ const submitAndSave = () => {
 >
   📋 Problem Chart
 </button>
-
-  <label>Problem</label>
-  <input
-    style={styles.readonlyInput}
-    value={form.diagnosis_problem}
-    readOnly
-  />
-
-  <label>Etiology</label>
-  <input
-    style={styles.readonlyInput}
-    value={form.diagnosis_etiology}
-    readOnly
-  />
-
-  <label>Signs & Symptoms</label>
-  <textarea
-    style={styles.textarea}
-    value={form.diagnosis_signs}
-    onChange={(e) => setField("diagnosis_signs", e.target.value)}
-  />
-
-  <label>Nutrition Diagnosis</label>
-  <textarea
-    style={styles.readonlyInput}
-    readOnly
-    value={
-      form.diagnosis_problem &&
-      form.diagnosis_etiology &&
-      form.diagnosis_signs
-        ? `${form.diagnosis_problem} ${form.diagnosis_etiology} ${form.diagnosis_signs}`
-        : ""
-    }
-  />
+  </div>
+  
+  {form.diagnosis_problems && form.diagnosis_problems.length > 0 ? (
+    form.diagnosis_problems.map((diagnosis, index) => (
+      <div key={index} style={{ marginBottom: 24, borderRadius: 8 }}>
+        <CommonFormBuilder
+          schema={{
+            title: `Nutrition Diagnosis ${index + 1}`,
+            sections: [
+              {
+                fields: [
+                  {
+                    name: `diagnosis_problem_${index}`,
+                    label: "Problem",
+                    type: "input",
+                    readOnly: true
+                  },
+                  {
+                    name: `diagnosis_etiology_${index}`,
+                    label: "Etiology",
+                    type: "input",
+                    readOnly: true
+                  },
+                  {
+                    name: `diagnosis_signs_${index}`,
+                    label: "Signs & Symptoms",
+                    type: "textarea"
+                  },
+                  {
+                    name: `nutrition_diagnosis_${index}`,
+                    label: "Nutrition Diagnosis",
+                    type: "textarea",
+                    readOnly: true
+                  }
+                ]
+              }
+            ]
+          }}
+          values={{
+            [`diagnosis_problem_${index}`]: diagnosis.problem,
+            [`diagnosis_etiology_${index}`]: diagnosis.etiology,
+            [`diagnosis_signs_${index}`]: diagnosis.signs,
+            [`nutrition_diagnosis_${index}`]: diagnosis.problem &&
+              diagnosis.etiology &&
+              diagnosis.signs
+              ? `${diagnosis.problem} ${diagnosis.etiology} as evidenced by ${diagnosis.signs}`
+              : ""
+          }}
+          onChange={(name, value) => {
+            if (name.startsWith(`diagnosis_signs_${index}`)) {
+              const updatedProblems = [...form.diagnosis_problems];
+              updatedProblems[index].signs = value;
+              setField("diagnosis_problems", updatedProblems);
+            }
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            const updatedProblems = form.diagnosis_problems.filter((_, i) => i !== index);
+            setField("diagnosis_problems", updatedProblems);
+          }}
+          style={{
+            marginTop: 10,
+            padding: "6px 12px",
+            backgroundColor: "#ef4444",
+            color: "white",
+            border: "none",
+            borderRadius: 4,
+            cursor: "pointer"
+          }}
+        >
+          Remove
+        </button>
 </div>
+    ))
+  ) : (
+    <div style={{ padding: 20, textAlign: "center", color: "#6b7280" }}>
+      No nutrition diagnosis selected. Click "Problem Chart" to add one.
+    </div>
+  )}
+</div>
+
+
+
 {showProblemChart && (
   <div style={modalOverlay}>
     <div style={modalBoxLarge}>
@@ -1135,13 +1309,20 @@ const submitAndSave = () => {
             }}
           >
             <input
-              type="radio"
-              name="nutrition_problem"
-              checked={form.diagnosis_problem === item.label}
-              onChange={() => {
-                setField("diagnosis_problem", item.label);
-                setField("diagnosis_etiology", item.etiology);
-                setShowProblemChart(false);
+              type="checkbox"
+              checked={form.diagnosis_problems.some(p => p.problem === item.label)}
+              onChange={(e) => {
+                const currentProblems = form.diagnosis_problems || [];
+                if (e.target.checked) {
+                  // Add the problem
+                  setField("diagnosis_problems", [
+                    ...currentProblems,
+                    { problem: item.label, etiology: item.etiology, signs: "" }
+                  ]);
+                } else {
+                  // Remove the problem
+                  setField("diagnosis_problems", currentProblems.filter(p => p.problem !== item.label));
+                }
               }}
             />
             <span>{item.label}</span>
