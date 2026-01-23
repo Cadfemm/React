@@ -1,10 +1,5 @@
 import * as React from "react";
 import { useHistory } from "react-router-dom";
-import {
-  User, ClipboardList, Layers, Stethoscope, Target, FileText, FileStack,
-  Briefcase, ShieldCheck, Activity, ClipboardCheck, Calendar, Package,
-  LineChart, Settings, Plus, Bell, Search, Users
-} from "lucide-react";
 
 export default function HomeDashboard() {
   const history = useHistory();

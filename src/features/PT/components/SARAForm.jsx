@@ -83,18 +83,71 @@ const SARA_SCHEMA = {
         {
           type: "radio-matrix",
           name: "finger_chase_right",
-          label: "Right",
-          options: OPT_0_4
+          label: "Finger Chase Right",
+          options: OPT_0_4,
+          info: {
+            content: [
+              "4 – Unable to perform 5 pointing movements ",
+              "3 – Dysmetria, under/ overshooting target > 15 cm",
+              "2 – Dysmetria, under/ overshooting target < 15 cm",
+              "1 – Dysmetria, under/ overshooting target <5 cm ",
+              "0 – No dysmetria"
+            ]
+          }
         },
         {
           type: "radio-matrix",
           name: "finger_chase_left",
-          label: "Left",
-          options: OPT_0_4
+          label: "Finger Chase Left",
+          options: OPT_0_4,
+          info: {
+            content: [
+              "4 – Unable to perform 5 pointing movements ",
+              "3 – Dysmetria, under/ overshooting target > 15 cm",
+              "2 – Dysmetria, under/ overshooting target < 15 cm",
+              "1 – Dysmetria, under/ overshooting target <5 cm ",
+              "0 – No dysmetria"
+            ]
+          }
         },
         {
           type: "score-box",
           name: "finger_chase_mean",
+          label: "Finger Chase Mean"
+        },
+         {
+          type: "radio-matrix",
+          name: "nose_finger_right",
+          label: "Nose-finger Right",
+          options: OPT_0_4,
+                    info: {
+            content: [
+              "4 – Unable to perform 5 pointing movements ",
+              "3 – Dysmetria, under/ overshooting target > 15 cm",
+              "2 – Dysmetria, under/ overshooting target < 15 cm",
+              "1 – Tremor with an amplitude < 2 cm",
+              "0 – No tremor"
+            ]
+          }
+        },
+        {
+          type: "radio-matrix",
+          name: "nose_finger_left",
+          label: "Nose-finger Left",
+          options: OPT_0_4,
+                    info: {
+            content: [
+              "4 – Unable to perform 5 pointing movements ",
+              "3 – Dysmetria, under/ overshooting target > 15 cm",
+              "2 – Dysmetria, under/ overshooting target < 15 cm",
+              "1 – Dysmetria, under/ overshooting target <5 cm ",
+              "0 – No dysmetria"
+            ]
+          }
+        },
+        {
+          type: "score-box",
+          name: "nose_finger_mean",
           label: "Mean (R+L)/2"
         }
       ]

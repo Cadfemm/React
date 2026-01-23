@@ -21,21 +21,16 @@ const Dropdown = () => {
   const [visibleInput, setVisibleInput] = useState(null);
   const [cType, setCType] = useState("");
   const [isVisible, setIsVisible] = useState(true);
-  const [showInputsFor, setShowInputsFor] = useState(null);
-  const [isCTypeDisabled, setIsCTypeDisabled] = useState(false);
-  const [isTTypeDisabled, setIsTTypeDisabled] = useState(false);
   const [tType, setTType] = useState("");
   const [visibleCategory, setVisibleCategory] = useState(null);
-  const [showButtons, setShowButtons] = useState(false);
   const [inputValues, setInputValues] = useState({});
   const [daysOfTreatment, setDaysOfTreatment] = useState('');
-  const [allFieldsFilled, setAllFieldsFilled] = useState(false);
   const [isModified, setIsModified] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoSource, setVideoSource] = useState('60per.mp4');
 
   useEffect(() => {
-    setAllFieldsFilled(false);
+    // Effect runs when dependencies change
   }, [selectedDiseases, visibleInput, visibleCategory]);
 
   const handleButtonPress = () => {
@@ -59,7 +54,6 @@ const Dropdown = () => {
     setVisibleCategory(null);
     setInputValues({});
     setDaysOfTreatment('');
-    setAllFieldsFilled(false);
     setIsModified(false);
     setVideoSource('60per.mp4'); // Reset video source on disease change
   };
@@ -72,33 +66,11 @@ const Dropdown = () => {
   const handleCTypeChange = (e) => {
     const value = e.target.value;
     setCType(value);
-
-    // Disable T-Type dropdown when C-Type is selected
-    if (value) {
-      setIsTTypeDisabled(true);
-      setIsCTypeDisabled(false); // Enable C-Type dropdown
-    } else {
-      setIsTTypeDisabled(false);
-    }
-
-    if (value === "C1" || value === "C2") {
-      setShowInputsFor(true);
-    } else {
-      setShowButtons(false);
-    }
   };
 
   const handleTTypeChange = (e) => {
     const value = e.target.value;
     setTType(value);
-
-    // Disable T-Type dropdown when C-Type is selected
-    if (value) {
-      setIsCTypeDisabled(true);
-      setIsTTypeDisabled(false); // Enable T-Type dropdown
-    } else {
-      setIsCTypeDisabled(false);
-    }
   };
 
   const handleInputChange = (event) => {

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { icdData, ICD_LIST, ICF_DETAILS } from "../../../data/masterData"; // adjust path if needed
 import AssessmentRenderer from "./AssessmentRenderer"; // adjust path if needed
 import PatientReports from "../../PatientReports"; // 🔁 adjust path if needed
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 // helper: extract ICF short code
 function extractICFCode(icfLabel) {
@@ -69,12 +70,8 @@ const btnReport = {
   ];
 
   const meals = [
-    { key: "breakfast", label: "BREAKFAST" },
-    { key: "morning_tea", label: "MORNING TEA" },
-    { key: "lunch", label: "LUNCH" },
-    { key: "afternoon_tea", label: "AFTERNOON TEA" },
-    { key: "dinner", label: "DINNER" },
-    { key: "supper", label: "SUPPER" },
+    { key: "breakfast", label: "Meal Plan" },
+
   ];
   // selection UI (single ICD kept for compatibility)
   var [selectedICD, setSelectedICD] = useState("");
@@ -133,7 +130,14 @@ const [otherPlan, setOtherPlan] = useState("");
   var [selectedICF, setSelectedICF] = useState(null);
   var [activeAssessTab, setActiveAssessTab] = useState("subjective");
   var [selectedAssessment, setSelectedAssessment] = useState(null);
- const [form, setForm] = useState({})
+ const [form, setForm] = useState({
+    meal_plan_feeding_type: [],
+    breakfast_diet: [],
+    meal_plan_others_details: "",
+    meal_plan_enteral_details: "",
+    meal_plan_mixed_details: "",
+    meal_plan_fluid_details: ""
+  })
   // working-state per active ICF
   var [ichiStatus, setIchiStatus] = useState({});
   var [savedAssessments, setSavedAssessments] = useState([]);
@@ -1468,57 +1472,93 @@ function saveProgressReport() {
         <div className="card">
           <h5>Meal-Plan Modifications</h5>
 
-          {meals.map((meal) => (
-            <div key={meal.key} style={{ marginBottom: 16 }}>
-              <div style={mealGrid}>
-                <div style={mealLabel}>{meal.label}</div>
-
-                <select
-                  style={styles.input}
-                  value={form[`${meal.key}_diet`]}
-                  onChange={(e) => setField(`${meal.key}_diet`, e.target.value)}
-                >
-                  <option value="">Select Diet...</option>
-                  {dietOptions.map((opt) => (
-                    <option key={opt}>{opt}</option>
-                  ))}
-                </select>
-
-                <input
-                  type="time"
-                  style={styles.input}
-                  value={form[`${meal.key}_time`]}
-                  onChange={(e) => setField(`${meal.key}_time`, e.target.value)}
-                />
-              </div>
-            </div>
-          ))}
+          <CommonFormBuilder
+            schema={{
+              title: "",
+              sections: [
+                {
+                  fields: [
+                    {
+                      name: "meal_plan_feeding_type",
+                      label: "Feeding Type",
+                      type: "checkbox-group",
+                      inlineWithLabel: true,
+                      options: [
+                        { label: "Oral Feeding", value: "oral" },
+                        { label: "Enteral Feeding", value: "enteral" },
+                        { label: "Mixed Feeding", value: "mixed" },
+                        { label: "Fluid Intake", value: "fluid" }
+                      ]
+                    },
+                    {
+                      name: "breakfast_diet",
+                      label: "Meal Plan",
+                      type: "multi-select-dropdown",
+                      options: dietOptions.map(opt => ({ label: opt, value: opt })),
+                      showIf: {
+                        field: "meal_plan_feeding_type",
+                        includes: "oral"
+                      }
+                    },
+                    {
+                      name: "meal_plan_others_details",
+                      label: "Others (Please specify)",
+                      type: "textarea",
+                      placeholder: "Please specify other meal plan options...",
+                      showIf: {
+                        field: "breakfast_diet",
+                        includes: "Others"
+                      }
+                    },
+                    {
+                      name: "meal_plan_enteral_details",
+                      label: "Enteral Feeding Details",
+                      type: "textarea",
+                      placeholder: "Enter enteral feeding details…",
+                      showIf: {
+                        field: "meal_plan_feeding_type",
+                        includes: "enteral"
+                      }
+                    },
+                    {
+                      name: "meal_plan_mixed_details",
+                      label: "Mixed Feeding Details",
+                      type: "textarea",
+                      placeholder: "Enter mixed feeding details…",
+                      showIf: {
+                        field: "meal_plan_feeding_type",
+                        includes: "mixed"
+                      }
+                    },
+                    {
+                      name: "meal_plan_fluid_details",
+                      label: "Fluid Intake Details",
+                      type: "textarea",
+                      placeholder: "Enter fluid intake details…",
+                      showIf: {
+                        field: "meal_plan_feeding_type",
+                        includes: "fluid"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }}
+            values={{
+              meal_plan_feeding_type: Array.isArray(form.meal_plan_feeding_type) ? form.meal_plan_feeding_type : [],
+              breakfast_diet: Array.isArray(form.breakfast_diet) ? form.breakfast_diet : [],
+              meal_plan_others_details: form.meal_plan_others_details || "",
+              meal_plan_enteral_details: form.meal_plan_enteral_details || "",
+              meal_plan_mixed_details: form.meal_plan_mixed_details || "",
+              meal_plan_fluid_details: form.meal_plan_fluid_details || ""
+            }}
+            onChange={(name, value) => setField(name, value)}
+            layout="nested"
+          />
         </div>
 
         <div className="card">
-          <h3>Meal Duration & Kitchen Alert</h3>
 
-          <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <label>From Date</label>
-              <input
-                type="date"
-                style={styles.input}
-                value={form.from_date}
-                onChange={(e) => setField("from_date", e.target.value)}
-              />
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <label>To Date</label>
-              <input
-                type="date"
-                style={styles.input}
-                value={form.to_date}
-                onChange={(e) => setField("to_date", e.target.value)}
-              />
-            </div>
-          </div>
 
           <button style={btnOrange} onClick={() => alert("Alert sent to kitchen!")}>
             Send Alert to Kitchen
@@ -1899,7 +1939,7 @@ const btnOrange = {
 };
 const mealGrid = {
   display: "grid",
-  gridTemplateColumns: "140px 1fr 130px",
+  gridTemplateColumns: "140px 1fr",
   gap: 10,
   alignItems: "center",
 };

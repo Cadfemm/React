@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import Health from "../assets/output11.jpg";
 import "../styles/Monoplegia.css";
-import {useHistory , Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
   const Output = ({ location }) => {
     const [output1, setOutput1] = useState('');
