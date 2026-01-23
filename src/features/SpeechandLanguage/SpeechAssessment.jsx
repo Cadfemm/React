@@ -2,11 +2,12 @@ import React, { useState, useRef, useMemo } from "react";
 
 import PaedIASpeechLanguage from "./PaedSpeechAssessment";
 import PaedIAFeeding from "./PaedFeedingAssessment";
-
+import VoiceQualityAssessment from "./CapeAssement";
 import ClinicalSwallowingEvaluation from "./AdultSwallowing";
 import SpeechLanguageAssessment from "./AdultSpeechandLanguage";
 import VoiceAssessment from "./AdultVoice";
 import TracheostomyWeaningEvaluation from "./AdultTracheostomy";
+import VoiceIndices from "./VoiceHandicapAssessment";
 
 /* -------------------------------------------------------------
    WRAPPERS
@@ -66,6 +67,8 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
           "ADULT SPEECH-LANGUAGE",
           "ADULT VOICE",
           "ADULT TRACHEOSTOMY WEANING EVALUATION",
+          // "Consensus Auditory-Perceptual Evaluation of Voice",
+          // "Voice Handicap Index"
         ]
       : [
           "PAEDIATRIC SPEECH-LANGUAGE",
@@ -203,6 +206,23 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
             onBack={onBack}
           />
         )}
+ {tabs[activeTab] === "Consensus Auditory-Perceptual Evaluation of Voice" && (
+          <VoiceQualityAssessment
+            patient={patient}
+            onChange={setPaedFeeding}
+            onBack={onBack}
+          />
+        )}
+
+        {tabs[activeTab] === "Voice Handicap Index" && (
+          <VoiceIndices
+            patient={patient}
+            onChange={setAdultVoice}
+            onBack={onBack}
+          />
+        )}
+
+      
       </div>
 
      
