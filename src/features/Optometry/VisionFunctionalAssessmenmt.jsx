@@ -40,11 +40,11 @@ export default function VisualFunctionForm( layout = "root") {
   };
 
   const DIFFICULTY_OPTIONS = [
-  { label: "4. No difficulty", value: 4 },
-  { label: "3. A little difficulty", value: 3 },
-  { label: "2. Moderate difficulty", value: 2 },
-  { label: "1. A great deal of difficulty", value: 1 },
-  { label: "0. Unable to do this activity", value: 0 }
+  { label: "No difficulty", value: 4 },
+  { label: "A little difficulty", value: 3 },
+  { label: "Moderate difficulty", value: 2 },
+  { label: "A great deal of difficulty", value: 1 },
+  { label: "Unable to do this activity", value: 0 }
 ];
 
  const visualFunctionSchema = {

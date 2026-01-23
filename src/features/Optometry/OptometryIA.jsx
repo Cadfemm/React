@@ -690,49 +690,49 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
 
                     {
                         type: "grid-header",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_distance_unaided",
                         label: "Distance (Unaided)",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_near_unaided",
                         label: "Near (Unaided)",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_distance_aided",
                         label: "Distance (Habitual / Aided)",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_near_aided",
                         label: "Near (Habitual / Aided)",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_pinhole",
                         label: "Pinhole",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     {
                         type: "grid-row",
                         name: "va_remarks",
                         label: "Remarks",
-                        cols: ["RE", "LE", "BE"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
                     },
                     { type: "subheading", label: "Binocular & Ocular Function" },
 
                     {
                         type: "grid-header",
-                        cols: ["RE", "LE", "Remarks"]
+                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Remarks"]
                     },
 
                     {
@@ -842,8 +842,8 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                     {
                         type: "row",
                         fields: [
-                            { type: "input", name: "tonometry_re", label: "Tonometry RE (mmHg @ time)" },
-                            { type: "input", name: "tonometry_le", label: "Tonometry Left Eye (LE) (mmHg @ time)" }
+                            { type: "input", name: "tonometry_re", label: "Tonometry Right Eye (RE) (mmHg @ time)" },
+                            { type: "input", name: "tonometry_le", label: "Tonometry Left Eye (Left Eye (LE)) (mmHg @ time)" }
                         ]
                     },
 

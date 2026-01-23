@@ -52,7 +52,7 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
         type: "row",
         fields: [
           {
-            type: "single-select",
+            type: "radio",
             name: "visual_field_status",
             label: "Status",
             options: [

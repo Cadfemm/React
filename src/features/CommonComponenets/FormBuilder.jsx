@@ -665,6 +665,14 @@ function renderField(
         </div>
       );
 
+case "info-text":
+  return (
+    <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+      {Array.isArray(field.text)
+        ? field.text.map((t, i) => <div key={i}>{t}</div>)
+        : field.text}
+    </div>
+  );
 
 
     case "scale-table":

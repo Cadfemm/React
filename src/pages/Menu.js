@@ -51,6 +51,7 @@ import PsychologyDashboard from "../features/Psychology/components/PychologyDash
 import GlobalVitalsOverlay from "../components/GlobalVitalsOverlay";
 import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
 import OptometryDashboard from "../features/Optometry/OptometryDashboard";
+import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -732,6 +733,8 @@ export function MainContent({
       return <PsychologyDashboard />;
     case "Optometry":
       return <OptometryDashboard patients={patients} />;
+     case "Prosthetics & Orthotics":
+      return <ProstheticsAndOrthoticsDashboard patients={patients} />;
     case "Speech & Language Therapy":
       return <SpeechAndLanguage patients={patients} />;
 

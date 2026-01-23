@@ -1,166 +1,42 @@
 import React from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-const lvqolOptions = [
-  { label: "None (5)", value: 5 },
-  { label: "A little / Moderate (4)", value: 4 },
-  { label: "Moderate (3)", value: 3 },
-  { label: "Great (2)", value: 2 },
-  { label: "Very great (1)", value: 1 },
-  { label: "Not related", value: "not_related" },
-  { label: "Not available", value: "na" }
+const LVQOL_SCALE = [
+  { label: "None", value: 5 ,},
+  { label: "little", value: 4 },
+  { label: "Moderate", value: 3 },
+  { label: "Great", value: 2 },
+  { label: "Very great", value: 1 },
+  { label: "Not related", value: "not_related", required: true },
+  { label: "Not available", value: "na", required: true }
 ];
 
 
-const questions = [
-  // Distance, Mobility & Lighting
-  "General vision",
-  "Doing tasks for a short period (e.g., reading)",
-  "Vision in low light at home",
-  "Seeing enough to see the TV",
-  "Glare (car lights or sun)",
-  "Seeing street signs",
-  "Watching television",
-  "Seeing moving objects (cars)",
-  "Judging depth / reaching for objects",
-  "Recognizing faces",
-  "Walking outdoors (uneven ground)",
-  "Crossing roads",
-
-  // Adjustment
-  "Unhappy with your situation in life",
-  "Frustrated by vision-related tasks",
-  "Restricted in visiting friends or family",
-
-  // Reading & Fine Work
-  "Reading print",
-  "Reading a newspaper",
-  "Reading books",
-  "Reading labels (e.g., medicine bottles)",
-  "Reading letters and mail",
-  "Fine tasks (e.g., threading a needle)",
-
-  // Daily Activities
-  "Filling out forms",
-  "Writing checks or cards",
-  "Reading your own handwriting",
-  "Household chores"
-];
 
 
-const schema ={
+const schema = {
   title: "Low Vision Quality of Life Questionnaire (LVQoL)",
   sections: [
     {
       title: "Distance, Mobility & Lighting",
       fields: [
-        { type: "subheading", label: "How much of a problem do you have:" },
-
         {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q1",
-              label: "With your vision in general",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q2",
-              label: "With your eyes getting tired",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q3",
-              label: "With your vision at night inside the house",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q4",
-              label: "Getting the right amount of light to be able to see",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q5",
-              label: "With glare (e.g., dazzled by car light or the sun)",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q6",
-              label: "Seeing street signs",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q7",
-              label: "Seeing the television (appreciating the pictures)",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q8",
-              label: "Seeing moving objects (e.g., cars on the road)",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q9",
-              label: "With judging the depth or distance of items ",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q10",
-              label: "Seeing steps or curbs",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "dml_q11",
-              label: "Getting around outdoors  because of your vision",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "dml_q12",
-              label: "Crossing a road with traffic because of your vision",
-              options: lvqolOptions
-            }
+          type: "scale-table",
+          name: "dml",
+          columns: LVQOL_SCALE,
+          rows: [
+            "With your vision in general",
+            "Doing tasks for a short period (e.g., reading)",
+            "Vision in low light at home",
+            "Getting the right amount of light to be able to see",
+            "With glare (e.g., dazzled by car light or the sun)",
+            "Seeing street signs",
+            "Seeing the television (appreciating the pictures)",
+            "Seeing moving objects (e.g., cars on the road)",
+            "Judging the depth or distance of items",
+            "Recognizing faces",
+            "Getting around outdoors because of your vision",
+            "Crossing a road with traffic because of your vision"
           ]
         }
       ]
@@ -170,38 +46,14 @@ const schema ={
       title: "Adjustment",
       fields: [
         {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "adj_q1",
-              label: "Unhappy with your situation in life",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "adj_q2",
-              label: "Frustrated at not being able to do certain tasks",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "adj_q3",
-              label: "Restricted in visiting friends or family",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "adj_q4",
-              label: "How well has your eye condition been explained to you",
-              options: lvqolOptions
-            }
+          type: "scale-table",
+          name: "adjustment",
+          columns: LVQOL_SCALE,
+          rows: [
+            "Unhappy with your situation in life",
+            "Frustrated at not being able to do certain tasks",
+            "Restricted in visiting friends or family",
+            "How well has your eye condition been explained to you"
           ]
         }
       ]
@@ -210,53 +62,16 @@ const schema ={
     {
       title: "Reading & Fine Work",
       fields: [
-        { type: "subheading", label: "With your reading glasses, if used, how much of a problem do you have:" },
-
         {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "rfw_q1",
-              label: "Reading large print (e.g., newspaper headlines)",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "rfw_q2",
-              label: "Reading newspapers and books",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "rfw_q3",
-              label: "Reading labels (e.g., on medicine bottles)",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "rfw_q4",
-              label: "Reading your letters and mail",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "rfw_q5",
-              label: "Having problems using tools (e.g., threading a needle or cutting)",
-              options: lvqolOptions
-            }
+          type: "scale-table",
+          name: "reading_fine_work",
+          columns: LVQOL_SCALE,
+          rows: [
+            "Reading large print (e.g., newspaper headlines)",
+            "Reading newspapers and books",
+            "Reading labels (e.g., on medicine bottles)",
+            "Reading your letters and mail",
+            "Having problems using tools (e.g., threading a needle or cutting)"
           ]
         }
       ]
@@ -265,50 +80,22 @@ const schema ={
     {
       title: "Daily Activities",
       fields: [
-        { type: "subheading", label: "With your reading glasses, if used, how much of a problem do you have:" },
-
         {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "da_q1",
-              label: "Finding the time for yourself",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "da_q2",
-              label: "Writing (e.g., cheques or cards)",
-              options: lvqolOptions
-            }
+          type: "scale-table",
+          name: "daily_activities",
+          columns: LVQOL_SCALE,
+          rows: [
+            "Finding the time for yourself",
+            "Writing (e.g., cheques or cards)",
+            "Reading your own handwriting",
+            "With your everyday activities (e.g., household chores)"
           ]
-        },
-
-        {
-          type: "row",
-          fields: [
-            {
-              type: "single-select",
-              name: "da_q3",
-              label: "Reading your own handwriting",
-              options: lvqolOptions
-            },
-            {
-              type: "single-select",
-              name: "da_q4",
-              label: "With your everyday activities (e.g., house-hold chores)",
-              options: lvqolOptions
-            }
-          ]
-        },
-
-
-
+        }
       ]
     }
   ]
 };
+
 
 function calculateLVQoL(values) {
   const keys = Object.keys(values).filter(k =>
