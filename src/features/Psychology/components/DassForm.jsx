@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
+export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
   const DEPRESSION = ["q3", "q5", "q10", "q13", "q16", "q17", "q21"];
   const ANXIETY = ["q2", "q4", "q7", "q9", "q15", "q19", "q20"];
   const STRESS = ["q1", "q6", "q8", "q11", "q12", "q14", "q18"];
@@ -17,16 +17,16 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
   /* ================= SCHEMA ================= */
   const DASS_SCHEMA = {
     title: "Depression Anxiety Stress Scale (DASS-21)",
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "print", label: "Print" },
-      { type: "save", label: "Save" }
-    ],
+    // actions: [
+    //   { type: "back", label: "Back" },
+    //   { type: "clear", label: "Clear" },
+    //   { type: "print", label: "Print" },
+    //   { type: "save", label: "Save" }
+    // ],
     fields: [
       { name: "q1", label: "1. I found it hard to wind down." },
       { name: "q2", label: "2. I was aware of dryness of my mouth." },
-      { name: "q3", label: "3. I couldn’t seem to experience any positive feeling at all." },
+      { name: "q3", label: "3. I couldn't seem to experience any positive feeling at all." },
       { name: "q4", label: "4. I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)." },
       { name: "q5", label: "5. I found it difficult to work up the initiative to do things." },
       { name: "q6", label: "6. I tended to over-react to situations." },
@@ -40,7 +40,7 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
       { name: "q14", label: "14. I was intolerant of anything that kept me from getting on with what I was doing." },
       { name: "q15", label: "15. I felt I was close to panic." },
       { name: "q16", label: "16. I was unable to become enthusiastic." },
-      { name: "q17", label: "17. I felt I wasn’t worth much as a person." },
+      { name: "q17", label: "17. I felt I wasn't worth much as a person." },
       { name: "q18", label: "18. I felt that I was rather touchy." },
       { name: "q19", label: "19. I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat)." },
       { name: "q20", label: "20. I felt scared without any good reason." },
@@ -157,7 +157,8 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack }) {
         schema={DASS_SCHEMA}
         values={values}
         onChange={onChange}
-        submitted={submitted}
+        layout="nested"
+        submitted={submitted} 
         onAction={handleAction}
       >
         <div style={scoreRow}>

@@ -9,12 +9,12 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
 
     const HAMD_SCHEMA = {
         title: "Hamilton Depression Rating Scale - (HAM-D)",
-        actions: [
-            { type: "back", label: "Back" },
-            { type: "clear", label: "Clear" },
-            // { type: "print", label: "Print" },
-            { type: "save", label: "Save" }
-        ],
+        // actions: [
+        //     { type: "back", label: "Back" },
+        //     { type: "clear", label: "Clear" },
+        //     // { type: "print", label: "Print" },
+        //     { type: "save", label: "Save" }
+        // ],
         fields: [
             {
                 name: "q1",
@@ -316,6 +316,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             <CommonFormBuilder
                 schema={HAMD_SCHEMA}
                 values={values}
+                layout="nested"
                 onChange={onChange}
                 submitted={submitted}
                 onAction={handleAction}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import AssessmentRenderer from "../components/AssessmentRenderer";
-import PatientDetails from "../components/PatientDetails";
+import PsychologyAssessment from "../components/PsychologyAssessment";
 import { useHistory } from "react-router-dom";
 
 
@@ -10,12 +9,14 @@ export default function PsychologyDepartmentPage({ patients, department }) {
 
   const list = patients.filter(p => p.departments.includes(department));
 
-  // If patient is selected → show PatientDetails as FULL component
+  // If patient is selected → show PsychologyAssessment as FULL component
   if (selectedPatient) {
     return (
-      <PatientDetails 
+      <PsychologyAssessment 
         patient={selectedPatient} 
-        department={department}
+        onSubmit={(values) => {
+          console.log("Psychology assessment submitted:", values);
+        }}
         onBack={() => setSelectedPatient(null)}
       />
     );

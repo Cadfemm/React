@@ -3,15 +3,19 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 /* ===================== OPTIONS ===================== */
 
-const Right_Left = [
-  { label: "No", value: "0" },
-  { label: "Right", value: "1" },
-  { label: "Left", value: "2" },
-  { label: "Bilateral", value: "3" }
+const INTACT_IMPAIRED = [
+  { label: "Intact", value: "intact" },
+  { label: "Impaired", value: "impaired" }
+];
+
+const IMPAIRED_LOCATION = [
+  { label: "Right", value: "right" },
+  { label: "Left", value: "left" },
+  { label: "Bilateral", value: "bilateral" }
 ];
 const YES_NO = [
-  { label: "No", value: "0" },
-  { label: "Yes", value: "1" }
+  { label: "Yes", value: "1" },
+  { label: "No", value: "0" }
 ];
 
 const FULLTERM_PRETERM = [
@@ -100,7 +104,7 @@ const SUBJECTIVE_SCHEMA = {
 
 {
   name: "length_of_pregnancy_notes",
-  label: "Additional Information",
+  label: "",
   type: "textarea",
   showIf: { field: "length_of_pregnancy", equals: "1" }
 },
@@ -118,7 +122,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "pregnancy_complications_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf: { field: "pregnancy_complications", equals: "1" }
         },
@@ -131,7 +135,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "nicu_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf: { field: "nicu_history", equals: "1" }
         },
@@ -166,7 +170,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "prenatal_risk_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
         showIf: { field: "prenatal_risk_factors", exists: true }
 
@@ -194,7 +198,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "ototoxic_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf: { field: "ototoxic_medications", exists: true }
         },
@@ -207,7 +211,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "high_fever_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf: { field: "high_fever_history", equals: "1" }
         },
@@ -220,7 +224,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "hospitalisation_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "hospitalisation_history", equals: "1" }
         },
@@ -233,7 +237,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "specialist_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "specialist_history", equals: "1" }
         },
@@ -267,7 +271,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "ear_conditions_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "ear_conditions", exists: true  }
         },
@@ -279,7 +283,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "surgical_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "surgical_history", equals: "1" }
         },
@@ -291,7 +295,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "pain_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "pain_history", equals: "1" }
         },
@@ -304,7 +308,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "noise_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "noise_history", equals: "1" }
         },
@@ -334,7 +338,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "condition_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
            showIf: { field: "condition_history", equals: "1" }
         },
@@ -381,7 +385,7 @@ const SUBJECTIVE_SCHEMA = {
         },
  {
           name: "speech_understood_family_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
        showIf:{field:"speech_understood_family",equals:"1"}
         },
@@ -394,7 +398,7 @@ const SUBJECTIVE_SCHEMA = {
         },
 {
           name: "speech_understood_others_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
        showIf:{field:"speech_understood_others",equals:"1"}
         },
@@ -406,7 +410,7 @@ const SUBJECTIVE_SCHEMA = {
         },
 {
           name: "speech_concerns_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
        showIf:{field:"speech_concerns",equals:"1"}
         },
@@ -424,20 +428,22 @@ const SUBJECTIVE_SCHEMA = {
           type: "multi-select-dropdown",
           options: [
             { label: "None", value: "0" },
-            { label: "Family history", value: "1" },
-            { label: "Jaundice", value: "2" },
-            { label: "Meningitis", value: "3" },
-            { label: "Head trauma", value: "4" },
-            { label: "CHARGE syndrome", value: "5" },
-            { label: "Down syndrome", value: "6" },
-            { label: "Cleft lip / palate", value: "7" },
-            { label: "Ear anomalies", value: "8" },
-            { label: "Rh incompatibility", value: "9" }
+            { label: "Family history of hearing loss", value: "1" },
+            { label: "Jaundice (required transfusion)", value: "2" },
+            { label: "Bacterial meningitis", value: "3" },
+            { label: "Pulmonary hypertension", value: "4" },
+            { label: "Head trauma (hospitalisation required)", value: "5" },
+            { label: "CHARGE syndrome", value: "6" },
+            { label: "Down syndrome (trisomy 21)", value: "7" },
+            { label: "Cleft lip and palate", value: "8" },
+            { label: "Small and absent pinna/ears", value: "9" },
+            { label: "Skin tag or pits around ears", value: "10" },
+            { label: "Rh incompatibility", value: "11" }
           ]
         },
         {
           name: "hearing_loss_risk_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"hearing_loss_risk_factors" ,exists:true}
         },
@@ -449,7 +455,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "family_member_hearing_loss_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"family_member_hearing_loss" ,equals:"1"}
         },
@@ -461,7 +467,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "previous_hearing_test_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"previous_hearing_test" ,equals:"1"}
         },
@@ -473,7 +479,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "ear_infections_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"ear_infections" ,equals:"1"}
         },
@@ -486,7 +492,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "responds_to_sound_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"responds_to_sound" ,equals:"1"}
         },
@@ -498,7 +504,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "turns_to_sound_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"turns_to_sound" ,equals:"1"}
         },
@@ -510,7 +516,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "enjoys_music_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"enjoys_music" ,equals:"1"}
         },
@@ -522,7 +528,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "responds_to_name_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"responds_to_name" ,equals:"1"}
         },
@@ -535,7 +541,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "startle_to_loud_sound_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"startle_to_loud_sound" ,equals:"1"}
         },
@@ -562,7 +568,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "balance_issues_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
           showIf:{field:"balance_issues",equals:"1"}
         },
@@ -574,9 +580,44 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "vestibular_notes",
-          label: "Additional Information",
+          label: "",
           type: "textarea",
                     showIf:{field:"dizziness_history",equals:"1"}
+        }
+      ]
+    },
+
+    /* ===================== D. AUDIOMETRY ===================== */
+    {
+      fields: [
+        {
+          type: "attach-file",
+          name: "audiometry_audiology_report",
+          title: "Audiometry (Attach PDF)",
+          accept: "application/pdf,image/*",
+          multiple: false
+        },
+
+        {
+          name: "audiometry_type",
+          label: "Type of Audiometry",
+          type: "radio",
+          options: [
+            { label: "Screening", value: "screening" },
+            { label: "Diagnostic Pure Tone", value: "pta" },
+            { label: "Play", value: "play" },
+            { label: "Visual Reinforcement (VR)", value: "vra" }
+          ]
+        },
+
+        {
+          name: "masking",
+          label: "Masking",
+          type: "radio",
+          options: [
+            { label: "Unmasked", value: "unmasked" },
+            { label: "Masking", value: "masked" }
+          ]
         }
       ]
     }
@@ -624,17 +665,35 @@ const OBJECTIVE_SCHEMA = {
     {
       title: "Tympanometry (Attach PDF)",
       fields: [
-
-{
-  type: "attach-file",
-  name: "audiology_report",
-  accept: "application/pdf,image/*",
-  multiple: false
-},        { type: "subheading", label: "Tympanogram Type" },
+        {
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "tympanometry_report_right",
+              accept: "application/pdf,image/*",
+              title: "Tympanometry - Right",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            },
+            {
+              type: "attach-file",
+              name: "tympanometry_report_left",
+              accept: "application/pdf,image/*",
+              title: "Tympanometry - Left",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            }
+          ]
+        },
+        { type: "subheading", label: "Tympanogram Type" },
         {
           type: "paired-select",
-          left: { name: "tymp_type_r", title: "Right Ear" },
-          right: { name: "tymp_type_l", title: "Left Ear" },
+          right: { name: "tymp_type_r", title: "Right Ear" },
+          left: { name: "tymp_type_l", title: "Left Ear" },
           options: [
             { label: "Type A", value: "A" },
             { label: "Type As", value: "As" },
@@ -648,6 +707,7 @@ const OBJECTIVE_SCHEMA = {
 
         {
           type: "paired-text",
+          name: "peak_pressure",
           pairs: [
           { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
           { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
@@ -655,6 +715,7 @@ const OBJECTIVE_SCHEMA = {
 
         {
           type: "paired-text",
+          name: "static_compliance",
           pairs: [
           { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
         { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }]
@@ -662,6 +723,7 @@ const OBJECTIVE_SCHEMA = {
 
         {
           type: "paired-text",
+          name: "ecv",
           pairs: [
             { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
           { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }]
@@ -687,7 +749,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         },
         {
@@ -697,7 +758,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         },
 
@@ -708,7 +768,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         },
         {
@@ -718,7 +777,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         },
 
@@ -729,7 +787,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         },
         {
@@ -739,7 +796,6 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Pass", value: "pass" },
             { label: "Refer", value: "refer" },
-            { label: "Could not test (CNT)", value: "cnt" }
           ]
         }
       ]
@@ -749,12 +805,29 @@ const OBJECTIVE_SCHEMA = {
     {
       fields: [
         {
-  type: "attach-file",
-  name: "audiology_report",
-  accept: "application/pdf,image/*",
-  title: "Otoscopic Examination (Attach PDF)",
-  multiple: false
-}, 
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "otoscopic_examination_left",
+              accept: "application/pdf,image/*",
+              title: "Otoscopic Examination - Left",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            },
+            {
+              type: "attach-file",
+              name: "otoscopic_examination_right",
+              accept: "application/pdf,image/*",
+              title: "Otoscopic Examination - Right",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            }
+          ]
+        }, 
         {
           type: "paired-select",
           left: { name: "external_canal_r", title: "External Ear Canal – Right" },
@@ -799,47 +872,13 @@ const OBJECTIVE_SCHEMA = {
         {
           type: "paired-text",
           pairs: [
+                      { name: "otoscopy_other_l", title: "Other Findings – Left" },
           { name: "otoscopy_other_r", title: "Other Findings – Right" },
-          { name: "otoscopy_other_l", title: "Other Findings – Left" }]
+          ]
         }
       ]
     },
 
-    /* ===================== AUDIOMETRY ===================== */
-    {
-      
-      fields: [
-{
-  type: "attach-file",
-  name: "audiometry_audiology_report",
-  title: "Audiometry (Attach PDF)",
-  accept: "application/pdf,image/*",
-  multiple: false
-}, 
-
-        {
-          name: "audiometry_type",
-          label: "Type of Audiometry",
-          type: "radio",
-          options: [
-            { label: "Screening", value: "screening" },
-            { label: "Diagnostic Pure Tone", value: "pta" },
-            { label: "Play", value: "play" },
-            { label: "Visual Reinforcement (VR)", value: "vra" }
-          ]
-        },
-
-        {
-          name: "masking",
-          label: "Masking",
-          type: "radio",
-          options: [
-            { label: "Unmasked", value: "unmasked" },
-            { label: "Masking", value: "masked" }
-          ]
-        },
-      ]
-    }
   ]
 };
 
@@ -876,6 +915,62 @@ const OBJECTIVE_SCHEMA = {
     assessment: ASSESSMENT_SCHEMA,
     plan: PLAN_SCHEMA
   };
+
+  /* ===================== PATIENT INFO ===================== */
+  const AUDIO_CONTAINER_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    return new Date(dateStr).toLocaleDateString();
+  };
+
+  const today = new Date();
+
+  const calculateDuration = (onset) => {
+    if (!onset) return "-";
+    const onsetDate = new Date(onset);
+    const diffMs = today - onsetDate;
+
+    if (diffMs < 0) return "-";
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+
+    if (years > 0) return `${years} yr ${months % 12} mo`;
+    if (months > 0) return `${months} mo`;
+    return `${days} days`;
+  };
+
+  function AudioPatientInfo({ patient }) {
+    if (!patient) return null;
+
+    const handleDoctorsReport = () => {
+      alert("Report will be generating soon");
+    };
+
+    return (
+      <div style={section}>
+        <div style={patientGrid}>
+          <div><b>Name:</b> {patient.name}</div>
+          <div><b>IC:</b> {patient.id}</div>
+          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+          <div><b>ICD:</b> {patient.icd}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
+              Doctors Reports
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 function AudiometryFrequencyTable({ value = {}, onChange }) {
   const frequencies = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 
@@ -963,6 +1058,15 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
 
   return (
 <div style={mainContent}>
+  {/* ===== PATIENT INFORMATION CARD ===== */}
+  <CommonFormBuilder
+    schema={AUDIO_CONTAINER_SCHEMA}
+    values={{}}
+    onChange={() => {}}
+  >
+    <AudioPatientInfo patient={patient} />
+  </CommonFormBuilder>
+
   {/* ===== TABS ===== */}
   <div style={tabBar}>
     {["subjective", "objective", "assessment", "plan"].map(tab => (
@@ -985,7 +1089,7 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
     onAction={handleAction}
   >
 
-    {activeTab === "objective" && (
+    {activeTab === "subjective" && (
   <AudiometryFrequencyTable
     value={values.pta_matrix}
     onChange={onChange}
@@ -993,7 +1097,7 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
 )}
 
     {/* 👇 ADD THIS BLOCK HERE */}
-{activeTab === "objective" && (
+{activeTab === "subjective" && (
   <>
     {/* IMPRESSION */}
     <div style={{ marginTop: 20 }}>
@@ -1083,4 +1187,27 @@ const submitBtn = {
   borderRadius: 10,
   fontSize: 15,
   fontWeight: 700
+};
+
+const section = {
+  marginBottom: 24
+};
+
+const patientGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 12,
+  fontSize: 14
+};
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
 };

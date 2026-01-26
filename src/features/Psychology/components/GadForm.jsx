@@ -13,31 +13,35 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
     /* ---------------- SCHEMA ---------------- */
     const GAD7_SCHEMA = {
         title: "Generalized Anxiety Disorder (GAD-7)",
-        actions: [
-            { type: "back", label: "Back" },
-            { type: "clear", label: "Clear" },
-            { type: "print", label: "Print" },
-            { type: "save", label: "Save" }
-        ],
-        fields: [
-            "Feeling nervous, anxious, or on edge.",
-            "Not being able to stop or control worrying.",
-            "Worrying too much about different things.",
-            "Trouble relaxing.",
-            "Being so restless that it is hard to sit still.",
-            "Becoming easily annoyed or irritable.",
-            "Feeling afraid, as if something awful might happen."
-        ].map((text, index) => ({
-            name: `q${index + 1}`,
-            label: `${index + 1}. ${text}`,
-            type: "single-select",
-            options: [
-                { label: "Not at all (0)", value: 0 },
-                { label: "Several days (1)", value: 1 },
-                { label: "More than half the days (2)", value: 2 },
-                { label: "Nearly every day (3)", value: 3 }
-            ]
-        }))
+        // actions: [
+        //     { type: "back", label: "Back" },
+        //     { type: "clear", label: "Clear" },
+        //     { type: "print", label: "Print" },
+        //     { type: "save", label: "Save" }
+        // ],
+        sections: [
+            {
+                fields: [
+                    "Feeling nervous, anxious, or on edge.",
+                    "Not being able to stop or control worrying.",
+                    "Worrying too much about different things.",
+                    "Trouble relaxing.",
+                    "Being so restless that it is hard to sit still.",
+                    "Becoming easily annoyed or irritable.",
+                    "Feeling afraid, as if something awful might happen."
+                ].map((text, index) => ({
+                    name: `q${index + 1}`,
+                    label: `${index + 1}. ${text}`,
+                    type: "radio-matrix",
+                    options: [
+                        { label: "Not at all (0)", value: 0 },
+                        { label: "Several days (1)", value: 1 },
+                        { label: "More than half the days (2)", value: 2 },
+                        { label: "Nearly every day (3)", value: 3 }
+                    ]
+                }))
+            }
+        ]
     };
 
     /* ---------------- LOAD DRAFT ---------------- */
@@ -130,6 +134,7 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
                 schema={GAD7_SCHEMA}
                 values={values}
                 onChange={onChange}
+                layout="nested"
                 submitted={submitted}
                 onAction={handleAction}
             >
