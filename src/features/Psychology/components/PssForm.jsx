@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-export default function PSSFormBuilder({ patient, onSubmit, onBack }) {
+export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -13,12 +13,12 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack }) {
   /* ---------------- SCHEMA ---------------- */
   const PSS_SCHEMA = {
     title: "Perceived Stress Scale (PSS)",
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "print", label: "Print" },
-      { type: "save", label: "Save" }
-    ],
+    // actions: [
+    //   { type: "back", label: "Back" },
+    //   { type: "clear", label: "Clear" },
+    //   { type: "print", label: "Print" },
+    //   { type: "save", label: "Save" }
+    // ],
     fields: [
       { name: "q1", label: "1. In the last month, how often have you been upset because of something that happened unexpectedly?" },
       { name: "q2", label: "2. In the last month, how often have you felt that you were unable to control the important things in your life?" },
@@ -132,6 +132,7 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack }) {
         schema={PSS_SCHEMA}
         values={values}
         onChange={onChange}
+        layout="nested"
         submitted={submitted}
         onAction={handleAction}
       >

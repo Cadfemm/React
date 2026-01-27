@@ -81,36 +81,13 @@ export default function CommonFormBuilder({
                       {section.title}
                     </div>
                   )}
-                  {/* ===== MATRIX HEADER ===== */}
-                  { section.fields.some(f => f.type === "radio-matrix" && !f.hideMatrixHeader) && (
-                    <div style={styles.matrixHeader}>
-                      <div style={styles.matrixLabel}>
-                        Scale
-                        {/* {(() => {
-        const matrix = section.fields.find(f => f.type === "radio-matrix");
-        if (!matrix?.info) return null;
 
-        return (
-          <InfoTooltip info={matrix.info} />
-        );
-      })()} */}
-                      </div>
+                  {(() => {
+                    // Track if we've shown the matrix header for this section
+                    let matrixHeaderShown = false;
+                    const firstMatrixField = section.fields.find(f => f.type === "radio-matrix");
 
-                      <div style={styles.matrixOptions}>
-                        {section.fields
-                          .find(f => f.type === "radio-matrix")
-                          .options.map(opt => (
-                            <div key={opt.value} style={styles.matrixHeaderCell}>
-                              {opt.label}
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-
-
-
-                  { section.fields.map(field => {
+                    return section.fields.map(field => {
 
                     if (field.showIf) {
                       const depVal = values[field.showIf.field];
@@ -154,14 +131,35 @@ export default function CommonFormBuilder({
                       ? validateField(value, field.validation)
                       : null;
 
+                    // Show matrix header before the first radio-matrix field
+                    const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField;
+                    if (shouldShowMatrixHeader) {
+                      matrixHeaderShown = true;
+                    }
+
                     return (
-                      <div
-                        key={field.name}
-                        style={{
-                          ...styles.field,
-                          marginBottom: layout === "nested" ? 10 : 18
-                        }}
-                      >
+                      <React.Fragment key={field.name}>
+                        {shouldShowMatrixHeader && (
+                          <div style={styles.matrixHeader}>
+                            <div style={styles.matrixLabel}>
+                              Scale
+                              {firstMatrixField?.info && <InfoTooltip info={firstMatrixField.info} />}
+                            </div>
+                            <div style={styles.matrixOptions}>
+                              {firstMatrixField.options.map(opt => (
+                                <div key={opt.value} style={styles.matrixHeaderCell}>
+                                  {opt.label}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        <div
+                          style={{
+                            ...styles.field,
+                            marginBottom: layout === "nested" ? 10 : 18
+                          }}
+                        >
 
 
                         {/* RADIO stays special (side layout) */}
@@ -179,6 +177,16 @@ export default function CommonFormBuilder({
                         ) : field.type === "subheading" ? (
 
                           renderField(field)
+                        ) : field.type === "row" ? (
+                          /* ✅ ROW FIELDS → Render directly without extra wrapper */
+                          renderField(
+                            field,
+                            value,
+                            values,
+                            onChange,
+                            onAction,
+                            assessmentRegistry
+                          )
                         ) : (
                           <div style={{ marginBottom: 16 }}>
 
@@ -223,10 +231,11 @@ export default function CommonFormBuilder({
                           <div style={styles.error}>{error}</div>
                         )}
 
-                      </div>
+                        </div>
+                      </React.Fragment>
                     );
 
-                  })}
+                  })})()}
                 </div>
               );
             })}
@@ -1101,61 +1110,62 @@ case "info-text":
         />
       );
 
-    case "radio":
-      return (
-        <div style={{ marginTop: 6 }}>
-          <div style={styles.inlineGroup}>
-            {(field.options || []).map(opt => (
-              <label key={opt.value} style={styles.inlineItem}>
-                <input
-                  type="radio"
-                  name={field.name}
-                  checked={value === opt.value}
-                  onChange={() => onChange(field.name, opt.value)}
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        </div>
-      );
-    case "attach-file":
-      return (
-        <div style={styles.field}>
-          <label style={styles.label}>
-            {field.title}
-            {field.required && <span style={{ color: "red" }}> *</span>}
-          </label>
-
-
-          <div style={styles.inlineGroup}>
-            <input
-              type="file"
-              accept={field.accept}
-              multiple={field.multiple}
-              onChange={e => {
-                const files = field.multiple
-                  ? Array.from(e.target.files || [])
-                  : e.target.files?.[0] || null;
-
-                onChange(field.name, files);
-              }}
-              style={styles.fileInput}
-            />
-
-            {/* Preview / filename */}
-            {value && !Array.isArray(value) && (
-              <FilePreview file={value} />
-            )}
-
-            {Array.isArray(value) &&
-              value.map((file, idx) => (
-                <FilePreview key={idx} file={file} />
+      case "radio":
+        return (
+          <div style={{ marginTop: 6 }}>
+            <div style={styles.inlineGroup}>
+              {(field.options || []).map(opt => (
+                <label key={opt.value} style={styles.inlineItem}>
+                  <input
+                    type="radio"
+                    name={field.name}
+                    checked={value === opt.value}
+                    onChange={() => onChange(field.name, opt.value)}
+                  />
+                  {opt.label}
+                </label>
               ))}
+            </div>
           </div>
-        </div>
-      );
+        );
+      case "attach-file":
+        return (
+          <div style={{ marginBottom: 0 }}>
+            <label style={styles.label}>
+              {field.title}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </label>
 
+            <div style={styles.inlineGroup}>
+              {(!value || !field.hideInputAfterSelect) && (
+                <input
+                  type="file"
+                  accept={field.accept}
+                  multiple={field.multiple}
+                  onChange={e => {
+                    const files = field.multiple
+                      ? Array.from(e.target.files || [])
+                      : e.target.files?.[0] || null;
+
+                    onChange(field.name, files);
+                  }}
+                  style={styles.fileInput}
+                />
+              )}
+
+              {/* Preview / filename */}
+              {value && !Array.isArray(value) && (
+                <FilePreview file={value} previewSize={field.previewSize} />
+              )}
+
+              {Array.isArray(value) &&
+                value.map((file, idx) => (
+                  <FilePreview key={idx} file={file} previewSize={field.previewSize} />
+                ))}
+            </div>
+          </div>
+        );
+    
 
     case "paired-text":
       const pairs = field.pairs || [];
@@ -1216,9 +1226,9 @@ case "info-text":
             }}
           >
             {/* LABEL */}
-            <div style={styles.label}>
+            <label style={styles.label}>
               {field.label}
-            </div>
+            </label>
 
             {/* OPTIONS */}
             <div
@@ -1248,27 +1258,36 @@ case "info-text":
         );
       }
 
-      /* DEFAULT BEHAVIOUR (unchanged) */
-      return (
-        <div style={styles.inlineGroup}>
-          {(field.options || []).map(opt => (
-            <label key={opt.value} style={styles.inlineItem}>
-              <input
-                type="checkbox"
-                checked={(value || []).includes(opt.value)}
-                onChange={() => {
-                  const next = value?.includes(opt.value)
-                    ? value.filter(v => v !== opt.value)
-                    : [...(value || []), opt.value];
-                  onChange(field.name, next);
-                }}
-              />
-              {opt.label}
-            </label>
-          ))}
-        </div>
-      );
+/* DEFAULT BEHAVIOUR (label on top) */
+return (
+  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    {field.label ? (
+      <label style={styles.label}>{field.label}</label>
+    ) : null}
 
+    <div style={styles.inlineGroup}>
+      {(field.options || []).map((opt) => (
+        <label key={opt.value} style={styles.inlineItem}>
+          <input
+            type="checkbox"
+            checked={(value || []).includes(opt.value)}
+            onChange={() => {
+              const next = (value || []).includes(opt.value)
+                ? value.filter((v) => v !== opt.value)
+                : [...(value || []), opt.value];
+              onChange(field.name, next);
+            }}
+          />
+          {opt.label}
+        </label>
+      ))}
+    </div>
+  </div>
+);
+
+
+
+    
 
 
     case "subheading":
@@ -1695,7 +1714,7 @@ case "info-text":
   }
 }
 
-function FilePreview({ file }) {
+function FilePreview({ file, previewSize }) {
   const isImage = file.type.startsWith("image/");
 
   return (
@@ -1705,10 +1724,13 @@ function FilePreview({ file }) {
           src={URL.createObjectURL(file)}
           alt={file.name}
           style={{
-            maxWidth: 160,
-            maxHeight: 120,
+            width: previewSize?.width || 160,
+            height: previewSize?.height || 120,
+            maxWidth: previewSize?.width || 160,
+            maxHeight: previewSize?.height || 120,
             borderRadius: 6,
-            border: "1px solid #ddd"
+            border: "1px solid #ddd",
+            objectFit: "contain"
           }}
         />
       ) : (

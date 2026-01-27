@@ -13,12 +13,12 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
   /* ---------------- SCHEMA ---------------- */
   const PHQ9_SCHEMA = {
     title: "Patient Health Questionnaire (PHQ-9)",
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "print", label: "Print" },
-      { type: "save", label: "Save" }
-    ],
+    // actions: [
+    //   { type: "back", label: "Back" },
+    //   { type: "clear", label: "Clear" },
+    //   { type: "print", label: "Print" },
+    //   { type: "save", label: "Save" }
+    // ],
     fields: [
       "Little interest or pleasure in doing things.",
       "Feeling down, depressed, or hopeless.",
@@ -128,6 +128,7 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
     <div style={mainContent}>
       <CommonFormBuilder
         schema={PHQ9_SCHEMA}
+        layout="nested"
         values={values}
         onChange={onChange}
         submitted={submitted}

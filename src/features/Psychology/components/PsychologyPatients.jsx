@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PsychologyAssessmentForm from "./PsychologyAssignments";
+import PsychologyAssessment from "./PsychologyAssessment";
 
 export default function Patients({ onBack }) {
   const [tab, setTab] = useState("new");
@@ -20,8 +20,11 @@ export default function Patients({ onBack }) {
   /* ---------------- RENDER ASSESSMENT ---------------- */
   if (selectedPatient) {
     return (
-      <PsychologyAssessmentForm
+      <PsychologyAssessment
         patient={selectedPatient}
+        onSubmit={(values) => {
+          console.log("Psychology assessment submitted:", values);
+        }}
         onBack={() => setSelectedPatient(null)}
       />
     );

@@ -13,12 +13,12 @@ export default function HAM_A_FormBuilder({ patient, onSubmit, onBack }) {
   /* ---------------- SCHEMA ---------------- */
   const HAM_A_SCHEMA = {
     title: "Hamilton Anxiety Rating Scale (HAM-A )",
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "print", label: "Print" },
-      { type: "save", label: "Save" }
-    ],
+    // actions: [
+    //   { type: "back", label: "Back" },
+    //   { type: "clear", label: "Clear" },
+    //   { type: "print", label: "Print" },
+    //   { type: "save", label: "Save" }
+    // ],
     fields: [
       "Anxious mood - Worries, anticipation of the worst, fearful anticipation, irritability",
       "Tension - Feelings of tension, fatigability, startle response, moved to tears easily, trembling, feelings of restlessness, inability to relax",
@@ -137,6 +137,7 @@ export default function HAM_A_FormBuilder({ patient, onSubmit, onBack }) {
       <CommonFormBuilder
         schema={HAM_A_SCHEMA}
         values={values}
+        layout="nested"
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
