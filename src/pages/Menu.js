@@ -52,6 +52,7 @@ import GlobalVitalsOverlay from "../components/GlobalVitalsOverlay";
 import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
 import OptometryDashboard from "../features/Optometry/OptometryDashboard";
 import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
+import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -740,6 +741,9 @@ export function MainContent({
         updatePatientInMainList={updatePatientInMainList}
       />
         ;
+
+    case "Nursing / Medical Assistant":
+      return <NursingDepartmentPage patients={patients} department="Nursing / Medical Assistant" />;
 
     default:
       return <div>Select a department</div>;
