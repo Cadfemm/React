@@ -1,24 +1,115 @@
-
 import React, { useState } from "react";
-import AssessmentForm from "./OptometryAssessment";
+import OptometryAssessment from "./components/OptometryAssessment";
 
-export default function OptometryPatients({ Patients,onBack }) {
-  const [tab, setTab] = useState("new");
+const OPTION_CARDS = [
+  { id: "initial", title: "Initial Assessment", description: "Full SOAP assessment for new patient", icon: "📋", color: "#2563EB" },
+  { id: "followup", title: "Follow-up Visit", description: "Follow-up visit documentation", icon: "🔄", color: "#059669" },
+  { id: "progress", title: "Progress Intervention", description: "Track progress and interventions", icon: "📈", color: "#7C3AED" },
+  { id: "group", title: "Group Intervention", description: "Group session documentation", icon: "👥", color: "#EA580C" }
+];
+
+export default function OptometryPatients({ Patients, onBack }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
-  console.log("patients",Patients)
- const newPatients = (Patients || []).filter(p => p.status !== "Old");
-const existingPatients = []
+  const [assessmentView, setAssessmentView] = useState(null); // null | 'initial' | 'followup' | 'progress' | 'group'
+  const [submittedAssessments, setSubmittedAssessments] = useState({}); // { [patientId]: values } – initial only
+  const [submittedFollowups, setSubmittedFollowups] = useState({}); // { [patientId]: values } – follow-up only
+  const patients = Patients || [];
 
+  /* ---------------- RENDER INITIAL ASSESSMENT (full patient page) ---------------- */
+  if (selectedPatient && assessmentView === "initial") {
+    const initialSaved = submittedAssessments[selectedPatient.id] ?? null;
+    const initialReadOnly = !!initialSaved;
+    return (
+      <OptometryAssessment
+        patient={selectedPatient}
+        mode="initial"
+        savedValues={initialSaved}
+        readOnly={initialReadOnly}
+        onSubmit={(values) => {
+          setSubmittedAssessments((prev) => ({
+            ...prev,
+            [selectedPatient.id]: values
+          }));
+          console.log("Optometry initial assessment submitted:", values);
+        }}
+        onBack={() => setAssessmentView(null)}
+      />
+    );
+  }
 
-  const patients = tab === "new" ? newPatients : existingPatients;
+  /* ---------------- RENDER FOLLOW-UP (same layout, always fresh from initial; own saved state) ---------------- */
+  if (selectedPatient && assessmentView === "followup") {
+    const followupSaved = submittedFollowups[selectedPatient.id] ?? null;
+    const followupReadOnly = !!followupSaved;
+    return (
+      <OptometryAssessment
+        patient={selectedPatient}
+        mode="followup"
+        savedValues={followupSaved}
+        readOnly={followupReadOnly}
+        onSubmit={(values) => {
+          setSubmittedFollowups((prev) => ({
+            ...prev,
+            [selectedPatient.id]: values
+          }));
+          console.log("Optometry follow-up submitted:", values);
+        }}
+        onBack={() => setAssessmentView(null)}
+      />
+    );
+  }
 
-  /* ---------------- RENDER ASSESSMENT ---------------- */
+  /* ---------------- RENDER 4 OPTION CARDS when patient selected ---------------- */
   if (selectedPatient) {
     return (
-      <AssessmentForm
-        patient={selectedPatient}
-        onBack={() => setSelectedPatient(null)}
-      />
+      <div style={styles.page}>
+        <div style={styles.header}>
+          <div>
+            <h1 style={styles.title}>Patient: {selectedPatient.name}</h1>
+            <p style={styles.subtitle}>Choose an assessment or visit type</p>
+          </div>
+          <button style={styles.backBtn} onClick={() => { setSelectedPatient(null); setAssessmentView(null); }}>
+            ← Back to Patients
+          </button>
+        </div>
+
+        <div style={styles.cardsGrid}>
+          {OPTION_CARDS.map((card) => (
+            <div
+              key={card.id}
+              style={{
+                ...styles.optionCard,
+                borderLeftColor: card.color
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.12)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+              onClick={() => {
+                if (card.id === "initial") {
+                  setAssessmentView("initial");
+                } else if (card.id === "followup") {
+                  setAssessmentView("followup");
+                } else {
+                  // Placeholder for other types – can be replaced with actual views later
+                  alert(`${card.title} – Coming soon`);
+                }
+              }}
+            >
+              <div style={{ ...styles.optionCardIcon, background: `${card.color}20`, color: card.color }}>
+                {card.icon}
+              </div>
+              <h3 style={styles.optionCardTitle}>{card.title}</h3>
+              <p style={styles.optionCardDesc}>{card.description}</p>
+              <span style={{ ...styles.optionCardArrow, color: card.color }}>Open →</span>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 
@@ -29,35 +120,12 @@ const existingPatients = []
         <div>
           <h1 style={styles.title}>Patients</h1>
           <p style={styles.subtitle}>
-            Manage and start psychology assessments
+            Manage and start optometry assessments
           </p>
         </div>
 
         <button style={styles.backBtn} onClick={onBack}>
           ← Back to Dashboard
-        </button>
-      </div>
-
-      {/* ================= TABS ================= */}
-      <div style={styles.tabs}>
-        <button
-          style={{
-            ...styles.tab,
-            ...(tab === "new" ? styles.activeTab : {})
-          }}
-          onClick={() => setTab("new")}
-        >
-          New Patients
-        </button>
-
-        <button
-          style={{
-            ...styles.tab,
-            ...(tab === "existing" ? styles.activeTab : {})
-          }}
-          onClick={() => setTab("existing")}
-        >
-          Existing Patients
         </button>
       </div>
 
@@ -72,7 +140,7 @@ const existingPatients = []
 
       {patients.length === 0 ? (
   <div style={styles.emptyState}>
-    Patients are not configured yet
+    No patients assigned
   </div>
 ) : (
   patients.map((p) => (
@@ -156,28 +224,6 @@ emptyState: {
     color: "#2563EB"
   },
 
-  tabs: {
-    display: "flex",
-    gap: 20,
-    borderBottom: "1px solid #E5E7EB",
-    marginBottom: 24
-  },
-
-  tab: {
-    paddingBottom: 12,
-    fontSize: 15,
-    fontWeight: 600,
-    cursor: "pointer",
-    background: "none",
-    border: "none",
-    color: "#64748B"
-  },
-
-  activeTab: {
-    color: "#2563EB",
-    borderBottom: "3px solid #2563EB"
-  },
-
   card: {
     background: "#FFFFFF",
     borderRadius: 16,
@@ -238,5 +284,61 @@ emptyState: {
     fontSize: 14,
     fontWeight: 700,
     cursor: "pointer"
+  },
+
+  cardsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: 24,
+    marginTop: 8,
+    maxWidth: 640,
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+
+  optionCard: {
+    background: "#FFFFFF",
+    borderRadius: 16,
+    border: "1px solid #E5E7EB",
+    borderLeftWidth: 4,
+    padding: 24,
+    cursor: "pointer",
+    transition: "box-shadow 0.2s ease, transform 0.2s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    minHeight: 180
+  },
+
+  optionCardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 22,
+    marginBottom: 14
+  },
+
+  optionCardTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: "#0F172A",
+    margin: "0 0 8px 0"
+  },
+
+  optionCardDesc: {
+    fontSize: 14,
+    color: "#64748B",
+    margin: "0 0 12px 0",
+    flex: 1,
+    lineHeight: 1.4
+  },
+
+  optionCardArrow: {
+    fontSize: 14,
+    fontWeight: 600
   }
 };

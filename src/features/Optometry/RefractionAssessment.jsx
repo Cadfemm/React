@@ -6,115 +6,167 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
   const [submitted, setSubmitted] = useState(false);
   const RefractionAssessmentSchema ={
     title: "Refraction Assessment",
-    // subtitle: "Ophthalmology / Orthoptics Evaluation",
     sections: [
       {
-        title: "Subjective",
         fields: [
-          { type: "subheading", label: "Refraction Assessment" },
-{
-  type: "row",
-  fields: [
-    {
-      type: "file-upload-modal",
-      label: "Auto-refractor File",
-      name: "auto_refractor_file"
-    },
-    {
-      type: "file-upload-modal",
-      label: "Keratometry Reading File",
-      name: "keratometry_reading_file"
-    }
-  ]
-},
-
           {
-                type: "textarea",
-                name: "auto_refractor",
-                label: "Auto-refractor"
+            name: "refraction_sections",
+            type: "checkbox-group",
+            options: [
+              { label: "Auto-Refractor", value: "auto_refractor_file" },
+              { label: "Keratometry", value: "keratometry_file" },
+              { label: "Retinoscopy", value: "retinoscopy" },
+              { label: "Subjective Refraction", value: "subjective_refraction" },
+              { label: "Final Prescription", value: "final_prescription" }
+            ]
+          },
+          {
+            type: "row",
+            fields: [
+              {
+                type: "file-upload-modal",
+                label: "Auto-refractor Right Ear",
+                name: "auto_refractor_file"
               },
-
-       {
-                type: "textarea",
-                name: "keratometry_reading",
-                label: "Keratometry Reading"
+              {
+                type: "file-upload-modal",
+                label: "Auto-refractor Left Ear",
+                name: "keratometry_reading_file"
+              }
+            ],
+            showIf: {
+              field: "refraction_sections",
+              includes: "auto_refractor_file"
+            }
+          },
+          {
+            type: "input",
+            name: "auto_refractor",
+            label: "Auto-refractor",
+            showIf: {
+              field: "refraction_sections",
+              includes: "auto_refractor_file"
+            }
+          },
+          {
+            type: "row",
+            fields: [
+              {
+                type: "file-upload-modal",
+                label: "Keratometry Right Ear",
+                name: "keratometry_file_right"
               },
-
-         {
-                type: "textarea",
-                name: "retinoscopy",
-                label: "Retinoscopy"
+              {
+                type: "file-upload-modal",
+                label: "Keratometry Left Ear",
+                name: "keratometry_file_left"
+              }
+            ],
+            showIf: {
+              field: "refraction_sections",
+              includes: "keratometry_file"
+            }
+          },
+          {
+            type: "input",
+            name: "keratometry_reading",
+            label: "Keratometry Reading",
+            showIf: {
+              field: "refraction_sections",
+              includes: "keratometry_file"
+            }
+          },
+          {
+            type: "input",
+            name: "retinoscopy",
+            label: "Retinoscopy",
+            showIf: {
+              field: "refraction_sections",
+              includes: "retinoscopy"
+            }
+          },
+          {
+            type: "subheading",
+            label: "Subjective Refraction",
+            showIf: {
+              field: "refraction_sections",
+              includes: "subjective_refraction"
+            }
+          },
+          {
+            type: "refraction-12col",
+            name: "subjective_refraction",
+            rows: [
+              { label: "Distance", value: "distance" },
+              { label: "ADD", value: "add" },
+              { label: "Near", value: "near" }
+            ],
+            groups: [
+              {
+                label: "Right Eye",
+                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
               },
- 
-          { type: "subheading", label: "Subjective Refraction" },
-
-         {
-  type: "refraction-12col",
-  name: "subjective_refraction",
-  rows: [
-    { label: "Distance", value: "distance" },
-    { label: "ADD", value: "add" },
-    { label: "Near", value: "near" }
-  ],
-  groups: [
-    {
-      label: "Right Eye",
-      columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-    },
-    {
-      label: "Left Eye",
-      columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-    },
-    {
-      label: "Pupil",
-      columns: ["Distance", "Height"]
-    }
-  ]
-},
-
-          { type: "subheading", label: "Final Prescription" },
-
-         {
-  type: "refraction-12col",
-  name: "final_refraction",
-  rows: [
-    { label: "Distance", value: "distance" },
-    { label: "ADD", value: "add" },
-    { label: "Near", value: "near" }
-  ],
-  groups: [
-    {
-      label: "Right Eye",
-      columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-    },
-    {
-      label: "Left Eye",
-      columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-    },
-    {
-      label: "Pupil",
-      columns: ["Distance", "Height"]
-    }
-  ]
-},
+              {
+                label: "Left Eye",
+                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
+              },
+              {
+                label: "Pupil",
+                columns: ["Distance", "Height"]
+              }
+            ],
+            showIf: {
+              field: "refraction_sections",
+              includes: "subjective_refraction"
+            }
+          },
+          {
+            type: "subheading",
+            label: "Final Prescription",
+            showIf: {
+              field: "refraction_sections",
+              includes: "final_prescription"
+            }
+          },
+          {
+            type: "refraction-12col",
+            name: "final_refraction",
+            rows: [
+              { label: "Distance", value: "distance" },
+              { label: "ADD", value: "add" },
+              { label: "Near", value: "near" }
+            ],
+            groups: [
+              {
+                label: "Right Eye",
+                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
+              },
+              {
+                label: "Left Eye",
+                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
+              },
+              {
+                label: "Pupil",
+                columns: ["Distance", "Height"]
+              }
+            ],
+            showIf: {
+              field: "refraction_sections",
+              includes: "final_prescription"
+            }
+          },
          
 
          {
-                type: "textarea",
+                type: "input",
                 name: "bcva_category",
                 label: "Best Corrected Visual Acuity (BCVA) – Vision Category"
               },
 
           {
-            type: "textarea",
+            type: "input",
             name: "refraction_remark",
             label: "Remark"
-          },
-
-          {
-            type: "textarea",
-            name: "vision_notes",
-            label: "Vision"
           },
         ]
       }

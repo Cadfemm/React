@@ -8,7 +8,8 @@ export default function CommonFormBuilder({
   onAction,
   assessmentRegistry = {},
   children,
-  layout = "root"
+  layout = "root",
+  readOnly: formReadOnly = false
 }) {
   const sections = schema.sections || [
     { title: null, fields: schema.fields }
@@ -36,15 +37,17 @@ export default function CommonFormBuilder({
 
             {schema.actions?.length > 0 && (
               <div style={styles.actions}>
-                {schema.actions.map(action => (
-                  <button
-                    key={action.type}
-                    style={styles.mstBtn}
-                    onClick={() => onAction?.(action.type)}
-                  >
-                    {action.label}
-                  </button>
-                ))}
+                {schema.actions
+                  .filter(action => !formReadOnly || action.type === "back")
+                  .map(action => (
+                    <button
+                      key={action.type}
+                      style={styles.mstBtn}
+                      onClick={() => onAction?.(action.type)}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
               </div>
             )}
           </div>
@@ -58,6 +61,12 @@ export default function CommonFormBuilder({
 
                 if ("equals" in section.showIf && depVal !== section.showIf.equals) {
                   return null;
+                }
+
+                if ("includes" in section.showIf) {
+                  if (!Array.isArray(depVal) || !depVal.includes(section.showIf.includes)) {
+                    return null;
+                  }
                 }
 
                 if ("exists" in section.showIf && !depVal) {
@@ -86,6 +95,11 @@ export default function CommonFormBuilder({
                     // Track if we've shown the matrix header for this section
                     let matrixHeaderShown = false;
                     const firstMatrixField = section.fields.find(f => f.type === "radio-matrix");
+                    // Check if there's a grid-header before the first radio-matrix
+                    const hasGridHeader = section.fields.some((f, idx) => {
+                      const matrixIdx = section.fields.findIndex(f2 => f2.type === "radio-matrix");
+                      return f.type === "grid-header" && matrixIdx !== -1 && idx < matrixIdx;
+                    });
 
                     return section.fields.map(field => {
 
@@ -131,11 +145,15 @@ export default function CommonFormBuilder({
                       ? validateField(value, field.validation)
                       : null;
 
-                    // Show matrix header before the first radio-matrix field
-                    const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField;
+                    // Show matrix header before the first radio-matrix field, but not if there's already a grid-header
+                    const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField && !hasGridHeader;
                     if (shouldShowMatrixHeader) {
                       matrixHeaderShown = true;
                     }
+
+                    // Determine max options count for alignment
+                    const maxOptions = firstMatrixField ? firstMatrixField.options.length : 0;
+                    const currentOptions = field.type === "radio-matrix" ? field.options.length : 0;
 
                     return (
                       <React.Fragment key={field.name}>
@@ -172,11 +190,12 @@ export default function CommonFormBuilder({
                               values,
                               onChange,
                               onAction,
-                              assessmentRegistry
+                              assessmentRegistry,
+                              formReadOnly
                             )}                          </div>
                         ) : field.type === "subheading" ? (
 
-                          renderField(field)
+                          renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
                         ) : field.type === "row" ? (
                           /* ✅ ROW FIELDS → Render directly without extra wrapper */
                           renderField(
@@ -185,7 +204,8 @@ export default function CommonFormBuilder({
                             values,
                             onChange,
                             onAction,
-                            assessmentRegistry
+                            assessmentRegistry,
+                            formReadOnly
                           )
                         ) : (
                           <div style={{ marginBottom: 16 }}>
@@ -206,7 +226,8 @@ export default function CommonFormBuilder({
                                 values,
                                 onChange,
                                 onAction,
-                                assessmentRegistry
+                                assessmentRegistry,
+                                formReadOnly
                               )}
                             </>
 
@@ -562,8 +583,13 @@ function AssessmentLauncher({
 }
 
 function RadioMatrixRow({ field, value, onChange }) {
+  // Use custom widths if wideLabel is set, otherwise use default
+  const rowStyle = field.wideLabel 
+    ? { ...styles.matrixRow, gridTemplateColumns: "400px repeat(5, 80px)" }
+    : styles.matrixRow;
+  
   return (
-    <div style={styles.matrixRow}>
+    <div style={rowStyle}>
       <div style={styles.matrixLabel}>
         {field.label}
         {field.info && <InfoTooltip info={field.info} />}
@@ -594,8 +620,10 @@ function renderField(
   values,
   onChange,
   onAction,
-  assessmentRegistry
+  assessmentRegistry,
+  formReadOnly = false
 ) {
+  const readOnly = formReadOnly || field.readOnly;
 
   switch (field.type) {
     case "input":
@@ -603,7 +631,10 @@ function renderField(
         <input
           style={styles.input}
           value={value || ""}
-          onChange={e => onChange(field.name, e.target.value)}
+          readOnly={readOnly}
+          onChange={e =>
+            !readOnly && onChange(field.name, e.target.value)
+          }
         />
       );
     case "milestone-grid":
@@ -834,7 +865,8 @@ case "info-text":
                     style={{
                       display: "block",
                       fontWeight: 600,
-                      marginBottom: 6
+                      marginBottom: 6,
+                      color: "#0f172a"
                     }}
                   >
                     {f.label}
@@ -848,7 +880,8 @@ case "info-text":
                   values,
                   onChange,
                   onAction,
-                  assessmentRegistry
+                  assessmentRegistry,
+                  formReadOnly
                 )}
               </div>
             );
@@ -896,11 +929,15 @@ case "info-text":
 
     case "grid-header": {
       const colsCount = field.cols.length;
-      const template = `180px repeat(${colsCount}, 1fr)`;
+      // Use custom template if provided, otherwise default
+      const template = field.template || (field.wideLabel ? `400px repeat(${colsCount}, 80px)` : `180px repeat(${colsCount}, 1fr)`);
 
       return (
         <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
-          <div></div>
+          <div style={styles.gridHeaderCell}>
+            {field.label || ""}
+            {field.info && <InfoTooltip info={field.info} />}
+          </div>
           {field.cols.map(col => (
             <div key={col} style={styles.gridHeaderCell}>
               {col}
@@ -970,7 +1007,8 @@ case "info-text":
                     values,
                     onChange,
                     onAction,
-                    assessmentRegistry
+                    assessmentRegistry,
+                    formReadOnly
                   )}
                 </div>
               );
@@ -1068,9 +1106,9 @@ case "info-text":
         <textarea
           style={styles.textarea}
           value={value || ""}
-          readOnly={field.readOnly}
+          readOnly={readOnly}
           onChange={e =>
-            !field.readOnly && onChange(field.name, e.target.value)
+            !readOnly && onChange(field.name, e.target.value)
           }
         />
       );
@@ -1080,7 +1118,9 @@ case "info-text":
           type="date"
           style={styles.input}
           value={value || ""}
-          onChange={e => onChange(field.name, e.target.value)}
+          readOnly={readOnly}
+          disabled={readOnly}
+          onChange={e => !readOnly && onChange(field.name, e.target.value)}
         />
       );
 
@@ -1091,7 +1131,8 @@ case "info-text":
         <select
           style={styles.select}
           value={value ?? ""}
-          onChange={e => onChange(field.name, e.target.value)}
+          disabled={readOnly}
+          onChange={e => !readOnly && onChange(field.name, e.target.value)}
         >
           <option value="">Select</option>
           {(field.options || []).map(opt => (
@@ -1120,7 +1161,8 @@ case "info-text":
                     type="radio"
                     name={field.name}
                     checked={value === opt.value}
-                    onChange={() => onChange(field.name, opt.value)}
+                    disabled={readOnly}
+                    onChange={() => !readOnly && onChange(field.name, opt.value)}
                   />
                   {opt.label}
                 </label>
@@ -1243,7 +1285,9 @@ case "info-text":
                   <input
                     type="checkbox"
                     checked={(value || []).includes(opt.value)}
+                    disabled={readOnly}
                     onChange={() => {
+                      if (readOnly) return;
                       const next = value?.includes(opt.value)
                         ? value.filter(v => v !== opt.value)
                         : [...(value || []), opt.value];
@@ -1271,7 +1315,9 @@ return (
           <input
             type="checkbox"
             checked={(value || []).includes(opt.value)}
+            disabled={readOnly}
             onChange={() => {
+              if (readOnly) return;
               const next = (value || []).includes(opt.value)
                 ? value.filter((v) => v !== opt.value)
                 : [...(value || []), opt.value];
@@ -1326,7 +1372,7 @@ return (
           alignItems: "center",
           gap: 16
         }}>
-          <div style={{ fontWeight: 600 }}>{field.label}</div>
+          <div style={{ fontWeight: 600, color: "#0f172a" }}>{field.label}</div>
 
           {/* Right Ear */}
           <div style={styles.inlineGroup}>
@@ -1571,21 +1617,21 @@ return (
     case "refraction-12col": {
       const rows = field.rows || [];
       const groups = field.groups || [];
-
-      // flatten all columns
+ 
       const flatCols = groups.flatMap(g => g.columns);
-
+      const colCount = flatCols.length;
+ 
+      const gridTemplate = `200px repeat(${colCount}, 1fr)`;
+ 
       return (
-        <div style={styles.refraction12Wrapper}>
-          {/* Header Row 1 – Group Labels */}
-          <div style={styles.refraction12Row}>
-            <div style={styles.refraction12LabelCell}></div>
-
+        <div style={styles.vaWrap}>
+          <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
+            <div style={styles.vaCorner} />
             {groups.map((g, i) => (
               <div
                 key={i}
                 style={{
-                  ...styles.refraction12GroupHeader,
+                  ...styles.vaGroupHeader,
                   gridColumn: `span ${g.columns.length}`
                 }}
               >
@@ -1593,36 +1639,77 @@ return (
               </div>
             ))}
           </div>
-
-          {/* Header Row 2 – Column Labels */}
-          <div style={styles.refraction12Row}>
-            <div style={styles.refraction12LabelCell}></div>
-            {flatCols.map((c, i) => (
-              <div key={i} style={styles.refraction12ColHeader}>
-                {c}
-              </div>
-            ))}
+ 
+          {/* <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
+  <div style={styles.vaCorner} />
+  {flatCols.map((c, i) => (
+    <div key={i} style={styles.vaColHeader}>
+      {c.key}
+    </div>
+  ))}
+</div> */}
+ 
+ 
+          <div style={{ overflowX: "auto" }}>
+            {rows.map(r => {
+              const rowCols = r.columns || flatCols;
+ 
+              return (
+                <div
+                  key={r.value}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: gridTemplate,
+                    borderBottom: "1px solid #e5e7eb"
+                  }}
+                >
+                  <div style={styles.vaRowLabel}>{r.label}</div>
+ 
+                  {r.remark ? (
+                    <textarea
+                      style={{ ...styles.vaRemark, gridColumn: `span ${colCount}` }}
+                      placeholder="Enter remarks…"
+                      value={values[`${field.name}_${r.value}`] || ""}
+                      onChange={e =>
+                        onChange(`${field.name}_${r.value}`, e.target.value)
+                      }
+                    />
+                  ) : (
+                    rowCols.map((col, i) => {
+                      const key = `${field.name}_${r.value}_${i}`;
+                      const v = values[key] || "";
+ 
+                      return (
+                        <div key={key} style={styles.vaCell}>
+                          {col.type === "select" ? (
+                            <select
+                              value={v}
+                              onChange={e => onChange(key, e.target.value)}
+                              style={styles.vaSelect}
+                            >
+                              <option value="">Select</option>
+                              {(col.options || []).map(o => (
+                                <option key={o} value={o}>{o}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              value={v}
+                              onChange={e => onChange(key, e.target.value)}
+                              style={styles.vaInput}
+                            />
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              );
+            })}
+ 
           </div>
-
-          {/* Data Rows */}
-          {rows.map(r => (
-            <div key={r.value} style={styles.refraction12Row}>
-              <div style={styles.refraction12RowLabel}>{r.label}</div>
-
-              {flatCols.map((_, i) => {
-                const key = `${field.name}_${r.value}_${i}`;
-                return (
-                  <input
-                    key={key}
-                    style={styles.refraction12Input}
-                    value={values[key] || ""}
-                    onChange={e => onChange(key, e.target.value)}
-                  />
-                );
-              })}
-            </div>
-          ))}
         </div>
+ 
       );
     }
 
@@ -2217,7 +2304,7 @@ radioRow: {
 
   inlineLabel: {
     fontWeight: 500,
-    color: "#111827"
+    color: "#0f172a"
   },
 
   inlineInput: {
@@ -2240,7 +2327,8 @@ radioRow: {
   inlineItem: {
     display: "flex",
     gap: 6,
-    alignItems: "center"
+    alignItems: "center",
+    color: "#0f172a"
   },
 
   helper: {
@@ -2431,5 +2519,93 @@ radioRow: {
   fundusTableColumn: {
     padding: "12px",
     borderRight: "1px solid #e5e7eb"
-  }
+  },
+  vaWrap: {
+    border: "1px solid #e5e7eb",
+    borderRadius: 16,
+    overflow: "hidden",
+    background: "#ffffff",
+    marginTop: 16,
+    boxShadow: "0 10px 30px rgba(15,23,42,0.06)"
+  },
+  vaCorner: {
+    background: "#f8fafc",
+    borderRight: "1px solid #eef2f7",
+    height: 56
+  },
+ 
+  vaGroupHeader: {
+    textAlign: "center",
+    fontWeight: 700,
+    fontSize: 14,
+    padding: "14px 6px",
+    background: "linear-gradient(#f8fafc, #eef2f7)",
+    borderRight: "1px solid #eef2f7"
+  },
+ 
+  vaColHeader: {
+    textAlign: "center",
+    fontWeight: 600,
+    fontSize: 12,
+    color: "#334155",
+    padding: "10px 4px",
+    background: "#fafafa",
+    borderRight: "1px solid #eef2f7"
+  },
+ 
+  vaRowLabel: {
+    padding: "0 16px",
+    fontWeight: 600,
+    fontSize: 13,
+    background: "#f9fafb",
+    borderRight: "1px solid #e5e7eb",
+    display: "flex",
+    alignItems: "center",
+    lineHeight: 1.4
+  },
+ 
+  vaCell: {
+    borderRight: "1px solid #e5e7eb",
+    padding: 10,
+    display: "flex",
+    alignItems: "center"
+  },
+ 
+  vaSelect: {
+    width: "100%",
+    height: 40,
+    borderRadius: 8,
+    border: "1px solid #cbd5e1",
+    background: "#ffffff",
+    fontSize: 13,
+    padding: "0 12px",
+    appearance: "none",
+    backgroundImage:
+      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20'%3E%3Cpath fill='%23334155' d='M5.5 7.5L10 12l4.5-4.5'/%3E%3C/svg%3E\")",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 12px center",
+    backgroundSize: "12px"
+  },
+ 
+  vaInput: {
+    width: "100%",
+    height: 40,
+    borderRadius: 8,
+    border: "1px solid #e5e7eb",
+    fontSize: 13,
+    padding: "0 10px",
+    background: "#ffffff"
+  },
+ 
+  vaRemark: {
+    width: "100%",
+    height: 56,
+    borderRadius: 8,
+    border: "1px solid #e5e7eb",
+    padding: "10px 12px",
+    fontSize: 13,
+    resize: "none",
+    background: "#ffffff"
+  },
 };
+ 

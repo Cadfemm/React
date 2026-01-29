@@ -3,7 +3,7 @@ import BinocularVisionAssessment from "./BinocularVisionAssessment";
 import VisionAssessment from "./VisionAssessment";
 import RefractionAssessment from "./RefractionAssessment";
 import OcularHealthAssessment from "./OcularHealthAssessment";
-import OptometryIAAssessment from "./OptometryIA";
+import OptometryAssessment from "../Optometry/components/OptometryAssessment";
 import SpecialDiagnosticAssessment from "./SpecialDiagnostic";
 import LVQoLForm from "./LowVisionQualityAssessment";
 import BrainVisionInjury from "./BrainVisionInjury";
@@ -208,11 +208,11 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
       )} */}
 
       {/* Primary: Optometry Initial Assessment */}
-      <OptometryIAAssessment
+      <OptometryAssessment
         patient={patient}
-        onChange={setPaedSpeech}
+        mode="initial"
+        onSubmit={(values) => setPaedSpeech(values)}
         onBack={onBack}
-        onAction={handleObjectiveAction}
       />
     </div>
   );
