@@ -643,7 +643,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 name: "pct_fixating_unaided",
                 label: "Fixating Eye (Unaided)",
                 options: [
-                  { label: "Right Eye (Right Eye (RE))", value: "Right Eye (RE)" },
+                  { label: "Right Eye (RE)", value: "Right Eye (RE)" },
                   { label: "Left Eye (LE)", value: "Left Eye (LE)" }
                 ]
               },
