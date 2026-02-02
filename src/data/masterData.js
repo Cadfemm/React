@@ -18,7 +18,7 @@ export const ICD_LIST = [
 ];
 
 export const GROUPED_ICD_TO_DEPT = {
-  "Stroke": ["Physio Therapy", "Occupational Therapy", "Speech & Language Therapy", "Psychology","Doctor","Dietetics","Optometry"],
+  "Stroke": ["Physio Therapy", "Occupational Therapy", "Speech & Language Therapy", "Psychology","Doctor","Dietetics","Optometry","Nursing / Medical Assistant"],
   "Brain Injury": ["Physio Therapy", "Speech & Language Therapy", "Psychology"],
   "Spinal Cord Injury": ["Physio Therapy", "Nursing / Medical Assistant"],
   "Multiple Sclerosis": ["Physio Therapy", "Occupational Therapy"],

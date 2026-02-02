@@ -1,0 +1,847 @@
+import React, { useEffect, useState, createContext, useContext } from "react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+// Import original assessment components
+import DASSFormBuilder from "./DassForm";
+import PSSFormBuilder from "./PssForm";
+import PHQ9FormBuilder from "./PhqForm";
+import GAD7FormBuilder from "./GadForm";
+import HAMDFormBuilder from "./HamdForm";
+import HAM_A_FormBuilder from "./HamaForm";
+
+// Create context to pass patient to assessment components
+const PatientContext = createContext(null);
+
+// Adapter components that bridge values/onChange to patient/onSubmit/onBack
+function DASS21Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    // Store in parent values using namespace
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`dass21_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    // Close the assessment by clearing the active key
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <DASSFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function PSSAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`pss_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <PSSFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function PHQ9Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`phq9_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <PHQ9FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function GAD7Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`gad7_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <GAD7FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function HAMDAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`hamd_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <HAMDFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function HAMAAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`hama_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <HAM_A_FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+// Assessment Registry - using original components with adapters
+export const PSYCHOLOGY_ASSESSMENT_REGISTRY = {
+  dass21: DASS21Adapter,
+  pss: PSSAdapter,
+  phq9: PHQ9Adapter,
+  gad7: GAD7Adapter,
+  hamd: HAMDAdapter,
+  hama: HAMAAdapter
+};
+
+/* ===================== OPTIONS ===================== */
+
+const YES_NO = [
+  { label: "Yes", value: "yes" },
+  { label: "No", value: "no" }
+];
+
+/* ===================== COMPONENT ===================== */
+
+export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
+  const [values, setValues] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [activeTab, setActiveTab] = useState("subjective");
+
+  /* ---------------- STORAGE ---------------- */
+  const storageKey = patient
+    ? `psychology_assessment_draft_${patient.id}`
+    : null;
+
+  useEffect(() => {
+    if (!storageKey) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      setValues(JSON.parse(saved).values || {});
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!patient) return;
+
+    setValues(v => ({
+      ...v,
+      psychiatric_history_autogenerated:
+        patient.psychiatric_history || patient.medical_history || "No data available",
+      family_medical_history_autogenerated:
+        patient.family_history || patient.diagnosis_history || "No data available",
+      drug_history_autogenerated:
+        patient.medications || patient.drug_history || "No data available"
+    }));
+  }, [patient]);
+
+  const onChange = (name, value) => {
+    setValues(v => ({ ...v, [name]: value }));
+  };
+
+  const handleAction = (type) => {
+    if (type === "back") onBack?.();
+
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+      localStorage.removeItem(storageKey);
+    }
+
+    if (type === "save") {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ values, updatedAt: new Date() })
+      );
+      alert("Psychology draft saved");
+    }
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    onSubmit?.(values);
+    alert("Psychology assessment submitted");
+  };
+
+  /* ===================== SCHEMAS ===================== */
+
+  const SUBJECTIVE_SCHEMA = {
+    actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+    sections: [
+      {
+        fields: [
+          {
+            name: "chief_complaint",
+            label: "Chief Complaint (In patient words)",
+            type: "textarea"
+          },
+          {
+            name: "hpi",
+            label: "History of Presenting Illness (HPI)",
+            type: "textarea"
+          },
+          {
+            type: "subheading",
+            label: "Autogenerated History"
+          },
+          {
+            name: "psychiatric_history_autogenerated",
+            label: "Psychiatric History",
+            type: "textarea",
+            readOnly: true
+          },
+          {
+            name: "family_medical_history_autogenerated",
+            label: "Family/Medical History",
+            type: "textarea",
+            readOnly: true
+          },
+          {
+            name: "drug_history_autogenerated",
+            label: "Drug History",
+            type: "textarea",
+            readOnly: true
+          },
+          {
+            name: "mood_patient_description",
+            label: "Mood (patient description)",
+            type: "textarea"
+          },
+          {
+            name: "perceptual_disturbance",
+            label: "Perceptual Disturbance (if reported)",
+            type: "checkbox-group",
+            options: [
+              { label: "Auditory hallucinations", value: "auditory_hallucinations" },
+              { label: "Visual hallucinations", value: "visual_hallucinations" },
+              { label: "Derealization", value: "derealization" },
+              { label: "Depersonalization", value: "depersonalization" },
+              { label: "Illusions", value: "illusions" },
+              { label: "None", value: "none" }
+            ]
+          },
+          {
+            name: "thought_content_patient_reported",
+            label: "Thought content (patient-reported)",
+            type: "checkbox-group",
+            options: [
+              { label: "Suicidal ideation", value: "suicidal_ideation" },
+              { label: "Homicidal ideation", value: "homicidal_ideation" },
+              { label: "Self-harm thoughts", value: "self_harm_thoughts" },
+              { label: "Paranoia", value: "paranoia" },
+              { label: "Obsessions/Compulsions", value: "obsessions_compulsions" },
+              { label: "Phobias", value: "phobias" },
+              { label: "Rumination", value: "rumination" },
+              { label: "Overvalued ideas", value: "overvalued_ideas" },
+              { label: "None", value: "none" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  const PSYCHOLOGY_CONTAINER_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  };
+
+  const OBJECTIVE_SCHEMA = {
+    actions: SUBJECTIVE_SCHEMA.actions,
+    sections: [
+      {
+        fields: [
+          {
+            type: "subheading",
+            label: "Forms"
+          },
+          {
+            name: "psychology_assessments",
+            type: "assessment-launcher",
+            options: [
+              { label: "Depression Anxiety Stress Scale (DASS-21)", value: "dass21" },
+              { label: "Perceived Stress Scale (PSS)", value: "pss" },
+              { label: "Patient Health Questionnaire (PHQ-9)", value: "phq9" },
+              { label: "Generalized Anxiety Disorder (GAD-7)", value: "gad7" },
+              { label: "Hamilton Depression Rating Scale (HAM-D)", value: "hamd" },
+              { label: "Hamilton Anxiety Rating Scale (HAM-A)", value: "hama" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Appearance & Behaviour"
+          },
+          {
+            type: "subheading",
+            label: "Appearance"
+          },
+          {
+            name: "appearance_grooming",
+            label: "Grooming",
+            type: "radio",
+            options: [
+              { label: "Well-groomed", value: "well_groomed" },
+              { label: "Adequate", value: "adequate" },
+              { label: "Poor", value: "poor" }
+            ]
+          },
+          {
+            name: "appearance_dress",
+            label: "Dress",
+            type: "radio",
+            options: [
+              { label: "Appropriate", value: "appropriate" },
+              { label: "Inappropriate", value: "inappropriate" }
+            ]
+          },
+          {
+            name: "appearance_hygiene",
+            label: "Hygiene",
+            type: "radio",
+            options: [
+              { label: "Clean", value: "clean" },
+              { label: "Poor", value: "poor" }
+            ]
+          },
+          {
+            name: "appearance_build_posture",
+            label: "Build/Posture",
+            type: "radio",
+            options: [
+              { label: "Thin", value: "thin" },
+              { label: "Average", value: "average" },
+              { label: "Overweight", value: "overweight" }
+            ]
+          },
+          {
+            name: "appearance_visible_marks",
+            label: "Visible Marks",
+            type: "checkbox-group",
+            inlineWithLabel: true,
+            options: [
+              { label: "Scars", value: "scars" },
+              { label: "Bruises", value: "bruises" },
+              { label: "Tattoos", value: "tattoos" },
+              { label: "None", value: "none" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Behaviour"
+          },
+          {
+            name: "behavior_cooperation",
+            label: "Cooperation",
+            type: "radio",
+            options: [
+              { label: "Cooperative", value: "cooperative" },
+              { label: "Guarded", value: "guarded" },
+              { label: "Uncooperative", value: "uncooperative" },
+              { label: "Hostile", value: "hostile" }
+            ]
+          },
+          {
+            name: "behavior_eye_contact",
+            label: "Eye contact",
+            type: "radio",
+            options: [
+              { label: "Good", value: "good" },
+              { label: "Poor", value: "poor" },
+              { label: "Avoidant", value: "avoidant" },
+              { label: "Intense", value: "intense" }
+            ]
+          },
+          {
+            name: "behavior_psychomotor_activity",
+            label: "Psychomotor activity",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Agitated", value: "agitated" },
+              { label: "Retarded", value: "retarded" },
+              { label: "Restless", value: "restless" }
+            ]
+          },
+          {
+            name: "behavior_impulse_control",
+            label: "Impulse control",
+            type: "radio",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" }
+            ]
+          },
+          {
+            name: "behavior_attention",
+            label: "Attention",
+            type: "radio",
+            options: [
+              { label: "Alert", value: "alert" },
+              { label: "Distracted", value: "distracted" },
+              { label: "Focused", value: "focused" }
+            ]
+          },
+          {
+            name: "behavior_engagement_attitude",
+            label: "Engagement/Attitude",
+            type: "radio",
+            options: [
+              { label: "Open", value: "open" },
+              { label: "Defensive", value: "defensive" },
+              { label: "Withdrawn", value: "withdrawn" },
+              { label: "Evasive", value: "evasive" }
+            ]
+          },
+          {
+            name: "behavior_affect_behavioral_state",
+            label: "Affect/behavioral state",
+            type: "radio",
+            options: [
+              { label: "Calm", value: "calm" },
+              { label: "Anxious", value: "anxious" },
+              { label: "Tearful", value: "tearful" },
+              { label: "Agitated", value: "agitated" },
+              { label: "Tense", value: "tense" }
+            ]
+          },
+          {
+            name: "behavior_activity_level",
+            label: "Activity level",
+            type: "radio",
+            options: [
+              { label: "Relaxed", value: "relaxed" },
+              { label: "Restless", value: "restless" },
+              { label: "Fidgety", value: "fidgety" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Speech"
+          },
+          {
+            name: "speech_rate",
+            label: "Rate",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Rapid/Pressured", value: "rapid_pressured" },
+              { label: "Slow", value: "slow" },
+              { label: "Disorganized", value: "disorganized" },
+              { label: "Poverty", value: "poverty" },
+              { label: "Variable", value: "variable" },
+              { label: "Mute", value: "mute" },
+              { label: "Echolalia", value: "echolalia" }
+            ]
+          },
+          {
+            name: "speech_volume",
+            label: "Volume",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Loud", value: "loud" },
+              { label: "Soft", value: "soft" },
+              { label: "Whispered", value: "whispered" }
+            ]
+          },
+          {
+            name: "speech_fluency",
+            label: "Fluency",
+            type: "radio",
+            options: [
+              { label: "Fluent/Coherent", value: "fluent_coherent" },
+              { label: "Hesitant", value: "hesitant" },
+              { label: "Slurred", value: "slurred" },
+              { label: "Dysarthric", value: "dysarthric" },
+              { label: "Stammering", value: "stammering" }
+            ]
+          },
+          {
+            name: "speech_quantity",
+            label: "Quantity",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Talkative", value: "talkative" },
+              { label: "Poverty of speech", value: "poverty_of_speech" },
+              { label: "Spontaneous expansive", value: "spontaneous_expansive" }
+            ]
+          },
+          {
+            name: "speech_tone_prosody",
+            label: "Tone/Prosody",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Dull", value: "dull" },
+              { label: "Monotonous/Flat", value: "monotonous_flat" },
+              { label: "Flat", value: "flat" },
+              { label: "Loud", value: "loud" },
+              { label: "Whispered", value: "whispered" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Mood & Affect"
+          },
+          {
+            name: "mood_observed",
+            label: "Mood",
+            type: "textarea"
+          },
+          {
+            name: "affect_observed",
+            label: "Affect",
+            type: "checkbox-group",
+            inlineWithLabel: true,
+            options: [
+              { label: "Euthymic", value: "euthymic" },
+              { label: "Constricted", value: "constricted" },
+              { label: "Flat", value: "flat" },
+              { label: "Blunted", value: "blunted" },
+              { label: "Labile", value: "labile" },
+              { label: "Congruent", value: "congruent" },
+              { label: "Incongruent", value: "incongruent" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Thought"
+          },
+          {
+            name: "thought_form_process",
+            label: "Form/Process",
+            type: "checkbox-group",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Loose associations", value: "loose_associations" },
+              { label: "Clang associations", value: "clang_associations" },
+              { label: "Tangential", value: "tangential" },
+              { label: "Circumstantial", value: "circumstantial" },
+              { label: "Flight of ideas", value: "flight_of_ideas" },
+              { label: "Word salad", value: "word_salad" },
+              { label: "Poverty of thought", value: "poverty_of_thought" },
+              { label: "Pressure of thought", value: "pressure_of_thought" },
+              { label: "Thought blocking", value: "thought_blocking" },
+              { label: "Spontaneous", value: "spontaneous" }
+            ]
+          },
+          {
+            name: "thought_content_observed",
+            label: "Content (observed/reported)",
+            type: "checkbox-group",
+            options: [
+              { label: "Delusions (Grandiose, Erotomanic, Somatic, Referential, Persecutory, Control, Religious)", value: "delusions" },
+              { label: "Hallucinations", value: "hallucinations" },
+              { label: "Illusions", value: "illusions" },
+              { label: "Suicidal/Homicidal ideation", value: "suicidal_homicidal_ideation" },
+              { label: "Paranoia", value: "paranoia" },
+              { label: "Obsessions", value: "obsessions" },
+              { label: "Compulsions", value: "compulsions" },
+              { label: "Thought insertion", value: "thought_insertion" },
+              { label: "Thought broadcasting", value: "thought_broadcasting" },
+              { label: "Thought withdrawal", value: "thought_withdrawal" },
+              { label: "None", value: "none" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Cognition"
+          },
+          {
+            name: "cognition_orientation",
+            label: "Orientation",
+            type: "checkbox-group",
+            inlineWithLabel: true,
+            options: [
+              { label: "Person", value: "person" },
+              { label: "Place", value: "place" },
+              { label: "Time", value: "time" },
+              { label: "Situation", value: "situation" }
+            ]
+          },
+          {
+            name: "cognition_attention_concentration",
+            label: "Attention/Concentration",
+            type: "radio",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Mildly impaired", value: "mildly_impaired" },
+              { label: "Severely impaired", value: "severely_impaired" }
+            ]
+          },
+          {
+            name: "cognition_memory_immediate",
+            label: "Memory",
+            type: "radio",
+            options: [
+              { label: "Immediate", value: "immediate" },
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" }
+            ]
+          },
+          {
+            name: "cognition_memory_recent",
+            label: "Recent",
+            type: "radio-matrix",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" }
+            ]
+          },
+          {
+            name: "cognition_memory_remote",
+            label: "Remote",
+            type: "radio-matrix",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" }
+            ]
+          },
+          {
+            name: "cognition_abstract_thinking",
+            label: "Abstract thinking",
+            type: "radio-matrix",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  const ASSESSMENT_SCHEMA = {
+    actions: SUBJECTIVE_SCHEMA.actions,
+    sections: [
+      {
+        fields: [
+          {
+            name: "clinical_summary",
+            label: "Clinical Summary (Brief synthesis of symptoms, functioning, and mental status)",
+            type: "textarea"
+          },
+          {
+            name: "diagnosis_icd10",
+            label: "Diagnosis (ICD-10)",
+            type: "textarea"
+          },
+          {
+            name: "severity",
+            label: "Severity",
+            type: "radio",
+            options: [
+              { label: "Mild", value: "mild" },
+              { label: "Moderate", value: "moderate" },
+              { label: "Severe", value: "severe" }
+            ]
+          },
+          {
+            name: "risk_assessment",
+            label: "Risk Assessment",
+            type: "single-select",
+            options: [
+              { label: "No current risk", value: "no_current_risk" },
+              { label: "Suicidal ideation", value: "suicidal_ideation" },
+              { label: "Homicidal ideation", value: "homicidal_ideation" },
+              { label: "Self-harm risk", value: "self_harm_risk" },
+              { label: "Risk to others", value: "risk_to_others" }
+            ]
+          },
+          {
+            name: "protective_factors",
+            label: "Protective factors",
+            type: "textarea"
+          }
+        ]
+      }
+    ]
+  };
+
+  const PLAN_SCHEMA = {
+    actions: SUBJECTIVE_SCHEMA.actions,
+    sections: [
+      {
+        fields: [
+          {
+            name: "follow_up_visit_scheduled",
+            label: "Follow-up visit scheduled",
+            type: "date"
+          },
+          {
+            name: "psychiatric_referral",
+            label: "Psychiatric referral",
+            type: "checkbox-group",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+
+  const schemaMap = {
+    subjective: SUBJECTIVE_SCHEMA,
+    objective: OBJECTIVE_SCHEMA,
+    assessment: ASSESSMENT_SCHEMA,
+    plan: PLAN_SCHEMA
+  };
+
+  /* ===================== PATIENT INFO ===================== */
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    return new Date(dateStr).toLocaleDateString();
+  };
+
+  const today = new Date();
+
+  function PsychologyPatientInfo({ patient }) {
+    if (!patient) return null;
+
+    return (
+      <div style={section}>
+        <div style={patientGrid}>
+          <div><b>Name:</b> {patient.name}</div>
+          <div><b>IC:</b> {patient.id}</div>
+          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+          <div><b>ICD:</b> {patient.icd}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ===================== RENDER ===================== */
+
+  return (
+    <PatientContext.Provider value={patient}>
+      <div style={mainContent}>
+        {/* ===== PATIENT INFORMATION CARD ===== */}
+        <CommonFormBuilder
+          schema={PSYCHOLOGY_CONTAINER_SCHEMA}
+          values={{}}
+          onChange={() => {}}
+        >
+          <PsychologyPatientInfo patient={patient} />
+        </CommonFormBuilder>
+
+        {/* ===== TABS ===== */}
+        <div style={tabBar}>
+          {["subjective", "objective", "assessment", "plan"].map(tab => (
+            <div
+              key={tab}
+              style={activeTab === tab ? tabActive : tabBtn}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.toUpperCase()}
+            </div>
+          ))}
+        </div>
+
+        {/* ===== TAB CONTENT ===== */}
+        <CommonFormBuilder
+          schema={schemaMap[activeTab]}
+          values={values}
+          onChange={onChange}
+          submitted={submitted}
+          onAction={handleAction}
+          assessmentRegistry={PSYCHOLOGY_ASSESSMENT_REGISTRY}
+        >
+          {/* Submit button */}
+          <div style={submitRow}>
+            <button style={submitBtn} onClick={handleSubmit}>
+              Submit Psychology Assessment
+            </button>
+          </div>
+        </CommonFormBuilder>
+      </div>
+    </PatientContext.Provider>
+  );
+}
+
+/* ===================== STYLES ===================== */
+
+const mainContent = { margin: "0 auto", width: "100%" };
+
+const tabBar = {
+  display: "flex",
+  gap: 12,
+  justifyContent: "center",
+  borderBottom: "1px solid #ddd",
+  marginBottom: 12
+};
+
+const tabBtn = {
+  padding: "10px 22px",
+  fontWeight: 600,
+  cursor: "pointer",
+  color: "#0f172a"
+};
+
+const tabActive = {
+  ...tabBtn,
+  borderBottom: "3px solid #2451b3",
+  color: "#2451b3"
+};
+
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 20
+};
+
+const submitBtn = {
+  padding: "12px 32px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 10,
+  fontSize: 15,
+  fontWeight: 700
+};
+
+const section = {
+  marginBottom: 24
+};
+
+const patientGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 12,
+  fontSize: 14
+};

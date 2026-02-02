@@ -8,13 +8,33 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
   const OcularHealthAssessmentSchema ={
   title: "Ocular Health / Structure",
   fields: [
+    {
+      type: "checkbox-group",
+      name: "ocular_health_sections",
+      options: [
+        { label: "Slit Lamp - Anterior Chamber", value: "slit_lamp_anterior" },
+        { label: "Fundus Camera – Posterior Chamber", value: "fundus_camera_posterior" }
+      ]
+    },
 
+    { 
+      type: "subheading", 
+      label: "Slit Lamp - Anterior Chamber",
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
+    },
 
  {
       type: "row",
       fields: [
         { type: "date", name: "anterior_date", label: "Date", format: "DD/MM/YYYY" }
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
 
     // {
@@ -27,7 +47,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
 
     {
       type: "grid-header",
-      cols: ["Right Eye (RE)", "Left Eye (LE)", "Comment / Remark"]
+      cols: ["Right Eye (RE)", "Left Eye (LE)", "Comment / Remark"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
      {
       type: "grid-row",
@@ -37,7 +61,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
         { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
 
     // ===== FREE TEXT =====
@@ -45,7 +73,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
       type: "grid-row",
       name: "ac_eyelashes",
       label: "Eyelashes",
-      cols: ["textarea", "textarea", "textarea"]
+      cols: ["textarea", "textarea", "textarea"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
 
     // ===== DROPDOWN SCALE =====
@@ -57,7 +89,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -67,7 +103,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -77,7 +117,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -87,7 +131,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -97,13 +145,21 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
       name: "ac_crystalline_lens",
       label: "Crystalline Lens",
-      cols: ["textarea", "textarea", "textarea"]
+      cols: ["textarea", "textarea", "textarea"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -113,7 +169,11 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
@@ -123,38 +183,60 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         { type: "single-select", options: ["0 - Normal", "1 - Trace", "2 - Mild", "3 - Moderate", "4 - Severe"] },
         "textarea"
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     {
       type: "grid-row",
       name: "ac_other",
       label: "Other Test",
-      cols: ["textarea", "textarea", "textarea"]
+      cols: ["textarea", "textarea", "textarea"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
 
     {
-      type: "textarea",
+      type: "input",
       name: "ac_impression",
-      label: "Impression / Management & Plan"
-    },
-    {
-      type: "textarea",
-      name: "ac_remark",
-      label: "Remark"
+      label: "Clinical Findings",
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "slit_lamp_anterior"
+      }
     },
     // ===== Fundus Camera =====
-    { type: "subheading", label: "Fundus Camera – Posterior Chamber" },
+    { 
+      type: "subheading", 
+      label: "Fundus Camera – Posterior Chamber",
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
+    },
 
     {
       type: "row",
       fields: [
         { type: "date", name: "fundus_date", label: "Date", format: "DD/MM/YYYY" }
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-header",
-      cols: ["Right Eye (RE)", "Left Eye (LE)"]
+      cols: ["Right Eye (RE)", "Left Eye (LE)"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
@@ -164,53 +246,76 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
       cols: [
         { type: "file-upload-modal", name: "fundus_re_image", accept: "image/*,.pdf" },
         { type: "file-upload-modal", name: "fundus_le_image", accept: "image/*,.pdf" }
-      ]
+      ],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-row",
       name: "fundus_media",
       label: "Media",
-      cols: ["input", "input"]
+      cols: ["input", "input"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-row",
       name: "fundus_cd_ratio",
       label: "C/D Ratio",
-      cols: ["input", "input"]
+      cols: ["input", "input"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-row",
       name: "fundus_av_ratio",
       label: "A/V Ratio",
-      cols: ["input", "input"]
+      cols: ["input", "input"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-row",
       name: "fundus_background",
       label: "Background",
-      cols: ["input", "input"]
+      cols: ["input", "input"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
       type: "grid-row",
       name: "fundus_macula",
       label: "Macula",
-      cols: ["input", "input"]
+      cols: ["input", "input"],
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     },
 
     {
-      type: "textarea",
+      type: "input",
       name: "fundus_impression",
-      label: "Impression, Management & Plan"
-    },
-    {
-      type: "textarea",
-      name: "fundus_remark",
-      label: "Remark"
+      label: "Clinical Findings",
+      showIf: {
+        field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+      }
     }
   ]
 };

@@ -34,7 +34,7 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
             ]
       },
       {
-        type: "textarea",
+        type: "input",
         name: "color_vision_status",
         label: "Status"
       },
@@ -44,7 +44,7 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
         label: "Visual Field"
       },
       {
-        type: "textarea",
+        type: "input",
         name: "visual_field_file",
         label: "Visual Field"
       },
@@ -66,15 +66,9 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
       },
 
       {
-        type: "textarea",
+        type: "input",
         name: "impression_management",
-        label: "Impression, Management & Plan"
-      },
-
-      {
-        type: "textarea",
-        name: "driving_remark",
-        label: "Remark"
+        label: "Clinical Findings"
       }
     ]
   }

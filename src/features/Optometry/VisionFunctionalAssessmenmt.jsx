@@ -173,7 +173,7 @@ export default function VisualFunctionForm( layout = "root") {
         schema={visualFunctionSchema}
         values={values}
         onChange={handleChange}
-          layout={layout}
+        layout={layout}
       />
 
       <div style={{ display: "flex", gap: 16, margin: 24 }}>
