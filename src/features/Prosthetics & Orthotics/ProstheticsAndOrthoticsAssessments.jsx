@@ -1,341 +1,452 @@
-import React, { useState } from "react";
-import BinocularVisionAssessment from "./BinocularVisionAssessment";
-import VisionAssessment from "./VisionAssessment";
-import RefractionAssessment from "./RefractionAssessment";
-import OcularHealthAssessment from "./OcularHealthAssessment";
-import OptometryAssessment from "../Optometry/components/OptometryAssessment";
-import SpecialDiagnosticAssessment from "./SpecialDiagnostic";
-import LVQoLForm from "./LowVisionQualityAssessment";
-import BrainVisionInjury from "./BrainVisionInjury";
-import VisualFunctionForm from "./VisionFunctionalAssessmenmt";
-import BVDAssessment from "./BvdqAssessment";
+// OrthoticsAssessment.jsx
+import React, { useEffect, useState } from "react";
+import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
+/* ===================== OPTIONS ===================== */
 
+const YES_NO = [
+  { label: "Yes", value: "yes" },
+  { label: "No", value: "no" }
+];
 
+const CLASSIFICATION = [
+  { label: "Neuro", value: "neuro" },
+  { label: "SCI", value: "sci" },
+  { label: "MSD", value: "msd" },
+  { label: "Others", value: "others" }
+];
 
-// const Tracheostomy = ({ patient, onChange, onBack }) => (
-//   <TracheostomyWeaningEvaluation
-//     patient={patient}
-//     onBack={onBack}
-//     onSubmit={onChange}
-//   />
-// );
+const PROGNOSIS = [
+  { label: "Good", value: "good" },
+  { label: "Fair", value: "fair" },
+  { label: "Poor", value: "poor" }
+];
 
-// const Voice = ({ patient, onChange, onBack }) => (
-//   <VoiceAssessment patient={patient} onBack={onBack} onSubmit={onChange} />
-// );
+const WALKING_AID = [
+  { label: "None", value: "none" },
+  { label: "SPC", value: "spc" },
+  { label: "Quadripod", value: "quadripod" },
+  { label: "Walking Frame", value: "wf" },
+  { label: "Wheelchair", value: "wheelchair" }
+];
 
-// const SpeechLanguage = ({ patient, onChange, onBack }) => (
-//   <SpeechLanguageAssessment
-//     patient={patient}
-//     onBack={onBack}
-//     onSubmit={onChange}
-//   />
-// );
+const WALKING_PATTERN = [
+  { label: "Normal", value: "normal" },
+  { label: "Hemiplegic", value: "hemiplegic" },
+  { label: "Antalgic", value: "antalgic" },
+  { label: "Ataxic", value: "ataxic" },
+  { label: "Trendelenburg", value: "trendelenburg" }
+];
 
+const FOOT_CLEARANCE = [
+  { label: "Normal", value: "normal" },
+  { label: "Reduced", value: "reduced" },
+  { label: "Dragging", value: "dragging" },
+  { label: "Foot Drop", value: "foot_drop" }
+];
 
-// const PaedIAFeed = ({ patient, onChange, onBack }) => (
-//   <PaedIAFeeding patient={patient} onBack={onBack} onSubmit={onChange} />
-// );
+const STEP_LENGTH = [
+  { label: "Normal", value: "normal" },
+  { label: "Shortened (affected side)", value: "short_affected" }
+];
 
-// const PaedIASpeech = ({ patient, onChange, onBack }) => (
-//   <PaedIASpeechLanguage
-//     patient={patient}
-//     onBack={onBack}
-//     onSubmit={onChange}
-//   />
-// );
+const STANCE_PHASE = [
+  { label: "Normal", value: "normal" },
+  { label: "Knee collapse", value: "knee_collapse" },
+  { label: "Genu recurvatum", value: "genu_recurvatum" },
+  { label: "Hip instability", value: "hip_instability" }
+];
 
-export default function AssessmentForm({ patient, onSave, onBack }) {
-  const isAdult = patient?.age >= 20;
-  const [activeAssessmentKey, setActiveAssessmentKey] = useState(null);
+const SWING_PHASE = [
+  { label: "Normal", value: "normal" },
+  { label: "Circumduction", value: "circumduction" },
+  { label: "Hip hiking", value: "hip_hiking" },
+  { label: "Reduced flexion", value: "reduced_flexion" }
+];
 
-  /* --------- Store Form Results --------- */
-  const [adultCSE, setAdultCSE] = useState(null);
-  const [adultSpeech, setAdultSpeech] = useState(null);
-  const [adultVoice, setAdultVoice] = useState(null);
-  const [adultTrache, setAdultTrache] = useState(null);
-  const [binocularVision, setBinocularVision] = useState(null);
+const WEIGHT_BEARING = [
+  { label: "Symmetrical", value: "symmetrical" },
+  { label: "Asymmetrical", value: "asymmetrical" }
+];
 
-  const [paedSpeech, setPaedSpeech] = useState(null);
-  const [paedFeeding, setPaedFeeding] = useState(null);
+const GAIT_BALANCE = [
+  { label: "Good", value: "good" },
+  { label: "Fair", value: "fair" },
+  { label: "Poor", value: "poor" }
+];
 
-  const objectiveAssessments = [
-    {
-      key: "BINOCULAR_VISION",
-      label: "Binocular Vision",
-      Component: BinocularVisionAssessment,
-      onChange: setBinocularVision,
-    },
-    {
-      key: "REFRACTION",
-      label: "Refraction Assessment",
-      Component: RefractionAssessment,
-      onChange: setAdultSpeech,
-    },
-    {
-      key: "VISION_DRIVING",
-      label: "Vision For Driving",
-      Component: VisionAssessment,
-      onChange: setAdultVoice,
-    },
-    {
-      key: "OCULAR_HEALTH",
-      label: "Ocular Health / Structure",
-      Component: OcularHealthAssessment,
-      onChange: setAdultTrache,
-    },
-    {
-      key: "SPECIAL_DIAGNOSTIC",
-      label: "Special Diagnostic",
-      Component: SpecialDiagnosticAssessment,
-      onChange: setPaedFeeding,
-    },
-    {
-      key: "LVQOL",
-      label: "Low Vision Quality of Life Questionnaire (LVQoL)",
-      Component: LVQoLForm,
-      onChange: setPaedFeeding,
-    },
-    {
-      key: "BRAIN_VISION",
-      label: "Brain Vision Injury",
-      Component: BrainVisionInjury,
-      onChange: setPaedFeeding,
-    },
-    {
-      key: "VISUAL_FUNCTION",
-      label: "Visual Function Questionnaire",
-      Component: VisualFunctionForm,
-      onChange: setPaedFeeding,
-    },
-    {
-      key: "BVDQ",
-      label: "BVDQ Assessment",
-      Component: BVDAssessment,
-      onChange: setPaedFeeding,
-    },
-  ];
+const ENDURANCE = [
+  { label: "Good", value: "good" },
+  { label: "Limited distance", value: "limited" },
+  { label: "Fatigue early", value: "fatigue" }
+];
 
-  const handleSaveAssessment = () => {
-    if (!patient) {
-      alert("No patient selected");
-      return;
-    }
+const INDICATIONS = [
+  { label: "Improve stability", value: "stability" },
+  { label: "Improve foot clearance", value: "clearance" },
+  { label: "Reduce pain", value: "pain" },
+  { label: "Prevent deformity", value: "deformity" },
+  { label: "Support weak limb", value: "support" }
+];
 
-    const record = {
-      patientId: patient.id,
-      age: patient.age,
-      createdAt: new Date().toISOString(),
-      category: isAdult ? "ADULT" : "PAEDIATRIC",
-      data: isAdult
-        ? {
-            clinicalSwallowing: adultCSE,
-            speechLanguage: adultSpeech,
-            voice: adultVoice,
-            tracheostomy: adultTrache,
-          }
-        : {
-            speechLanguage: paedSpeech,
-            feeding: paedFeeding,
-          },
-    };
+const ORTHOSIS_TYPES = [
+  "FO",
+  "AFO Rigid",
+  "AFO Hinged",
+  "AFO PLS",
+  "GRAFO",
+  "KO",
+  "KAFO",
+  "WHO Functional",
+  "WHO Resting",
+  "WHO Anti-spastic",
+  "Elbow ROM",
+  "Shoulder Support",
+  "LSO",
+  "TLSO",
+  "Cervical Collar"
+].map(v => ({ label: v, value: v }));
 
-    const key = `patient_${patient.id}_assessments`;
-    const existing = JSON.parse(localStorage.getItem(key) || "[]");
-    localStorage.setItem(key, JSON.stringify([...existing, record]));
+/* ===================== SCHEMAS ===================== */
 
-    onSave?.(record);
-    alert("Assessment saved successfully");
-  };
-
-  const handleObjectiveAction = (action) => {
-    if (action?.startsWith("open_obj_")) {
-      const key = action.replace("open_obj_", "");
-      setActiveAssessmentKey(key);
-    }
-  };
-
-  return (
-    <div style={styles.container}>
-      {/* Objective assessments quick access (always visible)
-      <div style={styles.objectiveWrapper}>
-        <div style={styles.objectiveTitle}>Objective Assessments</div>
-        <div style={styles.objectiveRow}>
-          {objectiveAssessments.map((item) => (
-            <button
-              key={item.key}
-              style={styles.objectiveBtn}
-              onClick={() =>
-                setActiveAssessmentKey((prev) =>
-                  prev === item.key ? null : item.key
-                )
-              }
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div style={styles.helperText}>
-          Click an assessment to open it right below.
-        </div>
-      </div>
-
-      {activeAssessmentKey && (
-        <InlineAssessmentCard
-          title={
-            objectiveAssessments.find((a) => a.key === activeAssessmentKey)
-              ?.label || "Assessment"
-          }
-          onClose={() => setActiveAssessmentKey(null)}
-        >
-          {(() => {
-            const item = objectiveAssessments.find(
-              (a) => a.key === activeAssessmentKey
-            );
-            if (!item) return null;
-            const { Component, onChange } = item;
-            return (
-              <Component
-                patient={patient}
-                onBack={() => setActiveAssessmentKey(null)}
-                onChange={onChange}
-                onSubmit={onChange}
-              />
-            );
-          })()}
-        </InlineAssessmentCard>
-      )} */}
-
-      {/* Primary: Optometry Initial Assessment */}
-      <OptometryAssessment
-        patient={patient}
-        mode="initial"
-        onSubmit={(values) => setPaedSpeech(values)}
-        onBack={onBack}
-      />
-    </div>
-  );
-}
-
-function InlineAssessmentCard({ title, children, onClose }) {
-  return (
-    <div style={styles.inlineCard}>
-      <div style={styles.inlineHeader}>
-        <div style={styles.inlineTitle}>{title}</div>
-        <button style={styles.closeBtn} onClick={onClose}>
-          ✕
-        </button>
-      </div>
-      <div style={styles.inlineBody}>{children}</div>
-    </div>
-  );
-}
-
-const styles = {
-  container: {
-    width: "100%",
-    padding: 16,
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
-  },
-
-  saveBtn: {
-    padding: "10px 16px",
-    borderRadius: 8,
-    background: "#2563EB",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    fontWeight: 600,
-  },
-
-  backBtn: {
-    padding: "10px 16px",
-    borderRadius: 8,
-    background: "#F3F4F6",
-    border: "1px solid #E5E7EB",
-    cursor: "pointer",
-  },
-
-  objectiveWrapper: {
-    marginTop: 20,
-    padding: 16,
-    border: "1px solid #E5E7EB",
-    borderRadius: 10,
-    background: "#F8FAFC",
-  },
-
-  objectiveTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    marginBottom: 12,
-    color: "#0F172A",
-  },
-
-  objectiveRow: {
-    display: "flex",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-
-  objectiveBtn: {
-    padding: "10px 14px",
-    borderRadius: 8,
-    border: "1px solid #CBD5E1",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: 600,
-    color: "#0F172A",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-  },
-
-  helperText: {
-    marginTop: 8,
-    fontSize: 12,
-    color: "#475569",
-  },
-
-  inlineCard: {
-    marginTop: 16,
-    border: "1px solid #E5E7EB",
-    borderRadius: 8,
-    background: "#fff",
-    overflow: "visible",
-    boxShadow: "none",
-  },
-
-  inlineHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "12px 14px",
-    borderBottom: "1px solid #E5E7EB",
-    background: "#F8FAFC",
-  },
-
-  inlineTitle: {
-    fontSize: 17,
-    fontWeight: 700,
-    color: "#0F172A",
-  },
-
-  closeBtn: {
-    border: "1px solid #CBD5E1",
-    background: "#fff",
-    fontSize: 16,
-    cursor: "pointer",
-    color: "#0F172A",
-    padding: "6px 10px",
-    borderRadius: 999,
-    transition: "all 0.2s ease",
-  },
-
-  inlineBody: {
-    padding: 14,
-    background: "#fff",
-    maxHeight: "none",
-    overflowY: "visible",
-  },
+const ORTHOTICS_CONTAINER_SCHEMA = {
+  title: "Patient Information",
+  sections: []
 };
+
+const SUBJECTIVE_SCHEMA = {
+  actions: [
+    { type: "back", label: "Back" },
+    { type: "clear", label: "Clear" },
+    { type: "save", label: "Save" }
+  ],
+  fields: [
+    { name: "pain_score", label: "Pain Score (0–10)", type: "input" },
+    { name: "patient_complaint", label: "Patient Complaint", type: "textarea" },
+    {
+      name: "functional_difficulty",
+      label: "Functional Difficulty (ADL / Mobility / Work)",
+      type: "textarea"
+    },
+    {
+      name: "patient_goals",
+      label: "Patient Goals / Expectations",
+      type: "textarea"
+    }
+  ]
+};
+
+const OBJECTIVE_SCHEMA = {
+  title: "Objective",
+  actions: SUBJECTIVE_SCHEMA.actions,
+  sections: [
+    {
+      title: "Physical Examination (Auto from MDT)",
+      fields: [
+        { name: "ul_mmt_r", label: "UL MMT Right", type: "textarea", readOnly: true },
+        { name: "ul_mmt_l", label: "UL MMT Left", type: "textarea", readOnly: true },
+        { name: "ll_mmt_r", label: "LL MMT Right", type: "textarea", readOnly: true },
+        { name: "ll_mmt_l", label: "LL MMT Left", type: "textarea", readOnly: true },
+        { name: "rom_auto", label: "ROM", type: "textarea", readOnly: true },
+        { name: "tone_auto", label: "Tone", type: "textarea", readOnly: true },
+        { name: "sensation_auto", label: "Sensation", type: "textarea", readOnly: true },
+        { name: "skin_auto", label: "Skin Condition", type: "textarea", readOnly: true },
+        {
+          name: "po_picture",
+          label: "Upload Picture (P&O)",
+          type: "file-upload-modal"
+        },
+        {
+          name: "functional_problems",
+          label: "Functional Problems (editable)",
+          type: "textarea"
+        }
+      ]
+    },
+    {
+      title: "Gait Assessment",
+      fields: [
+        { name: "walking_aid", label: "Walking Aid Used", type: "single-select", options: WALKING_AID },
+        { name: "walking_pattern", label: "Walking Pattern", type: "single-select", options: WALKING_PATTERN },
+        { name: "foot_clearance", label: "Foot Clearance", type: "single-select", options: FOOT_CLEARANCE },
+        { name: "step_length", label: "Step Length", type: "single-select", options: STEP_LENGTH },
+        { name: "stance_phase", label: "Stance Phase", type: "single-select", options: STANCE_PHASE },
+        { name: "swing_phase", label: "Swing Phase", type: "single-select", options: SWING_PHASE },
+        { name: "weight_bearing", label: "Weight Bearing", type: "single-select", options: WEIGHT_BEARING },
+        { name: "gait_balance", label: "Balance During Gait", type: "single-select", options: GAIT_BALANCE },
+        { name: "endurance", label: "Endurance", type: "single-select", options: ENDURANCE }
+      ]
+    }
+  ]
+};
+
+const ASSESSMENT_SCHEMA = {
+  actions: SUBJECTIVE_SCHEMA.actions,
+  fields: [
+    { name: "orthotic_need", label: "Orthotic Need", type: "input" },
+    {
+      name: "indications",
+      label: "Indication for Orthosis",
+      type: "multi-select-dropdown",
+      options: INDICATIONS
+    },
+    { name: "clinical_impression", label: "Clinical Impression", type: "textarea" },
+    { name: "prognosis", label: "Prognosis", type: "single-select", options: PROGNOSIS }
+  ]
+};
+
+const PLAN_SCHEMA = {
+  actions: SUBJECTIVE_SCHEMA.actions,
+  fields: [
+    {
+      name: "orthosis_category",
+      label: "Orthosis Category",
+      type: "single-select",
+      options: [
+        { label: "Ready-Made", value: "ready" },
+        { label: "Custom-Made", value: "custom" }
+      ]
+    },
+
+    /* READY-MADE */
+    {
+      name: "ready_model",
+      label: "Orthosis Model",
+      type: "input",
+      showIf: { field: "orthosis_category", equals: "ready" }
+    },
+    {
+      name: "ready_size",
+      label: "Size",
+      type: "single-select",
+      options: ["S", "M", "L", "XL"].map(v => ({ label: v, value: v })),
+      showIf: { field: "orthosis_category", equals: "ready" }
+    },
+    {
+      name: "ready_adjustment",
+      label: "Adjustment Required",
+      type: "radio",
+      options: YES_NO,
+      showIf: { field: "orthosis_category", equals: "ready" }
+    },
+
+    /* CUSTOM-MADE */
+    {
+      name: "custom_casting",
+      label: "Casting Required",
+      type: "radio",
+      options: YES_NO,
+      showIf: { field: "orthosis_category", equals: "custom" }
+    },
+    {
+      name: "custom_modification",
+      label: "Modification Notes",
+      type: "textarea",
+      showIf: { field: "orthosis_category", equals: "custom" }
+    },
+    {
+      name: "custom_material",
+      label: "Material Type",
+      type: "single-select",
+      options: [
+        { label: "Soft", value: "soft" },
+        { label: "Semi-rigid", value: "semi" },
+        { label: "Rigid", value: "rigid" }
+      ],
+      showIf: { field: "orthosis_category", equals: "custom" }
+    },
+    {
+      name: "custom_features",
+      label: "Custom Features",
+      type: "checkbox-group",
+      options: [
+        { label: "Straps", value: "straps" },
+        { label: "Padding", value: "padding" },
+        { label: "Hinges", value: "hinges" },
+        { label: "Others", value: "others" }
+      ],
+      showIf: { field: "orthosis_category", equals: "custom" }
+    },
+
+    { type: "subheading", label: "Orthosis Details" },
+
+    {
+      name: "orthosis_type",
+      label: "Orthosis Type",
+      type: "single-select",
+      options: ORTHOSIS_TYPES
+    },
+    {
+      name: "orthosis_material",
+      label: "Material",
+      type: "single-select",
+      options: [
+        { label: "Soft", value: "soft" },
+        { label: "Semi-rigid", value: "semi" },
+        { label: "Rigid", value: "rigid" }
+      ]
+    },
+    { name: "orthosis_notes", label: "Additional Notes", type: "input" },
+    { name: "measurement_date", label: "Measurement Date", type: "date" },
+    { name: "casting_required", label: "Casting Required", type: "radio", options: YES_NO },
+    { name: "casting_date", label: "Casting Date", type: "date" },
+    {
+      name: "follow_up",
+      label: "Follow-up",
+      type: "single-select",
+      options: [
+        { label: "2 weeks", value: "2w" },
+        { label: "4 weeks", value: "4w" },
+        { label: "Others", value: "others" }
+      ]
+    }
+  ]
+};
+
+/* ===================== COMPONENT ===================== */
+
+export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
+  const [values, setValues] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [activeTab, setActiveTab] = useState("subjective");
+
+  const storageKey = patient ? `orthotics_draft_${patient.id}` : null;
+
+  useEffect(() => {
+    if (!storageKey) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      setValues(JSON.parse(saved).values || {});
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!patient) return;
+
+    setValues(v => ({
+      ...v,
+      ul_mmt_r: patient.ul_mmt_r,
+      ul_mmt_l: patient.ul_mmt_l,
+      ll_mmt_r: patient.ll_mmt_r,
+      ll_mmt_l: patient.ll_mmt_l,
+      rom_auto: patient.rom,
+      tone_auto: patient.tone,
+      sensation_auto: patient.sensation,
+      skin_auto: patient.skin
+    }));
+  }, [patient]);
+
+  const onChange = (name, value) => {
+    setValues(v => ({ ...v, [name]: value }));
+  };
+
+  const handleAction = (type) => {
+    if (type === "back") onBack?.();
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+      localStorage.removeItem(storageKey);
+    }
+    if (type === "save") {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ values, updatedAt: new Date() })
+      );
+      alert("Orthotics draft saved");
+    }
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    onSubmit?.(values);
+    alert("Orthotics assessment submitted");
+  };
+
+  const schemaMap = {
+    subjective: SUBJECTIVE_SCHEMA,
+    objective: OBJECTIVE_SCHEMA,
+    assessment: ASSESSMENT_SCHEMA,
+    plan: PLAN_SCHEMA
+  };
+
+  function PatientInfo({ patient }) {
+    if (!patient) return null;
+    return (
+      <div style={{ marginBottom: 12 }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12,
+          fontSize: 14
+        }}>
+          <div><b>Name:</b> {patient.name}</div>
+          <div><b>IC:</b> {patient.id}</div>
+          <div><b>DOB:</b> {patient.dob}</div>
+          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+          <div><b>Primary Diagnosis:</b> {patient.icd}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ margin: "0 auto" }}>
+      <CommonFormBuilder
+        schema={ORTHOTICS_CONTAINER_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientInfo patient={patient} />
+      </CommonFormBuilder>
+
+      <div style={{
+        display: "flex",
+        gap: 12,
+        justifyContent: "center",
+        borderBottom: "1px solid #ddd",
+        marginBottom: 12
+      }}>
+        {["subjective", "objective", "assessment", "plan"].map(tab => (
+          <div
+            key={tab}
+            style={{
+              padding: "10px 22px",
+              fontWeight: 600,
+              cursor: "pointer",
+              color: activeTab === tab ? "#2451b3" : "#0f172a",
+              borderBottom: activeTab === tab ? "3px solid #2451b3" : "none"
+            }}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.toUpperCase()}
+          </div>
+        ))}
+      </div>
+
+      <CommonFormBuilder
+        schema={schemaMap[activeTab]}
+        values={values}
+        onChange={onChange}
+        submitted={submitted}
+        onAction={handleAction}
+      >
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
+          <button
+            style={{
+              padding: "12px 32px",
+              background: "#2563EB",
+              color: "#fff",
+              border: "none",
+              borderRadius: 10,
+              fontSize: 15,
+              fontWeight: 700
+            }}
+            onClick={handleSubmit}
+          >
+            Submit Orthotics Assessment
+          </button>
+        </div>
+      </CommonFormBuilder>
+    </div>
+  );
+}

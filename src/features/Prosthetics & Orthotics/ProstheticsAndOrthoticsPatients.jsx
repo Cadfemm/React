@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 // import AssessmentForm from "./OptometryAssessment";
+import OrthoticsAssessments from "./ProstheticsAndOrthoticsAssessments";
 
 export default function ProstheticsAndOrthoticsPatients({ Patients,onBack }) {
   const [tab, setTab] = useState("new");
@@ -15,11 +16,10 @@ const existingPatients = []
   /* ---------------- RENDER ASSESSMENT ---------------- */
   if (selectedPatient) {
     return (
-    //   <AssessmentForm
-    //     patient={selectedPatient}
-    //     onBack={() => setSelectedPatient(null)}
-    //   />
-    <></>
+      <OrthoticsAssessments
+        patient={selectedPatient}
+        onBack={() => setSelectedPatient(null)}
+      />
     );
   }
 

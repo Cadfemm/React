@@ -67,8 +67,8 @@ export default function AssessmentForm({ patient, onSave, onBack }) {
           "ADULT SPEECH-LANGUAGE",
           "ADULT VOICE",
           "ADULT TRACHEOSTOMY WEANING EVALUATION",
-          // "Consensus Auditory-Perceptual Evaluation of Voice",
-          // "Voice Handicap Index"
+          "Consensus Auditory-Perceptual Evaluation of Voice",
+          "Voice Handicap Index"
         ]
       : [
           "PAEDIATRIC SPEECH-LANGUAGE",
