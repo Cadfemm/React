@@ -4,143 +4,267 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 export default function BrainVisionInjury ({ onBack, layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
- const scaleColumns = [
-  { label: "Never", value: 0 },
-  { label: "Rarely", value: 1 },
-  { label: "Sometimes", value: 2 },
-  { label: "Often", value: 3 },
-  { label: "Always", value: 4 }
+  const [language, setLanguage] = useState("en");
+const BIVSS_SCALE = [
+  { label: { en: "Never", ms: "Tidak pernah" }, value: 0 },
+  { label: { en: "Rarely", ms: "Jarang" }, value: 1 },
+  { label: { en: "Sometimes", ms: "Kadang-kadang" }, value: 2 },
+  { label: { en: "Often", ms: "Kerap" }, value: 3 },
+  { label: { en: "Always", ms: "Sentiasa" }, value: 4 }
 ];
 
-const schema = {
-  title: "Brain Injury Vision Symptoms Survey (BIVSS)",
+const BIVSS_SCHEMA = {
+  enableLanguageToggle: true,
+
+  title: {
+    en: "Brain Injury Vision Symptoms Survey (BIVSS)",
+    ms: "Soal Selidik Bahasa Melayu bagi Gejala Penglihatan dalam Kalangan Pesakit yang Mengalami Kecederaan Otak"
+  },
+
+  actions: [
+    { type: "toggle-language" }
+  ],
+
   sections: [
+    // ================= VISION CLARITY =================
     {
-      title: "VISION CLARITY",
+      title: {
+        en: "VISION CLARITY",
+        ms: "KEJELASAN PENGLIHATAN"
+      },
       fields: [
         {
           type: "scale-table",
           name: "vision_clarity",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Distance vision is blurred and unclear even with glasses",
-            "Near vision is blurred and unclear even with glasses",
-            "Vision clarity changes throughout the day",
-            "Night vision is unclear / unable to see well in low light"
+            {
+              en: "Distance vision is blurred and unclear even with glasses",
+              ms: "Penglihatan jarak jauh kabur dan tidak jelas walaupun dengan pemakaian kaca mata"
+            },
+            {
+              en: "Near vision is blurred and unclear even with glasses",
+              ms: "Penglihatan jarak dekat kabur dan tidak jelas walaupun dengan pemakaian kaca mata"
+            },
+            {
+              en: "Vision clarity changes throughout the day",
+              ms: "Kejelasan penglihatan berubah-ubah sepanjang hari"
+            },
+            {
+              en: "Night vision is unclear / unable to see well in low light",
+              ms: "Penglihatan pada waktu malam tidak jelas / tidak dapat melihat dengan baik dalam cahaya malap"
+            }
           ]
         }
       ]
     },
 
+    // ================= VISUAL COMFORT =================
     {
-      title: "VISUAL COMFORT",
+      title: {
+        en: "VISUAL COMFORT",
+        ms: "KESELESAAN PENGLIHATAN"
+      },
       fields: [
         {
           type: "scale-table",
           name: "visual_comfort",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Eyes feel uncomfortable / painful / tired",
-            "Headache or dizziness after using the eyes",
-            "Eye pain or soreness after using the eyes all day",
-            "Tight feeling around the eyes"
+            {
+              en: "Eyes feel uncomfortable, painful, or tired",
+              ms: "Mata terasa tidak selesa, sakit atau letih"
+            },
+            {
+              en: "Headache or dizziness after using the eyes",
+              ms: "Sakit kepala atau pening selepas menggunakan mata"
+            },
+            {
+              en: "Eye pain or soreness after prolonged use",
+              ms: "Rasa sakit atau pedih pada mata selepas penggunaan berpanjangan"
+            },
+            {
+              en: "Tight or heavy feeling around the eyes",
+              ms: "Rasa tegang atau berat di sekitar mata"
+            }
           ]
         }
       ]
     },
 
+    // ================= DOUBLE VISION =================
     {
-      title: "DOUBLE VISION",
+      title: {
+        en: "DOUBLE VISION",
+        ms: "PENGLIHATAN BERGANDA"
+      },
       fields: [
         {
           type: "scale-table",
           name: "double_vision",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Double vision, especially when the eyes feel tired",
-            "Need to close one eye to see clearly",
-            "Words appear to move when reading"
+            {
+              en: "Double vision especially when eyes feel tired",
+              ms: "Penglihatan menjadi berganda terutamanya apabila mata berasa letih"
+            },
+            {
+              en: "Need to close one eye to see clearly",
+              ms: "Terpaksa menutup sebelah mata untuk melihat dengan jelas"
+            },
+            {
+              en: "Words appear to move when reading",
+              ms: "Tulisan kelihatan seperti bergerak ketika membaca"
+            }
           ]
         }
       ]
     },
 
+    // ================= LIGHT SENSITIVITY =================
     {
-      title: "LIGHT SENSITIVITY",
+      title: {
+        en: "LIGHT SENSITIVITY",
+        ms: "SENSITIVITI TERHADAP CAHAYA"
+      },
       fields: [
         {
           type: "scale-table",
           name: "light_sensitivity",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Discomfort (glare) with indoor lighting",
-            "Need to wear dark glasses when outdoors",
-            "Indoor lighting interferes with vision"
+            {
+              en: "Discomfort (glare) with indoor lighting",
+              ms: "Rasa tidak selesa (silau) dengan cahaya di dalam bangunan"
+            },
+            {
+              en: "Need to wear dark glasses outdoors",
+              ms: "Terpaksa memakai cermin mata hitam apabila berada di luar"
+            },
+            {
+              en: "Indoor lighting interferes with vision",
+              ms: "Cahaya di dalam bangunan mengganggu penglihatan"
+            }
           ]
         }
       ]
     },
 
+    // ================= DRY EYES =================
     {
-      title: "DRY EYES",
+      title: {
+        en: "DRY EYES",
+        ms: "MATA KERING"
+      },
       fields: [
         {
           type: "scale-table",
           name: "dry_eyes",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Eyes feel dry and painful",
-            "Often feel the urge to blink",
-            "Frequently rub the eyes"
+            {
+              en: "Eyes feel dry and painful",
+              ms: "Mata terasa kering dan pedih"
+            },
+            {
+              en: "Frequently feel the urge to blink",
+              ms: "Kerap terasa hendak berkelip"
+            },
+            {
+              en: "Frequently rub the eyes",
+              ms: "Kerap menggosok mata"
+            }
           ]
         }
       ]
     },
 
+    // ================= DEPTH PERCEPTION =================
     {
-      title: "DEPTH PERCEPTION",
+      title: {
+        en: "DEPTH PERCEPTION",
+        ms: "KEBOLEHAN MENGANGGAR JARAK"
+      },
       fields: [
         {
           type: "scale-table",
           name: "depth_perception",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Difficulty judging position of objects",
-            "Uncertain when walking / easily trip or stumble",
-            "Handwriting becomes messy"
+            {
+              en: "Difficulty judging position of objects",
+              ms: "Sukar menilai kedudukan sesuatu objek"
+            },
+            {
+              en: "Unsteady when walking / easily trip or stumble",
+              ms: "Kurang yakin ketika berjalan / mudah tersandung atau terjatuh"
+            },
+            {
+              en: "Handwriting becomes messy",
+              ms: "Tulisan menjadi tidak kemas"
+            }
           ]
         }
       ]
     },
 
+    // ================= PERIPHERAL VISION =================
     {
-      title: "PERIPHERAL VISION",
+      title: {
+        en: "PERIPHERAL VISION",
+        ms: "PENGLIHATAN SISI"
+      },
       fields: [
         {
           type: "scale-table",
           name: "peripheral_vision",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Side vision appears blurred or objects seem to move",
-            "Objects in front are not always directly in front"
+            {
+              en: "Side vision appears blurred or objects seem to move",
+              ms: "Penglihatan sisi kelihatan kabur atau objek seolah-olah bergerak"
+            },
+            {
+              en: "Objects in front are not always directly in front",
+              ms: "Objek yang dilihat di hadapan tidak semestinya berada tepat di hadapan"
+            }
           ]
         }
       ]
     },
 
+    // ================= READING =================
     {
-      title: "READING",
+      title: {
+        en: "READING",
+        ms: "PEMBACAAN"
+      },
       fields: [
         {
           type: "scale-table",
           name: "reading",
-          columns: scaleColumns,
+          columns: BIVSS_SCALE,
           rows: [
-            "Poor concentration / easily distracted while reading",
-            "Difficulty or slowness when reading and writing",
-            "Poor comprehension / cannot remember what was read",
-            "Lose place or skip words while reading",
-            "Need to use finger to keep place while reading"
+            {
+              en: "Poor concentration or easily distracted while reading",
+              ms: "Daya tumpuan rendah atau mudah terganggu ketika membaca"
+            },
+            {
+              en: "Difficulty or slowness when reading and writing",
+              ms: "Mengalami kesukaran atau kelambatan ketika membaca dan menulis"
+            },
+            {
+              en: "Poor comprehension or cannot remember what was read",
+              ms: "Kurang pemahaman atau tidak dapat mengingati apa yang dibaca"
+            },
+            {
+              en: "Lose place or skip words while reading",
+              ms: "Keliru atau terlepas perkataan ketika membaca"
+            },
+            {
+              en: "Need to use finger to keep place while reading",
+              ms: "Perlu menggunakan jari untuk mengekalkan kedudukan semasa membaca"
+            }
           ]
         }
       ]
@@ -148,6 +272,11 @@ const schema = {
   ]
 };
 
+const handleAction = (type) => {
+  if (type === "toggle-language") {
+    setLanguage(l => (l === "en" ? "ms" : "en"));
+  }
+};
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
@@ -167,12 +296,14 @@ const schema = {
 
   return (
     <CommonFormBuilder
-      schema={schema}
+      schema={BIVSS_SCHEMA}
       values={values}
       onChange={onChange}
       submitted={submitted}
-      onAction={onAction}
+        onAction={handleAction}
         layout={layout}
+                language={language}
+
     />
   );
 }

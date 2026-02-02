@@ -1,4 +1,5 @@
 import React from "react";
+import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 
 export default function CommonFormBuilder({
   schema,
@@ -9,11 +10,13 @@ export default function CommonFormBuilder({
   assessmentRegistry = {},
   children,
   layout = "root",
+  language,
   readOnly: formReadOnly = false
 }) {
   const sections = schema.sections || [
     { title: null, fields: schema.fields }
   ];
+  const supportsLanguage = schema?.enableLanguageToggle;
 
   return (
     <div style={styles.page}>
@@ -29,27 +32,60 @@ export default function CommonFormBuilder({
 
           <div style={styles.header}>
             <div>
-              <div style={styles.title}>{schema.title}</div>
+              <div style={styles.title}>
+                {schema?.enableLanguageToggle ? t(schema.title, language) : schema.title}
+              </div>
               {schema.subtitle && (
-                <div style={styles.subtitle}>{schema.subtitle}</div>
+                <div style={styles.title}>
+                  {schema?.enableLanguageToggle
+                    ? t(schema.title, language)
+                    : schema.title}
+                </div>
               )}
+
             </div>
 
-            {schema.actions?.length > 0 && (
-              <div style={styles.actions}>
-                {schema.actions
-                  .filter(action => !formReadOnly || action.type === "back")
-                  .map(action => (
-                    <button
-                      key={action.type}
-                      style={styles.mstBtn}
-                      onClick={() => onAction?.(action.type)}
-                    >
-                      {action.label}
-                    </button>
-                  ))}
-              </div>
-            )}
+     {schema.actions?.length > 0 && (
+  <div style={styles.actionsBar}>
+    
+    {/* LEFT: Special controls (toggles, switches) */}
+    <div style={styles.actionControls}>
+      {schema.actions.map(action => {
+        if (
+          action.type === "toggle-language" &&
+          schema.enableLanguageToggle
+        ) {
+          return (
+            <MalayToggle
+              key={action.type}
+              enabled={language === "ms"}
+              onToggle={() => onAction?.("toggle-language")}
+            />
+          );
+        }
+        return null;
+      })}
+    </div>
+
+    {/* RIGHT: Normal buttons (Save, Clear, Back, etc.) */}
+    <div style={styles.actionButtons}>
+      {schema.actions
+        .filter(a => a.type !== "toggle-language")
+        .filter(a => !formReadOnly || a.type === "back")
+        .map(action => (
+          <button
+            key={action.type}
+            style={styles.mstBtn}
+            onClick={() => onAction?.(action.type)}
+          >
+            {action.label}
+          </button>
+        ))}
+    </div>
+
+  </div>
+)}
+
           </div>
 
           <div style={styles.body}>
@@ -84,12 +120,13 @@ export default function CommonFormBuilder({
                   }
                 >
 
-
                   {section.title && (
                     <div style={styles.sectionTitle}>
-                      {section.title}
+                      {supportsLanguage ? t(section.title, language) : section.title}
                     </div>
                   )}
+
+
 
                   {(() => {
                     // Track if we've shown the matrix header for this section
@@ -103,160 +140,176 @@ export default function CommonFormBuilder({
 
                     return section.fields.map(field => {
 
-                    if (field.showIf) {
-                      const depVal = values[field.showIf.field];
+                      if (field.showIf) {
+                        const depVal = values[field.showIf.field];
 
-                      // equals (works for single-select / radio)
-                      if ("equals" in field.showIf) {
-                        if (Array.isArray(depVal)) {
-                          if (!depVal.includes(field.showIf.equals)) return null;
-                        } else {
-                          if (depVal !== field.showIf.equals) return null;
+                        // equals (works for single-select / radio)
+                        if ("equals" in field.showIf) {
+                          if (Array.isArray(depVal)) {
+                            if (!depVal.includes(field.showIf.equals)) return null;
+                          } else {
+                            if (depVal !== field.showIf.equals) return null;
+                          }
                         }
-                      }
 
-                      // oneOf (checks if value is one of the provided array of values)
-                      if ("oneOf" in field.showIf) {
-                        const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
-                        if (Array.isArray(depVal)) {
-                          const hasMatch = depVal.some(val => allowedValues.includes(val));
-                          if (!hasMatch) return null;
-                        } else {
-                          if (!allowedValues.includes(depVal)) return null;
+                        // oneOf (checks if value is one of the provided array of values)
+                        if ("oneOf" in field.showIf) {
+                          const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
+                          if (Array.isArray(depVal)) {
+                            const hasMatch = depVal.some(val => allowedValues.includes(val));
+                            if (!hasMatch) return null;
+                          } else {
+                            if (!allowedValues.includes(depVal)) return null;
+                          }
                         }
-                      }
-                      // includes (works for multi-select / checkbox-group)
-                      if ("includes" in field.showIf) {
-                        if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
+                        // includes (works for multi-select / checkbox-group)
+                        if ("includes" in field.showIf) {
+                          if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
+                            return null;
+                          }
+                        }
+
+                        // exists
+                        if ("exists" in field.showIf && !depVal) {
                           return null;
                         }
                       }
 
-                      // exists
-                      if ("exists" in field.showIf && !depVal) {
-                        return null;
+
+
+                      const value = values[field.name];
+                      const error = submitted
+                        ? validateField(value, field.validation)
+                        : null;
+
+                      // Show matrix header before the first radio-matrix field, but not if there's already a grid-header
+                      const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField && !hasGridHeader;
+                      if (shouldShowMatrixHeader) {
+                        matrixHeaderShown = true;
                       }
-                    }
 
+                      // Determine max options count for alignment
+                      const maxOptions = firstMatrixField ? firstMatrixField.options.length : 0;
+                      const currentOptions = field.type === "radio-matrix" ? field.options.length : 0;
 
+                      return (
+                        <React.Fragment key={field.name}>
+                          {shouldShowMatrixHeader && (
+                            <div style={styles.matrixHeader}>
+                              <div style={styles.matrixLabel}>
+                                Scale
+                                {firstMatrixField?.info && <InfoTooltip info={firstMatrixField.info} />}
+                              </div>
+                              <div style={styles.matrixOptions}>
+                                {firstMatrixField.options.map(opt => (
+                                  <div key={opt.value} style={styles.matrixHeaderCell}>
+                                    {opt.label}{schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
 
-                    const value = values[field.name];
-                    const error = submitted
-                      ? validateField(value, field.validation)
-                      : null;
-
-                    // Show matrix header before the first radio-matrix field, but not if there's already a grid-header
-                    const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField && !hasGridHeader;
-                    if (shouldShowMatrixHeader) {
-                      matrixHeaderShown = true;
-                    }
-
-                    // Determine max options count for alignment
-                    const maxOptions = firstMatrixField ? firstMatrixField.options.length : 0;
-                    const currentOptions = field.type === "radio-matrix" ? field.options.length : 0;
-
-                    return (
-                      <React.Fragment key={field.name}>
-                        {shouldShowMatrixHeader && (
-                          <div style={styles.matrixHeader}>
-                            <div style={styles.matrixLabel}>
-                              Scale
-                              {firstMatrixField?.info && <InfoTooltip info={firstMatrixField.info} />}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div style={styles.matrixOptions}>
-                              {firstMatrixField.options.map(opt => (
-                                <div key={opt.value} style={styles.matrixHeaderCell}>
-                                  {opt.label}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        <div
-                          style={{
-                            ...styles.field,
-                            marginBottom: layout === "nested" ? 10 : 18
-                          }}
-                        >
+                          )}
+                          <div
+                            style={{
+                              ...styles.field,
+                              marginBottom: layout === "nested" ? 10 : 18
+                            }}
+                          >
 
 
-                        {/* RADIO stays special (side layout) */}
-                        {field.type === "radio" && !field.inRow ? (
-                          <div style={styles.radioRow}>
-                            <div style={styles.radioLabel}>{field.label}</div>
-                            {renderField(
-                              field,
-                              value,
-                              values,
-                              onChange,
-                              onAction,
-                              assessmentRegistry,
-                              formReadOnly
-                            )}                          </div>
-                        ) : field.type === "subheading" ? (
+                            {/* RADIO stays special (side layout) */}
+                            {field.type === "radio" && !field.inRow ? (
+                              <div style={styles.radioRow}>
+                                <div style={styles.radioLabel}>{field.label}</div>
+                                {renderField(
+                                  field,
+                                  value,
+                                  values,
+                                  onChange,
+                                  onAction,
+                                  assessmentRegistry,
+                                  formReadOnly,
+                                  {
+                                    enabled: schema?.enableLanguageToggle === true,
+                                    lang: language
+                                  }
+                                )}                          </div>
+                            ) : field.type === "subheading" ? (
 
-                          renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
-                        ) : field.type === "row" ? (
-                          /* ✅ ROW FIELDS → Render directly without extra wrapper */
-                          renderField(
-                            field,
-                            value,
-                            values,
-                            onChange,
-                            onAction,
-                            assessmentRegistry,
-                            formReadOnly
-                          )
-                        ) : (
-                          <div style={{ marginBottom: 16 }}>
-
-                            <>
-                              {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row"].includes(field.type)
-                                && field.type !== "checkbox-group"
-                                && (
-                                  <label style={styles.label}>
-                                    {field.label}
-                                  </label>
-                                )}
-
-
-                              {renderField(
+                              renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
+                            ) : field.type === "row" ? (
+                              /* ✅ ROW FIELDS → Render directly without extra wrapper */
+                              renderField(
                                 field,
                                 value,
                                 values,
                                 onChange,
                                 onAction,
                                 assessmentRegistry,
-                                formReadOnly
-                              )}
-                            </>
+                                formReadOnly,
+                                {
+                                  enabled: schema?.enableLanguageToggle === true,
+                                  lang: language
+                                }
 
-                            {field.helper && (
-                              <div
-                                style={{
-                                  fontSize: 12,
-                                  color: "#6b7280",
-                                  marginTop: 4
-                                }}
-                              >
-                                {field.helper}
+                              )
+                            ) : (
+                              <div style={{ marginBottom: 16 }}>
+
+                                <>
+                                  {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row"].includes(field.type)
+                                    && field.type !== "checkbox-group"
+                                    && (
+                                      <label style={styles.label}>
+                                        {schema?.enableLanguageToggle ? t(field.label, language) : field.label}
+                                      </label>
+                                    )}
+
+
+                                  {renderField(
+                                    field,
+                                    value,
+                                    values,
+                                    onChange,
+                                    onAction,
+                                    assessmentRegistry,
+                                    formReadOnly,
+
+                                    {
+                                      enabled: schema?.enableLanguageToggle === true,
+                                      lang: language
+                                    }
+                                  )}
+                                </>
+
+                                {field.helper && (
+                                  <div
+                                    style={{
+                                      fontSize: 12,
+                                      color: "#6b7280",
+                                      marginTop: 4
+                                    }}
+                                  >
+                                    {field.helper}
+                                  </div>
+                                )}
                               </div>
+
+
+
                             )}
+
+                            {error && (
+                              <div style={styles.error}>{error}</div>
+                            )}
+
                           </div>
+                        </React.Fragment>
+                      );
 
-
-
-                        )}
-
-                        {error && (
-                          <div style={styles.error}>{error}</div>
-                        )}
-
-                        </div>
-                      </React.Fragment>
-                    );
-
-                  })})()}
+                    })
+                  })()}
                 </div>
               );
             })}
@@ -306,7 +359,69 @@ function InfoTooltip({ info }) {
 }
 
 
+const t = (text, lang) => {
+  if (!text) return "";
+  if (typeof text === "string") return text;
+  return text[lang] || text.en || "";
+};
 
+function MalayToggle({ enabled, onToggle }) {
+  return (
+    <div style={langSwitch.wrap}>
+      <span style={langSwitch.label}>Malay</span>
+      <div
+        style={{
+          ...langSwitch.track,
+          backgroundColor: enabled ? "#2563eb" : "#e5e7eb"
+        }}
+        onClick={onToggle}
+      >
+        <div
+          style={{
+            ...langSwitch.thumb,
+            transform: enabled ? "translateX(20px)" : "translateX(0)"
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+const langSwitch = {
+  wrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "6px 10px",
+    borderRadius: 8,
+    background: "#f8fafc",
+    border: "1px solid #e5e7eb"
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#0f172a"
+  },
+  track: {
+    width: 42,
+    height: 22,
+    borderRadius: 999,
+    position: "relative",
+    cursor: "pointer",
+    transition: "background 0.2s ease"
+  },
+  thumb: {
+    width: 18,
+    height: 18,
+    background: "#fff",
+    borderRadius: "50%",
+    position: "absolute",
+    top: 2,
+    left: 2,
+    transition: "transform 0.2s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.2)"
+  }
+};
 
 
 function MultiSelectDropdown({ field, value, onChange }) {
@@ -382,6 +497,7 @@ function FileUploadModal({ field, value, onChange }) {
         type: file.type,
         data: reader.result
       });
+      setShowModal(true); // open modal immediately after upload
     };
     reader.readAsDataURL(file);
   };
@@ -389,7 +505,6 @@ function FileUploadModal({ field, value, onChange }) {
   return (
     <>
       <div style={{ width: "100%", maxWidth: 320 }}>
-        {/* Hidden native input */}
         <input
           ref={inputRef}
           type="file"
@@ -398,7 +513,6 @@ function FileUploadModal({ field, value, onChange }) {
           style={{ display: "none" }}
         />
 
-        {/* Upload box */}
         {!value?.data && (
           <div
             onClick={() => inputRef.current?.click()}
@@ -431,7 +545,6 @@ function FileUploadModal({ field, value, onChange }) {
           </div>
         )}
 
-        {/* Selected file pill */}
         {value?.data && (
           <div
             style={{
@@ -439,58 +552,21 @@ function FileUploadModal({ field, value, onChange }) {
               border: "1px solid #e5e7eb",
               borderRadius: 8,
               padding: "6px 8px",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: "#fff"
+              background: "#fff",
+              fontSize: 12,
+              color: "#1f2937",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap"
             }}
           >
-            <span
-              style={{
-                fontSize: 12,
-                color: "#1f2937",
-                flex: 1,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap"
-              }}
-            >
-              {value.filename}
-            </span>
-
-            <button
-              onClick={() => setShowModal(true)}
-              title="View"
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                color: "#2563eb",
-                fontSize: 14
-              }}
-            >
-              👁️
-            </button>
-
-            <button
-              onClick={() => onChange(field.name, null)}
-              title="Remove"
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                color: "#ef4444",
-                fontSize: 14
-              }}
-            >
-              ✕
-            </button>
+            {value.filename}
           </div>
         )}
       </div>
 
-      {/* Modal (unchanged) */}
-      {showModal && (
+      {/* MODAL – IMAGE ONLY, MEDIUM SIZE */}
+      {showModal && value?.data && (
         <div
           style={{
             position: "fixed",
@@ -508,28 +584,20 @@ function FileUploadModal({ field, value, onChange }) {
             style={{
               backgroundColor: "#fff",
               borderRadius: 12,
-              padding: 24,
-              maxWidth: "85%",
-              maxHeight: "85%",
-              display: "flex",
-              flexDirection: "column",
-              gap: 16
+              padding: 16,
+              maxWidth: "70%",
+              maxHeight: "70%"
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <strong>{value?.filename}</strong>
-              <button
-                onClick={() => setShowModal(false)}
-                style={{ border: "none", background: "none", fontSize: 20 }}
-              >
-                ✕
-              </button>
-            </div>
-
             <img
-              src={value?.data}
+              src={value.data}
               alt=""
-              style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain" }}
+              style={{
+                width: "100%",
+                maxHeight: "60vh",
+                objectFit: "contain",
+                borderRadius: 8
+              }}
             />
           </div>
         </div>
@@ -537,6 +605,7 @@ function FileUploadModal({ field, value, onChange }) {
     </>
   );
 }
+
 
 function AssessmentLauncher({
   field,
@@ -575,7 +644,7 @@ function AssessmentLauncher({
 
       {ActiveComponent ? (
         <div style={{ marginTop: 20, width: '100%' }}>
-          <ActiveComponent values={values} onChange={onChange}  layout="nested" />
+          <ActiveComponent values={values} onChange={onChange} layout="nested" />
         </div>
       ) : null}
     </div>
@@ -584,10 +653,10 @@ function AssessmentLauncher({
 
 function RadioMatrixRow({ field, value, onChange }) {
   // Use custom widths if wideLabel is set, otherwise use default
-  const rowStyle = field.wideLabel 
+  const rowStyle = field.wideLabel
     ? { ...styles.matrixRow, gridTemplateColumns: "400px repeat(5, 80px)" }
     : styles.matrixRow;
-  
+
   return (
     <div style={rowStyle}>
       <div style={styles.matrixLabel}>
@@ -621,7 +690,8 @@ function renderField(
   onChange,
   onAction,
   assessmentRegistry,
-  formReadOnly = false
+  formReadOnly = false,
+  languageConfig
 ) {
   const readOnly = formReadOnly || field.readOnly;
 
@@ -715,14 +785,14 @@ function renderField(
         </div>
       );
 
-case "info-text":
-  return (
-    <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
-      {Array.isArray(field.text)
-        ? field.text.map((t, i) => <div key={i}>{t}</div>)
-        : field.text}
-    </div>
-  );
+    case "info-text":
+      return (
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+          {Array.isArray(field.text)
+            ? field.text.map((t, i) => <div key={i}>{t}</div>)
+            : field.text}
+        </div>
+      );
 
 
     case "scale-table":
@@ -741,7 +811,7 @@ case "info-text":
               <th style={styles.th}></th>
               {field.columns.map(col => (
                 <th key={col.value} style={styles.th}>
-                  {col.label}
+                  {languageConfig?.enabled ? t(col.label, languageConfig.lang) : col.label}
                   {!col?.required && (
                     <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
                   )}
@@ -756,7 +826,8 @@ case "info-text":
               const rowKey = `${field.name}_${rIdx}`;
               return (
                 <tr key={rowKey}>
-                  <td style={styles.tdLabel}>{rowLabel}</td>
+                  <td style={styles.tdLabel}>
+                    {languageConfig?.enabled ? t(rowLabel, languageConfig.lang) : rowLabel}</td>
                   {field.columns.map(col => (
                     <td key={col.value} style={styles.td}>
                       <input
@@ -777,6 +848,123 @@ case "info-text":
       );
 
 
+    case "refraction-col": {
+      const rows = field.rows || [];
+      const groups = field.groups || [];
+
+      // Build flat columns with group boundaries
+      const groupMeta = [];
+      let cursor = 0;
+
+      groups.forEach((g, gi) => {
+        groupMeta.push({
+          groupIndex: gi,
+          start: cursor,
+          length: g.columns.length
+        });
+        cursor += g.columns.length;
+      });
+
+      const flatCols = groups.flatMap(g => g.columns);
+
+      return (
+        <div style={styles.refraction12Wrapper}>
+          {/* Header Row 1 – Group Labels */}
+          <div style={styles.refraction12Row}>
+            <div style={styles.refraction12LabelCell}></div>
+            {groups.map((g, i) => (
+              <div
+                key={i}
+                style={{
+                  ...styles.refraction12GroupHeader,
+                  gridColumn: `span ${g.columns.length}`
+                }}
+              >
+                {g.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Header Row 2 – Column Labels */}
+          <div style={styles.refraction12Row}>
+            <div style={styles.refraction12LabelCell}></div>
+            {flatCols.map((c, i) => (
+              <div key={i} style={styles.refraction12ColHeader}>
+                {c}
+              </div>
+            ))}
+          </div>
+
+          {/* Data Rows */}
+          {rows.map(r => (
+            <div key={r.value} style={styles.refraction12Row}>
+              <div style={styles.refraction12RowLabel}>{r.label}</div>
+
+              {flatCols.map((_, i) => {
+                const key = `${field.name}_${r.value}_${i}`;
+
+                // Find which group this column belongs to
+                const meta = groupMeta.find(
+                  g => i >= g.start && i < g.start + g.length
+                );
+
+                const isGroupStart = meta && i === meta.start;
+
+                // 🔹 Merge inside each group (e.g. Sphere → Prism for ADD)
+                if (r.merge && isGroupStart) {
+                  return (
+                    <input
+                      key={key}
+                      style={{
+                        ...styles.refraction12Input,
+                        gridColumn: `span ${Math.min(r.merge, meta.length)}`
+                      }}
+                      value={values[`${field.name}_${r.value}_${meta.groupIndex}_merged`] || ""}
+                      onChange={e =>
+                        onChange(
+                          `${field.name}_${r.value}_${meta.groupIndex}_merged`,
+                          e.target.value
+                        )
+                      }
+                    />
+                  );
+                }
+
+                // Skip merged cells inside that group
+                if (
+                  r.merge &&
+                  meta &&
+                  i > meta.start &&
+                  i < meta.start + Math.min(r.merge, meta.length)
+                ) {
+                  return null;
+                }
+
+                return (
+                  <input
+                    key={key}
+                    style={styles.refraction12Input}
+                    value={values[key] || ""}
+                    onChange={e => onChange(key, e.target.value)}
+                  />
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+case "image-anatomy-selector":
+  return (
+    <AnatomyImageOverlayInputs
+
+      image={field.image}
+      fields={field.markers}
+       values={values}
+  onChange={onChange}
+    />
+  );
 
 
     case "multi-select-details": {
@@ -1014,7 +1202,6 @@ case "info-text":
               );
             }
 
-            // Handle string column type (e.g., "textarea", "input")
             return (
               <input
                 key={fieldKey}
@@ -1151,63 +1338,63 @@ case "info-text":
         />
       );
 
-      case "radio":
-        return (
-          <div style={{ marginTop: 6 }}>
-            <div style={styles.inlineGroup}>
-              {(field.options || []).map(opt => (
-                <label key={opt.value} style={styles.inlineItem}>
-                  <input
-                    type="radio"
-                    name={field.name}
-                    checked={value === opt.value}
-                    disabled={readOnly}
-                    onChange={() => !readOnly && onChange(field.name, opt.value)}
-                  />
-                  {opt.label}
-                </label>
-              ))}
-            </div>
-          </div>
-        );
-      case "attach-file":
-        return (
-          <div style={{ marginBottom: 0 }}>
-            <label style={styles.label}>
-              {field.title}
-              {field.required && <span style={{ color: "red" }}> *</span>}
-            </label>
-
-            <div style={styles.inlineGroup}>
-              {(!value || !field.hideInputAfterSelect) && (
+    case "radio":
+      return (
+        <div style={{ marginTop: 6 }}>
+          <div style={styles.inlineGroup}>
+            {(field.options || []).map(opt => (
+              <label key={opt.value} style={styles.inlineItem}>
                 <input
-                  type="file"
-                  accept={field.accept}
-                  multiple={field.multiple}
-                  onChange={e => {
-                    const files = field.multiple
-                      ? Array.from(e.target.files || [])
-                      : e.target.files?.[0] || null;
-
-                    onChange(field.name, files);
-                  }}
-                  style={styles.fileInput}
+                  type="radio"
+                  name={field.name}
+                  checked={value === opt.value}
+                  disabled={readOnly}
+                  onChange={() => !readOnly && onChange(field.name, opt.value)}
                 />
-              )}
-
-              {/* Preview / filename */}
-              {value && !Array.isArray(value) && (
-                <FilePreview file={value} previewSize={field.previewSize} />
-              )}
-
-              {Array.isArray(value) &&
-                value.map((file, idx) => (
-                  <FilePreview key={idx} file={file} previewSize={field.previewSize} />
-                ))}
-            </div>
+                {opt.label}
+              </label>
+            ))}
           </div>
-        );
-    
+        </div>
+      );
+    case "attach-file":
+      return (
+        <div style={{ marginBottom: 0 }}>
+          <label style={styles.label}>
+            {field.title}
+            {field.required && <span style={{ color: "red" }}> *</span>}
+          </label>
+
+          <div style={styles.inlineGroup}>
+            {(!value || !field.hideInputAfterSelect) && (
+              <input
+                type="file"
+                accept={field.accept}
+                multiple={field.multiple}
+                onChange={e => {
+                  const files = field.multiple
+                    ? Array.from(e.target.files || [])
+                    : e.target.files?.[0] || null;
+
+                  onChange(field.name, files);
+                }}
+                style={styles.fileInput}
+              />
+            )}
+
+            {/* Preview / filename */}
+            {value && !Array.isArray(value) && (
+              <FilePreview file={value} previewSize={field.previewSize} />
+            )}
+
+            {Array.isArray(value) &&
+              value.map((file, idx) => (
+                <FilePreview key={idx} file={file} previewSize={field.previewSize} />
+              ))}
+          </div>
+        </div>
+      );
+
 
     case "paired-text":
       const pairs = field.pairs || [];
@@ -1302,38 +1489,38 @@ case "info-text":
         );
       }
 
-/* DEFAULT BEHAVIOUR (label on top) */
-return (
-  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-    {field.label ? (
-      <label style={styles.label}>{field.label}</label>
-    ) : null}
+      /* DEFAULT BEHAVIOUR (label on top) */
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {field.label ? (
+            <label style={styles.label}>{field.label}</label>
+          ) : null}
 
-    <div style={styles.inlineGroup}>
-      {(field.options || []).map((opt) => (
-        <label key={opt.value} style={styles.inlineItem}>
-          <input
-            type="checkbox"
-            checked={(value || []).includes(opt.value)}
-            disabled={readOnly}
-            onChange={() => {
-              if (readOnly) return;
-              const next = (value || []).includes(opt.value)
-                ? value.filter((v) => v !== opt.value)
-                : [...(value || []), opt.value];
-              onChange(field.name, next);
-            }}
-          />
-          {opt.label}
-        </label>
-      ))}
-    </div>
-  </div>
-);
+          <div style={styles.inlineGroup}>
+            {(field.options || []).map((opt) => (
+              <label key={opt.value} style={styles.inlineItem}>
+                <input
+                  type="checkbox"
+                  checked={(value || []).includes(opt.value)}
+                  disabled={readOnly}
+                  onChange={() => {
+                    if (readOnly) return;
+                    const next = (value || []).includes(opt.value)
+                      ? value.filter((v) => v !== opt.value)
+                      : [...(value || []), opt.value];
+                    onChange(field.name, next);
+                  }}
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
 
 
 
-    
+
 
 
     case "subheading":
@@ -1514,42 +1701,49 @@ return (
           {rows.map((row, rowIdx) => (
             <div key={rowIdx} style={styles.refractionTableRow}>
               <div style={styles.refractionTableRowLabel}>{row.label}</div>
+
               {[0, 1].map(eye => (
                 <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
                   {eyeColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
+                    const baseKey = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}`;
+                    const fieldName = `${baseKey}_${colIdx}`;
+
+                    // 🔹 Dynamic merge from schema
+                    if (row.merge && colIdx === 0) {
+                      return (
+                        <input
+                          key={fieldName}
+                          style={{
+                            ...styles.refractionTableInput,
+                            gridColumn: `span ${row.merge}`
+                          }}
+                          value={values[`${baseKey}_merged`] || ""}
+                          onChange={e =>
+                            onChange(`${baseKey}_merged`, e.target.value)
+                          }
+                        />
+                      );
+                    }
+
+                    // Skip merged columns
+                    if (row.merge && colIdx > 0 && colIdx < row.merge) {
+                      return null;
+                    }
+
                     return (
                       <input
                         key={fieldName}
                         style={styles.refractionTableInput}
-                        value={fieldValue}
+                        value={values[fieldName] || ""}
                         onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
                       />
                     );
                   })}
                 </div>
               ))}
-              {extraColumns.length > 0 && (
-                <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${extraColumns.length}, 1fr)` }}>
-                  {extraColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_extra_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
-                    return (
-                      <input
-                        key={fieldName}
-                        style={styles.refractionTableInput}
-                        value={fieldValue}
-                        onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
-                      />
-                    );
-                  })}
-                </div>
-              )}
             </div>
           ))}
+
         </div>
       );
     }
@@ -1617,12 +1811,12 @@ return (
     case "refraction-12col": {
       const rows = field.rows || [];
       const groups = field.groups || [];
- 
+
       const flatCols = groups.flatMap(g => g.columns);
       const colCount = flatCols.length;
- 
+
       const gridTemplate = `200px repeat(${colCount}, 1fr)`;
- 
+
       return (
         <div style={styles.vaWrap}>
           <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
@@ -1639,7 +1833,7 @@ return (
               </div>
             ))}
           </div>
- 
+
           {/* <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
   <div style={styles.vaCorner} />
   {flatCols.map((c, i) => (
@@ -1648,12 +1842,12 @@ return (
     </div>
   ))}
 </div> */}
- 
- 
+
+
           <div style={{ overflowX: "auto" }}>
             {rows.map(r => {
               const rowCols = r.columns || flatCols;
- 
+
               return (
                 <div
                   key={r.value}
@@ -1664,7 +1858,7 @@ return (
                   }}
                 >
                   <div style={styles.vaRowLabel}>{r.label}</div>
- 
+
                   {r.remark ? (
                     <textarea
                       style={{ ...styles.vaRemark, gridColumn: `span ${colCount}` }}
@@ -1678,7 +1872,7 @@ return (
                     rowCols.map((col, i) => {
                       const key = `${field.name}_${r.value}_${i}`;
                       const v = values[key] || "";
- 
+
                       return (
                         <div key={key} style={styles.vaCell}>
                           {col.type === "select" ? (
@@ -1706,10 +1900,10 @@ return (
                 </div>
               );
             })}
- 
+
           </div>
         </div>
- 
+
       );
     }
 
@@ -1839,6 +2033,23 @@ function validateField(value, rules) {
 
 
 const styles = {
+  actionsBar: {
+  display: "flex",
+  alignItems: "center",
+  gap: 16
+},
+
+actionControls: {
+  display: "flex",
+  alignItems: "center",
+  gap: 12
+},
+
+actionButtons: {
+  display: "flex",
+  alignItems: "center",
+  gap: 8
+},
   page: {
     minHeight: "auto",
     fontFamily: "Inter, system-ui"
@@ -2154,12 +2365,12 @@ const styles = {
     justifyContent: "space-between"
   },
 
-radioRow: {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between", 
-  gap: 24
-},
+  radioRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 24
+  },
 
   radioLabel: {
     fontWeight: 600,
@@ -2533,7 +2744,7 @@ radioRow: {
     borderRight: "1px solid #eef2f7",
     height: 56
   },
- 
+
   vaGroupHeader: {
     textAlign: "center",
     fontWeight: 700,
@@ -2542,7 +2753,7 @@ radioRow: {
     background: "linear-gradient(#f8fafc, #eef2f7)",
     borderRight: "1px solid #eef2f7"
   },
- 
+
   vaColHeader: {
     textAlign: "center",
     fontWeight: 600,
@@ -2552,7 +2763,7 @@ radioRow: {
     background: "#fafafa",
     borderRight: "1px solid #eef2f7"
   },
- 
+
   vaRowLabel: {
     padding: "0 16px",
     fontWeight: 600,
@@ -2563,14 +2774,14 @@ radioRow: {
     alignItems: "center",
     lineHeight: 1.4
   },
- 
+
   vaCell: {
     borderRight: "1px solid #e5e7eb",
     padding: 10,
     display: "flex",
     alignItems: "center"
   },
- 
+
   vaSelect: {
     width: "100%",
     height: 40,
@@ -2586,7 +2797,7 @@ radioRow: {
     backgroundPosition: "right 12px center",
     backgroundSize: "12px"
   },
- 
+
   vaInput: {
     width: "100%",
     height: 40,
@@ -2596,7 +2807,7 @@ radioRow: {
     padding: "0 10px",
     background: "#ffffff"
   },
- 
+
   vaRemark: {
     width: "100%",
     height: 56,
@@ -2608,4 +2819,3 @@ radioRow: {
     background: "#ffffff"
   },
 };
- 

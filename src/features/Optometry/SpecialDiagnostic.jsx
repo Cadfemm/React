@@ -43,8 +43,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "oct_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "oct_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "oct_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "oct_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "oct_impression", label: "Clinical Findings" }
@@ -65,8 +65,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "vep_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "vep_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "vep_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "vep_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "vep_impression", label: "Clinical Findings" }
@@ -87,8 +87,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "hess_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "hess_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "hess_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "hess_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "hess_impression", label: "Clinical Findings" }
@@ -109,8 +109,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "revs_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "revs_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "revs_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "revs_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "revs_impression", label: "Clinical Findings" }
@@ -131,8 +131,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "topo_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "topo_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "topo_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "topo_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "topo_impression", label: "Clinical Findings" }
@@ -153,8 +153,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "dem_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "dem_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "dem_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "dem_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "dem_impression", label: "Clinical Findings" }
@@ -176,8 +176,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "ap_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "ap_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "ap_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "ap_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "ap_impression", label: "Clinical Findings" }
@@ -198,8 +198,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "micro_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "micro_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "micro_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "micro_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "micro_impression", label: "Clinical Findings" }
@@ -220,8 +220,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "np_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "np_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "np_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "np_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "np_impression", label: "Clinical Findings" }
@@ -243,8 +243,8 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
         {
           type: "row",
           fields: [
-            { type: "file-upload-modal", name: "cv_re_file", label: "Right Eye (RE)" },
-            { type: "file-upload-modal", name: "cv_le_file", label: "Left Eye (LE)" }
+            { type: "attach-file", name: "cv_re_file", label: "Right Eye (RE)" },
+            { type: "attach-file", name: "cv_le_file", label: "Left Eye (LE)" }
           ]
         },
         { type: "input", name: "cv_impression", label: "Clinical Findings" }

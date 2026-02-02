@@ -1,47 +1,47 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function BinocularVisionAssessment({ onBack,  layout = "root" }) {
+export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const VisionTherapyAssessmentSchema = { 
-       title: "Binocular Vision",
+  const VisionTherapyAssessmentSchema = {
+    title: "Binocular Vision",
     sections: [
       {
         fields: [
- 
-      {
-                type: "radio",
-                name: "onset",
-                label: "Onset",
-                options: [
-                  { label: "Sudden", value: "sudden" },
-                  { label: "Gradual", value: "gradual" }
-                ]
-              },
-              {
-                type: "radio",
-                name: "frequency",
-                label: "Frequency",
-                options: [
-                  { label: "Constant", value: "constant" },
-                  { label: "Intermittent", value: "intermittent" },
-                  { label: "Alternating", value: "alternating" }
-                ]
-              },
-          
-      
-              {
-                type: "radio",
-                name: "was_he_been",
-                label: "Neurological disease",
-                options: [
-                  { label: "Yes", value: "yes" },
-                  { label: "No", value: "no" }
-                ]
-              },
-       
- 
+
+          {
+            type: "radio",
+            name: "onset",
+            label: "Onset",
+            options: [
+              { label: "Sudden", value: "sudden" },
+              { label: "Gradual", value: "gradual" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "frequency",
+            label: "Frequency",
+            options: [
+              { label: "Constant", value: "constant" },
+              { label: "Intermittent", value: "intermittent" },
+              { label: "Alternating", value: "alternating" }
+            ]
+          },
+
+
+          {
+            type: "radio",
+            name: "was_he_been",
+            label: "Neurological disease",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ]
+          },
+
+
           {
             type: "input",
             name: "was_he_been_specify",
@@ -51,9 +51,9 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               equals: "yes"
             }
           },
- 
- 
- 
+
+
+
           {
             type: "row",
             fields: [
@@ -69,15 +69,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               }
             ]
           },
- 
+
           /* ---- One per row (full width) ---- */
- 
+
           {
             type: "input",
             name: "previous_treatment",
             label: "Previous Treatment"
           },
- 
+
           {
             type: "input",
             name: "subjective_Remarks",
@@ -85,9 +85,9 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
           }
         ]
       },
- 
- 
- 
+
+
+
       /* ===================== OBJECTIVE ===================== */
       {
         fields: [
@@ -110,7 +110,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               { label: "Other (Specify)", value: "Other" }
             ]
           },
- 
+
           {
             type: "input",
             name: "ocular_signs_other",
@@ -120,10 +120,10 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "Other"
             }
           },
- 
+
         ]
       },
- 
+
       /* ===================== ANALYSIS / ASSESSMENT ===================== */
       {
 
@@ -139,15 +139,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               { label: "Strabismus", value: "strabismus" }
             ]
           },
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "General Examination",
             showIf: {
               field: "binocular_examination_sections",
               includes: "general_examination"
             }
           },
- 
+
           {
             type: "row",
             fields: [
@@ -171,101 +171,234 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "general_examination"
             }
           },
-          { 
-            type: "subheading", 
-            label: "Visual Acuity – Aided",
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
- 
           {
-            type: "grid-header",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          {
-            type: "grid-row",
-            name: "va_aided_distance",
-            label: "Distance",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          {
-            type: "grid-row",
-            name: "va_aided_near",
-            label: "Near",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          {
-            type: "input",
-            name: "va_aided_Remarks",
-            label: "Remarks",
-            showIf: {
+            type: "checkbox-group",
+            name: "visual_acuity_eyes",
+            label: "Visual Acuity",
+            inlineWithLabel: true,
+            options: [
+              { value: "RE", label: "Right Eye" },
+              { value: "LE", label: "Left Eye" },
+              { value: "BE", label: "Both Eye" }
+            ],
+              showIf: {
               field: "binocular_examination_sections",
               includes: "general_examination"
             }
           },
 
-          { 
-            type: "subheading", 
-            label: "Visual Acuity – Unaided",
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
- 
+          /* ================= RIGHT EYE ================= */
           {
-            type: "grid-header",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
+            type: "refraction-12col",
+            name: "visual_acuity_re",
+            showIf: { field: "visual_acuity_eyes", includes: "RE" },
+
+            groups: [
+              {
+                label: "Right Eye (RE)",
+                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+              }
+            ],
+
+            rows: [
+              {
+                label: "Aided – Distance",
+                value: "ha_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Aided – Near",
+                value: "ha_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+              {
+                label: "Unaided – Distance",
+                value: "ua_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Unaided – Near",
+                value: "ua_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Unaided – Remark", value: "ua_remark", remark: true }
+            ]
+          },
+
+          /* ================= LEFT EYE ================= */
+          {
+            type: "refraction-12col",
+            name: "visual_acuity_le",
+            showIf: { field: "visual_acuity_eyes", includes: "LE" },
+
+            groups: [
+              {
+                label: "Left Eye (LE)",
+                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+              }
+            ],
+
+
+            rows: [
+              {
+                label: "Aided – Distance",
+                value: "ha_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"], },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Aided – Near",
+                value: "ha_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+              {
+                label: "Unaided – Distance",
+                value: "ua_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Unaided – Near",
+                value: "ua_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Unaided – Remark", value: "ua_remark", remark: true }
+            ]
+          },
+
+          /* ================= BOTH EYE ================= */
+          {
+            type: "refraction-12col",
+            name: "visual_acuity_be",
+            showIf: { field: "visual_acuity_eyes", includes: "BE" },
+
+            groups: [
+              {
+                label: "Both Eye (BE)",
+                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+              }
+            ],
+
+            rows: [
+              {
+                label: "Aided – Distance",
+                value: "ha_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Aided – Near",
+                value: "ha_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+              {
+                label: "Unaided – Distance",
+                value: "ua_dist",
+                columns: [
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["+", "-"] },
+                  { type: "select", options: [1, 2, 3, 4, 5] }
+                ]
+              },
+              {
+                label: "Unaided – Near",
+                value: "ua_near",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                      "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                      "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                    ]
+                  },
+                  { type: "input" },
+                  { type: "input" }
+                ]
+              },
+              { label: "Unaided – Remark", value: "ua_remark", remark: true }
+            ]
           },
           {
-            type: "grid-row",
-            name: "va_unaided_distance",
-            label: "Distance",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          {
-            type: "grid-row",
-            name: "va_unaided_near",
-            label: "Near",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"],
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          {
-            type: "input",
-            name: "va_unaided_Remarks",
-            label: "Remarks",
-            showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
-            }
-          },
-          { 
-            type: "subheading", 
+            type: "subheading",
             label: "Subjective Refraction",
             showIf: {
               field: "binocular_examination_sections",
@@ -274,12 +407,13 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
           },
 
           {
+
             type: "refraction-table",
             name: "subjective_refraction",
             columns: ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"],
             rows: [
               { label: "Distance", value: "distance" },
-              { label: "ADD", value: "add" },
+              { label: "ADD", value: "add", merge: 4 },
               { label: "Near", value: "near" }
             ],
             showIf: {
@@ -288,8 +422,8 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
 
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Cycloplegic Refraction",
             showIf: {
               field: "binocular_examination_sections",
@@ -371,9 +505,9 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "general_examination"
             }
           },
- 
- 
- 
+
+
+
           // {
           //   type: "row",
           //   fields: [
@@ -397,14 +531,14 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
           //     }
           //   ]
           // },
- 
+
           // {
           //   type: "attach-file",
           //   name: "extra_oculomotor_test",
           //   title: "Extra Oculo Motor Test (PDF / Image)",
           //   accept: ".pdf,image/*"
           // },
- 
+
           // {
           //   type: "row",
           //   fields: [
@@ -412,9 +546,9 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
           //     { type: "input", name: "krimsky_test", label: "Krimsky Test" }
           //   ]
           // },
- 
-          { 
-            type: "subheading", 
+
+          {
+            type: "subheading",
             label: "Cover Test",
             showIf: {
               field: "binocular_examination_sections",
@@ -453,15 +587,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
 
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Prism Cover Test (PCT)",
             showIf: {
               field: "binocular_examination_sections",
               includes: "general_examination"
             }
           },
-    {
+          {
             type: "grid-header",
             cols: ["Unaided", "Aided"],
             showIf: {
@@ -529,8 +663,8 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
 
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Simultaneous Prism Cover Test (SPCT)",
             showIf: {
               field: "binocular_examination_sections",
@@ -559,8 +693,8 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
 
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Phoria Test",
             showIf: {
               field: "binocular_examination_sections",
@@ -617,15 +751,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
           // Accommodation Section
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Accommodation",
             showIf: {
               field: "binocular_examination_sections",
               includes: "accommodation"
             }
           },
- 
+
           {
             type: "grid-header",
             cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (LE)"],
@@ -676,8 +810,8 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
 
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Accommodation Facility",
             showIf: {
               field: "binocular_examination_sections",
@@ -714,15 +848,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
           // Vergence Section
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Vergence",
             showIf: {
               field: "binocular_examination_sections",
               includes: "vergence"
             }
           },
- 
+
           {
             type: "grid-header",
             cols: ["6m", "40cm"],
@@ -731,7 +865,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "vergence"
             }
           },
- 
+
           {
             type: "grid-row",
             name: "vergence_method",
@@ -782,7 +916,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "vergence"
             }
           },
- 
+
           {
             type: "input",
             name: "vergence_Remarks",
@@ -792,16 +926,16 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "vergence"
             }
           },
- 
-          { 
-            type: "subheading", 
+
+          {
+            type: "subheading",
             label: "Vergence Facility",
             showIf: {
               field: "binocular_examination_sections",
               includes: "vergence"
             }
           },
- 
+
           {
             type: "row",
             fields: [
@@ -821,7 +955,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "vergence"
             }
           },
- 
+
           {
             type: "input",
             name: "vergence_facility_Remarks",
@@ -832,15 +966,15 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
             }
           },
           // Strabismus Section
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Strabismus",
             showIf: {
               field: "binocular_examination_sections",
               includes: "strabismus"
             }
           },
- 
+
           {
             type: "input",
             name: "prism_cover_all_direction",
@@ -901,24 +1035,24 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               includes: "strabismus"
             }
           },
- 
+
         ]
       },
 
       {
         fields: [
- 
+
           {
             type: "input",
             name: "plan_comments",
             label: "Clinical Findings"
           },
- 
+
         ]
       }
     ]
   };
- 
+
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
@@ -931,7 +1065,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
     }
 
     if (type === "back") {
-      onBack?.();   
+      onBack?.();
     }
   };
 
@@ -943,7 +1077,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
-        layout={layout}
+      layout={layout}
     />
   );
 }

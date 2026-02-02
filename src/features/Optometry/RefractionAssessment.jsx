@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function RefractionAssessment({ onBack , layout = "root"}) {
+export default function RefractionAssessment({ onBack, layout = "root" }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const RefractionAssessmentSchema ={
+  const RefractionAssessmentSchema = {
     title: "Refraction Assessment",
     sections: [
       {
@@ -24,12 +24,12 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
             type: "row",
             fields: [
               {
-                type: "file-upload-modal",
+                type: "attach-file",
                 label: "Auto-refractor Right Ear",
                 name: "auto_refractor_file"
               },
               {
-                type: "file-upload-modal",
+                type: "attach-file",
                 label: "Auto-refractor Left Ear",
                 name: "keratometry_reading_file"
               }
@@ -52,12 +52,12 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
             type: "row",
             fields: [
               {
-                type: "file-upload-modal",
+                type: "attach-file",
                 label: "Keratometry Right Ear",
                 name: "keratometry_file_right"
               },
               {
-                type: "file-upload-modal",
+                type: "attach-file",
                 label: "Keratometry Left Ear",
                 name: "keratometry_file_left"
               }
@@ -89,37 +89,33 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
             type: "subheading",
             label: "Subjective Refraction",
             showIf: {
-              field: "refraction_sections",
-              includes: "subjective_refraction"
+              field: "binocular_examination_sections",
+              includes: "general_examination"
             }
           },
           {
-            type: "refraction-12col",
+            type: "refraction-table",
             name: "subjective_refraction",
+
+            // Eye columns (used for Right & Left)
+            columns: ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"],
+
+            // Extra columns after Left Eye → Pupil
+            extraColumns: ["Pupil Distance", "Pupil Height"],
+
             rows: [
               { label: "Distance", value: "distance" },
-              { label: "ADD", value: "add" },
+              { label: "ADD", value: "add", merge: 4 },
               { label: "Near", value: "near" }
             ],
-            groups: [
-              {
-                label: "Right Eye",
-                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-              },
-              {
-                label: "Left Eye",
-                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-              },
-              {
-                label: "Pupil",
-                columns: ["Distance", "Height"]
-              }
-            ],
+
             showIf: {
-              field: "refraction_sections",
-              includes: "subjective_refraction"
+              field: "binocular_examination_sections",
+              includes: "general_examination"
             }
           },
+
+
           {
             type: "subheading",
             label: "Final Prescription",
@@ -129,39 +125,26 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
             }
           },
           {
-            type: "refraction-12col",
+            type: "refraction-col",
             name: "final_refraction",
             rows: [
               { label: "Distance", value: "distance" },
-              { label: "ADD", value: "add" },
+              { label: "ADD", value: "add", merge: 4 }, // merges Sphere→Prism inside EACH group
               { label: "Near", value: "near" }
             ],
             groups: [
-              {
-                label: "Right Eye",
-                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-              },
-              {
-                label: "Left Eye",
-                columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"]
-              },
-              {
-                label: "Pupil",
-                columns: ["Distance", "Height"]
-              }
-            ],
-            showIf: {
-              field: "refraction_sections",
-              includes: "final_prescription"
-            }
+              { label: "Right Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
+              { label: "Left Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
+              { label: "Pupil", columns: ["Distance", "Height"] }
+            ]
           },
-         
 
-         {
-                type: "input",
-                name: "bcva_category",
-                label: "Best Corrected Visual Acuity (BCVA) – Vision Category"
-              },
+
+          {
+            type: "input",
+            name: "bcva_category",
+            label: "Best Corrected Visual Acuity (BCVA) – Vision Category"
+          },
 
           {
             type: "input",
@@ -184,7 +167,7 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
     }
 
     if (type === "back") {
-      onBack?.();   
+      onBack?.();
     }
   };
 
@@ -196,7 +179,7 @@ export default function RefractionAssessment({ onBack , layout = "root"}) {
       onChange={onChange}
       submitted={submitted}
       onAction={onAction}
-        layout={layout}
+      layout={layout}
     />
   );
 }
