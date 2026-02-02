@@ -82,7 +82,7 @@ export default function CommonFormBuilder({
                     </div>
                   )}
                   {/* ===== MATRIX HEADER ===== */}
-                  { section.fields.some(f => f.type === "radio-matrix" && !f.hideMatrixHeader) && (
+                  {section.fields.some(f => f.type === "radio-matrix" && !f.hideMatrixHeader) && (
                     <div style={styles.matrixHeader}>
                       <div style={styles.matrixLabel}>
                         Scale
@@ -110,7 +110,7 @@ export default function CommonFormBuilder({
 
 
 
-                  { section.fields.map(field => {
+                  {section.fields.map(field => {
 
                     if (field.showIf) {
                       const depVal = values[field.showIf.field];
@@ -545,7 +545,7 @@ function AssessmentLauncher({
 
       {ActiveComponent ? (
         <div style={{ marginTop: 20, width: '100%' }}>
-          <ActiveComponent values={values} onChange={onChange}  layout="nested" />
+          <ActiveComponent values={values} onChange={onChange} layout="nested" />
         </div>
       ) : null}
     </div>
@@ -675,14 +675,14 @@ function renderField(
         </div>
       );
 
-case "info-text":
-  return (
-    <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
-      {Array.isArray(field.text)
-        ? field.text.map((t, i) => <div key={i}>{t}</div>)
-        : field.text}
-    </div>
-  );
+    case "info-text":
+      return (
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+          {Array.isArray(field.text)
+            ? field.text.map((t, i) => <div key={i}>{t}</div>)
+            : field.text}
+        </div>
+      );
 
 
     case "scale-table":
@@ -1446,104 +1446,52 @@ case "info-text":
           </div>
 
           {/* Data Rows */}
-          {rows.map((row, rowIdx) => (
-            <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
-              {[0, 1].map(eye => (
-                <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
-                  {eyeColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
-                    return (
-                      <input
-                        key={fieldName}
-                        style={styles.refractionTableInput}
-                        value={fieldValue}
-                        onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-              {extraColumns.length > 0 && (
-                <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${extraColumns.length}, 1fr)` }}>
-                  {extraColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_extra_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
-                    return (
-                      <input
-                        key={fieldName}
-                        style={styles.refractionTableInput}
-                        value={fieldValue}
-                        onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
-                      />
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      );
-    }
+       {rows.map((row, rowIdx) => (
+  <div key={rowIdx} style={styles.refractionTableRow}>
+    <div style={styles.refractionTableRowLabel}>{row.label}</div>
 
+    {[0, 1].map(eye => (
+      <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
+        {eyeColumns.map((col, colIdx) => {
+          const baseKey = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}`;
+          const fieldName = `${baseKey}_${colIdx}`;
 
-    case "refraction-table-full": {
-      const rows = field.rows || [];
-      const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
+          // 🔹 Dynamic merge from schema
+          if (row.merge && colIdx === 0) {
+            return (
+              <input
+                key={fieldName}
+                style={{
+                  ...styles.refractionTableInput,
+                  gridColumn: `span ${row.merge}`
+                }}
+                value={values[`${baseKey}_merged`] || ""}
+                onChange={e =>
+                  onChange(`${baseKey}_merged`, e.target.value)
+                }
+              />
+            );
+          }
 
-      return (
-        <div style={styles.refractionTableWrapper}>
-          {/* Header Row 1: Eye labels */}
-          <div style={styles.refractionTableRow}>
-            <div style={styles.refractionTableCell}></div>
-            <div style={styles.refractionTableHeaderGroup}>
-              <div style={styles.refractionTableEyeLabel}>Right Eye</div>
-            </div>
-            <div style={styles.refractionTableHeaderGroup}>
-              <div style={styles.refractionTableEyeLabel}>Left Eye</div>
-            </div>
-          </div>
+          // Skip merged columns
+          if (row.merge && colIdx > 0 && colIdx < row.merge) {
+            return null;
+          }
 
-          {/* Header Row 2: Column labels */}
-          <div style={styles.refractionTableRow}>
-            <div style={styles.refractionTableCell}></div>
-            {[0, 1].map(eye => (
-              <div key={eye} style={styles.refractionTableHeaderGroup}>
-                {eyeColumns.map(col => (
-                  <div key={col} style={styles.refractionTableColumnHeader}>
-                    {col}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          return (
+            <input
+              key={fieldName}
+              style={styles.refractionTableInput}
+              value={values[fieldName] || ""}
+              onChange={e => onChange(fieldName, e.target.value)}
+            />
+          );
+        })}
+      </div>
+    ))}
+  </div>
+))}
 
-          {/* Data Rows */}
-          {rows.map((row, rowIdx) => (
-            <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
-              {[0, 1].map(eye => (
-                <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
-                  {eyeColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
-                    return (
-                      <input
-                        key={fieldName}
-                        style={styles.refractionTableInput}
-                        value={fieldValue}
-                        onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          ))}
         </div>
       );
     }
@@ -1553,20 +1501,20 @@ case "info-text":
       const rows = field.rows || [];
       const groups = field.groups || [];
 
-      // flatten all columns
       const flatCols = groups.flatMap(g => g.columns);
+      const colCount = flatCols.length;
+
+      const gridTemplate = `200px repeat(${colCount}, 1fr)`;
 
       return (
-        <div style={styles.refraction12Wrapper}>
-          {/* Header Row 1 – Group Labels */}
-          <div style={styles.refraction12Row}>
-            <div style={styles.refraction12LabelCell}></div>
-
+        <div style={styles.vaWrap}>
+          <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
+            <div style={styles.vaCorner} />
             {groups.map((g, i) => (
               <div
                 key={i}
                 style={{
-                  ...styles.refraction12GroupHeader,
+                  ...styles.vaGroupHeader,
                   gridColumn: `span ${g.columns.length}`
                 }}
               >
@@ -1575,121 +1523,80 @@ case "info-text":
             ))}
           </div>
 
-          {/* Header Row 2 – Column Labels */}
-          <div style={styles.refraction12Row}>
-            <div style={styles.refraction12LabelCell}></div>
-            {flatCols.map((c, i) => (
-              <div key={i} style={styles.refraction12ColHeader}>
-                {c}
-              </div>
-            ))}
-          </div>
+          {/* <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
+  <div style={styles.vaCorner} />
+  {flatCols.map((c, i) => (
+    <div key={i} style={styles.vaColHeader}>
+      {c.key}
+    </div>
+  ))}
+</div> */}
 
-          {/* Data Rows */}
-          {rows.map(r => (
-            <div key={r.value} style={styles.refraction12Row}>
-              <div style={styles.refraction12RowLabel}>{r.label}</div>
 
-              {flatCols.map((_, i) => {
-                const key = `${field.name}_${r.value}_${i}`;
-                return (
-                  <input
-                    key={key}
-                    style={styles.refraction12Input}
-                    value={values[key] || ""}
-                    onChange={e => onChange(key, e.target.value)}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      );
-    }
+          <div style={{ overflowX: "auto" }}>
+            {rows.map(r => {
+              const rowCols = r.columns || flatCols;
 
-    case "final-prescription-table": {
-      const rows = field.rows || [];
-      const eyeColumns = field.columns || ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"];
-      const pupilColumns = field.pupilColumns || ["Distance", "Height"];
+              return (
+                <div
+                  key={r.value}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: gridTemplate,
+                    borderBottom: "1px solid #e5e7eb"
+                  }}
+                >
+                  <div style={styles.vaRowLabel}>{r.label}</div>
 
-      return (
-        <div style={styles.refractionTableWrapper}>
-          {/* Header Row 1: Eye labels and Pupil label */}
-          <div style={styles.refractionTableRow}>
-            <div style={styles.refractionTableCell}></div>
-            <div style={styles.refractionTableHeaderGroup}>
-              <div style={styles.refractionTableEyeLabel}>Right Eye</div>
-            </div>
-            <div style={styles.refractionTableHeaderGroup}>
-              <div style={styles.refractionTableEyeLabel}>Left Eye</div>
-            </div>
-            <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
-              <div style={styles.refractionTableEyeLabel}>Pupil</div>
-            </div>
-          </div>
-
-          {/* Header Row 2: Column labels */}
-          <div style={styles.refractionTableRow}>
-            <div style={styles.refractionTableCell}></div>
-            {[0, 1].map(eye => (
-              <div key={eye} style={styles.refractionTableHeaderGroup}>
-                {eyeColumns.map(col => (
-                  <div key={col} style={styles.refractionTableColumnHeader}>
-                    {col}
-                  </div>
-                ))}
-              </div>
-            ))}
-            <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
-              {pupilColumns.map(col => (
-                <div key={col} style={styles.refractionTableColumnHeader}>
-                  {col}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Data Rows */}
-          {rows.map((row, rowIdx) => (
-            <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
-              {[0, 1].map(eye => (
-                <div key={eye} style={styles.refractionTableHeaderGroup}>
-                  {eyeColumns.map((col, colIdx) => {
-                    const fieldName = `${field.name}_${row.value}_${eye === 0 ? "re" : "le"}_${colIdx}`;
-                    const fieldValue = values[fieldName] || "";
-                    return (
-                      <input
-                        key={colIdx}
-                        style={styles.refractionTableInput}
-                        value={fieldValue}
-                        onChange={e => onChange(fieldName, e.target.value)}
-                        placeholder=""
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-              <div style={{ ...styles.refractionTableHeaderGroup, gridTemplateColumns: `repeat(${pupilColumns.length}, 1fr)` }}>
-                {pupilColumns.map((col, colIdx) => {
-                  const fieldName = `${field.name}_${row.value}_pupil_${colIdx}`;
-                  const fieldValue = values[fieldName] || "";
-                  return (
-                    <input
-                      key={colIdx}
-                      style={styles.refractionTableInput}
-                      value={fieldValue}
-                      onChange={e => onChange(fieldName, e.target.value)}
-                      placeholder=""
+                  {r.remark ? (
+                    <textarea
+                      style={{ ...styles.vaRemark, gridColumn: `span ${colCount}` }}
+                      placeholder="Enter remarks…"
+                      value={values[`${field.name}_${r.value}`] || ""}
+                      onChange={e =>
+                        onChange(`${field.name}_${r.value}`, e.target.value)
+                      }
                     />
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+                  ) : (
+                    rowCols.map((col, i) => {
+                      const key = `${field.name}_${r.value}_${i}`;
+                      const v = values[key] || "";
+
+                      return (
+                        <div key={key} style={styles.vaCell}>
+                          {col.type === "select" ? (
+                            <select
+                              value={v}
+                              onChange={e => onChange(key, e.target.value)}
+                              style={styles.vaSelect}
+                              
+                            >
+                              <option value="">Select</option>
+                              {(col.options || []).map(o => (
+                                <option key={o} value={o}>{o}</option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              value={v}
+                              onChange={e => onChange(key, e.target.value)}
+                              style={styles.vaInput}
+                            />
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              );
+            })}
+
+          </div>
         </div>
+
       );
     }
+
     default:
       return null;
   }
@@ -1774,57 +1681,97 @@ const styles = {
     borderBottom: "1px solid #f0f0f0"
   },
 
-  refraction12Wrapper: {
-    border: "1px solid #d1d5db",
-    borderRadius: 6,
+  vaWrap: {
+    border: "1px solid #e5e7eb",
+    borderRadius: 16,
     overflow: "hidden",
-    marginTop: 8
+    background: "#ffffff",
+    marginTop: 16,
+    boxShadow: "0 10px 30px rgba(15,23,42,0.06)"
   },
 
-  refraction12Row: {
-    display: "grid",
-    gridTemplateColumns: "120px repeat(12, 1fr)",
-    borderBottom: "1px solid #e5e7eb"
+
+
+  vaCorner: {
+    background: "#f8fafc",
+    borderRight: "1px solid #eef2f7",
+    height: 56
   },
 
-  refraction12LabelCell: {
-    background: "#f9fafb",
-    borderRight: "1px solid #e5e7eb"
-  },
-
-  refraction12GroupHeader: {
-    gridColumn: "span 1",
+  vaGroupHeader: {
     textAlign: "center",
-    padding: "10px 6px",
     fontWeight: 700,
-    background: "#f3f4f6",
-    borderRight: "1px solid #e5e7eb"
+    fontSize: 14,
+    padding: "14px 6px",
+    background: "linear-gradient(#f8fafc, #eef2f7)",
+    borderRight: "1px solid #eef2f7"
   },
 
-  refraction12ColHeader: {
+  vaColHeader: {
     textAlign: "center",
-    padding: "8px 4px",
     fontWeight: 600,
-    background: "#f3f4f6",
-    borderRight: "1px solid #e5e7eb",
-    fontSize: 13
+    fontSize: 12,
+    color: "#334155",
+    padding: "10px 4px",
+    background: "#fafafa",
+    borderRight: "1px solid #eef2f7"
   },
 
-  refraction12RowLabel: {
-    padding: "10px",
+  vaRowLabel: {
+    padding: "0 16px",
     fontWeight: 600,
+    fontSize: 13,
     background: "#f9fafb",
-    borderRight: "1px solid #e5e7eb"
+    borderRight: "1px solid #e5e7eb",
+    display: "flex",
+    alignItems: "center",
+    lineHeight: 1.4
   },
 
-  refraction12Input: {
-    width: "100%",
-    border: "none",
-    padding: "8px 4px",
-    textAlign: "center",
+  vaCell: {
     borderRight: "1px solid #e5e7eb",
-    boxSizing: "border-box"
+    padding: 10,
+    display: "flex",
+    alignItems: "center"
   },
+
+  vaSelect: {
+    width: "100%",
+    height: 40,
+    borderRadius: 8,
+    border: "1px solid #cbd5e1",
+    background: "#ffffff",
+    fontSize: 13,
+    padding: "0 12px",
+    appearance: "none",
+    backgroundImage:
+      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20'%3E%3Cpath fill='%23334155' d='M5.5 7.5L10 12l4.5-4.5'/%3E%3C/svg%3E\")",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 12px center",
+    backgroundSize: "12px"
+  },
+
+  vaInput: {
+    width: "100%",
+    height: 40,
+    borderRadius: 8,
+    border: "1px solid #e5e7eb",
+    fontSize: 13,
+    padding: "0 10px",
+    background: "#ffffff"
+  },
+
+  vaRemark: {
+    width: "100%",
+    height: 56,
+    borderRadius: 8,
+    border: "1px solid #e5e7eb",
+    padding: "10px 12px",
+    fontSize: 13,
+    resize: "none",
+    background: "#ffffff"
+  },
+
   gridHeaderCell: {
     textAlign: "center",
     fontWeight: 700,
@@ -2045,12 +1992,12 @@ const styles = {
     justifyContent: "space-between"
   },
 
-radioRow: {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between", 
-  gap: 24
-},
+  radioRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 24
+  },
 
   radioLabel: {
     fontWeight: 600,

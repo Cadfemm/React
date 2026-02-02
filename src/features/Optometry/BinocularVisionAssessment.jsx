@@ -181,66 +181,241 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
               { type: "input", name: "suppression_40cm", label: "Suppression Test (40cm)" }
             ]
           },
-          { type: "subheading", label: "Visual Acuity – Aided" },
- 
-          {
-            type: "grid-header",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "grid-row",
-            name: "va_aided_distance",
-            label: "Distance",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "grid-row",
-            name: "va_aided_near",
-            label: "Near",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "textarea",
-            name: "va_aided_remark",
-            label: "Remark"
-          },
- 
-          { type: "subheading", label: "Visual Acuity – Unaided" },
- 
-          {
-            type: "grid-header",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "grid-row",
-            name: "va_unaided_distance",
-            label: "Distance",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "grid-row",
-            name: "va_unaided_near",
-            label: "Near",
-            cols: ["Right Eye (Right Eye (RE))", "Left Eye (Left Eye (LE))", "Both Eyes (Both Eye (LE))"]
-          },
-          {
-            type: "textarea",
-            name: "va_unaided_remark",
-            label: "Remark"
-          },
+        
+                    {
+                        type: "checkbox-group",
+                        name: "visual_acuity_eyes",
+                        label: "Visual Acuity",
+                        inlineWithLabel: true,
+                        options: [
+                            { value: "RE", label: "Right Eye" },
+                            { value: "LE", label: "Left Eye" },
+                            { value: "BE", label: "Both Eye" }
+                        ]
+                    },
+
+                    /* ================= RIGHT EYE ================= */
+                    {
+                        type: "refraction-12col",
+                        name: "visual_acuity_re",
+                        showIf: { field: "visual_acuity_eyes", includes: "RE" },
+
+                        groups: [
+                            {
+                                label: "Right Eye (RE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+                        rows: [
+                            {
+                                label: "Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
+                    },
+
+                    /* ================= LEFT EYE ================= */
+                    {
+                        type: "refraction-12col",
+                        name: "visual_acuity_le",
+                        showIf: { field: "visual_acuity_eyes", includes: "LE" },
+
+                        groups: [
+                            {
+                                label: "Left Eye (LE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+
+                        rows: [
+                            {
+                                label: "Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ],},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
+                    },
+
+                    /* ================= BOTH EYE ================= */
+                    {
+                        type: "refraction-12col",
+                        name: "visual_acuity_be",
+                        showIf: { field: "visual_acuity_eyes", includes: "BE" },
+
+                        groups: [
+                            {
+                                label: "Both Eye (BE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+                        rows: [
+                            {
+                                label: "Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
+                    },
           { type: "subheading", label: "Subjective Refraction" },
 
-          {
-            type: "refraction-table",
-            name: "subjective_refraction",
-            columns: ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"],
-            rows: [
-              { label: "Distance", value: "distance" },
-              { label: "ADD", value: "add" },
-              { label: "Near", value: "near" }
-            ]
-          },
-
+       {
+  type: "refraction-table",
+  name: "subjective_refraction",
+  columns: ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"],
+  rows: [
+    { label: "Distance", value: "distance" },
+    { label: "ADD", value: "add", merge: 4 },   // 👈 merge Sphere → Prism
+    { label: "Near", value: "near" }
+  ]
+},
           { type: "subheading", label: "Cycloplegic Refraction" },
 
           {
@@ -389,7 +564,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
                 name: "pct_fixating_unaided",
                 label: "Fixating Eye (Unaided)",
                 options: [
-                  { label: "Right Eye (Right Eye (RE))", value: "Right Eye (RE)" },
+                  { label: "Right Eye (RE)", value: "Right Eye (RE)" },
                   { label: "Left Eye (LE)", value: "Left Eye (LE)" }
                 ]
               },
@@ -619,7 +794,7 @@ export default function BinocularVisionAssessment({ onBack,  layout = "root" }) 
           },
  
           {
-            type: "input",
+            type: "textarea",
             name: "fixation",
             label: "Fixation"
           },

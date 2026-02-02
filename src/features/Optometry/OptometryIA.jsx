@@ -13,11 +13,16 @@ import BVDAssessment from "./BvdqAssessment";
 export default function OptometryIAAssessment({ onBack, onAction }) {
     const [values, setValues] = useState({});
     const [submitted, setSubmitted] = useState(false);
+
+
+    const VA_DISTANCE = ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"];
+    const VA_NEAR = ["N5 at 40cm", "N6 at 40cm", "N8 at 40cm", "N10 at 40cm", "N12 at 40cm", "N14 at 40cm", "N24 at 40cm", "N36 at 40cm", "Poorer than N36"];
+    const VA_PINHOLE = ["PH+", "PH-"];
     const VisionTherapyAssessmentSchema = {
         title: "Optometry Initial Assessment",
-          actions: [
-    { type: "back", label: "Back" },
-  ],
+        actions: [
+            { type: "back", label: "Back" },
+        ],
         sections: [
             {
                 title: "Subjective",
@@ -30,7 +35,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                     },
                     {
                         type: "textarea",
-                        name: "visit_other_specify",
+                        name: "visit_specify",
                         label: "History of Present Illness",
 
                     },
@@ -165,11 +170,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                             includes: "Other"
                         }
                     },
-                    {
-                        type: "textarea",
-                        name: "previous_ocular_treatment",
-                        label: "Previous Ocular Treatment / Intervention"
-                    },
+
 
 
                     { type: "subheading", label: "Family History" },
@@ -686,48 +687,241 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         name: "general_observation",
                         label: "General Observation"
                     },
-                      { type: "subheading", label: "Visual Acuity" },
+                    { type: "subheading", label: "Visual Acuity" },
 
                     {
-                        type: "grid-header",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
+                        type: "checkbox-group",
+                        name: "visual_acuity_eyes",
+                        label: "Visual Acuity",
+                        inlineWithLabel: true,
+                        options: [
+                            { value: "RE", label: "Right Eye" },
+                            { value: "LE", label: "Left Eye" },
+                            { value: "BE", label: "Both Eye" }
+                        ]
                     },
+
+                    /* ================= RIGHT EYE ================= */
                     {
-                        type: "grid-row",
-                        name: "va_distance_unaided",
-                        label: "Distance (Unaided)",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
+                        type: "refraction-12col",
+                        name: "visual_acuity_re",
+                        showIf: { field: "visual_acuity_eyes", includes: "RE" },
+
+                        groups: [
+                            {
+                                label: "Right Eye (RE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+                        rows: [
+                            {
+                                label: "Habitual / Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Habitual / Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
+                            { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Pinhole", value: "ua_pin", remark: true },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
                     },
+
+                    /* ================= LEFT EYE ================= */
                     {
-                        type: "grid-row",
-                        name: "va_near_unaided",
-                        label: "Near (Unaided)",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
+                        type: "refraction-12col",
+                        name: "visual_acuity_le",
+                        showIf: { field: "visual_acuity_eyes", includes: "LE" },
+
+                        groups: [
+                            {
+                                label: "Left Eye (LE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+
+                        rows: [
+                            {
+                                label: "Habitual / Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ],},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Habitual / Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
+                            { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Pinhole", value: "ua_pin", remark: true },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
                     },
+
+                    /* ================= BOTH EYE ================= */
                     {
-                        type: "grid-row",
-                        name: "va_distance_aided",
-                        label: "Distance (Habitual / Aided)",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
+                        type: "refraction-12col",
+                        name: "visual_acuity_be",
+                        showIf: { field: "visual_acuity_eyes", includes: "BE" },
+
+                        groups: [
+                            {
+                                label: "Both Eye (BE)",
+                                columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
+                            }
+                        ],
+
+                        rows: [
+                            {
+                                label: "Habitual / Aided – Distance",
+                                value: "ha_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Habitual / Aided – Near",
+                                value: "ha_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
+                            { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
+
+                            {
+                                label: "Unaided – Distance",
+                                value: "ua_dist",
+                                columns: [
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["+", "-"] },
+                                    { type: "select", options: [1, 2, 3, 4, 5] }
+                                ]
+                            },
+                            {
+                                label: "Unaided – Near",
+                                value: "ua_near",
+                                columns: [
+                                    {
+                                        type: "select",
+                                        options: [
+                                            "N5 at 40cm", "N6 at 40cm", "N8 at 40cm",
+                                            "N10 at 40cm", "N12 at 40cm", "N14 at 40cm",
+                                            "N24 at 40cm", "N36 at 40cm", "Poorer than N36"
+                                        ]
+                                    },
+                                    { type: "input" },
+                                    { type: "input" }
+                                ]
+                            },
+                            { label: "Unaided – Pinhole", value: "ua_pin", remark: true },
+                            { label: "Unaided – Remark", value: "ua_remark", remark: true }
+                        ]
                     },
-                    {
-                        type: "grid-row",
-                        name: "va_near_aided",
-                        label: "Near (Habitual / Aided)",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
-                    },
-                    {
-                        type: "grid-row",
-                        name: "va_pinhole",
-                        label: "Pinhole",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
-                    },
-                    {
-                        type: "grid-row",
-                        name: "va_remarks",
-                        label: "Remarks",
-                        cols: ["Right Eye (RE)", "Left Eye (LE)", "Both Eye (BE)"]
-                    },
+
+
+
+
+
                     { type: "subheading", label: "Binocular & Ocular Function" },
 
                     {
@@ -748,20 +942,20 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                     {
                         type: "grid-row",
                         name: "color_vision",
-                        label: "Color Vision",
+                        label: "Color Vision Test",
                         cols: [
-                            { type: "single-select", options: ["Pass", "Fail"] },
-                            { type: "single-select", options: ["Pass", "Fail"] },
+                            { type: "single-select", options: ["Passed", "Failed"] },
+                            { type: "single-select", options: ["Passed", "Failed"] },
                             "input"
                         ]
                     },
                     {
                         type: "grid-row",
                         name: "pupil_response",
-                        label: "Pupillary Response",
+                        label: "Pupil Response",
                         cols: [
-                            { type: "single-select", options: ["PERL", "Anisocoria"] },
-                            { type: "single-select", options: ["PERL", "Anisocoria"] },
+                            { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
+                            { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
                             "input"
                         ]
                     },
@@ -792,8 +986,8 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         name: "stereopsis",
                         label: "Stereopsis",
                         cols: [
-                            { type: "single-select", options: ["Present", "Absent"] },
-                            { type: "single-select", options: ["Present", "Absent"] },
+                            { type: "single-select", options: ["Presented", "Not presented"] },
+                            { type: "single-select", options: ["Presented", "Not presented"] },
                             "input"
                         ]
                     },
@@ -802,15 +996,15 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         name: "hirschberg",
                         label: "Hirschberg Test",
                         cols: [
-                            { type: "single-select", options: ["Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
-                            { type: "single-select", options: ["Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
+                            { type: "single-select", options: ["Symmetry", "Centre", "Nasal", "Temporal", "Superior"] },
+                            { type: "single-select", options: ["Symmetry", "Centre", "Nasal", "Temporal", "Superior"] },
                             "input"
                         ]
                     },
                     {
                         type: "grid-row",
                         name: "eom",
-                        label: "Extraocular Movements (EOM)",
+                        label: "EOM Test",
                         cols: [
                             { type: "single-select", options: ["Normal", "Impaired"] },
                             { type: "single-select", options: ["Normal", "Impaired"] },
@@ -820,7 +1014,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                     {
                         type: "grid-row",
                         name: "vor",
-                        label: "Vestibulo-Ocular Reflex (VOR)",
+                        label: "VOR Test",
                         cols: [
                             { type: "single-select", options: ["Normal", "Impaired"] },
                             { type: "single-select", options: ["Normal", "Impaired"] },
@@ -828,23 +1022,22 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         ]
                     },
 
-
                     {
-                        type: "radio",
+                        type: "grid-row",
                         name: "confrontation",
                         label: "Confrontational Test",
-                        options: [
-                            { label: "Full", value: "full" },
-                            { label: "Restricted", value: "restricted" }
+                        cols: [
+                            { type: "single-select", options: ["Full", "Restricted"] },
+                            { type: "single-select", options: ["Full", "Restricted"] },
+                            "input"
                         ]
                     },
 
                     {
-                        type: "row",
-                        fields: [
-                            { type: "input", name: "tonometry_re", label: "Tonometry Right Eye (RE) (mmHg @ time)" },
-                            { type: "input", name: "tonometry_le", label: "Tonometry Left Eye (Left Eye (LE)) (mmHg @ time)" }
-                        ]
+                        type: "grid-row",
+                        name: "tonometry",
+                        label: "Tonometry (mmHg @ time)",
+                        cols: ["input", "input", "input"]
                     },
 
                     { type: "textarea", name: "additional_test", label: "Additional Test" },
@@ -869,40 +1062,40 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                 ]
             },
             {
-                title: "Analysis / Assessment",
+                title: "Assessment",
                 fields: [
-      
-    {
-      type: "textarea",
-      name: "clinical_impression",
-            label: "Clinical Impression / Diagnosis"
 
-    },
+                    {
+                        type: "textarea",
+                        name: "clinical_impression",
+                        label: "Clinical Impression / Diagnosis"
 
-    // { type: "subheading", label: "Functional Vision Status" },
+                    },
 
-    {
-      type: "radio",
-      name: "functional_vision_status",
-      label: "Functional Vision Status",
-      options: [
-        { label: "Normal", value: "normal" },
-        { label: "Abnormal", value: "abnormal" }
-      ]
-    },
+                    // { type: "subheading", label: "Functional Vision Status" },
 
-    {
-      type: "textarea",
-      name: "functional_vision_details",
-      label: "Details",
-      showIf: {
-        field: "functional_vision_status",
-        equals: "abnormal"
-      }
-    }
+                    {
+                        type: "radio",
+                        name: "functional_vision_status",
+                        label: "Functional Vision Status",
+                        options: [
+                            { label: "Normal", value: "normal" },
+                            { label: "Abnormal", value: "abnormal" }
+                        ]
+                    },
+
+                    {
+                        type: "textarea",
+                        name: "functional_vision_details",
+                        label: "Details",
+                        showIf: {
+                            field: "functional_vision_status",
+                            equals: "abnormal"
+                        }
+                    }
                 ]
             }, {
-                title: "P – Plan",
+                title: "Plan",
                 fields: [
                     {
                         type: "radio",
@@ -981,40 +1174,40 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
         setValues(v => ({ ...v, [name]: value }));
     };
 
-const handleAction = (type) => {
-  if (type === "submit") {
-    setSubmitted(true);
-    console.log("Optometry IA", values);
-  }
+    const handleAction = (type) => {
+        if (type === "submit") {
+            setSubmitted(true);
+            console.log("Optometry IA", values);
+        }
 
-  if (type === "back") {
-    onBack?.(); // this will go back to Patients page
-  }
+        if (type === "back") {
+            onBack?.(); // this will go back to Patients page
+        }
 
-  onAction?.(type);
-};
+        onAction?.(type);
+    };
 
 
 
     return (
-     <CommonFormBuilder
-  schema={VisionTherapyAssessmentSchema}
-  values={values}
-  onChange={(n, v) => setValues(p => ({ ...p, [n]: v }))}
-  submitted={submitted}
-  onAction={handleAction}
-  assessmentRegistry={{
-    BINOCULAR_VISION: BinocularVisionAssessment,
-    REFRACTION: RefractionAssessment,
-    VISION_DRIVING: VisionAssessment,
-    OCULAR_HEALTH: OcularHealthAssessment,
-    SPECIAL_DIAGNOSTIC: SpecialDiagnosticAssessment,
-    LVQOL: LVQoLForm,
-    BRAIN_VISION: BrainVisionInjury,
-    VISUAL_FUNCTION: VisualFunctionForm,
-    BVDQ: BVDAssessment
-  }}
-/>
+        <CommonFormBuilder
+            schema={VisionTherapyAssessmentSchema}
+            values={values}
+            onChange={(n, v) => setValues(p => ({ ...p, [n]: v }))}
+            submitted={submitted}
+            onAction={handleAction}
+            assessmentRegistry={{
+                BINOCULAR_VISION: BinocularVisionAssessment,
+                REFRACTION: RefractionAssessment,
+                VISION_DRIVING: VisionAssessment,
+                OCULAR_HEALTH: OcularHealthAssessment,
+                SPECIAL_DIAGNOSTIC: SpecialDiagnosticAssessment,
+                LVQOL: LVQoLForm,
+                BRAIN_VISION: BrainVisionInjury,
+                VISUAL_FUNCTION: VisualFunctionForm,
+                BVDQ: BVDAssessment
+            }}
+        />
 
 
     );
