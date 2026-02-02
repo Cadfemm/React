@@ -39,7 +39,7 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
         label: "Status"
       },
       {
-        type: "file-upload-modal",
+        type: "attach-file",
         name: "visual_field",
         label: "Visual Field"
       },

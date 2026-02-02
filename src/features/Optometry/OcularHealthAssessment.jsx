@@ -36,6 +36,40 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         includes: "slit_lamp_anterior"
       }
     },
+{
+  type: "row",
+  name: "Eyelashes_Images",
+  label: "Eyelashes",
+  fields: [
+    {
+      type: "attach-file",
+      label: "Eyelashes Image (LE)",
+      name: "Eyelashes_Images_le",
+      accept: "image/*,.pdf"
+    },
+    {
+      type: "attach-file",
+      label: "Eyelashes Image (RE)",
+      name: "Eyelashes_Images_re",
+      accept: "image/*,.pdf"
+    },
+  ],
+  showIf: {
+    field: "ocular_health_sections",
+    includes: "slit_lamp_anterior"
+  }
+},
+{
+  type: "textarea",
+  label: "Eyelashes Remark",
+  name: "Eyelashes_remark",
+  placeholder: "Enter findings / remarks...",
+    showIf: {
+    field: "ocular_health_sections",
+    includes: "slit_lamp_anterior"
+  }
+},
+
 
     // {
     //   type: "row",
@@ -53,32 +87,19 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
         includes: "slit_lamp_anterior"
       }
     },
-     {
-      type: "grid-row",
-      name: "Eyelashes_Images",
-      label: "Eyelashes Images",
-      cols: [
-        { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
-        { type: "file-upload-modal", name: "Eyelashes_Images", accept: "image/*,.pdf" },
-        "textarea"
-      ],
-      showIf: {
-        field: "ocular_health_sections",
-        includes: "slit_lamp_anterior"
-      }
-    },
+     
 
     // ===== FREE TEXT =====
-    {
-      type: "grid-row",
-      name: "ac_eyelashes",
-      label: "Eyelashes",
-      cols: ["textarea", "textarea", "textarea"],
-      showIf: {
-        field: "ocular_health_sections",
-        includes: "slit_lamp_anterior"
-      }
-    },
+    // {
+    //   type: "grid-row",
+    //   name: "ac_eyelashes",
+    //   label: "Eyelashes",
+    //   cols: ["textarea", "textarea", "textarea"],
+    //   showIf: {
+    //     field: "ocular_health_sections",
+    //     includes: "slit_lamp_anterior"
+    //   }
+    // },
 
     // ===== DROPDOWN SCALE =====
     {
@@ -231,6 +252,39 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
     },
 
     {
+  type: "row",
+  name: "fundus_images",
+  label: "Fundus Images",
+  fields: [
+    {
+      type: "attach-file",
+      label: "Fundus Images (LE)",
+      name: "fundus_images_le",
+      accept: "image/*,.pdf"
+    },
+    {
+      type: "attach-file",
+      label: "Fundus Images (RE)",
+      name: "fundus_images_re",
+      accept: "image/*,.pdf"
+    },
+  ],
+  showIf: {
+ field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+  }
+},
+
+{
+  type: "textarea",
+  label: "Fundus Images Remark",
+  name: "fundus_images_remark",
+    showIf: {
+ field: "ocular_health_sections",
+        includes: "fundus_camera_posterior"
+  }
+},
+    {
       type: "grid-header",
       cols: ["Right Eye (RE)", "Left Eye (LE)"],
       showIf: {
@@ -239,19 +293,7 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
       }
     },
 
-    {
-      type: "grid-row",
-      name: "fundus_images",
-      label: "Fundus Images",
-      cols: [
-        { type: "file-upload-modal", name: "fundus_re_image", accept: "image/*,.pdf" },
-        { type: "file-upload-modal", name: "fundus_le_image", accept: "image/*,.pdf" }
-      ],
-      showIf: {
-        field: "ocular_health_sections",
-        includes: "fundus_camera_posterior"
-      }
-    },
+
 
     {
       type: "grid-row",

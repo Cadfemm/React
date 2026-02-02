@@ -272,8 +272,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ]
           },
           // Patient Vision & Care History Section
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Patient Vision & Care History",
             showIf: {
               field: "general_questions",
@@ -596,8 +596,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             }
           },
           // External Eye Symptoms Section
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "External Eye Symptoms",
             showIf: {
               field: "general_questions",
@@ -1260,22 +1260,22 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
         fields: [
           ...(isFollowup
             ? [
-                {
-                  type: "assessment-launcher",
-                  name: "optometry_assessments",
-                  options: [
-                    { label: "Binocular Vision", value: "BINOCULAR_VISION" },
-                    { label: "Refraction Assessment", value: "REFRACTION" },
-                    { label: "Vision For Driving", value: "VISION_DRIVING" },
-                    { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
-                    { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
-                    { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
-                    { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
-                    { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
-                    { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
-                  ]
-                }
-              ]
+              {
+                type: "assessment-launcher",
+                name: "optometry_assessments",
+                options: [
+                  { label: "Binocular Vision", value: "BINOCULAR_VISION" },
+                  { label: "Refraction Assessment", value: "REFRACTION" },
+                  { label: "Vision For Driving", value: "VISION_DRIVING" },
+                  { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
+                  { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
+                  { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
+                  { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
+                  { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
+                  { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
+                ]
+              }
+            ]
             : []),
           {
             type: "input",
@@ -1290,15 +1290,15 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Binocular & Ocular Function", value: "binocular_ocular" }
             ]
           },
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Visual Acuity",
             showIf: {
               field: "objective_sections",
               includes: "visual_acuity"
             }
           },
- 
+
           {
             type: "checkbox-group",
             name: "visual_acuity_eyes",
@@ -1314,33 +1314,33 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               includes: "visual_acuity"
             }
           },
- 
+
           /* ================= RIGHT EYE ================= */
           {
             type: "refraction-12col",
             name: "visual_acuity_re",
-            showIf: { 
-              field: "visual_acuity_eyes", 
+            showIf: {
+              field: "visual_acuity_eyes",
               includes: "RE",
               and: {
                 field: "objective_sections",
                 includes: "visual_acuity"
               }
             },
- 
+
             groups: [
               {
                 label: "Right Eye (RE)",
                 columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
               }
             ],
- 
+
             rows: [
               {
                 label: "Habitual / Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1363,7 +1363,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               },
               { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
               { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
- 
+
               {
                 label: "Unaided – Distance",
                 value: "ua_dist",
@@ -1393,30 +1393,30 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Unaided – Remark", value: "ua_remark", remark: true }
             ]
           },
- 
+
           /* ================= LEFT EYE ================= */
           {
             type: "refraction-12col",
             name: "visual_acuity_le",
-            showIf: { 
-              field: "visual_acuity_eyes", 
+            showIf: {
+              field: "visual_acuity_eyes",
               includes: "LE"
             },
- 
+
             groups: [
               {
                 label: "Left Eye (LE)",
                 columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
               }
             ],
- 
- 
+
+
             rows: [
               {
                 label: "Habitual / Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ],},
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"], },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1439,7 +1439,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               },
               { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
               { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
- 
+
               {
                 label: "Unaided – Distance",
                 value: "ua_dist",
@@ -1469,23 +1469,23 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Unaided – Remark", value: "ua_remark", remark: true }
             ]
           },
- 
+
           /* ================= BOTH EYE ================= */
           {
             type: "refraction-12col",
             name: "visual_acuity_be",
-            showIf: { 
-              field: "visual_acuity_eyes", 
+            showIf: {
+              field: "visual_acuity_eyes",
               includes: "BE"
             },
- 
+
             groups: [
               {
                 label: "Both Eye (BE)",
                 columns: [{ key: "D" }, { key: "N" }, { key: "P" }]
               }
             ],
- 
+
             rows: [
               {
                 label: "Habitual / Aided – Distance",
@@ -1514,12 +1514,12 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               },
               { label: "Habitual / Aided – Pinhole", value: "ha_pin", remark: true },
               { label: "Habitual / Aided – Remark", value: "ha_remark", remark: true },
- 
+
               {
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1544,8 +1544,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Unaided – Remark", value: "ua_remark", remark: true }
             ]
           },
-          { 
-            type: "subheading", 
+          {
+            type: "subheading",
             label: "Binocular & Ocular Function",
             showIf: {
               field: "objective_sections",
@@ -1904,13 +1904,21 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
         <CommonFormBuilder
           schema={OPTOMETRY_CONTAINER_SCHEMA}
           values={{}}
-          onChange={() => {}}
+          onChange={() => { }}
         >
           <OptometryPatientInfo patient={patient} />
         </CommonFormBuilder>
 
         {isFollowup && (
-          <h2 style={{ margin: "0 0 12px 0", fontSize: 20, fontWeight: 700, color: "#059669" }}>
+          <h2 style={{
+            width: "100%",
+            textAlign: "center",
+            margin: "0 0 12px 0",
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#059669"
+          }}
+          >
             Follow-up Visit
           </h2>
         )}

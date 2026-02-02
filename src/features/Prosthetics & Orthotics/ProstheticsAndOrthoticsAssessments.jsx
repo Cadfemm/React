@@ -1,7 +1,7 @@
 // OrthoticsAssessment.jsx
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
-
+import LowerExtremityOrthoticsPrescription from "./LowerExtremityorthoticsAssessment";
 /* ===================== OPTIONS ===================== */
 
 const YES_NO = [
@@ -15,6 +15,11 @@ const CLASSIFICATION = [
   { label: "MSD", value: "msd" },
   { label: "Others", value: "others" }
 ];
+
+const ORTHOTICS_ASSESSMENT_REGISTRY = {
+  lower_extremity_orthotics: LowerExtremityOrthoticsPrescription
+};
+
 
 const PROGNOSIS = [
   { label: "Good", value: "good" },
@@ -140,6 +145,22 @@ const OBJECTIVE_SCHEMA = {
   title: "Objective",
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
+        {
+      title: "Orthotics Prescription Forms",
+      fields: [
+        {
+          name: "orthotics_objective_forms",
+          type: "assessment-launcher",
+          options: [
+            {
+              label: "Lower Extremity Orthotics Prescription",
+              value: "lower_extremity_orthotics"
+            }
+          ]
+        }
+      ]
+    },
+
     {
       title: "Physical Examination (Auto from MDT)",
       fields: [
@@ -166,15 +187,15 @@ const OBJECTIVE_SCHEMA = {
     {
       title: "Gait Assessment",
       fields: [
-        { name: "walking_aid", label: "Walking Aid Used", type: "single-select", options: WALKING_AID },
-        { name: "walking_pattern", label: "Walking Pattern", type: "single-select", options: WALKING_PATTERN },
-        { name: "foot_clearance", label: "Foot Clearance", type: "single-select", options: FOOT_CLEARANCE },
-        { name: "step_length", label: "Step Length", type: "single-select", options: STEP_LENGTH },
-        { name: "stance_phase", label: "Stance Phase", type: "single-select", options: STANCE_PHASE },
-        { name: "swing_phase", label: "Swing Phase", type: "single-select", options: SWING_PHASE },
-        { name: "weight_bearing", label: "Weight Bearing", type: "single-select", options: WEIGHT_BEARING },
-        { name: "gait_balance", label: "Balance During Gait", type: "single-select", options: GAIT_BALANCE },
-        { name: "endurance", label: "Endurance", type: "single-select", options: ENDURANCE }
+        { name: "walking_aid", label: "Walking Aid Used", type: "radio", options: WALKING_AID },
+        { name: "walking_pattern", label: "Walking Pattern", type: "radio", options: WALKING_PATTERN },
+        { name: "foot_clearance", label: "Foot Clearance", type: "radio", options: FOOT_CLEARANCE },
+        { name: "step_length", label: "Step Length", type: "radio", options: STEP_LENGTH },
+        { name: "stance_phase", label: "Stance Phase", type: "radio", options: STANCE_PHASE },
+        { name: "swing_phase", label: "Swing Phase", type: "radio", options: SWING_PHASE },
+        { name: "weight_bearing", label: "Weight Bearing", type: "radio", options: WEIGHT_BEARING },
+        { name: "gait_balance", label: "Balance During Gait", type: "radio", options: GAIT_BALANCE },
+        { name: "endurance", label: "Endurance", type: "radio", options: ENDURANCE }
       ]
     }
   ]
@@ -394,7 +415,7 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
       <CommonFormBuilder
         schema={ORTHOTICS_CONTAINER_SCHEMA}
         values={{}}
-        onChange={() => {}}
+        onChange={() => { }}
       >
         <PatientInfo patient={patient} />
       </CommonFormBuilder>
@@ -423,13 +444,15 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
         ))}
       </div>
 
-      <CommonFormBuilder
-        schema={schemaMap[activeTab]}
-        values={values}
-        onChange={onChange}
-        submitted={submitted}
-        onAction={handleAction}
-      >
+     <CommonFormBuilder
+  schema={schemaMap[activeTab]}
+  values={values}
+  onChange={onChange}
+  submitted={submitted}
+  onAction={handleAction}
+  assessmentRegistry={ORTHOTICS_ASSESSMENT_REGISTRY}
+>
+
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
           <button
             style={{
