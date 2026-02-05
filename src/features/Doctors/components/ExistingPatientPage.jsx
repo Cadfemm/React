@@ -1,6 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import VisualAssessment  from "../components/Visual";
 import SwallowingAssessment from "./SwallowingAssessment";
+import BladderAssessment from "./BladderAssessment";
+import BowelAssessment from "./BowelAssessment";
 import PatientReports from "../../PatientReports"; // 🔹 NEW
 
 /* -------------------------------------------------------------
@@ -155,6 +157,8 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
   /* --------- Store Assessment Data for Report --------- */
   const [swallowingData, setSwallowingData] = useState(null);
   const [visualData, setVisualData] = useState(null);
+  const [bladderData, setBladderData] = useState(null);
+  const [bowelData, setBowelData] = useState(null);
 
   /* 🔹 NEW: show/hide report panels */
   const [showDoctorReports, setShowDoctorReports] = useState(false);
@@ -197,6 +201,18 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
 
   const [selectedDepartments, setSelectedDepartments] = useState([]);
 
+  /* --------- Persist bladder_control and bowel_control when doctor fills assessments --------- */
+  useEffect(() => {
+    if (!patient) return;
+    const bladderControl = bladderData?.urinaryProblem || "";
+    const bowelControl = bowelData?.control === "Yes" ? "CONTINENT" : bowelData?.control === "No" ? "INCONTINENT" : "";
+    if (bladderControl || bowelControl) {
+      const updated = { ...patient, bladder_control: bladderControl || patient.bladder_control, bowel_control: bowelControl || patient.bowel_control };
+      localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+      onUpdatePatient?.(updated);
+    }
+  }, [patient?.id, bladderData?.urinaryProblem, bowelData?.control]);
+
   /* --------- Scroll tab into view --------- */
   const handleTabClick = (index) => {
     setActiveTab(index);
@@ -222,8 +238,10 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
   const handleSubmitReferral = () => {
     if (!patient) return;
 
+    const bladderControl = bladderData?.urinaryProblem || patient.bladder_control || "";
     const updated = {
       ...patient,
+      bladder_control: bladderControl,
       // keep existing departments, always include "Doctor", plus newly selected ones
       departments: Array.from(
         new Set([
@@ -268,6 +286,8 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
       summary: {
         swallowing: swallowingData,
         visual: visualData,
+        bladder: bladderData,
+        bowel: bowelData,
       },
       // human-readable summary text (same as bottom UI)
       summaryText: {
@@ -277,6 +297,12 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
     };
 
     localStorage.setItem(key, JSON.stringify([...existingReports, report]));
+
+    // Persist bladder_control to patient so Diet can display it (read-only)
+    const bladderControl = bladderData?.urinaryProblem || "";
+    const updatedPatient = { ...patient, bladder_control: bladderControl };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updatedPatient));
+    if (onUpdatePatient) onUpdatePatient(updatedPatient);
 
     alert("Report generated and shared with referred departments!");
   };
@@ -479,6 +505,10 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
           <VisualAssessment onChange={setVisualData} />
         ) : tabs[activeTab] === "Swallowing" ? (
           <SwallowingAssessment onChange={setSwallowingData} />
+        ) : tabs[activeTab] === "Bladder Issue" ? (
+          <BladderAssessment onChange={setBladderData} />
+        ) : tabs[activeTab] === "Bowel Issue" ? (
+          <BowelAssessment onChange={setBowelData} />
         ) : (
           <div style={{ padding: "20px 0" }}>
             <h3 style={{ textAlign: "center" }}>{tabs[activeTab]} Module</h3>

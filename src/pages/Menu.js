@@ -53,6 +53,7 @@ import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDa
 import OptometryDashboard from "../features/Optometry/OptometryDashboard";
 import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
+import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -742,8 +743,11 @@ export function MainContent({
       />
         ;
 
-    case "Nursing / Medical Assistant":
-      return <NursingDepartmentPage patients={patients} department="Nursing / Medical Assistant" />;
+    case "Nursing":
+      return <NursingDepartmentPage patients={patients} department="Nursing" />;
+
+    case "Medical Assistant":
+      return <MedicalAssistantPatientspage patients={patients} department="Medical Assistant" />;
 
     default:
       return <div>Select a department</div>;

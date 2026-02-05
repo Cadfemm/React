@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect }, { useEffect } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 
 export default function CommonFormBuilder({
@@ -218,24 +218,70 @@ export default function CommonFormBuilder({
                           >
 
 
-                            {/* RADIO stays special (side layout) */}
-                            {field.type === "radio" && !field.inRow ? (
-                              <div style={styles.radioRow}>
-                                <div style={styles.radioLabel}>{field.label}</div>
-                                {renderField(
-                                  field,
-                                  value,
-                                  values,
-                                  onChange,
-                                  onAction,
-                                  assessmentRegistry,
-                                  formReadOnly,
-                                  {
+                        {/* RADIO: labelAbove = label on one line, options on next line */}
+                        {field.type === "radio" && !field.inRow && field.labelAbove ? (
+                          <div style={{ marginBottom: 16 }}>
+                            {(field.label || field.info) && (
+                              <label style={styles.label}>
+                                {field.label}
+                                {field.info && <InfoTooltip info={field.info} />}
+                              </label>
+                            )}
+                            <div style={{ marginTop: 6 }}>
+                              {renderField(
+                                field,
+                                value,
+                                values,
+                                onChange,
+                                onAction,
+                                assessmentRegistry,
+                                formReadOnly,
+                                {
                                     enabled: schema?.enableLanguageToggle === true,
                                     lang: language
                                   }
-                                )}                          </div>
-                            ) : field.type === "subheading" ? (
+                              )}
+                            </div>
+                          </div>
+                        ) : field.type === "radio" && !field.inRow ? (
+                          <div style={styles.radioRow}>
+                            {(field.label || field.info) && (
+                              <div style={styles.radioLabel}>
+                                {field.label}
+                                {field.info && <InfoTooltip info={field.info} />}
+                              </div>
+                            )}
+                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
+                              {renderField(
+                                field,
+                                value,
+                                values,
+                                onChange,
+                                onAction,
+                                assessmentRegistry,
+                                formReadOnly
+                              )}
+                            </div>
+                          </div>
+                            {(field.label || field.info) && (
+                              <div style={styles.radioLabel}>
+                                {field.label}
+                                {field.info && <InfoTooltip info={field.info} />}
+                              </div>
+                            )}
+                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
+                              {renderField(
+                                field,
+                                value,
+                                values,
+                                onChange,
+                                onAction,
+                                assessmentRegistry,
+                                formReadOnly
+                              )}
+                            </div>
+                          </div>
+                        ) : field.type === "subheading" ? (
 
                               renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
                             ) : field.type === "row" ? (
@@ -664,8 +710,6 @@ function RadioMatrixRow({ field, value, onChange }) {
         {field.info && <InfoTooltip info={field.info} />}
       </div>
 
-
-
       <div style={styles.matrixOptions}>
         {field.options.map(opt => (
           <label key={opt.value} style={styles.matrixCell}>
@@ -785,14 +829,74 @@ function renderField(
         </div>
       );
 
-    case "info-text":
+    case "enteral-feeding-table": {
+      const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
+      const updateRow = (idx, col, val) => {
+        const next = [...rows];
+        if (!next[idx]) next[idx] = { time: "", scoops: "", water: "", flushing: "" };
+        next[idx] = { ...next[idx], [col]: val };
+        onChange(`${field.name}_rows`, next);
+      };
+      const addRow = () => {
+        const last = rows.length > 0 ? rows[rows.length - 1] : { time: "", scoops: "", water: "", flushing: "" };
+        const newRow = { time: "", scoops: last.scoops || "", water: last.water || "", flushing: last.flushing || "" };
+        onChange(`${field.name}_rows`, [...rows, newRow]);
+      };
+      const removeRow = (idx) => onChange(`${field.name}_rows`, rows.filter((_, i) => i !== idx));
+      const template = "repeat(4, 1fr) 70px";
       return (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
-          {Array.isArray(field.text)
-            ? field.text.map((t, i) => <div key={i}>{t}</div>)
-            : field.text}
+        <div style={{ marginTop: 10 }}>
+          {/* Header row */}
+          <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
+            <div style={styles.gridHeaderCell}>Time</div>
+            <div style={styles.gridHeaderCell}>Scoops</div>
+            <div style={styles.gridHeaderCell}>Water</div>
+            <div style={styles.gridHeaderCell}>Flushing</div>
+            <div style={styles.gridHeaderCell}></div>
+          </div>
+          {/* Data rows */}
+          {rows.map((row, idx) => (
+            <div key={idx} style={{ ...styles.gridRow, gridTemplateColumns: template }}>
+              <input
+                type="time"
+                value={row.time || ""}
+                onChange={e => updateRow(idx, "time", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.scoops || ""}
+                onChange={e => updateRow(idx, "scoops", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.water || ""}
+                onChange={e => updateRow(idx, "water", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.flushing || ""}
+                onChange={e => updateRow(idx, "flushing", e.target.value)}
+                style={styles.gridInput}
+              />
+              <button type="button" onClick={() => removeRow(idx)} style={{ padding: "6px 8px", fontSize: 12, background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
+            </div>
+          ))}
+          <button type="button" onClick={addRow} style={{ marginTop: 8, padding: "6px 12px", background: "#2563eb", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>+ Add Row</button>
         </div>
       );
+    }
+
+case "info-text":
+  return (
+    <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+      {Array.isArray(field.text)
+        ? field.text.map((t, i) => <div key={i}>{t}</div>)
+        : field.text}
+    </div>
+  );
 
 
     case "scale-table":
@@ -1043,6 +1147,16 @@ case "image-anatomy-selector":
                   return null;
                 }
               }
+
+              if ("oneOf" in f.showIf) {
+                const allowedValues = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
+                if (!allowedValues.includes(depVal)) return null;
+              }
+
+              if ("oneOf" in f.showIf) {
+                const allowedValues = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
+                if (!allowedValues.includes(depVal)) return null;
+              }
             }
 
             const v = values[f.name];
@@ -1176,11 +1290,26 @@ case "image-anatomy-selector":
                   onChange={e => onChange(fieldKey, e.target.value)}
                 >
                   <option value="">Select</option>
-                  {col.options.map(opt => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
+                  {(col.options || []).map((opt, i) => {
+                    const val = typeof opt === "object" && opt !== null && "value" in opt ? opt.value : opt;
+                    const label = typeof opt === "object" && opt !== null && "label" in opt ? opt.label : opt;
+                    const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+                    return (
+                      <option key={val ?? i} value={val}>
+                        {display}
+                      </option>
+                    );
+                  })}
+                  {(col.options || []).map((opt, i) => {
+                    const val = typeof opt === "object" && opt !== null && "value" in opt ? opt.value : opt;
+                    const label = typeof opt === "object" && opt !== null && "label" in opt ? opt.label : opt;
+                    const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+                    return (
+                      <option key={val ?? i} value={val}>
+                        {display}
+                      </option>
+                    );
+                  })}
                 </select>
               );
             }
@@ -1338,32 +1467,56 @@ case "image-anatomy-selector":
         />
       );
 
-    case "radio":
-      return (
-        <div style={{ marginTop: 6 }}>
-          <div style={styles.inlineGroup}>
-            {(field.options || []).map(opt => (
-              <label key={opt.value} style={styles.inlineItem}>
-                <input
-                  type="radio"
-                  name={field.name}
-                  checked={value === opt.value}
-                  disabled={readOnly}
-                  onChange={() => !readOnly && onChange(field.name, opt.value)}
-                />
-                {opt.label}
-              </label>
-            ))}
+      case "radio": {
+        const opts = field.options || [];
+      case "radio": {
+        const opts = field.options || [];
+        return (
+          <div style={{ marginTop: 6 }}>
+            <div style={styles.inlineGroup}>
+              {opts.map((opt, idx) => {
+                const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
+                const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
+                return (
+                  <label key={optVal ?? idx} style={styles.inlineItem}>
+                    <input
+                      type="radio"
+                      name={field.name}
+                      checked={value === optVal}
+                      disabled={readOnly}
+                      onChange={() => !readOnly && onChange(field.name, optVal)}
+                    />
+                    {typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? "")}
+                  </label>
+                );
+              })}
+              {opts.map((opt, idx) => {
+                const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
+                const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
+                return (
+                  <label key={optVal ?? idx} style={styles.inlineItem}>
+                    <input
+                      type="radio"
+                      name={field.name}
+                      checked={value === optVal}
+                      disabled={readOnly}
+                      onChange={() => !readOnly && onChange(field.name, optVal)}
+                    />
+                    {typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? "")}
+                  </label>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      );
-    case "attach-file":
-      return (
-        <div style={{ marginBottom: 0 }}>
-          <label style={styles.label}>
-            {field.title}
-            {field.required && <span style={{ color: "red" }}> *</span>}
-          </label>
+        );
+      }
+      case "attach-file":
+        return (
+          <div style={{ marginBottom: 0 }}>
+            <label style={styles.label}>
+              {field.title}
+              {field.required && <span style={{ color: "red" }}> *</span>}
+            </label>
 
           <div style={styles.inlineGroup}>
             {(!value || !field.hideInputAfterSelect) && (
@@ -1882,9 +2035,14 @@ case "image-anatomy-selector":
                               style={styles.vaSelect}
                             >
                               <option value="">Select</option>
-                              {(col.options || []).map(o => (
-                                <option key={o} value={o}>{o}</option>
-                              ))}
+                              {(col.options || []).map((o, i) => {
+                                const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
+                                const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
+                                const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+                                return (
+                                  <option key={val ?? i} value={val}>{display}</option>
+                                );
+                              })}
                             </select>
                           ) : (
                             <input
@@ -1996,29 +2154,48 @@ case "image-anatomy-selector":
 }
 
 function FilePreview({ file, previewSize }) {
-  const isImage = file.type.startsWith("image/");
+  if (!file) return null;
+  const fileName = file.name ?? file.filename ?? "File";
+  const fileType = typeof file.type === "string" ? file.type : "";
+  const isBlobOrFile = file instanceof File || file instanceof Blob;
+  const isImage = fileType.startsWith("image/") && isBlobOrFile;
 
+  if (isImage) {
+    try {
+      const url = URL.createObjectURL(file);
+      return <FilePreviewImage url={url} fileName={fileName} previewSize={previewSize} />;
+    } catch {
+      return (
+        <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
+          📄 {fileName}
+        </div>
+      );
+    }
+  }
+  return (
+    <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
+      📄 {fileName}
+    </div>
+  );
+}
+
+function FilePreviewImage({ url, fileName, previewSize }) {
+  useEffect(() => () => URL.revokeObjectURL(url), [url]);
   return (
     <div style={{ marginTop: 6 }}>
-      {isImage ? (
-        <img
-          src={URL.createObjectURL(file)}
-          alt={file.name}
-          style={{
-            width: previewSize?.width || 160,
-            height: previewSize?.height || 120,
-            maxWidth: previewSize?.width || 160,
-            maxHeight: previewSize?.height || 120,
-            borderRadius: 6,
-            border: "1px solid #ddd",
-            objectFit: "contain"
-          }}
-        />
-      ) : (
-        <div style={{ fontSize: 13, color: "#2563eb" }}>
-          📄 {file.name}
-        </div>
-      )}
+      <img
+        src={url}
+        alt={fileName}
+        style={{
+          width: previewSize?.width || 160,
+          height: previewSize?.height || 120,
+          maxWidth: previewSize?.width || 160,
+          maxHeight: previewSize?.height || 120,
+          borderRadius: 6,
+          border: "1px solid #ddd",
+          objectFit: "contain"
+        }}
+      />
     </div>
   );
 }

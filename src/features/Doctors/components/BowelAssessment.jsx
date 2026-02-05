@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-export default function BowelAssessmentForm() {
+export default function BowelAssessmentForm({ onChange: onParentChange }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [showBristol, setShowBristol] = useState(false);
 
   const onChange = (name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+    setValues(prev => {
+      const next = { ...prev, [name]: value };
+      onParentChange?.(next);
+      return next;
+    });
   };
 
   const onAction = (action) => {

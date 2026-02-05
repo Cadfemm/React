@@ -8,6 +8,7 @@ export default function PatientRegister({ addPatient }) {
     dob: "", 
     age: "",
     sex: "",
+    phone: "",
     race: "",
     accommodation: "",
     nkfa: "",
@@ -18,10 +19,13 @@ export default function PatientRegister({ addPatient }) {
     date_of_onset: "",
     weight: "",
     height: "",
+    neck_circumference: "",
     weight_record_date: "",  // Auto-captured when weight/height is entered
     remarks: "",
     diagnosis_history: "",     // NEW FIELD
-    medical_history: ""        // NEW FIELD
+    medical_history: "",       // NEW FIELD
+    lmp_date: "",              // Last Menstrual Date (female, age > 8)
+    case_manager: ""           // Case Manager - flows to CM in Resus Bay
   });
 
   const ICD_LIST = Object.keys(GROUPED_ICD_TO_DEPT);
@@ -75,6 +79,7 @@ const calculateAge = (dob) => {
   age: form.age,  
       age: form.age,
       sex: form.sex,
+      phone: form.phone,
       race: form.race,
       accommodation: form.accommodation,
       nkfa: form.nkfa,
@@ -86,6 +91,7 @@ const calculateAge = (dob) => {
       ul: "-",
       weight: form.weight,
       height: form.height,
+      neck_circumference: form.neck_circumference,
       bmi: bmi,
       weight_record_date: form.weight_record_date,  // Date when weight/height was recorded
       remarks: form.remarks,
@@ -93,7 +99,9 @@ const calculateAge = (dob) => {
       // NEWLY ADDED FIELDS STORED HERE
       diagnosis_history: form.diagnosis_history,
       medical_history: form.medical_history,
-carers: carers,   
+      lmp_date: form.lmp_date,
+      case_manager: form.case_manager,
+      carers: carers,
       departments: depts
     };
 
@@ -144,6 +152,35 @@ carers: carers,
         <option>Other</option>
       </select>
 
+      <label>Phone Number</label>
+      <input
+        type="tel"
+        value={form.phone}
+        onChange={e => setField("phone", e.target.value)}
+        style={{ width: "100%" }}
+        placeholder="Enter phone number"
+      />
+
+      <label>Case Manager</label>
+      <select value={form.case_manager} onChange={e => setField("case_manager", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="Misni">Misni</option>
+        <option value="Lasya">Lasya</option>
+        <option value="Dean">Dean</option>
+      </select>
+
+      {(form.sex?.toLowerCase() === "female" && parseInt(form.age, 10) > 8) && (
+        <>
+          <label>Last Menstrual Date</label>
+          <input
+            type="date"
+            value={form.lmp_date}
+            onChange={e => setField("lmp_date", e.target.value)}
+            style={{ width: "100%" }}
+          />
+        </>
+      )}
+
       <label>Race</label>
       <input value={form.race} onChange={e => setField("race", e.target.value)} style={{ width:"100%" }}/>
 
@@ -154,7 +191,7 @@ carers: carers,
         <option>Hostel</option>
       </select>
 
-      <label>NKFA (Allergies)</label>
+      <label>Allergic History</label>
       <input value={form.nkfa} onChange={e => setField("nkfa", e.target.value)} style={{ width:"100%" }}/>
 
       <label>Place of Residence</label>
@@ -287,6 +324,15 @@ carers: carers,
           }
         }}
         style={{ width:"100%" }}
+      />
+
+      <label>Neck Circumference (cm)</label>
+      <input
+        type="number"
+        value={form.neck_circumference}
+        onChange={e => setField("neck_circumference", e.target.value)}
+        style={{ width:"100%" }}
+        placeholder="Enter neck circumference"
       />
 
       <label>BMI (Auto)</label>
