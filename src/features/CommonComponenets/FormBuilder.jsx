@@ -1,4 +1,4 @@
-import React, { useEffect }, { useEffect } from "react";
+import React, { useEffect } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 
 export default function CommonFormBuilder({
@@ -36,10 +36,10 @@ export default function CommonFormBuilder({
                 {schema?.enableLanguageToggle ? t(schema.title, language) : schema.title}
               </div>
               {schema.subtitle && (
-                <div style={styles.title}>
+                <div style={styles.subtitle}>
                   {schema?.enableLanguageToggle
-                    ? t(schema.title, language)
-                    : schema.title}
+                    ? t(schema.subtitle, language)
+                    : schema.subtitle}
                 </div>
               )}
 
@@ -203,8 +203,7 @@ export default function CommonFormBuilder({
                               <div style={styles.matrixOptions}>
                                 {firstMatrixField.options.map(opt => (
                                   <div key={opt.value} style={styles.matrixHeaderCell}>
-                                    {opt.label}{schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
-
+                                    {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
                                   </div>
                                 ))}
                               </div>
@@ -263,24 +262,8 @@ export default function CommonFormBuilder({
                               )}
                             </div>
                           </div>
-                            {(field.label || field.info) && (
-                              <div style={styles.radioLabel}>
-                                {field.label}
-                                {field.info && <InfoTooltip info={field.info} />}
-                              </div>
-                            )}
-                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
-                              {renderField(
-                                field,
-                                value,
-                                values,
-                                onChange,
-                                onAction,
-                                assessmentRegistry,
-                                formReadOnly
-                              )}
-                            </div>
-                          </div>
+
+                        
                         ) : field.type === "subheading" ? (
 
                               renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
@@ -1409,14 +1392,7 @@ case "image-anatomy-selector":
       );
 
 
-    case "radio-matrix":
-      return (
-        <RadioMatrixRow
-          field={field}
-          value={value}
-          onChange={onChange}
-        />
-      );
+
     case "textarea":
       return (
         <textarea
@@ -1467,29 +1443,12 @@ case "image-anatomy-selector":
         />
       );
 
-      case "radio": {
-        const opts = field.options || [];
+
       case "radio": {
         const opts = field.options || [];
         return (
           <div style={{ marginTop: 6 }}>
             <div style={styles.inlineGroup}>
-              {opts.map((opt, idx) => {
-                const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
-                const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
-                return (
-                  <label key={optVal ?? idx} style={styles.inlineItem}>
-                    <input
-                      type="radio"
-                      name={field.name}
-                      checked={value === optVal}
-                      disabled={readOnly}
-                      onChange={() => !readOnly && onChange(field.name, optVal)}
-                    />
-                    {typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? "")}
-                  </label>
-                );
-              })}
               {opts.map((opt, idx) => {
                 const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
                 const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
