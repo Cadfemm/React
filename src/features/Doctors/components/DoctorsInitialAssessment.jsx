@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import  VisualAssessment from "../components/Visual";
 import SwallowingAssessment from "./SwallowingAssessment";
 import CognitiveAssessmentForm from "./CognitiveAssessment";
@@ -286,11 +286,24 @@ const [FunctionalAssessmentData,setFunctionalAssessmentData] = useState(null);
     "Psychology",
     "Medical",
     "Nursing",
+    "Medical Assistant",
     "Orthotics & Prosthetics",
     "Social Work",
   ];
 
   const [selectedDepartments, setSelectedDepartments] = useState([]);
+
+  /* --------- Persist bladder_control and bowel_control when doctor fills assessments --------- */
+  useEffect(() => {
+    if (!patient) return;
+    const bladderControl = BladderAssessmentData?.urinaryProblem || "";
+    const bowelControl = BowelAssessmentData?.control === "Yes" ? "CONTINENT" : BowelAssessmentData?.control === "No" ? "INCONTINENT" : "";
+    if (bladderControl || bowelControl) {
+      const updated = { ...patient, bladder_control: bladderControl || patient.bladder_control, bowel_control: bowelControl || patient.bowel_control };
+      localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+      onUpdatePatient?.(updated);
+    }
+  }, [patient?.id, BladderAssessmentData?.urinaryProblem, BowelAssessmentData?.control]);
 
   /* --------- Scroll tab into view --------- */
   const handleTabClick = (index) => {
@@ -316,8 +329,12 @@ const markDoctorExisting = (patientId) => {
 const handleSubmitReferral = () => {
   if (!patient) return;
 
+  const bladderControl = BladderAssessmentData?.urinaryProblem || patient.bladder_control || "";
+  const bowelControl = BowelAssessmentData?.control === "Yes" ? "CONTINENT" : BowelAssessmentData?.control === "No" ? "INCONTINENT" : patient.bowel_control || "";
   const updated = {
     ...patient,
+    bladder_control: bladderControl,
+    bowel_control: bowelControl,
     // keep existing departments, always include "Doctor", plus newly selected ones
     departments: Array.from(
       new Set([
@@ -366,6 +383,8 @@ const handleSubmitReferral = () => {
       summary: {
         swallowing: swallowingData,
         visual: visualData,
+        bladder: BladderAssessmentData,
+        bowel: BowelAssessmentData,
       },
       // human-readable summary text (same as bottom UI)
       summaryText: {
@@ -375,6 +394,13 @@ const handleSubmitReferral = () => {
     };
 
     localStorage.setItem(key, JSON.stringify([...existingReports, report]));
+
+    // Persist bladder_control and bowel_control to patient so Diet can display (read-only)
+    const bladderControl = BladderAssessmentData?.urinaryProblem || "";
+    const bowelControl = BowelAssessmentData?.control === "Yes" ? "CONTINENT" : BowelAssessmentData?.control === "No" ? "INCONTINENT" : "";
+    const updatedPatient = { ...patient, bladder_control: bladderControl, bowel_control: bowelControl };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updatedPatient));
+    if (onUpdatePatient) onUpdatePatient(updatedPatient);
 
     alert("Report generated and shared with referred departments!");
   };

@@ -5,6 +5,9 @@ import ADLForm from "./ADLForm";
 import PatientHistoryForm from "./PatientHistoryForm";
 import MorseFallScaleForm from "./MorseFallScaleForm";
 import BradenScaleForm from "./BradenScaleForm";
+import WoundTreatmentFlowsheetForm from "./WoundTreatmentFlowsheetForm";
+import NumericPainRatingScaleForm from "./NumericPainRatingScaleForm";
+import DiabeticFootAssessmentForm from "./DiabeticFootAssessmentForm";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -90,13 +93,64 @@ function BradenScaleAdapter({ values, onChange }) {
   return <BradenScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
 }
 
+function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`wound_flowsheet_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "nursing_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <WoundTreatmentFlowsheetForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function NumericPainRatingScaleAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`numeric_pain_scale_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "nursing_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <NumericPainRatingScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function DiabeticFootAssessmentAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`diabetic_foot_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "nursing_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <DiabeticFootAssessmentForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
 // Assessment Registry
 export const NURSING_ASSESSMENT_REGISTRY = {
   barthel: BarthelIndexAdapter,
   adl: ADLAdapter,
   patient_history: PatientHistoryAdapter,
   morse_fall_scale: MorseFallScaleAdapter,
-  braden_scale: BradenScaleAdapter
+  braden_scale: BradenScaleAdapter,
+  wound_treatment_flowsheet: WoundTreatmentFlowsheetAdapter,
+  numeric_pain_rating_scale: NumericPainRatingScaleAdapter,
+  diabetic_foot_assessment: DiabeticFootAssessmentAdapter
 };
 
 /* ===================== COMPONENT ===================== */
@@ -179,7 +233,10 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "ADL", value: "adl" },
               { label: "Patient History", value: "patient_history" },
               { label: "Morse Fall Scale", value: "morse_fall_scale" },
-              { label: "Braden Scale", value: "braden_scale" }
+              { label: "Braden Scale", value: "braden_scale" },
+              { label: "Wound Treatment Flowsheet", value: "wound_treatment_flowsheet" },
+              { label: "Numeric Pain Rating Scale", value: "numeric_pain_rating_scale" },
+              { label: "Diabetic Foot Assessment", value: "diabetic_foot_assessment" }
             ]
           }
         ]

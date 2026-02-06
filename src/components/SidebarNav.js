@@ -25,7 +25,8 @@ const [showDeptMenu, setShowDeptMenu] = React.useState(false);
 
 const departments = [
   "Customer Service",
-  "Nursing / Medical Assistant",
+  "Nursing",
+  "Medical Assistant",
   "Doctor",
   "Physio Therapy",
   "Vocational + Work Rehab",

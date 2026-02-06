@@ -10,15 +10,15 @@ const BLADDER_SCHEMA = {
       title: null,
       fields: [
         /* -------------------------------------------------
-           Q0: Any urinary problem?
+           Q0: Urinary (Continent/Incontinent)
         ------------------------------------------------- */
         {
           name: "urinaryProblem",
-          label: "Any urinary problem?",
+          label: "Urinary",
           type: "radio",
           options: [
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" }
+            { label: "Continent", value: "CONTINENT" },
+            { label: "Incontinent", value: "INCONTINENT" }
           ],
           validation: { required: true }
         },
@@ -32,7 +32,7 @@ const BLADDER_SCHEMA = {
           type: "single-select",
           showIf: {
             field: "urinaryProblem",
-            equals: "Yes"
+            equals: "INCONTINENT"
           },
           options: [
             { label: "Spontaneous", value: "Spontaneous" },
@@ -72,7 +72,7 @@ const BLADDER_SCHEMA = {
             type: "radio",
             showIf: {
               field: "urinaryProblem",
-              equals: "Yes"
+              equals: "INCONTINENT"
             },
             options: [
               { label: "Yes", value: "Yes" },
@@ -99,7 +99,7 @@ const BLADDER_SCHEMA = {
           type: "textarea",
           showIf: {
             field: "urinaryProblem",
-            equals: "Yes"
+            equals: "INCONTINENT"
           }
         }
       ]
@@ -130,12 +130,16 @@ const initialValues = {
 
 
 
-export default function BladderAssessment() {
+export default function BladderAssessment({ onChange: onParentChange }) {
   const [values, setValues] = useState(initialValues);
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+    setValues(prev => {
+      const next = { ...prev, [name]: value };
+      onParentChange?.(next);
+      return next;
+    });
   };
 
   const handleSubmit = () => {

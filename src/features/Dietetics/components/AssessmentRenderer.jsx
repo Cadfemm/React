@@ -3,16 +3,17 @@ import React from "react";
 import PGSGAMetric from "../components/PGSGAMetric";
 import MST from "../components/MST";
 import NRS from "../components/NRS";
-import BIA from "../components/BIA"
-import GrowthChartAssessment from "../components/GrowthChart"
+import BIA from "../components/BIA";
+import GrowthChartAssessment from "../components/GrowthChart";
+import SGAForm from "../components/SGAForm";
 
 const AssessmentComponents = {
   "PG-SGA-Metric-version": PGSGAMetric,
   "MST": MST,
   "NRS": NRS,
-  "Growth Chart":GrowthChartAssessment,
-  "BIA":BIA
-  // ... other assessments
+  "Growth Chart": GrowthChartAssessment,
+  "BIA": BIA,
+  "SGA": SGAForm
 };
 
 export default function AssessmentRenderer({ selected, onSave,onBack, initialFormData }) {
