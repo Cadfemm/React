@@ -85,9 +85,6 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
           }
         ]
       },
-
-
-
       /* ===================== OBJECTIVE ===================== */
       {
         fields: [

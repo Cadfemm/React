@@ -91,6 +91,8 @@ export default function CommonFormBuilder({
           <div style={styles.body}>
             {sections.map((section, sIdx) => {
 
+              if (!section.fields || !Array.isArray(section.fields)) return null;
+
               /* ===== SECTION-LEVEL VISIBILITY ===== */
               if (section.showIf) {
                 const depVal = values[section.showIf.field];
@@ -755,10 +757,12 @@ function renderField(
       );
 
     case "grid-table-flat":
+      const colCount = field.headers.length;
+      const colWidth = 120; // Medium width for data columns
       return (
         <div style={styles.tableWrap}>
           {/* Header row */}
-          <div style={styles.tableHeaderFlat}>
+          <div style={{ ...styles.tableHeaderFlat, gridTemplateColumns: `120px repeat(${colCount}, ${colWidth}px)` }}>
             <div></div>
             {field.headers.map(h => (
               <div key={h} style={styles.tableHeaderCell}>{h}</div>
@@ -767,7 +771,7 @@ function renderField(
 
           {/* Data rows */}
           {field.rows.map(row => (
-            <div key={row.key} style={styles.tableRowFlat}>
+            <div key={row.key} style={{ ...styles.tableRowFlat, gridTemplateColumns: `120px repeat(${colCount}, ${colWidth}px)` }}>
               <div style={styles.tableRowLabel}>{row.label}</div>
 
               {field.headers.map(h => (
@@ -963,6 +967,8 @@ case "image-anatomy-selector":
       fields={field.markers}
        values={values}
   onChange={onChange}
+      width={field.width}
+      height={field.height}
     />
   );
 

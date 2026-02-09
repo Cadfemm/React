@@ -26,12 +26,20 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
               {
                 type: "attach-file",
                 label: "Auto-refractor Right Ear",
-                name: "auto_refractor_file"
+                name: "auto_refractor_file",
+                accept: "application/pdf,image/*",
+                multiple: false,
+                hideInputAfterSelect: true,
+                previewSize: { width: 400, height: 400 },
               },
               {
                 type: "attach-file",
                 label: "Auto-refractor Left Ear",
-                name: "keratometry_reading_file"
+                name: "keratometry_reading_file",
+                accept: "application/pdf,image/*",
+                multiple: false,
+                hideInputAfterSelect: true,
+                previewSize: { width: 400, height: 400 },
               }
             ],
             showIf: {
@@ -54,12 +62,20 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
               {
                 type: "attach-file",
                 label: "Keratometry Right Ear",
-                name: "keratometry_file_right"
+                name: "keratometry_file_right",
+                accept: "application/pdf,image/*",
+                multiple: false,
+                hideInputAfterSelect: true,
+                previewSize: { width: 400, height: 400 },
               },
               {
                 type: "attach-file",
                 label: "Keratometry Left Ear",
-                name: "keratometry_file_left"
+                name: "keratometry_file_left",
+                accept: "application/pdf,image/*",
+                multiple: false,
+                hideInputAfterSelect: true,
+                previewSize: { width: 400, height: 400 },
               }
             ],
             showIf: {
@@ -94,24 +110,21 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
             }
           },
           {
-            type: "refraction-table",
+            type: "refraction-col",
             name: "subjective_refraction",
-
-            // Eye columns (used for Right & Left)
-            columns: ["Sphere", "Cylinder", "Axis", "Prism", "Visual Acuity"],
-
-            // Extra columns after Left Eye → Pupil
-            extraColumns: ["Pupil Distance", "Pupil Height"],
-
-            rows: [
+  rows: [
               { label: "Distance", value: "distance" },
-              { label: "ADD", value: "add", merge: 4 },
+              { label: "ADD", value: "add", merge: 4 }, // merges Sphere→Prism inside EACH group
               { label: "Near", value: "near" }
             ],
-
+            groups: [
+              { label: "Right Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
+              { label: "Left Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
+              { label: "Pupil", columns: ["Distance", "Height"] }
+            ],
             showIf: {
-              field: "binocular_examination_sections",
-              includes: "general_examination"
+              field: "refraction_sections",
+              includes: "subjective_refraction"
             }
           },
 
@@ -136,7 +149,11 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
               { label: "Right Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
               { label: "Left Eye", columns: ["Sphere", "Cylinder", "Axis", "Prism", "Acuity"] },
               { label: "Pupil", columns: ["Distance", "Height"] }
-            ]
+            ],
+                showIf: {
+              field: "refraction_sections",
+              includes: "final_prescription"
+            }
           },
 
 

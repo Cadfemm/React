@@ -55,7 +55,7 @@ const LVQOL_SCALE = [
 
   title: {
     en: "Low Vision Quality of Life Questionnaire (LVQoL)",
-    ms: "Soal Selidik Kualiti Hidup Penglihatan Rendah (LVQoL)"
+    ms: "Soal Selidik Kualiti Hidup Penglihatan Rendah"
   },
 
  actions: [

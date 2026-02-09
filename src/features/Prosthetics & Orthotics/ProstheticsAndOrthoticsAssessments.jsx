@@ -2,6 +2,12 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 import LowerExtremityOrthoticsPrescription from "./LowerExtremityorthoticsAssessment";
+import UpperExtremityOrthoticsPrescription from "./UpperExtremityorthoticsAssessment";
+import AboveKneeMeasurementForm from "./AboveKneeMeasurementForm";
+import AnkleFootOrthosisMeasurementForm from "./AnkleFootOrthosisMeasurementForm";
+import BelowKneeMeasurementForm from "./BelowKneeMeasurementForm";
+import CorrectiveAccommodativeFootOrthosisForm from "./CorrectiveAccommodativeFootOrthosisForm";
+import ScoliosisBraceMeasurementForm from "./ScoliosisBraceMeasurementForm";
 /* ===================== OPTIONS ===================== */
 
 const YES_NO = [
@@ -17,7 +23,13 @@ const CLASSIFICATION = [
 ];
 
 const ORTHOTICS_ASSESSMENT_REGISTRY = {
-  lower_extremity_orthotics: LowerExtremityOrthoticsPrescription
+  lower_extremity_orthotics: LowerExtremityOrthoticsPrescription,
+  upper_extremity_orthotics: UpperExtremityOrthoticsPrescription,
+  above_knee_measurement: AboveKneeMeasurementForm,
+  ankle_foot_orthosis_measurement: AnkleFootOrthosisMeasurementForm,
+  below_knee_measurement: BelowKneeMeasurementForm,
+  corrective_accommodative_foot_orthosis: CorrectiveAccommodativeFootOrthosisForm,
+  scoliosis_brace_measurement: ScoliosisBraceMeasurementForm
 };
 
 
@@ -155,6 +167,30 @@ const OBJECTIVE_SCHEMA = {
             {
               label: "Lower Extremity Orthotics Prescription",
               value: "lower_extremity_orthotics"
+            },
+            {
+              label: "Upper Extremity Orthotics Prescription",
+              value: "upper_extremity_orthotics"
+            },
+            {
+              label: "Above Knee Measurement Form",
+              value: "above_knee_measurement"
+            },
+            {
+              label: "Ankle Foot Orthosis Measurement Form",
+              value: "ankle_foot_orthosis_measurement"
+            },
+            {
+              label: "Below Knee Measurement Form",
+              value: "below_knee_measurement"
+            },
+            {
+              label: "Corrective / Accommodative Foot Orthosis Measurement Form",
+              value: "corrective_accommodative_foot_orthosis"
+            },
+            {
+              label: "Scoliosis Brace Measurement Form",
+              value: "scoliosis_brace_measurement"
             }
           ]
         }

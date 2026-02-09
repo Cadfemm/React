@@ -1655,8 +1655,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "hirschberg",
             label: "Hirschberg Test",
             cols: [
-              { type: "single-select", options: ["Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
-              { type: "single-select", options: ["Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
+              { type: "single-select", options: ["Symmetry", "Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
+              { type: "single-select", options: ["Symmetry", "Centered", "Nasal", "Temporal", "Superior", "Inferior"] },
               "input"
             ],
             showIf: {

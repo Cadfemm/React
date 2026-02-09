@@ -1187,6 +1187,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
         onAction?.(type);
     };
 
+symmetry/centre/nasal/temporal/superior/inferior
 
 
     return (

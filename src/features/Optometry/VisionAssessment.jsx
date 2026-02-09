@@ -28,10 +28,10 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
         type: "radio",
         name: "color_vision",
         label: "Color Vision",
-         options: [
-              { label: "Passed", value: "Passed" },
-              { label: "Failed", value: "Failed" }
-            ]
+        options: [
+          { label: "Passed", value: "Passed" },
+          { label: "Failed", value: "Failed" }
+        ]
       },
       {
         type: "input",
@@ -41,7 +41,11 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
       {
         type: "attach-file",
         name: "visual_field",
-        label: "Visual Field"
+        label: "Visual Field",
+        accept: "application/pdf,image/*",
+        multiple: false,
+        hideInputAfterSelect: true,
+        previewSize: { width: 400, height: 400 },
       },
       {
         type: "input",
