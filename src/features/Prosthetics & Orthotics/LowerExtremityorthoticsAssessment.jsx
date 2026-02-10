@@ -73,21 +73,18 @@ const MIDDLE_FIELDS = [
 
 
 
-// const LOWER_LIMB_FIELDS = [
-//   { name: "thigh", shape: "rect", top: "46.4%", left: "92%", width: "8%", height: "9%" },
-//   { name: "knee",  shape: "rect", top: "61%", left: "79%", width: "8.3%", height: "9%" },
-//   { name: "leg",   shape: "rect", top: "8%", left: "55%", width: "8.3%", height: "9.2%" },
-//   { name: "circle_1", shape: "oval", top: "25%", left: "8%", width: "6%", height: "6%" },
-//   { name: "circle_2", shape: "oval", top: "33%", left: "8%", width: "6%", height: "6%" }
-// ];
-
 const LOWER_LIMB_FIELDS = [
-  { name: "thigh",  x: 720, y: 260, size: 48 },
-  { name: "knee",   x: 720, y: 340, size: 48 },
-  { name: "leg",    x: 720, y: 420, size: 48 },
-  { name: "ankle",  x: 720, y: 500, size: 48 },
-  { name: "foot",   x: 720, y: 580, size: 48 }
+  { name: "thigh", label: "A" },
+  { name: "knee", label: "B" },
+  { name: "leg", label: "C" },
+  { name: "ankle", label: "D" },
+  { name: "foot", label: "E" },
+  { name: "leg", label: "F" },
+  { name: "ankle", label: "G" },
+  { name: "foot", label: "H" },
+  { name: "foot", label: "I" }
 ];
+
 
 
  const LE_ORTHOTICS_PRESCRIPTION_SCHEMA = {
