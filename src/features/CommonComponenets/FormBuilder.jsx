@@ -36,12 +36,12 @@ export default function CommonFormBuilder({
                 {schema?.enableLanguageToggle ? t(schema.title, language) : schema.title}
               </div>
               {schema.subtitle && (
-                <div style={styles.subtitle}>
-                  {schema?.enableLanguageToggle
-                    ? t(schema.subtitle, language)
-                    : schema.subtitle}
-                </div>
-              )}
+  <div style={styles.subtitle}>
+    {schema?.enableLanguageToggle
+      ? t(schema.subtitle, language)  // ✅ FIXED: uses schema.subtitle
+      : schema.subtitle}
+  </div>
+)}
 
             </div>
 
@@ -204,6 +204,7 @@ export default function CommonFormBuilder({
                                 {firstMatrixField.options.map(opt => (
                                   <div key={opt.value} style={styles.matrixHeaderCell}>
                                     {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
+
                                   </div>
                                 ))}
                               </div>
@@ -217,18 +218,18 @@ export default function CommonFormBuilder({
                           >
 
 
-                        {/* RADIO: labelAbove = label on one line, options on next line */}
-                        {field.type === "radio" && !field.inRow && field.labelAbove ? (
-                          <div style={{ marginBottom: 16 }}>
-                            {(field.label || field.info) && (
-                              <label style={styles.label}>
-                                {field.label}
-                                {field.info && <InfoTooltip info={field.info} />}
-                              </label>
-                            )}
-                            <div style={{ marginTop: 6 }}>
-                              {renderField(
-                                field,
+                            {/* RADIO stays special (side layout) */}
+{/* RADIO: labelAbove = label on one line, options on next line */}
+{field.type === "radio" && !field.inRow && field.labelAbove ? (
+  <div style={{ marginBottom: 16 }}>
+    {(field.label || field.info) && (
+      <label style={styles.label}>
+        {field.label}
+        {field.info && <InfoTooltip info={field.info} />}
+      </label>
+    )}
+    <div style={{ marginTop: 6 }}>
+      {renderField( field,
                                 value,
                                 values,
                                 onChange,
@@ -236,35 +237,34 @@ export default function CommonFormBuilder({
                                 assessmentRegistry,
                                 formReadOnly,
                                 {
-                                    enabled: schema?.enableLanguageToggle === true,
-                                    lang: language
-                                  }
-                              )}
-                            </div>
-                          </div>
-                        ) : field.type === "radio" && !field.inRow ? (
-                          <div style={styles.radioRow}>
-                            {(field.label || field.info) && (
-                              <div style={styles.radioLabel}>
-                                {field.label}
-                                {field.info && <InfoTooltip info={field.info} />}
-                              </div>
-                            )}
-                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
-                              {renderField(
-                                field,
+                                  enabled: schema?.enableLanguageToggle === true,
+                                  lang: language
+                                })}
+    </div>
+  </div>
+) : field.type === "radio" && !field.inRow ? (
+  <div style={styles.radioRow}>
+    {(field.label || field.info) && (
+      <div style={styles.radioLabel}>
+        {field.label}
+        {field.info && <InfoTooltip info={field.info} />}
+      </div>
+    )}
+    <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
+      {renderField( field,
                                 value,
                                 values,
                                 onChange,
                                 onAction,
                                 assessmentRegistry,
-                                formReadOnly
-                              )}
-                            </div>
-                          </div>
-
-                        
-                        ) : field.type === "subheading" ? (
+                                formReadOnly,
+                                {
+                                  enabled: schema?.enableLanguageToggle === true,
+                                  lang: language
+                                })}
+    </div>
+  </div>
+) : field.type === "subheading" ? (
 
                               renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
                             ) : field.type === "row" ? (
@@ -693,6 +693,8 @@ function RadioMatrixRow({ field, value, onChange }) {
         {field.info && <InfoTooltip info={field.info} />}
       </div>
 
+
+
       <div style={styles.matrixOptions}>
         {field.options.map(opt => (
           <label key={opt.value} style={styles.matrixCell}>
@@ -780,12 +782,71 @@ function renderField(
           ))}
         </div>
       );
-
+      case "enteral-feeding-table": {
+        const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
+        const updateRow = (idx, col, val) => {
+          const next = [...rows];
+          if (!next[idx]) next[idx] = { time: "", scoops: "", water: "", flushing: "" };
+          next[idx] = { ...next[idx], [col]: val };
+          onChange(`${field.name}_rows`, next);
+        };
+        const addRow = () => {
+          const last = rows.length > 0 ? rows[rows.length - 1] : { time: "", scoops: "", water: "", flushing: "" };
+          const newRow = { time: "", scoops: last.scoops || "", water: last.water || "", flushing: last.flushing || "" };
+          onChange(`${field.name}_rows`, [...rows, newRow]);
+        };
+        const removeRow = (idx) => onChange(`${field.name}_rows`, rows.filter((_, i) => i !== idx));
+        const template = "repeat(4, 1fr) 70px";
+        return (
+          <div style={{ marginTop: 10 }}>
+            {/* Header row */}
+            <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
+              <div style={styles.gridHeaderCell}>Time</div>
+              <div style={styles.gridHeaderCell}>Scoops</div>
+              <div style={styles.gridHeaderCell}>Water</div>
+              <div style={styles.gridHeaderCell}>Flushing</div>
+              <div style={styles.gridHeaderCell}></div>
+            </div>
+            {/* Data rows */}
+            {rows.map((row, idx) => (
+              <div key={idx} style={{ ...styles.gridRow, gridTemplateColumns: template }}>
+                <input
+                  type="time"
+                  value={row.time || ""}
+                  onChange={e => updateRow(idx, "time", e.target.value)}
+                  style={styles.gridInput}
+                />
+                <input
+                  type="text"
+                  value={row.scoops || ""}
+                  onChange={e => updateRow(idx, "scoops", e.target.value)}
+                  style={styles.gridInput}
+                />
+                <input
+                  type="text"
+                  value={row.water || ""}
+                  onChange={e => updateRow(idx, "water", e.target.value)}
+                  style={styles.gridInput}
+                />
+                <input
+                  type="text"
+                  value={row.flushing || ""}
+                  onChange={e => updateRow(idx, "flushing", e.target.value)}
+                  style={styles.gridInput}
+                />
+                <button type="button" onClick={() => removeRow(idx)} style={{ padding: "6px 8px", fontSize: 12, background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
+              </div>
+            ))}
+            <button type="button" onClick={addRow} style={{ marginTop: 8, padding: "6px 12px", background: "#2563eb", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>+ Add Row</button>
+          </div>
+        );
+      }
     case "grid-table-flat":
+      const colCount = field.headers.length;
       return (
         <div style={styles.tableWrap}>
           {/* Header row */}
-          <div style={styles.tableHeaderFlat}>
+          <div style={{ ...styles.tableHeaderFlat, gridTemplateColumns: `120px repeat(${colCount}, 1fr)` }}>
             <div></div>
             {field.headers.map(h => (
               <div key={h} style={styles.tableHeaderCell}>{h}</div>
@@ -794,7 +855,7 @@ function renderField(
 
           {/* Data rows */}
           {field.rows.map(row => (
-            <div key={row.key} style={styles.tableRowFlat}>
+            <div key={row.key} style={{ ...styles.tableRowFlat, gridTemplateColumns: `120px repeat(${colCount}, 1fr)` }}>
               <div style={styles.tableRowLabel}>{row.label}</div>
 
               {field.headers.map(h => (
@@ -812,74 +873,14 @@ function renderField(
         </div>
       );
 
-    case "enteral-feeding-table": {
-      const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
-      const updateRow = (idx, col, val) => {
-        const next = [...rows];
-        if (!next[idx]) next[idx] = { time: "", scoops: "", water: "", flushing: "" };
-        next[idx] = { ...next[idx], [col]: val };
-        onChange(`${field.name}_rows`, next);
-      };
-      const addRow = () => {
-        const last = rows.length > 0 ? rows[rows.length - 1] : { time: "", scoops: "", water: "", flushing: "" };
-        const newRow = { time: "", scoops: last.scoops || "", water: last.water || "", flushing: last.flushing || "" };
-        onChange(`${field.name}_rows`, [...rows, newRow]);
-      };
-      const removeRow = (idx) => onChange(`${field.name}_rows`, rows.filter((_, i) => i !== idx));
-      const template = "repeat(4, 1fr) 70px";
+    case "info-text":
       return (
-        <div style={{ marginTop: 10 }}>
-          {/* Header row */}
-          <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
-            <div style={styles.gridHeaderCell}>Time</div>
-            <div style={styles.gridHeaderCell}>Scoops</div>
-            <div style={styles.gridHeaderCell}>Water</div>
-            <div style={styles.gridHeaderCell}>Flushing</div>
-            <div style={styles.gridHeaderCell}></div>
-          </div>
-          {/* Data rows */}
-          {rows.map((row, idx) => (
-            <div key={idx} style={{ ...styles.gridRow, gridTemplateColumns: template }}>
-              <input
-                type="time"
-                value={row.time || ""}
-                onChange={e => updateRow(idx, "time", e.target.value)}
-                style={styles.gridInput}
-              />
-              <input
-                type="text"
-                value={row.scoops || ""}
-                onChange={e => updateRow(idx, "scoops", e.target.value)}
-                style={styles.gridInput}
-              />
-              <input
-                type="text"
-                value={row.water || ""}
-                onChange={e => updateRow(idx, "water", e.target.value)}
-                style={styles.gridInput}
-              />
-              <input
-                type="text"
-                value={row.flushing || ""}
-                onChange={e => updateRow(idx, "flushing", e.target.value)}
-                style={styles.gridInput}
-              />
-              <button type="button" onClick={() => removeRow(idx)} style={{ padding: "6px 8px", fontSize: 12, background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
-            </div>
-          ))}
-          <button type="button" onClick={addRow} style={{ marginTop: 8, padding: "6px 12px", background: "#2563eb", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>+ Add Row</button>
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+          {Array.isArray(field.text)
+            ? field.text.map((t, i) => <div key={i}>{t}</div>)
+            : field.text}
         </div>
       );
-    }
-
-case "info-text":
-  return (
-    <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
-      {Array.isArray(field.text)
-        ? field.text.map((t, i) => <div key={i}>{t}</div>)
-        : field.text}
-    </div>
-  );
 
 
     case "scale-table":
@@ -1050,6 +1051,8 @@ case "image-anatomy-selector":
       fields={field.markers}
        values={values}
   onChange={onChange}
+      width={field.width}
+      height={field.height}
     />
   );
 
@@ -1116,30 +1119,22 @@ case "image-anatomy-selector":
             // Check showIf visibility condition
             if (f.showIf) {
               const depVal = values[f.showIf.field];
-
               if ("equals" in f.showIf && depVal !== f.showIf.equals) {
                 return null;
               }
-
               if ("exists" in f.showIf && !depVal) {
                 return null;
               }
-
               if ("includes" in f.showIf) {
                 if (!Array.isArray(depVal) || !depVal.includes(f.showIf.includes)) {
                   return null;
                 }
               }
-
               if ("oneOf" in f.showIf) {
                 const allowedValues = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
                 if (!allowedValues.includes(depVal)) return null;
               }
-
-              if ("oneOf" in f.showIf) {
-                const allowedValues = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
-                if (!allowedValues.includes(depVal)) return null;
-              }
+              // Note: oneOf check appears twice (lines 1134-1137 and 1139-1142) - likely a duplicate
             }
 
             const v = values[f.name];
@@ -1283,16 +1278,6 @@ case "image-anatomy-selector":
                       </option>
                     );
                   })}
-                  {(col.options || []).map((opt, i) => {
-                    const val = typeof opt === "object" && opt !== null && "value" in opt ? opt.value : opt;
-                    const label = typeof opt === "object" && opt !== null && "label" in opt ? opt.label : opt;
-                    const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
-                    return (
-                      <option key={val ?? i} value={val}>
-                        {display}
-                      </option>
-                    );
-                  })}
                 </select>
               );
             }
@@ -1392,7 +1377,14 @@ case "image-anatomy-selector":
       );
 
 
-
+    case "radio-matrix":
+      return (
+        <RadioMatrixRow
+          field={field}
+          value={value}
+          onChange={onChange}
+        />
+      );
     case "textarea":
       return (
         <textarea
@@ -1434,14 +1426,6 @@ case "image-anatomy-selector":
           ))}
         </select>
       );
-    case "radio-matrix":
-      return (
-        <RadioMatrixRow
-          field={field}
-          value={value}
-          onChange={onChange}
-        />
-      );
 
 
       case "radio": {
@@ -1469,13 +1453,13 @@ case "image-anatomy-selector":
           </div>
         );
       }
-      case "attach-file":
-        return (
-          <div style={{ marginBottom: 0 }}>
-            <label style={styles.label}>
-              {field.title}
-              {field.required && <span style={{ color: "red" }}> *</span>}
-            </label>
+    case "attach-file":
+      return (
+        <div style={{ marginBottom: 0 }}>
+          <label style={styles.label}>
+            {field.title}
+            {field.required && <span style={{ color: "red" }}> *</span>}
+          </label>
 
           <div style={styles.inlineGroup}>
             {(!value || !field.hideInputAfterSelect) && (
@@ -1554,7 +1538,7 @@ case "image-anatomy-selector":
 
 
     case "checkbox-group":
-      const inline = field.inlineWithLabel;
+      const inline = field.position === "side";
 
       if (inline) {
         return (
@@ -1995,13 +1979,13 @@ case "image-anatomy-selector":
                             >
                               <option value="">Select</option>
                               {(col.options || []).map((o, i) => {
-                                const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
-                                const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
-                                const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
-                                return (
-                                  <option key={val ?? i} value={val}>{display}</option>
-                                );
-                              })}
+  const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
+  const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
+  const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+  return (
+    <option key={val ?? i} value={val}>{display}</option>
+  );
+})}
                             </select>
                           ) : (
                             <input

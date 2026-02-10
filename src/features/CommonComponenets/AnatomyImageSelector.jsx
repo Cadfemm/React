@@ -1,97 +1,57 @@
-import React, { useState } from "react";
+import React from "react";
 
-const INITIAL_FIELDS = [
-  { name: "thigh", x: 720, y: 260, size: 48 },
-  { name: "knee", x: 720, y: 340, size: 48 },
-  { name: "leg", x: 720, y: 420, size: 48 }
-];
+export default function AnatomyImageOverlayInputs({
+  image,
+  fields,
+  values,
+  onChange,
+  width,
+  height
+}) {
+  const labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-export default function AnatomySvgEditor({ image }) {
-  const [fields, setFields] = useState(INITIAL_FIELDS);
-  const [dragging, setDragging] = useState(null);
-
-  const onMouseDown = (e, name) => {
-    e.stopPropagation();
-    setDragging({
-      name,
-      offsetX: e.nativeEvent.offsetX,
-      offsetY: e.nativeEvent.offsetY
-    });
-  };
-
-  const onMouseMove = e => {
-    if (!dragging) return;
-
-    const svg = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - svg.left - dragging.offsetX;
-    const y = e.clientY - svg.top - dragging.offsetY;
-
-    setFields(f =>
-      f.map(item =>
-        item.name === dragging.name
-          ? { ...item, x: Math.round(x), y: Math.round(y) }
-          : item
-      )
-    );
-  };
-
-  const onMouseUp = () => setDragging(null);
-
-  const exportJSON = () => {
-    console.log("EXPORT THIS ⬇️");
-    console.log(JSON.stringify(fields, null, 2));
-    alert("Positions printed in console");
-  };
+  if (!fields || !Array.isArray(fields)) return null;
 
   return (
-    <>
-      <svg
-        viewBox="0 0 1000 1600"
-        width="100%"
-        style={{ border: "1px solid #ccc" }}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-      >
-        <image href={image} width="1000" height="1600" />
-
-        {fields.map(f => (
-          <g
-            key={f.name}
-            transform={`translate(${f.x}, ${f.y})`}
-            onMouseDown={e => onMouseDown(e, f.name)}
-            style={{ cursor: "move" }}
-          >
-            <rect
-              width={f.size}
-              height={f.size}
-              rx="8"
-              fill="transparent"
-              stroke="black"
-              strokeWidth="2"
-            />
-            <text
-              x="50%"
-              y="50%"
-              dominantBaseline="middle"
-              textAnchor="middle"
-              fontSize="10"
-            >
-              {f.name}
-            </text>
-          </g>
-        ))}
-      </svg>
-
-      <button
-        onClick={exportJSON}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {/* Display the image */}
+      <img
+        src={image}
+        alt="Anatomy"
         style={{
-          marginTop: 12,
-          padding: "6px 12px",
-          fontWeight: "bold"
+          width: width === 'small' ? '30%' : (width || '60%'),
+          maxWidth: (width === 'small' || width) ? undefined : 600,
+          height: height === 'small' ? '30%' : (height || 'auto'),
+          border: '1px solid #ccc',
+          borderRadius: 8,
+          marginBottom: 20
         }}
-      >
-        Export Positions
-      </button>
-    </>
+      />
+
+      {/* Row of small square inputs below the image, labeled A, B, etc., based on fields */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+        {fields.map((f, index) => (
+          <div key={f.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{ fontWeight: 'bold', marginBottom: 5 }}>
+              {f.label || labels[index] || f.name}
+            </label>
+            <input
+              type="text"
+              value={values[f.name] || ''}
+              onChange={(e) => onChange(f.name, e.target.value)}
+              style={{
+                width: 155,
+                height: 30,
+                border: '1px solid #ccc',
+                borderRadius: 4,
+                textAlign: 'center',
+                fontSize: 14
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
+
