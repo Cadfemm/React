@@ -18,7 +18,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
         fields: [
             {
                 name: "q1",
-                label: "1. Depressed Mood",
+                label: "1. Depressed Mood (sadness, hopeless, helpless, worthless)",
                 type: "single-select",
                 options: [
                     { label: "Absent", value: 0 },
@@ -54,7 +54,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q4",
-                label: "4. Insomnia – Early",
+                label: "4. Insomnia: Early in the Night",
                 type: "single-select",
                 options: [
                     { label: "No difficulty", value: 0 },
@@ -64,7 +64,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q5",
-                label: "5. Insomnia – Middle",
+                label: "5. Insomnia: Middle of the Night",
                 type: "single-select",
                 options: [
                     { label: "No difficulty", value: 0 },
@@ -74,7 +74,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q6",
-                label: "6. Insomnia – Early Morning",
+                label: "6. Insomnia: Early Hours of the Morning",
                 type: "single-select",
                 options: [
                     { label: "No difficulty", value: 0 },
@@ -96,7 +96,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q8",
-                label: "8. Retardation",
+                label: "8. Retardation (slowness of thought and speech, impaired ability to concentrate, decreased motor activity)",
                 type: "single-select",
                 options: [
                     { label: "Normal", value: 0 },
@@ -132,7 +132,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q11",
-                label: "11. Anxiety – Somatic",
+                label: "11. Anxiety Somatic (physiological concomitants of anxiety) such as: gastro-intestinal – dry mouth, wind, indigestion, diarrhea, cramps, belching; cardio-vascular – palpitations, headaches; respiratory – hyperventilation, sighing; urinary frequency; sweating",
                 type: "single-select",
                 options: [
                     { label: "Absent", value: 0 },
@@ -144,7 +144,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q12",
-                label: "12. Somatic Symptoms – GI",
+                label: "12. Somatic Symptoms Gastro-Intestinal",
                 type: "single-select",
                 options: [
                     { label: "None", value: 0 },
@@ -164,7 +164,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
             },
             {
                 name: "q14",
-                label: "14. Genital Symptoms",
+                label: "14. Genital Symptoms (symptoms such as loss of libido, menstrual disturbances)",
                 type: "single-select",
                 options: [
                     { label: "Absent", value: 0 },
@@ -185,13 +185,36 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
                 ]
             },
             {
-                name: "q16",
-                label: "16. Loss of Weight",
-                type: "single-select",
+                name: "loss_of_weight_method",
+                label: "16. Loss of Weight (Rate Either a or b)",
+                type: "radio",
                 options: [
-                    { label: "No weight loss", value: 0 },
-                    { label: "Probable weight loss", value: 1 },
-                    { label: "Definite weight loss", value: 2 }
+                    { label: "a) According to the patient", value: "a" },
+                    { label: "b) According to weekly measurements", value: "b" }
+                ]
+            },
+            {
+                name: "q16_a",
+                label: "a) According to the patient:",
+                type: "single-select",
+                showIf: { field: "loss_of_weight_method", equals: "a" },
+                options: [
+                    { label: "No weight loss.", value: 0 },
+                    { label: "Probable weight loss associated with present illness.", value: 1 },
+                    { label: "Definite (according to patient) weight loss.", value: 2 },
+                    { label: "Not assessed.", value: 3 }
+                ]
+            },
+            {
+                name: "q16_b",
+                label: "b) According to weekly measurements:",
+                type: "single-select",
+                showIf: { field: "loss_of_weight_method", equals: "b" },
+                options: [
+                    { label: "Less than 1lb weight loss in a week.", value: 0 },
+                    { label: "Greater than 1lb weight loss in a week.", value: 1 },
+                    { label: "Greater than 2lb weight loss in a week.", value: 2 },
+                    { label: "Not assessed.", value: 3 }
                 ]
             },
             {
@@ -210,10 +233,15 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
     /* ---------------- SCORE ---------------- */
 
     const totalScore = useMemo(() => {
-        return Object.values(values).reduce(
-            (sum, v) => sum + (v !== undefined ? Number(v) : 0),
+        const scoreKeys = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13", "q14", "q15", "q17"];
+        let sum = scoreKeys.reduce(
+            (s, k) => s + (values[k] !== undefined ? Number(values[k]) : 0),
             0
         );
+        const method = values.loss_of_weight_method;
+        const q16Val = method === "a" ? values.q16_a : method === "b" ? values.q16_b : undefined;
+        sum += q16Val !== undefined ? Number(q16Val) : 0;
+        return sum;
     }, [values]);
     const storageKey = patient
         ? `psychology_hamd_draft_${patient.name}`
@@ -239,7 +267,11 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
     const severity = getSeverity(totalScore);
 
     const onChange = (name, value) => {
-        setValues(v => ({ ...v, [name]: Number(value) }));
+        if (name === "loss_of_weight_method") {
+            setValues(v => ({ ...v, [name]: value }));
+        } else {
+            setValues(v => ({ ...v, [name]: Number(value) }));
+        }
     };
 
     const handleSubmit = () => {
@@ -328,7 +360,7 @@ export default function HAMDFormBuilder({ patient, onSubmit, onBack }) {
                         </div>
 
                         <div style={severityPill}>
-                            ANXIETY SEVERITY : {severity}
+                            Depression Severity: {severity}
                         </div>
                     </div>
 

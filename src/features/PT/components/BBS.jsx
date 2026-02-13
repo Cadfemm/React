@@ -23,6 +23,16 @@ const BBS_SCHEMA = {
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
+            title: "BBS Scale",
+            content: [
+              "4 – Independent / No assistance needed",
+              "3 – Independent with supervision",
+              "2 – Minimal assistance",
+              "1 – Moderate assistance",
+              "0 – Maximal assistance / Unable"
+            ]
+          },
+          rowInfo: {
             title: "Scoring – Sitting to Standing",
             content: [
               "4 – Able to stand without using hands independently",
@@ -31,7 +41,8 @@ const BBS_SCHEMA = {
               "1 – Needs assistance to stand or stabilize",
               "0 – Needs moderate or maximal assistance"
             ]
-          }
+          },
+          showInfoInRow: true
         },
         {
           name: "bbs_2",

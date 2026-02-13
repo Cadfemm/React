@@ -8,6 +8,7 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
 
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   /* ================= STORAGE KEY ================= */
   const storageKey = patient?.id
@@ -15,48 +16,68 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
     : null;
 
   /* ================= SCHEMA ================= */
-  const DASS_SCHEMA = {
-    title: "Depression Anxiety Stress Scale (DASS-21)",
-    // actions: [
-    //   { type: "back", label: "Back" },
-    //   { type: "clear", label: "Clear" },
-    //   { type: "print", label: "Print" },
-    //   { type: "save", label: "Save" }
-    // ],
-    fields: [
-      { name: "q1", label: "1. I found it hard to wind down." },
-      { name: "q2", label: "2. I was aware of dryness of my mouth." },
-      { name: "q3", label: "3. I couldn't seem to experience any positive feeling at all." },
-      { name: "q4", label: "4. I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)." },
-      { name: "q5", label: "5. I found it difficult to work up the initiative to do things." },
-      { name: "q6", label: "6. I tended to over-react to situations." },
-      { name: "q7", label: "7. I experienced trembling." },
-      { name: "q8", label: "8. I felt that I was using a lot of nervous energy." },
-      { name: "q9", label: "9. I was worried about situations in which I might panic and make a fool of myself." },
-      { name: "q10", label: "10. I felt that I had nothing to look forward to." },
-      { name: "q11", label: "11. I found myself getting agitated." },
-      { name: "q12", label: "12. I found it difficult to relax." },
-      { name: "q13", label: "13. I felt down-hearted and blue." },
-      { name: "q14", label: "14. I was intolerant of anything that kept me from getting on with what I was doing." },
-      { name: "q15", label: "15. I felt I was close to panic." },
-      { name: "q16", label: "16. I was unable to become enthusiastic." },
-      { name: "q17", label: "17. I felt I wasn't worth much as a person." },
-      { name: "q18", label: "18. I felt that I was rather touchy." },
-      { name: "q19", label: "19. I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat)." },
-      { name: "q20", label: "20. I felt scared without any good reason." },
-      { name: "q21", label: "21. I felt that life was meaningless." }
-    ].map(f => ({
-      ...f,
-      type: "single-select",
-      validation: { required: true, message: "This question is required" },
-      options: [
-        { label: "Did not apply to me at all (0)", value: 0 },
-        { label: "Applied some of the time (1)", value: 1 },
-        { label: "Applied a good part of time (2)", value: 2 },
-        { label: "Applied most of the time (3)", value: 3 }
+  const DASS_SCHEMA = useMemo(() => {
+    const optionsWithScores = [
+      { label: "Did not apply to me at all (0)", value: 0 },
+      { label: "Applied to me some of the time (1)", value: 1 },
+      { label: "Applied to me a good part of the time (2)", value: 2 },
+      { label: "Applied to me most of the time (3)", value: 3 }
+    ];
+    const optionsWithoutScores = [
+      { label: "Did not apply to me at all", value: 0 },
+      { label: "Applied to me some of the time", value: 1 },
+      { label: "Applied to me a good part of the time", value: 2 },
+      { label: "Applied to me most of the time", value: 3 }
+    ];
+
+    return {
+      title: "Depression Anxiety Stress Scale (DASS-21)",
+      enableScoreToggle: true,
+      actions: [{ type: "toggle-show-scores" }],
+      sections: [
+        {
+          fields: [
+        { name: "q1", label: "1. I found it hard to wind down." },
+        { name: "q2", label: "2. I was aware of dryness of my mouth." },
+        { name: "q3", label: "3. I couldn't seem to experience any positive feeling at all." },
+        { name: "q4", label: "4. I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)." },
+        { name: "q5", label: "5. I found it difficult to work up the initiative to do things." },
+        { name: "q6", label: "6. I tended to over-react to situations." },
+        { name: "q7", label: "7. I experienced trembling (e.g. in the hands)." },
+        { name: "q8", label: "8. I felt that I was using a lot of nervous energy." },
+        { name: "q9", label: "9. I was worried about situations in which I might panic and make a fool of myself." },
+        { name: "q10", label: "10. I felt that I had nothing to look forward to." },
+        { name: "q11", label: "11. I found myself getting agitated." },
+        { name: "q12", label: "12. I found it difficult to relax." },
+        { name: "q13", label: "13. I felt down-hearted and blue." },
+        { name: "q14", label: "14. I was intolerant of anything that kept me from getting on with what I was doing." },
+        { name: "q15", label: "15. I felt I was close to panic." },
+        { name: "q16", label: "16. I was unable to become enthusiastic about anything." },
+        { name: "q17", label: "17. I felt I wasn't worth much as a person." },
+        { name: "q18", label: "18. I felt that I was rather touchy." },
+        { name: "q19", label: "19. I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat)." },
+        { name: "q20", label: "20. I felt scared without any good reason." },
+        { name: "q21", label: "21. I felt that life was meaningless." }
+      ].map((f, i) => ({
+        ...f,
+        type: "radio-matrix",
+        validation: { required: true, message: "This question is required" },
+        info: i === 0 && scoresVisible ? {
+          title: "DASS-21 Scale",
+          content: [
+            "0 – Did not apply to me at all",
+            "1 – Applied to me some of the time",
+            "2 – Applied to me a good part of the time",
+            "3 – Applied to me most of the time"
+          ]
+        } : undefined,
+        showInfoInRow: false,
+        options: scoresVisible ? optionsWithScores : optionsWithoutScores
+      }))
+        }
       ]
-    }))
-  };
+    };
+  }, [scoresVisible]);
 
   /* ================= AUTO REFILL ================= */
   useEffect(() => {
@@ -94,11 +115,15 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
   };
 
   const allRequiredFilled = () =>
-    DASS_SCHEMA.fields.every(f => values[f.name] !== undefined);
+    DASS_SCHEMA.sections[0].fields.every(f => values[f.name] !== undefined);
 
   /* ================= ACTIONS ================= */
   const handleAction = (type) => {
     switch (type) {
+      case "toggle-show-scores":
+        setScoresVisible(v => !v);
+        break;
+
       case "back":
         onBack?.();
         break;
@@ -158,9 +183,11 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
         values={values}
         onChange={onChange}
         layout="nested"
-        submitted={submitted} 
+        submitted={submitted}
         onAction={handleAction}
+        showScores={scoresVisible}
       >
+        {scoresVisible && (
         <div style={scoreRow}>
           {["depression", "anxiety", "stress"].map((type) => (
             <div key={type} style={scoreBox}>
@@ -169,7 +196,7 @@ export default function DASSFormBuilder({ patient, onSubmit, onBack, layout }) {
             </div>
           ))}
         </div>
-
+        )}
 
         <div style={submitRow}>
           <button

@@ -60,7 +60,7 @@ export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }
     setSubmitted(true);
     const payload = {
       patientId: patient?.id,
-      scale: "Numeric Pain Rating Scale",
+      scale: "Numeric Rating Scale (NRS) 0-10",
       values,
       submittedAt: new Date().toISOString()
     };
@@ -86,10 +86,9 @@ export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }
   );
 
   const SCHEMA = {
-    title: "Numeric Pain Rating Scale",
+    title: "Numeric Rating Scale (NRS) 0-10",
     sections: [
       {
-        title: "Pain ratings (0–10)",
         fields: [
           { name: "current_pain", label: "Current pain", type: "input", placeholder: "0–10" },
           { name: "best_pain", label: "Best pain (past 24 hours)", type: "input", placeholder: "0–10" },
@@ -113,7 +112,7 @@ export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }
         {/* Visual scale 0–10 with severity labels */}
         <div style={{ marginTop: 24, padding: "0 16px", marginBottom: 24 }}>
           <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 12, color: "#0F172A" }}>
-            Numeric Pain Rating Scale
+            Numeric Rating Scale (NRS) 0-10
           </div>
           <div style={{ position: "relative", paddingTop: 8, paddingBottom: 36 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>

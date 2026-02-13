@@ -4,47 +4,65 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
     const [values, setValues] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [scoresVisible, setScoresVisible] = useState(true);
 
     /* ---------------- STORAGE KEY ---------------- */
-    const storageKey = patient
-        ? `psychology_gad7_draft_${patient.name}`
+    const storageKey = patient?.id
+        ? `psychology::${patient.id}::GAD7`
         : null;
 
     /* ---------------- SCHEMA ---------------- */
-    const GAD7_SCHEMA = {
-        title: "Generalized Anxiety Disorder (GAD-7)",
-        // actions: [
-        //     { type: "back", label: "Back" },
-        //     { type: "clear", label: "Clear" },
-        //     { type: "print", label: "Print" },
-        //     { type: "save", label: "Save" }
-        // ],
-        sections: [
-            {
-                fields: [
-                    "Feeling nervous, anxious, or on edge.",
-                    "Not being able to stop or control worrying.",
-                    "Worrying too much about different things.",
-                    "Trouble relaxing.",
-                    "Being so restless that it is hard to sit still.",
-                    "Becoming easily annoyed or irritable.",
-                    "Feeling afraid, as if something awful might happen."
-                ].map((text, index) => ({
-                    name: `q${index + 1}`,
-                    label: `${index + 1}. ${text}`,
-                    type: "radio-matrix",
-                    options: [
-                        { label: "Not at all (0)", value: 0 },
-                        { label: "Several days (1)", value: 1 },
-                        { label: "More than half the days (2)", value: 2 },
-                        { label: "Nearly every day (3)", value: 3 }
-                    ]
-                }))
-            }
-        ]
-    };
+    const GAD7_SCHEMA = useMemo(() => {
+        const optionsWithScores = [
+            { label: "Not at all (0)", value: 0 },
+            { label: "Several days (1)", value: 1 },
+            { label: "More than half the days (2)", value: 2 },
+            { label: "Nearly every day (3)", value: 3 }
+        ];
+        const optionsWithoutScores = [
+            { label: "Not at all", value: 0 },
+            { label: "Several days", value: 1 },
+            { label: "More than half the days", value: 2 },
+            { label: "Nearly every day", value: 3 }
+        ];
 
-    /* ---------------- LOAD DRAFT ---------------- */
+        return {
+            title: "Generalized Anxiety Disorder (GAD-7)",
+            enableScoreToggle: true,
+            actions: [{ type: "toggle-show-scores" }],
+            sections: [
+                {
+                    fields: [
+                        "Feeling nervous, anxious, or on edge.",
+                        "Not being able to stop or control worrying.",
+                        "Worrying too much about different things.",
+                        "Trouble relaxing.",
+                        "Being so restless that it is hard to sit still.",
+                        "Becoming easily annoyed or irritable.",
+                        "Feeling afraid, as if something awful might happen."
+                    ].map((text, index) => ({
+                        name: `q${index + 1}`,
+                        label: `${index + 1}. ${text}`,
+                        type: "radio-matrix",
+                        validation: { required: true, message: "This question is required" },
+                        info: index === 0 && scoresVisible ? {
+                            title: "GAD-7 Scale",
+                            content: [
+                                "0 – Not at all",
+                                "1 – Several days",
+                                "2 – More than half the days",
+                                "3 – Nearly every day"
+                            ]
+                        } : undefined,
+                        showInfoInRow: false,
+                        options: scoresVisible ? optionsWithScores : optionsWithoutScores
+                    }))
+                }
+            ]
+        };
+    }, [scoresVisible]);
+
+    /* ---------------- AUTO REFILL ---------------- */
     useEffect(() => {
         if (!storageKey) return;
 
@@ -56,10 +74,14 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
         }
     }, [storageKey]);
 
-    /* ---------------- CHANGE ---------------- */
+    /* ---------------- HANDLERS ---------------- */
     const onChange = (name, value) => {
         setValues(v => ({ ...v, [name]: Number(value) }));
     };
+
+    const allRequiredFilled = useMemo(() => {
+        return GAD7_SCHEMA.sections[0].fields.every(f => values[f.name] !== undefined);
+    }, [values]);
 
     /* ---------------- SCORE ---------------- */
     const totalScore = useMemo(
@@ -81,6 +103,10 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
     /* ---------------- ACTION HANDLER ---------------- */
     const handleAction = (type) => {
         switch (type) {
+            case "toggle-show-scores":
+                setScoresVisible(v => !v);
+                break;
+
             case "back":
                 onBack?.();
                 break;
@@ -118,13 +144,27 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
     const handleSubmit = () => {
         setSubmitted(true);
 
-        const result = { totalScore, severity };
+        if (!allRequiredFilled) {
+            alert("Please answer all required questions");
+            return;
+        }
 
-        onSubmit?.(result);
+        const payload = {
+            patientId: patient?.id,
+            scale: "GAD-7",
+            values,
+            totalScore,
+            severity,
+            submittedAt: new Date().toISOString()
+        };
 
-        alert(
-            `GAD-7 Submitted\n\nScore: ${totalScore}\nSeverity: ${severity}`
-        );
+        if (storageKey) {
+            localStorage.setItem(storageKey, JSON.stringify({ values }));
+        }
+        console.log("GAD-7 Submitted:", payload);
+        alert("GAD-7 submitted successfully");
+
+        onSubmit?.(payload);
     };
 
     /* ---------------- UI ---------------- */
@@ -137,8 +177,10 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
                 layout="nested"
                 submitted={submitted}
                 onAction={handleAction}
+                showScores={scoresVisible}
             >
                 {/* -------- SUMMARY -------- */}
+                {scoresVisible && (
                 <div style={summaryWrap}>
                     <div style={scoreRow}>
                         <div style={scorePill}>
@@ -149,13 +191,20 @@ export default function GAD7FormBuilder({ patient, onSubmit, onBack }) {
                             Anxiety Severity: {severity}
                         </div>
                     </div>
+                </div>
+                )}
 
                     <div style={submitRow}>
-                        <button style={submitBtn} onClick={handleSubmit}>
+                        <button
+                            style={{
+                                ...submitBtn,
+                            }}
+                            disabled={!allRequiredFilled}
+                            onClick={handleSubmit}
+                        >
                             Submit
                         </button>
                     </div>
-                </div>
             </CommonFormBuilder>
         </div>
     );

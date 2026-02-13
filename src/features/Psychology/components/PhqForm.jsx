@@ -4,45 +4,67 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   /* ---------------- STORAGE KEY ---------------- */
-  const storageKey = patient
-    ? `psychology_phq9_draft_${patient.name}`
+  const storageKey = patient?.id
+    ? `psychology::${patient.id}::PHQ9`
     : null;
 
   /* ---------------- SCHEMA ---------------- */
-  const PHQ9_SCHEMA = {
-    title: "Patient Health Questionnaire (PHQ-9)",
-    // actions: [
-    //   { type: "back", label: "Back" },
-    //   { type: "clear", label: "Clear" },
-    //   { type: "print", label: "Print" },
-    //   { type: "save", label: "Save" }
-    // ],
-    fields: [
-      "Little interest or pleasure in doing things.",
-      "Feeling down, depressed, or hopeless.",
-      "Trouble falling or staying asleep, or sleeping too much.",
-      "Feeling tired or having little energy.",
-      "Poor appetite or overeating.",
-      "Feeling bad about yourself — or that you are a failure or have let yourself or your family down.",
-      "Trouble concentrating on things, such as reading the newspaper or watching television.",
-      "Moving or speaking so slowly that other people could have noticed? Or being so fidgety or restless that you have been moving more than usual.",
-      "Thoughts that you would be better off dead or of hurting yourself in some way."
-    ].map((text, index) => ({
-      name: `q${index + 1}`,
-      label: `${index + 1}. ${text}`,
-      type: "single-select",
-      options: [
-        { label: "Not at all (0)", value: 0 },
-        { label: "Several days (1)", value: 1 },
-        { label: "More than half the days (2)", value: 2 },
-        { label: "Nearly every day (3)", value: 3 }
-      ]
-    }))
-  };
+  const PHQ9_SCHEMA = useMemo(() => {
+    const optionsWithScores = [
+      { label: "Not at all (0)", value: 0 },
+      { label: "Several days (1)", value: 1 },
+      { label: "More than half the days (2)", value: 2 },
+      { label: "Nearly every day (3)", value: 3 }
+    ];
+    const optionsWithoutScores = [
+      { label: "Not at all", value: 0 },
+      { label: "Several days", value: 1 },
+      { label: "More than half the days", value: 2 },
+      { label: "Nearly every day", value: 3 }
+    ];
 
-  /* ---------------- LOAD SAVED DRAFT ---------------- */
+    return {
+      title: "Patient Health Questionnaire (PHQ-9)",
+      enableScoreToggle: true,
+      actions: [{ type: "toggle-show-scores" }],
+      sections: [
+        {
+          fields: [
+            "Little interest or pleasure in doing things.",
+            "Feeling down, depressed, or hopeless.",
+            "Trouble falling or staying asleep, or sleeping too much.",
+            "Feeling tired or having little energy.",
+            "Poor appetite or overeating.",
+            "Feeling bad about yourself — or that you are a failure or have let yourself or your family down.",
+            "Trouble concentrating on things, such as reading the newspaper or watching television.",
+            "Moving or speaking so slowly that other people could have noticed? Or being so fidgety or restless that you have been moving more than usual.",
+            "Thoughts that you would be better off dead or of hurting yourself in some way."
+          ].map((text, index) => ({
+            name: `q${index + 1}`,
+            label: `${index + 1}. ${text}`,
+            type: "radio-matrix",
+            validation: { required: true, message: "This question is required" },
+            info: index === 0 && scoresVisible ? {
+              title: "PHQ-9 Scale",
+              content: [
+                "0 – Not at all",
+                "1 – Several days",
+                "2 – More than half the days",
+                "3 – Nearly every day"
+              ]
+            } : undefined,
+            showInfoInRow: false,
+            options: scoresVisible ? optionsWithScores : optionsWithoutScores
+          }))
+        }
+      ]
+    };
+  }, [scoresVisible]);
+
+  /* ---------------- AUTO REFILL ---------------- */
   useEffect(() => {
     if (!storageKey) return;
 
@@ -54,10 +76,14 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
     }
   }, [storageKey]);
 
-  /* ---------------- CHANGE ---------------- */
+  /* ---------------- HANDLERS ---------------- */
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: Number(value) }));
   };
+
+  const allRequiredFilled = useMemo(() => {
+    return PHQ9_SCHEMA.sections[0].fields.every(f => values[f.name] !== undefined);
+  }, [values]);
 
   /* ---------------- SCORE ---------------- */
   const totalScore = useMemo(() => {
@@ -78,6 +104,10 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
   /* ---------------- ACTION HANDLER ---------------- */
   const handleAction = (type) => {
     switch (type) {
+      case "toggle-show-scores":
+        setScoresVisible(v => !v);
+        break;
+
       case "back":
         onBack?.();
         break;
@@ -115,12 +145,27 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
   const handleSubmit = () => {
     setSubmitted(true);
 
-    const result = { totalScore, severity };
-    onSubmit?.(result);
+    if (!allRequiredFilled) {
+      alert("Please answer all required questions");
+      return;
+    }
 
-    alert(
-      `PHQ-9 Submitted\n\nScore: ${totalScore}\nSeverity: ${severity}`
-    );
+    const payload = {
+      patientId: patient?.id,
+      scale: "PHQ-9",
+      values,
+      totalScore,
+      severity,
+      submittedAt: new Date().toISOString()
+    };
+
+    if (storageKey) {
+      localStorage.setItem(storageKey, JSON.stringify({ values }));
+    }
+    console.log("PHQ-9 Submitted:", payload);
+    alert("PHQ-9 submitted successfully");
+
+    onSubmit?.(payload);
   };
 
   /* ---------------- UI ---------------- */
@@ -133,8 +178,10 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
+        showScores={scoresVisible}
       >
         {/* ---------- SUMMARY ---------- */}
+        {scoresVisible && (
          <div style={summaryWrap}>
   {/* Row 1: Score + Severity */}
   <div style={scoreRow}>
@@ -143,17 +190,24 @@ export default function PHQ9FormBuilder({ patient, onSubmit, onBack }) {
     </div>
 
     <div style={severityPill}>
-      Anxiety Severity: {severity}
+      Depression Severity: {severity}
     </div>
   </div>
+</div>
+        )}
 
   {/* Row 2: Submit button */}
   <div style={submitRow}>
-    <button style={submitBtn} onClick={handleSubmit}>
+    <button
+      style={{
+        ...submitBtn,
+      }}
+      disabled={!allRequiredFilled}
+      onClick={handleSubmit}
+    >
       Submit
     </button>
   </div>
-</div>
       </CommonFormBuilder>
     </div>
   );
