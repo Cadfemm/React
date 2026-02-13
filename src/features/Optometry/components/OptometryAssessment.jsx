@@ -1742,7 +1742,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
           {
             type: "input",
             name: "clinical_impression",
-            label: "Clinical Findings"
+            label: "Clinical Impression"
           },
           {
             type: "radio",

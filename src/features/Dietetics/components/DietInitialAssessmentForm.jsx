@@ -45,17 +45,18 @@ diet_afternoon_tea: "",
 diet_supper: "",
 diet_dinner: "",
 feeding_type: "",
-    enteral_feeding_details: "",
+enteral_feeding_details: "",
     enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
-    mixed_feeding_details: "",
+mixed_feeding_details: "",
     mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
     iddsi_level: "",
 fluid_intake_details: "",
     ffq: "",
-    ons_regime: "",
+ons_regime: "",
     weight_record_date: "",
     wheelchair_weight: patient.wheelchair_weight || "30",
-    wheelchair_type: patient.wheelchair_type || "light",
+    wheelchair_type: patient.wheelchair_type || "",
+    wheelchair_size: patient.wheelchair_size || "",
     diet_assessment_data: {},
     diet_prognosis: "",
     diet_intervention: [],
@@ -490,7 +491,8 @@ const submitAndSave = () => {
           enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", fluid_intake_details: "",
           ons_regime: "", weight_record_date: "",
           wheelchair_weight: patient?.wheelchair_weight || "30",
-          wheelchair_type: patient?.wheelchair_type || "light",
+          wheelchair_type: patient?.wheelchair_type || "",
+          wheelchair_size: patient?.wheelchair_size || "",
           diet_assessment_data: {},
           diet_prognosis: "",
           diet_intervention: [],
@@ -530,7 +532,7 @@ const submitAndSave = () => {
       }
       submitAndSave();
     }
-  };
+};
 
   // clinician + notes + actions
   var [clinician, setClinician] = useState("");
@@ -574,9 +576,9 @@ const submitAndSave = () => {
 
   const DIET_SUBJECTIVE_SCHEMA = {
     actions: DIET_ACTIONS,
-    sections: [
-      {
-        fields: [
+            sections: [
+              {
+                fields: [
           { type: "subheading", label: "Nutrition Assessment" },
           { name: "chief_complaint", label: "Chief Complaint", type: "textarea" },
           { name: "medical_history", label: "History of Presenting Illness (HPI)", type: "textarea" },
@@ -617,8 +619,8 @@ const submitAndSave = () => {
             { name: "diet_morning_tea", label: "Morning Tea", type: "textarea" },
             { name: "diet_lunch", label: "Lunch", type: "textarea" },
             { name: "diet_afternoon_tea", label: "Afternoon Tea", type: "textarea" },
-            { name: "diet_supper", label: "Supper", type: "textarea" },
-            { name: "diet_dinner", label: "Dinner", type: "textarea" }
+            { name: "diet_supper", label: "Dinner", type: "textarea" },
+            { name: "diet_dinner", label: "Supper", type: "textarea" }
           ], showIf: { field: "feeding_type", equals: "oral" }},
           { name: "enteral_feeding_table", label: "Enteral Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "enteral" } },
           { name: "enteral_feeding_details", label: "Enteral Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "enteral" } },
@@ -635,13 +637,13 @@ const submitAndSave = () => {
 
   const DIET_OBJECTIVE_SCHEMA = {
     actions: DIET_ACTIONS,
-    sections: [
-      {
-        fields: [
-          {
+        sections: [
+        {
+          fields: [
+            {
             name: "diet_assessments",
             type: "assessment-launcher",
-            options: [
+              options: [
               { label: "NRS", value: "NRS" },
               { label: "Growth Chart", value: "Growth Chart" },
               { label: "PG-SGA", value: "PG-SGA-Metric-version" },
@@ -661,8 +663,25 @@ const submitAndSave = () => {
           { name: "previous_weight", label: "Previous Weight (kg)", type: "input", showIf: { field: "weight_change", equals: "Yes" } },
           { type: "row", fields: [
             { name: "wheelchair_weight", label: "Wheelchair Weight", type: "input" },
-            { name: "wheelchair_type", label: "Wheelchair Type", type: "single-select", options: [{ label: "Heavy", value: "heavy" }, { label: "Light", value: "light" }, { label: "Overloaded", value: "overloaded" }] }
+            { name: "wheelchair_type", label: "Wheelchair Type", type: "single-select", options: [
+              { label: "Detachable Adult Wheelchair", value: "detachable_adult" },
+              { label: "LightWeight Adult Wheelchair", value: "lightweight_adult" },
+              { label: "Reclining Wheelchair", value: "reclining" },
+              { label: "Heavy Duty Extra Wide Manual Wheelchair", value: "heavy_duty_extra_wide" }
+            ]}
           ]},
+          { name: "wheelchair_size", label: "Wheelchair Size", type: "radio", options: [
+            { label: "16\"", value: "16" },
+            { label: "18\"", value: "18" },
+            { label: "20\"", value: "20" },
+            { label: "22\"", value: "22" }
+          ], showIf: { field: "wheelchair_type", oneOf: ["detachable_adult", "lightweight_adult", "reclining"] }},
+          { name: "wheelchair_size", label: "Wheelchair Size", type: "radio", options: [
+            { label: "20\"", value: "20" },
+            { label: "22\"", value: "22" },
+            { label: "24\"", value: "24" },
+            { label: "26\"", value: "26" }
+          ], showIf: { field: "wheelchair_type", equals: "heavy_duty_extra_wide" }},
           { name: "anthro_remarks", label: "Remarks", type: "textarea" },
           { type: "subheading", label: "Vital Signs & Measurements" },
           { type: "row", fields: [
@@ -687,7 +706,7 @@ const submitAndSave = () => {
 
   const DIET_ASSESSMENT_SCHEMA = {
     actions: DIET_ACTIONS,
-    sections: [{ fields: [{ type: "subheading", label: "Nutrition Diagnosis" }] }]
+    sections: [{ fields: [{ type: "subheading", label: "Clinical Impression" }] }]
   };
 
   const DIET_MEAL_PLAN_OPTIONS = [
@@ -706,10 +725,10 @@ const submitAndSave = () => {
 
   const DIET_PLAN_SCHEMA = {
     actions: DIET_ACTIONS,
-    sections: [
-      {
-        fields: [
-          {
+      sections: [
+        {
+          fields: [
+            {
             name: "diet_intervention",
             label: "Intervention",
             type: "checkbox-group",
@@ -728,7 +747,7 @@ const submitAndSave = () => {
           { name: "diet_intervention_order_consult", label: "Order Nutrition consult – Details", type: "input", showIf: { field: "diet_intervention", includes: "order_consult" } },
           { name: "diet_intervention_supplements_enteral", label: "Start supplements/considering enteral – Details", type: "input", showIf: { field: "diet_intervention", includes: "supplements_enteral" } },
           { name: "diet_intervention_others", label: "Others – Details", type: "input", showIf: { field: "diet_intervention", includes: "others" } },
-          { type: "subheading", label: "Meal-plan modifications" },
+          { type: "subheading", label: "Diet Type" },
           { name: "meal_plan_mod_feeding_type", label: "Feeding Type", type: "radio", options: [{ label: "Oral Feeding", value: "oral" }, { label: "Enteral Feeding", value: "enteral" }, { label: "Mixed Feeding", value: "mixed" }] },
           { name: "meal_plan_mod_oral", label: "Meal Plan", type: "multi-select-dropdown", options: DIET_MEAL_PLAN_OPTIONS, showIf: { field: "meal_plan_mod_feeding_type", equals: "oral" } },
           { name: "meal_plan_mod_oral_others", label: "Others – Please specify", type: "input", showIf: { field: "meal_plan_mod_oral", includes: "Others" } },
@@ -793,13 +812,13 @@ const submitAndSave = () => {
     weight_record_date: weightRecordDate,
     medications: patient.medications ? patient.medications.join(", ") : "Dolo 650, Aspirin",
     iddsi_level: patient.iddsi_level || form.iddsi_level || "",
-    bp: vitals.bp,
-    pulse: vitals.pulse,
-    rr: vitals.rr,
-    temp: vitals.temp,
-    spo2: vitals.spo2,
-    rbs: vitals.rbs,
-    pain: vitals.pain
+      bp: vitals.bp,
+      pulse: vitals.pulse,
+      rr: vitals.rr,
+      temp: vitals.temp,
+      spo2: vitals.spo2,
+      rbs: vitals.rbs,
+      pain: vitals.pain
   };
 
   const dietOnChange = (name, value) => {
@@ -815,15 +834,14 @@ const submitAndSave = () => {
         <CommonFormBuilder
           schema={{ title: "Patient Information", sections: [] }}
           values={{}}
-          onChange={() => {}}
-        >
+    onChange={() => {}}
+  >
           <div style={dietSection}>
             <div style={dietPatientGrid}>
               <div><b>Name:</b> {patient.name || "-"}</div>
               <div><b>IC/MRN:</b> {patient.id || patient.mrn || patient.ic || "-"}</div>
               <div><b>Age/Gender:</b> {patient.age != null ? patient.age : "-"} / {patient.sex || patient.gender || "-"}</div>
               <div><b>Accommodation:</b> {patient.accommodation || "-"}</div>
-              <div><b>Residence:</b> {patient.residence || "-"}</div>
               <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
               <div><b>Occupation:</b> {patient.occupation || "-"}</div>
               <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
@@ -855,56 +873,56 @@ const submitAndSave = () => {
         >
           {/* Know more for Vitals (Objective tab) - same as Resus Bay */}
           {activeTab === "objective" && (
-            <div style={{ textAlign: "right", marginTop: -40, marginBottom: 20 }}>
-              <span
-                style={{
-                  color: "#0050ff",
-                  fontSize: 13,
-                  cursor: "pointer",
+    <div style={{ textAlign: "right", marginTop: -40, marginBottom: 20 }}>
+<span
+  style={{
+    color: "#0050ff",
+    fontSize: 13,
+    cursor: "pointer",
                   fontWeight: 600
-                }}
+  }}
                 onClick={() => typeof window?.openVitals === "function" && window.openVitals(patient)}
-              >
-                Know more →
-              </span>
-            </div>
+>
+  Know more →
+</span>
+  </div>
           )}
-          {/* Assessment: Problem Chart + diagnosis list */}
+          {/* Assessment: Nutrition Diagnosis + diagnosis list */}
           {activeTab === "assessment" && (
             <>
-              <div style={{ textAlign: "center", padding: 10 }}>
-                <button type="button" style={btnBlue} onClick={() => setShowProblemChart(true)}>📋 Problem Chart</button>
-              </div>
-              {form.diagnosis_problems && form.diagnosis_problems.length > 0 ? (
-                form.diagnosis_problems.map((diagnosis, index) => (
+  <div style={{ textAlign: "center", padding: 10 }}>
+                <button type="button" style={btnBlue} onClick={() => setShowProblemChart(true)}>📋 Nutrition Diagnosis</button>
+  </div>
+  {form.diagnosis_problems && form.diagnosis_problems.length > 0 ? (
+    form.diagnosis_problems.map((diagnosis, index) => (
                   <div key={index} style={{ marginBottom: 24 }}>
-                    <CommonFormBuilder
+        <CommonFormBuilder
                       schema={{ title: `Nutrition Diagnosis ${index + 1}`, sections: [{ fields: [
                         { name: `diagnosis_problem_${index}`, label: "Problem", type: "input", readOnly: true },
                         { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "input", readOnly: true },
                         { name: `diagnosis_signs_${index}`, label: "Signs & Symptoms", type: "textarea" },
                         { name: `nutrition_diagnosis_${index}`, label: "Nutrition Diagnosis", type: "textarea", readOnly: true }
                       ]}]}}
-                      values={{
-                        [`diagnosis_problem_${index}`]: diagnosis.problem,
-                        [`diagnosis_etiology_${index}`]: diagnosis.etiology,
-                        [`diagnosis_signs_${index}`]: diagnosis.signs,
+          values={{
+            [`diagnosis_problem_${index}`]: diagnosis.problem,
+            [`diagnosis_etiology_${index}`]: diagnosis.etiology,
+            [`diagnosis_signs_${index}`]: diagnosis.signs,
                         [`nutrition_diagnosis_${index}`]: diagnosis.problem && diagnosis.etiology && diagnosis.signs ? `${diagnosis.problem} ${diagnosis.etiology} as evidenced by ${diagnosis.signs}` : ""
-                      }}
-                      onChange={(name, value) => {
+          }}
+          onChange={(name, value) => {
                         if (name.startsWith(`diagnosis_signs_`)) {
                           const idx = parseInt(name.split("_")[2], 10);
                           const updated = [...form.diagnosis_problems];
                           if (updated[idx]) updated[idx] = { ...updated[idx], signs: value };
                           setField("diagnosis_problems", updated);
-                        }
-                      }}
-                    />
+            }
+          }}
+        />
                     <button type="button" onClick={() => setField("diagnosis_problems", form.diagnosis_problems.filter((_, i) => i !== index))} style={{ marginTop: 10, padding: "6px 12px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
                   </div>
                 ))
               ) : (
-                <div style={{ padding: 20, textAlign: "center", color: "#6b7280" }}>No nutrition diagnosis selected. Click "Problem Chart" to add one.</div>
+                <div style={{ padding: 20, textAlign: "center", color: "#6b7280" }}>No nutrition diagnosis selected. Click "Nutrition Diagnosis" to add one.</div>
               )}
             </>
           )}
@@ -912,18 +930,18 @@ const submitAndSave = () => {
           {activeTab === "plan" && (
             <>
               <div style={{ marginTop: 20, marginBottom: 16 }}>
-                <button
-                  type="button"
+        <button
+          type="button"
                   style={btnOrange}
                   onClick={() => alert("Alert sent to kitchen!")}
                 >
                   Send alert to kitchen
-                </button>
-              </div>
+        </button>
+</div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
                 <button style={btnSave} onClick={saveOnly}>Save →</button>
                 <button style={btnSubmit} onClick={submitAndSave}>Submit →</button>
-              </div>
+    </div>
               {submittedRows.length > 0 && (
                 <div className="card" style={{ marginTop: 30 }}>
                   <h3>Generated ICF / ICHI Recommendations</h3>
@@ -949,13 +967,13 @@ const submitAndSave = () => {
                       ))}
                     </tbody>
                   </table>
-                </div>
+</div>
               )}
             </>
           )}
         </CommonFormBuilder>
 
-        {showProblemChart && (
+{showProblemChart && (
   <div style={modalOverlay}>
     <div style={modalBoxLarge}>
       <h4>Nutrition Diagnostic Terminology</h4>
@@ -1198,7 +1216,7 @@ const submitAndSave = () => {
 
 
 
-      </div>
+        </div>
 
       <style jsx>{`
         .card {

@@ -1,6 +1,39 @@
 import React, { useEffect } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 
+function evaluateShowIf(showIf, values) {
+  if (!showIf) return true;
+  if ("or" in showIf) {
+    const conditions = Array.isArray(showIf.or) ? showIf.or : [showIf.or];
+    return conditions.some(cond => {
+      const depVal = values[cond.field];
+      if ("equals" in cond && depVal !== cond.equals) return false;
+      if ("oneOf" in cond) {
+        const allowed = Array.isArray(cond.oneOf) ? cond.oneOf : [cond.oneOf];
+        if (!allowed.includes(depVal)) return false;
+      }
+      if ("includes" in cond) {
+        if (!Array.isArray(depVal) || !depVal.includes(cond.includes)) return false;
+      }
+      if ("exists" in cond && !depVal) return false;
+      return true;
+    });
+  }
+  const depVal = values[showIf.field];
+  if ("equals" in showIf) {
+    if (Array.isArray(depVal)) return depVal.includes(showIf.equals);
+    return depVal === showIf.equals;
+  }
+  if ("oneOf" in showIf) {
+    const allowed = Array.isArray(showIf.oneOf) ? showIf.oneOf : [showIf.oneOf];
+    if (Array.isArray(depVal)) return depVal.some(v => allowed.includes(v));
+    return allowed.includes(depVal);
+  }
+  if ("includes" in showIf) return Array.isArray(depVal) && depVal.includes(showIf.includes);
+  if ("exists" in showIf) return !!depVal;
+  return true;
+}
+
 export default function CommonFormBuilder({
   schema,
   values,
@@ -11,7 +44,8 @@ export default function CommonFormBuilder({
   children,
   layout = "root",
   language,
-  readOnly: formReadOnly = false
+  readOnly: formReadOnly = false,
+  showScores
 }) {
   const sections = schema.sections || [
     { title: null, fields: schema.fields }
@@ -63,6 +97,18 @@ export default function CommonFormBuilder({
             />
           );
         }
+        if (
+          action.type === "toggle-show-scores" &&
+          schema.enableScoreToggle
+        ) {
+          return (
+            <ScoresToggle
+              key={action.type}
+              enabled={showScores}
+              onToggle={() => onAction?.("toggle-show-scores")}
+            />
+          );
+        }
         return null;
       })}
     </div>
@@ -70,7 +116,7 @@ export default function CommonFormBuilder({
     {/* RIGHT: Normal buttons (Save, Clear, Back, etc.) */}
     <div style={styles.actionButtons}>
       {schema.actions
-        .filter(a => a.type !== "toggle-language")
+        .filter(a => a.type !== "toggle-language" && a.type !== "toggle-show-scores")
         .filter(a => !formReadOnly || a.type === "back")
         .map(action => (
           <button
@@ -92,23 +138,7 @@ export default function CommonFormBuilder({
             {sections.map((section, sIdx) => {
 
               /* ===== SECTION-LEVEL VISIBILITY ===== */
-              if (section.showIf) {
-                const depVal = values[section.showIf.field];
-
-                if ("equals" in section.showIf && depVal !== section.showIf.equals) {
-                  return null;
-                }
-
-                if ("includes" in section.showIf) {
-                  if (!Array.isArray(depVal) || !depVal.includes(section.showIf.includes)) {
-                    return null;
-                  }
-                }
-
-                if ("exists" in section.showIf && !depVal) {
-                  return null;
-                }
-              }
+              if (section.showIf && !evaluateShowIf(section.showIf, values)) return null;
 
               return (
                 <div
@@ -126,90 +156,103 @@ export default function CommonFormBuilder({
                     </div>
                   )}
 
-
-
                   {(() => {
-                    // Track if we've shown the matrix header for this section
-                    let matrixHeaderShown = false;
                     const firstMatrixField = section.fields.find(f => f.type === "radio-matrix");
                     // Check if there's a grid-header before the first radio-matrix
                     const hasGridHeader = section.fields.some((f, idx) => {
                       const matrixIdx = section.fields.findIndex(f2 => f2.type === "radio-matrix");
                       return f.type === "grid-header" && matrixIdx !== -1 && idx < matrixIdx;
                     });
-
-                    return section.fields.map(field => {
-
-                      if (field.showIf) {
-                        const depVal = values[field.showIf.field];
-
-                        // equals (works for single-select / radio)
-                        if ("equals" in field.showIf) {
-                          if (Array.isArray(depVal)) {
-                            if (!depVal.includes(field.showIf.equals)) return null;
-                          } else {
-                            if (depVal !== field.showIf.equals) return null;
-                          }
-                        }
-
-                        // oneOf (checks if value is one of the provided array of values)
-                        if ("oneOf" in field.showIf) {
-                          const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
-                          if (Array.isArray(depVal)) {
-                            const hasMatch = depVal.some(val => allowedValues.includes(val));
-                            if (!hasMatch) return null;
-                          } else {
-                            if (!allowedValues.includes(depVal)) return null;
-                          }
-                        }
-                        // includes (works for multi-select / checkbox-group)
-                        if ("includes" in field.showIf) {
-                          if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
-                            return null;
-                          }
-                        }
-
-                        // exists
-                        if ("exists" in field.showIf && !depVal) {
-                          return null;
-                        }
+                    // Compute column width from longest heading in this matrix set
+                    const matrixColumnWidth = firstMatrixField?.options?.length
+                      ? Math.max(36, Math.max(...firstMatrixField.options.map(o => String(o?.label || "").length)) * 10 + 16)
+                      : 110;
+                    const getPrevVisibleField = (idx) => {
+                      for (let i = idx - 1; i >= 0; i--) {
+                        const f = section.fields[i];
+                        if (f.showIf && !evaluateShowIf(f.showIf, values)) continue;
+                        return { field: f, idx: i };
                       }
+                      return null;
+                    };
+                    const optionsEqual = (a, b) => {
+                      if (!a || !b || a.length !== b.length) return false;
+                      return a.every((o, i) => (o?.value ?? o) === (b[i]?.value ?? b[i]) && (o?.label ?? o) === (b[i]?.label ?? b[i]));
+                    };
+                    const renderScaleBeforeSubheading = (field, idx) => {
+                      if (field.type !== "subheading" || hasGridHeader) return null;
+                      const nextMatrix = section.fields[idx + 1];
+                      if (nextMatrix?.type !== "radio-matrix" || !nextMatrix?.options?.length) return null;
+                      const questionColumnWidth = 400; // Fixed width for question column
+                      const optionsCount = nextMatrix.options?.length || 4;
+                      const headerStyle = {
+                        ...styles.matrixHeader,
+                        marginBottom: 12,
+                        gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+                      };
+                      return (
+                        <div key={`scale-${idx}`} style={headerStyle}>
+                          <div style={styles.matrixLabel}>
+                            {nextMatrix.matrixHeaderLabel || "Scale"}
+                            {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
+                          </div>
+                          <div style={styles.matrixOptions}>
+                            {nextMatrix.options?.map((opt) => (
+                              <div key={opt.value} style={styles.matrixHeaderCell}>
+                                {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    };
+                    const shouldShowScaleBeforeMatrix = (field, idx) => {
+                      if (field.type !== "radio-matrix" || !field.options?.length || hasGridHeader) return false;
+                      const prev = getPrevVisibleField(idx);
+                      const scaleAlreadyBeforeSubheading = prev?.field?.type === "subheading" && section.fields[prev.idx + 1]?.type === "radio-matrix";
+                      if (scaleAlreadyBeforeSubheading) return false;
+                      const prevMatrix = prev?.field?.type === "radio-matrix" ? prev.field : null;
+                      return !prevMatrix || !optionsEqual(prevMatrix.options, field.options);
+                    };
 
+                    return (
+                      <>
+                        {section.fields.map((field, idx) => {
 
+                      if (field.showIf && !evaluateShowIf(field.showIf, values)) return null;
 
                       const value = values[field.name];
                       const error = submitted
                         ? validateField(value, field.validation)
                         : null;
 
-                      // Show matrix header before the first radio-matrix field, but not if there's already a grid-header
-                      const shouldShowMatrixHeader = field.type === "radio-matrix" && !matrixHeaderShown && firstMatrixField && !hasGridHeader;
-                      if (shouldShowMatrixHeader) {
-                        matrixHeaderShown = true;
-                      }
-
-                      // Determine max options count for alignment
-                      const maxOptions = firstMatrixField ? firstMatrixField.options.length : 0;
-                      const currentOptions = field.type === "radio-matrix" ? field.options.length : 0;
-
                       return (
-                        <React.Fragment key={field.name}>
-                          {shouldShowMatrixHeader && (
-                            <div style={styles.matrixHeader}>
-                              <div style={styles.matrixLabel}>
-                                Scale
-                                {firstMatrixField?.info && <InfoTooltip info={firstMatrixField.info} />}
+                        <React.Fragment key={field.name ?? field.label ?? idx}>
+                          {renderScaleBeforeSubheading(field, idx)}
+                          {shouldShowScaleBeforeMatrix(field, idx) && (() => {
+                            const questionColumnWidth = 400; // Fixed width for question column
+                            const optionsCount = field.options?.length || 4;
+                            const headerStyle = {
+                              ...styles.matrixHeader,
+                              marginBottom: 12,
+                              gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+                            };
+                            return (
+                              <div style={headerStyle}>
+                                <div style={styles.matrixLabel}>
+                                  {field.matrixHeaderLabel || "Scale"}
+                                  {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
+                                </div>
+                                <div style={styles.matrixOptions}>
+                                  {field.options?.map((opt) => (
+                                    <div key={opt.value} style={styles.matrixHeaderCell}>
+                                      {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                              <div style={styles.matrixOptions}>
-                                {firstMatrixField.options.map(opt => (
-                                  <div key={opt.value} style={styles.matrixHeaderCell}>
-                                    {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
-
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                            );
+                          })()}
                           <div
                             style={{
                               ...styles.field,
@@ -237,21 +280,24 @@ export default function CommonFormBuilder({
                                 assessmentRegistry,
                                 formReadOnly,
                                 {
-                                  enabled: schema?.enableLanguageToggle === true,
-                                  lang: language
-                                })}
-    </div>
-  </div>
-) : field.type === "radio" && !field.inRow ? (
-  <div style={styles.radioRow}>
-    {(field.label || field.info) && (
-      <div style={styles.radioLabel}>
-        {field.label}
-        {field.info && <InfoTooltip info={field.info} />}
-      </div>
-    )}
-    <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
-      {renderField( field,
+                                    enabled: schema?.enableLanguageToggle === true,
+                                    lang: language,
+                                    showScores
+                                  }
+                              )}
+                            </div>
+                          </div>
+                        ) : field.type === "radio" && !field.inRow ? (
+                          <div style={styles.radioRow}>
+                            {(field.label || field.info) && (
+                              <div style={styles.radioLabel}>
+                                {field.label}
+                                {field.info && <InfoTooltip info={field.info} />}
+                              </div>
+                            )}
+                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
+                              {renderField(
+                                field,
                                 value,
                                 values,
                                 onChange,
@@ -259,14 +305,18 @@ export default function CommonFormBuilder({
                                 assessmentRegistry,
                                 formReadOnly,
                                 {
-                                  enabled: schema?.enableLanguageToggle === true,
-                                  lang: language
-                                })}
-    </div>
-  </div>
-) : field.type === "subheading" ? (
+                                  showScores
+                                }
+                              )}
+                            </div>
+                          </div>
 
-                              renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly)
+                        
+                        ) : field.type === "subheading" ? (
+
+                              renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
+                                showScores
+                              })
                             ) : field.type === "row" ? (
                               /* ✅ ROW FIELDS → Render directly without extra wrapper */
                               renderField(
@@ -279,7 +329,8 @@ export default function CommonFormBuilder({
                                 formReadOnly,
                                 {
                                   enabled: schema?.enableLanguageToggle === true,
-                                  lang: language
+                                  lang: language,
+                                  showScores
                                 }
 
                               )
@@ -304,10 +355,11 @@ export default function CommonFormBuilder({
                                     onAction,
                                     assessmentRegistry,
                                     formReadOnly,
-
                                     {
                                       enabled: schema?.enableLanguageToggle === true,
-                                      lang: language
+                                      lang: language,
+                                      matrixColumnWidth,
+                                      showScores
                                     }
                                   )}
                                 </>
@@ -337,7 +389,9 @@ export default function CommonFormBuilder({
                         </React.Fragment>
                       );
 
-                    })
+                    })}
+                        </>
+                    );
                   })()}
                 </div>
               );
@@ -363,10 +417,8 @@ function InfoTooltip({ info }) {
   return (
     <span
       style={styles.infoWrapper}
-      onClick={e => {
-        e.stopPropagation();       // ✅ prevent parent clicks
-        setOpen(o => !o);
-      }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
     >
       ⓘ
       {open && (
@@ -393,6 +445,28 @@ const t = (text, lang) => {
   if (typeof text === "string") return text;
   return text[lang] || text.en || "";
 };
+
+function ScoresToggle({ enabled, onToggle }) {
+  return (
+    <div style={langSwitch.wrap}>
+      <span style={langSwitch.label}>Doctor View</span>
+      <div
+        style={{
+          ...langSwitch.track,
+          backgroundColor: enabled ? "#2563eb" : "#e5e7eb"
+        }}
+        onClick={onToggle}
+      >
+        <div
+          style={{
+            ...langSwitch.thumb,
+            transform: enabled ? "translateX(20px)" : "translateX(0)"
+          }}
+        />
+      </div>
+    </div>
+  );
+}
 
 function MalayToggle({ enabled, onToggle }) {
   return (
@@ -680,23 +754,31 @@ function AssessmentLauncher({
   );
 }
 
-function RadioMatrixRow({ field, value, onChange }) {
-  // Use custom widths if wideLabel is set, otherwise use default
-  const rowStyle = field.wideLabel
-    ? { ...styles.matrixRow, gridTemplateColumns: "400px repeat(5, 80px)" }
-    : styles.matrixRow;
+function RadioMatrixRow({ field, value, onChange, columnWidth, showScores }) {
+  // Fixed width for question column, equal widths for option columns
+  const questionColumnWidth = field.wideLabel ? 400 : 400; // Fixed width for question column
+  const optionsCount = field.options?.length || 4;
+  const rowStyle = {
+    ...styles.matrixRow,
+    gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+  };
 
   return (
     <div style={rowStyle}>
       <div style={styles.matrixLabel}>
         {field.label}
-        {field.info && <InfoTooltip info={field.info} />}
+        {field.showInfoInRow !== false && (
+          <>
+            {field.rowInfo && <InfoTooltip info={field.rowInfo} />}
+            {!field.rowInfo && field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
+          </>
+        )}
       </div>
 
 
 
       <div style={styles.matrixOptions}>
-        {field.options.map(opt => (
+        {field.options.map((opt) => (
           <label key={opt.value} style={styles.matrixCell}>
             <input
               type="radio"
@@ -1116,7 +1198,8 @@ case "image-anatomy-selector":
           }}
         >
           {field.fields.map(f => {
-            // Check showIf visibility condition
+           
+          
             if (f.showIf) {
               const depVal = values[f.showIf.field];
               if ("equals" in f.showIf && depVal !== f.showIf.equals) {
@@ -1140,7 +1223,7 @@ case "image-anatomy-selector":
             const v = values[f.name];
             return (
               <div key={f.name} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
-                {f.label && f.type !== "button" && (
+                {f.label && !["button", "checkbox-group"].includes(f.type) && (
                   <label
                     style={{
                       display: "block",
@@ -1161,7 +1244,10 @@ case "image-anatomy-selector":
                   onChange,
                   onAction,
                   assessmentRegistry,
-                  formReadOnly
+                  formReadOnly,
+                  {
+                    showScores: languageConfig?.showScores
+                  }
                 )}
               </div>
             );
@@ -1293,7 +1379,10 @@ case "image-anatomy-selector":
                     onChange,
                     onAction,
                     assessmentRegistry,
-                    formReadOnly
+                    formReadOnly,
+                    {
+                      showScores: languageConfig?.showScores
+                    }
                   )}
                 </div>
               );
@@ -1425,6 +1514,16 @@ case "image-anatomy-selector":
             </option>
           ))}
         </select>
+      );
+    case "radio-matrix":
+      return (
+        <RadioMatrixRow
+          field={field}
+          value={value}
+          onChange={onChange}
+          columnWidth={languageConfig?.matrixColumnWidth}
+          showScores={languageConfig?.showScores}
+        />
       );
 
 
@@ -2553,7 +2652,8 @@ actionButtons: {
   },
   matrixHeader: {
     display: "grid",
-    gridTemplateColumns: "1fr auto",
+    gridTemplateColumns: "400px repeat(4, 1fr)", // Fixed question column, equal option columns
+    gap: "0 16px", // Horizontal gap between columns
     marginBottom: 12,
     borderBottom: "2px solid #d1d5db",
     fontSize: 14,
@@ -2563,9 +2663,9 @@ actionButtons: {
   },
 
   matrixHeaderCell: {
-    width: 110,
     textAlign: "center",
-    padding: "0 8px"
+    padding: "0 8px",
+    width: "100%"
   },
   nestedContainer: {
     border: "1px solid #e5e7eb",
@@ -2604,7 +2704,7 @@ actionButtons: {
 
   matrixRow: {
     display: "grid",
-    gridTemplateColumns: "1fr auto",
+    gridTemplateColumns: "400px repeat(4, 1fr)", // Fixed question column, equal option columns
     alignItems: "center",
     marginBottom: 16,
     paddingBottom: 8,
@@ -2621,16 +2721,14 @@ actionButtons: {
   },
 
   matrixOptions: {
-    display: "flex",
-    gap: 16,
-    justifyContent: "center"
+    display: "contents" // Use parent grid columns
   },
 
   matrixCell: {
-    width: 110,
     display: "flex",
     justifyContent: "center",
-    padding: "8px"
+    padding: "8px",
+    width: "100%"
   },
 
   inlineLabel: {

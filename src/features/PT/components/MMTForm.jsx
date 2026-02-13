@@ -1,21 +1,40 @@
 import React from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-/* ===================== MMT OPTIONS ===================== */
+/* ===================== MMT OPTIONS (numbers as column headers) ===================== */
 
 const MMT_OPTIONS = [
-  { label: "0 – Nothing, no muscle contraction", value: "0" },
-  { label: "1 – Flicker (palpable contraction, no movement)", value: "1" },
-  { label: "2− – Part ROM with gravity counterbalanced ", value: "2-" },
-  { label: "2 – Full ROM with gravity counterbalanced", value: "2" },
-  { label: "2+ – Full ROM with gravity counterbalanced and a little resistance, no antigravity moment", value: "2+" },
-  { label: "3− – Antigravity movement through part (most of range) ", value: "3-" },
-  { label: "3 – Full range antigravity movement", value: "3" },
-  { label: "3+ – Full antigravity ROM with some resistance through part of range", value: "3+" },
-  { label: "4 – Full antigravity ROM with some resistance through the whole range", value: "4" },
-  { label: "4+ – Full antigravity ROM with normal power in part of range", value: "4+" },
-  { label: "5 – Full ROM with full normal resistance throughout range", value: "5" }
+  { label: "0", value: "0" },
+  { label: "1", value: "1" },
+  { label: "2-", value: "2-" },
+  { label: "2", value: "2" },
+  { label: "2+", value: "2+" },
+  { label: "3-", value: "3-" },
+  { label: "3", value: "3" },
+  { label: "3+", value: "3+" },
+  { label: "4", value: "4" },
+  { label: "4+", value: "4+" },
+  { label: "5", value: "5" }
 ];
+
+const MMT_INFO = {
+  title: "MMT Scale",
+  content: [
+    "0 – Nothing, no muscle contraction",
+    "1 – Flicker (palpable contraction, no movement)",
+    "2− – Part ROM with gravity counterbalanced",
+    "2 – Full ROM with gravity counterbalanced",
+    "2+ – Full ROM with gravity counterbalanced and a little resistance, no antigravity moment",
+    "3− – Antigravity movement through part (most of range)",
+    "3 – Full range antigravity movement",
+    "3+ – Full antigravity ROM with some resistance through part of range",
+    "4 – Full antigravity ROM with some resistance through the whole range",
+    "4+ – Full antigravity ROM with normal power in part of range",
+    "5 – Full ROM with full normal resistance throughout range"
+  ]
+};
+
+const mmt = (name, label) => ({ type: "radio-matrix", name, label, options: MMT_OPTIONS, info: MMT_INFO, showInfoInRow: false });
 
 /* ===================== SCHEMA ===================== */
 
@@ -25,306 +44,61 @@ const MMT_SCHEMA = {
     {
       title: "Upper Extremities",
       fields: [
-                { type: "subheading", label: "Shoulder" },
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_sh_flex_l",
-    title: "Shoulder Flexion Left"
-  },
-  right: {
-    name: "mmt_sh_flex_r",
-    title: "Shoulder Flexion Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_se_flex_l",
-    title: "Shoulder Extension Left"
-  },
-  right: {
-    name: "mmt_se_flex_r",
-    title: "Shoulder Extension Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_sa_flex_l",
-    title: "Shoulder Abduction Left"
-  },
-  right: {
-    name: "mmt_sa_flex_r",
-    title: "Shoulder Abduction Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_sad_flex_l",
-    title: "Shoulder Adduction Left"
-  },
-  right: {
-    name: "mmt_sad_flex_r",
-    title: "Shoulder Adduction Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_ir_flex_l",
-    title: "Internal rotation Left"
-  },
-  right: {
-    name: "mmt_ir_flex_r",
-    title: "Internal rotation Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_er_flex_l",
-    title: "External rotation Left"
-  },
-  right: {
-    name: "mmt_er_flex_r",
-    title: "External rotation Right"
-  },
-  options: MMT_OPTIONS
-},
-
-
-
-
+        { type: "subheading", label: "Shoulder" },
+        mmt("mmt_sh_flex_l", "Shoulder Flexion Left"),
+        mmt("mmt_sh_flex_r", "Shoulder Flexion Right"),
+        mmt("mmt_se_flex_l", "Shoulder Extension Left"),
+        mmt("mmt_se_flex_r", "Shoulder Extension Right"),
+        mmt("mmt_sa_flex_l", "Shoulder Abduction Left"),
+        mmt("mmt_sa_flex_r", "Shoulder Abduction Right"),
+        mmt("mmt_sad_flex_l", "Shoulder Adduction Left"),
+        mmt("mmt_sad_flex_r", "Shoulder Adduction Right"),
+        mmt("mmt_ir_flex_l", "Internal rotation Left"),
+        mmt("mmt_ir_flex_r", "Internal rotation Right"),
+        mmt("mmt_er_flex_l", "External rotation Left"),
+        mmt("mmt_er_flex_r", "External rotation Right"),
         { type: "subheading", label: "Elbow" },
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_el_flex_l",
-    title: "Elbow Flexion Left"
-  },
-  right: {
-    name: "mmt_el_flex_r",
-    title: "Elbow Flexion Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_el_ext_l",
-    title: "Elbow Extension Left"
-  },
-  right: {
-    name: "mmt_el_ext_r",
-    title: "Elbow Extension Right"
-  },
-  options: MMT_OPTIONS
-},
-
+        mmt("mmt_el_flex_l", "Elbow Flexion Left"),
+        mmt("mmt_el_flex_r", "Elbow Flexion Right"),
+        mmt("mmt_el_ext_l", "Elbow Extension Left"),
+        mmt("mmt_el_ext_r", "Elbow Extension Right"),
         { type: "subheading", label: "Wrist" },
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_wr_flex_l",
-    title: "Wrist Flexion Left"
-  },
-  right: {
-    name: "mmt_wr_flex_r",
-    title: "Wrist Flexion Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_wr_ext_l",
-    title: "Wrist Extension Left"
-  },
-  right: {
-    name: "mmt_wr_ext_r",
-    title: "Wrist Extension Right"
-  },
-  options: MMT_OPTIONS
-},
+        mmt("mmt_wr_flex_l", "Wrist Flexion Left"),
+        mmt("mmt_wr_flex_r", "Wrist Flexion Right"),
+        mmt("mmt_wr_ext_l", "Wrist Extension Left"),
+        mmt("mmt_wr_ext_r", "Wrist Extension Right")
       ]
     },
-
     {
       title: "Lower Extremities",
       fields: [
         { type: "subheading", label: "Hip" },
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_hip_flex_l",
-    title: "Hip Flexion Left"
-  },
-  right: {
-    name: "mmt_hip_flex_r",
-    title: "Hip Flexion Right"
-  },
-  options: MMT_OPTIONS
-},
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_hip_ext_l",
-    title: "Hip Extension Left"
-  },
-  right: {
-    name: "mmt_hip_ext_r",
-    title: "Hip Extension Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_hip_abd_l",
-    title: "Hip Abduction Left"
-  },
-  right: {
-    name: "mmt_hip_abd_r",
-    title: "Hip Abduction Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_hip_add_l",
-    title: "Hip Adduction Left"
-  },
-  right: {
-    name: "mmt_hip_add_r",
-    title: "Hip Adduction Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_hir_add_l",
-    title: "Hip Internal rotation Left"
-  },
-  right: {
-    name: "mmt_hir_add_r",
-    title: "Hip Internal rotation Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_her_add_l",
-    title: "Hip External rotation Left"
-  },
-  right: {
-    name: "mmt_her_add_r",
-    title: "Hip External rotation Right"
-  },
-  options: MMT_OPTIONS
-},
-
-
-
-
-
-
+        mmt("mmt_hip_flex_l", "Hip Flexion Left"),
+        mmt("mmt_hip_flex_r", "Hip Flexion Right"),
+        mmt("mmt_hip_ext_l", "Hip Extension Left"),
+        mmt("mmt_hip_ext_r", "Hip Extension Right"),
+        mmt("mmt_hip_abd_l", "Hip Abduction Left"),
+        mmt("mmt_hip_abd_r", "Hip Abduction Right"),
+        mmt("mmt_hip_add_l", "Hip Adduction Left"),
+        mmt("mmt_hip_add_r", "Hip Adduction Right"),
+        mmt("mmt_hir_add_l", "Hip Internal rotation Left"),
+        mmt("mmt_hir_add_r", "Hip Internal rotation Right"),
+        mmt("mmt_her_add_l", "Hip External rotation Left"),
+        mmt("mmt_her_add_r", "Hip External rotation Right"),
         { type: "subheading", label: "Knee" },
-
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_knee_flex_l",
-    title: "Knee Flexion Left"
-  },
-  right: {
-    name: "mmt_knee_flex_r",
-    title: "Knee Flexion Right"
-  },
-  options: MMT_OPTIONS
-},
-{
-  type: "paired-select",
-  left: {
-    name: "mmt_knee_ext_l",
-    title: "Knee Extension Left"
-  },
-  right: {
-    name: "mmt_knee_ext_r",
-    title: "Knee Extension Right"
-  },
-  options: MMT_OPTIONS
-},
+        mmt("mmt_knee_flex_l", "Knee Flexion Left"),
+        mmt("mmt_knee_flex_r", "Knee Flexion Right"),
+        mmt("mmt_knee_ext_l", "Knee Extension Left"),
+        mmt("mmt_knee_ext_r", "Knee Extension Right"),
         { type: "subheading", label: "Ankle" },
-
-        {
-  type: "paired-select",
-  left: {
-    name: "mmt_ank_df_l",
-    title: "Ankle Dorsiflexion Left"
-  },
-  right: {
-    name: "mmt_ank_df_r",
-    title: "Ankle Dorsiflexion Right"
-  },
-  options: MMT_OPTIONS
-},
-
-        {
-  type: "paired-select",
-  left: {
-    name: "mmt_ank_pf_l",
-    title: "Ankle Plantarflexion Left"
-  },
-  right: {
-    name: "mmt_ank_pf_r",
-    title: "Ankle Plantarflexion Right"
-  },
-  options: MMT_OPTIONS
-},
-                {
-  type: "paired-select",
-  left: {
-    name: "mmt_ank_inv_l",
-    title: "Ankle Inversion Left"
-  },
-  right: {
-    name: "mmt_ank_inv_r",
-    title: "Ankle Inversion Right"
-  },
-  options: MMT_OPTIONS
-},
-
-        {
-  type: "paired-select",
-  left: {
-    name: "mmt_ank_evr_l",
-    title: "Ankle Eversion Left"
-  },
-  right: {
-    name: "mmt_ank_evr_r",
-    title: "Ankle Eversion Right"
-  },
-  options: MMT_OPTIONS
-},
-
+        mmt("mmt_ank_df_l", "Ankle Dorsiflexion Left"),
+        mmt("mmt_ank_df_r", "Ankle Dorsiflexion Right"),
+        mmt("mmt_ank_pf_l", "Ankle Plantarflexion Left"),
+        mmt("mmt_ank_pf_r", "Ankle Plantarflexion Right"),
+        mmt("mmt_ank_inv_l", "Ankle Inversion Left"),
+        mmt("mmt_ank_inv_r", "Ankle Inversion Right"),
+        mmt("mmt_ank_evr_l", "Ankle Eversion Left"),
+        mmt("mmt_ank_evr_r", "Ankle Eversion Right")
       ]
     }
   ]
@@ -338,7 +112,7 @@ export default function MMTForm({ values, onChange }) {
       schema={MMT_SCHEMA}
       values={values}
       onChange={onChange}
-       layout="nested"   // 👈 THIS is the key
+      layout="nested"
     />
   );
 }

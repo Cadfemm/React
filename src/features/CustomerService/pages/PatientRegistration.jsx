@@ -15,6 +15,11 @@ export default function PatientRegister({ addPatient }) {
     residence: "",
     occupation: "",
     marital_status: "",
+    employment_status: "",
+    education_background: "",
+    education_background_other: "",
+    living_environment: "",
+    living_environment_other: "",
     icd: "",
     date_of_onset: "",
     weight: "",
@@ -25,7 +30,8 @@ export default function PatientRegister({ addPatient }) {
     diagnosis_history: "",     // NEW FIELD
     medical_history: "",       // NEW FIELD
     lmp_date: "",              // Last Menstrual Date (female, age > 8)
-    case_manager: ""           // Case Manager - flows to CM in Resus Bay
+    case_manager: "",          // Case Manager - flows to CM in Resus Bay
+    main_caregiver: ""         // Main caregiver (in Carer Information)
   });
 
   const ICD_LIST = Object.keys(GROUPED_ICD_TO_DEPT);
@@ -86,6 +92,11 @@ const calculateAge = (dob) => {
       residence: form.residence,
       occupation: form.occupation,
       marital_status: form.marital_status,
+      employment_status: form.employment_status,
+      education_background: form.education_background,
+      education_background_other: form.education_background_other,
+      living_environment: form.living_environment,
+      living_environment_other: form.living_environment_other,
       icd: form.icd,
       date_of_onset: form.date_of_onset,
       ul: "-",
@@ -101,6 +112,7 @@ const calculateAge = (dob) => {
       medical_history: form.medical_history,
       lmp_date: form.lmp_date,
       case_manager: form.case_manager,
+      main_caregiver: form.main_caregiver,
       carers: carers,
       departments: depts
     };
@@ -207,6 +219,55 @@ const calculateAge = (dob) => {
         <option>Single</option>
       </select>
 
+      <label>Employment Status</label>
+      <select value={form.employment_status} onChange={e => setField("employment_status", e.target.value)} style={{ width:"100%" }}>
+        <option value="">Select</option>
+        <option value="Employed">Employed</option>
+        <option value="Unemployed">Unemployed</option>
+      </select>
+
+      <label>Education Background</label>
+      <select value={form.education_background} onChange={e => setField("education_background", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="Primary">Primary</option>
+        <option value="Secondary">Secondary</option>
+        <option value="Tertiary (Diploma/Degree)">Tertiary (Diploma/Degree)</option>
+        <option value="Postgraduate">Postgraduate</option>
+        <option value="Other">Other</option>
+      </select>
+      {form.education_background === "Other" && (
+        <>
+          <label>Education Background – Other (please specify)</label>
+          <input
+            value={form.education_background_other}
+            onChange={e => setField("education_background_other", e.target.value)}
+            style={{ width: "100%" }}
+            placeholder="Please specify"
+          />
+        </>
+      )}
+
+      <label>Living Environment</label>
+      <select value={form.living_environment} onChange={e => setField("living_environment", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="Single home">Single home</option>
+        <option value="Apartment/condominium">Apartment/condominium</option>
+        <option value="Old folks home">Old folks home</option>
+        <option value="Nursing home">Nursing home</option>
+        <option value="Other">Other</option>
+      </select>
+      {form.living_environment === "Other" && (
+        <>
+          <label>Living Environment – Other (please specify)</label>
+          <input
+            value={form.living_environment_other}
+            onChange={e => setField("living_environment_other", e.target.value)}
+            style={{ width: "100%" }}
+            placeholder="Please specify"
+          />
+        </>
+      )}
+
       <label>Grouping ICD</label>
       <select value={form.icd} onChange={e => setField("icd", e.target.value)} style={{ width:"100%" }}>
         <option value="">Select ICD</option>
@@ -221,6 +282,16 @@ const calculateAge = (dob) => {
 />
 
 <h3 style={{ marginTop: 20 }}>Carer Information</h3>
+
+<label>Main Caregiver</label>
+<select value={form.main_caregiver} onChange={e => setField("main_caregiver", e.target.value)} style={{ width: "100%" }}>
+  <option value="">Select</option>
+  <option value="Husband/wife">Husband/wife</option>
+  <option value="Father/mother">Father/mother</option>
+  <option value="Son/daughter">Son/daughter</option>
+  <option value="Maid">Maid</option>
+  <option value="Hired caregiver">Hired caregiver</option>
+</select>
 
 <label>Number of Carers</label>
 <select

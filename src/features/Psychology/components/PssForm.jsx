@@ -4,49 +4,73 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   /* ---------------- STORAGE KEY ---------------- */
-  const storageKey = patient
-    ? `psychology_pss_draft_${patient.name}`
+  const storageKey = patient?.id
+    ? `psychology::${patient.id}::PSS`
     : null;
 
   /* ---------------- SCHEMA ---------------- */
-  const PSS_SCHEMA = {
-    title: "Perceived Stress Scale (PSS)",
-    // actions: [
-    //   { type: "back", label: "Back" },
-    //   { type: "clear", label: "Clear" },
-    //   { type: "print", label: "Print" },
-    //   { type: "save", label: "Save" }
-    // ],
-    fields: [
-      { name: "q1", label: "1. In the last month, how often have you been upset because of something that happened unexpectedly?" },
-      { name: "q2", label: "2. In the last month, how often have you felt that you were unable to control the important things in your life?" },
-      { name: "q3", label: "3. In the last month, how often have you felt nervous and stressed?" },
-      { name: "q4", label: "4. In the last month, how often have you felt confident about your ability to handle your personal problems?" },
-      { name: "q5", label: "5. In the last month, how often have you felt that things were going your way?" },
-      { name: "q6", label: "6. In the last month, how often have you found that you could not cope with all the things that you had to do?" },
-      { name: "q7", label: "7. In the last month, how often have you been able to control irritations in your life?" },
-      { name: "q8", label: "8. In the last month, how often have you felt that you were on top of things?" },
-      { name: "q9", label: "9. In the last month, how often have you been angered because of things that were outside of your control?" },
-      { name: "q10", label: "10. In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?" }
-    ].map(f => ({
-      ...f,
-      type: "single-select",
-      options: [
-        { label: "Never (0)", value: 0 },
-        { label: "Almost never (1)", value: 1 },
-        { label: "Sometimes (2)", value: 2 },
-        { label: "Fairly often (3)", value: 3 },
-        { label: "Very often (4)", value: 4 }
+  const PSS_SCHEMA = useMemo(() => {
+    const optionsWithScores = [
+      { label: "Never (0)", value: 0 },
+      { label: "Almost never (1)", value: 1 },
+      { label: "Sometimes (2)", value: 2 },
+      { label: "Fairly often (3)", value: 3 },
+      { label: "Very often (4)", value: 4 }
+    ];
+    const optionsWithoutScores = [
+      { label: "Never", value: 0 },
+      { label: "Almost never", value: 1 },
+      { label: "Sometimes", value: 2 },
+      { label: "Fairly often", value: 3 },
+      { label: "Very often", value: 4 }
+    ];
+
+    return {
+      title: "Perceived Stress Scale (PSS)",
+      enableScoreToggle: true,
+      actions: [{ type: "toggle-show-scores" }],
+      sections: [
+        {
+          fields: [
+            { name: "q1", label: "1. In the last month, how often have you been upset because of something that happened unexpectedly?" },
+            { name: "q2", label: "2. In the last month, how often have you felt that you were unable to control the important things in your life?" },
+            { name: "q3", label: "3. In the last month, how often have you felt nervous and stressed?" },
+            { name: "q4", label: "4. In the last month, how often have you felt confident about your ability to handle your personal problems?" },
+            { name: "q5", label: "5. In the last month, how often have you felt that things were going your way?" },
+            { name: "q6", label: "6. In the last month, how often have you found that you could not cope with all the things that you had to do?" },
+            { name: "q7", label: "7. In the last month, how often have you been able to control irritations in your life?" },
+            { name: "q8", label: "8. In the last month, how often have you felt that you were on top of things?" },
+            { name: "q9", label: "9. In the last month, how often have you been angered because of things that were outside of your control?" },
+            { name: "q10", label: "10. In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?" }
+          ].map((f, i) => ({
+            ...f,
+            type: "radio-matrix",
+            validation: { required: true, message: "This question is required" },
+            info: i === 0 && scoresVisible ? {
+              title: "PSS Scale",
+              content: [
+                "0 – Never",
+                "1 – Almost never",
+                "2 – Sometimes",
+                "3 – Fairly often",
+                "4 – Very often"
+              ]
+            } : undefined,
+            showInfoInRow: false,
+            options: scoresVisible ? optionsWithScores : optionsWithoutScores
+          }))
+        }
       ]
-    }))
-  };
+    };
+  }, [scoresVisible]);
 
   /* Reverse scored questions */
   const REVERSED = ["q4", "q5", "q7", "q8"];
 
-  /* ---------------- LOAD SAVED DRAFT ---------------- */
+  /* ---------------- AUTO REFILL ---------------- */
   useEffect(() => {
     if (!storageKey) return;
 
@@ -58,10 +82,14 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
     }
   }, [storageKey]);
 
-  /* ---------------- CHANGE ---------------- */
+  /* ---------------- HANDLERS ---------------- */
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: Number(value) }));
   };
+
+  const allRequiredFilled = useMemo(() => {
+    return PSS_SCHEMA.sections[0].fields.every(f => values[f.name] !== undefined);
+  }, [values]);
 
   /* ---------------- SCORE ---------------- */
   const totalScore = useMemo(() => {
@@ -80,6 +108,10 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
   /* ---------------- ACTION HANDLER ---------------- */
   const handleAction = (type) => {
     switch (type) {
+      case "toggle-show-scores":
+        setScoresVisible(v => !v);
+        break;
+
       case "back":
         onBack?.();
         break;
@@ -117,12 +149,27 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
   const handleSubmit = () => {
     setSubmitted(true);
 
-    const result = { totalScore, severity };
-    onSubmit?.(result);
+    if (!allRequiredFilled) {
+      alert("Please answer all required questions");
+      return;
+    }
 
-    alert(
-      `PSS Submitted\n\nScore: ${totalScore}\nSeverity: ${severity}`
-    );
+    const payload = {
+      patientId: patient?.id,
+      scale: "PSS",
+      values,
+      totalScore,
+      severity,
+      submittedAt: new Date().toISOString()
+    };
+
+    if (storageKey) {
+      localStorage.setItem(storageKey, JSON.stringify({ values }));
+    }
+    console.log("PSS Submitted:", payload);
+    alert("PSS submitted successfully");
+
+    onSubmit?.(payload);
   };
 
   /* ---------------- UI ---------------- */
@@ -135,8 +182,10 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
         layout="nested"
         submitted={submitted}
         onAction={handleAction}
+        showScores={scoresVisible}
       >
         {/* ---------- SUMMARY ---------- */}
+      {scoresVisible && (
       <div style={summaryWrap}>
   {/* Row 1: Score + Severity */}
   <div style={scoreRow}>
@@ -145,17 +194,24 @@ export default function PSSFormBuilder({ patient, onSubmit, onBack, layout }) {
     </div>
 
     <div style={severityPill}>
-      Anxiety Severity: {severity}
+      Stress Severity: {severity}
     </div>
   </div>
 
   {/* Row 2: Submit button */}
   <div style={submitRow}>
-    <button style={submitBtn} onClick={handleSubmit}>
+    <button
+      style={{
+        ...submitBtn,
+      }}
+      disabled={!allRequiredFilled}
+      onClick={handleSubmit}
+    >
       Submit
     </button>
   </div>
 </div>
+      )}
 
       </CommonFormBuilder>
     </div>
