@@ -33,80 +33,87 @@ const submitBtn = {
   cursor: "pointer"
 };
 
+const t = (text, lang) => {
+  if (!text) return "";
+  if (typeof text === "string" || typeof text === "number") return text;
+  if (typeof text === "object" && text !== null && !Array.isArray(text)) return text[lang] || text.en || "";
+  return String(text);
+};
+
 const XRAY_OPTIONS = [
-  { value: "abdomen", label: "Abdomen" },
-  { value: "chest", label: "Chest" },
-  { value: "spine", label: "Spine" },
-  { value: "skull", label: "Skull" },
-  { value: "pelvis", label: "Pelvis" },
-  { value: "extremity", label: "Extremity" },
-  { value: "others", label: "Others" }
+  { value: "abdomen", label: { en: "Abdomen", ms: "Abdomen" } },
+  { value: "chest", label: { en: "Chest", ms: "Dada" } },
+  { value: "spine", label: { en: "Spine", ms: "Tulang Belakang" } },
+  { value: "skull", label: { en: "Skull", ms: "Tengkorak" } },
+  { value: "pelvis", label: { en: "Pelvis", ms: "Pelvis" } },
+  { value: "extremity", label: { en: "Extremity", ms: "Anggota Badan" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const SIDE_OPTIONS = [
-  { value: "right", label: "Right" },
-  { value: "left", label: "Left" },
-  { value: "bilateral", label: "Bilateral" },
-  { value: "na", label: "N/A" }
+  { value: "right", label: { en: "Right", ms: "Kanan" } },
+  { value: "left", label: { en: "Left", ms: "Kiri" } },
+  { value: "bilateral", label: { en: "Bilateral", ms: "Dua Hala" } },
+  { value: "na", label: { en: "N/A", ms: "T/A" } }
 ];
 
 const CLIENT_STATUS_OPTIONS = [
-  { value: "walking", label: "Walking" },
-  { value: "wheel_chair", label: "Wheel Chair" },
-  { value: "trolly", label: "Trolly" }
+  { value: "walking", label: { en: "Walking", ms: "Berjalan" } },
+  { value: "wheel_chair", label: { en: "Wheel Chair", ms: "Kerusi Roda" } },
+  { value: "trolly", label: { en: "Trolly", ms: "Troli" } }
 ];
 
 const DOCTOR_OPTIONS = [
-  { value: "dr_faez", label: "Dr.Faez" },
-  { value: "dr_afif", label: "Dr.Afif" },
-  { value: "dr_azril", label: "Dr.Azril" },
-  { value: "other", label: "Other" }
+  { value: "dr_faez", label: { en: "Dr.Faez", ms: "Dr.Faez" } },
+  { value: "dr_afif", label: { en: "Dr.Afif", ms: "Dr.Afif" } },
+  { value: "dr_azril", label: { en: "Dr.Azril", ms: "Dr.Azril" } },
+  { value: "other", label: { en: "Other", ms: "Lain-lain" } }
 ];
 
 const RADIOGRAPHER_OPTIONS = [
-  { value: "danial", label: "Danial" },
-  { value: "others", label: "Others" }
+  { value: "danial", label: { en: "Danial", ms: "Danial" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const STATUS_OB_PP_OPTIONS = [
-  { value: "refer_hospital", label: "Refer Hospital" },
-  { value: "monitoring_ward", label: "Monitoring at Ward" },
-  { value: "monitoring_daycare", label: "Monitory at Day Care" },
-  { value: "nil", label: "Nil" },
-  { value: "others", label: "Others" }
+  { value: "refer_hospital", label: { en: "Refer Hospital", ms: "Rujuk ke Hospital" } },
+  { value: "monitoring_ward", label: { en: "Monitoring at Ward", ms: "Pemantauan di Wad" } },
+  { value: "monitoring_daycare", label: { en: "Monitory at Day Care", ms: "Pemantauan di Day Care" } },
+  { value: "nil", label: { en: "Nil", ms: "Tiada" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const WARD_OPTIONS = [
-  { value: "tsw", label: "TSW" },
-  { value: "dpw", label: "DPW" },
-  { value: "premier_ward", label: "Premier Ward" },
-  { value: "out_patient", label: "Out Patient" }
+  { value: "tsw", label: { en: "TSW", ms: "TSW" } },
+  { value: "dpw", label: { en: "DPW", ms: "DPW" } },
+  { value: "premier_ward", label: { en: "Premier Ward", ms: "Wad Premier" } },
+  { value: "out_patient", label: { en: "Out Patient", ms: "Pesakit Luar" } }
 ];
 
 const BASIC_REPORT_OPTIONS = [
-  { value: "normal", label: "Normal" },
-  { value: "abnormal", label: "Abnormal" }
+  { value: "normal", label: { en: "Normal", ms: "Normal" } },
+  { value: "abnormal", label: { en: "Abnormal", ms: "Tidak Normal" } }
 ];
 
 const PROBLEM_CLIENT_POSITION_OPTIONS = [
-  { value: "cannot_move", label: "Cannot Move" },
-  { value: "cannot_turn", label: "Cannot Turn" },
-  { value: "moving", label: "Moving" },
-  { value: "foreign_body", label: "Foreign Body" }
+  { value: "cannot_move", label: { en: "Cannot Move", ms: "Tidak Boleh Bergerak" } },
+  { value: "cannot_turn", label: { en: "Cannot Turn", ms: "Tidak Boleh Berpaling" } },
+  { value: "moving", label: { en: "Moving", ms: "Bergerak" } },
+  { value: "foreign_body", label: { en: "Foreign Body", ms: "Benda Asing" } }
 ];
 
 const CHARGING_OPTIONS = [
-  { value: "abdomen_rm60", label: "Abdomen RM60" },
-  { value: "chest_rm60", label: "Chest RM 60" },
-  { value: "skull_rm90", label: "Skull RM 90" }
+  { value: "abdomen_rm60", label: { en: "Abdomen RM60", ms: "Abdomen RM60" } },
+  { value: "chest_rm60", label: { en: "Chest RM 60", ms: "Dada RM 60" } },
+  { value: "skull_rm90", label: { en: "Skull RM 90", ms: "Tengkorak RM 90" } }
 ];
 
 const POSITION_OPTIONS = [
-  { value: "pa", label: "PA" },
-  { value: "ap", label: "AP" },
-  { value: "lateral", label: "Lateral" },
-  { value: "oblique", label: "Oblique" },
-  { value: "others", label: "Others" }
+  { value: "pa", label: { en: "PA", ms: "PA" } },
+  { value: "ap", label: { en: "AP", ms: "AP" } },
+  { value: "lateral", label: { en: "Lateral", ms: "Lateral" } },
+  { value: "oblique", label: { en: "Oblique", ms: "Oblique" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const formatDate = (dateStr) => {
@@ -115,7 +122,16 @@ const formatDate = (dateStr) => {
   return isNaN(d.getTime()) ? "-" : d.toLocaleDateString();
 };
 
-function XRayPatientInfo({ patient }) {
+const PATIENT_INFO_LABELS = {
+  name: { en: "Name", ms: "Nama" },
+  id: { en: "Id", ms: "Id" },
+  phone: { en: "Phone Number", ms: "Nombor Telefon" },
+  timeArrival: { en: "Time Arrival", ms: "Masa Ketibaan" },
+  gender: { en: "Gender", ms: "Jantina" },
+  birthDate: { en: "Birth Date", ms: "Tarikh Lahir" }
+};
+
+function XRayPatientInfo({ patient, language = "en" }) {
   if (!patient) return null;
   const name = patient.name || patient.patient_name || "-";
   const id = patient.id || patient.patient_id || "-";
@@ -127,18 +143,19 @@ function XRayPatientInfo({ patient }) {
   return (
     <div style={section}>
       <div style={patientGrid}>
-        <div><b>Name:</b> {name}</div>
-        <div><b>Id:</b> {id}</div>
-        <div><b>Phone Number:</b> {tel}</div>
-        <div><b>Time Arrival:</b> {timeArrival}</div>
-        <div><b>Gender:</b> {sex}</div>
-        <div><b>Birth Date:</b> {formatDate(dob)}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.name, language)}:</b> {name}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.id, language)}:</b> {id}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.phone, language)}:</b> {tel}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.timeArrival, language)}:</b> {timeArrival}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.gender, language)}:</b> {sex}</div>
+        <div><b>{t(PATIENT_INFO_LABELS.birthDate, language)}:</b> {formatDate(dob)}</div>
       </div>
     </div>
   );
 }
 
 export default function XRayInformationForm({ patient, onBack }) {
+  const [language, setLanguage] = useState("en");
   const [values, setValues] = useState({
     xray: "abdomen",
     side: "right",
@@ -186,6 +203,9 @@ export default function XRayInformationForm({ patient, onBack }) {
   };
 
   const handleAction = (type) => {
+    if (type === "toggle-language") {
+      setLanguage(l => (l === "en" ? "ms" : "en"));
+    }
     if (type === "back") onBack?.();
     if (type === "add_xray_image") {
       const current = parseInt(values._xray_image_count || "2", 10);
@@ -208,114 +228,117 @@ export default function XRayInformationForm({ patient, onBack }) {
   const showLmpField = isFemale && !isNaN(patientAge) && patientAge > 8;
 
   const PATIENT_INFO_SCHEMA = {
-    title: "Patient Information",
+    enableLanguageToggle: true,
+    title: { en: "Patient Information", ms: "Maklumat Pesakit" },
     sections: []
   };
 
   /* Single flat section with subheadings - matches Physiotherapy (no nested cards) */
   const XRAY_SCHEMA = {
-    title: "X-RAY INFORMATION (E-FORM)",
+    enableLanguageToggle: true,
+    title: { en: "X-RAY INFORMATION (E-FORM)", ms: "MAKLUMAT X-RAY (E-FORM)" },
     actions: [
-      { type: "back", label: "Back" }
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
     ],
     sections: [
       {
         fields: [
           {
             name: "xray",
-            label: "XRAY",
+            label: { en: "XRAY", ms: "XRAY" },
             type: "radio",
             options: XRAY_OPTIONS
           },
           {
             name: "xray_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter X-ray type",
+            placeholder: { en: "Enter X-ray type", ms: "Masukkan jenis X-ray" },
             showIf: { field: "xray", equals: "others" }
           },
           {
             name: "side",
-            label: "Side of Examination",
+            label: { en: "Side of Examination", ms: "Bahagian Pemeriksaan" },
             type: "radio",
             options: SIDE_OPTIONS
           },
           {
             name: "position",
-            label: "Position",
+            label: { en: "Position", ms: "Posisi" },
             type: "radio",
             options: POSITION_OPTIONS
           },
           {
             name: "position_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter position",
+            placeholder: { en: "Enter position", ms: "Masukkan posisi" },
             showIf: { field: "position", equals: "others" }
           },
-          { type: "subheading", label: "History & Consent" },
+          { type: "subheading", label: { en: "History & Consent", ms: "Sejarah & Persetujuan" } },
           {
             name: "history_from_doctor",
-            label: "Medical History from the Doctor",
+            label: { en: "Medical History from the Doctor", ms: "Sejarah Perubatan dari Doktor" },
             type: "textarea",
             readOnly: true,
-            placeholder: "Auto-generated from Customer Service"
+            placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
           },
           {
             name: "consent_from_client",
-            label: "Consent from Client",
+            label: { en: "Consent from Client", ms: "Persetujuan dari Klien" },
             type: "textarea",
-            placeholder: "Enter consent information"
+            placeholder: { en: "Enter consent information", ms: "Masukkan maklumat persetujuan" }
           },
-          { type: "subheading", label: "Clinical Details" },
+          { type: "subheading", label: { en: "Clinical Details", ms: "Butiran Klinikal" } },
           {
             name: "client_status",
-            label: "Client Status",
+            label: { en: "Client Status", ms: "Status Klien" },
             type: "radio",
             options: CLIENT_STATUS_OPTIONS
           },
           {
             name: "doctor_name",
-            label: "Doctor Name",
+            label: { en: "Doctor Name", ms: "Nama Doktor" },
             type: "radio",
             options: DOCTOR_OPTIONS
           },
           {
             name: "doctor_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter doctor name",
+            placeholder: { en: "Enter doctor name", ms: "Masukkan nama doktor" },
             showIf: { field: "doctor_name", equals: "other" }
           },
           {
             name: "radiographer_name",
-            label: "Radiographer Name",
+            label: { en: "Radiographer Name", ms: "Nama Ahli Radiografi" },
             type: "radio",
             options: RADIOGRAPHER_OPTIONS
           },
           {
             name: "radiographer_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter radiographer name",
+            placeholder: { en: "Enter radiographer name", ms: "Masukkan nama ahli radiografi" },
             showIf: { field: "radiographer_name", equals: "others" }
           },
           {
             name: "status_ob_pp",
-            label: "Status OB/PP",
+            label: { en: "Status OB/PP", ms: "Status OB/PP" },
             type: "radio",
             options: STATUS_OB_PP_OPTIONS
           },
           {
             name: "status_ob_pp_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter status",
+            placeholder: { en: "Enter status", ms: "Masukkan status" },
             showIf: { field: "status_ob_pp", equals: "others" }
           },
           {
             name: "ward",
-            label: "Ward",
+            label: { en: "Ward", ms: "Wad" },
             type: "radio",
             options: WARD_OPTIONS
           },
@@ -323,68 +346,68 @@ export default function XRayInformationForm({ patient, onBack }) {
             ? [
                 {
                   name: "lmp_date",
-                  label: "Last Menstrual Date",
+                  label: { en: "Last Menstrual Date", ms: "Tarikh Haid Terakhir" },
                   type: "date"
                 }
               ]
             : []),
-          { type: "subheading", label: "Exposure Factor" },
+          { type: "subheading", label: { en: "Exposure Factor", ms: "Faktor Pendedahan" } },
           {
             type: "row",
             fields: [
               {
                 name: "kvp",
-                label: "kVp",
+                label: { en: "kVp", ms: "kVp" },
                 type: "input",
-                placeholder: "kVp"
+                placeholder: { en: "kVp", ms: "kVp" }
               },
               {
                 name: "mas",
-                label: "mAs",
+                label: { en: "mAs", ms: "mAs" },
                 type: "input",
-                placeholder: "mAs"
+                placeholder: { en: "mAs", ms: "mAs" }
               },
               {
                 name: "seconds",
-                label: "S (Seconds)",
+                label: { en: "S (Seconds)", ms: "S (Saat)" },
                 type: "input",
-                placeholder: "S"
+                placeholder: { en: "S", ms: "S" }
               }
             ]
           },
-          { type: "subheading", label: "XRAY IMAGE UPLOAD" },
+          { type: "subheading", label: { en: "XRAY IMAGE UPLOAD", ms: "MUAT NAIK GAMBAR XRAY" } },
           {
             type: "row",
             fields: [
               {
                 name: "xray_image_1",
-                title: "XRAY IMAGE 1",
+                title: { en: "XRAY IMAGE 1", ms: "GAMBAR XRAY 1" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "xray_image_2",
-                title: "XRAY IMAGE 2",
+                title: { en: "XRAY IMAGE 2", ms: "GAMBAR XRAY 2" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "xray_image_3",
-                title: "XRAY IMAGE 3",
+                title: { en: "XRAY IMAGE 3", ms: "GAMBAR XRAY 3" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", oneOf: ["3", "4", "5"] }
               },
               {
                 name: "xray_image_4",
-                title: "XRAY IMAGE 4",
+                title: { en: "XRAY IMAGE 4", ms: "GAMBAR XRAY 4" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", oneOf: ["4", "5"] }
               },
               {
                 name: "xray_image_5",
-                title: "XRAY IMAGE 5",
+                title: { en: "XRAY IMAGE 5", ms: "GAMBAR XRAY 5" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", equals: "5" }
@@ -393,32 +416,32 @@ export default function XRayInformationForm({ patient, onBack }) {
           },
           {
             type: "button",
-            label: "ADDED IMAGE FILE (+)",
+            label: { en: "ADDED IMAGE FILE (+)", ms: "TAMBAH FAIL GAMBAR (+)" },
             action: "add_xray_image"
           },
-          { type: "subheading", label: "Report from Radiographer" },
+          { type: "subheading", label: { en: "Report from Radiographer", ms: "Laporan dari Ahli Radiografi" } },
           {
             name: "basic_report",
-            label: "Basic Report",
+            label: { en: "Basic Report", ms: "Laporan Asas" },
             type: "radio",
             options: BASIC_REPORT_OPTIONS
           },
           {
             name: "problem_client_position",
-            label: "Problem Client Position",
+            label: { en: "Problem Client Position", ms: "Masalah Posisi Klien" },
             type: "radio",
             options: PROBLEM_CLIENT_POSITION_OPTIONS
           },
-          { type: "subheading", label: "Report from Doctor" },
+          { type: "subheading", label: { en: "Report from Doctor", ms: "Laporan dari Doktor" } },
           {
             name: "report_from_doctor",
-            label: "Report from Doctor",
+            label: { en: "Report from Doctor", ms: "Laporan dari Doktor" },
             type: "textarea",
-            placeholder: "Enter report"
+            placeholder: { en: "Enter report", ms: "Masukkan laporan" }
           },
           {
             name: "charging",
-            label: "Charging",
+            label: { en: "Charging", ms: "Caj" },
             type: "single-select",
             options: CHARGING_OPTIONS
           }
@@ -435,8 +458,9 @@ export default function XRayInformationForm({ patient, onBack }) {
           schema={PATIENT_INFO_SCHEMA}
           values={{}}
           onChange={() => {}}
+          language={language}
         >
-          <XRayPatientInfo patient={patient} />
+          <XRayPatientInfo patient={patient} language={language} />
         </CommonFormBuilder>
       </div>
 
@@ -446,10 +470,11 @@ export default function XRayInformationForm({ patient, onBack }) {
         values={values}
         onChange={onChange}
         onAction={handleAction}
+        language={language}
       >
         <div style={submitRow}>
           <button style={submitBtn} onClick={handlePrint} type="button">
-            PRINT
+            {t({ en: "PRINT", ms: "CETAK" }, language)}
           </button>
         </div>
       </CommonFormBuilder>

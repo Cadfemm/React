@@ -67,13 +67,11 @@ export default function CommonFormBuilder({
           <div style={styles.header}>
             <div>
               <div style={styles.title}>
-                {schema?.enableLanguageToggle ? t(schema.title, language) : schema.title}
+                {t(schema.title, schema?.enableLanguageToggle ? (language || "en") : "en")}
               </div>
               {schema.subtitle && (
   <div style={styles.subtitle}>
-    {schema?.enableLanguageToggle
-      ? t(schema.subtitle, language)  // ✅ FIXED: uses schema.subtitle
-      : schema.subtitle}
+    {t(schema.subtitle, schema?.enableLanguageToggle ? (language || "en") : "en")}
   </div>
 )}
 
@@ -124,7 +122,7 @@ export default function CommonFormBuilder({
             style={styles.mstBtn}
             onClick={() => onAction?.(action.type)}
           >
-            {action.label}
+            {t(action.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
           </button>
         ))}
     </div>
@@ -152,7 +150,7 @@ export default function CommonFormBuilder({
 
                   {section.title && (
                     <div style={styles.sectionTitle}>
-                      {supportsLanguage ? t(section.title, language) : section.title}
+                      {t(section.title, supportsLanguage ? (language || "en") : "en")}
                     </div>
                   )}
 
@@ -199,7 +197,7 @@ export default function CommonFormBuilder({
                           <div style={styles.matrixOptions}>
                             {nextMatrix.options?.map((opt) => (
                               <div key={opt.value} style={styles.matrixHeaderCell}>
-                                {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
+                                {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                               </div>
                             ))}
                           </div>
@@ -226,8 +224,9 @@ export default function CommonFormBuilder({
                         ? validateField(value, field.validation)
                         : null;
 
+                      const fieldKey = field.name ?? (typeof field.label === "string" ? field.label : null) ?? `field-${idx}`;
                       return (
-                        <React.Fragment key={field.name ?? field.label ?? idx}>
+                        <React.Fragment key={fieldKey}>
                           {renderScaleBeforeSubheading(field, idx)}
                           {shouldShowScaleBeforeMatrix(field, idx) && (() => {
                             const questionColumnWidth = 400; // Fixed width for question column
@@ -246,7 +245,7 @@ export default function CommonFormBuilder({
                                 <div style={styles.matrixOptions}>
                                   {field.options?.map((opt) => (
                                     <div key={opt.value} style={styles.matrixHeaderCell}>
-                                      {schema?.enableLanguageToggle ? t(opt.label, language) : opt.label}
+                                      {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                     </div>
                                   ))}
                                 </div>
@@ -267,7 +266,7 @@ export default function CommonFormBuilder({
   <div style={{ marginBottom: 16 }}>
     {(field.label || field.info) && (
       <label style={styles.label}>
-        {field.label}
+        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
         {field.info && <InfoTooltip info={field.info} />}
       </label>
     )}
@@ -291,7 +290,7 @@ export default function CommonFormBuilder({
                           <div style={styles.radioRow}>
                             {(field.label || field.info) && (
                               <div style={styles.radioLabel}>
-                                {field.label}
+                                {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                 {field.info && <InfoTooltip info={field.info} />}
                               </div>
                             )}
@@ -305,6 +304,8 @@ export default function CommonFormBuilder({
                                 assessmentRegistry,
                                 formReadOnly,
                                 {
+                                  enabled: schema?.enableLanguageToggle === true,
+                                  lang: language,
                                   showScores
                                 }
                               )}
@@ -315,6 +316,8 @@ export default function CommonFormBuilder({
                         ) : field.type === "subheading" ? (
 
                               renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
+                                enabled: schema?.enableLanguageToggle === true,
+                                lang: language,
                                 showScores
                               })
                             ) : field.type === "row" ? (
@@ -342,7 +345,7 @@ export default function CommonFormBuilder({
                                     && field.type !== "checkbox-group"
                                     && (
                                       <label style={styles.label}>
-                                        {schema?.enableLanguageToggle ? t(field.label, language) : field.label}
+                                        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                       </label>
                                     )}
 
@@ -442,8 +445,12 @@ function InfoTooltip({ info }) {
 
 const t = (text, lang) => {
   if (!text) return "";
-  if (typeof text === "string") return text;
-  return text[lang] || text.en || "";
+  if (typeof text === "string" || typeof text === "number") return text;
+  if (typeof text === "object" && text !== null && !Array.isArray(text)) {
+    // Handle bilingual objects {en: "...", ms: "..."}
+    return text[lang] || text.en || "";
+  }
+  return String(text);
 };
 
 function ScoresToggle({ enabled, onToggle }) {
@@ -527,7 +534,7 @@ const langSwitch = {
 };
 
 
-function MultiSelectDropdown({ field, value, onChange }) {
+function MultiSelectDropdown({ field, value, onChange, languageConfig }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
 
@@ -553,7 +560,7 @@ function MultiSelectDropdown({ field, value, onChange }) {
       ? "Select"
       : field.options
         .filter(o => value.includes(o.value))
-        .map(o => o.label)
+        .map(o => t(o.label, languageConfig?.enabled ? languageConfig.lang : "en"))
         .join(", ");
 
   return (
@@ -577,7 +584,7 @@ function MultiSelectDropdown({ field, value, onChange }) {
                 checked={value.includes(opt.value)}
                 onChange={() => toggleValue(opt.value)}
               />
-              {opt.label}
+              {languageConfig?.enabled ? t(opt.label, languageConfig.lang) : opt.label}
             </label>
           ))}
         </div>
@@ -714,7 +721,8 @@ function AssessmentLauncher({
   field,
   values,
   onChange,
-  assessmentRegistry
+  assessmentRegistry,
+  languageConfig
 }) {
   const activeKey = `${field.name}_active`;
   const active = values[activeKey] || null;
@@ -740,7 +748,7 @@ function AssessmentLauncher({
               )
             }
           >
-            {opt.label}
+            {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
           </button>
         ))}
       </div>
@@ -754,7 +762,7 @@ function AssessmentLauncher({
   );
 }
 
-function RadioMatrixRow({ field, value, onChange, columnWidth, showScores }) {
+function RadioMatrixRow({ field, value, onChange, columnWidth, showScores, languageConfig }) {
   // Fixed width for question column, equal widths for option columns
   const questionColumnWidth = field.wideLabel ? 400 : 400; // Fixed width for question column
   const optionsCount = field.options?.length || 4;
@@ -766,7 +774,7 @@ function RadioMatrixRow({ field, value, onChange, columnWidth, showScores }) {
   return (
     <div style={rowStyle}>
       <div style={styles.matrixLabel}>
-        {field.label}
+        {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
         {field.showInfoInRow !== false && (
           <>
             {field.rowInfo && <InfoTooltip info={field.rowInfo} />}
@@ -813,6 +821,7 @@ function renderField(
           style={styles.input}
           value={value || ""}
           readOnly={readOnly}
+          placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
           onChange={e =>
             !readOnly && onChange(field.name, e.target.value)
           }
@@ -821,7 +830,7 @@ function renderField(
     case "milestone-grid":
       return (
         <div>
-          <div style={styles.subheading}>{field.heading}</div>
+          <div style={styles.subheading}>{t(field.heading, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
           {field.rows.map((row, idx) => (
             <div
@@ -835,11 +844,11 @@ function renderField(
             >
               {/* LEFT */}
               <div>
-                <div style={styles.milestoneLabel}>{row.left.label}</div>
+                <div style={styles.milestoneLabel}>{t(row.left.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
                 <input
                   style={styles.input}
                   value={values[row.left.name] || ""}
-                  placeholder={row.left.placeholder}
+                  placeholder={languageConfig?.enabled ? t(row.left.placeholder, languageConfig.lang) || "" : (row.left.placeholder || "")}
                   onChange={e =>
                     onChange(row.left.name, e.target.value)
                   }
@@ -849,11 +858,11 @@ function renderField(
               {/* RIGHT (only if present) */}
               {row.right && (
                 <div>
-                  <div style={styles.milestoneLabel}>{row.right.label}</div>
+                  <div style={styles.milestoneLabel}>{languageConfig?.enabled ? t(row.right.label, languageConfig.lang) : row.right.label}</div>
                   <input
                     style={styles.input}
                     value={values[row.right.name] || ""}
-                    placeholder={row.right.placeholder}
+                    placeholder={t(row.right.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
                     onChange={e =>
                       onChange(row.right.name, e.target.value)
                     }
@@ -938,7 +947,7 @@ function renderField(
           {/* Data rows */}
           {field.rows.map(row => (
             <div key={row.key} style={{ ...styles.tableRowFlat, gridTemplateColumns: `120px repeat(${colCount}, 1fr)` }}>
-              <div style={styles.tableRowLabel}>{row.label}</div>
+              <div style={styles.tableRowLabel}>{languageConfig?.enabled ? t(row.label, languageConfig.lang) : row.label}</div>
 
               {field.headers.map(h => (
                 <input
@@ -981,7 +990,7 @@ function renderField(
               <th style={styles.th}></th>
               {field.columns.map(col => (
                 <th key={col.value} style={styles.th}>
-                  {languageConfig?.enabled ? t(col.label, languageConfig.lang) : col.label}
+                  {t(col.label, languageConfig?.enabled ? languageConfig.lang : "en")}
                   {!col?.required && (
                     <div style={{ fontSize: 11, fontWeight: 600 }}>({col.value})</div>
                   )}
@@ -997,7 +1006,7 @@ function renderField(
               return (
                 <tr key={rowKey}>
                   <td style={styles.tdLabel}>
-                    {languageConfig?.enabled ? t(rowLabel, languageConfig.lang) : rowLabel}</td>
+                    {t(rowLabel, languageConfig?.enabled ? languageConfig.lang : "en")}</td>
                   {field.columns.map(col => (
                     <td key={col.value} style={styles.td}>
                       <input
@@ -1050,7 +1059,7 @@ function renderField(
                   gridColumn: `span ${g.columns.length}`
                 }}
               >
-                {g.label}
+                {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
               </div>
             ))}
           </div>
@@ -1068,7 +1077,7 @@ function renderField(
           {/* Data Rows */}
           {rows.map(r => (
             <div key={r.value} style={styles.refraction12Row}>
-              <div style={styles.refraction12RowLabel}>{r.label}</div>
+              <div style={styles.refraction12RowLabel}>{t(r.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
               {flatCols.map((_, i) => {
                 const key = `${field.name}_${r.value}_${i}`;
@@ -1232,7 +1241,7 @@ case "image-anatomy-selector":
                       color: "#0f172a"
                     }}
                   >
-                    {f.label}
+                    {languageConfig?.enabled ? t(f.label, languageConfig.lang) : f.label}
                   </label>
                 )}
 
@@ -1245,9 +1254,7 @@ case "image-anatomy-selector":
                   onAction,
                   assessmentRegistry,
                   formReadOnly,
-                  {
-                    showScores: languageConfig?.showScores
-                  }
+                  languageConfig
                 )}
               </div>
             );
@@ -1285,7 +1292,7 @@ case "image-anatomy-selector":
       return (
         <div style={styles.scoreBox}>
           <div style={styles.scoreLabel}>
-            {field.label}
+            {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
           </div>
           <div style={styles.scoreValue}>
             {value ?? 0}
@@ -1301,12 +1308,12 @@ case "image-anatomy-selector":
       return (
         <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
           <div style={styles.gridHeaderCell}>
-            {field.label || ""}
+            {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
             {field.info && <InfoTooltip info={field.info} />}
           </div>
           {field.cols.map(col => (
             <div key={col} style={styles.gridHeaderCell}>
-              {col}
+              {languageConfig?.enabled ? t(col, languageConfig.lang) : col}
             </div>
           ))}
         </div>
@@ -1318,7 +1325,7 @@ case "image-anatomy-selector":
           {/* <div style={styles.label}>{field.label}</div> */}
           <img
             src={field.src}
-            alt={field.label}
+            alt={t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
             style={{
               width: "100%",
               maxWidth: 600,
@@ -1340,7 +1347,7 @@ case "image-anatomy-selector":
 
       return (
         <div style={{ ...styles.gridRow, gridTemplateColumns: template }}>
-          <div style={styles.gridLabel}>{field.label}</div>
+          <div style={styles.gridLabel}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
           {field.cols.map((col, idx) => {
             const fieldKey = `${field.name}_${idx}`;
 
@@ -1357,7 +1364,7 @@ case "image-anatomy-selector":
                   {(col.options || []).map((opt, i) => {
                     const val = typeof opt === "object" && opt !== null && "value" in opt ? opt.value : opt;
                     const label = typeof opt === "object" && opt !== null && "label" in opt ? opt.label : opt;
-                    const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+                    const display = t(label, languageConfig?.enabled ? languageConfig.lang : "en") || String(val ?? "");
                     return (
                       <option key={val ?? i} value={val}>
                         {display}
@@ -1423,10 +1430,10 @@ case "image-anatomy-selector":
           {/* ROW 1: TITLES */}
           <div style={styles.pairedTitles}>
             <div style={styles.pairedTitleCell}>
-              {field.right.title}
+              {t(field.right.title, languageConfig?.enabled ? languageConfig.lang : "en")}
             </div>
             <div style={styles.pairedTitleCell}>
-              {field.left.title}
+              {t(field.left.title, languageConfig?.enabled ? languageConfig.lang : "en")}
             </div>
           </div>
 
@@ -1442,7 +1449,7 @@ case "image-anatomy-selector":
               <option value="">Select</option>
               {field.options.map(opt => (
                 <option key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
                 </option>
               ))}
             </select>
@@ -1457,7 +1464,7 @@ case "image-anatomy-selector":
               <option value="">Select</option>
               {field.options.map(opt => (
                 <option key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
                 </option>
               ))}
             </select>
@@ -1472,6 +1479,7 @@ case "image-anatomy-selector":
           field={field}
           value={value}
           onChange={onChange}
+          languageConfig={languageConfig}
         />
       );
     case "textarea":
@@ -1510,7 +1518,7 @@ case "image-anatomy-selector":
           <option value="">Select</option>
           {(field.options || []).map(opt => (
             <option key={opt.value} value={opt.value}>
-              {opt.label}
+              {languageConfig?.enabled ? t(opt.label, languageConfig.lang) : opt.label}
             </option>
           ))}
         </select>
@@ -1523,6 +1531,7 @@ case "image-anatomy-selector":
           onChange={onChange}
           columnWidth={languageConfig?.matrixColumnWidth}
           showScores={languageConfig?.showScores}
+          languageConfig={languageConfig}
         />
       );
 
@@ -1544,7 +1553,7 @@ case "image-anatomy-selector":
                       disabled={readOnly}
                       onChange={() => !readOnly && onChange(field.name, optVal)}
                     />
-                    {typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? "")}
+                    {typeof optLabel === "object" && optLabel !== null && !Array.isArray(optLabel) ? t(optLabel, languageConfig?.lang) : (typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? ""))}
                   </label>
                 );
               })}
@@ -1556,7 +1565,7 @@ case "image-anatomy-selector":
       return (
         <div style={{ marginBottom: 0 }}>
           <label style={styles.label}>
-            {field.title}
+            {t(field.title, languageConfig?.enabled ? languageConfig.lang : "en")}
             {field.required && <span style={{ color: "red" }}> *</span>}
           </label>
 
@@ -1596,13 +1605,13 @@ case "image-anatomy-selector":
 
       return (
         <div style={styles.field}>
-          <label style={styles.label}>{field.label}</label>
+          <label style={styles.label}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
 
           <div style={{ display: "flex", gap: 12 }}>
             {pairs.map(pair => (
               <div key={pair.name} style={{ flex: 1 }}>
                 <div style={{ fontSize: "13px", fontWeight: "600", color: "#0f172a", }}>
-                  {pair.title || pair.label}
+                  {t(pair.title || pair.label, languageConfig?.enabled ? languageConfig.lang : "en")}
                 </div>
 
                 <input
@@ -1632,6 +1641,7 @@ case "image-anatomy-selector":
           values={values}                 // ✅ FIX
           onChange={onChange}
           assessmentRegistry={assessmentRegistry} // ✅ FIX
+          languageConfig={languageConfig}
         />
       );
 
@@ -1651,7 +1661,7 @@ case "image-anatomy-selector":
           >
             {/* LABEL */}
             <label style={styles.label}>
-              {field.label}
+              {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
             </label>
 
             {/* OPTIONS */}
@@ -1676,7 +1686,7 @@ case "image-anatomy-selector":
                       onChange(field.name, next);
                     }}
                   />
-                  {opt.label}
+                  {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
                 </label>
               ))}
             </div>
@@ -1688,7 +1698,7 @@ case "image-anatomy-selector":
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {field.label ? (
-            <label style={styles.label}>{field.label}</label>
+            <label style={styles.label}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
           ) : null}
 
           <div style={styles.inlineGroup}>
@@ -1706,7 +1716,7 @@ case "image-anatomy-selector":
                     onChange(field.name, next);
                   }}
                 />
-                {opt.label}
+                {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
               </label>
             ))}
           </div>
@@ -1721,7 +1731,7 @@ case "image-anatomy-selector":
     case "subheading":
       return (
         <div style={styles.subheading}>
-          {field.label}
+          {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
         </div>
       );
 
@@ -1731,17 +1741,18 @@ case "image-anatomy-selector":
           field={field}
           value={value || []}
           onChange={onChange}
+          languageConfig={languageConfig}
         />
       );
     case "inline-input":
       return (
         <div style={styles.inlineRow}>
-          <div style={styles.inlineLabel}>{field.inlineLabel}</div>
+          <div style={styles.inlineLabel}>{t(field.inlineLabel, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
           <input
             style={styles.inlineInput}
             value={value || ""}
             onChange={e => onChange(field.name, e.target.value)}
-            placeholder={field.placeholder || ""}
+            placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
           />
         </div>
       );
@@ -1754,7 +1765,7 @@ case "image-anatomy-selector":
           alignItems: "center",
           gap: 16
         }}>
-          <div style={{ fontWeight: 600, color: "#0f172a" }}>{field.label}</div>
+          <div style={{ fontWeight: 600, color: "#0f172a" }}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
           {/* Right Ear */}
           <div style={styles.inlineGroup}>
@@ -1798,7 +1809,7 @@ case "image-anatomy-selector":
           style={styles.btnOutline}
           onClick={() => onAction?.(field.action)}
         >
-          {field.label}
+          {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
         </button>
       );
 
@@ -1895,7 +1906,7 @@ case "image-anatomy-selector":
           {/* Data Rows */}
           {rows.map((row, rowIdx) => (
             <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              <div style={styles.refractionTableRowLabel}>{languageConfig?.enabled ? t(row.label, languageConfig.lang) : row.label}</div>
 
               {[0, 1].map(eye => (
                 <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
@@ -1978,7 +1989,7 @@ case "image-anatomy-selector":
           {/* Data Rows */}
           {rows.map((row, rowIdx) => (
             <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              <div style={styles.refractionTableRowLabel}>{languageConfig?.enabled ? t(row.label, languageConfig.lang) : row.label}</div>
               {[0, 1].map(eye => (
                 <div key={`${rowIdx}-eye-${eye}`} style={styles.refractionTableHeaderGroup}>
                   {eyeColumns.map((col, colIdx) => {
@@ -2024,7 +2035,7 @@ case "image-anatomy-selector":
                   gridColumn: `span ${g.columns.length}`
                 }}
               >
-                {g.label}
+                {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
               </div>
             ))}
           </div>
@@ -2052,7 +2063,7 @@ case "image-anatomy-selector":
                     borderBottom: "1px solid #e5e7eb"
                   }}
                 >
-                  <div style={styles.vaRowLabel}>{r.label}</div>
+                  <div style={styles.vaRowLabel}>{t(r.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
                   {r.remark ? (
                     <textarea
@@ -2152,7 +2163,7 @@ case "image-anatomy-selector":
           {/* Data Rows */}
           {rows.map((row, rowIdx) => (
             <div key={rowIdx} style={styles.refractionTableRow}>
-              <div style={styles.refractionTableRowLabel}>{row.label}</div>
+              <div style={styles.refractionTableRowLabel}>{languageConfig?.enabled ? t(row.label, languageConfig.lang) : row.label}</div>
               {[0, 1].map(eye => (
                 <div key={eye} style={styles.refractionTableHeaderGroup}>
                   {eyeColumns.map((col, colIdx) => {
