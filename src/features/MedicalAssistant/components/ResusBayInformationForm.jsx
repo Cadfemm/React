@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const mainContent = {};
@@ -8,6 +8,7 @@ const mainContent = {};
  * Data is read-only, sourced from patient and departmental records.
  */
 export default function ResusBayInformationForm({ patient, onBack }) {
+  const [language, setLanguage] = useState("en");
   const name = patient?.name || patient?.patient_name || "-";
   const ic = patient?.ic || patient?.ic_no || patient?.id || "-";
   const age = patient?.age ?? "-";
@@ -57,83 +58,204 @@ export default function ResusBayInformationForm({ patient, onBack }) {
   };
 
   const RESUS_BAY_SCHEMA = {
-    title: "RESUS BAY INFORMATION",
-    actions: [{ type: "back", label: "Back" }],
+    enableLanguageToggle: true,
+    title: {
+      en: "RESUS BAY INFORMATION",
+      ms: "MAKLUMAT BAY RESUS"
+    },
+    actions: [
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
+    ],
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Patient Identification" },
-          { name: "nama", label: "NAMA", type: "input", readOnly: true },
-          { name: "ic", label: "IC", type: "input", readOnly: true },
-          { name: "umur", label: "UMUR", type: "input", readOnly: true },
-          { name: "cm", label: "CM", type: "input", readOnly: true },
-          { name: "aduan", label: "ADUAN", type: "textarea", readOnly: true },
-          { type: "subheading", label: "TANDA VITAL (Vital Signs & Measurements)" },
+          { 
+            type: "subheading", 
+            label: { 
+              en: "Patient Identification", 
+              ms: "Pengenalan Pesakit" 
+            } 
+          },
+          { 
+            name: "nama", 
+            label: { en: "Name", ms: "NAMA" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "ic", 
+            label: { en: "IC", ms: "IC" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "umur", 
+            label: { en: "Age", ms: "UMUR" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "cm", 
+            label: { en: "CM", ms: "CM" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "aduan", 
+            label: { en: "Complaint", ms: "ADUAN" }, 
+            type: "textarea", 
+            readOnly: true 
+          },
+          { 
+            type: "subheading", 
+            label: { 
+              en: "Vital Signs & Measurements", 
+              ms: "TANDA VITAL" 
+            } 
+          },
           {
             type: "row",
             fields: [
-              { name: "bp", label: "BP", type: "input", readOnly: true },
-              { name: "rr", label: "RR", type: "input", readOnly: true },
-              { name: "spo2", label: "SPO2", type: "input", readOnly: true },
-              { name: "hr", label: "HR", type: "input", readOnly: true },
-              { name: "temp", label: "T", type: "input", readOnly: true },
-              { name: "ps", label: "P/S", type: "input", readOnly: true }
+              { 
+                name: "bp", 
+                label: { en: "BP", ms: "BP" }, 
+                type: "input", 
+                readOnly: true 
+              },
+              { 
+                name: "rr", 
+                label: { en: "RR", ms: "RR" }, 
+                type: "input", 
+                readOnly: true 
+              },
+              { 
+                name: "spo2", 
+                label: { en: "SPO2", ms: "SPO2" }, 
+                type: "input", 
+                readOnly: true 
+              },
+              { 
+                name: "hr", 
+                label: { en: "HR", ms: "HR" }, 
+                type: "input", 
+                readOnly: true 
+              },
+              { 
+                name: "temp", 
+                label: { en: "T", ms: "T" }, 
+                type: "input", 
+                readOnly: true 
+              },
+              { 
+                name: "ps", 
+                label: { en: "P/S", ms: "P/S" }, 
+                type: "input", 
+                readOnly: true 
+              }
             ]
           },
-          { type: "subheading", label: "Reports" },
+          { 
+            type: "subheading", 
+            label: { 
+              en: "Reports", 
+              ms: "Laporan" 
+            } 
+          },
           {
             name: "xray_status",
-            label: "XRAY",
+            label: { en: "X-Ray", ms: "X-RAY" },
             type: "radio",
             options: [
-              { value: "non_indicator", label: "Non Indicator" },
-              { value: "done", label: "Done" }
+              { 
+                value: "non_indicator", 
+                label: { en: "Non Indicator", ms: "Tiada Petunjuk" } 
+              },
+              { 
+                value: "done", 
+                label: { en: "Done", ms: "Selesai" } 
+              }
             ],
             readOnly: true
           },
           {
             name: "xray_result",
-            label: "RESULT XRAY",
+            label: { en: "X-Ray Result", ms: "KEPUTUSAN X-RAY" },
             type: "textarea",
-            placeholder: "X-Ray result",
+            placeholder: { en: "X-Ray result", ms: "Keputusan X-Ray" },
             readOnly: true,
             showIf: { field: "xray_status", equals: "done" }
           },
           {
             name: "lab_status",
-            label: "LAB RESULT",
+            label: { en: "Lab Result", ms: "KEPUTUSAN MAKMAL" },
             type: "radio",
             options: [
-              { value: "non_indicator", label: "Non Indicator" },
-              { value: "done", label: "Done" }
+              { 
+                value: "non_indicator", 
+                label: { en: "Non Indicator", ms: "Tiada Petunjuk" } 
+              },
+              { 
+                value: "done", 
+                label: { en: "Done", ms: "Selesai" } 
+              }
             ],
             readOnly: true
           },
           {
             name: "lab_result",
-            label: "RESULT LAB",
+            label: { en: "Lab Result", ms: "KEPUTUSAN MAKMAL" },
             type: "textarea",
-            placeholder: "Lab result",
+            placeholder: { en: "Lab result", ms: "Keputusan makmal" },
             readOnly: true,
             showIf: { field: "lab_status", equals: "done" }
           },
           {
             name: "doctor_plan",
-            label: "DOCTOR PLAN / MANAGEMENT",
+            label: { en: "Doctor Plan / Management", ms: "PELAN DOKTOR / PENGURUSAN" },
             type: "textarea",
             readOnly: true
           },
-          { type: "subheading", label: "Diagnosis & Status" },
-          { name: "diagnosis", label: "DIAGNOSIS", type: "input", readOnly: true },
-          { name: "dirawat_oleh_doktor", label: "DIRAWAT OLEH DOKTOR", type: "input", readOnly: true },
-          { name: "status_ob_pp", label: "STATUS OB/PP", type: "input", readOnly: true },
-          { name: "others", label: "OTHERS", type: "textarea", readOnly: true }
+          { 
+            type: "subheading", 
+            label: { 
+              en: "Diagnosis & Status", 
+              ms: "Diagnosis & Status" 
+            } 
+          },
+          { 
+            name: "diagnosis", 
+            label: { en: "Diagnosis", ms: "DIAGNOSIS" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "dirawat_oleh_doktor", 
+            label: { en: "Treated by Doctor", ms: "DIRAWAT OLEH DOKTOR" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "status_ob_pp", 
+            label: { en: "Status OB/PP", ms: "STATUS OB/PP" }, 
+            type: "input", 
+            readOnly: true 
+          },
+          { 
+            name: "others", 
+            label: { en: "Others", ms: "LAIN-LAIN" }, 
+            type: "textarea", 
+            readOnly: true 
+          }
         ]
       }
     ]
   };
 
   const handleAction = (type) => {
+    if (type === "toggle-language") {
+      setLanguage(l => (l === "en" ? "ms" : "en"));
+    }
     if (type === "back") onBack?.();
   };
 
@@ -144,6 +266,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
         values={values}
         onChange={() => {}}
         onAction={handleAction}
+        language={language}
       >
         <div style={{ textAlign: "right", marginTop: -40, marginBottom: 20 }}>
           <span
