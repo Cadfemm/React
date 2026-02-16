@@ -4,79 +4,79 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 const mainContent = {};
 
 const PP_OB_OPTIONS = [
-  { value: "in_patient", label: "In Patient" },
-  { value: "out_patient", label: "Out Patient" }
+  { value: "in_patient", label: { en: "In Patient", ms: "Pesakit Dalam" } },
+  { value: "out_patient", label: { en: "Out Patient", ms: "Pesakit Luar" } }
 ];
 
 const LAB_OPTIONS = [
-  { value: "inhouse", label: "Inhouse" },
-  { value: "out_source", label: "Out source" }
+  { value: "inhouse", label: { en: "Inhouse", ms: "Dalam Rumah" } },
+  { value: "out_source", label: { en: "Out source", ms: "Sumber Luar" } }
 ];
 
 const DOCTOR_OPTIONS = [
-  { value: "dr_afif", label: "Dr. Afif" },
-  { value: "dr_faez", label: "Dr. Faez" },
-  { value: "dr_azril", label: "Dr. Azril" }
+  { value: "dr_afif", label: { en: "Dr. Afif", ms: "Dr. Afif" } },
+  { value: "dr_faez", label: { en: "Dr. Faez", ms: "Dr. Faez" } },
+  { value: "dr_azril", label: { en: "Dr. Azril", ms: "Dr. Azril" } }
 ];
 
 const LOCATION_OPTIONS = [
-  { value: "tsw", label: "TSW" },
-  { value: "dpw", label: "DPW" },
-  { value: "premier_clinic", label: "Premier Clinic" },
-  { value: "general_clinic", label: "General Clinic" },
-  { value: "premier_ward", label: "Premier Ward" },
-  { value: "general_ward", label: "General ward" },
-  { value: "cvw", label: "CVW" },
-  { value: "hb3", label: "HB3" }
+  { value: "tsw", label: { en: "TSW", ms: "TSW" } },
+  { value: "dpw", label: { en: "DPW", ms: "DPW" } },
+  { value: "premier_clinic", label: { en: "Premier Clinic", ms: "Klinik Premier" } },
+  { value: "general_clinic", label: { en: "General Clinic", ms: "Klinik Am" } },
+  { value: "premier_ward", label: { en: "Premier Ward", ms: "Wad Premier" } },
+  { value: "general_ward", label: { en: "General ward", ms: "Wad Am" } },
+  { value: "cvw", label: { en: "CVW", ms: "CVW" } },
+  { value: "hb3", label: { en: "HB3", ms: "HB3" } }
 ];
 
 const MEAL_OPTIONS = [
-  { value: "fasting", label: "Fasting" },
-  { value: "non_fasting", label: "Non Fasting" }
+  { value: "fasting", label: { en: "Fasting", ms: "Berpuasa" } },
+  { value: "non_fasting", label: { en: "Non Fasting", ms: "Tidak Berpuasa" } }
 ];
 
 const PROFILE_TEST_OPTIONS = [
-  { value: "rft", label: "RFT" },
-  { value: "cbc", label: "CBC" },
-  { value: "tft", label: "TFT" },
-  { value: "rp", label: "RP" },
-  { value: "bmp", label: "BMP" },
-  { value: "lp", label: "LP" },
-  { value: "others", label: "Others" }
+  { value: "rft", label: { en: "RFT", ms: "RFT" } },
+  { value: "cbc", label: { en: "CBC", ms: "CBC" } },
+  { value: "tft", label: { en: "TFT", ms: "TFT" } },
+  { value: "rp", label: { en: "RP", ms: "RP" } },
+  { value: "bmp", label: { en: "BMP", ms: "BMP" } },
+  { value: "lp", label: { en: "LP", ms: "LP" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const BIOCHEMISTRY_OPTIONS = [
-  { value: "hba1c", label: "HbA1c" },
-  { value: "psa", label: "PSA" },
-  { value: "hiv", label: "HIV 1&2" },
-  { value: "afp", label: "AFP" },
-  { value: "cea", label: "CEA" },
-  { value: "others", label: "Others" }
+  { value: "hba1c", label: { en: "HbA1c", ms: "HbA1c" } },
+  { value: "psa", label: { en: "PSA", ms: "PSA" } },
+  { value: "hiv", label: { en: "HIV 1&2", ms: "HIV 1&2" } },
+  { value: "afp", label: { en: "AFP", ms: "AFP" } },
+  { value: "cea", label: { en: "CEA", ms: "CEA" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const HEMATOLOGY_OPTIONS = [
-  { value: "fbc", label: "FBC" },
-  { value: "hb", label: "HB" },
-  { value: "esr", label: "ESR" },
-  { value: "others", label: "Others" }
+  { value: "fbc", label: { en: "FBC", ms: "FBC" } },
+  { value: "hb", label: { en: "HB", ms: "HB" } },
+  { value: "esr", label: { en: "ESR", ms: "ESR" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
 const MICROBIOLOGY_OPTIONS = [
-  { value: "ufeme", label: "UFEME" },
-  { value: "urine_cs", label: "Urine C&S" },
-  { value: "microscopy", label: "Microscopy" },
-  { value: "others", label: "OTHERS" }
+  { value: "ufeme", label: { en: "UFEME", ms: "UFEME" } },
+  { value: "urine_cs", label: { en: "Urine C&S", ms: "Urin C&S" } },
+  { value: "microscopy", label: { en: "Microscopy", ms: "Mikroskopi" } },
+  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
 ];
 
 const SPECIMEN_OPTIONS = [
-  { value: "sputum", label: "Sputum" },
-  { value: "faeces", label: "Faeces" },
-  { value: "others", label: "OTHERS" }
+  { value: "sputum", label: { en: "Sputum", ms: "Kahak" } },
+  { value: "faeces", label: { en: "Faeces", ms: "Najis" } },
+  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
 ];
 
 const NOTIFY_DOCTOR_OPTIONS = [
-  { value: "yes", label: "Yes" },
-  { value: "no", label: "No" }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const formatDate = (d) => {
@@ -86,6 +86,7 @@ const formatDate = (d) => {
 };
 
 export default function LabRequestForm({ patient, onBack }) {
+  const [language, setLanguage] = useState("en");
   const name = patient?.name || patient?.patient_name || "-";
   const address = patient?.residence || patient?.address || "-";
   const dob = patient?.dob || patient?.date_of_birth || patient?.birth_date;
@@ -136,32 +137,36 @@ export default function LabRequestForm({ patient, onBack }) {
   const onChange = (name, value) => setValues(v => ({ ...v, [name]: value }));
 
   const LAB_SCHEMA = {
-    title: "Lab Request Form",
-    actions: [{ type: "back", label: "Back" }],
+    enableLanguageToggle: true,
+    title: { en: "Lab Request Form", ms: "Borang Permintaan Makmal" },
+    actions: [
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
+    ],
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Sample details" },
-          { name: "pp_ob", label: "PP/OB", type: "radio", options: PP_OB_OPTIONS },
-          { name: "lab", label: "LAB", type: "radio", options: LAB_OPTIONS },
-          { type: "subheading", label: "Requester details" },
-          { name: "requester_name", label: "Name", type: "single-select", options: DOCTOR_OPTIONS },
-          { name: "requester_telephone", label: "Telephone number", type: "input", placeholder: "Enter telephone" },
-          { name: "location", label: "LOCATION", type: "single-select", options: LOCATION_OPTIONS },
+          { type: "subheading", label: { en: "Sample details", ms: "Butiran sampel" } },
+          { name: "pp_ob", label: { en: "PP/OB", ms: "PP/OB" }, type: "radio", options: PP_OB_OPTIONS },
+          { name: "lab", label: { en: "LAB", ms: "MAKMAL" }, type: "radio", options: LAB_OPTIONS },
+          { type: "subheading", label: { en: "Requester details", ms: "Butiran pemohon" } },
+          { name: "requester_name", label: { en: "Name", ms: "Nama" }, type: "single-select", options: DOCTOR_OPTIONS },
+          { name: "requester_telephone", label: { en: "Telephone number", ms: "Nombor telefon" }, type: "input", placeholder: { en: "Enter telephone", ms: "Masukkan nombor telefon" } },
+          { name: "location", label: { en: "LOCATION", ms: "LOKASI" }, type: "single-select", options: LOCATION_OPTIONS },
           {
             type: "row",
             fields: [
-              { name: "requester_date", label: "DATE", type: "date" },
-              { name: "requester_time", label: "TIME", type: "input", placeholder: "HH:MM" }
+              { name: "requester_date", label: { en: "DATE", ms: "TARIKH" }, type: "date" },
+              { name: "requester_time", label: { en: "TIME", ms: "MASA" }, type: "input", placeholder: { en: "HH:MM", ms: "HH:MM" } }
             ]
           },
-          { type: "subheading", label: "Patient Details" },
-          { name: "patient_name", label: "Name", type: "input", readOnly: true, placeholder: "Auto-generated from Customer Service" },
-          { name: "patient_address", label: "Address", type: "input", readOnly: true, placeholder: "Auto-generated from Customer Service (residence)" },
-          { name: "patient_dob", label: "Date of Birth", type: "input", readOnly: true, placeholder: "Auto-generated from Customer Service" },
-          { name: "patient_gender", label: "Gender", type: "input", readOnly: true, placeholder: "Auto-generated from Customer Service" },
-          { name: "meal", label: "MEAL", type: "radio", options: MEAL_OPTIONS },
-          { type: "subheading", label: "Profile test" },
+          { type: "subheading", label: { en: "Patient Details", ms: "Butiran Pesakit" } },
+          { name: "patient_name", label: { en: "Name", ms: "Nama" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
+          { name: "patient_address", label: { en: "Address", ms: "Alamat" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service (residence)", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan (tempat tinggal)" } },
+          { name: "patient_dob", label: { en: "Date of Birth", ms: "Tarikh Lahir" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
+          { name: "patient_gender", label: { en: "Gender", ms: "Jantina" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
+          { name: "meal", label: { en: "MEAL", ms: "MAKANAN" }, type: "radio", options: MEAL_OPTIONS },
+          { type: "subheading", label: { en: "Profile test", ms: "Ujian profil" } },
           {
             name: "profile_test",
             label: "",
@@ -171,12 +176,12 @@ export default function LabRequestForm({ patient, onBack }) {
           },
           {
             name: "profile_test_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter details",
+            placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "profile_test", includes: "others" }
           },
-          { type: "subheading", label: "Biochemistry" },
+          { type: "subheading", label: { en: "Biochemistry", ms: "Biokimia" } },
           {
             name: "biochemistry",
             label: "",
@@ -186,12 +191,12 @@ export default function LabRequestForm({ patient, onBack }) {
           },
           {
             name: "biochemistry_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter details",
+            placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "biochemistry", includes: "others" }
           },
-          { type: "subheading", label: "Hematology" },
+          { type: "subheading", label: { en: "Hematology", ms: "Hematologi" } },
           {
             name: "hematology",
             label: "",
@@ -201,12 +206,12 @@ export default function LabRequestForm({ patient, onBack }) {
           },
           {
             name: "hematology_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter details",
+            placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "hematology", includes: "others" }
           },
-          { type: "subheading", label: "Microbiology" },
+          { type: "subheading", label: { en: "Microbiology", ms: "Mikrobiologi" } },
           {
             name: "microbiology",
             label: "",
@@ -216,12 +221,12 @@ export default function LabRequestForm({ patient, onBack }) {
           },
           {
             name: "microbiology_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter details",
+            placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "microbiology", includes: "others" }
           },
-          { type: "subheading", label: "Specimen" },
+          { type: "subheading", label: { en: "Specimen", ms: "Spesimen" } },
           {
             name: "specimen",
             label: "",
@@ -231,25 +236,28 @@ export default function LabRequestForm({ patient, onBack }) {
           },
           {
             name: "specimen_others",
-            label: "Specify Other",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
-            placeholder: "Enter details",
+            placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "specimen", includes: "others" }
           },
-          { name: "others", label: "OTHERS", type: "textarea", placeholder: "Free text" },
+          { name: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" }, type: "textarea", placeholder: { en: "Free text", ms: "Teks bebas" } },
           {
             name: "result_upload",
-            title: "UPLOAD THE RESULT",
+            title: { en: "UPLOAD THE RESULT", ms: "MUAT NAIK KEPUTUSAN" },
             type: "attach-file",
             accept: "image/*,.pdf"
           },
-          { name: "notify_doctor", label: "NOTIFY DOCTOR", type: "radio", options: NOTIFY_DOCTOR_OPTIONS }
+          { name: "notify_doctor", label: { en: "NOTIFY DOCTOR", ms: "MAKLUMKAN DOKTOR" }, type: "radio", options: NOTIFY_DOCTOR_OPTIONS }
         ]
       }
     ]
   };
 
   const handleAction = (type) => {
+    if (type === "toggle-language") {
+      setLanguage(l => (l === "en" ? "ms" : "en"));
+    }
     if (type === "back") onBack?.();
   };
 
@@ -260,6 +268,7 @@ export default function LabRequestForm({ patient, onBack }) {
         values={values}
         onChange={onChange}
         onAction={handleAction}
+        language={language}
       />
     </div>
   );

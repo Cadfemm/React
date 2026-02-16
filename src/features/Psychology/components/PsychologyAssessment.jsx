@@ -333,7 +333,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Appropriate", value: "appropriate" },
               { label: "Inappropriate", value: "inappropriate" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -343,7 +343,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Clean", value: "clean" },
               { label: "Poor", value: "poor" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -354,7 +354,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Thin", value: "thin" },
               { label: "Average", value: "average" },
               { label: "Overweight", value: "overweight" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -366,7 +366,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Scars", value: "scars" },
               { label: "Bruises", value: "bruises" },
               { label: "Tattoos", value: "tattoos" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -382,7 +382,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Guarded", value: "guarded" },
               { label: "Uncooperative", value: "uncooperative" },
               { label: "Hostile", value: "hostile" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -394,7 +394,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Poor", value: "poor" },
               { label: "Avoidant", value: "avoidant" },
               { label: "Intense", value: "intense" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -415,7 +415,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Intact", value: "intact" },
               { label: "Impaired", value: "impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -437,7 +437,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Defensive", value: "defensive" },
               { label: "Withdrawn", value: "withdrawn" },
               { label: "Evasive", value: "evasive" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -450,7 +450,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Tearful", value: "tearful" },
               { label: "Agitated", value: "agitated" },
               { label: "Tense", value: "tense" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -461,7 +461,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Relaxed", value: "relaxed" },
               { label: "Restless", value: "restless" },
               { label: "Fidgety", value: "fidgety" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -504,7 +504,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Slurred", value: "slurred" },
               { label: "Dysarthric", value: "dysarthric" },
               { label: "Stammering", value: "stammering" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -553,7 +553,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Labile", value: "labile" },
               { label: "Congruent", value: "congruent" },
               { label: "Incongruent", value: "incongruent" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -593,7 +593,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Thought insertion", value: "thought_insertion" },
               { label: "Thought broadcasting", value: "thought_broadcasting" },
               { label: "Thought withdrawal", value: "thought_withdrawal" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -610,7 +610,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Place", value: "place" },
               { label: "Time", value: "time" },
               { label: "Situation", value: "situation" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -621,7 +621,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Intact", value: "intact" },
               { label: "Mildly impaired", value: "mildly_impaired" },
               { label: "Severely impaired", value: "severely_impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -632,7 +632,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
               { label: "Immediate", value: "immediate" },
               { label: "Intact", value: "intact" },
               { label: "Impaired", value: "impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -643,7 +643,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Intact", value: "intact" },
               { label: "Impaired", value: "impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -653,7 +653,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Intact", value: "intact" },
               { label: "Impaired", value: "impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           },
           {
@@ -663,7 +663,7 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Intact", value: "intact" },
               { label: "Impaired", value: "impaired" },
-              { label: "NA", value: "na" }
+              { label: "N/A", value: "na" }
             ]
           }
         ]
