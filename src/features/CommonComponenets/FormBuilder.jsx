@@ -3,6 +3,11 @@ import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 
 function evaluateShowIf(showIf, values) {
   if (!showIf) return true;
+  if ("and" in showIf) {
+    const rest = { ...showIf };
+    delete rest.and;
+    return evaluateShowIf(rest, values) && evaluateShowIf(showIf.and, values);
+  }
   if ("or" in showIf) {
     const conditions = Array.isArray(showIf.or) ? showIf.or : [showIf.or];
     return conditions.some(cond => {
@@ -181,7 +186,7 @@ export default function CommonFormBuilder({
                       if (field.type !== "subheading" || hasGridHeader) return null;
                       const nextMatrix = section.fields[idx + 1];
                       if (nextMatrix?.type !== "radio-matrix" || !nextMatrix?.options?.length) return null;
-                      const questionColumnWidth = 400; // Fixed width for question column
+                      const questionColumnWidth = 200; // Fixed width for question column
                       const optionsCount = nextMatrix.options?.length || 4;
                       const headerStyle = {
                         ...styles.matrixHeader,
@@ -229,7 +234,7 @@ export default function CommonFormBuilder({
                         <React.Fragment key={fieldKey}>
                           {renderScaleBeforeSubheading(field, idx)}
                           {shouldShowScaleBeforeMatrix(field, idx) && (() => {
-                            const questionColumnWidth = 400; // Fixed width for question column
+                            const questionColumnWidth = 200; // Fixed width for question column
                             const optionsCount = field.options?.length || 4;
                             const headerStyle = {
                               ...styles.matrixHeader,
@@ -341,7 +346,7 @@ export default function CommonFormBuilder({
                               <div style={{ marginBottom: 16 }}>
 
                                 <>
-                                  {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row"].includes(field.type)
+                                  {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
                                     && field.type !== "checkbox-group"
                                     && (
                                       <label style={styles.label}>
@@ -764,7 +769,7 @@ function AssessmentLauncher({
 
 function RadioMatrixRow({ field, value, onChange, columnWidth, showScores, languageConfig }) {
   // Fixed width for question column, equal widths for option columns
-  const questionColumnWidth = field.wideLabel ? 400 : 400; // Fixed width for question column
+  const questionColumnWidth = field.wideLabel ? 400 : 200; // Fixed width for question column
   const optionsCount = field.options?.length || 4;
   const rowStyle = {
     ...styles.matrixRow,
@@ -1391,6 +1396,26 @@ case "image-anatomy-selector":
                       showScores: languageConfig?.showScores
                     }
                   )}
+                </div>
+              );
+            }
+
+            // Handle static (read-only) text column – e.g. Normal values in ROM tables
+            if (typeof col === "object" && col.type === "static") {
+              return (
+                <div
+                  key={fieldKey}
+                  style={{
+                    ...styles.gridInput,
+                    display: "flex",
+                    alignItems: "center",
+                    color: "#64748b",
+                    backgroundColor: "#f8fafc",
+                    cursor: "default",
+                    pointerEvents: "none"
+                  }}
+                >
+                  {col.value ?? ""}
                 </div>
               );
             }
@@ -2673,11 +2698,14 @@ actionButtons: {
     color: "#0F172A"
   },
 
-  matrixHeaderCell: {
-    textAlign: "center",
-    padding: "0 8px",
-    width: "100%"
-  },
+matrixHeaderCell: {
+     textAlign: "center",
+     padding: "0 8px",
+     width: "100%",
+     overflowWrap: "break-word",
+     wordBreak: "break-word",
+     minWidth: 0  // lets the cell shrink so wrapping can occur
+   },
   nestedContainer: {
     border: "1px solid #e5e7eb",
     borderRadius: "10px",
