@@ -214,9 +214,19 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
     setValues(v => ({ ...v, [name]: value }));
   };
 
+  const tabOrder = ["subjective", "objective", "assessment", "plan"];
+
   const handleAction = (type) => {
     if (type === "back") onBack?.();
     if (readOnly) return;
+
+    if (type === "next") {
+      const idx = tabOrder.indexOf(activeTab);
+      if (idx >= 0 && idx < tabOrder.length - 1) {
+        setActiveTab(tabOrder[idx + 1]);
+      }
+      return;
+    }
 
     if (type === "clear") {
       setValues({});
@@ -241,13 +251,24 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
   };
 
   /* ===================== SCHEMAS ===================== */
+  // Follow-up: show sections only when user selects the checkbox. Initial assessment: all sections always open.
+  const sectionShowIf = (key) => (isFollowup ? { field: "general_questions", includes: key } : undefined);
+  const sectionShowIfAnd = (key, andCond) =>
+    isFollowup ? { field: "general_questions", includes: key, and: andCond } : (andCond || undefined);
+
+  const ACTIONS_WITH_NEXT = [
+    { type: "back", label: "Back" },
+    { type: "clear", label: "Clear" },
+    { type: "save", label: "Save" }
+  ];
+  const ACTIONS_PLAN_ONLY = [
+    { type: "back", label: "Back" },
+    { type: "clear", label: "Clear" },
+    { type: "save", label: "Save" }
+  ];
 
   const SUBJECTIVE_SCHEMA = {
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "save", label: "Save" }
-    ],
+    actions: ACTIONS_WITH_NEXT,
     sections: [
       {
         fields: [
@@ -261,33 +282,31 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             label: "History of Present Illness",
             type: "input"
           },
-          {
-            name: "general_questions",
-            type: "checkbox-group",
-            options: [
-              { label: "Patient Vision & Care History", value: "patient_vision_care" },
-              { label: "Refraction", value: "refraction_questions" },
-              { label: "External Eye Symptoms", value: "external_eye_symptoms" },
-              { label: "Ocular History & Eye Conditions", value: "ocular_history" }
+          ...(isFollowup
+            ? [
+              {
+                name: "general_questions",
+                type: "checkbox-group",
+                options: [
+                  { label: "Patient Vision & Care History", value: "patient_vision_care" },
+                  { label: "External Eye Symptoms", value: "external_eye_symptoms" },
+                  { label: "Ocular History & Eye Conditions", value: "ocular_history" },
+                  { label: "Binocular Vision", value: "binocular_vision" }
+                ]
+              }
             ]
-          },
-          // Patient Vision & Care History Section
+            : []),
+          // Patient Vision & Care History (always visible in IA; in follow-up only when selected)
           {
             type: "subheading",
             label: "Patient Vision & Care History",
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             type: "date",
             name: "last_eye_exam",
             label: "Date of last eye examination",
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             type: "radio",
@@ -297,19 +316,13 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             type: "input",
             name: "spectacle_prescription",
             label: "Prescription",
-            showIf: {
-              field: "spectacles_use",
-              equals: "yes"
-            }
+            showIf: sectionShowIfAnd("patient_vision_care", { field: "spectacles_use", equals: "yes" }) || { field: "spectacles_use", equals: "yes" }
           },
           {
             type: "radio",
@@ -319,10 +332,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             type: "row",
@@ -331,25 +341,16 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 type: "input",
                 name: "contact_prescription",
                 label: "Prescription",
-                showIf: {
-                  field: "contact_lens_use",
-                  equals: "yes"
-                }
+                showIf: { field: "contact_lens_use", equals: "yes" }
               },
               {
                 type: "input",
                 name: "contact_type",
                 label: "Type",
-                showIf: {
-                  field: "contact_lens_use",
-                  equals: "yes"
-                }
+                showIf: { field: "contact_lens_use", equals: "yes" }
               }
             ],
-            showIf: {
-              field: "contact_lens_use",
-              equals: "yes"
-            }
+            showIf: sectionShowIfAnd("patient_vision_care", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
           },
           {
             type: "row",
@@ -358,73 +359,247 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 type: "input",
                 name: "contact_wearing_frequency",
                 label: "Wearing frequency",
-                showIf: {
-                  field: "contact_lens_use",
-                  equals: "yes"
-                }
+                showIf: { field: "contact_lens_use", equals: "yes" }
               },
               {
                 type: "input",
                 name: "contact_modalities",
                 label: "Modalities",
-                showIf: {
-                  field: "contact_lens_use",
-                  equals: "yes"
-                }
+                showIf: { field: "contact_lens_use", equals: "yes" }
               }
             ],
-            showIf: {
-              field: "contact_lens_use",
-              equals: "yes"
-            }
+            showIf: sectionShowIfAnd("patient_vision_care", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
           },
           {
             type: "input",
             name: "others_specify",
             label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             name: "pmh_from_registration",
             label: "Medical History",
             type: "input",
             readOnly: true,
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             name: "family_history_from_registration",
             label: "Family History",
             type: "input",
             readOnly: true,
-            showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
-            }
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
           },
           {
             name: "allergies_from_registration",
             label: "Allergies",
             type: "input",
             readOnly: true,
+            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+          },
+          // Binocular Vision Section (follow-up: content till Ocular Signs)
+          {
+            type: "subheading",
+            label: "Binocular Vision",
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "radio",
+            name: "bv_onset",
+            label: "Onset",
+            options: [
+              { label: "Sudden", value: "sudden" },
+              { label: "Gradual", value: "gradual" }
+            ],
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "radio",
+            name: "bv_frequency",
+            label: "Frequency",
+            options: [
+              { label: "Constant", value: "constant" },
+              { label: "Intermittent", value: "intermittent" },
+              { label: "Alternating", value: "alternating" }
+            ],
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "radio",
+            name: "bv_was_he_been",
+            label: "Neurological disease",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ],
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "input",
+            name: "bv_was_he_been_specify",
+            label: "Neurologica – specify",
+            showIf: { field: "bv_was_he_been", equals: "yes" }
+          },
+          {
+            type: "row",
+            fields: [
+              { type: "input", name: "bv_type_of_birth", label: "Type of Birth" },
+              { type: "input", name: "bv_birth_term", label: "Birth Term" }
+            ],
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "input",
+            name: "bv_previous_treatment",
+            label: "Previous Treatment",
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "input",
+            name: "bv_subjective_Remarks",
+            label: "Remarks",
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "multi-select-dropdown",
+            name: "bv_ocular_signs",
+            label: "Ocular Signs",
+            options: [
+              { label: "Squint / turn of eyes", value: "Squint" },
+              { label: "Defective eye movement", value: "Defective eye movement" },
+              { label: "Nystagmus (wobbling eyes)", value: "Nystagmus" },
+              { label: "Visual inattention / neglect", value: "Visual inattention" },
+              { label: "Closing one eye", value: "Closing one eye" },
+              { label: "Suspected visual problem", value: "Suspected visual problem" },
+              { label: "Ptosis (lid drop)", value: "Ptosis" },
+              { label: "Abnormal pupils", value: "Abnormal pupils" },
+              { label: "Head turn", value: "Head turn" },
+              { label: "Family concern", value: "Family concern" },
+              { label: "Misjudging distance", value: "Misjudging distance" },
+              { label: "Other (Specify)", value: "Other" }
+            ],
+            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
+          },
+          {
+            type: "input",
+            name: "bv_ocular_signs_other",
+            label: "Other – Specify",
+            showIf: { field: "bv_ocular_signs", includes: "Other" }
+          },
+          // External Eye Symptoms Section
+          {
+            type: "subheading",
+            label: "External Eye Symptoms",
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+          {
+            name: "external_eye_symptoms_checkboxes",
+            type: "checkbox-group",
+            options: [
+              { label: "Grittiness", value: "grittiness" },
+              { label: "Burning", value: "burning" },
+              { label: "Itchiness", value: "itchiness" },
+              { label: "Dryness", value: "dryness" },
+              { label: "Tearing", value: "tearing" },
+              { label: "Infection", value: "infection" }
+            ],
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+          {
+            type: "radio",
+            name: "ext_grittiness_location",
+            label: "Grittiness - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
             showIf: {
-              field: "general_questions",
-              includes: "patient_vision_care"
+              field: "external_eye_symptoms_checkboxes",
+              includes: "grittiness"
             }
           },
-          // Refraction Section
+          {
+            type: "radio",
+            name: "ext_burning_location",
+            label: "Burning - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
+            showIf: {
+              field: "external_eye_symptoms_checkboxes",
+              includes: "burning"
+            }
+          },
+          {
+            type: "radio",
+            name: "ext_itchiness_location",
+            label: "Itchiness - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
+            showIf: {
+              field: "external_eye_symptoms_checkboxes",
+              includes: "itchiness"
+            }
+          },
+          {
+            type: "radio",
+            name: "ext_dryness_location",
+            label: "Dryness - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
+            showIf: {
+              field: "external_eye_symptoms_checkboxes",
+              includes: "dryness"
+            }
+          },
+          {
+            type: "radio",
+            name: "ext_tearing_location",
+            label: "Tearing - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
+            showIf: {
+              field: "external_eye_symptoms_checkboxes",
+              includes: "tearing"
+            }
+          },
+          {
+            type: "radio",
+            name: "ext_infection_location",
+            label: "Infection - Location",
+            options: [
+              { label: "Right (R)", value: "right" },
+              { label: "Left (L)", value: "left" },
+              { label: "Bilateral", value: "bilateral" }
+            ],
+            showIf: {
+              field: "external_eye_symptoms_checkboxes",
+              includes: "infection"
+            }
+          },
+          {
+            type: "input",
+            name: "external_eye_symptoms_specify",
+            label: "Specify",
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+          // Refraction Section (below External Eye Symptoms; in follow-up shown when External Eye Symptoms is selected)
           {
             type: "subheading",
             label: "Refraction / Vision-Specific Questions (Symptoms)",
-            showIf: {
-              field: "general_questions",
-              includes: "refraction_questions"
-            }
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
           },
           {
             name: "visual_ocular_symptoms",
@@ -441,10 +616,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Squinting", value: "squinting" },
               { label: "Emmetropia (Normal Vision)", value: "emmetropia" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "refraction_questions"
-            }
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
           },
           {
             type: "radio",
@@ -590,137 +762,18 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             type: "input",
             name: "refraction_questions_specify",
             label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "refraction_questions"
-            }
-          },
-          // External Eye Symptoms Section
-          {
-            type: "subheading",
-            label: "External Eye Symptoms",
-            showIf: {
-              field: "general_questions",
-              includes: "external_eye_symptoms"
-            }
-          },
-          {
-            name: "external_eye_symptoms_checkboxes",
-            type: "checkbox-group",
-            options: [
-              { label: "Grittiness", value: "grittiness" },
-              { label: "Burning", value: "burning" },
-              { label: "Itchiness", value: "itchiness" },
-              { label: "Dryness", value: "dryness" },
-              { label: "Tearing", value: "tearing" },
-              { label: "Infection", value: "infection" }
-            ],
-            showIf: {
-              field: "general_questions",
-              includes: "external_eye_symptoms"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_grittiness_location",
-            label: "Grittiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "grittiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_burning_location",
-            label: "Burning - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "burning"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_itchiness_location",
-            label: "Itchiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "itchiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_dryness_location",
-            label: "Dryness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "dryness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_tearing_location",
-            label: "Tearing - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "tearing"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_infection_location",
-            label: "Infection - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "infection"
-            }
-          },
-          {
-            type: "input",
-            name: "external_eye_symptoms_specify",
-            label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "external_eye_symptoms"
-            }
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
           },
           // OCULAR HISTORY & EYE CONDITIONS Section
           {
             type: "subheading",
+            label: "Ocular History & Eye Conditions",
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+          },
+          {
+            type: "subheading",
             label: "A. Ocular Symptoms",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             name: "ocular_symptoms",
@@ -734,10 +787,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Infection", value: "infection" },
               { label: "Eye pain", value: "eye_pain" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             type: "radio",
@@ -841,18 +891,12 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             type: "input",
             name: "ocular_symptoms_specify",
             label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             type: "subheading",
             label: "B. Past Ocular History",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             name: "past_ocular_history",
@@ -871,10 +915,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Retinal detachment", value: "retinal_detachment" },
               { label: "Other eye disease", value: "other_eye_disease" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             type: "radio",
@@ -1057,18 +1098,12 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             type: "input",
             name: "past_ocular_history_specify",
             label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             type: "subheading",
             label: "C. Family Ocular History",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             name: "family_ocular_history",
@@ -1085,10 +1120,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Colour vision defect", value: "colour_vision" },
               { label: "Other eye disease", value: "other_family_eye_disease" }
             ],
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
             type: "radio",
@@ -1243,10 +1275,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             type: "input",
             name: "family_ocular_history_specify",
             label: "Specify",
-            showIf: {
-              field: "general_questions",
-              includes: "ocular_history"
-            }
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           }
         ]
       }
@@ -1254,29 +1283,25 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
   };
 
   const OBJECTIVE_SCHEMA = {
-    actions: SUBJECTIVE_SCHEMA.actions,
+    actions: ACTIONS_WITH_NEXT,
     sections: [
       {
         fields: [
-          ...(isFollowup
-            ? [
-              {
-                type: "assessment-launcher",
-                name: "optometry_assessments",
-                options: [
-                  { label: "Binocular Vision", value: "BINOCULAR_VISION" },
-                  { label: "Refraction Assessment", value: "REFRACTION" },
-                  { label: "Vision For Driving", value: "VISION_DRIVING" },
-                  { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
-                  { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
-                  { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
-                  { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
-                  { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
-                  { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
-                ]
-              }
+          {
+            type: "assessment-launcher",
+            name: "optometry_assessments",
+            options: [
+              { label: "Binocular Vision", value: "BINOCULAR_VISION" },
+              { label: "Refraction Assessment", value: "REFRACTION" },
+              { label: "Vision For Driving", value: "VISION_DRIVING" },
+              { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
+              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
+              { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
+              { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
+              { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
+              { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
             ]
-            : []),
+          },
           {
             type: "input",
             name: "general_observation",
@@ -1286,8 +1311,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "objective_sections",
             type: "checkbox-group",
             options: [
-              { label: "Visual Acuity", value: "visual_acuity" },
-              { label: "Binocular & Ocular Function", value: "binocular_ocular" }
+              { label: "Entrance Test", value: "entrance_test" }
             ]
           },
           {
@@ -1295,7 +1319,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             label: "Visual Acuity",
             showIf: {
               field: "objective_sections",
-              includes: "visual_acuity"
+              includes: "entrance_test"
             }
           },
 
@@ -1311,7 +1335,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "visual_acuity"
+              includes: "entrance_test"
             }
           },
 
@@ -1324,7 +1348,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               includes: "RE",
               and: {
                 field: "objective_sections",
-                includes: "visual_acuity"
+                includes: "entrance_test"
               }
             },
 
@@ -1400,7 +1424,11 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "visual_acuity_le",
             showIf: {
               field: "visual_acuity_eyes",
-              includes: "LE"
+              includes: "LE",
+              and: {
+                field: "objective_sections",
+                includes: "entrance_test"
+              }
             },
 
             groups: [
@@ -1476,7 +1504,11 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "visual_acuity_be",
             showIf: {
               field: "visual_acuity_eyes",
-              includes: "BE"
+              includes: "BE",
+              and: {
+                field: "objective_sections",
+                includes: "entrance_test"
+              }
             },
 
             groups: [
@@ -1549,7 +1581,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             label: "Binocular & Ocular Function",
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1557,7 +1589,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             cols: ["Right Eye (RE)", "Left Eye (LE)", "Remarks"],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1571,7 +1603,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1585,7 +1617,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1599,7 +1631,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1613,7 +1645,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1623,7 +1655,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             cols: ["input", "input", "input"],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1633,7 +1665,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             cols: ["input", "input", "input"],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1647,7 +1679,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1661,7 +1693,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1675,7 +1707,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1689,7 +1721,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "objective_sections",
-              includes: "binocular_ocular"
+              includes: "entrance_test"
             }
           },
           {
@@ -1735,7 +1767,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
   };
 
   const ASSESSMENT_SCHEMA = {
-    actions: SUBJECTIVE_SCHEMA.actions,
+    actions: ACTIONS_WITH_NEXT,
     sections: [
       {
         fields: [
@@ -1768,14 +1800,41 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
   };
 
   const PLAN_SCHEMA = {
-    actions: SUBJECTIVE_SCHEMA.actions,
+    actions: ACTIONS_PLAN_ONLY,
     sections: [
       {
         fields: [
           {
+            type: "input",
+            name: "short_term_goals",
+            label: "Short Term Goals"
+          },
+          {
+            type: "date",
+            name: "short_term_goals_date",
+            label: "Target Date (Short Term)",
+            format: "DD/MM/YYYY"
+          },
+          {
+            type: "input",
+            name: "long_term_goals",
+            label: "Long Term Goals"
+          },
+          {
+            type: "date",
+            name: "long_term_goals_date",
+            label: "Target Date (Long Term)",
+            format: "DD/MM/YYYY"
+          },
+          {
+            type: "textarea",
+            name: "intervention_plan",
+            label: "Intervention Plan"
+          },
+          {
             type: "radio",
             name: "need_further_assessment",
-            label: "Required further assessment",
+            label: "Required Further Assessments",
             options: [
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
@@ -1806,9 +1865,15 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ].map(v => ({ label: v, value: v }))
           },
           {
+            type: "date",
+            name: "next_follow_up",
+            label: "Next Follow-Up",
+            format: "DD/MM/YYYY"
+          },
+          {
             type: "radio",
             name: "required_referral",
-            label: "Required referral",
+            label: "Required Referral",
             options: [
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
@@ -1822,28 +1887,6 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               field: "required_referral",
               equals: "yes"
             }
-          },
-          {
-            type: "input",
-            name: "short_term_goals",
-            label: "Short Term Goals"
-          },
-          {
-            type: "date",
-            name: "short_term_goals_date",
-            label: "Target Date (Short Term)",
-            format: "DD/MM/YYYY"
-          },
-          {
-            type: "input",
-            name: "long_term_goals",
-            label: "Long Term Goals"
-          },
-          {
-            type: "date",
-            name: "long_term_goals_date",
-            label: "Target Date (Long Term)",
-            format: "DD/MM/YYYY"
           }
         ]
       }
@@ -1946,8 +1989,28 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
           assessmentRegistry={OPTOMETRY_ASSESSMENT_REGISTRY}
           readOnly={readOnly}
         >
-          {/* Submit button - hidden when read-only */}
-          {!readOnly && (
+          {/* Next button at bottom for Subjective, Objective, Assessment */}
+          {!readOnly && activeTab !== "plan" && (
+            <div style={submitRow}>
+              <button
+                style={{
+                  padding: "12px 32px",
+                  background: "#2451b3",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 10,
+                  fontSize: 15,
+                  fontWeight: 700,
+                  cursor: "pointer"
+                }}
+                onClick={() => handleAction("next")}
+              >
+                Next
+              </button>
+            </div>
+          )}
+          {/* Final approval / Submit - only on Plan tab */}
+          {!readOnly && activeTab === "plan" && (
             <div style={submitRow}>
               <button style={submitBtn} onClick={handleSubmit}>
                 {isFollowup ? "Submit Follow-up Visit" : "Submit Optometry Assessment"}

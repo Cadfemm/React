@@ -7,8 +7,10 @@ import MASForm from "./MASForm";
 import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
 import FMALEForm from "./FMALEForm";
+import ROMForm from "./ROMForm";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
+  rom: ROMForm,
   mmt: MMTForm,
   tug: TUG,
   mas: MASForm,

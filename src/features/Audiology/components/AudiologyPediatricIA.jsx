@@ -111,7 +111,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "birth_weight",
           label: "Birth Weight",
-          type: "textarea"
+          type: "input"
         },
 
         {
@@ -143,7 +143,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "apgar_score",
           label: "APGAR Score",
-          type: "textarea"
+          type: "input"
         },
 
         {
@@ -186,14 +186,13 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "ototoxic_medications",
           label: "Has your child taken any of the following medications?",
-          type: "multi-select-dropdown",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "0" },
             { label: "Vancomycin", value: "1" },
             { label: "Chemotherapy", value: "2" },
             { label: "Gentamycin", value: "3" },
-            { label: "Streptomycin", value: "4" },
-            
+            { label: "Streptomycin", value: "4" }
           ]
         },
         {
@@ -371,8 +370,8 @@ const SUBJECTIVE_SCHEMA = {
           { name: "sit_unsupported_age", title: "d) Sit unsupported?" }
       ]},
 
-        { name: "walk_alone_age", label: "e) Walk alone?", type: "textarea" },
- { name: "communicate_with_others", label: "How does your child communicate with others?", type: "textarea" },
+        { name: "walk_alone_age", label: "e) Walk alone?", type: "input" },
+ { name: "communicate_with_others", label: "How does your child communicate with others?", type: "input" },
        {type:"subheading",
         label:"How much of your child's speech can be understood?"
        },
@@ -589,15 +588,47 @@ const SUBJECTIVE_SCHEMA = {
 
     /* ===================== D. AUDIOMETRY ===================== */
     {
+      title: "Audiometry",
       fields: [
         {
-          type: "attach-file",
-          name: "audiometry_audiology_report",
-          title: "Audiometry (Attach PDF)",
-          accept: "application/pdf,image/*",
-          multiple: false
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "audiometry_report_right",
+              accept: "application/pdf,image/*",
+              title: "Audiometry - Right",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            },
+            {
+              type: "attach-file",
+              name: "audiometry_report_left",
+              accept: "application/pdf,image/*",
+              title: "Audiometry - Left",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            }
+          ]
         },
-
+        {
+          type: "row",
+          fields: [
+            {
+              name: "impression_r",
+              label: "Impression – Right Ear",
+              type: "textarea"
+            },
+            {
+              name: "impression_l",
+              label: "Impression – Left Ear",
+              type: "textarea"
+            }
+          ]
+        },
         {
           name: "audiometry_type",
           label: "Type of Audiometry",
@@ -617,6 +648,16 @@ const SUBJECTIVE_SCHEMA = {
           options: [
             { label: "Unmasked", value: "unmasked" },
             { label: "Masking", value: "masked" }
+          ]
+        },
+        {
+          name: "reliability",
+          label: "Reliability",
+          type: "radio",
+          options: [
+            { label: "Good", value: "Good" },
+            { label: "Fair", value: "Fair" },
+            { label: "Poor", value: "Poor" }
           ]
         }
       ]
@@ -661,9 +702,88 @@ const AUDIO_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const OBJECTIVE_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
+    /* ===================== OTOSCOPIC EXAMINATION ===================== */
+    {
+      title: "Otoscopic Examination",
+      fields: [
+        {
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "otoscopic_examination_right",
+              accept: "application/pdf,image/*",
+              title: "Otoscopic Examination - Right",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            },
+            {
+              type: "attach-file",
+              name: "otoscopic_examination_left",
+              accept: "application/pdf,image/*",
+              title: "Otoscopic Examination - Left",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            }
+          ]
+        },
+        {
+          type: "paired-select",
+          right: { name: "external_canal_r", title: "External Ear Canal – Right" },
+          left: { name: "external_canal_l", title: "External Ear Canal – Left" },
+          options: [
+            { label: "Clear", value: "clear" },
+            { label: "Inflamed", value: "inflamed" },
+            { label: "Minimal cerumen", value: "minimal_cerumen" },
+            { label: "Impacted cerumen", value: "impacted_cerumen" },
+            { label: "Discharge present", value: "discharge" },
+            { label: "Swelling", value: "swelling" }
+          ]
+        },
+
+        {
+          type: "paired-select",
+          right: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
+          left: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
+          options: [
+            { label: "Intact", value: "intact" },
+            { label: "Perforated", value: "perforated" },
+            { label: "Dull", value: "dull" },
+            { label: "Retracted", value: "retracted" },
+            { label: "Bulging", value: "bulging" },
+            { label: "Opaque", value: "opaque" }
+          ]
+        },
+
+        {
+          type: "paired-select",
+          right: { name: "tm_colour_r", title: "TM Colour – Right" },
+          left: { name: "tm_colour_l", title: "TM Colour – Left" },
+          options: [
+            { label: "Pearly grey", value: "pearly_grey" },
+            { label: "Reddened", value: "red" },
+            { label: "Yellowish", value: "yellow" },
+            { label: "Bluish", value: "blue" },
+            { label: "White patches", value: "white_patches" }
+          ]
+        },
+
+        {
+          type: "paired-text",
+          pairs: [
+            { name: "otoscopy_other_r", title: "Other Findings – Right" },
+            { name: "otoscopy_other_l", title: "Other Findings – Left" }
+          ]
+        }
+      ]
+    },
+
     /* ===================== TYMPANOMETRY ===================== */
     {
-      title: "Tympanometry (Attach PDF)",
+      title: "Tympanometry",
       fields: [
         {
           type: "row",
@@ -689,7 +809,6 @@ const OBJECTIVE_SCHEMA = {
             }
           ]
         },
-        { type: "subheading", label: "Tympanogram Type" },
         {
           type: "paired-select",
           right: { name: "tymp_type_r", title: "Right Ear" },
@@ -709,16 +828,18 @@ const OBJECTIVE_SCHEMA = {
           type: "paired-text",
           name: "peak_pressure",
           pairs: [
-          { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
-          { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
-      ]},
+            { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
+            { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
+          ]
+        },
 
         {
           type: "paired-text",
           name: "static_compliance",
           pairs: [
-          { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
-        { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }]
+            { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
+            { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }
+          ]
         },
 
         {
@@ -726,83 +847,15 @@ const OBJECTIVE_SCHEMA = {
           name: "ecv",
           pairs: [
             { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
-          { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }]
+            { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }
+          ]
         }
       ]
     },
 
     /* ===================== OAE ===================== */
     {
-      
-      fields: [
-        {
-  type: "attach-file",
-  name: "OAEaudiology_report",
-  title: "OAE Screening (Attach PDF)",
-  accept: "application/pdf,image/*",
-  multiple: false
-}, 
-        {
-          name: "oae_right",
-          label: "OAE – Right Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        },
-        {
-          name: "oae_left",
-          label: "OAE – Left Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        },
-
-        {
-          name: "dpoae_right",
-          label: "DPOAE – Right Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        },
-        {
-          name: "dpoae_left",
-          label: "DPOAE – Left Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        },
-
-        {
-          name: "teoae_right",
-          label: "TEOAE – Right Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        },
-        {
-          name: "teoae_left",
-          label: "TEOAE – Left Ear",
-          type: "radio",
-          options: [
-            { label: "Pass", value: "pass" },
-            { label: "Refer", value: "refer" },
-          ]
-        }
-      ]
-    },
-
-    /* ===================== A – ANALYSIS ===================== */
-    {
+      title: "OAE Screening",
       fields: [
         {
           type: "row",
@@ -810,75 +863,137 @@ const OBJECTIVE_SCHEMA = {
           fields: [
             {
               type: "attach-file",
-              name: "otoscopic_examination_left",
+              name: "oae_right_upload",
               accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              title: "OAE – Right Ear",
+              multiple: false
             },
             {
               type: "attach-file",
-              name: "otoscopic_examination_right",
+              name: "oae_left_upload",
               accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              title: "OAE – Left Ear",
+              multiple: false
             }
           ]
-        }, 
+        },
         {
-          type: "paired-select",
-          left: { name: "external_canal_r", title: "External Ear Canal – Right" },
-          right: { name: "external_canal_l", title: "External Ear Canal – Left" },
-          options: [
-            { label: "Clear", value: "clear" },
-            { label: "Inflamed", value: "inflamed" },
-            { label: "Minimal cerumen", value: "minimal_cerumen" },
-            { label: "Impacted cerumen", value: "impacted_cerumen" },
-            { label: "Discharge present", value: "discharge" },
-            { label: "Swelling", value: "swelling" }
+          type: "row",
+          fields: [
+            {
+              name: "oae_right",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            },
+            {
+              name: "oae_left",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            }
           ]
         },
-
         {
-          type: "paired-select",
-          left: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
-          right: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
-          options: [
-            { label: "Intact", value: "intact" },
-            { label: "Perforated", value: "perforated" },
-            { label: "Dull", value: "dull" },
-            { label: "Retracted", value: "retracted" },
-            { label: "Bulging", value: "bulging" },
-            { label: "Opaque", value: "opaque" }
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "dpoae_right_upload",
+              accept: "application/pdf,image/*",
+              title: "DPOAE – Right Ear",
+              multiple: false
+            },
+            {
+              type: "attach-file",
+              name: "dpoae_left_upload",
+              accept: "application/pdf,image/*",
+              title: "DPOAE – Left Ear",
+              multiple: false
+            }
           ]
         },
-
         {
-          type: "paired-select",
-          left: { name: "tm_colour_r", title: "TM Colour – Right" },
-          right: { name: "tm_colour_l", title: "TM Colour – Left" },
-          options: [
-            { label: "Pearly grey", value: "pearly_grey" },
-            { label: "Reddened", value: "red" },
-            { label: "Yellowish", value: "yellow" },
-            { label: "Bluish", value: "blue" },
-            { label: "White patches", value: "white_patches" }
+          type: "row",
+          fields: [
+            {
+              name: "dpoae_right",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            },
+            {
+              name: "dpoae_left",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            }
           ]
         },
-
         {
-          type: "paired-text",
-          pairs: [
-                      { name: "otoscopy_other_l", title: "Other Findings – Left" },
-          { name: "otoscopy_other_r", title: "Other Findings – Right" },
+          type: "row",
+          columns: 2,
+          fields: [
+            {
+              type: "attach-file",
+              name: "teoae_right_upload",
+              accept: "application/pdf,image/*",
+              title: "TEOAE – Right Ear",
+              multiple: false
+            },
+            {
+              type: "attach-file",
+              name: "teoae_left_upload",
+              accept: "application/pdf,image/*",
+              title: "TEOAE – Left Ear",
+              multiple: false
+            }
+          ]
+        },
+        {
+          type: "row",
+          fields: [
+            {
+              name: "teoae_right",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            },
+            {
+              name: "teoae_left",
+              label: "",
+              type: "radio",
+              options: [
+                { label: "Pass", value: "pass" },
+                { label: "Refer", value: "refer" },
+                { label: "Could Not test", value: "could_not_test" }
+              ]
+            }
           ]
         }
       ]
-    },
-
+    }
   ]
 };
 
@@ -901,12 +1016,129 @@ const OBJECTIVE_SCHEMA = {
 
   const PLAN_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
- fields: [
+    fields: [
+      {
+        name: "plan_short_term_goals",
+        label: "Short Term Goals",
+        type: "textarea"
+      },
+      {
+        name: "plan_target_date_short_term",
+        label: "Target Date (Short Term)",
+        type: "date"
+      },
+      {
+        name: "plan_long_term_goals",
+        label: "Long Term Goals",
+        type: "textarea"
+      },
+      {
+        name: "plan_target_date_long_term",
+        label: "Target Date (Long Term)",
+        type: "date"
+      },
       {
         name: "plan_list",
-        label: "Plan",
+        label: "Intervention Plan",
         type: "textarea"
-      },]
+      },
+      {
+        name: "plan_options",
+        label: "Required further assessment",
+        type: "multi-select-dropdown",
+        options: [
+          { label: "Otoscopic Examination", value: "otoscopic" },
+          { label: "Tympanometry", value: "tympanometry" },
+          { label: "Audiometry", value: "audiometry" },
+          { label: "Acoustic Reflex", value: "acoustic_reflex" },
+          { label: "OAE Screening", value: "oae_screening" },
+          { label: "Eustachian tube Function", value: "eustachian_tube" },
+          { label: "Auditory steady-state response", value: "assr" },
+          { label: "Auditory brainstem response", value: "abr" },
+          { label: "Electrophysiology for hearing", value: "electrophysiology" },
+          { label: "Special test", value: "special_test" },
+          { label: "Hearing Handicap Inventory for Adults (HHIA)", value: "hhia" },
+          { label: "Client oriented scale of improvement (COSI)", value: "cosi" },
+          { label: "Tinnitus", value: "tinnitus" },
+          { label: "Hyperacusis", value: "hyperacusis" },
+          { label: "Vestibular", value: "vestibular" },
+          { label: "Speech Test", value: "speech_test" }
+        ]
+      },
+      {
+        name: "plan_tinnitus_options",
+        label: "Tinnitus Options",
+        type: "multi-select-dropdown",
+        showIf: { field: "plan_options", includes: "tinnitus" },
+        options: [
+          { label: "Tinnitus Handicap Inventory (THI)", value: "thi" },
+          { label: "Tinnitus Functional Index (TFI)", value: "tfi" },
+          { label: "Tinnitus Visual Analog Scale (VAS)", value: "tinnitus_vas" },
+          { label: "Tinnitus Annoyance", value: "tinnitus_annoyance" },
+          { label: "Tinnitus Awareness", value: "tinnitus_awareness" }
+        ]
+      },
+      {
+        name: "plan_hyperacusis_options",
+        label: "Hyperacusis Options",
+        type: "multi-select-dropdown",
+        showIf: { field: "plan_options", includes: "hyperacusis" },
+        options: [
+          { label: "Modified Khalfa Hyperacusis Questionnaire", value: "khalfa" },
+          { label: "Hyperacusis Questionnaire (HQ)", value: "hq" },
+          { label: "Visual Analog Scale (VAS) – Loudness Discomfort", value: "vas_loudness" },
+          { label: "Visual Analog Scale (VAS) – Annoyance", value: "vas_annoyance" }
+        ]
+      },
+      {
+        name: "plan_vestibular_options",
+        label: "Vestibular Options",
+        type: "multi-select-dropdown",
+        showIf: { field: "plan_options", includes: "vestibular" },
+        options: [
+          { label: "Dizziness Handicap Inventory (DHI)", value: "dhi" },
+          { label: "Visual Vertigo Analogue Score (VVAS)", value: "vvas" },
+          { label: "Vertigo Handicap Questionnaire (VHQ)", value: "vhq" },
+          { label: "Malay Version Vertigo Symptom Scale (MVVSS)", value: "mvvss" },
+          { label: "Vestibular Evaluation", value: "vestibular_eval" },
+          { label: "Dynamic Visual Acuity (DVA)", value: "dva" },
+          { label: "Video Head Impulse Test (vHIT)", value: "vhit" },
+          { label: "Posturography", value: "posturography" },
+          { label: "Functional Gait Assessment", value: "fga" },
+          { label: "cVEMP", value: "cvemp" },
+          { label: "oVEMP", value: "ovemp" },
+          { label: "Videonystagmography", value: "videonystagmography" }
+        ]
+      },
+      {
+        name: "plan_special_test_details",
+        label: "Special Test Details",
+        type: "textarea",
+        placeholder: "Enter special test details...",
+        showIf: { field: "plan_options", includes: "special_test" }
+      },
+      {
+        name: "plan_next_follow_up",
+        label: "Next Follow-Up",
+        type: "date"
+      },
+      {
+        name: "plan_required_referral",
+        label: "Required Referral",
+        type: "radio",
+        options: [
+          { label: "Yes", value: "yes" },
+          { label: "No", value: "no" }
+        ]
+      },
+      {
+        name: "plan_required_referral_details",
+        label: "",
+        type: "input",
+        placeholder: "Specify referral details...",
+        showIf: { field: "plan_required_referral", equals: "yes" }
+      }
+    ]
   };
 
   const schemaMap = {
@@ -960,6 +1192,9 @@ const OBJECTIVE_SCHEMA = {
           <div><b>DOB:</b> {formatDate(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
+          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+          <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
           <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
           <div style={{ gridColumn: "1 / -1" }}>
             <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
@@ -971,86 +1206,86 @@ const OBJECTIVE_SCHEMA = {
     );
   }
 
-function AudiometryFrequencyTable({ value = {}, onChange }) {
-  const frequencies = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
+// function AudiometryFrequencyTable({ value = {}, onChange }) {
+//   const frequencies = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 
-  const columns = [
-    { key: "ac_right", label: "Air Conduction Right (dB HL)" },
-    { key: "ac_left", label: "Air Conduction Left (dB HL)" },
-    { key: "bc_right", label: "Bone Conduction Right (dB HL)" },
-    { key: "bc_left", label: "Bone Conduction Left (dB HL)" }
-  ];
+//   const columns = [
+//     { key: "ac_right", label: "Air Conduction Right (dB HL)" },
+//     { key: "ac_left", label: "Air Conduction Left (dB HL)" },
+//     { key: "bc_right", label: "Bone Conduction Right (dB HL)" },
+//     { key: "bc_left", label: "Bone Conduction Left (dB HL)" }
+//   ];
 
-  const options = [
-    -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60,
-    65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120
-  ].map(v => ({ label: String(v), value: v }));
+//   const options = [
+//     -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60,
+//     65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120
+//   ].map(v => ({ label: String(v), value: v }));
 
-  return (
-    <div>
+//   return (
+//     <div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "120px repeat(4, 170px)",
-          fontSize: 14,
-          fontWeight: 600,
-          gap:20,
-          marginBottom: 8
-        }}
-      >
-        <div>Frequency (Hz)</div>
-        {columns.map(c => (
-          <div key={c.key}>{c.label}</div>
-        ))}
-      </div>
+//       <div
+//         style={{
+//           display: "grid",
+//           gridTemplateColumns: "120px repeat(4, 170px)",
+//           fontSize: 14,
+//           fontWeight: 600,
+//           gap:20,
+//           marginBottom: 8
+//         }}
+//       >
+//         <div>Frequency (Hz)</div>
+//         {columns.map(c => (
+//           <div key={c.key}>{c.label}</div>
+//         ))}
+//       </div>
 
-      {frequencies.map(freq => (
-        <div
-          key={freq}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "120px repeat(4, 170px)",
-            gap:20,
-            gap: 12,
-            marginBottom: 6
-          }}
-        >
-          <div style={{ fontSize: 14, fontWeight: 500 }}>{freq}</div>
+//       {frequencies.map(freq => (
+//         <div
+//           key={freq}
+//           style={{
+//             display: "grid",
+//             gridTemplateColumns: "120px repeat(4, 170px)",
+//             gap:20,
+//             gap: 12,
+//             marginBottom: 6
+//           }}
+//         >
+//           <div style={{ fontSize: 14, fontWeight: 500 }}>{freq}</div>
 
-          {columns.map(col => (
-            <select
-              key={col.key}
-              value={value?.[freq]?.[col.key] ?? ""}
-              style={{
-                width: 170,
-                gap:20,
-                padding: "6px 8px",
-                fontSize: 14
-              }}
-              onChange={e =>
-                onChange("pta_matrix", {
-                  ...value,
-                  [freq]: {
-                    ...value[freq],
-                    [col.key]: Number(e.target.value)
-                  }
-                })
-              }
-            >
-              <option value="">–</option>
-              {options.map(opt => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
+//           {columns.map(col => (
+//             <select
+//               key={col.key}
+//               value={value?.[freq]?.[col.key] ?? ""}
+//               style={{
+//                 width: 170,
+//                 gap:20,
+//                 padding: "6px 8px",
+//                 fontSize: 14
+//               }}
+//               onChange={e =>
+//                 onChange("pta_matrix", {
+//                   ...value,
+//                   [freq]: {
+//                     ...value[freq],
+//                     [col.key]: Number(e.target.value)
+//                   }
+//                 })
+//               }
+//             >
+//               <option value="">–</option>
+//               {options.map(opt => (
+//                 <option key={opt.value} value={opt.value}>
+//                   {opt.label}
+//                 </option>
+//               ))}
+//             </select>
+//           ))}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
 
 
 
@@ -1089,51 +1324,15 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
     onAction={handleAction}
   >
 
-    {activeTab === "subjective" && (
+    {/* {activeTab === "subjective" && (
   <AudiometryFrequencyTable
     value={values.pta_matrix}
     onChange={onChange}
   />
-)}
+)} */}
 
     {/* 👇 ADD THIS BLOCK HERE */}
-{activeTab === "subjective" && (
-  <>
-    {/* IMPRESSION */}
-    <div style={{ marginTop: 20 }}>
-      <label>Impression – Right Ear</label>
-      <textarea
-        value={values.impression_r || ""}
-        onChange={e => onChange("impression_r", e.target.value)}
-        style={{ width: "100%", marginBottom: 12 }}
-      />
 
-      <label>Impression – Left Ear</label>
-      <textarea
-        value={values.impression_l || ""}
-        onChange={e => onChange("impression_l", e.target.value)}
-        style={{ width: "100%", marginBottom: 12 }}
-      />
-    </div>
-
-    {/* RELIABILITY */}
-    <div style={{ marginTop: 12 }}>
-      <label>Reliability</label>
-      <div style={{ display: "flex", gap: 12 }}>
-        {["Good", "Fair", "Poor"].map(opt => (
-          <label key={opt}>
-            <input
-              type="radio"
-              checked={values.reliability === opt}
-              onChange={() => onChange("reliability", opt)}
-            />
-            {opt}
-          </label>
-        ))}
-      </div>
-    </div>
-  </>
-)}
 
 
     {/* Submit button stays */}
