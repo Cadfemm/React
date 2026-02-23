@@ -17,8 +17,7 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   sara: SARAForm,
   bbs: BergBalanceScale,
   fma_le: FMALEForm,
-  flug: UpperExtremityAssessment,
-  tsi: TISAssessment
+
 };
 
 /* ===================== OPTIONS ===================== */

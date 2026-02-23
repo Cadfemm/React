@@ -1126,7 +1126,7 @@ function NeuroPatientInfo({ patient }) {
 
         <div><b>Occupation:</b> -</div>
         <div><b>Work Status:</b>-</div>
-        <div><b>Driving Status:</b> {patient?.driving_status?.join(", ") || "-"}</div>
+        <div><b>Driving Status:</b> -</div>
 
         <div><b>Name of Therapist:</b> -</div>
                 <div><b>Referral Reasons:</b> -</div>

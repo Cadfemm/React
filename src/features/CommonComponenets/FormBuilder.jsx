@@ -166,50 +166,66 @@ export default function CommonFormBuilder({
                       const matrixIdx = section.fields.findIndex(f2 => f2.type === "radio-matrix");
                       return f.type === "grid-header" && matrixIdx !== -1 && idx < matrixIdx;
                     });
-
-                    return section.fields.map(field => {
-
-                      if (field.showIf) {
-                        const depVal = values[field.showIf.field];
-
-                        // equals (works for single-select / radio)
-                        if ("equals" in field.showIf) {
-                          if (Array.isArray(depVal)) {
-                            if (!depVal.includes(field.showIf.equals)) return null;
-                          } else {
-                            if (depVal !== field.showIf.equals) return null;
-                          }
-                        }
-
-                        // oneOf (checks if value is one of the provided array of values)
-                        if ("oneOf" in field.showIf) {
-                          const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
-                          if (Array.isArray(depVal)) {
-                            const hasMatch = depVal.some(val => allowedValues.includes(val));
-                            if (!hasMatch) return null;
-                          } else {
-                            if (!allowedValues.includes(depVal)) return null;
-                          }
-                        }
-                        // includes (works for multi-select / checkbox-group)
-                        if ("includes" in field.showIf) {
-                          if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
-                            return null;
-                          }
-                        }
-
-                        // exists
-                        if ("exists" in field.showIf && !depVal) {
-                          return null;
-                        }
+ const matrixColumnWidth = firstMatrixField?.options?.length
+                      ? Math.max(36, Math.max(...firstMatrixField.options.map(o => String(o?.label || "").length)) * 10 + 16)
+                      : 110;
+                    const getPrevVisibleField = (idx) => {
+                      for (let i = idx - 1; i >= 0; i--) {
+                        const f = section.fields[i];
+                        if (f.showIf && !evaluateShowIf(f.showIf, values)) continue;
+                        return { field: f, idx: i };
                       }
+                      return null;
+                    };
+                    const optionsEqual = (a, b) => {
+                      if (!a || !b || a.length !== b.length) return false;
+                      return a.every((o, i) => (o?.value ?? o) === (b[i]?.value ?? b[i]) && (o?.label ?? o) === (b[i]?.label ?? b[i]));
+                    };
+                    const renderScaleBeforeSubheading = (field, idx) => {
+                      if (field.type !== "subheading" || hasGridHeader) return null;
+                      const nextMatrix = section.fields[idx + 1];
+                      if (nextMatrix?.type !== "radio-matrix" || !nextMatrix?.options?.length) return null;
+                      const questionColumnWidth = 200; // Fixed width for question column
+                      const optionsCount = nextMatrix.options?.length || 4;
+                      const headerStyle = {
+                        ...styles.matrixHeader,
+                        marginBottom: 12,
+                        gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+                      };
+                      return (
+                        <div key={`scale-${idx}`} style={headerStyle}>
+                          <div style={styles.matrixLabel}>
+                            {nextMatrix.matrixHeaderLabel || "Scale"}
+                            {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
+                          </div>
+                          <div style={styles.matrixOptions}>
+                            {nextMatrix.options?.map((opt) => (
+                              <div key={opt.value} style={styles.matrixHeaderCell}>
+                                {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    };
+                    const shouldShowScaleBeforeMatrix = (field, idx) => {
+                      if (field.type !== "radio-matrix" || !field.options?.length || hasGridHeader) return false;
+                      const prev = getPrevVisibleField(idx);
+                      const scaleAlreadyBeforeSubheading = prev?.field?.type === "subheading" && section.fields[prev.idx + 1]?.type === "radio-matrix";
+                      if (scaleAlreadyBeforeSubheading) return false;
+                      const prevMatrix = prev?.field?.type === "radio-matrix" ? prev.field : null;
+                      return !prevMatrix || !optionsEqual(prevMatrix.options, field.options);
+                    };
+                    return (
+                      <>
+                        {section.fields.map((field, idx) => {
 
+                      if (field.showIf && !evaluateShowIf(field.showIf, values)) return null;
 
-
-                          const value = values[field.name];
-                          const error = submitted
-                            ? validateField(value, field.validation)
-                            : null;
+                      const value = values[field.name];
+                      const error = submitted
+                        ? validateField(value, field.validation)
+                        : null;
 
                       const fieldKey = field.name ?? (typeof field.label === "string" ? field.label : null) ?? `field-${idx}`;
                       return (
@@ -323,9 +339,9 @@ export default function CommonFormBuilder({
                                   showScores
                                 }
 
-                                  )
-                                ) : (
-                                  <div style={{ marginBottom: 16 }}>
+                              )
+                            ) : (
+                              <div style={{ marginBottom: 16 }}>
 
                                 <>
                                   {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
@@ -354,32 +370,34 @@ export default function CommonFormBuilder({
                                   )}
                                 </>
 
-                                    {field.helper && (
-                                      <div
-                                        style={{
-                                          fontSize: 12,
-                                          color: "#6b7280",
-                                          marginTop: 4
-                                        }}
-                                      >
-                                        {field.helper}
-                                      </div>
-                                    )}
+                                {field.helper && (
+                                  <div
+                                    style={{
+                                      fontSize: 12,
+                                      color: "#6b7280",
+                                      marginTop: 4
+                                    }}
+                                  >
+                                    {field.helper}
                                   </div>
-
-
-
                                 )}
-
-                                {error && (
-                                  <div style={styles.error}>{error}</div>
-                                )}
-
                               </div>
-                            </React.Fragment>
-                          );
 
-                    })
+
+
+                            )}
+
+                            {error && (
+                              <div style={styles.error}>{error}</div>
+                            )}
+
+                          </div>
+                        </React.Fragment>
+                      );
+
+                    })}
+                        </>
+                    );
                   })()}
                 </div>
               );

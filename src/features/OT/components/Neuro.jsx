@@ -1211,8 +1211,8 @@ function NeuroPatientInfo({ patient }) {
 
         <div><b>Name:</b> {patient.name || "-"}</div>
         <div><b>MRN / ID:</b> {patient.mrn || "-"}</div>
-        <div><b>Date of Birth:</b> {formatDate(patient?.dob)}</div>
-        <div><b>Age:</b> {calculateAge(patient?.dob)}</div>
+        <div><b>Date of Birth:</b> -</div>
+        <div><b>Age:</b> -</div>
 
         <div><b>Date of Assessment:</b> {formatDate(patient?.assessment_date)}</div>
         <div><b>Date of Onset:</b> {formatDate(patient?.onset_date)}</div>
@@ -1227,7 +1227,7 @@ function NeuroPatientInfo({ patient }) {
 
         <div><b>Occupation:</b> -</div>
         <div><b>Work Status:</b>-</div>
-        <div><b>Driving Status:</b> {patient?.driving_status?.join(", ") || "-"}</div>
+        <div><b>Driving Status:</b>-</div>
 
         <div><b>Name of Therapist:</b> -</div>
                 <div><b>Referral Reasons:</b> -</div>
