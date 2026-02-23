@@ -291,7 +291,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                   { label: "Patient Vision & Care History", value: "patient_vision_care" },
                   { label: "External Eye Symptoms", value: "external_eye_symptoms" },
                   { label: "Ocular History & Eye Conditions", value: "ocular_history" },
-                  { label: "Binocular Vision", value: "binocular_vision" }
+                  { label: "Binocular Vision", value: "binocular_vision" },
+                  { label: "Questionnaires", value: "questionnaires" }
                 ]
               }
             ]
@@ -1276,6 +1277,30 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "family_ocular_history_specify",
             label: "Specify",
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+          },
+          // In follow-up: form buttons show directly when "Questionnaires" checkbox is selected. In IA: button toggles the launcher.
+          ...(!isFollowup
+            ? [
+                {
+                  type: "button",
+                  label: "Questionnaires",
+                  name: "show_questionnaires",
+                  toggleValue: true
+                }
+              ]
+            : []),
+          {
+            type: "assessment-launcher",
+            name: "subjective_questionnaires",
+            showIf: isFollowup
+              ? { field: "general_questions", includes: "questionnaires" }
+              : { field: "show_questionnaires", equals: true },
+            options: [
+              { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
+              { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
+              { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
+              { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
+            ]
           }
         ]
       }
@@ -1295,11 +1320,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Refraction Assessment", value: "REFRACTION" },
               { label: "Vision For Driving", value: "VISION_DRIVING" },
               { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
-              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
-              { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
-              { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
-              { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
-              { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
+              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" }
             ]
           },
           {
