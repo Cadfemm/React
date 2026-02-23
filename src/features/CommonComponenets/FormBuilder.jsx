@@ -1829,10 +1829,19 @@ case "image-anatomy-selector":
       );
 
     case "button":
+      const handleButtonClick = () => {
+        if (field.name && field.toggleValue) {
+          onChange(field.name, !values[field.name]);
+        }
+        if (field.action) {
+          onAction?.(field.action);
+        }
+      };
       return (
         <button
+          type="button"
           style={styles.btnOutline}
-          onClick={() => onAction?.(field.action)}
+          onClick={handleButtonClick}
         >
           {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
         </button>
