@@ -53,6 +53,7 @@ import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDa
 import OptometryDashboard from "../features/Optometry/OptometryDashboard";
 import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
+import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
@@ -718,6 +719,8 @@ export function MainContent({
 
     case "Physio Therapy":
       return <DepartmentPage patients={patients} department="Physio Therapy" />;
+     case "Occupational Therapy":
+      return <OtDepartmentPage patients={patients} department="Occupational Therapy" />;
 
     case "Psychology":
       return <PsychologyDashboard />;

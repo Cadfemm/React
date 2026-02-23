@@ -16,7 +16,8 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   mas: MASForm,
   sara: SARAForm,
   bbs: BergBalanceScale,
-  fma_le: FMALEForm
+  fma_le: FMALEForm,
+
 };
 
 /* ===================== OPTIONS ===================== */
@@ -375,7 +376,9 @@ title:"Functional and Mobility Status",
         { label: "Berg Balance Scale (BBS)", value: "bbs" },
         { label: "Visual Analog Scale (VAS)", value: "vas" },
         { label: "Timed Up and Go (TUG)", value: "tug" },
-        { label: "6 Minutes Walk Test (6MWT)", value: "6mwt" }
+        { label: "6 Minutes Walk Test (6MWT)", value: "6mwt" },
+        {label: "Upper Extremity Assessment (Flug)", value: "flug" },
+        {label: "Trunk Impairment Scale (TIS)", value: "tsi" }
       ]
     },
 
