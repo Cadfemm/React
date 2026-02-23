@@ -132,8 +132,8 @@ export default function CommonFormBuilder({
         ))}
     </div>
 
-  </div>
-)}
+              </div>
+            )}
 
           </div>
 
@@ -166,68 +166,50 @@ export default function CommonFormBuilder({
                       const matrixIdx = section.fields.findIndex(f2 => f2.type === "radio-matrix");
                       return f.type === "grid-header" && matrixIdx !== -1 && idx < matrixIdx;
                     });
-                    // Compute column width from longest heading in this matrix set
-                    const matrixColumnWidth = firstMatrixField?.options?.length
-                      ? Math.max(36, Math.max(...firstMatrixField.options.map(o => String(o?.label || "").length)) * 10 + 16)
-                      : 110;
-                    const getPrevVisibleField = (idx) => {
-                      for (let i = idx - 1; i >= 0; i--) {
-                        const f = section.fields[i];
-                        if (f.showIf && !evaluateShowIf(f.showIf, values)) continue;
-                        return { field: f, idx: i };
+
+                    return section.fields.map(field => {
+
+                      if (field.showIf) {
+                        const depVal = values[field.showIf.field];
+
+                        // equals (works for single-select / radio)
+                        if ("equals" in field.showIf) {
+                          if (Array.isArray(depVal)) {
+                            if (!depVal.includes(field.showIf.equals)) return null;
+                          } else {
+                            if (depVal !== field.showIf.equals) return null;
+                          }
+                        }
+
+                        // oneOf (checks if value is one of the provided array of values)
+                        if ("oneOf" in field.showIf) {
+                          const allowedValues = Array.isArray(field.showIf.oneOf) ? field.showIf.oneOf : [field.showIf.oneOf];
+                          if (Array.isArray(depVal)) {
+                            const hasMatch = depVal.some(val => allowedValues.includes(val));
+                            if (!hasMatch) return null;
+                          } else {
+                            if (!allowedValues.includes(depVal)) return null;
+                          }
+                        }
+                        // includes (works for multi-select / checkbox-group)
+                        if ("includes" in field.showIf) {
+                          if (!Array.isArray(depVal) || !depVal.includes(field.showIf.includes)) {
+                            return null;
+                          }
+                        }
+
+                        // exists
+                        if ("exists" in field.showIf && !depVal) {
+                          return null;
+                        }
                       }
-                      return null;
-                    };
-                    const optionsEqual = (a, b) => {
-                      if (!a || !b || a.length !== b.length) return false;
-                      return a.every((o, i) => (o?.value ?? o) === (b[i]?.value ?? b[i]) && (o?.label ?? o) === (b[i]?.label ?? b[i]));
-                    };
-                    const renderScaleBeforeSubheading = (field, idx) => {
-                      if (field.type !== "subheading" || hasGridHeader) return null;
-                      const nextMatrix = section.fields[idx + 1];
-                      if (nextMatrix?.type !== "radio-matrix" || !nextMatrix?.options?.length) return null;
-                      const questionColumnWidth = 200; // Fixed width for question column
-                      const optionsCount = nextMatrix.options?.length || 4;
-                      const headerStyle = {
-                        ...styles.matrixHeader,
-                        marginBottom: 12,
-                        gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
-                      };
-                      return (
-                        <div key={`scale-${idx}`} style={headerStyle}>
-                          <div style={styles.matrixLabel}>
-                            {nextMatrix.matrixHeaderLabel || "Scale"}
-                            {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
-                          </div>
-                          <div style={styles.matrixOptions}>
-                            {nextMatrix.options?.map((opt) => (
-                              <div key={opt.value} style={styles.matrixHeaderCell}>
-                                {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    };
-                    const shouldShowScaleBeforeMatrix = (field, idx) => {
-                      if (field.type !== "radio-matrix" || !field.options?.length || hasGridHeader) return false;
-                      const prev = getPrevVisibleField(idx);
-                      const scaleAlreadyBeforeSubheading = prev?.field?.type === "subheading" && section.fields[prev.idx + 1]?.type === "radio-matrix";
-                      if (scaleAlreadyBeforeSubheading) return false;
-                      const prevMatrix = prev?.field?.type === "radio-matrix" ? prev.field : null;
-                      return !prevMatrix || !optionsEqual(prevMatrix.options, field.options);
-                    };
 
-                    return (
-                      <>
-                        {section.fields.map((field, idx) => {
 
-                      if (field.showIf && !evaluateShowIf(field.showIf, values)) return null;
 
-                      const value = values[field.name];
-                      const error = submitted
-                        ? validateField(value, field.validation)
-                        : null;
+                          const value = values[field.name];
+                          const error = submitted
+                            ? validateField(value, field.validation)
+                            : null;
 
                       const fieldKey = field.name ?? (typeof field.label === "string" ? field.label : null) ?? `field-${idx}`;
                       return (
@@ -341,9 +323,9 @@ export default function CommonFormBuilder({
                                   showScores
                                 }
 
-                              )
-                            ) : (
-                              <div style={{ marginBottom: 16 }}>
+                                  )
+                                ) : (
+                                  <div style={{ marginBottom: 16 }}>
 
                                 <>
                                   {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
@@ -372,34 +354,32 @@ export default function CommonFormBuilder({
                                   )}
                                 </>
 
-                                {field.helper && (
-                                  <div
-                                    style={{
-                                      fontSize: 12,
-                                      color: "#6b7280",
-                                      marginTop: 4
-                                    }}
-                                  >
-                                    {field.helper}
+                                    {field.helper && (
+                                      <div
+                                        style={{
+                                          fontSize: 12,
+                                          color: "#6b7280",
+                                          marginTop: 4
+                                        }}
+                                      >
+                                        {field.helper}
+                                      </div>
+                                    )}
                                   </div>
+
+
+
                                 )}
+
+                                {error && (
+                                  <div style={styles.error}>{error}</div>
+                                )}
+
                               </div>
+                            </React.Fragment>
+                          );
 
-
-
-                            )}
-
-                            {error && (
-                              <div style={styles.error}>{error}</div>
-                            )}
-
-                          </div>
-                        </React.Fragment>
-                      );
-
-                    })}
-                        </>
-                    );
+                    })
                   })()}
                 </div>
               );
@@ -878,65 +858,209 @@ function renderField(
           ))}
         </div>
       );
-      case "enteral-feeding-table": {
-        const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
-        const updateRow = (idx, col, val) => {
-          const next = [...rows];
-          if (!next[idx]) next[idx] = { time: "", scoops: "", water: "", flushing: "" };
-          next[idx] = { ...next[idx], [col]: val };
-          onChange(`${field.name}_rows`, next);
-        };
-        const addRow = () => {
-          const last = rows.length > 0 ? rows[rows.length - 1] : { time: "", scoops: "", water: "", flushing: "" };
-          const newRow = { time: "", scoops: last.scoops || "", water: last.water || "", flushing: last.flushing || "" };
-          onChange(`${field.name}_rows`, [...rows, newRow]);
-        };
-        const removeRow = (idx) => onChange(`${field.name}_rows`, rows.filter((_, i) => i !== idx));
-        const template = "repeat(4, 1fr) 70px";
-        return (
-          <div style={{ marginTop: 10 }}>
-            {/* Header row */}
-            <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
-              <div style={styles.gridHeaderCell}>Time</div>
-              <div style={styles.gridHeaderCell}>Scoops</div>
-              <div style={styles.gridHeaderCell}>Water</div>
-              <div style={styles.gridHeaderCell}>Flushing</div>
-              <div style={styles.gridHeaderCell}></div>
-            </div>
-            {/* Data rows */}
-            {rows.map((row, idx) => (
-              <div key={idx} style={{ ...styles.gridRow, gridTemplateColumns: template }}>
-                <input
-                  type="time"
-                  value={row.time || ""}
-                  onChange={e => updateRow(idx, "time", e.target.value)}
-                  style={styles.gridInput}
-                />
-                <input
-                  type="text"
-                  value={row.scoops || ""}
-                  onChange={e => updateRow(idx, "scoops", e.target.value)}
-                  style={styles.gridInput}
-                />
-                <input
-                  type="text"
-                  value={row.water || ""}
-                  onChange={e => updateRow(idx, "water", e.target.value)}
-                  style={styles.gridInput}
-                />
-                <input
-                  type="text"
-                  value={row.flushing || ""}
-                  onChange={e => updateRow(idx, "flushing", e.target.value)}
-                  style={styles.gridInput}
-                />
-                <button type="button" onClick={() => removeRow(idx)} style={{ padding: "6px 8px", fontSize: 12, background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
-              </div>
-            ))}
-            <button type="button" onClick={addRow} style={{ marginTop: 8, padding: "6px 12px", background: "#2563eb", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>+ Add Row</button>
-          </div>
-        );
+
+    case "dynamic-goals": {
+  const rows = values[field.name] || [];
+
+  const updateRow = (idx, key, val) => {
+    const next = [...rows];
+    next[idx] = { ...next[idx], [key]: val };
+    onChange(field.name, next);
+  };
+
+  const addRow = () => {
+    onChange(field.name, [
+      ...rows,
+      {
+        description: "",
+        sessionsPerWeek: "",
+        minutesPerSession: "",
+        plannedDurationWeeks: "",
+        targetDate: ""
       }
+    ]);
+  };
+
+  const removeRow = (idx) => {
+    const next = rows.filter((_, i) => i !== idx);
+    onChange(field.name, next);
+  };
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      {rows.map((row, idx) => (
+        <div
+          key={idx}
+          style={{
+            position: "relative",
+            border: "1px solid #e5e7eb",
+            padding: "16px",
+            borderRadius: "10px",
+            marginBottom: "16px",
+            background: "#ffffff"
+          }}
+        >
+          {/* Header */}
+          <div style={{ fontWeight: 600, marginBottom: 12 }}>
+            Goal {idx + 1}
+          </div>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={() => removeRow(idx)}
+            style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              background: "transparent",
+              border: "none",
+              color: "#ef4444",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+          >
+            ✕
+          </button>
+
+          {/* Goal Description */}
+          <textarea
+            placeholder="Goal Description"
+            value={row.description}
+            onChange={(e) =>
+              updateRow(idx, "description", e.target.value)
+            }
+            style={{
+              width: "100%",
+              minHeight: "80px",
+              marginBottom: "12px",
+              borderRadius: "6px",
+              border: "1px solid #d1d5db",
+              padding: "8px"
+            }}
+          />
+
+          {/* Frequency Section */}
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <input
+              type="number"
+              placeholder="Sessions / week"
+              value={row.sessionsPerWeek}
+              onChange={(e) =>
+                updateRow(idx, "sessionsPerWeek", e.target.value)
+              }
+              style={styles.inputStyle}
+            />
+
+            <input
+              type="number"
+              placeholder="Minutes / session"
+              value={row.minutesPerSession}
+              onChange={(e) =>
+                updateRow(idx, "minutesPerSession", e.target.value)
+              }
+              style={styles.inputStyle}
+            />
+
+            <input
+              type="number"
+              placeholder="Planned duration (weeks)"
+              value={row.plannedDurationWeeks}
+              onChange={(e) =>
+                updateRow(idx, "plannedDurationWeeks", e.target.value)
+              }
+              style={styles.inputStyle}
+            />
+
+            <input
+              type="date"
+              value={row.targetDate}
+              onChange={(e) =>
+                updateRow(idx, "targetDate", e.target.value)
+              }
+              style={styles.inputStyle}
+            />
+          </div>
+        </div>
+      ))}
+
+      {/* Add Goal Button */}
+      <button
+        type="button"
+        onClick={addRow}
+        style={{
+          background: "#2563eb",
+          color: "white",
+          border: "none",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        + Add Goal
+      </button>
+    </div>
+  );
+}
+    case "enteral-feeding-table": {
+      const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
+      const updateRow = (idx, col, val) => {
+        const next = [...rows];
+        if (!next[idx]) next[idx] = { time: "", scoops: "", water: "", flushing: "" };
+        next[idx] = { ...next[idx], [col]: val };
+        onChange(`${field.name}_rows`, next);
+      };
+      const addRow = () => {
+        const last = rows.length > 0 ? rows[rows.length - 1] : { time: "", scoops: "", water: "", flushing: "" };
+        const newRow = { time: "", scoops: last.scoops || "", water: last.water || "", flushing: last.flushing || "" };
+        onChange(`${field.name}_rows`, [...rows, newRow]);
+      };
+      const removeRow = (idx) => onChange(`${field.name}_rows`, rows.filter((_, i) => i !== idx));
+      const template = "repeat(4, 1fr) 70px";
+      return (
+        <div style={{ marginTop: 10 }}>
+          {/* Header row */}
+          <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
+            <div style={styles.gridHeaderCell}>Time</div>
+            <div style={styles.gridHeaderCell}>Scoops</div>
+            <div style={styles.gridHeaderCell}>Water</div>
+            <div style={styles.gridHeaderCell}>Flushing</div>
+            <div style={styles.gridHeaderCell}></div>
+          </div>
+          {/* Data rows */}
+          {rows.map((row, idx) => (
+            <div key={idx} style={{ ...styles.gridRow, gridTemplateColumns: template }}>
+              <input
+                type="time"
+                value={row.time || ""}
+                onChange={e => updateRow(idx, "time", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.scoops || ""}
+                onChange={e => updateRow(idx, "scoops", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.water || ""}
+                onChange={e => updateRow(idx, "water", e.target.value)}
+                style={styles.gridInput}
+              />
+              <input
+                type="text"
+                value={row.flushing || ""}
+                onChange={e => updateRow(idx, "flushing", e.target.value)}
+                style={styles.gridInput}
+              />
+              <button type="button" onClick={() => removeRow(idx)} style={{ padding: "6px 8px", fontSize: 12, background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
+            </div>
+          ))}
+          <button type="button" onClick={addRow} style={{ marginTop: 8, padding: "6px 12px", background: "#2563eb", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>+ Add Row</button>
+        </div>
+      );
+    }
     case "grid-table-flat":
       const colCount = field.headers.length;
       return (
@@ -1139,18 +1263,18 @@ function renderField(
       );
     }
 
-case "image-anatomy-selector":
-  return (
-    <AnatomyImageOverlayInputs
+    case "image-anatomy-selector":
+      return (
+        <AnatomyImageOverlayInputs
 
-      image={field.image}
-      fields={field.markers}
-       values={values}
-  onChange={onChange}
-      width={field.width}
-      height={field.height}
-    />
-  );
+          image={field.image}
+          fields={field.markers}
+          values={values}
+          onChange={onChange}
+          width={field.width}
+          height={field.height}
+        />
+      );
 
 
     case "multi-select-details": {
@@ -1498,15 +1622,6 @@ case "image-anatomy-selector":
       );
 
 
-    case "radio-matrix":
-      return (
-        <RadioMatrixRow
-          field={field}
-          value={value}
-          onChange={onChange}
-          languageConfig={languageConfig}
-        />
-      );
     case "textarea":
       return (
         <textarea
@@ -2123,13 +2238,13 @@ case "image-anatomy-selector":
                             >
                               <option value="">Select</option>
                               {(col.options || []).map((o, i) => {
-  const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
-  const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
-  const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
-  return (
-    <option key={val ?? i} value={val}>{display}</option>
-  );
-})}
+                                const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
+                                const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
+                                const display = typeof label === "string" || typeof label === "number" ? label : String(val ?? "");
+                                return (
+                                  <option key={val ?? i} value={val}>{display}</option>
+                                );
+                              })}
                             </select>
                           ) : (
                             <input
@@ -2298,22 +2413,22 @@ function validateField(value, rules) {
 
 const styles = {
   actionsBar: {
-  display: "flex",
-  alignItems: "center",
-  gap: 16
-},
+    display: "flex",
+    alignItems: "center",
+    gap: 16
+  },
 
-actionControls: {
-  display: "flex",
-  alignItems: "center",
-  gap: 12
-},
+  actionControls: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12
+  },
 
-actionButtons: {
-  display: "flex",
-  alignItems: "center",
-  gap: 8
-},
+  actionButtons: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8
+  },
   page: {
     minHeight: "auto",
     fontFamily: "Inter, system-ui"
@@ -2915,6 +3030,13 @@ matrixHeaderCell: {
     gridTemplateColumns: "120px repeat(2, 1fr)",
     borderBottom: "1px solid #e5e7eb"
   },
+   inputStyle :{
+  flex: "1",
+  minWidth: "180px",
+  padding: "8px",
+  borderRadius: "6px",
+  border: "1px solid #d1d5db"
+},
 
   refractionTableCell: {
     padding: "12px",
