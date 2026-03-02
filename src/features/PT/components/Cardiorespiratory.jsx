@@ -172,7 +172,7 @@ function CardioPatientInfo({ patient }) {
         <div><b>ICD:</b> {patient.icd}</div>
         <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
         <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-        <div>
+    <div>
           <b>Duration of Diagnosis:</b>{" "}
           {calculateDuration(patient.date_of_onset)}
         </div>
