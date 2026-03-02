@@ -30,7 +30,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <SpinalCordInjury />;
 
       case "hydro":
-        return <Hydro />;
+        return <Hydro patient={patient}/>;
 
       case "msk":
         return <Musculoskeletal />;
@@ -39,7 +39,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Conditioning />;
 
       case "cardio":
-        return <Cardiorespiratory />;
+        return <Cardiorespiratory patient={patient} />;
 
       case "amputee":
         return <Amputee />;

@@ -885,7 +885,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             ],
             showIf: {
               field: "ocular_symptoms",
-              includes: "eye_pain"
+              includes: "eye_pain_location"
             }
           },
           {

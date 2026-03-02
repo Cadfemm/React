@@ -830,6 +830,15 @@ function renderField(
           }
         />
       );
+      case "scale-slider":
+  return (
+    <ScaleSlider
+      field={field}
+      value={value}
+      onChange={onChange}
+      readOnly={readOnly}
+    />
+  );
     case "milestone-grid":
       return (
         <div>
@@ -1016,6 +1025,114 @@ function renderField(
         }}
       >
         + Add Goal
+      </button>
+    </div>
+  );
+}
+
+case "dynamic-section": {
+const rows = values[field.name] ?? [{}];
+ 
+  const updateField = (idx, childName, val) => {
+    const next = [...rows];
+    next[idx] = {
+      ...next[idx],
+      [childName]: val
+    };
+    onChange(field.name, next);
+  };
+ 
+  const addBlock = () => {
+    onChange(field.name, [...rows, {}]);
+  };
+ 
+  const removeBlock = (idx) => {
+    const next = rows.filter((_, i) => i !== idx);
+    onChange(field.name, next);
+  };
+ 
+  return (
+    <div style={{ marginTop: 12 }}>
+      {rows.map((block, idx) => (
+        <div
+          key={idx}
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: 10,
+            padding: 16,
+            marginBottom: 16,
+            background: "#ffffff",
+            position: "relative"
+          }}
+        >
+
+ 
+          <button
+            type="button"
+            onClick={() => removeBlock(idx)}
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              border: "none",
+              background: "transparent",
+              color: "#ef4444",
+              cursor: "pointer",
+              fontSize: 16
+            }}
+          >
+            ✕
+          </button>
+ 
+          {/* Render Child Fields */}
+          {field.fields.map(child => {
+ 
+            // Handle showIf inside block
+            if (child.showIf) {
+              const depVal = block[child.showIf.field];
+              if (
+                child.showIf.includes &&
+                (!Array.isArray(depVal) || !depVal.includes(child.showIf.includes))
+              ) return null;
+            }
+ 
+            return (
+              <div key={child.name} style={{ marginBottom: 14 }}>
+                {child.label && (
+                  <label style={styles.label}>
+                    {child.label}
+                  </label>
+                )}
+ 
+                {renderField(
+                  { ...child, name: child.name },
+                  block[child.name],
+                  block,
+                  (name, val) => updateField(idx, name, val),
+                  onAction,
+                  assessmentRegistry,
+                  formReadOnly,
+                  languageConfig
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+ 
+      <button
+        type="button"
+        onClick={addBlock}
+        style={{
+          background: "#2563eb",
+          color: "white",
+          border: "none",
+          padding: "8px 16px",
+          borderRadius: 6,
+          cursor: "pointer"
+        }}
+      >
+        + Add More
       </button>
     </div>
   );
@@ -2395,6 +2512,65 @@ function FilePreview({ file, previewSize }) {
   return (
     <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
       📄 {fileName}
+    </div>
+  );
+}
+
+function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
+  const { min, max, step = 1, ranges = [], showValue } = field;
+
+  const steps = Math.floor((max - min) / step);
+
+  const gradient =
+    ranges.length > 0
+      ? `linear-gradient(to right, ${ranges
+          .map(r => `${r.color} ${(r.min - min) / (max - min) * 100}% ${(r.max - min) / (max - min) * 100}%`)
+          .join(",")})`
+      : "linear-gradient(to right, #9ca3af, #9ca3af)";
+
+  const getRange = v =>
+    ranges.find(r => v >= r.min && v <= r.max);
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      {/* NUMBERS */}
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+        {Array.from({ length: steps + 1 }, (_, i) => min + i * step).map(n => (
+          <span key={n}>{n}</span>
+        ))}
+      </div>
+
+      {/* SLIDER */}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        disabled={readOnly}
+        onChange={e => onChange(field.name, Number(e.target.value))}
+        style={{
+          width: "100%",
+          marginTop: 6,
+          appearance: "none",
+          height: 8,
+          borderRadius: 999,
+          background: gradient,
+          outline: "none"
+        }}
+      />
+
+      {/* VALUE */}
+      {showValue && (
+        <div style={{ marginTop: 6, fontSize: 13 }}>
+          Selected: <b>{value}</b>
+          {getRange(value) && (
+            <> – <span style={{ color: getRange(value).color }}>
+              {getRange(value).label}
+            </span></>
+          )}
+        </div>
+      )}
     </div>
   );
 }
