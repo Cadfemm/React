@@ -5,7 +5,7 @@ import SpinalCordInjury from "./SpinalcordInjury";
 import Hydro from "./Hydro";
 import Musculoskeletal from "./Musculoskeletal";
 import Conditioning from "./Conditioning";
-import Cardiorespiratory from "./Cardiorespiratory";
+import CardioRespiratory from "./CardioRespiratory";
 import Amputee from "./Amputee";
 
 export default function ProgramTabsWithContent({ patient }) {
@@ -39,7 +39,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Conditioning />;
 
       case "cardio":
-        return <Cardiorespiratory />;
+        return <CardioRespiratory patient={patient}/>;
 
       case "amputee":
         return <Amputee />;
