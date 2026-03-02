@@ -33,7 +33,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Hydro patient={patient}/>;
 
       case "msk":
-        return <Musculoskeletal />;
+        return <Musculoskeletal patient={patient} />;
 
       case "conditioning":
         return <Conditioning />;
