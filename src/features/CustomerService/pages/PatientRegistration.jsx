@@ -31,7 +31,10 @@ export default function PatientRegister({ addPatient }) {
     medical_history: "",       // NEW FIELD
     lmp_date: "",              // Last Menstrual Date (female, age > 8)
     case_manager: "",          // Case Manager - flows to CM in Resus Bay
-    main_caregiver: ""         // Main caregiver (in Carer Information)
+    main_caregiver: "",        // Main caregiver (in Carer Information)
+    dominant_side: "",        // Right / Left / Bilateral
+    language_preference: "",  // English, Tamil, Malay, Urdu
+    driving_status: ""        // Can Drive / Can't Drive
   });
 
   const ICD_LIST = Object.keys(GROUPED_ICD_TO_DEPT);
@@ -113,6 +116,9 @@ const calculateAge = (dob) => {
       lmp_date: form.lmp_date,
       case_manager: form.case_manager,
       main_caregiver: form.main_caregiver,
+      dominant_side: form.dominant_side,
+      language_preference: form.language_preference,
+      driving_status: form.driving_status,
       carers: carers,
       departments: depts
     };
@@ -267,6 +273,30 @@ const calculateAge = (dob) => {
           />
         </>
       )}
+
+      <label>Dominant Side</label>
+      <select value={form.dominant_side} onChange={e => setField("dominant_side", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="Right">Right</option>
+        <option value="Left">Left</option>
+        <option value="Bilateral">Bilateral</option>
+      </select>
+
+      <label>Language Preference</label>
+      <select value={form.language_preference} onChange={e => setField("language_preference", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="English">English</option>
+        <option value="Tamil">Tamil</option>
+        <option value="Malay">Malay</option>
+        <option value="Urdu">Urdu</option>
+      </select>
+
+      <label>Driving Status</label>
+      <select value={form.driving_status} onChange={e => setField("driving_status", e.target.value)} style={{ width: "100%" }}>
+        <option value="">Select</option>
+        <option value="Can Drive">Can Drive</option>
+        <option value="Can't Drive">Can't Drive</option>
+      </select>
 
       <label>Grouping ICD</label>
       <select value={form.icd} onChange={e => setField("icd", e.target.value)} style={{ width:"100%" }}>

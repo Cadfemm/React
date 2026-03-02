@@ -30,8 +30,8 @@ export default function HearingAssessment() {
 
         {
           type: "multi-select-dropdown",
-          name: "b230_hearing_issue",
-          label: "b230 Hearing Issue",
+          name: "hearing_issue",
+          label: "Hearing Issue",
           showIf: { field: "ear_status", equals: "impaired" },
           options: [
             { label: "No issue", value: "no_issue" },
@@ -48,12 +48,27 @@ export default function HearingAssessment() {
             { label: "Deformity", value: "deformity" }
           ]
         },
-        {
-          type: "textarea",
-          name: "b230_hearing_issue_notes",
-          label: "Elaboration of issues (if present)",
-          showIf: { field: "ear_status", equals: "impaired" }
-        }
+              ...[
+  "ear_pain",
+  "hearing_loss",
+  "tinnitus",
+  "fullness",
+  "ear_discharge",
+  "dizziness",
+  "vertigo",
+  "nausea",
+  "itching",
+  "hyperacusis",
+  "deformity"
+].map(issue => ({
+  type: "textarea",
+  name: `hearing_issue_${issue}_notes`,
+  label: `Elaboration – ${issue.replace(/_/g, " ")}`,
+  showIf: {
+    field: "hearing_issue",
+    includes: issue
+  }
+}))
       ]
     },
 
@@ -278,14 +293,24 @@ export default function HearingAssessment() {
     /* =====================================================
        HEARING TEST
     ===================================================== */
+   {
+  title: "Hearing Test",
+  showIf: { field: "ear_status", equals: "impaired" },
+  fields: [
+
     {
-      title: "Hearing Test",
-      showIf: { field: "ear_status", equals: "impaired" },
-      fields: [
+      type: "grid-header",
+      cols: [ "Right Ear", "Left Ear"]
+    },
+
+    {
+      type: "grid-row",
+      name: "whisper_test",
+      label: "Whisper Test",
+      cols: [
         {
           type: "radio",
           name: "right_whisper_test",
-          label: "Right Ear – Whisper Test",
           options: [
             { label: "Passed", value: "passed" },
             { label: "Failed", value: "failed" }
@@ -294,16 +319,22 @@ export default function HearingAssessment() {
         {
           type: "radio",
           name: "left_whisper_test",
-          label: "Left Ear – Whisper Test",
           options: [
             { label: "Passed", value: "passed" },
             { label: "Failed", value: "failed" }
           ]
-        },
+        }
+      ]
+    },
+
+    {
+      type: "grid-row",
+      name: "dix_hallpike_test",
+      label: "Dix-Hallpike Test",
+      cols: [
         {
           type: "radio",
           name: "right_dix_hallpike",
-          label: "Right Ear – Dix-Hallpike Test",
           options: [
             { label: "Positive", value: "positive" },
             { label: "Negative", value: "negative" }
@@ -312,15 +343,16 @@ export default function HearingAssessment() {
         {
           type: "radio",
           name: "left_dix_hallpike",
-          label: "Left Ear – Dix-Hallpike Test",
           options: [
             { label: "Positive", value: "positive" },
             { label: "Negative", value: "negative" }
           ]
         }
       ]
-    },
+    }
 
+  ]
+},
     /* =====================================================
        PLAN
     ===================================================== */

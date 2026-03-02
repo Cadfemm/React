@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import  VisualAssessment from "../components/Visual";
+import SocialHistory from "./SocialHistory";
+import WorkHistory from "./WorkHistory";
 import SwallowingAssessment from "./SwallowingAssessment";
 import CognitiveAssessmentForm from "./CognitiveAssessment";
 import Physical from "./Physical";
@@ -497,6 +499,12 @@ const handleSubmitReferral = () => {
         ) :
          tabs[activeTab] === "Bladder Issue" ? (
           <BladderAssessment onChange={setBladderAssessmentData} />
+        ) :
+         tabs[activeTab] === "Social History" ? (
+          <SocialHistory />
+        ) :
+         tabs[activeTab] === "Work History" ? (
+          <WorkHistory />
         ) :
          (
           <div style={{ padding: "20px 0" }}>
