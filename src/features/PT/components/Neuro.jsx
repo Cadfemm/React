@@ -1216,76 +1216,90 @@ return (
     </div>
  
     {/* ===== TAB CONTENT ===== */}
-{/* ===== TAB CONTENT ===== */}
-<CommonFormBuilder
-  schema={schemaMap[activeTab]}
-  values={values}
-  onChange={onChange}
-  submitted={submitted}
-  onAction={handleAction}
-  assessmentRegistry={NEURO_ASSESSMENT_REGISTRY}
->
- 
-  {/* 🔹 ADD MATRIX ONLY IN PLAN TAB */}
-  {activeTab === "plan" &&
-    Array.isArray(values.treatment_plan) &&
-    values.treatment_plan.length > 0 && (
- 
-    <div style={{ marginTop: 20 }}>
-      <h3>Treatment Plan Schedule</h3>
- 
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ background: "#f1f5f9" }}>
-            <th style={th}>Treatment</th>
-            <th style={th}>Frequency</th>
-            <th style={th}>Duration</th>
-          </tr>
-        </thead>
- 
-        <tbody>
-          {values.treatment_plan.map(plan => (
-            <tr key={plan}>
-             <td style={td}>
-  <b>{TREATMENT_PLAN_LABEL_MAP[plan] || plan}</b>
-</td>
- 
- 
-              <td style={td}>
-                <input
-                  type="text"
-                  placeholder="e.g. 5 days/week"
-                  value={values[`freq_${plan}`] || ""}
-                  onChange={e =>
-                    onChange(`freq_${plan}`, e.target.value)
-                  }
-                />
-              </td>
- 
-              <td style={td}>
-                <input
-                  type="text"
-                  placeholder="e.g. 30 mins / 6 weeks"
-                  value={values[`dur_${plan}`] || ""}
-                  onChange={e =>
-                    onChange(`dur_${plan}`, e.target.value)
-                  }
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
- 
-  <div style={submitRow}>
-    <button style={submitBtn} onClick={handleSubmit}>
-      Submit Neuro Assessment
-    </button>
-  </div>
- 
-</CommonFormBuilder>
+    {/* ===== TAB CONTENT ===== */}
+    <CommonFormBuilder
+      schema={schemaMap[activeTab]}
+      values={values}
+      onChange={onChange}
+      submitted={submitted}
+      onAction={handleAction}
+      assessmentRegistry={NEURO_ASSESSMENT_REGISTRY}
+    >
+      {/* 🔹 ADD MATRIX ONLY IN PLAN TAB */}
+      {activeTab === "plan" &&
+        Array.isArray(values.treatment_plan) &&
+        values.treatment_plan.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <h3>Treatment Plan Schedule</h3>
+
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#f1f5f9" }}>
+                  <th style={th}>Treatment</th>
+                  <th style={th}>Frequency</th>
+                  <th style={th}>Duration</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {values.treatment_plan.map(plan => (
+                  <tr key={plan}>
+                    <td style={td}>
+                      <b>{TREATMENT_PLAN_LABEL_MAP[plan] || plan}</b>
+                    </td>
+
+                    <td style={td}>
+                      <input
+                        type="text"
+                        placeholder="e.g. 5 days/week"
+                        value={values[`freq_${plan}`] || ""}
+                        onChange={e =>
+                          onChange(`freq_${plan}`, e.target.value)
+                        }
+                      />
+                    </td>
+
+                    <td style={td}>
+                      <input
+                        type="text"
+                        placeholder="e.g. 30 mins / 6 weeks"
+                        value={values[`dur_${plan}`] || ""}
+                        onChange={e =>
+                          onChange(`dur_${plan}`, e.target.value)
+                        }
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+      <div style={submitRow}>
+        {activeTab !== "plan" ? (
+          <button
+            type="button"
+            style={submitBtn}
+            onClick={() => {
+              if (activeTab === "subjective") setActiveTab("objective");
+              else if (activeTab === "objective") setActiveTab("assessment");
+              else if (activeTab === "assessment") setActiveTab("plan");
+            }}
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            type="button"
+            style={submitBtn}
+            onClick={handleSubmit}
+          >
+            Submit Neurology Assessment
+          </button>
+        )}
+      </div>
+    </CommonFormBuilder>
  
  
   </div>

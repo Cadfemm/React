@@ -3007,7 +3007,7 @@ const styles = {
   matrixHeader: {
     display: "grid",
     gridTemplateColumns: "400px repeat(4, 1fr)", // Fixed question column, equal option columns
-    gap: "0 16px", // Horizontal gap between columns
+    // gap: "0 16px", // Horizontal gap between columns
     marginBottom: 12,
     borderBottom: "2px solid #d1d5db",
     fontSize: 14,

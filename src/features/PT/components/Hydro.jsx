@@ -780,8 +780,9 @@ const HYDRO_ASSESSMENT_REGISTRY = {
 
 /* ===================== MAIN HYDRO ===================== */
 
-export default function Hydro({ patient }) {
+export default function Hydro({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
+  const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
 
   useEffect(() => {
@@ -795,6 +796,23 @@ export default function Hydro({ patient }) {
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
+  };
+
+  const handleAction = (type) => {
+    if (type === "back") onBack?.();
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+    }
+    if (type === "save") {
+      alert("Hydrotherapy draft saved");
+    }
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    onSubmit?.(values);
+    alert("Hydrotherapy assessment submitted");
   };
 
   const schemaMap = {
@@ -841,8 +859,34 @@ export default function Hydro({ patient }) {
         schema={schemaMap[activeTab]}
         values={values}
         onChange={onChange}
+        submitted={submitted}
+        onAction={handleAction}
         assessmentRegistry={HYDRO_ASSESSMENT_REGISTRY}
-      />
+      >
+        <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={() => {
+                if (activeTab === "subjective") setActiveTab("objective");
+                else if (activeTab === "objective") setActiveTab("assessment");
+                else if (activeTab === "assessment") setActiveTab("plan");
+              }}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={handleSubmit}
+            >
+              Submit Hydrotherapy Assessment
+            </button>
+          )}
+        </div>
+      </CommonFormBuilder>
     </div>
   );
 }
@@ -879,4 +923,20 @@ const patientGrid = {
   gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
   gap: 12,
   fontSize: 14
+};
+
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 20
+};
+
+const submitBtn = {
+  padding: "12px 32px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 10,
+  fontSize: 15,
+  fontWeight: 700
 };
