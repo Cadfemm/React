@@ -894,16 +894,20 @@ const SUBJECTIVE_SCHEMA = {
 
         {
           name: "family_social_from_registration",
-          label: "Family History (From Customer Service)",
-          type: "textarea",
-          readOnly: true
+          label: "Family History",
+          type: "radio",
+          options: [
+            { label: "Yes", value: "1"},
+            { label: "No", value: "0"}
+          ]
         },
-
         {
           name: "family_history_notes",
-          label: "",
           type: "textarea",
-          showIf: { field: "family_history", exists: true }
+          showIf: {
+            field: "family_social_from_registration",
+            equals: "1"
+          }
         },
 
         {
