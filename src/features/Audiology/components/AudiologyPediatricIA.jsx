@@ -497,7 +497,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "turns_to_sound",
-          label: "b) turn to find sound source",
+          label: "b) Turn to find sound source",
           type: "radio",
           options: YES_NO
         },
@@ -521,7 +521,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "responds_to_name",
-          label: "d)Respond to their name",
+          label: "d) Respond to their name",
           type: "radio",
           options: YES_NO
         },
@@ -534,7 +534,7 @@ const SUBJECTIVE_SCHEMA = {
 
                 {
           name: "startle_to_loud_sound",
-          label: "e) startle to loud sound",
+          label: "e) Startle to loud sound",
           type: "radio",
           options: YES_NO
         },
