@@ -11,8 +11,8 @@ import Amputee from "./Amputee";
 export default function ProgramTabsWithContent({ patient }) {
   const tabs = [
     { key: "sci", label: "Spinal Cord Injury" },
-    { key: "neuro", label: "Neuro" },
-    { key: "hydro", label: "Hydro" },
+    { key: "neuro", label: "Neurology" },
+    { key: "hydro", label: "Hydrotherapy" },
     { key: "msk", label: "Musculoskeletal" },
     { key: "conditioning", label: "Conditioning" },
     { key: "cardio", label: "Cardiorespiratory" },
@@ -36,7 +36,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Musculoskeletal patient={patient} />;
 
       case "conditioning":
-        return <Conditioning />;
+        return <Conditioning patient={patient} />;
 
       case "cardio":
         return <Cardiorespiratory patient={patient} />;
