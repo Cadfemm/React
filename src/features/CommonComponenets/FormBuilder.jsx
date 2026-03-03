@@ -1836,6 +1836,49 @@ const rows = values[field.name] ?? [{}];
           </div>
         );
       }
+    case "radio-group":
+      const opts = field.options || [];
+
+      return (
+        <div style={{ marginTop: 12 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
+              gap: "10px 20px", // row gap + column gap
+            }}
+          >
+            {opts.map((opt, idx) => {
+              const optVal =
+                typeof opt === "object" && opt !== null ? opt.value : opt;
+              const optLabel =
+                typeof opt === "object" && opt !== null ? opt.label : opt;
+
+              return (
+                <label
+                  key={optVal ?? idx}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    cursor: readOnly ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name={field.name}
+                    value={optVal}
+                    checked={value === optVal}
+                    disabled={readOnly}
+                    onChange={() => !readOnly && onChange(field.name, optVal)}
+                  />
+                  {optLabel}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      );
     case "attach-file":
       return (
         <div style={{ marginBottom: 0 }}>
