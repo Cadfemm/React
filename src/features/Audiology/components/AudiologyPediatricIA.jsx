@@ -149,7 +149,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "prenatal_risk_factors",
           label: "Did any of the following occur during pregnancy?",
-          type: "multi-select-dropdown",
+          type: "radio-group",
           options: [
             { label: "No", value: "0" },
             { label: "Alcohol abuse", value: "1" },
@@ -168,14 +168,6 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Toxoplasmosis", value: "14" }
           ]
         },
-        {
-          name: "prenatal_risk_notes",
-          label: "",
-          type: "textarea",
-        showIf: { field: "prenatal_risk_factors", exists: true }
-
-
-        }
       ]
     },
 
@@ -244,7 +236,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "ear_conditions",
           label: "Has your child had any of the following?",
-          type: "multi-select-dropdown",
+          type: "radio-group",
           options: [
             { label: "No", value: "0" },
             { label: "Allergies / Sinus problems", value: "1" },
@@ -267,12 +259,6 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Meconium aspiration", value: "18" },
             { label: "Rubella", value: "19" }
           ]
-        },
-        {
-          name: "ear_conditions_notes",
-          label: "",
-          type: "textarea",
-           showIf: { field: "ear_conditions", exists: true  }
         },
 {
           name: "surgical_history",
@@ -424,7 +410,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "hearing_loss_risk_factors",
           label: "Factors associated with hearing loss",
-          type: "multi-select-dropdown",
+          type: "radio-group",
           options: [
             { label: "None", value: "0" },
             { label: "Family history of hearing loss", value: "1" },
@@ -439,12 +425,6 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Skin tag or pits around ears", value: "10" },
             { label: "Rh incompatibility", value: "11" }
           ]
-        },
-        {
-          name: "hearing_loss_risk_notes",
-          label: "",
-          type: "textarea",
-          showIf:{field:"hearing_loss_risk_factors" ,exists:true}
         },
         {
           name: "family_member_hearing_loss",
