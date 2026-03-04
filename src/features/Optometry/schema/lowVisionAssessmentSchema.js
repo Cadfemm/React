@@ -4,44 +4,68 @@ const YES_NO = [
 ];
 
 const LOW_VISION_ASSESSMENT_SCHEMA = {
-    title: "Low Vision",
+    title: "Low Vision Rehabilitation",
     sections: [{
         fields: [
             { name: "case_background_sections", label: "Case Background", type: "textarea"},
-            {
-                name: "low_vision_rehabilitation",
-                type: "subheading",
-                label: "Low Vision Rehabilitation",
-                showIf: {
-                    field: "case_background_sections"
-                }
-            },
-            {
-                name: "low_vision",
-                type: "refraction-table",
-                columns: [
-                    "Yes/No",
-                    "Distance",
-                    "Near",
-                ],
-                rows: [
-                    { label: "Current LVD/s", value: "current_lvd"},
-                    { label: "Visual Acuity", value: "visual_actuity"},
-                    { label: "Refraction", value: "refraction"}
-                ]
-            },
+            { type: "subheading", label: "Current LVD/s" },
             {
                 type: "grid-header",
-                cols: ["RE", "LE"],
+                cols: ["RE", "LE", "Comments"],
                 showIf: {
                     field: "case_background_sections",
                 }
-            },          
+            },  
+            {
+                type: "grid-header",
+                cols: ["", "", ""],
+                rows: ["Distance", "Near"]
+            },
+
+            {
+                type: "grid-row",
+                name: "refraction_optionn",
+                label: "Current LVD/s",
+                cols: [{type:"single-select", options: YES_NO}, {type:"single-select", options: YES_NO}, "input"]
+            },
+
+            {
+                type: "grid-row",
+                name: "refraction_distance",
+                label: "Distance",
+                cols: ["input", "input", "input"]
+            },
+            {
+                type: "grid-row",
+                name: "refraction_near",
+                label: "Near",
+                cols: ["input", "input", "input"]
+            },
+
+            { type: "subheading", label: "Visual Acuity" },
+            {
+                type: "grid-header",
+                cols: ["", ""],
+                rows: ["Distance", "Near"]
+            },
+            {
+                type: "grid-row",
+                name: "refraction_distance",
+                label: "Distance",
+                cols: ["input", "input", "input"]
+            },
+            {
+                type: "grid-row",
+                name: "refraction_near",
+                label: "Near",
+                cols: ["input", "input", "input"]
+            },
+        
             {
                 type: "grid-row",
                 name: "visual_field_assessment",
                 label: "Visual Field Assessment",
-                cols: [{ type: "file-upload-modal"}, { type: "file-upload-modal"}],
+                cols: [{ type: "file-upload-modal"}, { type: "file-upload-modal"}, "input"],
                 showIf: {
                     field: "case_background_sections",
                 }
@@ -50,31 +74,40 @@ const LOW_VISION_ASSESSMENT_SCHEMA = {
                 type: "grid-row",
                 name: "contrast_sensitivity",
                 label: "Contrast Sensitivity",
-                cols: ["RE", "LE"],
+                cols: ["RE", "LE", "input"],
                 showIf: {
                     field: "case_background_sections",
                 }
+            },
+            
+
+            { type: "subheading", label: "Refraction" },
+            {
+                type: "grid-header",
+                cols: ["", ""],
+                rows: ["Distance", "Near"]
+            },
+            {
+                type: "grid-row",
+                name: "refraction_distance",
+                label: "Distance",
+                cols: ["input", "input", "input"]
+            },
+            {
+                type: "grid-row",
+                name: "refraction_near",
+                label: "Near",
+                cols: ["input", "input", "input"]
             },
             {
                 type: "grid-row",
                 name: "magnification_needed",
                 label: "Magnification Needed",
-                cols: ["RE", "LE"],
+                cols: ["RE", "LE", "input"],
                 showIf: {
                     field: "case_background_sections",
                 }
             },
-
-            {
-                type: "grid-row",
-                name: "comments",
-                label: "Comments",
-                cols: ["RE", "LE"],
-                showIf: {
-                    field: "case_background_sections",
-                }
-            },
-
             {
                 type: "subheading",
                 name: "low_vision_aid_trial",
@@ -86,7 +119,7 @@ const LOW_VISION_ASSESSMENT_SCHEMA = {
 
             {
                 type: "grid-header",
-                cols: ["No", "Description", "D/N", "VA", "Comments"],
+                cols: ["Description", "D/N", "R/L", "VA", "Comments"],
                 showIf: {
                     field: "case_background_sections",
                 }
@@ -96,7 +129,7 @@ const LOW_VISION_ASSESSMENT_SCHEMA = {
                 type: "grid-row",
                 name: "optical",
                 label: "Optical",
-                cols: ["No", "Description", "D/N", "VA", "Comments"],
+                cols: ["Description", "D/N", "R/L", "VA", "Comments"],
                 showIf: {
                     field: "case_background_sections",
                 }
