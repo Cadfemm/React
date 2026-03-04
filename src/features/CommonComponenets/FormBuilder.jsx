@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
+import AudiogramGraph from "../Audiology/components/AudioGramGraph";
 
 function evaluateShowIf(showIf, values) {
   if (!showIf) return true;
@@ -1604,7 +1605,11 @@ const rows = values[field.name] ?? [{}];
         </div>
       );
 
-
+    case "audiogram-graph": {
+      return(
+        <AudiogramGraph/>
+      )
+    }
     case "grid-row": {
       const colsCount = field.cols.length;
       const template = `180px repeat(${colsCount}, 1fr)`;
