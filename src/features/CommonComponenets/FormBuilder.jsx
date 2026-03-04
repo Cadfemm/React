@@ -1607,7 +1607,7 @@ const rows = values[field.name] ?? [{}];
 
     case "grid-row": {
       const colsCount = field.cols.length;
-      const template = `180px repeat(${colsCount}, 1fr)`;
+      const template = field.template || `180px repeat(${colsCount}, 1fr)`;
 
       return (
         <div style={{ ...styles.gridRow, gridTemplateColumns: template }}>
@@ -1661,20 +1661,68 @@ const rows = values[field.name] ?? [{}];
 
             // Handle static (read-only) text column – e.g. Normal values in ROM tables
             if (typeof col === "object" && col.type === "static") {
+  return (
+    <div
+      key={fieldKey}
+      style={{
+        ...styles.gridInput,
+        backgroundColor: "#f8fafc",
+        fontWeight: 600,
+        pointerEvents: "none",
+        cursor: "default"
+      }}
+    >
+      {values[col.name] ?? 0}
+    </div>
+  );
+}
+
+            // Handle time-input column (HH:MM format)
+            if (typeof col === "object" && col.type === "time-input") {
+              const [hours, minutes] = (values[fieldKey] || "").split(":").length === 2 
+                ? values[fieldKey].split(":") 
+                : ["", ""];
               return (
                 <div
                   key={fieldKey}
                   style={{
-                    ...styles.gridInput,
                     display: "flex",
+                    gap: 4,
                     alignItems: "center",
-                    color: "#64748b",
-                    backgroundColor: "#f8fafc",
-                    cursor: "default",
-                    pointerEvents: "none"
+                    padding: "8px 4px"
                   }}
                 >
-                  {col.value ?? ""}
+                  <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    placeholder="HH"
+                    value={hours}
+                    style={{
+                      ...styles.gridInput,
+                      flex: 1,
+                      maxWidth: 50,
+                      padding: "6px 4px",
+                      textAlign: "center"
+                    }}
+                    onChange={e => onChange(fieldKey, `${e.target.value || "0"}:${minutes || "0"}`)}
+                  />
+                  <span style={{ fontWeight: 600, color: "#6b7280", fontSize: 14 }}>:</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    placeholder="MM"
+                    value={minutes}
+                    style={{
+                      ...styles.gridInput,
+                      flex: 1,
+                      maxWidth: 50,
+                      padding: "6px 4px",
+                      textAlign: "center"
+                    }}
+                    onChange={e => onChange(fieldKey, `${hours || "0"}:${e.target.value || "0"}`)}
+                  />
                 </div>
               );
             }
@@ -1692,6 +1740,39 @@ const rows = values[field.name] ?? [{}];
       );
     }
 
+ case "time-input":
+      const [hours, minutes] = (value || "").split(":").length === 2 ? value.split(":") : ["", ""];
+      return (
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <input
+            style={{ ...styles.input, flex: 1, maxWidth: 80 }}
+            type="number"
+            min="0"
+            max="59"
+            placeholder="HH"
+            value={hours}
+            readOnly={readOnly}
+            onChange={e => {
+              const h = e.target.value || "0";
+              onChange(field.name, `${h}:${minutes || "0"}`);
+            }}
+          />
+          <span style={{ fontWeight: 600, color: "#6b7280" }}>:</span>
+          <input
+            style={{ ...styles.input, flex: 1, maxWidth: 80 }}
+            type="number"
+            min="0"
+            max="59"
+            placeholder="MM"
+            value={minutes}
+            readOnly={readOnly}
+            onChange={e => {
+              const m = e.target.value || "0";
+              onChange(field.name, `${hours || "0"}:${m}`);
+            }}
+          />
+        </div>
+      );
 
     case "nested":
       return (

@@ -10,13 +10,12 @@ import Amputee from "./Amputee";
 
 export default function ProgramTabsWithContent({ patient }) {
   const tabs = [
-    { key: "sci", label: "Spinal Cord Injury" },
-    { key: "neuro", label: "Neuro" },
-    { key: "hydro", label: "Hydro" },
+    { key: "conditioning", label: "Cognitive" },
+    { key: "neuro", label: "Neurology" },
     { key: "msk", label: "Musculoskeletal" },
-    { key: "conditioning", label: "Conditioning" },
-    { key: "cardio", label: "Cardiorespiratory" },
-    { key: "amputee", label: "Amputee" }
+    { key: "sci", label: "Spinal Cord Injury" },
+    { key: "amputee", label: "Amputee" },
+    { key: "cardio", label: "Work Hardening & Cardiorespiratory" },
   ];
 
   const [activeTab, setActiveTab] = useState("sci");
@@ -36,7 +35,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Musculoskeletal />;
 
       case "conditioning":
-        return <Conditioning />;
+        return <Conditioning patient={patient}/>;
 
       case "cardio":
         return <Cardiorespiratory />;
