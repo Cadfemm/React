@@ -9,6 +9,7 @@ import LVQoLForm from "../LowVisionQualityAssessment";
 import BrainVisionInjury from "../BrainVisionInjury";
 import VisualFunctionForm from "../VisionFunctionalAssessmenmt";
 import BVDAssessment from "../BvdqAssessment";
+import LowVisionAssessment from "../LowVisionAssessment";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -29,6 +30,28 @@ function BinocularVisionAdapter({ values, onChange, layout }) {
   };
   return <BinocularVisionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
 }
+
+function LowVisionAssessmentAdapter({values, onChange, layout}) {
+  const patient = useContext(PatientContext)
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`low_vision_assessment_${key}`, payload.values[key])
+      })
+    }
+  }
+  const handleBack = ()=> {
+    const activeKey = "low_vision_assessment_active"
+    onChange(activeKey, null)
+  }
+  return <LowVisionAssessment 
+            patient={patient}
+            onSubmit={handleSubmit}
+            onBack={handleBack}
+            layout={layout}
+        />
+}
+
 
 function RefractionAdapter({ values, onChange, layout }) {
   const patient = useContext(PatientContext);
@@ -168,7 +191,8 @@ export const OPTOMETRY_ASSESSMENT_REGISTRY = {
   LVQOL: LVQoLAdapter,
   BRAIN_VISION: BrainVisionAdapter,
   VISUAL_FUNCTION: VisualFunctionAdapter,
-  BVDQ: BVDQAdapter
+  BVDQ: BVDQAdapter,
+  LOW_VISION_ASSESSMENT :LowVisionAssessmentAdapter
 };
 
 /* ===================== COMPONENT ===================== */
@@ -1320,7 +1344,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Refraction Assessment", value: "REFRACTION" },
               { label: "Vision For Driving", value: "VISION_DRIVING" },
               { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
-              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" }
+              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
+              { label: "Low Vision Assessment", value: "LOW_VISION_ASSESSMENT"}
             ]
           },
           {
