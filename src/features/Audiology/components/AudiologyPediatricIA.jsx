@@ -573,30 +573,7 @@ const SUBJECTIVE_SCHEMA = {
     {
       title: "Audiometry",
       fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "audiometry_report_right",
-              accept: "application/pdf,image/*",
-              title: "Audiometry - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            },
-            {
-              type: "attach-file",
-              name: "audiometry_report_left",
-              accept: "application/pdf,image/*",
-              title: "Audiometry - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            }
-          ]
-        },
+        { type: "audiogram-graph", name: "audiogram_graph"},    
         {
           type: "row",
           fields: [
