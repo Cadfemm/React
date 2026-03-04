@@ -15,13 +15,15 @@ import DLOTCAForm from "./Slums";
 import DLOTCA_G_Full from "./Dlocta-g";
 import MMSEAssessment from "./Mmse";
 import LOTCAForm from "./Lotca";
+import CASPAssessment from "./Casp";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   dlocta: DLOTCAFullAssessment,
   slums: DLOTCAForm,
   dloctag: DLOTCA_G_Full,
   mmse:MMSEAssessment ,
-  lotca: LOTCAForm, 
+  lotca: LOTCAForm,
+  casp: CASPAssessment 
 };
 
 /* ===================== OPTIONS ===================== */
