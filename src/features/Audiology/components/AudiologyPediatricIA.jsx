@@ -149,7 +149,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "prenatal_risk_factors",
           label: "Did any of the following occur during pregnancy?",
-          type: "radio-group",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "No", value: "0" },
             { label: "Alcohol abuse", value: "1" },
@@ -236,7 +237,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "ear_conditions",
           label: "Has your child had any of the following?",
-          type: "radio-group",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "No", value: "0" },
             { label: "Allergies / Sinus problems", value: "1" },
@@ -410,7 +412,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "hearing_loss_risk_factors",
           label: "Factors associated with hearing loss",
-          type: "radio-group",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "None", value: "0" },
             { label: "Family history of hearing loss", value: "1" },
