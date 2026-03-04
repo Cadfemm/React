@@ -149,7 +149,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "prenatal_risk_factors",
           label: "Did any of the following occur during pregnancy?",
-          type: "multi-select-dropdown",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "No", value: "0" },
             { label: "Alcohol abuse", value: "1" },
@@ -172,9 +173,7 @@ const SUBJECTIVE_SCHEMA = {
           name: "prenatal_risk_notes",
           label: "",
           type: "textarea",
-        showIf: { field: "prenatal_risk_factors", exists: true }
-
-
+          showIf: { field: "prenatal_risk_factors", exists: true }
         }
       ]
     },
@@ -244,7 +243,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "ear_conditions",
           label: "Has your child had any of the following?",
-          type: "multi-select-dropdown",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "No", value: "0" },
             { label: "Allergies / Sinus problems", value: "1" },
@@ -268,7 +268,7 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Rubella", value: "19" }
           ]
         },
-        {
+         {
           name: "ear_conditions_notes",
           label: "",
           type: "textarea",
@@ -424,7 +424,8 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "hearing_loss_risk_factors",
           label: "Factors associated with hearing loss",
-          type: "multi-select-dropdown",
+          type: "radio",
+          labelAbove:"true",
           options: [
             { label: "None", value: "0" },
             { label: "Family history of hearing loss", value: "1" },
@@ -440,7 +441,7 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Rh incompatibility", value: "11" }
           ]
         },
-        {
+         {
           name: "hearing_loss_risk_notes",
           label: "",
           type: "textarea",
@@ -497,7 +498,7 @@ const SUBJECTIVE_SCHEMA = {
         },
                 {
           name: "turns_to_sound",
-          label: "b) turn to find sound source",
+          label: "b) Turn to find sound source",
           type: "radio",
           options: YES_NO
         },
@@ -521,7 +522,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "responds_to_name",
-          label: "d)Respond to their name",
+          label: "d) Respond to their name",
           type: "radio",
           options: YES_NO
         },
@@ -534,7 +535,7 @@ const SUBJECTIVE_SCHEMA = {
 
                 {
           name: "startle_to_loud_sound",
-          label: "e) startle to loud sound",
+          label: "e) Startle to loud sound",
           type: "radio",
           options: YES_NO
         },
@@ -590,30 +591,7 @@ const SUBJECTIVE_SCHEMA = {
     {
       title: "Audiometry",
       fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "audiometry_report_right",
-              accept: "application/pdf,image/*",
-              title: "Audiometry - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            },
-            {
-              type: "attach-file",
-              name: "audiometry_report_left",
-              accept: "application/pdf,image/*",
-              title: "Audiometry - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            }
-          ]
-        },
+        { type: "audiogram-graph", name: "audiogram_graph"},    
         {
           type: "row",
           fields: [
