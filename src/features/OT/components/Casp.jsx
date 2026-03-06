@@ -14,7 +14,7 @@ export default function CASPAssessment() {
 
     const totalScore = () => {
         var sum = 0
-        Object.entries(values).map(([keys, value]) => {
+        Object.entries(values).forEach(([keys, value]) => {
             if (Number.isInteger(value)) {
                 sum += value
             }

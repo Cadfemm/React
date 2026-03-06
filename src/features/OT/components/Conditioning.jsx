@@ -17,6 +17,7 @@ import MMSEAssessment from "./Mmse";
 import LOTCAForm from "./Lotca";
 import CASPAssessment from "./Casp";
 import MoCAAssessment from "./MocA";
+import COGBATAssessment from "./Cogbat";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   dlocta: DLOTCAFullAssessment,
@@ -26,6 +27,7 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   lotca: LOTCAForm,
   casp: CASPAssessment, 
   moca: MoCAAssessment
+  cogbat: COGBATAssessment
 };
 
 /* ===================== OPTIONS ===================== */
