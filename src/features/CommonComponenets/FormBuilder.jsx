@@ -2571,6 +2571,21 @@ const rows = values[field.name] ?? [{}];
         </div>
       );
     }
+    case "input-number-range":
+      return (
+        <input
+          min={field.min}
+          max={field.max}
+          type="number"
+          style={styles.input}
+          value={value || ""}
+          readOnly={readOnly}
+          placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
+          onChange={e =>
+            !readOnly && onChange(field.name, e.target.value)
+          }
+        />
+      );
     default:
       return null;
   }
