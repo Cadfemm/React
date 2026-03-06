@@ -26,7 +26,7 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   mmse:MMSEAssessment ,
   lotca: LOTCAForm,
   casp: CASPAssessment, 
-  moca: MoCAAssessment
+  moca: MoCAAssessment,
   cogbat: COGBATAssessment
 };
 
