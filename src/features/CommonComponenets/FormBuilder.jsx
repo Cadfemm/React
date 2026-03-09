@@ -74,64 +74,65 @@ export default function CommonFormBuilder({
             <div>
               <div style={styles.title}>
                 {t(schema.title, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                {schema.titleInfo && <InfoTooltip info={schema.titleInfo} />}
               </div>
               {schema.subtitle && (
-  <div style={styles.subtitle}>
-    {t(schema.subtitle, schema?.enableLanguageToggle ? (language || "en") : "en")}
-  </div>
-)}
+                <div style={styles.subtitle}>
+                  {t(schema.subtitle, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                </div>
+              )}
 
             </div>
 
-     {schema.actions?.length > 0 && (
-  <div style={styles.actionsBar}>
-    
-    {/* LEFT: Special controls (toggles, switches) */}
-    <div style={styles.actionControls}>
-      {schema.actions.map(action => {
-        if (
-          action.type === "toggle-language" &&
-          schema.enableLanguageToggle
-        ) {
-          return (
-            <MalayToggle
-              key={action.type}
-              enabled={language === "ms"}
-              onToggle={() => onAction?.("toggle-language")}
-            />
-          );
-        }
-        if (
-          action.type === "toggle-show-scores" &&
-          schema.enableScoreToggle
-        ) {
-          return (
-            <ScoresToggle
-              key={action.type}
-              enabled={showScores}
-              onToggle={() => onAction?.("toggle-show-scores")}
-            />
-          );
-        }
-        return null;
-      })}
-    </div>
+            {schema.actions?.length > 0 && (
+              <div style={styles.actionsBar}>
 
-    {/* RIGHT: Normal buttons (Save, Clear, Back, etc.) */}
-    <div style={styles.actionButtons}>
-      {schema.actions
-        .filter(a => a.type !== "toggle-language" && a.type !== "toggle-show-scores")
-        .filter(a => !formReadOnly || a.type === "back")
-        .map(action => (
-          <button
-            key={action.type}
-            style={styles.mstBtn}
-            onClick={() => onAction?.(action.type)}
-          >
-            {t(action.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
-          </button>
-        ))}
-    </div>
+                {/* LEFT: Special controls (toggles, switches) */}
+                <div style={styles.actionControls}>
+                  {schema.actions.map(action => {
+                    if (
+                      action.type === "toggle-language" &&
+                      schema.enableLanguageToggle
+                    ) {
+                      return (
+                        <MalayToggle
+                          key={action.type}
+                          enabled={language === "ms"}
+                          onToggle={() => onAction?.("toggle-language")}
+                        />
+                      );
+                    }
+                    if (
+                      action.type === "toggle-show-scores" &&
+                      schema.enableScoreToggle
+                    ) {
+                      return (
+                        <ScoresToggle
+                          key={action.type}
+                          enabled={showScores}
+                          onToggle={() => onAction?.("toggle-show-scores")}
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+
+                {/* RIGHT: Normal buttons (Save, Clear, Back, etc.) */}
+                <div style={styles.actionButtons}>
+                  {schema.actions
+                    .filter(a => a.type !== "toggle-language" && a.type !== "toggle-show-scores")
+                    .filter(a => !formReadOnly || a.type === "back")
+                    .map(action => (
+                      <button
+                        key={action.type}
+                        style={styles.mstBtn}
+                        onClick={() => onAction?.(action.type)}
+                      >
+                        {t(action.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                      </button>
+                    ))}
+                </div>
 
               </div>
             )}
@@ -167,7 +168,7 @@ export default function CommonFormBuilder({
                       const matrixIdx = section.fields.findIndex(f2 => f2.type === "radio-matrix");
                       return f.type === "grid-header" && matrixIdx !== -1 && idx < matrixIdx;
                     });
- const matrixColumnWidth = firstMatrixField?.options?.length
+                    const matrixColumnWidth = firstMatrixField?.options?.length
                       ? Math.max(36, Math.max(...firstMatrixField.options.map(o => String(o?.label || "").length)) * 10 + 16)
                       : 110;
                     const getPrevVisibleField = (idx) => {
@@ -221,140 +222,112 @@ export default function CommonFormBuilder({
                       <>
                         {section.fields.map((field, idx) => {
 
-                      if (field.showIf && !evaluateShowIf(field.showIf, values)) return null;
+                          if (field.showIf && !evaluateShowIf(field.showIf, values)) return null;
 
-                      const value = values[field.name];
-                      const error = submitted
-                        ? validateField(value, field.validation)
-                        : null;
+                          const value = values[field.name];
+                          const error = submitted
+                            ? validateField(value, field.validation)
+                            : null;
 
-                      const fieldKey = field.name ?? (typeof field.label === "string" ? field.label : null) ?? `field-${idx}`;
-                      return (
-                        <React.Fragment key={fieldKey}>
-                          {renderScaleBeforeSubheading(field, idx)}
-                          {shouldShowScaleBeforeMatrix(field, idx) && (() => {
-                            const questionColumnWidth = 200; // Fixed width for question column
-                            const optionsCount = field.options?.length || 4;
-                            const headerStyle = {
-                              ...styles.matrixHeader,
-                              marginBottom: 12,
-                              gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
-                            };
-                            return (
-                              <div style={headerStyle}>
-                                <div style={styles.matrixLabel}>
-                                  {field.matrixHeaderLabel || "Scale"}
-                                  {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
-                                </div>
-                                <div style={styles.matrixOptions}>
-                                  {field.options?.map((opt) => (
-                                    <div key={opt.value} style={styles.matrixHeaderCell}>
-                                      {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                          const fieldKey = field.name ?? (typeof field.label === "string" ? field.label : null) ?? `field-${idx}`;
+                          return (
+                            <React.Fragment key={fieldKey}>
+                              {renderScaleBeforeSubheading(field, idx)}
+                              {shouldShowScaleBeforeMatrix(field, idx) && (() => {
+                                const questionColumnWidth = 200; // Fixed width for question column
+                                const optionsCount = field.options?.length || 4;
+                                const headerStyle = {
+                                  ...styles.matrixHeader,
+                                  marginBottom: 12,
+                                  gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+                                };
+                                return (
+                                  <div style={headerStyle}>
+                                    <div style={styles.matrixLabel}>
+                                      {field.matrixHeaderLabel || "Scale"}
+                                      {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
                                     </div>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          })()}
-                          <div
-                            style={{
-                              ...styles.field,
-                              marginBottom: layout === "nested" ? 10 : 18
-                            }}
-                          >
+                                    <div style={styles.matrixOptions}>
+                                      {field.options?.map((opt) => (
+                                        <div key={opt.value} style={styles.matrixHeaderCell}>
+                                          {t(opt.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                              <div
+                                style={{
+                                  ...styles.field,
+                                  marginBottom: layout === "nested" ? 10 : 18
+                                }}
+                              >
 
 
-                            {/* RADIO stays special (side layout) */}
-{/* RADIO: labelAbove = label on one line, options on next line */}
-{field.type === "radio" && !field.inRow && field.labelAbove ? (
-  <div style={{ marginBottom: 16 }}>
-    {(field.label || field.info) && (
-      <label style={styles.label}>
-        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
-        {field.info && <InfoTooltip info={field.info} />}
-      </label>
-    )}
-    <div style={{ marginTop: 6 }}>
-      {renderField( field,
-                                value,
-                                values,
-                                onChange,
-                                onAction,
-                                assessmentRegistry,
-                                formReadOnly,
-                                {
+                                {/* RADIO stays special (side layout) */}
+                                {/* RADIO: labelAbove = label on one line, options on next line */}
+                                {field.type === "radio" && !field.inRow && field.labelAbove ? (
+                                  <div style={{ marginBottom: 16 }}>
+                                    {(field.label || field.info) && (
+                                      <label style={styles.label}>
+                                        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                                        {field.info && <InfoTooltip info={field.info} />}
+                                      </label>
+                                    )}
+                                    <div style={{ marginTop: 6 }}>
+                                      {renderField(field,
+                                        value,
+                                        values,
+                                        onChange,
+                                        onAction,
+                                        assessmentRegistry,
+                                        formReadOnly,
+                                        {
+                                          enabled: schema?.enableLanguageToggle === true,
+                                          lang: language,
+                                          showScores
+                                        }
+                                      )}
+                                    </div>
+                                  </div>
+                                ) : field.type === "radio" && !field.inRow ? (
+                                  <div style={styles.radioRow}>
+                                    {(field.label || field.info) && (
+                                      <div style={styles.radioLabel}>
+                                        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                                        {field.info && <InfoTooltip info={field.info} />}
+                                      </div>
+                                    )}
+                                    <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
+                                      {renderField(
+                                        field,
+                                        value,
+                                        values,
+                                        onChange,
+                                        onAction,
+                                        assessmentRegistry,
+                                        formReadOnly,
+                                        {
+                                          enabled: schema?.enableLanguageToggle === true,
+                                          lang: language,
+                                          showScores
+                                        }
+                                      )}
+                                    </div>
+                                  </div>
+
+
+                                ) : field.type === "subheading" ? (
+
+                                  renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
                                     enabled: schema?.enableLanguageToggle === true,
                                     lang: language,
                                     showScores
-                                  }
-                              )}
-                            </div>
-                          </div>
-                        ) : field.type === "radio" && !field.inRow ? (
-                          <div style={styles.radioRow}>
-                            {(field.label || field.info) && (
-                              <div style={styles.radioLabel}>
-                                {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
-                                {field.info && <InfoTooltip info={field.info} />}
-                              </div>
-                            )}
-                            <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", flexWrap: "wrap", gap: 16 }}>
-                              {renderField(
-                                field,
-                                value,
-                                values,
-                                onChange,
-                                onAction,
-                                assessmentRegistry,
-                                formReadOnly,
-                                {
-                                  enabled: schema?.enableLanguageToggle === true,
-                                  lang: language,
-                                  showScores
-                                }
-                              )}
-                            </div>
-                          </div>
-
-                        
-                        ) : field.type === "subheading" ? (
-
-                              renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
-                                enabled: schema?.enableLanguageToggle === true,
-                                lang: language,
-                                showScores
-                              })
-                            ) : field.type === "row" ? (
-                              /* ✅ ROW FIELDS → Render directly without extra wrapper */
-                              renderField(
-                                field,
-                                value,
-                                values,
-                                onChange,
-                                onAction,
-                                assessmentRegistry,
-                                formReadOnly,
-                                {
-                                  enabled: schema?.enableLanguageToggle === true,
-                                  lang: language,
-                                  showScores
-                                }
-
-                              )
-                            ) : (
-                              <div style={{ marginBottom: 16 }}>
-
-                                <>
-                                  {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
-                                    && field.type !== "checkbox-group"
-                                    && (
-                                      <label style={styles.label}>
-                                        {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
-                                      </label>
-                                    )}
-
-
-                                  {renderField(
+                                  })
+                                ) : field.type === "row" ? (
+                                  /* ✅ ROW FIELDS → Render directly without extra wrapper */
+                                  renderField(
                                     field,
                                     value,
                                     values,
@@ -365,39 +338,67 @@ export default function CommonFormBuilder({
                                     {
                                       enabled: schema?.enableLanguageToggle === true,
                                       lang: language,
-                                      matrixColumnWidth,
                                       showScores
                                     }
-                                  )}
-                                </>
 
-                                {field.helper && (
-                                  <div
-                                    style={{
-                                      fontSize: 12,
-                                      color: "#6b7280",
-                                      marginTop: 4
-                                    }}
-                                  >
-                                    {field.helper}
+                                  )
+                                ) : (
+                                  <div style={{ marginBottom: 16 }}>
+
+                                    <>
+                                      {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
+                                        && field.type !== "checkbox-group"
+                                        && (
+                                          <label style={styles.label}>
+                                            {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
+                                          </label>
+                                        )}
+
+
+                                      {renderField(
+                                        field,
+                                        value,
+                                        values,
+                                        onChange,
+                                        onAction,
+                                        assessmentRegistry,
+                                        formReadOnly,
+                                        {
+                                          enabled: schema?.enableLanguageToggle === true,
+                                          lang: language,
+                                          matrixColumnWidth,
+                                          showScores
+                                        }
+                                      )}
+                                    </>
+
+                                    {field.helper && (
+                                      <div
+                                        style={{
+                                          fontSize: 12,
+                                          color: "#6b7280",
+                                          marginTop: 4
+                                        }}
+                                      >
+                                        {field.helper}
+                                      </div>
+                                    )}
                                   </div>
+
+
+
                                 )}
+
+                                {error && (
+                                  <div style={styles.error}>{error}</div>
+                                )}
+
                               </div>
+                            </React.Fragment>
+                          );
 
-
-
-                            )}
-
-                            {error && (
-                              <div style={styles.error}>{error}</div>
-                            )}
-
-                          </div>
-                        </React.Fragment>
-                      );
-
-                    })}
-                        </>
+                        })}
+                      </>
                     );
                   })()}
                 </div>
@@ -427,15 +428,19 @@ function InfoTooltip({ info }) {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      ⓘ
+      <span style={styles.infoIcon}>i</span>
+
       {open && (
-        <div style={styles.tooltip}>
+        <div style={styles.tooltipCard}>
+          <div style={styles.tooltipArrow}></div>
+
           {info.title && (
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>
+            <div style={styles.tooltipTitle}>
               {info.title}
             </div>
           )}
-          <ul style={{ paddingLeft: 16, margin: 0 }}>
+
+          <ul style={styles.tooltipList}>
             {content.map((line, i) => (
               <li key={i}>{line}</li>
             ))}
@@ -730,9 +735,9 @@ function AssessmentLauncher({
 }) {
   const activeKey = `${field.name}_active`;
   const active = values[activeKey] || null;
-  const ActiveComponent = active
-    ? assessmentRegistry?.[active]
-    : null;
+  let component = active ? assessmentRegistry?.[active] : null;
+  // Handle both direct component export and default export
+  const ActiveComponent = component?.default || component;
 
   return (
     <div>
@@ -831,15 +836,15 @@ function renderField(
           }
         />
       );
-      case "scale-slider":
-  return (
-    <ScaleSlider
-      field={field}
-      value={value}
-      onChange={onChange}
-      readOnly={readOnly}
-    />
-  );
+    case "scale-slider":
+      return (
+        <ScaleSlider
+          field={field}
+          value={value}
+          onChange={onChange}
+          readOnly={readOnly}
+        />
+      );
     case "milestone-grid":
       return (
         <div>
@@ -888,256 +893,256 @@ function renderField(
       );
 
     case "dynamic-goals": {
-  const rows = values[field.name] || [];
+      const rows = values[field.name] || [];
 
-  const updateRow = (idx, key, val) => {
-    const next = [...rows];
-    next[idx] = { ...next[idx], [key]: val };
-    onChange(field.name, next);
-  };
+      const updateRow = (idx, key, val) => {
+        const next = [...rows];
+        next[idx] = { ...next[idx], [key]: val };
+        onChange(field.name, next);
+      };
 
-  const addRow = () => {
-    onChange(field.name, [
-      ...rows,
-      {
-        description: "",
-        sessionsPerWeek: "",
-        minutesPerSession: "",
-        plannedDurationWeeks: "",
-        targetDate: ""
-      }
-    ]);
-  };
+      const addRow = () => {
+        onChange(field.name, [
+          ...rows,
+          {
+            description: "",
+            sessionsPerWeek: "",
+            minutesPerSession: "",
+            plannedDurationWeeks: "",
+            targetDate: ""
+          }
+        ]);
+      };
 
-  const removeRow = (idx) => {
-    const next = rows.filter((_, i) => i !== idx);
-    onChange(field.name, next);
-  };
+      const removeRow = (idx) => {
+        const next = rows.filter((_, i) => i !== idx);
+        onChange(field.name, next);
+      };
 
-  return (
-    <div style={{ marginTop: 10 }}>
-      {rows.map((row, idx) => (
-        <div
-          key={idx}
-          style={{
-            position: "relative",
-            border: "1px solid #e5e7eb",
-            padding: "16px",
-            borderRadius: "10px",
-            marginBottom: "16px",
-            background: "#ffffff"
-          }}
-        >
-          {/* Header */}
-          <div style={{ fontWeight: 600, marginBottom: 12 }}>
-            Goal {idx + 1}
-          </div>
+      return (
+        <div style={{ marginTop: 10 }}>
+          {rows.map((row, idx) => (
+            <div
+              key={idx}
+              style={{
+                position: "relative",
+                border: "1px solid #e5e7eb",
+                padding: "16px",
+                borderRadius: "10px",
+                marginBottom: "16px",
+                background: "#ffffff"
+              }}
+            >
+              {/* Header */}
+              <div style={{ fontWeight: 600, marginBottom: 12 }}>
+                Goal {idx + 1}
+              </div>
 
-          {/* Delete Button */}
+              {/* Delete Button */}
+              <button
+                type="button"
+                onClick={() => removeRow(idx)}
+                style={{
+                  position: "absolute",
+                  top: 12,
+                  right: 12,
+                  background: "transparent",
+                  border: "none",
+                  color: "#ef4444",
+                  fontSize: "16px",
+                  cursor: "pointer"
+                }}
+              >
+                ✕
+              </button>
+
+              {/* Goal Description */}
+              <textarea
+                placeholder="Goal Description"
+                value={row.description}
+                onChange={(e) =>
+                  updateRow(idx, "description", e.target.value)
+                }
+                style={{
+                  width: "100%",
+                  minHeight: "80px",
+                  marginBottom: "12px",
+                  borderRadius: "6px",
+                  border: "1px solid #d1d5db",
+                  padding: "8px"
+                }}
+              />
+
+              {/* Frequency Section */}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                <input
+                  type="number"
+                  placeholder="Sessions / week"
+                  value={row.sessionsPerWeek}
+                  onChange={(e) =>
+                    updateRow(idx, "sessionsPerWeek", e.target.value)
+                  }
+                  style={styles.inputStyle}
+                />
+
+                <input
+                  type="number"
+                  placeholder="Minutes / session"
+                  value={row.minutesPerSession}
+                  onChange={(e) =>
+                    updateRow(idx, "minutesPerSession", e.target.value)
+                  }
+                  style={styles.inputStyle}
+                />
+
+                <input
+                  type="number"
+                  placeholder="Planned duration (weeks)"
+                  value={row.plannedDurationWeeks}
+                  onChange={(e) =>
+                    updateRow(idx, "plannedDurationWeeks", e.target.value)
+                  }
+                  style={styles.inputStyle}
+                />
+
+                <input
+                  type="date"
+                  value={row.targetDate}
+                  onChange={(e) =>
+                    updateRow(idx, "targetDate", e.target.value)
+                  }
+                  style={styles.inputStyle}
+                />
+              </div>
+            </div>
+          ))}
+
+          {/* Add Goal Button */}
           <button
             type="button"
-            onClick={() => removeRow(idx)}
+            onClick={addRow}
             style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
-              background: "transparent",
+              background: "#2563eb",
+              color: "white",
               border: "none",
-              color: "#ef4444",
-              fontSize: "16px",
+              padding: "8px 16px",
+              borderRadius: "6px",
               cursor: "pointer"
             }}
           >
-            ✕
+            + Add Goal
           </button>
-
-          {/* Goal Description */}
-          <textarea
-            placeholder="Goal Description"
-            value={row.description}
-            onChange={(e) =>
-              updateRow(idx, "description", e.target.value)
-            }
-            style={{
-              width: "100%",
-              minHeight: "80px",
-              marginBottom: "12px",
-              borderRadius: "6px",
-              border: "1px solid #d1d5db",
-              padding: "8px"
-            }}
-          />
-
-          {/* Frequency Section */}
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <input
-              type="number"
-              placeholder="Sessions / week"
-              value={row.sessionsPerWeek}
-              onChange={(e) =>
-                updateRow(idx, "sessionsPerWeek", e.target.value)
-              }
-              style={styles.inputStyle}
-            />
-
-            <input
-              type="number"
-              placeholder="Minutes / session"
-              value={row.minutesPerSession}
-              onChange={(e) =>
-                updateRow(idx, "minutesPerSession", e.target.value)
-              }
-              style={styles.inputStyle}
-            />
-
-            <input
-              type="number"
-              placeholder="Planned duration (weeks)"
-              value={row.plannedDurationWeeks}
-              onChange={(e) =>
-                updateRow(idx, "plannedDurationWeeks", e.target.value)
-              }
-              style={styles.inputStyle}
-            />
-
-            <input
-              type="date"
-              value={row.targetDate}
-              onChange={(e) =>
-                updateRow(idx, "targetDate", e.target.value)
-              }
-              style={styles.inputStyle}
-            />
-          </div>
         </div>
-      ))}
+      );
+    }
 
-      {/* Add Goal Button */}
-      <button
-        type="button"
-        onClick={addRow}
-        style={{
-          background: "#2563eb",
-          color: "white",
-          border: "none",
-          padding: "8px 16px",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
-        + Add Goal
-      </button>
-    </div>
-  );
-}
+    case "dynamic-section": {
+      const rows = values[field.name] ?? [{}];
 
-case "dynamic-section": {
-const rows = values[field.name] ?? [{}];
- 
-  const updateField = (idx, childName, val) => {
-    const next = [...rows];
-    next[idx] = {
-      ...next[idx],
-      [childName]: val
-    };
-    onChange(field.name, next);
-  };
- 
-  const addBlock = () => {
-    onChange(field.name, [...rows, {}]);
-  };
- 
-  const removeBlock = (idx) => {
-    const next = rows.filter((_, i) => i !== idx);
-    onChange(field.name, next);
-  };
- 
-  return (
-    <div style={{ marginTop: 12 }}>
-      {rows.map((block, idx) => (
-        <div
-          key={idx}
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: 10,
-            padding: 16,
-            marginBottom: 16,
-            background: "#ffffff",
-            position: "relative"
-          }}
-        >
+      const updateField = (idx, childName, val) => {
+        const next = [...rows];
+        next[idx] = {
+          ...next[idx],
+          [childName]: val
+        };
+        onChange(field.name, next);
+      };
 
- 
+      const addBlock = () => {
+        onChange(field.name, [...rows, {}]);
+      };
+
+      const removeBlock = (idx) => {
+        const next = rows.filter((_, i) => i !== idx);
+        onChange(field.name, next);
+      };
+
+      return (
+        <div style={{ marginTop: 12 }}>
+          {rows.map((block, idx) => (
+            <div
+              key={idx}
+              style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: 10,
+                padding: 16,
+                marginBottom: 16,
+                background: "#ffffff",
+                position: "relative"
+              }}
+            >
+
+
+              <button
+                type="button"
+                onClick={() => removeBlock(idx)}
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  border: "none",
+                  background: "transparent",
+                  color: "#ef4444",
+                  cursor: "pointer",
+                  fontSize: 16
+                }}
+              >
+                ✕
+              </button>
+
+              {/* Render Child Fields */}
+              {field.fields.map(child => {
+
+                // Handle showIf inside block
+                if (child.showIf) {
+                  const depVal = block[child.showIf.field];
+                  if (
+                    child.showIf.includes &&
+                    (!Array.isArray(depVal) || !depVal.includes(child.showIf.includes))
+                  ) return null;
+                }
+
+                return (
+                  <div key={child.name} style={{ marginBottom: 14 }}>
+                    {child.label && (
+                      <label style={styles.label}>
+                        {child.label}
+                      </label>
+                    )}
+
+                    {renderField(
+                      { ...child, name: child.name },
+                      block[child.name],
+                      block,
+                      (name, val) => updateField(idx, name, val),
+                      onAction,
+                      assessmentRegistry,
+                      formReadOnly,
+                      languageConfig
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+
           <button
             type="button"
-            onClick={() => removeBlock(idx)}
+            onClick={addBlock}
             style={{
-              position: "absolute",
-              top: 10,
-              right: 10,
+              background: "#2563eb",
+              color: "white",
               border: "none",
-              background: "transparent",
-              color: "#ef4444",
-              cursor: "pointer",
-              fontSize: 16
+              padding: "8px 16px",
+              borderRadius: 6,
+              cursor: "pointer"
             }}
           >
-            ✕
+            + Add More
           </button>
- 
-          {/* Render Child Fields */}
-          {field.fields.map(child => {
- 
-            // Handle showIf inside block
-            if (child.showIf) {
-              const depVal = block[child.showIf.field];
-              if (
-                child.showIf.includes &&
-                (!Array.isArray(depVal) || !depVal.includes(child.showIf.includes))
-              ) return null;
-            }
- 
-            return (
-              <div key={child.name} style={{ marginBottom: 14 }}>
-                {child.label && (
-                  <label style={styles.label}>
-                    {child.label}
-                  </label>
-                )}
- 
-                {renderField(
-                  { ...child, name: child.name },
-                  block[child.name],
-                  block,
-                  (name, val) => updateField(idx, name, val),
-                  onAction,
-                  assessmentRegistry,
-                  formReadOnly,
-                  languageConfig
-                )}
-              </div>
-            );
-          })}
         </div>
-      ))}
- 
-      <button
-        type="button"
-        onClick={addBlock}
-        style={{
-          background: "#2563eb",
-          color: "white",
-          border: "none",
-          padding: "8px 16px",
-          borderRadius: 6,
-          cursor: "pointer"
-        }}
-      >
-        + Add More
-      </button>
-    </div>
-  );
-}
+      );
+    }
     case "enteral-feeding-table": {
       const rows = values[`${field.name}_rows`] || [{ time: "", scoops: "", water: "", flushing: "" }];
       const updateRow = (idx, col, val) => {
@@ -1252,7 +1257,10 @@ const rows = values[field.name] ?? [{}];
 
           <thead>
             <tr>
-              <th style={styles.th}></th>
+              <th style={styles.th}>
+                {field.label || ""}
+                {field.info && <InfoTooltip info={field.info} />}
+              </th>
               {field.columns.map(col => (
                 <th key={col.value} style={styles.th}>
                   {t(col.label, languageConfig?.enabled ? languageConfig.lang : "en")}
@@ -1472,8 +1480,8 @@ const rows = values[field.name] ?? [{}];
           }}
         >
           {field.fields.map(f => {
-           
-          
+
+
             if (f.showIf) {
               const depVal = values[f.showIf.field];
               if ("equals" in f.showIf && depVal !== f.showIf.equals) {
@@ -1618,7 +1626,7 @@ const rows = values[field.name] ?? [{}];
         <div style={{ ...styles.gridRow, gridTemplateColumns: template }}>
           <div style={styles.gridLabel}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
           {field.cols.map((col, idx) => {
-            const fieldKey = `${field.name}_${idx}`;
+            const fieldKey = (typeof col === "object" && col.name) ? col.name : `${field.name}_${idx}`;
 
             // Handle object column type (e.g., single-select with options)
             if (typeof col === "object" && col.type === "single-select") {
@@ -1666,26 +1674,26 @@ const rows = values[field.name] ?? [{}];
 
             // Handle static (read-only) text column – e.g. Normal values in ROM tables
             if (typeof col === "object" && col.type === "static") {
-  return (
-    <div
-      key={fieldKey}
-      style={{
-        ...styles.gridInput,
-        backgroundColor: "#f8fafc",
-        fontWeight: 600,
-        pointerEvents: "none",
-        cursor: "default"
-      }}
-    >
-      {values[col.name] ?? 0}
-    </div>
-  );
-}
+              return (
+                <div
+                  key={fieldKey}
+                  style={{
+                    ...styles.gridInput,
+                    backgroundColor: "#f8fafc",
+                    fontWeight: 600,
+                    pointerEvents: "none",
+                    cursor: "default"
+                  }}
+                >
+                  {values[col.name] ?? 0}
+                </div>
+              );
+            }
 
             // Handle time-input column (HH:MM format)
             if (typeof col === "object" && col.type === "time-input") {
-              const [hours, minutes] = (values[fieldKey] || "").split(":").length === 2 
-                ? values[fieldKey].split(":") 
+              const [hours, minutes] = (values[fieldKey] || "").split(":").length === 2
+                ? values[fieldKey].split(":")
                 : ["", ""];
               return (
                 <div
@@ -1735,7 +1743,10 @@ const rows = values[field.name] ?? [{}];
             return (
               <input
                 key={fieldKey}
-                style={styles.gridInput}
+                style={{
+                  ...styles.gridInput,
+                  ...(col.width && { width: col.width })
+                }}
                 value={values[fieldKey] || ""}
                 onChange={e => onChange(fieldKey, e.target.value)}
               />
@@ -1745,7 +1756,7 @@ const rows = values[field.name] ?? [{}];
       );
     }
 
- case "time-input":
+    case "time-input":
       const [hours, minutes] = (value || "").split(":").length === 2 ? value.split(":") : ["", ""];
       return (
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -1897,31 +1908,34 @@ const rows = values[field.name] ?? [{}];
       );
 
 
-      case "radio": {
-        const opts = field.options || [];
-        return (
-          <div style={{ marginTop: 6 }}>
-            <div style={styles.inlineGroup}>
-              {opts.map((opt, idx) => {
-                const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
-                const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
-                return (
-                  <label key={optVal ?? idx} style={styles.inlineItem}>
-                    <input
-                      type="radio"
-                      name={field.name}
-                      checked={value === optVal}
-                      disabled={readOnly}
-                      onChange={() => !readOnly && onChange(field.name, optVal)}
-                    />
-                    {typeof optLabel === "object" && optLabel !== null && !Array.isArray(optLabel) ? t(optLabel, languageConfig?.lang) : (typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? ""))}
-                  </label>
-                );
-              })}
-            </div>
+    case "radio": {
+      const opts = field.options || [];
+      return (
+        <div style={{ marginTop: 6 }}>
+          <div style={styles.inlineGroup}>
+            {opts.map((opt, idx) => {
+              const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
+              const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
+              // Ensure both values are same type for comparison
+              const isChecked = value != null && (value === optVal || String(value) === String(optVal));
+              return (
+                <label key={`${field.name}-${idx}`} style={styles.inlineItem}>
+                  <input
+                    type="radio"
+                    name={field.name}
+                    value={String(optVal)}
+                    checked={isChecked}
+                    disabled={readOnly}
+                    onChange={() => !readOnly && onChange(field.name, optVal)}
+                  />
+                  {typeof optLabel === "object" && optLabel !== null && !Array.isArray(optLabel) ? t(optLabel, languageConfig?.lang) : (typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? ""))}
+                </label>
+              );
+            })}
           </div>
-        );
-      }
+        </div>
+      );
+    }
     case "attach-file":
       return (
         <div style={{ marginBottom: 0 }}>
@@ -2625,8 +2639,8 @@ function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
   const gradient =
     ranges.length > 0
       ? `linear-gradient(to right, ${ranges
-          .map(r => `${r.color} ${(r.min - min) / (max - min) * 100}% ${(r.max - min) / (max - min) * 100}%`)
-          .join(",")})`
+        .map(r => `${r.color} ${(r.min - min) / (max - min) * 100}% ${(r.max - min) / (max - min) * 100}%`)
+        .join(",")})`
       : "linear-gradient(to right, #9ca3af, #9ca3af)";
 
   const getRange = v =>
@@ -3117,14 +3131,14 @@ const styles = {
     color: "#0F172A"
   },
 
-matrixHeaderCell: {
-     textAlign: "center",
-     padding: "0 8px",
-     width: "100%",
-     overflowWrap: "break-word",
-     wordBreak: "break-word",
-     minWidth: 0  // lets the cell shrink so wrapping can occur
-   },
+  matrixHeaderCell: {
+    textAlign: "center",
+    padding: "0 8px",
+    width: "100%",
+    overflowWrap: "break-word",
+    wordBreak: "break-word",
+    minWidth: 0  // lets the cell shrink so wrapping can occur
+  },
   nestedContainer: {
     border: "1px solid #e5e7eb",
     borderRadius: "10px",
@@ -3325,13 +3339,13 @@ matrixHeaderCell: {
     gridTemplateColumns: "120px repeat(2, 1fr)",
     borderBottom: "1px solid #e5e7eb"
   },
-   inputStyle :{
-  flex: "1",
-  minWidth: "180px",
-  padding: "8px",
-  borderRadius: "6px",
-  border: "1px solid #d1d5db"
-},
+  inputStyle: {
+    flex: "1",
+    minWidth: "180px",
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #d1d5db"
+  },
 
   refractionTableCell: {
     padding: "12px",
@@ -3436,7 +3450,66 @@ matrixHeaderCell: {
     background: "linear-gradient(#f8fafc, #eef2f7)",
     borderRight: "1px solid #eef2f7"
   },
+  infoWrapper: {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    marginLeft: 6,
+    cursor: "pointer"
+  },
 
+  infoIcon: {
+    width: 18,
+    height: 18,
+    borderRadius: "50%",
+    background: "#2563eb",
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: 700,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    lineHeight: 1
+  },
+
+  tooltipCard: {
+    position: "absolute",
+    top: "28px",
+    left: 0,
+    background: "#ffffff",
+    color: "#0f172a",
+    padding: "12px 14px",
+    borderRadius: 8,
+    width: 260,
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 8px 24px rgba(15,23,42,0.15)",
+    zIndex: 100,
+    fontSize: 13
+  },
+
+  tooltipArrow: {
+    position: "absolute",
+    top: -6,
+    left: 12,
+    width: 12,
+    height: 12,
+    background: "#fff",
+    borderLeft: "1px solid #e5e7eb",
+    borderTop: "1px solid #e5e7eb",
+    transform: "rotate(45deg)"
+  },
+
+  tooltipTitle: {
+    fontWeight: 700,
+    marginBottom: 6,
+    fontSize: 13
+  },
+
+  tooltipList: {
+    paddingLeft: 16,
+    margin: 0,
+    lineHeight: 1.5
+  },
   vaColHeader: {
     textAlign: "center",
     fontWeight: 600,
