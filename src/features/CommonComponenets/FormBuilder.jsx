@@ -810,6 +810,25 @@ function RadioMatrixRow({ field, value, onChange, columnWidth, showScores, langu
   );
 }
 
+const cell = (values, row, key, onChange) => {
+  const checked = values?.[row]?.[key] || false
+  return (
+    <td style={styles.checkedBox} onClick={() => onChange(row, key)} key={key}>
+      <input
+        type="checkbox"
+        checked={checked}
+        readOnly
+        style={styles.hiddenCheckbox}
+      />
+      { checked && <span className="tick">✓</span>}
+    </td>
+  )
+}
+
+const getColSpan = (col) =>
+  col.groups.reduce((sum, g) => sum + g.options.length, 0);
+
+
 
 function renderField(
   field,
@@ -1906,8 +1925,6 @@ function renderField(
           languageConfig={languageConfig}
         />
       );
-
-
     case "radio": {
       const opts = field.options || [];
       return (
@@ -1932,7 +1949,7 @@ function renderField(
                 </label>
               );
             })}
-          </div>
+        </div>
         </div>
       );
     }
@@ -2600,6 +2617,79 @@ function renderField(
           }
         />
       );
+    case "checkbox-table-form": {
+        return (
+          <div style={styles.refraction12Wrapper}>
+            <table style={{ width: "100%", tableLayout: "fixed", fontSize: "9px", borderCollapse: "collapse" }}>
+              {/* Top header */}
+              <tr>
+                {field.columns.map(col => {
+                  if (col.rowSpan) {
+                    return (
+                      <th rowSpan={col.rowSpan} style={styles.tableContentOverflow}>
+                        {col.name}
+                      </th>
+                    )
+                  } else {
+                    return (
+                      <th
+                        key={col.name}
+                        colSpan={getColSpan(col)}
+                      >
+                        {col.name}
+                      </th>
+                    )
+                  }
+                })}
+              </tr>
+              <tr>
+                {field.columns.map((col) => 
+                  col.groups &&
+                     col.groups.map((group) => (
+                      <th
+                        key={col.name + group.title}
+                        colSpan={group.options.length}
+                        rowSpan={!group.labels ? 2 : 1}
+                      >
+                        {group.title}
+                      </th>
+                    ))
+                )}
+              </tr>
+              <tr>
+                {field.columns.map(col =>
+                  col.groups &&
+                    col.groups.map(group => (
+                      group.labels || []
+                    ).map((label, i) => (
+                      <th
+                        key={group.title + i}
+                      >
+                        {label}
+                      </th>
+                    )))
+                )}
+              </tr>
+              <tbody>
+                {field.rows.map(row => (
+                  <tr key={row}>
+                    <td style={styles.tableContentOverflow}>
+                      {row}
+                    </td>
+                    {field.columns.map(col => 
+                      col.groups && col.groups.map(group => 
+                        group.options.map(option => 
+                          cell(values, row, option, onChange)
+                        )
+                      )
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+    }
     default:
       return null;
   }
@@ -3574,4 +3664,28 @@ const styles = {
     resize: "none",
     background: "#ffffff"
   },
+
+  checkedBox: {
+    width:"50px",
+    height:"45px",
+    textAlign:"center",
+    verticalAlign:"middle",
+    cursor:"pointer",
+    position:"relative"
+  },
+  hiddenCheckbox: {
+    display:"none"
+  },
+
+  checkboxTick: {
+    fontSize:"26px",
+    fontWeight:"bold",
+    color:"black"
+  },
+  tableContentOverflow: { 
+    wordBreak: "break-word", 
+    padding: "4px"
+  }
+
+
 };
