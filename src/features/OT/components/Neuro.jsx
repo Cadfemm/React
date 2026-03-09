@@ -6,15 +6,13 @@ import TUG from "./TUGForm";
 import MASForm from "./MASForm";
 import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
-import FMALEForm from "./FMALEForm";
 import UpperExtremityAssessment from "./Flug";
 import TISAssessment from "./TsiAssessment";
 import ROMForm from "./RomForm";
-import SLUMSAssessment from "./Slums";
-import DLOTCAFullAssessment from "./Dlocta";
-import DLOTCA_G_Full from "./Dlocta-g";
-import MMSEAssessment from "./Mmse";
-import LOTCAForm from "./Lotca";
+import FIMAssessment from "./Fim";
+import ARATAssessment from "./Arat";
+import JHFTAssessment from "./Jfht";
+import BoxAndBlockTest from "./BoxBlockTest";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
@@ -22,9 +20,12 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   mas: MASForm,
   sara: SARAForm,
   bbs: BergBalanceScale,
-  fma_le: FMALEForm,
+  FIM: FIMAssessment,
   flug: UpperExtremityAssessment,
+  arat: ARATAssessment,
+  jfht: JHFTAssessment,
   tsi: TISAssessment,
+  bbt:BoxAndBlockTest,
   rom: ROMForm,
   sara: SARAForm,
 };
@@ -593,11 +594,11 @@ const OBJECTIVE_SCHEMA = {
             { label: "Scale for the Assessment and Rating of Ataxia (SARA)", value: "sara" },
             { label: "Fugl Meyer Assessment (FMA-UE)", value: "flug" },
             { label: "Trunk Impairment Scale (TIS)", value: "tsi" },
-            { label: "Box & Block", value: "fma_le" },
+            { label: "Box & Block", value: "bbt" },
             { label: "Functional Independence Measure (FIM)", value: "FIM" },
-            { label: "Action Research Arm Test(ARAT)", value: "motor_mas" },
+            { label: "Action Research Arm Test(ARAT)", value: "arat" },
             { label: "Montreal Cognitive Assessment (MoCA)", value: "moca" },
-            { label: "Jebsen Hand Function", value: "bbs" }
+            { label: "Jebsen Hand Function", value: "jfht" }
           ]
         },
         { type: "radio", name: "dominant_hand", label: "Dominant Hand", options: ["Right", "Left"] },

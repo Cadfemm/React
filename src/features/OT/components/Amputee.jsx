@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-// features/neuro/assessments/registry.js
 import MMTForm from "./MMTForm";
 import TUG from "./TUGForm";
 import MASForm from "./MASForm";
 import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
-import FMALEForm from "./FMALEForm";
-import UpperExtremityAssessment from "./Flug";
+import FimAssessment from "./Fim";
 import TISAssessment from "./TsiAssessment";
 import ROMForm from "./RomForm";
+import IADLAssessment from "./IADL";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
@@ -17,8 +16,8 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   mas: MASForm,
   sara: SARAForm,
   bbs: BergBalanceScale,
-  fma_le: FMALEForm,
-  flug: UpperExtremityAssessment,
+  fim: FimAssessment,
+  flug: IADLAssessment,
   tsi: TISAssessment,
   rom: ROMForm
 };
@@ -410,8 +409,8 @@ const OBJECTIVE_SCHEMA = {
           options: [
             { label: "Range of Motion (ROM)", value: "rom" },
             { label: "Manual Muscle Test (MMT)", value: "mmt" },
-            { label: "Functional Independence Measure (FIM)", value: "mas" },
-            { label: "Lawton IADL", value: "fac" },
+            { label: "Functional Independence Measure (FIM)", value: "fim" },
+            { label: "Lawton IADL", value: "flug" },
             { label: "Montreal Cognitive Assessment (MoCA)", value: "moca" }
           ]
         },
