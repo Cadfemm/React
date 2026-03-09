@@ -1345,6 +1345,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Vision For Driving", value: "VISION_DRIVING" },
               { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
               { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
+              { label: "Low Vision Assessment", value: "LOW_VISION_ASSESSMENT"}
             ]
           },
           {
