@@ -5,6 +5,7 @@ import WorkHistory from "./WorkHistory";
 import SwallowingAssessment from "./SwallowingAssessment";
 import CognitiveAssessmentForm from "./CognitiveAssessment";
 import Physical from "./Physical";
+import SpasmSpasticity from "./SpasmSpasticity";
 import HearingAssessment from "./HearingAssessment";
 import CardiovascularRespiratoryAssessment from "./CardiovascularRespiratoryAssessment";
 import BowelAssessment from "./BowelAssessment";
@@ -273,6 +274,7 @@ const [FunctionalAssessmentData,setFunctionalAssessmentData] = useState(null);
     "Physical",
     "Bowel Issue",
     "Bladder Issue",
+    "Spasm & Spasticity",
     "Skin",
     "Functional",
     "Social History",
@@ -499,6 +501,9 @@ const handleSubmitReferral = () => {
         ) :
          tabs[activeTab] === "Bladder Issue" ? (
           <BladderAssessment onChange={setBladderAssessmentData} />
+        ) :
+        tabs[activeTab] === "Spasm & Spasticity" ? (
+          <SpasmSpasticity />
         ) :
          tabs[activeTab] === "Social History" ? (
           <SocialHistory />
