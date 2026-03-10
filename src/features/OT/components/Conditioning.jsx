@@ -20,6 +20,7 @@ import DCOGAssessment from "./Dcog"
 import MoCAAssessment from "./MocA";
 import RPAB_Assessment from "./RPAB";
 import COGBATAssessment from "./Cogbat";
+import COTNABAssessment from "./Cotnab";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   dlocta: DLOTCAFullAssessment,
@@ -31,7 +32,8 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   dcog: DCOGAssessment, 
   moca: MoCAAssessment,
   rpab: RPAB_Assessment, 
-  cogbat: COGBATAssessment
+  cogbat: COGBATAssessment,
+  cotnab: COTNABAssessment
 };
 
 /* ===================== OPTIONS ===================== */
