@@ -17,43 +17,43 @@ const ABOVE_KNEE_MEASUREMENT_SCHEMA = {
 
   sections: [
     /* ================= PATIENT INFO ================= */
-    {
-      title: "Patient Details",
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "age", label: "Age", type: "input" },
-            { name: "gender", label: "Gender", type: "single-select", options: [
-              { label: "Male", value: "male" },
-              { label: "Female", value: "female" }
-            ]}
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Weight (kg)", type: "input" },
-            { name: "height", label: "Height (cm)", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "amp_side", label: "Amp Side", type: "single-select", options: [
-              { label: "Left", value: "left" },
-              { label: "Right", value: "right" }
-            ]},
-            { name: "k_level", label: "K-Level", type: "single-select", options: [
-              { label: "K1", value: "k1" },
-              { label: "K2", value: "k2" },
-              { label: "K3", value: "k3" },
-              { label: "K4", value: "k4" }
-            ]}
-          ]
-        }
-      ]
-    },
+    // {
+    //   title: "Patient Details",
+    //   fields: [
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "age", label: "Age", type: "input" },
+    //         { name: "gender", label: "Gender", type: "single-select", options: [
+    //           { label: "Male", value: "male" },
+    //           { label: "Female", value: "female" }
+    //         ]}
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "weight", label: "Weight (kg)", type: "input" },
+    //         { name: "height", label: "Height (cm)", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "amp_side", label: "Amp Side", type: "single-select", options: [
+    //           { label: "Left", value: "left" },
+    //           { label: "Right", value: "right" }
+    //         ]},
+    //         { name: "k_level", label: "K-Level", type: "single-select", options: [
+    //           { label: "K1", value: "k1" },
+    //           { label: "K2", value: "k2" },
+    //           { label: "K3", value: "k3" },
+    //           { label: "K4", value: "k4" }
+    //         ]}
+    //       ]
+    //     }
+    //   ]
+    // },
 
     /* ================= AFFECTED AREAS ================= */
     {
@@ -72,7 +72,6 @@ const ABOVE_KNEE_MEASUREMENT_SCHEMA = {
     {
       title: "Measurements",
       fields: [
-        { name: "balance", label: "Balance", type: "input" },
         {
           type: "row",
           fields: [
@@ -128,22 +127,45 @@ const ABOVE_KNEE_MEASUREMENT_SCHEMA = {
     },
 
     /* ================= CIRCUMFERENCE TABLE ================= */
+ {
+  title: "Circumference Measurement (cm)",
+  fields: [
+
     {
-      title: "Circumference Measurement (cm)",
-      fields: [
-        {
-          type: "grid-table-flat",
-          name: "circumference",
-          headers: ["Stump", "Cast", "Reduction %", "Goal", "Final"],
-          rows: [
-            { key: "level_1", label: "Level 1" },
-            { key: "level_2", label: "Level 2" },
-            { key: "level_3", label: "Level 3" },
-            { key: "level_4", label: "Level 4" }
-          ]
-        }
-      ]
+      type: "grid-header",
+      cols: ["Stump", "Cast", "Reduction %", "Goal", "Final"]
     },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_1",
+      label: "Level 1",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_2",
+      label: "Level 2",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_3",
+      label: "Level 3",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_4",
+      label: "Level 4",
+      cols: ["input", "input", "input", "input", "input"]
+    }
+
+  ]
+},
 
     /* ================= REMARKS ================= */
     {
@@ -151,7 +173,7 @@ const ABOVE_KNEE_MEASUREMENT_SCHEMA = {
       fields: [
         {
           name: "remarks",
-          label: "Notes",
+          label: "",
           type: "textarea"
         }
       ]
