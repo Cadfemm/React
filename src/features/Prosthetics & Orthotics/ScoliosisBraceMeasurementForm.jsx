@@ -16,42 +16,42 @@ const SCOLIOSIS_BRACE_MEASUREMENT_SCHEMA = {
 
   sections: [
     /* ================= PATIENT INFO ================= */
-       {
-      title: "Patient Details",
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "age", label: "RN", type: "input" },
-            { name: "gender", label: "IC", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Referral Date", type: "date" },
-            { name: "height", label: "Fitting Date", type: "date" }
-          ]
-        },
-         {
-          type: "row",
-          fields: [
-            { name: "age", label: "Menses", type: "input" },
-            { name: "gender", label: "Cob Angle", type: "input" }
-          ]
-        },
-   {
-          name: "activity_level",
-          label: "Scoliosis Level",
-          type: "radio",
-          options: [
-            { label: "X-ray film copy", value: "x_ray" },
-            { label: "X-ray film System", value: "system" },
-            { label: "CD", value: "Cd" },
-          ]
-        },
-      ]
-    },
+  //      {
+  //     title: "Patient Details",
+  //     fields: [
+  //       {
+  //         type: "row",
+  //         fields: [
+  //           { name: "age", label: "RN", type: "input" },
+  //           { name: "gender", label: "IC", type: "input" }
+  //         ]
+  //       },
+  //       {
+  //         type: "row",
+  //         fields: [
+  //           { name: "weight", label: "Referral Date", type: "date" },
+  //           { name: "height", label: "Fitting Date", type: "date" }
+  //         ]
+  //       },
+  //        {
+  //         type: "row",
+  //         fields: [
+  //           { name: "age", label: "Menses", type: "input" },
+  //           { name: "gender", label: "Cob Angle", type: "input" }
+  //         ]
+  //       },
+  //  {
+  //         name: "activity_level",
+  //         label: "Scoliosis Level",
+  //         type: "radio",
+  //         options: [
+  //           { label: "X-ray film copy", value: "x_ray" },
+  //           { label: "X-ray film System", value: "system" },
+  //           { label: "CD", value: "Cd" },
+  //         ]
+  //       },
+  //     ]
+  //   },
 
     /* ================= AFFECTED AREAS ================= */
     {
@@ -67,39 +67,39 @@ const SCOLIOSIS_BRACE_MEASUREMENT_SCHEMA = {
     },
 
     /* ================= BODY MEASUREMENTS ================= */
-    {
-      title: "Body Measurements",
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "chest_circumference", label: "Chest Circumference (cm)", type: "input" },
-            { name: "waist_circumference", label: "Waist Circumference (cm)", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "hip_circumference", label: "Hip Circumference (cm)", type: "input" },
-            { name: "shoulder_width", label: "Shoulder Width (cm)", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "axilla_to_waist", label: "Axilla to Waist (cm)", type: "input" },
-            { name: "waist_to_hip", label: "Waist to Hip (cm)", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "sternal_notch_to_waist", label: "Sternal Notch to Waist (cm)", type: "input" },
-            { name: "umbilicus_to_floor", label: "Umbilicus to Floor (cm)", type: "input" }
-          ]
-        }
-      ]
-    },
+    // {
+    //   title: "Body Measurements",
+    //   fields: [
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "chest_circumference", label: "Chest Circumference (cm)", type: "input" },
+    //         { name: "waist_circumference", label: "Waist Circumference (cm)", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "hip_circumference", label: "Hip Circumference (cm)", type: "input" },
+    //         { name: "shoulder_width", label: "Shoulder Width (cm)", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "axilla_to_waist", label: "Axilla to Waist (cm)", type: "input" },
+    //         { name: "waist_to_hip", label: "Waist to Hip (cm)", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "sternal_notch_to_waist", label: "Sternal Notch to Waist (cm)", type: "input" },
+    //         { name: "umbilicus_to_floor", label: "Umbilicus to Floor (cm)", type: "input" }
+    //       ]
+    //     }
+    //   ]
+    // },
 
     /* ================= PROCESS ================= */
     {
@@ -130,25 +130,44 @@ const SCOLIOSIS_BRACE_MEASUREMENT_SCHEMA = {
 
     /* ================= CIRCUMFERENCE TABLE ================= */
     {
-      title: "Circumference Measurement (cm)",
-      fields: [
-        {
-          type: "grid-table-flat",
-          name: "circumference",
-          headers: ["Stump", "Cast", "Reduction %", "Goal", "Final"],
-          rows: [
-            { key: "level_1", label: "Level 1" },
-            { key: "level_2", label: "Level 2" },
-            { key: "level_3", label: "Level 3" },
-            { key: "level_4", label: "Level 4" }
-          ]
-        },   {
-          name: "remarks",
-          label: "Notes",
-          type: "textarea"
-        }
-      ]
+  title: "Circumference Measurement (cm)",
+  fields: [
+
+    {
+      type: "grid-header",
+      cols: ["Stump", "Cast", "Reduction %", "Goal", "Final"]
     },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_1",
+      label: "Level 1",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_2",
+      label: "Level 2",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_3",
+      label: "Level 3",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_4",
+      label: "Level 4",
+      cols: ["input", "input", "input", "input", "input"]
+    }
+
+  ]
+},
   ]
 };
 

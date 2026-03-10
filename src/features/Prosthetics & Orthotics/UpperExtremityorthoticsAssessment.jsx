@@ -12,73 +12,91 @@ const UPPER_LIMB_FIELDS = [
 ];
 
 const UE_ORTHOTICS_PRESCRIPTION_SCHEMA = {
-    title: "Upper Extremity Orthotics Prescription",
+    title: "Upper Extremity Prosthetics Prescription",
     sections: [
         {
-            title: "Patient Information",
+            title: "",
             fields: [
-                {
-                    name: "activity_level",
-                    label: "Activity Level",
-                    type: "radio",
-                    options: [
-                        { label: "Sedentary", value: "sedentary" },
-                        { label: "Light", value: "light" },
-                        { label: "Moderate", value: "moderate" },
-                        { label: "Heavy", value: "heavy" }
-                    ]
-                },
-                {
-                    name: "limb_loss",
-                    label: "Limb Loss",
-                    type: "radio",
-                    options: [
-                        { label: "None", value: "none" },
-                        { label: "Partial", value: "partial" },
-                        { label: "Full", value: "full" }
-                    ]
-                },
-                {
-                    name: "diagnosis",
-                    label: "Diagnosis",
-                    type: "radio",
-                    options: [
-                        { label: "Cerebral Palsy", value: "cerebral_palsy" },
-                        { label: "Spinal Cord Injury", value: "sci" },
-                        { label: "Stroke", value: "stroke" },
-                        { label: "Traumatic Brain Injury", value: "tbi" },
-                        { label: "Other", value: "other" }
-                    ]
-                },
-                {
-                    name: "diagnosis_other",
-                    label: "Specify Other Diagnosis",
-                    type: "input",
-                    showIf: { field: "diagnosis", equals: "other" }
-                },
-                {
-                    name: "upper_limb_system",
-                    label: "Upper Limb System",
-                    type: "radio",
-                    options: [
-                        { name: "cosmesis", label: "Cosmesis", value: "cosmesis" },
-                        { name: "mechanical", label: "Mechanical", value: "mechanical" },
-                        { name: "myoelectric", label: "Myoelectric", value: "myoelectric" },
-                    ]
-                },
+          {
+  type: "subheading",
+  label: "Prosthetic Information"
+},
+
+{
+  type: "radio",
+  name: "activity_level",
+  label: "Activity Level",
+  options: [
+    { label: "K0", value: "K0" },
+    { label: "K1", value: "K1" },
+    { label: "K2", value: "K2" },
+    { label: "K3", value: "K3" },
+    { label: "K4", value: "K4" }
+  ]
+},
+
+{
+  type: "radio",
+  name: "limb_loss",
+  label: "Limb Loss",
+  options: [
+    { label: "Right", value: "right" },
+    { label: "Left", value: "left" },
+    { label: "Bilateral (Both Limbs)", value: "bilateral" }
+  ]
+},
+
+{
+  type: "date",
+  name: "date_of_onset",
+  label: "Date of Onset"
+},
+
+{
+  type: "radio",
+  name: "diagnosis_level",
+  label: "Diagnosis Level",
+  labelAbove: true,
+  options: [
+    { label: "TR – Transradial Amputation", value: "transradial" },
+    { label: "TH – Transhumeral Amputation", value: "transhumeral" },
+    { label: "SD – Shoulder Disarticulation", value: "shoulder_disarticulation" },
+    { label: "Others", value: "others" }
+  ]
+},
+
+{
+  type: "input",
+  name: "diagnosis_other",
+  label: "Other Diagnosis ",
+  showIf: { field: "diagnosis_level", equals: "others" }
+},
+
+{
+  type: "subheading",
+  label: "Upper Limb System"
+},
+
+{
+  type: "radio",
+  name: "upper_limb_system",
+  label: "Prosthesis Type",
+  options: [
+    { label: "Cosmesis ", value: "cosmesis" },
+    { label: "Mechanical ", value: "mechanical" },
+    { label: "Myoelectric ", value: "myoelectric" }
+  ]
+},
+
+{
+  type: "textarea",
+  name: "prosthetic_remarks",
+  label: "Remarks"
+}
             ]
         },
 
-        {
-            title: "Remarks",
-            fields: [
-                {
-                    name: "ue_orthotics_remarks",
-                    label: "Remarks",
-                    type: "textarea"
-                }
-            ]
-        }
+     
     ]
 };
 
