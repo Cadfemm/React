@@ -111,25 +111,25 @@ const LOWER_LIMB_FIELDS = [
         }
       ]
     },
-    {
-  title: "Affected Areas",
-  fields: [
-    {
-      name: "affected_areas_lower_limb",
-      label: "Affected Areas",
-      type: "image-anatomy-selector",
-      image: "/lowerlimb.png",
-      markers: LOWER_LIMB_FIELDS
-    }
-  ]
-},
+//     {
+//   title: "Affected Areas",
+//   fields: [
+//     {
+//       name: "affected_areas_lower_limb",
+//       label: "Affected Areas",
+//       type: "image-anatomy-selector",
+//       image: "/lowerlimb.png",
+//       markers: LOWER_LIMB_FIELDS
+//     }
+//   ]
+// },
 
     {
       title: "Remarks",
       fields: [
         {
           name: "le_orthotics_remarks",
-          label: "Remarks",
+          label: "",
           type: "textarea"
         }
       ]

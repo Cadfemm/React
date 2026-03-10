@@ -1202,37 +1202,65 @@ function renderField(
         </div>
       );
     }
+
     case "grid-table-flat":
-      const colCount = field.headers.length;
-      return (
-        <div style={styles.tableWrap}>
-          {/* Header row */}
-          <div style={{ ...styles.tableHeaderFlat, gridTemplateColumns: `120px repeat(${colCount}, 1fr)` }}>
-            <div></div>
-            {field.headers.map(h => (
-              <div key={h} style={styles.tableHeaderCell}>{h}</div>
-            ))}
+  const colCount = field.headers.length;
+
+  // width coming from schema
+  const labelWidth = field.labelWidth || "120px";
+  const inputWidth = field.inputWidth || "1fr";
+
+  return (
+    <div style={styles.tableWrap}>
+      
+      {/* Header row */}
+      <div
+        style={{
+          ...styles.tableHeaderFlat,
+          gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
+        }}
+      >
+        <div></div>
+
+        {field.headers.map(h => (
+          <div key={h} style={styles.tableHeaderCell}>
+            {h}
+          </div>
+        ))}
+      </div>
+
+      {/* Rows */}
+      {field.rows.map(row => (
+        <div
+          key={row.key}
+          style={{
+            ...styles.tableRowFlat,
+            gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
+          }}
+        >
+          <div style={styles.tableRowLabel}>
+            {languageConfig?.enabled
+              ? t(row.label, languageConfig.lang)
+              : row.label}
           </div>
 
-          {/* Data rows */}
-          {field.rows.map(row => (
-            <div key={row.key} style={{ ...styles.tableRowFlat, gridTemplateColumns: `120px repeat(${colCount}, 1fr)` }}>
-              <div style={styles.tableRowLabel}>{languageConfig?.enabled ? t(row.label, languageConfig.lang) : row.label}</div>
-
-              {field.headers.map(h => (
-                <input
-                  key={`${row.key}_${h}`}
-                  style={styles.tableInput}
-                  value={values[`${field.name}_${row.key}_${h}`] || ""}
-                  onChange={e =>
-                    onChange(`${field.name}_${row.key}_${h}`, e.target.value)
-                  }
-                />
-              ))}
-            </div>
+          {field.headers.map(h => (
+            <input
+              key={`${row.key}_${h}`}
+              style={{
+                ...styles.tableInput,
+                width: field.boxWidth || "100%"
+              }}
+              value={values[`${field.name}_${row.key}_${h}`] || ""}
+              onChange={e =>
+                onChange(`${field.name}_${row.key}_${h}`, e.target.value)
+              }
+            />
           ))}
         </div>
-      );
+      ))}
+    </div>
+  );
 
     case "info-text":
       return (

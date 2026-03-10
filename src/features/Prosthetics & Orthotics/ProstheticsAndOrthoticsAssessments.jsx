@@ -8,6 +8,7 @@ import AnkleFootOrthosisMeasurementForm from "./AnkleFootOrthosisMeasurementForm
 import BelowKneeMeasurementForm from "./BelowKneeMeasurementForm";
 import CorrectiveAccommodativeFootOrthosisForm from "./CorrectiveAccommodativeFootOrthosisForm";
 import ScoliosisBraceMeasurementForm from "./ScoliosisBraceMeasurementForm";
+import LowerLimbProsthesisPrescription from "./LowerExtremityProsthetics"
 /* ===================== OPTIONS ===================== */
 
 const YES_NO = [
@@ -25,6 +26,7 @@ const CLASSIFICATION = [
 const ORTHOTICS_ASSESSMENT_REGISTRY = {
   lower_extremity_orthotics: LowerExtremityOrthoticsPrescription,
   upper_extremity_orthotics: UpperExtremityOrthoticsPrescription,
+  lower_extremity_prosthotics:LowerLimbProsthesisPrescription,
   above_knee_measurement: AboveKneeMeasurementForm,
   ankle_foot_orthosis_measurement: AnkleFootOrthosisMeasurementForm,
   below_knee_measurement: BelowKneeMeasurementForm,
@@ -40,11 +42,11 @@ const PROGNOSIS = [
 ];
 
 const WALKING_AID = [
-  { label: "None", value: "none" },
-  { label: "SPC", value: "spc" },
+  { label: "Single Point Cane (SPC)", value: "spc" },
   { label: "Quadripod", value: "quadripod" },
   { label: "Walking Frame", value: "wf" },
-  { label: "Wheelchair", value: "wheelchair" }
+  { label: "Wheelchair", value: "wheelchair" },
+  { label: "None", value: "none" },
 ];
 
 const WALKING_PATTERN = [
@@ -138,40 +140,92 @@ const SUBJECTIVE_SCHEMA = {
     { type: "save", label: "Save" }
   ],
   fields: [
-    { name: "pain_score", label: "Pain Score (0–10)", type: "input" },
-    { name: "patient_complaint", label: "Patient Complaint", type: "textarea" },
+    { name: "chief_complaint", label: "Chief Complaint", type: "textarea" },
+    { name: "history_present_illness", label: "History of Present Illness", type: "textarea" },
+    {
+      type: "scale-slider",
+      name: "pain_score",
+      label: "Pain Score (0–10)",
+      min: 0,
+      max: 10,
+      step: 1,
+      showValue: true,
+      ranges: [
+        { min: 0, max: 3, color: "#16a34a", label: "Mild" },
+        { min: 4, max: 6, color: "#f59e0b", label: "Moderate" },
+        { min: 7, max: 10, color: "#dc2626", label: "Severe" }
+      ]
+    },
     {
       name: "functional_difficulty",
-      label: "Functional Difficulty (ADL / Mobility / Work)",
+      label: "Functional Difficulty (Patient Reported)",
       type: "textarea"
+    },
+    {
+      type: "radio",
+      name: "phantom_limb_pain",
+      label: "Phantom Limb Sensation / Pain",
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ]
+    },
+    {
+      type: "textarea",
+      name: "functional",
+      label: "Specify Phantom Limb Sensation",
+      showIf: {
+        field: "phantom_limb_pain",
+        equals: "yes"
+      }
     },
     {
       name: "patient_goals",
       label: "Patient Goals / Expectations",
       type: "textarea"
-    }
+    },
+        {
+      type: "checkbox-group",
+      name: "additional_symptoms",
+      label: "Additional Symptoms",
+      options: [
+        { label: "Pain", value: "yes" },
+        { label: "Weakness", value: "yes" },
+        { label: "Instability", value: "yes" },
+        { label: "Spasticity", value: "yes" },
+        { label: "Deformity", value: "yes" },
+        { label: "Fatigue during walking", value: "yes" }
+      ]
+    },
   ]
 };
 
 const OBJECTIVE_SCHEMA = {
-  title: "Objective",
+  title: "",
   actions: SUBJECTIVE_SCHEMA.actions,
-  sections: [
-    {
-      title: "Orthotics Prescription Forms",
-      showIf: { field: "assignment_type", equals: "orthotics" },
-      fields: [
-        {
+  sections: [{
+   
+
+    fields: [
+      { type: "subheading", label: "Physical Examination" },
+      { name: "ul_mmt_r", label: "UL MMT Right", type: "textarea", readOnly: true },
+      { name: "ul_mmt_l", label: "UL MMT Left", type: "textarea", readOnly: true },
+      { name: "ll_mmt_r", label: "LL MMT Right", type: "textarea", readOnly: true },
+      { name: "ll_mmt_l", label: "LL MMT Left", type: "textarea", readOnly: true },
+      { name: "rom_auto", label: "ROM", type: "textarea", readOnly: true },
+      { name: "tone_auto", label: "Tone", type: "textarea", readOnly: true },
+      { name: "sensation_auto", label: "Sensation", type: "textarea", readOnly: true },
+      { name: "skin_auto", label: "Skin Condition", type: "textarea", readOnly: true },
+      { name: "po_picture", label: "Upload Picture (P&O)", type: "file-upload-modal" },
+      { name: "functional_problems", label: "Functional Problems", type: "textarea" },
+      {type: "subheading", label: "Orthotic Assessment"},
+           {
           name: "orthotics_objective_forms",
           type: "assessment-launcher",
           options: [
             {
               label: "Lower Extremity Orthotics Prescription",
               value: "lower_extremity_orthotics"
-            },
-            {
-              label: "Upper Extremity Orthotics Prescription",
-              value: "upper_extremity_orthotics"
             },
             {
               label: "Above Knee Measurement Form",
@@ -194,64 +248,201 @@ const OBJECTIVE_SCHEMA = {
               value: "scoliosis_brace_measurement"
             }
           ]
-        }
-      ]
-    },
-
-    {
-      title: "Physical Examination (Auto from MDT)",
-      fields: [
-        { name: "ul_mmt_r", label: "UL MMT Right", type: "textarea", readOnly: true },
-        { name: "ul_mmt_l", label: "UL MMT Left", type: "textarea", readOnly: true },
-        { name: "ll_mmt_r", label: "LL MMT Right", type: "textarea", readOnly: true },
-        { name: "ll_mmt_l", label: "LL MMT Left", type: "textarea", readOnly: true },
-        { name: "rom_auto", label: "ROM", type: "textarea", readOnly: true },
-        { name: "tone_auto", label: "Tone", type: "textarea", readOnly: true },
-        { name: "sensation_auto", label: "Sensation", type: "textarea", readOnly: true },
-        { name: "skin_auto", label: "Skin Condition", type: "textarea", readOnly: true },
-        {
-          name: "po_picture",
-          label: "Upload Picture (P&O)",
-          type: "file-upload-modal"
         },
-        {
-          name: "functional_problems",
-          label: "Functional Problems (editable)",
-          type: "textarea"
-        }
-      ]
-    },
-    {
-      title: "Gait Assessment",
-      fields: [
-        { name: "walking_aid", label: "Walking Aid Used", type: "radio", options: WALKING_AID },
-        { name: "walking_pattern", label: "Walking Pattern", type: "radio", options: WALKING_PATTERN },
-        { name: "foot_clearance", label: "Foot Clearance", type: "radio", options: FOOT_CLEARANCE },
-        { name: "step_length", label: "Step Length", type: "radio", options: STEP_LENGTH },
-        { name: "stance_phase", label: "Stance Phase", type: "radio", options: STANCE_PHASE },
-        { name: "swing_phase", label: "Swing Phase", type: "radio", options: SWING_PHASE },
-        { name: "weight_bearing", label: "Weight Bearing", type: "radio", options: WEIGHT_BEARING },
-        { name: "gait_balance", label: "Balance During Gait", type: "radio", options: GAIT_BALANCE },
-        { name: "endurance", label: "Endurance", type: "radio", options: ENDURANCE }
-      ]
-    }
+      {
+        type: "subheading",
+        label: "Postural / Alignment Assessment"
+      },
+
+      {
+        type: "radio",
+        name: "pelvic_alignment",
+        label: "Pelvic Alignment",
+        options: [
+          { label: "Neutral", value: "neutral" },
+          { label: "Anterior tilt", value: "anterior_tilt" },
+          { label: "Posterior tilt", value: "posterior_tilt" },
+          { label: "Obliquity", value: "obliquity" }
+        ]
+      },
+
+      {
+        type: "radio",
+        name: "knee_alignment",
+        label: "Knee Alignment",
+        options: [
+          { label: "Neutral", value: "neutral" },
+          { label: "Varus", value: "varus" },
+          { label: "Valgus", value: "valgus" },
+          { label: "Flexion deformity", value: "flexion_deformity" },
+          { label: "Recurvatum", value: "recurvatum" }
+        ]
+      },
+
+      {
+        type: "radio",
+        name: "foot_alignment",
+        label: "Foot Alignment",
+        options: [
+          { label: "Neutral", value: "neutral" },
+          { label: "Pes planus", value: "pes_planus" },
+          { label: "Pes cavus", value: "pes_cavus" },
+          { label: "Equinus", value: "equinus" },
+          { label: "Calcaneus", value: "calcaneus" }
+        ]
+      },
+
+      {
+        type: "radio",
+        name: "spinal_alignment",
+        label: "Spinal Alignment",
+        options: [
+          { label: "Normal", value: "normal" },
+          { label: "Kyphosis", value: "kyphosis" },
+          { label: "Lordosis", value: "lordosis" },
+          { label: "Scoliosis", value: "scoliosis" }
+        ]
+      },
+
+      {
+  type: "subheading",
+  label: "Joint Contracture / Deformity"
+},
+
+{
+  type: "radio",
+  name: "ankle_contracture",
+  label: "Ankle Contracture",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" },
+    { label: "None", value: "none" },
   ]
+},
+
+{
+  type: "radio",
+  name: "knee_contracture",
+  label: "Knee Contracture",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" },
+    { label: "None", value: "none" },
+  ]
+},
+
+{
+  type: "radio",
+  name: "hip_contracture",
+  label: "Hip Contracture",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" },
+    { label: "None", value: "none" },
+  ]
+},
+
+{
+  type: "checkbox-group",
+  name: "upper_limb_contracture",
+  label: "Upper Limb Contracture",
+  options: [
+    { label: "Elbow", value: "elbow" },
+    { label: "Wrist", value: "wrist" },
+    { label: "Fingers", value: "fingers" }
+  ]
+},{
+  type: "subheading",
+  label: "Skin & Limb Inspection"
+},
+
+{
+  type: "radio",
+  name: "skin_condition",
+  label: "Skin Condition",
+  position: "side",
+  options: [
+    { label: "Normal", value: "normal" },
+    { label: "Redness", value: "redness" },
+    { label: "Pressure area", value: "pressure_area" },
+    { label: "Ulcer", value: "ulcer" },
+    { label: "Scar", value: "scar" }
+  ]
+},
+
+{
+  type: "radio",
+  name: "pressure_risk_areas",
+  label: "Pressure Risk Areas",
+  position: "side",
+  options: [
+    { label: "Heel", value: "heel" },
+    { label: "Malleolus", value: "malleolus" },
+    { label: "Tibial crest", value: "tibial_crest" },
+    { label: "Metatarsal head", value: "metatarsal_head" },
+    { label: "Olecranon", value: "olecranon" },
+    { label: "Wrist", value: "wrist" }
+  ]
+},
+
+{
+  type: "attach-file",
+  name: "limb_picture",
+  label: "Upload Picture"
+},
+      { type: "subheading", label: "Gait Assessment" },
+      { name: "walking_aid", label: "Walking Aid Used", type: "radio", options: WALKING_AID },
+      { name: "walking_pattern", label: "Walking Pattern", type: "radio", options: WALKING_PATTERN },
+      { name: "foot_clearance", label: "Foot Clearance", type: "radio", options: FOOT_CLEARANCE },
+      { name: "step_length", label: "Step Length", type: "radio", options: STEP_LENGTH },
+      { name: "stance_phase", label: "Stance Phase", type: "radio", options: STANCE_PHASE },
+      { name: "swing_phase", label: "Swing Phase", type: "radio", options: SWING_PHASE },
+      { name: "weight_bearing", label: "Weight Bearing", type: "radio", options: WEIGHT_BEARING },
+      { name: "gait_balance", label: "Balance During Gait", type: "radio", options: GAIT_BALANCE },
+      {
+        type: "radio", name: "static_balance", label: "Static Balance", options: [
+          { label: "Good", value: "good" },
+          { label: "Fair", value: "fair" },
+          { label: "Poor", value: "poor" }
+        ]
+      },
+
+      {
+        type: "radio",
+        name: "dynamic_balance",
+        label: "Dynamic Balance",
+        options: [
+          { label: "Good", value: "good" },
+          { label: "Fair", value: "fair" },
+          { label: "Poor", value: "poor" }
+        ]
+      },
+      { name: "endurance", label: "Endurance", type: "radio", options: ENDURANCE },
+
+    ]
+  }]
 };
 
 const ASSESSMENT_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   fields: [
-    { name: "orthotic_need", label: "Orthotic Need", type: "input" },
-    {
-      name: "indications",
-      label: "Indication for Orthosis",
-      type: "multi-select-dropdown",
-      options: INDICATIONS
-    },
+    // { name: "orthotic_need", label: "Orthotic Need", type: "input" },
+    // {
+    //   name: "indications",
+    //   label: "Indication for Orthosis",
+    //   type: "multi-select-dropdown",
+    //   options: INDICATIONS
+    // },
     { name: "clinical_impression", label: "Clinical Impression", type: "textarea" },
-    { name: "prognosis", label: "Prognosis", type: "single-select", options: PROGNOSIS }
+        { name: "functional_limitation_summary", label: "Functional Limitation Summary", type: "textarea" },
+
+    { name: "prognosis", label: "Prognosis", type: "radio", options: PROGNOSIS }
   ]
 };
+
 
 const PLAN_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
@@ -347,11 +538,45 @@ const PLAN_SCHEMA = {
     { name: "orthosis_notes", label: "Additional Notes", type: "input" },
     { name: "measurement_date", label: "Measurement Date", type: "date" },
     { name: "casting_required", label: "Casting Required", type: "radio", options: YES_NO },
+        { name: "fitting_date", label: "Fitting Date", type: "date" },
+
     { name: "casting_date", label: "Casting Date", type: "date" },
+    {
+  type: "subheading",
+  label: "Orthosis Wearing Schedule"
+},
+
+{
+  type: "radio",
+  name: "usage_plan",
+  label: "Usage Plan",
+  labelAbove: true,
+  // position: "side",
+  options: [
+    { label: "Full day use", value: "full_day_use" },
+    { label: "During ambulation", value: "during_ambulation" },
+    { label: "Activity specific", value: "activity_specific" },
+    { label: "Night splint", value: "night_splint" }
+  ]
+},
+
+{
+  type: "radio",
+  name: "patient_education_provided",
+  label: "Patient Education Provided",
+  labelAbove: true,
+  // position: "side",
+  options: [
+    { label: "Donning & doffing", value: "donning_doffing" },
+    { label: "Skin monitoring", value: "skin_monitoring" },
+    { label: "Cleaning instructions", value: "cleaning_instructions" },
+    { label: "Wearing schedule explained", value: "wearing_schedule_explained" }
+  ]
+},
     {
       name: "follow_up",
       label: "Follow-up",
-      type: "single-select",
+      type: "radio",
       options: [
         { label: "2 weeks", value: "2w" },
         { label: "4 weeks", value: "4w" },
@@ -371,87 +596,75 @@ const PROSTHETICS_SUBJECTIVE_SCHEMA = {
     { type: "save", label: "Save" }
   ],
   sections: [
-       {
-      title: "Prosthetic Status",
+    /* ================= SUBJECTIVE ================= */
+    {
+      title: "",
       fields: [
+        { name: "chief_complaint", label: "Chief Complaint", type: "textarea" },
+        { name: "history_present_illness", label: "History of Present Illness", type: "textarea" },
+        { name: "stump_pain", label: "Stump Pain", type: "textarea" },
+
         {
           type: "radio",
-          name: "prosthesis_restoration",
-          label: "Prosthesis Restoration",
-          options: [
-            { label: "New", value: "new" },
-            { label: "Repair", value: "repair" }
-          ]
-        },
-        {
-          type: "radio",
-          name: "inspire_scheme",
-          label: "INSPIRE Scheme",
+          name: "phantom_limb_pain",
+          label: "Phantom Limb Sensation / Pain",
           options: [
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" }
           ]
         },
         {
-          name: "supplier_name",
-          label: "Supplier Name",
-          type: "single-select",
-          showIf: { field: "inspire_scheme", equals: "yes" },
-          options: [
-            { label: "Unit P&O PRPSB", value: "unit_po_prpsb" },
-            { label: "TehLin", value: "tehlin" },
-            { label: "Warisan Jasamedik", value: "warisan" },
-            { label: "Limb Brace", value: "limb_brace" },
-            { label: "Bioapps", value: "bioapps" },
-            { label: "Hasba Medik", value: "hasba" },
-            { label: "Restu Progresif", value: "restu" },
-            { label: "Central Limb", value: "central_limb" },
-            { label: "RS Alfa", value: "rs_alfa" },
-            { label: "Secure Logic Tech (SLT)", value: "slt" }
+          type: "textarea",
+          name: "functional_difficulty",
+          label: "Specify Phantom Limb Sensation",
+          showIf: {
+            field: "phantom_limb_pain",
+            equals: "yes"
+          }
+        },
+
+        {
+          type: "scale-slider",
+          name: "pain_score",
+          label: "Pain Score (0–10)",
+          min: 0,
+          max: 10,
+          step: 1,
+          showValue: true,
+          ranges: [
+            { min: 0, max: 3, color: "#16a34a", label: "Mild" },
+            { min: 4, max: 6, color: "#f59e0b", label: "Moderate" },
+            { min: 7, max: 10, color: "#dc2626", label: "Severe" }
           ]
         },
-        { type: "date", name: "po_date", label: "PO Date" }
-      ]
-    },
-
-    /* ================= SUBJECTIVE ================= */
-    {
-      title: "Subjective",
-      fields: [
-        { name: "chief_complaint", label: "Chief Complaint", type: "textarea" },
-        { name: "history_present_illness", label: "History of Present Illness", type: "textarea" },
-        { name: "stump_pain", label: "Stump Pain", type: "textarea" },
-        { name: "pain_score", label: "Pain Score (1–10)", type: "input" }
       ]
     },
   ]
 };
 
 const PROSTHETICS_OBJECTIVE_SCHEMA = {
-  title: "Objective",
+  title: "",
   actions: PROSTHETICS_SUBJECTIVE_SCHEMA.actions,
-  sections: [    /* ================= OBJECTIVE ================= */
+
+  sections: [
     {
-      title: "Objective",
       fields: [
+        { type: "subheading", label: "A.Functional Classification" },
         {
           type: "radio",
           name: "k_level",
-          label: "Functional Classification (K-Level – PT Input)",
+          label: "K-Level",
+          labelAbove: true,
           options: [
-            { label: "K0", value: "k0" },
-            { label: "K1", value: "k1" },
-            { label: "K2", value: "k2" },
-            { label: "K3", value: "k3" },
-            { label: "K4", value: "k4" }
+            { label: "K0 – No prosthetic ambulation potential", value: "K0" },
+            { label: "K1 – Household ambulator", value: "K1" },
+            { label: "K2 – Limited community ambulator", value: "K2" },
+            { label: "K3 – Community ambulator (variable cadence)", value: "K3" },
+            { label: "K4 – High activity / athletic level", value: "K4" }
           ]
         },
 
-      ]
-    },
-    {
-      title: "Physical Performance Measures",
-      fields: [
+        { type: "subheading", label: "B.Physical Performance Measures" },
 
         {
           type: "row",
@@ -475,70 +688,92 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
             { name: "mmt_ul_right", label: "MMT Upper Limb – Right /5", type: "input" },
             { name: "mmt_ul_left", label: "MMT Upper Limb – Left /5", type: "input" }
           ]
-        }
-      ]
-    },
+        },
+       {
+          name: "orthotics_objective_forms",
+          type: "assessment-launcher",
+          options: [
+        
+             {
+              label: "Lower Extremity Prosthetics Prescription.",
+              value: "lower_extremity_prosthotics"
+            },
+            {
+              label: "Upper Extremity Prosthetics Prescription",
+              value: "upper_extremity_orthotics"
+            },
+            {
+              label: "Above Knee Measurement Form",
+              value: "above_knee_measurement"
+            },
+            {
+              label: "Ankle Foot Orthosis Measurement Form",
+              value: "ankle_foot_orthosis_measurement"
+            },
+            {
+              label: "Below Knee Measurement Form",
+              value: "below_knee_measurement"
+            },
+            {
+              label: "Corrective / Accommodative Foot Orthosis Measurement Form",
+              value: "corrective_accommodative_foot_orthosis"
+            },
+            {
+              label: "Scoliosis Brace Measurement Form",
+              value: "scoliosis_brace_measurement"
+            }
+          ]
+        },
+        { type: "subheading", label: "C. Residual Limb Evaluation" },
 
-    /* ================= RESIDUAL LIMB ================= */
-    {
-      title: "Residual Limb Evaluation",
-      fields: [
-        { type: "date", name: "assessment_date", label: "Date of Assessment" },
+        { type: "subheading", name: "Level of amputation", label: "Level of amputation" },
 
-   {
-  type: "row",
-  fields: [
-    {
-      type: "multi-select-dropdown",
-      name: "lower_limb_level",
-      label: "Lower Limb",
-      options: [
-        { label: "Above Knee (AK)", value: "ak" },
-        { label: "Below Knee (BK)", value: "bk" },
-        { label: "Hip Disarticulation", value: "hip" },
-        { label: "Rays Amputation", value: "rays" },
-        { label: "Carpal / Metacarpal", value: "carpal" },
-        { label: "Others", value: "others" }
-      ]
-    },
+        {
+          type: "row",
+          fields: [
+            {
+              type: "multi-select-dropdown",
+              name: "lower_limb_level",
+              label: "Lower Limb",
+              options: [
+                { label: "Above Knee (AK)", value: "ak" },
+                { label: "Below Knee (BK)", value: "bk" },
+                { label: "Hip Disarticulation", value: "hip" },
+                { label: "Rays Amputation", value: "rays" },
+                { label: "Carpal / Metacarpal", value: "carpal" },
+                { label: "Others", value: "others" }
+              ]
+            },
 
-    {
-      type: "multi-select-dropdown",
-      name: "upper_limb_level",
-      label: "Upper Limb",
-      options: [
-        { label: "Above Elbow (AE)", value: "ae" },
-        { label: "Below Elbow (BE)", value: "be" },
-        { label: "Shoulder Disarticulation", value: "shoulder" },
-        { label: "Rays Amputation", value: "rays" },
-        { label: "Carpal / Metacarpal", value: "carpal" },
-        { label: "Others", value: "others" }
-      ]
-    }
-  ]
-},
+            {
+              type: "multi-select-dropdown",
+              name: "upper_limb_level",
+              label: "Upper Limb",
+              options: [
+                { label: "Above Elbow (AE)", value: "ae" },
+                { label: "Below Elbow (BE)", value: "be" },
+                { label: "Shoulder Disarticulation", value: "shoulder" },
+                { label: "Rays Amputation", value: "rays" },
+                { label: "Carpal / Metacarpal", value: "carpal" },
+                { label: "Others", value: "others" }
+              ]
+            }
+          ]
+        },
 
         {
           type: "textarea",
           name: "lower_limb_other_details",
           label: "Lower Limb – Others (Specify)",
-          showIf: {
-            field: "lower_limb_level",
-            includes: "others"
-          }
+          showIf: { field: "lower_limb_level", includes: "others" }
         },
-
 
         {
           type: "textarea",
           name: "upper_limb_other_details",
           label: "Upper Limb – Others (Specify)",
-          showIf: {
-            field: "upper_limb_level",
-            includes: "others"
-          }
+          showIf: { field: "upper_limb_level", includes: "others" }
         },
-
 
         { type: "date", name: "amputation_date", label: "Date of Amputation" },
 
@@ -546,6 +781,7 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
           type: "checkbox-group",
           name: "cause",
           label: "Cause",
+          position: "side",
           options: [
             { label: "Trauma", value: "trauma" },
             { label: "Vascular", value: "vascular" },
@@ -555,41 +791,29 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
           ]
         },
 
-        { name: "referring_physician", label: "Referring Physician", type: "textarea" },
-        { name: "diagnosis_code", label: "Diagnosis Code", type: "textarea" }
-      ]
-    },
-
-    /* ================= MEASUREMENTS ================= */
-    {
-      title: "Residual Limb Measurements (Baseline)",
-      fields: [
         {
           type: "grid-table-flat",
           name: "circumference",
+          labelWidth: "200px",
+          inputWidth: "120px",
+          boxWidth: "100px",
           headers: ["Circumference (cm)"],
           rows: [
             { key: "proximal", label: "Proximal" },
             { key: "middle", label: "Middle" },
             { key: "distal", label: "Distal" },
-            { key: "Length of Residual Limb (cm)", label: "Length of Residual Limb (cm)" },
-            { key: "Contralateral Limb Reference (cm)", label: "Contralateral Limb Reference (cm)" },   
-
+            { key: "length_residual", label: "Length of Residual Limb (cm)" },
+            { key: "contralateral_reference", label: "Contralateral Limb Reference (cm)" }
           ]
         },
-       
-      ]
-    },
 
-    /* ================= SKIN CONDITION ================= */
-    {
-      title: "Skin Integrity & Limb Condition",
-      fields: [
+        { type: "subheading", label: "D. Skin Integrity & Limb Condition" },
+
         {
-          type: "checkbox-group",
+          type: "radio",
           name: "skin_condition",
           label: "Skin Condition",
-           position: "side",
+          position: "side",
           options: [
             { label: "Intact", value: "intact" },
             { label: "Dry", value: "dry" },
@@ -601,295 +825,111 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
         },
 
         {
-          type: "checkbox-group",
-          name: "edema",
-          label: "Edema",
-            position: "side",
+          type: "radio",
+          name: "phantom_sensation",
+          label: "Phantom Sensation / Pain",
           options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" }
+          ]
+        },
+
+        {
+          type: "radio",
+          name: "bony_prominences",
+          label: "Bony Prominences",
+          options: [
+            { label: "Present", value: "present" },
             { label: "None", value: "none" },
-            { label: "Mild", value: "mild" },
-            { label: "Moderate", value: "moderate" },
-            { label: "Severe", value: "severe" }
           ]
         },
-
-        // Added remaining fields for comprehensive skin and limb assessment
-        {
-          type: "checkbox-group",
-          name: "skin_temperature",
-          label: "Skin Temperature",
-          position: "side",
-          options: [
-            { label: "Warm", value: "warm" },
-            { label: "Cool", value: "cool" },
-            { label: "Cold", value: "cold" }
-          ]
-        },
-
-        {
-          type: "checkbox-group",
-          name: "skin_color",
-          label: "Skin Color",
-          position: "side",
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Pale", value: "pale" },
-            { label: "Red", value: "red" },
-            { label: "Cyanotic", value: "cyanotic" }
-          ]
-        },
-
-          /* ===== Sensation ===== */
-    {
-      type: "checkbox-group",
-      name: "sensation",
-      label: "Sensation",
-      position: "side",
-      options: [
-        { label: "Intact", value: "intact" },
-        { label: "Reduced", value: "reduced" },
-        { label: "Absent", value: "absent" },
-        { label: "Hypersensitive", value: "hypersensitive" }
-      ]
-    },
-
-    /* ===== Pain / Tenderness ===== */
-    {
-      type: "checkbox-group",
-      name: "pain_tenderness",
-      label: "Pain / Tenderness",
-            position: "side",
-
-      options: [
-        { label: "None", value: "none" },
-        { label: "Mild", value: "mild" },
-        { label: "Moderate", value: "moderate" },
-        { label: "Severe", value: "severe" }
-      ]
-    },
-
-    /* ===== Phantom Sensation / Pain ===== */
-    {
-      type: "radio",
-      name: "phantom_sensation",
-      label: "Phantom Sensation / Pain",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-
-    /* ===== Shape ===== */
-    {
-      type: "checkbox-group",
-      name: "stump_shape",
-      label: "Shape",
-            position: "side",
-
-      options: [
-        { label: "Conical", value: "conical" },
-        { label: "Cylindrical", value: "cylindrical" },
-        { label: "Bulbous", value: "bulbous" },
-        { label: "Irregular", value: "irregular" }
-      ]
-    },
-
-    /* ===== Bony Prominences ===== */
-    {
-      type: "radio",
-      name: "bony_prominences",
-      label: "Bony Prominences",
-      options: [
-        { label: "None", value: "none" },
-        { label: "Present", value: "present" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "bony_prominences_notes",
-      label: " specify",
-      showIf: { field: "bony_prominences", equals: "present" }
-    },
-
-    /* ===== Scars ===== */
-    {
-      type: "checkbox-group",
-      name: "scars",
-      label: "Scars",
-      position: "side",
-      options: [
-        { label: "None", value: "none" },
-        { label: "Healed", value: "healed" },
-        { label: "Adherent", value: "adherent" },
-        { label: "Painful", value: "painful" }
-      ]
-    },
 
         {
           type: "textarea",
-          name: "additional_notes",
-          label: "Additional Notes on Skin Integrity & Limb Condition"
+          name: "bony_prominences_notes",
+          label: "Specify",
+          showIf: { field: "bony_prominences", equals: "present" }
+        },
+
+        { type: "textarea", name: "additional_notes", label: "Additional Notes" },
+
+        { type: "subheading", label: "E. Wound Assessment" },
+
+        {
+          type: "radio",
+          name: "wound_present",
+          label: "Wound Present",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" }
+          ]
+        },
+
+        {
+          type: "input",
+          name: "wound_location",
+          label: "Location",
+          showIf: { field: "wound_present", equals: "yes" }
+        },
+
+        {
+          type: "input",
+          name: "wound_size",
+          label: "Size (L × W × D)",
+          showIf: { field: "wound_present", equals: "yes" }
+        },
+
+        {
+          type: "input",
+          name: "wound_stage_type",
+          label: "Stage / Type",
+          showIf: { field: "wound_present", equals: "yes" }
+        },
+
+        { type: "subheading", label: "F.Stump Characteristics" },
+
+        {
+          type: "radio",
+          name: "stump_length",
+          label: "Stump Length",
+          options: [
+            { label: "Short", value: "short" },
+            { label: "Medium", value: "medium" },
+            { label: "Long", value: "long" }
+          ]
+        },
+
+        {
+          type: "radio",
+          name: "muscle_tissue",
+          label: "Muscle Tissue",
+          options: [
+            { label: "Firm", value: "firm" },
+            { label: "Adequate", value: "adequate" },
+            { label: "Flabby", value: "flabby" }
+          ]
+        },
+
+        {
+          type: "radio",
+          name: "keloid_present",
+          label: "Keloid Present",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" }
+          ]
         }
-      ]
-    },
-    {
-  title: "Wound Assessment (If Present)",
-  fields: [
 
-    /* ===== Is Wound Present ===== */
-    {
-      type: "radio",
-      name: "wound_present",
-      label: "Wound Present",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-
-    /* ===== Location ===== */
-    {
-      type: "input",
-      name: "wound_location",
-      label: "Location",
-      showIf: { field: "wound_present", equals: "yes" }
-    },
-
-    /* ===== Size ===== */
-    {
-      type: "input",
-      name: "wound_size",
-      label: "Size (L × W × D)",
-      placeholder: "e.g. 4 × 2 × 1 cm",
-      showIf: { field: "wound_present", equals: "yes" }
-    },
-
-    /* ===== Exudate ===== */
-    {
-      type: "checkbox-group",
-      name: "wound_exudate",
-      label: "Exudate",
-      position: "side",
-      options: [
-        { label: "None", value: "none" },
-        { label: "Serous", value: "serous" },
-        { label: "Purulent", value: "purulent" }
-      ],
-      showIf: { field: "wound_present", equals: "yes" }
-    },
-
-    /* ===== Odor ===== */
-    {
-      type: "radio",
-      name: "wound_odor",
-      label: "Odor",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ],
-      showIf: { field: "wound_present", equals: "yes" }
-    },
-
-    /* ===== Stage / Type ===== */
-    {
-      type: "input",
-      name: "wound_stage_type",
-      label: "Stage / Type",
-      showIf: { field: "wound_present", equals: "yes" }
-    },
-
-    /* ===== Dressing Used ===== */
-    {
-      type: "input",
-      name: "wound_dressing_used",
-      label: "Dressing Used",
-      showIf: { field: "wound_present", equals: "yes" }
-    }
-
-  ]
-},
-{
-  title: "Stump Characteristics",
-  fields: [
-    {
-      type: "radio",
-      name: "stump_length",
-      label: "Stump Length",
-      options: [
-        { label: "Short", value: "short" },
-        { label: "Medium", value: "medium" },
-        { label: "Long", value: "long" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "stump_shape",
-      label: "Stump Shape",
-      options: [
-        { label: "Bulbous", value: "bulbous" },
-        { label: "Cylindrical", value: "cylindrical" },
-        { label: "Conical", value: "conical" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "muscle_tissue",
-      label: "Muscle Tissue",
-      options: [
-        { label: "Firm", value: "firm" },
-        { label: "Adequate", value: "adequate" },
-        { label: "Flabby", value: "flabby" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "keloid_present",
-      label: "Keloid Present",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
       ]
     }
   ]
-}]
 };
 
 const PROSTHETICS_ASSESSMENT_SCHEMA = {
   actions: PROSTHETICS_SUBJECTIVE_SCHEMA.actions,
-   fields: [
+  fields: [
 
-    /* ===== Dates ===== */
-    {
-      type: "date",
-      name: "assessment_date",
-      label: "Date of Assessment"
-    },
-    {
-      type: "date",
-      name: "amputation_date",
-      label: "Date of Amputation"
-    },
 
-    /* ===== Cause ===== */
-    {
-      type: "checkbox-group",
-      name: "amputation_cause",
-      label: "Cause",
-      options: [
-        { label: "Trauma", value: "trauma" },
-        { label: "Vascular", value: "vascular" },
-        { label: "Infection", value: "infection" },
-        { label: "Tumour", value: "tumour" },
-        { label: "Congenital", value: "congenital" }
-      ]
-    },
-
-    /* ===== Referrer ===== */
-    {
-      type: "input",
-      name: "referring_physician",
-      label: "Referring Physician"
-    },
 
     /* ===== Clinical Impression ===== */
     {
@@ -897,7 +937,16 @@ const PROSTHETICS_ASSESSMENT_SCHEMA = {
       name: "clinical_impression",
       label: "Clinical Impression"
     },
-
+    {
+      type: "textarea",
+      name: "Functional Level Summary:",
+      label: "Functional Level Summary:"
+    },
+    {
+      type: "textarea",
+      name: "Residual Limb Condition",
+      label: "Residual Limb Condition"
+    },
     /* ===== Casting Readiness ===== */
     {
       type: "radio",
@@ -914,158 +963,6 @@ const PROSTHETICS_ASSESSMENT_SCHEMA = {
       label: "If No – Reason / Plan",
       showIf: { field: "assessment_ready_for_casting", equals: "no" }
     },
-    {
-      type: "date",
-      name: "assessment_next_review",
-      label: "Next Review Date"
-    },
-    {
-  title: "Stump Characteristics",
-  fields: [
-    {
-      type: "radio",
-      name: "stump_length",
-      label: "Stump Length",
-      options: [
-        { label: "Short", value: "short" },
-        { label: "Medium", value: "medium" },
-        { label: "Long", value: "long" }
-      ]
-    },
-    {
-      type: "input",
-      name: "stump_length_notes",
-      label: "Stump Length (Free Text / Notes)"
-    },
-    {
-      type: "radio",
-      name: "stump_shape",
-      label: "Stump Shape",
-      options: [
-        { label: "Bulbous", value: "bulbous" },
-        { label: "Cylindrical", value: "cylindrical" },
-        { label: "Conical", value: "conical" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "muscle_tissue_type",
-      label: "Tissue Type (Muscle)",
-      options: [
-        { label: "Firm", value: "firm" },
-        { label: "Adequate", value: "adequate" },
-        { label: "Flabby", value: "flabby" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "keloid_presence",
-      label: "Presence of Keloid",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    }
-  ]
-},{
-  title: "Joint Range / Alignment",
-  fields: [
-    {
-      type: "input",
-      name: "hip_flexion_angle",
-      label: "Hip Flexion Angle (°)",
-      placeholder: "e.g. 110"
-    },
-    {
-      type: "input",
-      name: "knee_flexion_angle",
-      label: "Knee Flexion Angle (°)",
-      placeholder: "e.g. 120"
-    },
-    {
-      type: "input",
-      name: "abduction_angle",
-      label: "Abduction Angle (°)",
-      placeholder: "e.g. 15"
-    }
-  ]
-},
-{
-  title: "Casting Readiness (Assessment)",
-  fields: [
-    {
-      type: "radio",
-      name: "assessment_ready_for_casting",
-      label: "Ready for Casting",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "assessment_casting_plan",
-      label: "If No – Justification / Plan",
-      showIf: { field: "assessment_ready_for_casting", equals: "no" }
-    },
-    {
-      type: "date",
-      name: "assessment_next_review_date",
-      label: "Next Review Date"
-    }
-  ]
-},
-{
-  title: "Lower Limb Prosthesis Prescription (Assessment)",
-  fields: [
-    {
-      type: "checkbox-group",
-      name: "ll_suspension_system",
-      label: "Suspension System",
-      options: [
-        { label: "Pelite", value: "pelite" },
-        { label: "Pin Lock", value: "pin_lock" },
-        { label: "Suction", value: "suction" },
-        { label: "Lanyard", value: "lanyard" },
-        { label: "Seal-in", value: "seal_in" }
-      ]
-    },
-    {
-      type: "checkbox-group",
-      name: "ll_socket_design",
-      label: "Socket Design",
-      options: [
-        { label: "Patella Tendon Bearing (PTB)", value: "ptb" },
-        { label: "Total Surface Bearing (TSB)", value: "tsb" },
-        { label: "Ischial Containment (IC)", value: "ic" },
-        { label: "Quadrilateral", value: "quadrilateral" }
-      ]
-    },
-    {
-      type: "checkbox-group",
-      name: "ll_knee_joint",
-      label: "Knee Joint",
-      options: [
-        { label: "Safety Knee", value: "safety" },
-        { label: "4-Bar Knee", value: "four_bar" },
-        { label: "Pneumatic", value: "pneumatic" }
-      ]
-    },
-    {
-      type: "checkbox-group",
-      name: "ll_foot_type",
-      label: "Foot",
-      options: [
-        { label: "SACH", value: "sach" },
-        { label: "Single Axis", value: "single_axis" },
-        { label: "Multi-flex", value: "multi_flex" },
-        { label: "Energy Storing", value: "energy_storing" }
-      ]
-    }
-  ]
-}
-
-
 
   ]
 };
@@ -1160,13 +1057,61 @@ const PROSTHETICS_PLAN_SCHEMA = {
           type: "date",
           name: "fitting_date",
           label: "Fitting Date",
-          helper: "Auto: 4 working days post casting"
-        }
+        },
+        {
+          type: "date",
+          name: "assessment_next_review",
+          label: "Next Review Date"
+        },
       ]
     }
   ]
 };
+const getConsentSchema = (assignmentType) => ({
+  title: assignmentType === "orthotics"
+    ? "Orthotics Status"
+    : "Prosthetic Status",
 
+  fields: [
+    {
+      type: "radio",
+      name: "prosthesis_restoration",
+      label: assignmentType === "orthotics" ? "Orthotics Restoration" : "Prosthesis Restoration",
+      options: [
+        { label: "New", value: "new" },
+        { label: "Repair", value: "repair" }
+      ]
+    },
+    {
+      type: "radio",
+      name: "inspire_scheme",
+      label: "INSPIRE Scheme",
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ]
+    },
+    {
+      name: "supplier_name",
+      label: "Supplier Name",
+      type: "single-select",
+      showIf: { field: "inspire_scheme", equals: "yes" },
+      options: [
+        { label: "Unit P&O PRPSB", value: "unit_po_prpsb" },
+        { label: "TehLin", value: "tehlin" },
+        { label: "Warisan Jasamedik", value: "warisan" },
+        { label: "Limb Brace", value: "limb_brace" },
+        { label: "Bioapps", value: "bioapps" },
+        { label: "Hasba Medik", value: "hasba" },
+        { label: "Restu Progresif", value: "restu" },
+        { label: "Central Limb", value: "central_limb" },
+        { label: "RS Alfa", value: "rs_alfa" },
+        { label: "Secure Logic Tech (SLT)", value: "slt" }
+      ]
+    },
+    { type: "date", name: "po_date", label: "PO Date" }
+  ]
+});
 /* ===================== COMPONENT ===================== */
 
 export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
@@ -1250,9 +1195,18 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
         }}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {patient.dob}</div>
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>Primary Diagnosis:</b> {patient.icd}</div>
+          <div><b>DOB:</b> {patient?.dob}</div>
+          <div><b>Age / Gender:</b> {patient?.age} / {patient?.sex}</div>
+          <div><b>ICD:</b> {patient?.icd}</div>
+          <div><b>Date of Assessment:</b> {patient?.date_of_assessment}</div>
+          <div><b>Date of Onset:</b> {patient?.date_of_onset}</div>
+          <div>
+            <b>Duration of Diagnosis:</b>{" "}
+            {patient?.date_of_onset}
+          </div>
+          <div><b>Primary Diagnosis:</b> {patient?.diagnosis_history || "-"}</div>
+          <div><b>Secondary Diagnosis:</b> {patient?.medical_history || "-"}</div>
+
           <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <b>What do you want to perform?</b>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -1292,7 +1246,11 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
       >
         <PatientInfo patient={patient} values={values} onChange={onChange} />
       </CommonFormBuilder>
-
+      <CommonFormBuilder
+        schema={getConsentSchema(values.assignment_type)}
+        values={values}
+        onChange={onChange}
+      />
       <div style={{
         display: "flex",
         gap: 12,
@@ -1317,14 +1275,14 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
         ))}
       </div>
 
-     <CommonFormBuilder
-  schema={schemaMap[activeTab]}
-  values={values}
-  onChange={onChange}
-  submitted={submitted}
-  onAction={handleAction}
-  assessmentRegistry={ORTHOTICS_ASSESSMENT_REGISTRY}
->
+      <CommonFormBuilder
+        schema={schemaMap[activeTab]}
+        values={values}
+        onChange={onChange}
+        submitted={submitted}
+        onAction={handleAction}
+        assessmentRegistry={ORTHOTICS_ASSESSMENT_REGISTRY}
+      >
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
           <button

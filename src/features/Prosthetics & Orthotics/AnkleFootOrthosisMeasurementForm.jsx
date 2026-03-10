@@ -30,28 +30,28 @@ const ANKLE_FOOT_ORTHOSIS_MEASUREMENT_SCHEMA = {
 
   sections: [
     /* ================= PATIENT INFO ================= */
-    {
-      title: "Patient Details",
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "age", label: "RN", type: "input" },
-            { name: "gender", label: "IC", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Referral Date", type: "date" },
-            { name: "height", label: "Fitting Date", type: "date" }
-          ]
-        },
-       { name: "diagnosis", label: "Diagnosis", type: "textarea" },
-              { name: "notes", label: "Notes", type: "textarea" }
+    // {
+    //   title: "Patient Details",
+    //   fields: [
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "age", label: "RN", type: "input" },
+    //         { name: "gender", label: "IC", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "weight", label: "Referral Date", type: "date" },
+    //         { name: "height", label: "Fitting Date", type: "date" }
+    //       ]
+    //     },
+    //    { name: "diagnosis", label: "Diagnosis", type: "textarea" },
+    //           { name: "notes", label: "Notes", type: "textarea" }
 
-      ]
-    },
+    //   ]
+    // },
 
     /* ================= AFFECTED AREAS ================= */
     {

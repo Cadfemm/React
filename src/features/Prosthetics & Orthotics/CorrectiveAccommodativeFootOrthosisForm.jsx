@@ -5,31 +5,42 @@ const FOOT_FIELDS = [
   { name: "lenght of foot", label: "Length of Foot", top: "20%", left: "30%" },
 
 ];
+const LOWER_LIMB_FIELDS = [
+  { name: "A", label: "A", top: "10%", left: "45%" },
+  { name: "B", label: "B", top: "20%", left: "45%" },
+  { name: "C", label: "C", top: "30%", left: "45%" },
+  { name: "D", label: "D", top: "40%", left: "45%" },
+  { name: "E", label: "E", top: "50%", left: "45%" },
+  { name: "F", label: "F", top: "60%", left: "45%" }, // Thigh
+  { name: "G", label: "G", top: "70%", left: "45%" }, // Leg
+  { name: "H", label: "H", top: "80%", left: "45%" }, // Foot
+  { name: "I", label: "I", top: "90%", left: "45%" },  // Whole limb
+  { name: "J", label: "J", top: "10%", left: "30%" },
+  { name: "K", label: "K", top: "20%", left: "30%" },
+  { name: "L", label: "L", top: "30%", left: "30%" },
+  { name: "M", label: "M", top: "40%", left: "30%" },
+  { name: "N", label: "N", top: "50%", left: "30%" },
+  { name: "O", label: "O", top: "60%", left: "30%" },
+  { name: "P", label: "P", top: "70%", left: "30%" },
+  { name: "Q", label: "Q", top: "80%", left: "30%" },
+  { name: "R", label: "R", top: "90%", left: "30%" },
+  { name: "S", label: "S", top: "10%", left: "60%" },
+  { name: "T", label: "T", top: "20%", left: "60%" }
 
+];
 const CORRECTIVE_ACCOMMODATIVE_FOOT_ORTHOSIS_SCHEMA = {
   title: "Corrective / Accommodative Foot Orthosis Measurement Form",
 
   sections: [
-     {
-      title: "Patient Details",
+    {
+      title: "Affected Areas",
       fields: [
         {
-          type: "row",
-          fields: [
-            { name: "age", label: "RN", type: "input" },
-            { name: "gender", label: "IC", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Referral Date", type: "date" },
-            { name: "height", label: "Fitting Date", type: "date" }
-          ]
-        },
-       { name: "diagnosis", label: "Diagnosis", type: "textarea" },
-              { name: "notes", label: "Notes", type: "textarea" }
-
+          name: "affected_areas",
+          type: "image-anatomy-selector",
+          image: "/anklefoot.png",
+          markers: LOWER_LIMB_FIELDS
+        }
       ]
     },
 
@@ -37,6 +48,7 @@ const CORRECTIVE_ACCOMMODATIVE_FOOT_ORTHOSIS_SCHEMA = {
     {
       title: "Affected Areas",
       fields: [
+        
         {
           name: "affected_areas",
           type: "image-anatomy-selector",

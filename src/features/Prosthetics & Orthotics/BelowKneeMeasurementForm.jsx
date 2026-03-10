@@ -22,34 +22,34 @@ const BELOW_KNEE_MEASUREMENT_SCHEMA = {
 
   sections: [
     /* ================= PATIENT INFO ================= */
-      {
-      title: "Patient Details",
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "age", label: "RN", type: "input" },
-            { name: "gender", label: "IC", type: "input" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Referral Date", type: "date" },
-            { name: "height", label: "Fitting Date", type: "date" }
-          ]
-        },
-         {
-          type: "row",
-          fields: [
-            { name: "weight", label: "Amp side", type: "input" },
-            { name: "height", label: "K-level", type: "input" }
-          ]
-        },
-              { name: "notes", label: "Notes", type: "textarea" }
+    //   {
+    //   title: "Patient Details",
+    //   fields: [
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "age", label: "RN", type: "input" },
+    //         { name: "gender", label: "IC", type: "input" }
+    //       ]
+    //     },
+    //     {
+    //       type: "row",
+    //       fields: [
+    //         { name: "weight", label: "Referral Date", type: "date" },
+    //         { name: "height", label: "Fitting Date", type: "date" }
+    //       ]
+    //     },
+    //      {
+    //       type: "row",
+    //       fields: [
+    //         { name: "weight", label: "Amp side", type: "input" },
+    //         { name: "height", label: "K-level", type: "input" }
+    //       ]
+    //     },
+    //           { name: "notes", label: "Notes", type: "textarea" }
 
-      ]
-    },
+    //   ]
+    // },
     /* ================= AFFECTED AREAS ================= */
     {
       title: "Affected Areas",
@@ -123,25 +123,49 @@ const BELOW_KNEE_MEASUREMENT_SCHEMA = {
 
     /* ================= CIRCUMFERENCE TABLE ================= */
     {
-      title: "Circumference Measurement (cm)",
-      fields: [
-        {
-          type: "grid-table-flat",
-          name: "circumference",
-          headers: ["Stump", "Cast", "Reduction %", "Goal", "Final"],
-          rows: [
-            { key: "level_1", label: "Level 1" },
-            { key: "level_2", label: "Level 2" },
-            { key: "level_3", label: "Level 3" },
-            { key: "level_4", label: "Level 4" }
-          ]
-        },   {
+  title: "Circumference Measurement (cm)",
+  fields: [
+
+    {
+      type: "grid-header",
+      cols: ["Stump", "Cast", "Reduction %", "Goal", "Final"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_1",
+      label: "Level 1",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_2",
+      label: "Level 2",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_3",
+      label: "Level 3",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+
+    {
+      type: "grid-row",
+      name: "circumference_level_4",
+      label: "Level 4",
+      cols: ["input", "input", "input", "input", "input"]
+    },
+ {
           name: "remarks",
           label: "Notes",
           type: "textarea"
         }
-      ]
-    },
+  ]
+},
+
 
   
   ]
