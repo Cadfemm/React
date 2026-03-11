@@ -193,6 +193,7 @@ export default function SkinAssessment({ onChange }) {
               label: "Skin Surface",
               type: "radio",
               options: [
+                { label: "None", value: "none" },
                 { label: "Smooth", value: "smooth" },
                 { label: "Scaling", value: "scaling" },
                 { label: "Crusting", value: "crusting" },
@@ -306,7 +307,17 @@ export default function SkinAssessment({ onChange }) {
                   value: "ulcer",
                   tooltip: "Loss of epidermis and at least part of the dermis, resulting in a deeper tissue defect.",
                 },
+                {
+                  label: "Others",
+                  value: "other",
+                },
               ],
+            },
+            {
+              name: "lesion_morphology_other_specify",
+              label: "Specify",
+              type: "input",
+              showIf: { field: "lesion_morphology", equals: "other" },
             },
             {
               type: "info-text",
@@ -353,7 +364,7 @@ export default function SkinAssessment({ onChange }) {
                   action: "lesion_reference_popup",
                   showIf: {
                     field: "lesion_morphology",
-                    exists: true,
+                    oneOf: ["macule", "papule", "plaque", "vesicle", "bulla", "pustule", "wheal", "nodule", "scale", "crust", "ulcer"],
                   },
                 },
                 {
