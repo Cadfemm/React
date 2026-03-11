@@ -151,8 +151,8 @@ function BodyChartCanvas({ label, value, onChange, name }) {
           style={{
             padding: "6px 12px",
             borderRadius: 8,
-            border: "1px solid #cbd5e1",
-            background: "#fff",
+          
+           
             cursor: "pointer",
             fontWeight: 600,
           }}
