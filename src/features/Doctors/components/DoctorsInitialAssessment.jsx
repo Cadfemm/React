@@ -11,6 +11,7 @@ import CardiovascularRespiratoryAssessment from "./CardiovascularRespiratoryAsse
 import BowelAssessment from "./BowelAssessment";
 import BladderAssessment from "./BladderAssessment";
 import FunctionalAssessment from "./Functional";
+import SkinAssessment from "./SkinAssessment";
 
 /* -------------------------------------------------------------
    MULTISELECT CHECKBOX DROPDOWN  (UI ONLY - NO BUSINESS LOGIC)
@@ -264,6 +265,7 @@ const [HearingAssessmentData, setHearingAssessmentData] = useState(null);
 const [BowelAssessmentData, setBowelAssessmentData] = useState(null);
 const [BladderAssessmentData, setBladderAssessmentData] = useState(null);
 const [FunctionalAssessmentData,setFunctionalAssessmentData] = useState(null);
+const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
   /* --------- Tabs --------- */
   const tabs = [
     "Cognitive",
@@ -504,6 +506,9 @@ const handleSubmitReferral = () => {
         ) :
         tabs[activeTab] === "Spasm & Spasticity" ? (
           <SpasmSpasticity />
+        ) :
+        tabs[activeTab] === "Skin" ? (
+          <SkinAssessment onChange={setSkinAssessmentData} />
         ) :
          tabs[activeTab] === "Social History" ? (
           <SocialHistory />

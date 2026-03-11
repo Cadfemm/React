@@ -1,6 +1,132 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 import AudiogramGraph from "../Audiology/components/AudioGramGraph";
+
+function DrawCanvasField({ field, value, onChange }) {
+  const canvasRef = useRef(null);
+  const isDrawingRef = useRef(false);
+  const lastRef = useRef({ x: 0, y: 0 });
+
+  const width = field.width || 320;
+  const height = field.height || 260;
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
+    };
+    img.src = value || field.backgroundImage || "";
+  }, [value, field.backgroundImage, width, height]);
+
+  const getPoint = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: ((clientX - rect.left) / rect.width) * width,
+      y: ((clientY - rect.top) / rect.height) * height,
+    };
+  };
+
+  const start = (e) => {
+    e.preventDefault();
+    const p = getPoint(e);
+    isDrawingRef.current = true;
+    lastRef.current = p;
+  };
+
+  const move = (e) => {
+    if (!isDrawingRef.current) return;
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const p = getPoint(e);
+    ctx.strokeStyle = "#dc2626";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(lastRef.current.x, lastRef.current.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    lastRef.current = p;
+  };
+
+  const end = (e) => {
+    if (!isDrawingRef.current) return;
+    e.preventDefault();
+    isDrawingRef.current = false;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const data = canvas.toDataURL("image/png");
+    onChange(field.name, data);
+  };
+
+  const clear = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, width, height);
+    onChange(field.name, "");
+  };
+
+  return (
+    <div style={{ marginTop: 6 }}>
+      <div
+        style={{
+          position: "relative",
+          border: "1px solid #e5e7eb",
+          borderRadius: 8,
+          overflow: "hidden",
+          width,
+          height,
+          background: "#ffffff",
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          width={width}
+          height={height}
+          style={{ width, height, touchAction: "none", display: "block" }}
+          onMouseDown={start}
+          onMouseMove={move}
+          onMouseUp={end}
+          onMouseLeave={end}
+          onTouchStart={start}
+          onTouchMove={move}
+          onTouchEnd={end}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={clear}
+        style={{
+          marginTop: 6,
+          padding: "4px 10px",
+          borderRadius: 6,
+
+          cursor: "pointer",
+          fontSize: 12,
+        }}
+      >
+        Clear drawing
+      </button>
+    </div>
+  );
+}
 
 function evaluateShowIf(showIf, values) {
   if (!showIf) return true;
@@ -415,7 +541,7 @@ export default function CommonFormBuilder({
     </div>
   );
 }
-function InfoTooltip({ info }) {
+function InfoTooltip({ info, children, showIcon = true }) {
   const [open, setOpen] = React.useState(false);
 
   if (!info) return null;
@@ -428,7 +554,11 @@ function InfoTooltip({ info }) {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <span style={styles.infoIcon}>i</span>
+      {children ? (
+        children
+      ) : (
+        showIcon && <span style={styles.infoIcon}>i</span>
+      )}
 
       {open && (
         <div style={styles.tooltipCard}>
@@ -1123,7 +1253,7 @@ function renderField(
 
                 return (
                   <div key={child.name} style={{ marginBottom: 14 }}>
-                    {child.label && (
+                    {child.label && child.type !== "subheading" && child.type !== "checkbox-group" && (
                       <label style={styles.label}>
                         {child.label}
                       </label>
@@ -1620,6 +1750,15 @@ function renderField(
         </div>
       );
 
+    case "draw-canvas":
+      return (
+        <DrawCanvasField
+          field={field}
+          value={value}
+          onChange={onChange}
+        />
+      );
+
     case "grid-header": {
       const colsCount = field.cols.length;
       // Use custom template if provided, otherwise default
@@ -1961,8 +2100,26 @@ function renderField(
             {opts.map((opt, idx) => {
               const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
               const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
+              const optTooltip = typeof opt === "object" && opt !== null ? opt.tooltip : undefined;
               // Ensure both values are same type for comparison
               const isChecked = value != null && (value === optVal || String(value) === String(optVal));
+              const labelText =
+                typeof optLabel === "object" && optLabel !== null && !Array.isArray(optLabel)
+                  ? t(optLabel, languageConfig?.lang)
+                  : (typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? ""));
+              const renderedLabel = optTooltip ? (
+                <InfoTooltip
+                  info={{
+                    title: labelText,
+                    content: [optTooltip]
+                  }}
+                  showIcon={false}
+                >
+                  {labelText}
+                </InfoTooltip>
+              ) : (
+                labelText
+              );
               return (
                 <label key={`${field.name}-${idx}`} style={styles.inlineItem}>
                   <input
@@ -1973,7 +2130,9 @@ function renderField(
                     disabled={readOnly}
                     onChange={() => !readOnly && onChange(field.name, optVal)}
                   />
-                  {typeof optLabel === "object" && optLabel !== null && !Array.isArray(optLabel) ? t(optLabel, languageConfig?.lang) : (typeof optLabel === "string" || typeof optLabel === "number" ? optLabel : String(optLabel ?? ""))}
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    {renderedLabel}
+                  </span>
                 </label>
               );
             })}
