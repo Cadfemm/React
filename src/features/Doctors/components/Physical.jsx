@@ -31,29 +31,213 @@ export default function Physical({ onChange }) {
   };
 
   function MRCScaleForm({ values, onChange }) {
+    const strengthOptions = [
+      { value: "0", label: "0" },
+      { value: "1", label: "1" },
+      { value: "2", label: "2" },
+      { value: "3", label: "3" },
+      { value: "4", label: "4" },
+      { value: "5", label: "5" },
+      { value: "Not applicable", label: "Not applicable" },
+    ];
+
+    const rows = [
+      { key: "shoulder_flexor", label: "Shoulder flexor" },
+      { key: "shoulder_abductor", label: "Shoulder abductor" },
+      { key: "elbow_flexor", label: "Elbow flexor" },
+      { key: "elbow_extensor", label: "Elbow extensor" },
+      { key: "wrist_flexor", label: "Wrist flexor" },
+      { key: "wrist_extensor", label: "Wrist extensor" },
+      { key: "finger_flexor", label: "Finger flexor" },
+      { key: "finger_extensor", label: "Finger extensor" },
+      { key: "hip_flexor", label: "Hip flexor" },
+      { key: "hip_extensor", label: "Hip extensor" },
+      { key: "knee_flexor", label: "Knee flexor" },
+      { key: "knee_extensor", label: "Knee extensor" },
+      { key: "ankle_dorsiflexor", label: "Ankle dorsiflexor" },
+      { key: "ankle_plantarflexor", label: "Ankle plantarflexor" },
+    ];
+
     return (
-      <CommonFormBuilder
-        schema={{
-          title: "",
-          sections: [{ fields: [{ name: "mrc_scale_score", label: "MRC Scale", type: "textarea" }] }],
-        }}
-        values={values}
-        onChange={onChange}
-        layout="nested"
-      />
+      <div style={{ width: "100%" }}>
+        <div style={{ fontWeight: 700, marginBottom: 10 }}>MRC</div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>MRC</th>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Right</th>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Left</th>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Specify</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const rightName = `mrc_${r.key}_right`;
+                const leftName = `mrc_${r.key}_left`;
+                const specifyName = `mrc_${r.key}_specify`;
+                return (
+                  <tr key={r.key}>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9", fontWeight: 700 }}>
+                      {r.label}
+                    </td>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <select
+                        value={values[rightName] || ""}
+                        onChange={(e) => onChange(rightName, e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 10px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 8,
+                          background: "#fff",
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {strengthOptions.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <select
+                        value={values[leftName] || ""}
+                        onChange={(e) => onChange(leftName, e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 10px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 8,
+                          background: "#fff",
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {strengthOptions.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <input
+                        type="text"
+                        value={values[specifyName] || ""}
+                        onChange={(e) => onChange(specifyName, e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 10px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 8,
+                          background: "#fff",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
   }
   function MyotomeTestingForm({ values, onChange }) {
+    const strengthOptions = [
+      { value: "0", label: "0" },
+      { value: "1", label: "1" },
+      { value: "2", label: "2" },
+      { value: "3", label: "3" },
+      { value: "4", label: "4" },
+      { value: "5", label: "5" },
+      { value: "NT", label: "NT" },
+    ];
+
+    const rows = [
+      { key: "C5", label: "Elbow flexors (C5)" },
+      { key: "C6", label: "Wrist extensors (C6)" },
+      { key: "C7", label: "Elbow extensors (C7)" },
+      { key: "C8", label: "Finger flexors (C8)" },
+      { key: "T1", label: "Finger abductors (T1)" },
+      { key: "L2", label: "Hip flexors (L2)" },
+      { key: "L3", label: "Knee extensors (L3)" },
+      { key: "L4", label: "Ankle dorsiflexors (L4)" },
+      { key: "L5", label: "Long toe extensors (L5)" },
+      { key: "S1", label: "Ankle plantar flexors (S1)" },
+    ];
+
     return (
-      <CommonFormBuilder
-        schema={{
-          title: "",
-          sections: [{ fields: [{ name: "myotome_testing_notes", label: "Myotome Testing", type: "textarea" }] }],
-        }}
-        values={values}
-        onChange={onChange}
-        layout="nested"
-      />
+      <div style={{ width: "100%" }}>
+        <div style={{ fontWeight: 700, marginBottom: 10 }}>b) Myotome</div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 560 }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Myotome</th>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Right</th>
+                <th style={{ textAlign: "left", padding: "10px 8px", borderBottom: "1px solid #e5e7eb" }}>Left</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const rightName = `myotome_${r.key}_right`;
+                const leftName = `myotome_${r.key}_left`;
+                return (
+                  <tr key={r.key}>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9", fontWeight: 700 }}>
+                      {r.label}
+                    </td>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <select
+                        value={values[rightName] || ""}
+                        onChange={(e) => onChange(rightName, e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 10px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 8,
+                          background: "#fff",
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {strengthOptions.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td style={{ padding: "10px 8px", borderBottom: "1px solid #f1f5f9" }}>
+                      <select
+                        value={values[leftName] || ""}
+                        onChange={(e) => onChange(leftName, e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 10px",
+                          border: "1px solid #e5e7eb",
+                          borderRadius: 8,
+                          background: "#fff",
+                        }}
+                      >
+                        <option value="">Select</option>
+                        {strengthOptions.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
   }
 
@@ -166,7 +350,7 @@ export default function Physical({ onChange }) {
           },
           {
             name: "red_flag_specific",
-            label: "Specific",
+            label: "Specify",
             type: "textarea",
             showIf: { field: "clinical_category", equals: "spine", and: { field: "red_flag_screening", equals: "yes" } },
           },
@@ -362,7 +546,7 @@ export default function Physical({ onChange }) {
 
           {
             name: "motor_other_free_text",
-            label: "Other (Free text)",
+            label: "Specify",
             type: "textarea",
             showIf: { field: "clinical_category", equals: "spine" },
           },
@@ -371,7 +555,7 @@ export default function Physical({ onChange }) {
 
           {
             name: "sensory_numbness",
-            label: "Numbness (site)",
+            label: "Numbness",
             type: "radio",
             options: ["Yes", "No"],
             showIf: { field: "clinical_category", equals: "spine" },
@@ -456,7 +640,6 @@ export default function Physical({ onChange }) {
 
           { type: "subheading", label: "Physical Examination", showIf: { field: "clinical_category", equals: "spine" } },
           { type: "subheading", label: "Motor System", showIf: { field: "clinical_category", equals: "spine" } },
-          { type: "subheading", label: "Inspection", showIf: { field: "clinical_category", equals: "spine" } },
 
           {
             type: "row",
@@ -663,7 +846,7 @@ export default function Physical({ onChange }) {
           },
           {
             name: "pe_involuntary_movements_freetext",
-            label: "Free text",
+            label: "Specify",
             type: "input",
             showIf: { field: "clinical_category", equals: "spine" },
           },

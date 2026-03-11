@@ -1,168 +1,6 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-
-function BodyChartCanvas({ label, value, onChange, name }) {
-  const canvasRef = useRef(null);
-  const isDrawingRef = useRef(false);
-  const lastRef = useRef({ x: 0, y: 0 });
-
-  const width = 320;
-  const height = 420;
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, width, height);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#dc2626";
-    ctx.lineWidth = 3;
-
-    if (!value) return;
-    const img = new Image();
-    img.onload = () => {
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(img, 0, 0, width, height);
-    };
-    img.src = value;
-  }, [value]);
-
-  const getPoint = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: ((clientX - rect.left) / rect.width) * width,
-      y: ((clientY - rect.top) / rect.height) * height,
-    };
-  };
-
-  const start = (e) => {
-    e.preventDefault();
-    const p = getPoint(e);
-    isDrawingRef.current = true;
-    lastRef.current = p;
-  };
-
-  const move = (e) => {
-    if (!isDrawingRef.current) return;
-    e.preventDefault();
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const p = getPoint(e);
-    ctx.beginPath();
-    ctx.moveTo(lastRef.current.x, lastRef.current.y);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    lastRef.current = p;
-  };
-
-  const end = (e) => {
-    if (!isDrawingRef.current) return;
-    e.preventDefault();
-    isDrawingRef.current = false;
-    const canvas = canvasRef.current;
-    onChange(name, canvas.toDataURL("image/png"));
-  };
-
-  return (
-    <div style={{ marginTop: 10 }}>
-      <div style={{ fontWeight: 700, marginBottom: 8 }}>{label}</div>
-      <div
-        style={{
-          position: "relative",
-          width,
-          height,
-          border: "1px solid #e5e7eb",
-          borderRadius: 10,
-          background: "#fff",
-          overflow: "hidden",
-        }}
-      >
-        <svg
-          viewBox="0 0 320 420"
-          width={width}
-          height={height}
-          style={{ position: "absolute", inset: 0 }}
-        >
-          <rect x="0" y="0" width="320" height="420" fill="#ffffff" />
-          {/* Minimal body outline (front/back neutral) */}
-          <circle cx="160" cy="55" r="28" fill="none" stroke="#94a3b8" strokeWidth="2" />
-          <path
-            d="M120 90 C135 105 145 125 150 150 C152 175 148 205 140 230 C130 260 125 295 128 330 C130 360 140 385 160 410"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-          <path
-            d="M200 90 C185 105 175 125 170 150 C168 175 172 205 180 230 C190 260 195 295 192 330 C190 360 180 385 160 410"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-          <path
-            d="M120 120 C90 150 85 180 90 210"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-          <path
-            d="M200 120 C230 150 235 180 230 210"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-          <path
-            d="M140 230 C130 265 128 300 130 330"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-          <path
-            d="M180 230 C190 265 192 300 190 330"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-        </svg>
-
-        <canvas
-          ref={canvasRef}
-          width={width}
-          height={height}
-          style={{ position: "absolute", inset: 0, touchAction: "none" }}
-          onMouseDown={start}
-          onMouseMove={move}
-          onMouseUp={end}
-          onMouseLeave={end}
-          onTouchStart={start}
-          onTouchMove={move}
-          onTouchEnd={end}
-        />
-      </div>
-      <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-        <button
-          type="button"
-          onClick={() => onChange(name, "")}
-          style={{
-            padding: "6px 12px",
-            borderRadius: 8,
-          
-           
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
-        >
-          Clear drawing
-        </button>
-      </div>
-    </div>
-  );
-}
+import humanBodyImage from "../../../assets/Human Body.jpg";
 
 export default function PainAssessmentForm({ values, onChange }) {
   const schema = useMemo(() => {
@@ -172,6 +10,14 @@ export default function PainAssessmentForm({ values, onChange }) {
         {
           fields: [
             { type: "subheading", label: "History Taking" },
+            {
+              name: "pain_site_drawing",
+              label: "Site of Pain (draw)",
+              type: "draw-canvas",
+              backgroundImage: humanBodyImage,
+              width: 520,
+              height: 420,
+            },
             { name: "pain_history_specify", label: "Specify", type: "textarea" },
             {
               name: "pain_onset",
@@ -454,13 +300,6 @@ export default function PainAssessmentForm({ values, onChange }) {
 
   return (
     <div style={{ width: "100%" }}>
-      <BodyChartCanvas
-        label="Site of Pain (draw)"
-        name="pain_site_drawing"
-        value={values.pain_site_drawing || ""}
-        onChange={onChange}
-      />
-
       <CommonFormBuilder
         schema={schema}
         values={values}

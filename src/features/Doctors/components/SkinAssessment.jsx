@@ -15,6 +15,7 @@ import humanBodyImage from "../../../assets/Human Body.jpg";
 import feetImage from "../../../assets/feet_image.gif";
 import pressureInjuryStage1 from "../../../assets/PressureInjurystage1.png";
 import pressureInjuryStage2 from "../../../assets/PressureInjurystage2.png";
+import angioedemaImage from "../../../assets/Angioedema.png";
 
 function SkinLesionAssessmentForm({ values, onChange }) {
   return (
@@ -98,6 +99,7 @@ export default function SkinAssessment({ onChange }) {
   const [activeLesionImage, setActiveLesionImage] = useState(null);
   const [isLesionModalOpen, setIsLesionModalOpen] = useState(false);
   const [showPressureInjuryModal, setShowPressureInjuryModal] = useState(false);
+  const [showAngioedemaModal, setShowAngioedemaModal] = useState(false);
 
   const selectedLesion = values.lesion_morphology;
   const selectedLesionLabel = selectedLesion ? LESION_LABELS[selectedLesion] : null;
@@ -485,6 +487,12 @@ export default function SkinAssessment({ onChange }) {
               ],
             },
             {
+              type: "button",
+              label: "Reference image",
+              action: "angioedema_reference",
+              showIf: { field: "skin_disease_inflammatory_allergic", includes: "angioedema" },
+            },
+            {
               name: "angioedema_involvement",
               label: "Involvement",
               type: "checkbox-group",
@@ -538,6 +546,9 @@ export default function SkinAssessment({ onChange }) {
                 { label: "Impetigo", value: "impetigo" },
                 { label: "Herpes simplex", value: "herpes_simplex" },
                 { label: "Chickenpox", value: "chickenpox" },
+                { label: "Scarlet fever", value: "scarlet_fever" },
+                { label: "Infectious mononucleosis", value: "infectious_mononucleosis" },
+                { label: "Viral pharyngitis", value: "viral_pharyngitis" },
               ],
             },
             {
@@ -548,9 +559,6 @@ export default function SkinAssessment({ onChange }) {
                 { label: "Acute fever", value: "acute_fever" },
                 { label: "Vesicular rash", value: "vesicular_rash" },
                 { label: "Itchy rash", value: "itchy_rash" },
-                { label: "Scarlet fever", value: "scarlet_fever" },
-                { label: "Infectious mononucleosis", value: "infectious_mononucleosis" },
-                { label: "Viral pharyngitis", value: "viral_pharyngitis" },
               ],
               showIf: { field: "infectious_skin_conditions", includes: "chickenpox" },
             },
@@ -1562,6 +1570,9 @@ export default function SkinAssessment({ onChange }) {
     if (actionType === "pressure_injury_reference") {
       setShowPressureInjuryModal(true);
     }
+    if (actionType === "angioedema_reference") {
+      setShowAngioedemaModal(true);
+    }
   };
 
   return (
@@ -1665,6 +1676,55 @@ export default function SkinAssessment({ onChange }) {
               <button
                 type="button"
                 onClick={() => setShowPressureInjuryModal(false)}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 6,
+                  border: "1px solid #ccc",
+                
+                  cursor: "pointer",
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAngioedemaModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1300,
+          }}
+          onClick={() => setShowAngioedemaModal(false)}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 12,
+              padding: 16,
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ marginBottom: 12, fontWeight: 600 }}>Angioedema Reference Image</div>
+            <img
+              src={angioedemaImage}
+              alt="Angioedema reference"
+              style={{ maxWidth: "100%", maxHeight: "70vh", display: "block" }}
+            />
+            <div style={{ textAlign: "right", marginTop: 12 }}>
+              <button
+                type="button"
+                onClick={() => setShowAngioedemaModal(false)}
                 style={{
                   padding: "6px 14px",
                   borderRadius: 6,
