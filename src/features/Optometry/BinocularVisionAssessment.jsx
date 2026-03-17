@@ -88,7 +88,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -115,7 +115,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -159,7 +159,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"], },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"], },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -186,7 +186,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -229,7 +229,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -256,7 +256,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -352,7 +352,7 @@ export default function BinocularVisionAssessment({ onBack, layout = "root" }) {
           {
             type: "input",
             name: "extra_oculomotor_test_notes",
-            label: "Extra OculoMotor Test",
+            label: "Extraoculo Motor Test",
             showIf: {
               field: "binocular_examination_sections",
               includes: "general_examination"

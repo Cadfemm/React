@@ -12,14 +12,14 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
       type: "checkbox-group",
       name: "ocular_health_sections",
       options: [
-        { label: "Slit Lamp - Anterior Chamber", value: "slit_lamp_anterior" },
-        { label: "Fundus Camera – Posterior Chamber", value: "fundus_camera_posterior" }
+        { label: "Slit Lamp - Anterior Segment", value: "slit_lamp_anterior" },
+        { label: "Fundus Camera – Posterior Segment", value: "fundus_camera_posterior" }
       ]
     },
 
     { 
       type: "subheading", 
-      label: "Slit Lamp - Anterior Chamber",
+      label: "Slit Lamp - Anterior Segment",
       showIf: {
         field: "ocular_health_sections",
         includes: "slit_lamp_anterior"
@@ -43,14 +43,14 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
   fields: [
     {
       type: "attach-file",
-      label: "Eyelashes Image (LE)",
-      name: "Eyelashes_Images_le",
+      label: "Eyelashes Image (RE)",
+      name: "Eyelashes_Images_re",
       accept: "image/*,.pdf"
     },
     {
       type: "attach-file",
-      label: "Eyelashes Image (RE)",
-      name: "Eyelashes_Images_re",
+      label: "Eyelashes Image (LE)",
+      name: "Eyelashes_Images_le",
       accept: "image/*,.pdf"
     },
   ],
@@ -61,7 +61,7 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
 },
 {
   type: "textarea",
-  label: "Eyelashes Remark",
+  label: "Remarks",
   name: "Eyelashes_remark",
   placeholder: "Enter findings / remarks...",
     showIf: {
@@ -233,7 +233,7 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
     // ===== Fundus Camera =====
     { 
       type: "subheading", 
-      label: "Fundus Camera – Posterior Chamber",
+      label: "Fundus Camera – Posterior Segment",
       showIf: {
         field: "ocular_health_sections",
         includes: "fundus_camera_posterior"
@@ -258,14 +258,14 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
   fields: [
     {
       type: "attach-file",
-      label: "Fundus Images (LE)",
-      name: "fundus_images_le",
+      label: "Fundus Image (RE)",
+      name: "fundus_images_re",
       accept: "image/*,.pdf"
     },
     {
       type: "attach-file",
-      label: "Fundus Images (RE)",
-      name: "fundus_images_re",
+      label: "Fundus Image (LE)",
+      name: "fundus_images_le",
       accept: "image/*,.pdf"
     },
   ],
@@ -277,7 +277,7 @@ export default function OcularHealthAssessment({ onBack , layout = "root"}) {
 
 {
   type: "textarea",
-  label: "Fundus Images Remark",
+  label: "Remarks",
   name: "fundus_images_remark",
     showIf: {
  field: "ocular_health_sections",

@@ -15,7 +15,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
     const [submitted, setSubmitted] = useState(false);
 
 
-    const VA_DISTANCE = ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"];
+    const VA_DISTANCE = ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"];
     const VA_NEAR = ["N5 at 40cm", "N6 at 40cm", "N8 at 40cm", "N10 at 40cm", "N12 at 40cm", "N14 at 40cm", "N24 at 40cm", "N36 at 40cm", "Poorer than N36"];
     const VA_PINHOLE = ["PH+", "PH-"];
     const VisionTherapyAssessmentSchema = {
@@ -719,7 +719,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Habitual / Aided – Distance",
                                 value: "ha_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL" ]},
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -747,7 +747,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Unaided – Distance",
                                 value: "ua_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -792,7 +792,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Habitual / Aided – Distance",
                                 value: "ha_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ],},
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL" ],},
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -820,7 +820,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Unaided – Distance",
                                 value: "ua_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -864,7 +864,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Habitual / Aided – Distance",
                                 value: "ha_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -892,7 +892,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                                 label: "Unaided – Distance",
                                 value: "ua_dist",
                                 columns: [
-                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL" ]},
+                                    { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL" ]},
                                     { type: "select", options: ["+", "-"] },
                                     { type: "select", options: [1, 2, 3, 4, 5] }
                                 ]
@@ -954,8 +954,8 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         name: "pupil_response",
                         label: "Pupil Response",
                         cols: [
-                            { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
-                            { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
+                            { type: "single-select", options: ["PERRL", "Anisocoria R>L", "Anisocoria L>R"] },
+                            { type: "single-select", options: ["PERRL", "Anisocoria R>L", "Anisocoria L>R"] },
                             "input"
                         ]
                     },
@@ -1128,7 +1128,7 @@ export default function OptometryIAAssessment({ onBack, onAction }) {
                         options: [
                             "Refraction",
                             "Ocular Health Assessment",
-                            "Ocular Coherent Tomography",
+                            "Ocular Coherence Tomography",
                             "Hess Chart",
                             "Visual Evoked Potential / Electroretinogram",
                             "Right Eye Vision System",
