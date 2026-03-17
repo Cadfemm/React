@@ -27,7 +27,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Neuro patient={patient} />;
 
       case "sci":
-        return <SpinalCordInjury />;
+        return <SpinalCordInjury patient={patient}/>;
 
       case "hydro":
         return <Hydro patient={patient}/>;
