@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PainAssessmentForm from "./PainAssessmentForm";
 import SpinalcordInjury from "./SpinalcordInjury";
+import humanBodyImage from "../../../assets/Human Body.jpg";
 
 export default function Physical({ onChange }) {
   const [values, setValues] = useState({});
@@ -241,10 +242,40 @@ export default function Physical({ onChange }) {
     );
   }
 
+  function MASForm({ values, onChange }) {
+    return (
+      <CommonFormBuilder
+        schema={{
+          title: "",
+          sections: [{ fields: [{ name: "mas_scale_notes", label: "Modified Ashworth Scale (MAS)", type: "textarea" }] }],
+        }}
+        values={values}
+        onChange={onChange}
+        layout="nested"
+      />
+    );
+  }
+  function ROMForm({ values, onChange }) {
+    return (
+      <CommonFormBuilder
+        schema={{
+          title: "",
+          sections: [{ fields: [{ name: "rom_notes", label: "Mobility of Joint Functions (ROM)", type: "textarea" }] }],
+        }}
+        values={values}
+        onChange={onChange}
+        layout="nested"
+      />
+    );
+  }
+
   const PHYSICAL_ASSESSMENT_REGISTRY = {
     pain_assessment: PainAssessmentForm,
     mrc_scale: MRCScaleForm,
     myotome_testing: MyotomeTestingForm,
+    mas_scale: MASForm,
+    rom: ROMForm,
+    asia_sci: SpinalcordInjury,
   };
 
   const PHYSICAL_SCHEMA = {
@@ -374,6 +405,15 @@ export default function Physical({ onChange }) {
             type: "radio",
             options: ["Yes", "No"],
             showIf: { field: "clinical_category", equals: "spine" },
+          },
+
+          {
+            name: "sci_asia_launcher",
+            label: "",
+            type: "assessment-launcher",
+            autoOpen: true,
+            options: [{ label: "ASIA / ISNCSCI Assessment", value: "asia_sci" }],
+            showIf: { field: "clinical_category", equals: "sci" },
           },
           {
             name: "motor_muscle_weakness_sites",
@@ -1337,6 +1377,103 @@ export default function Physical({ onChange }) {
           },
           { name: "pe_special_wrist_tinnel", label: "Tinnel sign", type: "radio", options: [{ label: "Positive", value: "positive" }, { label: "Negative", value: "negative" }], showIf: { field: "pe_special_wrist_tests", includes: "tinnel" } },
           { name: "pe_special_wrist_phallens", label: "Phallen's test", type: "radio", options: [{ label: "Positive", value: "positive" }, { label: "Negative", value: "negative" }], showIf: { field: "pe_special_wrist_tests", includes: "phallens" } },
+
+          /* ========== AMPUTATION ========== */
+          { type: "subheading", label: "AMPUTATION HISTORY", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_amputation", label: "Amputation", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_site", label: "Site of Amputation", type: "checkbox-group", options: [{ label: "Left", value: "left" }, { label: "Right", value: "right" }], showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_amputation", equals: "Yes" } } },
+          { name: "amp_level", label: "Level of Amputation", type: "radio", labelAbove: true, options: [{ label: "Toe", value: "toe" }, { label: "Transmetatarsal", value: "transmetatarsal" }, { label: "Syme's", value: "symes" }, { label: "Below Knee (Transtibial)", value: "below_knee" }, { label: "Knee Disarticulation", value: "knee_disarticulation" }, { label: "Above Knee (Transfemoral)", value: "above_knee" }, { label: "Hip Disarticulation", value: "hip_disarticulation" }, { label: "Hemipelvectomy", value: "hemipelvectomy" }], showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_amputation", equals: "Yes" } } },
+          { name: "amp_date_operation", label: "Date of Operation/Amputation", type: "date", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_amputation", equals: "Yes" } } },
+          { name: "amp_indication", label: "Indication for Amputation", type: "radio", labelAbove: true, options: [{ label: "Diabetic foot complication", value: "diabetic_foot" }, { label: "Traumatic", value: "traumatic" }, { label: "Peripheral vascular disease", value: "pvd" }, { label: "Tumour", value: "tumour" }, { label: "Congenital", value: "congenital" }], showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_amputation", equals: "Yes" } } },
+          { name: "amp_wound_healing", label: "Post-operative Wound Healing", type: "radio", labelAbove: true, options: [{ label: "Satisfactory", value: "satisfactory" }, { label: "Delayed", value: "delayed" }, { label: "Infection present", value: "infection_present" }], showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_amputation", equals: "Yes" } } },
+
+          { type: "subheading", label: "PROSTHESIS HISTORY", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_prosthesis_restored", label: "Prosthesis Restored", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_prosthesis_type", label: "Type of Prosthesis", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_prosthesis_restored", equals: "Yes" } } },
+          { name: "amp_prosthesis_date_fitting", label: "Date of Fitting", type: "date", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_prosthesis_restored", equals: "Yes" } } },
+          { name: "amp_prosthesis_supplier", label: "Supplier / Prosthetic Center", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_prosthesis_restored", equals: "Yes" } } },
+          { name: "amp_prosthesis_issues", label: "Any Prosthesis-related issues", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_prosthesis_restored", equals: "Yes" } } },
+
+          { name: "amp_premorbid_mobility", label: "PRE-AMPUTATION FUNCTIONAL STATUS (Premorbid Mobility)", type: "radio", labelAbove: true, options: [{ label: "Independent without aid", value: "independent" }, { label: "With walking aid", value: "walking_aid" }, { label: "Household ambulator", value: "household_ambulator" }, { label: "Wheelchair dependent", value: "wheelchair_dependent" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "PHYSICAL EXAMINATION", showIf: { field: "clinical_category", equals: "amputation" } },
+          { type: "subheading", label: "BODY FUNCTIONS", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_inspection", label: "Inspection", type: "textarea", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_observe_for", label: "Observe for", type: "radio", labelAbove: true, options: [{ label: "Residual limb condition", value: "residual_limb" }, { label: "Posture", value: "posture" }, { label: "Muscle wasting", value: "muscle_wasting" }, { label: "Skin changes", value: "skin_changes" }, { label: "Deformity", value: "deformity" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_palpation", label: "Palpation", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Warmth", value: "warmth" }, { label: "Erythematous", value: "erythematous" }, { label: "Tenderness", value: "tenderness" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_involuntary_movement", label: "Involuntary Movement Functions", type: "radio", options: [{ label: "Tremor", value: "tremor" }, { label: "Chorea", value: "chorea" }, { label: "Dystonia", value: "dystonia" }, { label: "Dyskinesia", value: "dyskinesia" }, { label: "Athetosis", value: "athetosis" }, { label: "Nil", value: "nil" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_muscle_tone_launcher", label: "", type: "assessment-launcher", options: [{ label: "Modified Ashworth Scale (MAS)", value: "mas_scale" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_rom_launcher", label: "", type: "assessment-launcher", options: [{ label: "Mobility of Joint Functions: ROM", value: "rom" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_mrc_launcher", label: "", type: "assessment-launcher", options: [{ label: "Muscle Power Functions: MRC Grading", value: "mrc_scale" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Sensory Functions & Pain", showIf: { field: "clinical_category", equals: "amputation" } },
+          { type: "subheading", label: "Sensory Examination", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_light_touch", label: "Light Touch", type: "radio", options: [{ label: "Intact", value: "intact" }, { label: "Absent", value: "absent" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_pin_prick", label: "Pin Prick", type: "radio", options: [{ label: "Intact", value: "intact" }, { label: "Absent", value: "absent" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_phantom_limb_sensation", label: "Phantom Limb Sensation", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_phantom_limb_sensation_specify", label: "Severity & frequency", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_phantom_limb_sensation", equals: "Yes" } } },
+          { name: "amp_phantom_limb_pain", label: "Phantom Limb Pain", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_phantom_limb_pain_specify", label: "Severity & frequency", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_phantom_limb_pain", equals: "Yes" } } },
+          { name: "amp_neuropathic_pain", label: "Neuropathic Pain", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_neuropathic_pain_specify", label: "Severity & frequency", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_neuropathic_pain", equals: "Yes" } } },
+
+          { type: "subheading", label: "Sensory Hypersensitivity", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_hypersensitivity", label: "Hypersensitivity", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_hyperesthesia", label: "Hyperesthesia", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Stump (Residual Limb) Examination", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_stump_site", label: "Site", type: "input", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_stump_shape", label: "Shape", type: "radio", options: [{ label: "Conical", value: "conical" }, { label: "Cylindrical", value: "cylindrical" }, { label: "Bulbous", value: "bulbous" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_stump_length", label: "Length", type: "radio", options: [{ label: "Adequate", value: "adequate" }, { label: "Long", value: "long" }, { label: "Short", value: "short" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_redundant_tissue", label: "Redundant Tissue", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { type: "subheading", label: "Skin Condition", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_skin_colour", label: "1. Colour", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Cyanotic", value: "cyanotic" }, { label: "Erythematous", value: "erythematous" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_skin_moisture", label: "2. Moisture", type: "radio", options: [{ label: "Dry", value: "dry" }, { label: "Scaly", value: "scaly" }, { label: "Moist", value: "moist" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_skin_integrity", label: "3. Integrity", type: "radio", options: [{ label: "Ulcer", value: "ulcer" }, { label: "Blister", value: "blister" }, { label: "Scar", value: "scar" }, { label: "Infection", value: "infection" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_graft_flap_viability", label: "4. Graft / Flap Viability", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No graft / flap", value: "no_graft_flap" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_edema_swelling", label: "5. Edema / Swelling", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_trophic_changes", label: "6. Trophic Changes", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Scar Assessment", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_scar_location", label: "Location", type: "textarea", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_scar_tenderness", label: "Tenderness", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_scar_adherence", label: "Adherence", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Musculoskeletal Complications", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_contracture", label: "Contracture", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_contracture_joint", label: "Which Joint involved", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_contracture", equals: "Yes" } } },
+          { name: "amp_joint_stiffness", label: "Joint Stiffness", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_joint_stiffness_joint", label: "Which Joint involved", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_joint_stiffness", equals: "Yes" } } },
+
+          { name: "amp_gait_pattern", label: "Gait Pattern Functions", type: "radio", labelAbove: true, options: [{ label: "Spastic gait", value: "spastic" }, { label: "Hemiplegic gait", value: "hemiplegic" }, { label: "Paraplegic gait", value: "paraplegic" }, { label: "Asymmetric gait", value: "asymmetric" }, { label: "Limping gait", value: "limping" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "PROSTHETIC FIT & TOLERANCE", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_socket_fit", label: "Socket Fit", type: "radio", options: [{ label: "Good", value: "good" }, { label: "Poor", value: "poor" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_socket_fit_issue", label: "Describe Issue", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_socket_fit", equals: "poor" } } },
+          { name: "amp_alignment", label: "Alignment", type: "radio", options: [{ label: "Good", value: "good" }, { label: "Poor", value: "poor" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_alignment_issue", label: "Describe Issue", type: "input", showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_alignment", equals: "poor" } } },
+          { name: "amp_bony_prominence", label: "Bony Prominence / Pressure Sensitive Areas", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_bony_prominence_draw", label: "Body map (draw)", type: "draw-canvas", backgroundImage: humanBodyImage, width: 320, height: 260, showIf: { field: "clinical_category", equals: "amputation", and: { field: "amp_bony_prominence", equals: "Yes" } } },
+
+          { type: "subheading", label: "Activities & Participation", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_changing_body_position", label: "Changing body position", type: "scale-table", rows: ["Lying → Sitting", "Squatting / Kneeling", "Sit → Stand", "Rolling", "Bending", "Weight shifting"], columns: [{ label: "Independent", value: "independent" }, { label: "Supervision", value: "supervision" }, { label: "Min Assist", value: "min_assist" }, { label: "Mod Assist", value: "mod_assist" }, { label: "Max Assist", value: "max_assist" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_maintaining_body_position", label: "Maintaining Body Position", type: "radio", options: [{ label: "Good", value: "good" }, { label: "Fair", value: "fair" }, { label: "Poor", value: "poor" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_transferring", label: "Transferring Oneself", type: "radio", labelAbove: true, options: [{ label: "Independent", value: "independent" }, { label: "Supervision", value: "supervision" }, { label: "Contact Guard Assist", value: "contact_guard" }, { label: "Minimal Assist", value: "minimal_assist" }, { label: "Moderate Assist", value: "moderate_assist" }, { label: "Maximal Assist", value: "maximal_assist" }, { label: "Total Assist", value: "total_assist" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Walking", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_walking_short", label: "Walking Short Distance", type: "radio", labelAbove: true, options: [{ label: "Without aid", value: "without_aid" }, { label: "Walking frame", value: "walking_frame" }, { label: "Axillary crutches", value: "axillary_crutches" }, { label: "Elbow crutches", value: "elbow_crutches" }, { label: "Quadripod", value: "quadripod" }, { label: "Walking stick", value: "walking_stick" }, { label: "Wheelchair", value: "wheelchair" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_walking_long", label: "Walking Long Distance", type: "radio", labelAbove: true, options: [{ label: "Without aid", value: "without_aid" }, { label: "Walking frame", value: "walking_frame" }, { label: "Axillary crutches", value: "axillary_crutches" }, { label: "Elbow crutches", value: "elbow_crutches" }, { label: "Quadripod", value: "quadripod" }, { label: "Walking stick", value: "walking_stick" }, { label: "Wheelchair", value: "wheelchair" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Dressing", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_dressing_prosthesis", label: "(Donning / Doffing Prosthesis)", type: "radio", options: [{ label: "Independent", value: "independent" }, { label: "Assisted", value: "assisted" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_technique_acceptable", label: "Technique acceptable", type: "radio", options: ["Yes", "No"], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Environmental Factors", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_assistive_products", label: "Assistive Products", type: "radio", labelAbove: true, options: [{ label: "Wheelchair", value: "wheelchair" }, { label: "Walking frame", value: "walking_frame" }, { label: "Axillary crutches", value: "axillary_crutches" }, { label: "Elbow crutches", value: "elbow_crutches" }, { label: "Quadripod", value: "quadripod" }, { label: "Walking stick", value: "walking_stick" }], showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_family_support", label: "Family Support", type: "radio", options: [{ label: "Facilitator", value: "facilitator" }, { label: "Neutral", value: "neutral" }, { label: "Barrier", value: "barrier" }], showIf: { field: "clinical_category", equals: "amputation" } },
+
+          { type: "subheading", label: "Environmental Accessibility", showIf: { field: "clinical_category", equals: "amputation" } },
+          { name: "amp_building_access", label: "Building access", type: "radio", options: [{ label: "Stairs – Barrier", value: "stairs_barrier" }, { label: "Ramp available", value: "ramp_available" }, { label: "Lift available", value: "lift_available" }], showIf: { field: "clinical_category", equals: "amputation" } },
         ],
       },
     ],
@@ -1350,8 +1487,6 @@ export default function Physical({ onChange }) {
     });
   };
 
-  const selectedCategory = values.clinical_category;
-
   return (
     <div style={styles.container}>
       <CommonFormBuilder
@@ -1360,23 +1495,6 @@ export default function Physical({ onChange }) {
         onChange={handleChange}
         assessmentRegistry={PHYSICAL_ASSESSMENT_REGISTRY}
       />
-
-      <div style={styles.contentCard}>
-        {selectedCategory === "sci" ? (
-          <SpinalcordInjury />
-        ) : selectedCategory ? (
-          <div>
-            <h3>{CATEGORY_LABELS[selectedCategory]}</h3>
-            <p>
-              Physical assessment content for{" "}
-              <strong>{CATEGORY_LABELS[selectedCategory]}</strong> will appear
-              here.
-            </p>
-            </div>
-        ) : (
-          <p>Please select a clinical category above.</p>
-        )}
-      </div>
     </div>
   );
 }

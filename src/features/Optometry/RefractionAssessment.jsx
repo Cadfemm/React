@@ -25,12 +25,12 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
             fields: [
               {
                 type: "attach-file",
-                label: "Auto-refractor Right Ear",
+                label: "Auto-refractor Right Eye",
                 name: "auto_refractor_file"
               },
               {
                 type: "attach-file",
-                label: "Auto-refractor Left Ear",
+                label: "Auto-refractor Left Eye",
                 name: "keratometry_reading_file"
               }
             ],
@@ -53,12 +53,12 @@ export default function RefractionAssessment({ onBack, layout = "root" }) {
             fields: [
               {
                 type: "attach-file",
-                label: "Keratometry Right Ear",
+                label: "Keratometry Right Eye",
                 name: "keratometry_file_right"
               },
               {
                 type: "attach-file",
-                label: "Keratometry Left Ear",
+                label: "Keratometry Left Eye",
                 name: "keratometry_file_left"
               }
             ],

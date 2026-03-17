@@ -864,33 +864,36 @@ function AssessmentLauncher({
   languageConfig
 }) {
   const activeKey = `${field.name}_active`;
-  const active = values[activeKey] || null;
+  const defaultValue = field.options?.[0]?.value || null;
+  const active = values[activeKey] || (field.autoOpen ? defaultValue : null);
   let component = active ? assessmentRegistry?.[active] : null;
   // Handle both direct component export and default export
   const ActiveComponent = component?.default || component;
 
   return (
     <div>
-      <div style={styles.inlineGroup}>
-        {field.options.map(opt => (
-          <button
-            key={opt.value}
-            style={{
-              ...styles.btnOutline,
-              background: active === opt.value ? "#2563EB" : "#fff",
-              color: active === opt.value ? "#fff" : "#111827"
-            }}
-            onClick={() =>
-              onChange(
-                activeKey,
-                active === opt.value ? null : opt.value
-              )
-            }
-          >
-            {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
-          </button>
-        ))}
-      </div>
+      {!field.autoOpen && (
+        <div style={styles.inlineGroup}>
+          {field.options.map(opt => (
+            <button
+              key={opt.value}
+              style={{
+                ...styles.btnOutline,
+                background: active === opt.value ? "#2563EB" : "#fff",
+                color: active === opt.value ? "#fff" : "#111827"
+              }}
+              onClick={() =>
+                onChange(
+                  activeKey,
+                  active === opt.value ? null : opt.value
+                )
+              }
+            >
+              {t(opt.label, languageConfig?.enabled ? languageConfig.lang : "en")}
+            </button>
+          ))}
+        </div>
+      )}
 
       {ActiveComponent ? (
         <div style={{ marginTop: 20, width: '100%' }}>
@@ -1352,64 +1355,114 @@ function renderField(
       );
     }
 
-    case "grid-table-flat":
-  const colCount = field.headers.length;
+    case "grid-table-flat": {
+      const colCount = field.headers.length;
 
-  // width coming from schema
-  const labelWidth = field.labelWidth || "120px";
-  const inputWidth = field.inputWidth || "1fr";
+      // Optional per-cell hiding logic:
+      // - field.hiddenCells can be:
+      //   * an array of { rowKey, header }
+      //   * or a function (rowKey, header) => boolean
+      let hiddenSet = null;
+      if (Array.isArray(field.hiddenCells)) {
+        hiddenSet = new Set(
+          field.hiddenCells.map(c => `${c.rowKey}::${c.header}`)
+        );
+      }
+      const isHidden = (rowKey, header) => {
+        if (typeof field.hiddenCells === "function") {
+          try {
+            return field.hiddenCells(rowKey, header);
+          } catch (e) {
+            return false;
+          }
+        }
+        if (hiddenSet) {
+          return hiddenSet.has(`${rowKey}::${header}`);
+        }
+        return false;
+      };
 
-  return (
-    <div style={styles.tableWrap}>
-      
-      {/* Header row */}
-      <div
-        style={{
-          ...styles.tableHeaderFlat,
-          gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
-        }}
-      >
-        <div></div>
+      // width coming from schema
+      const labelWidth = field.labelWidth || "120px";
+      const inputWidth = field.inputWidth || "1fr";
 
-        {field.headers.map(h => (
-          <div key={h} style={styles.tableHeaderCell}>
-            {h}
+      return (
+        <div style={styles.tableWrap}>
+          {/* Header row */}
+          <div
+            style={{
+              ...styles.tableHeaderFlat,
+              gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
+            }}
+          >
+            <div></div>
+
+            {field.headers.map(h => (
+              <div key={h} style={styles.tableHeaderCell}>
+                {h}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Rows */}
-      {field.rows.map(row => (
-        <div
-          key={row.key}
-          style={{
-            ...styles.tableRowFlat,
-            gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
-          }}
-        >
-          <div style={styles.tableRowLabel}>
-            {languageConfig?.enabled
-              ? t(row.label, languageConfig.lang)
-              : row.label}
-          </div>
-
-          {field.headers.map(h => (
-            <input
-              key={`${row.key}_${h}`}
+          {/* Rows */}
+          {field.rows.map(row => (
+            <div
+              key={row.key}
               style={{
-                ...styles.tableInput,
-                width: field.boxWidth || "100%"
+                ...styles.tableRowFlat,
+                gridTemplateColumns: `${labelWidth} repeat(${colCount}, ${inputWidth})`
               }}
-              value={values[`${field.name}_${row.key}_${h}`] || ""}
-              onChange={e =>
-                onChange(`${field.name}_${row.key}_${h}`, e.target.value)
-              }
-            />
+            >
+              <div style={styles.tableRowLabel}>
+                {languageConfig?.enabled
+                  ? t(row.label, languageConfig.lang)
+                  : row.label}
+              </div>
+
+              {field.headers.map(h => {
+                const cellKey = `${row.key}_${h}`;
+                if (isHidden(row.key, h)) {
+                  return <div key={cellKey} />;
+                }
+                const valueKey = `${field.name}_${row.key}_${h}`;
+                const cellValue = values[valueKey] || "";
+                const options = field.headerOptions && field.headerOptions[h];
+                if (options && Array.isArray(options)) {
+                  return (
+                    <select
+                      key={cellKey}
+                      style={{
+                        ...styles.tableInput,
+                        width: field.boxWidth || "100%",
+                        padding: "4px 6px"
+                      }}
+                      value={cellValue}
+                      onChange={e => onChange(valueKey, e.target.value)}
+                    >
+                      <option value="">—</option>
+                      {options.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  );
+                }
+                return (
+                  <input
+                    key={cellKey}
+                    style={{
+                      ...styles.tableInput,
+                      width: field.boxWidth || "100%"
+                    }}
+                    value={cellValue}
+                    onChange={e => onChange(valueKey, e.target.value)}
+                  />
+                );
+              })}
+            </div>
           ))}
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
 
     case "info-text":
       return (
@@ -1682,7 +1735,7 @@ function renderField(
             const v = values[f.name];
             return (
               <div key={f.name} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
-                {f.label && !["button", "checkbox-group"].includes(f.type) && (
+                {f.label && !["button", "checkbox-group", "score-box"].includes(f.type) && (
                   <label
                     style={{
                       display: "block",
@@ -1738,17 +1791,34 @@ function renderField(
         </div>
       );
 
-    case "score-box":
+    case "score-box": {
+      const labelText = t(field.label, languageConfig?.enabled ? languageConfig.lang : "en");
+      const infoText = field.info
+        ? t(field.info, languageConfig?.enabled ? languageConfig.lang : "en")
+        : null;
+
+      const renderedLabel = infoText ? (
+        <InfoTooltip
+          info={{ title: labelText, content: [infoText] }}
+          showIcon={false}
+        >
+          {labelText}
+        </InfoTooltip>
+      ) : (
+        labelText
+      );
+
       return (
         <div style={styles.scoreBox}>
           <div style={styles.scoreLabel}>
-            {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
+            {renderedLabel}
           </div>
           <div style={styles.scoreValue}>
             {value ?? 0}
           </div>
         </div>
       );
+    }
 
     case "draw-canvas":
       return (
@@ -1789,7 +1859,7 @@ function renderField(
               width: "100%",
               maxWidth: 600,
               height: "auto",
-              maxHeight: 300,
+              maxHeight: field.maxHeight || 300,
               objectFit: "contain",
               border: "1px solid #e5e7eb",
               borderRadius: 6,

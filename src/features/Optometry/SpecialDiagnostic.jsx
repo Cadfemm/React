@@ -15,7 +15,7 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
           type: "checkbox-group",
           name: "special_diagnostic_sections",
           options: [
-            { label: "Ocular Coherent Tomography", value: "oct" },
+            { label: "Ocular Coherence Tomography", value: "oct" },
             { label: "Visual Evoked Potential / Electroretinogram", value: "vep" },
             { label: "Hess Chart", value: "hess" },
             { label: "Right Eye Vision System", value: "revs" },
@@ -30,7 +30,7 @@ export default function SpecialDiagnosticAssessment({ onBack, layout = "root" })
       ]
     },
     {
-      title: "Ocular Coherent Tomography",
+      title: "Ocular Coherence Tomography",
       showIf: { field: "special_diagnostic_sections", includes: "oct" },
       fields: [
         {

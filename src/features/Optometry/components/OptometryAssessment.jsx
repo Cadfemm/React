@@ -312,7 +312,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 name: "general_questions",
                 type: "checkbox-group",
                 options: [
-                  { label: "Patient Vision & Care History", value: "patient_vision_care" },
+                  { label: "Patient Vision & Case History", value: "patient_vision_case" },
                   { label: "External Eye Symptoms", value: "external_eye_symptoms" },
                   { label: "Ocular History & Eye Conditions", value: "ocular_history" },
                   { label: "Binocular Vision", value: "binocular_vision" },
@@ -321,17 +321,17 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               }
             ]
             : []),
-          // Patient Vision & Care History (always visible in IA; in follow-up only when selected)
+          // Patient Vision & Case History (always visible in IA; in follow-up only when selected)
           {
             type: "subheading",
-            label: "Patient Vision & Care History",
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            label: "Patient Vision & Case History",
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             type: "date",
             name: "last_eye_exam",
             label: "Date of last eye examination",
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             type: "radio",
@@ -341,13 +341,13 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
             ],
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             type: "input",
             name: "spectacle_prescription",
             label: "Prescription",
-            showIf: sectionShowIfAnd("patient_vision_care", { field: "spectacles_use", equals: "yes" }) || { field: "spectacles_use", equals: "yes" }
+            showIf: sectionShowIfAnd("patient_vision_case", { field: "spectacles_use", equals: "yes" }) || { field: "spectacles_use", equals: "yes" }
           },
           {
             type: "radio",
@@ -357,7 +357,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
             ],
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             type: "row",
@@ -375,7 +375,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 showIf: { field: "contact_lens_use", equals: "yes" }
               }
             ],
-            showIf: sectionShowIfAnd("patient_vision_care", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
+            showIf: sectionShowIfAnd("patient_vision_case", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
           },
           {
             type: "row",
@@ -393,34 +393,34 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 showIf: { field: "contact_lens_use", equals: "yes" }
               }
             ],
-            showIf: sectionShowIfAnd("patient_vision_care", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
+            showIf: sectionShowIfAnd("patient_vision_case", { field: "contact_lens_use", equals: "yes" }) || { field: "contact_lens_use", equals: "yes" }
           },
           {
             type: "input",
             name: "others_specify",
             label: "Specify",
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             name: "pmh_from_registration",
             label: "Medical History",
             type: "input",
             readOnly: true,
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             name: "family_history_from_registration",
             label: "Family History",
             type: "input",
             readOnly: true,
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           {
             name: "allergies_from_registration",
             label: "Allergies",
             type: "input",
             readOnly: true,
-            ...(sectionShowIf("patient_vision_care") && { showIf: sectionShowIf("patient_vision_care") })
+            ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
           // Binocular Vision Section (follow-up: content till Ocular Signs)
           {
@@ -462,7 +462,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
           {
             type: "input",
             name: "bv_was_he_been_specify",
-            label: "Neurologica – specify",
+            label: "Neurological – specify",
             showIf: { field: "bv_was_he_been", equals: "yes" }
           },
           {
@@ -623,14 +623,14 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
           // Refraction Section (below External Eye Symptoms; in follow-up shown when External Eye Symptoms is selected)
           {
             type: "subheading",
-            label: "Refraction / Vision-Specific Questions (Symptoms)",
+            label: "Visual Symptoms",
             ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
           },
           {
             name: "visual_ocular_symptoms",
             type: "checkbox-group",
             options: [
-              { label: "Vision screening issues", value: "vision_screening" },
+              { label: "Vision screening", value: "vision_screening" },
               { label: "Blurry vision", value: "blurry_vision" },
               { label: "Double vision (Diplopia)", value: "double_vision" },
               { label: "Night vision difficulty", value: "night_vision" },
@@ -646,7 +646,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
           {
             type: "radio",
             name: "vision_screening_location",
-            label: "Vision screening issues - Location",
+            label: "Vision screening - Location",
             options: [
               { label: "Right (R)", value: "right" },
               { label: "Left (L)", value: "left" },
@@ -1410,7 +1410,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Habitual / Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1438,7 +1438,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1490,7 +1490,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Habitual / Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"], },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"], },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1518,7 +1518,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1569,7 +1569,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Habitual / Aided – Distance",
                 value: "ha_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1597,7 +1597,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
                 label: "Unaided – Distance",
                 value: "ua_dist",
                 columns: [
-                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1mm", "HM at 1mm", "LP", "NPL"] },
+                  { type: "select", options: ["6/3", "6/4.5", "6/6", "6/7.5", "6/9", "6/12", "6/15", "6/18", "6/24", "6/30", "6/45", "6/60", "6/120", "CF at 1m", "HM at 1m", "LP", "NPL"] },
                   { type: "select", options: ["+", "-"] },
                   { type: "select", options: [1, 2, 3, 4, 5] }
                 ]
@@ -1671,8 +1671,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             name: "pupil_response",
             label: "Pupil Response",
             cols: [
-              { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
-              { type: "single-select", options: ["PERL", "Anisocoria R>L", "Anisocoria L>R"] },
+              { type: "single-select", options: ["PERRL", "Anisocoria R>L", "Anisocoria L>R"] },
+              { type: "single-select", options: ["PERRL", "Anisocoria R>L", "Anisocoria L>R"] },
               "input"
             ],
             showIf: {
@@ -1897,7 +1897,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
             options: [
               "Refraction",
               "Ocular Health Assessment",
-              "Ocular Coherent Tomography",
+              "Ocular Coherence Tomography",
               "Hess Chart",
               "Visual Evoked Potential / Electroretinogram",
               "Right Eye Vision System",
