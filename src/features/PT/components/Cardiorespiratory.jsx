@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import ROMForm from "./ROMForm";
 import MMTForm from "./MMTForm";
+import SixMWTForm from "./SixMWTForm"
 
 const YES_NO_OPTIONS = [
   { label: "Yes", value: "yes" },
@@ -132,7 +133,8 @@ const CARDIO_CONTAINER_SCHEMA = {
 // Registry for assessment-launcher buttons in Cardiorespiratory
 const CARDIO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
-  mmt: MMTForm
+  mmt: MMTForm,
+  sixmwt: SixMWTForm
 };
 
 function CardioPatientInfo({ patient }) {
@@ -689,7 +691,7 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
             options: [
               { label: "ROM (Active/Passive)", value: "rom" },
               { label: "MMT (Manual Muscle Testing)", value: "mmt" },
-              { label: "6-Minute Walking Test", value: "six_mwt" },
+              { label: "6-Minute Walking Test", value: "sixmwt" },
               { label: "1.6 Treadmill Test", value: "treadmill_1_6" },
               { label: "30 Seconds Sit-Stand Test", value: "sit_stand_30s" },
               { label: "RPE", value: "rpe" },
