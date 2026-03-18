@@ -1355,7 +1355,7 @@ function renderField(
       );
     }
 
-    case "grid-table-flat": {
+     case "grid-table-flat": {
       const colCount = field.headers.length;
 
       // Optional per-cell hiding logic:
@@ -1474,6 +1474,122 @@ function renderField(
       );
 
 
+case "grid-table-advanced": {
+
+  const tableStyle = {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: "13px",
+    background: "#fff"
+  };
+
+  const thStyle = {
+    border: "1px solid #d1d5db",
+    padding: "8px",
+    background: "#547faa",
+    fontWeight: 600,
+    textAlign: "center"
+  };
+
+  const tdStyle = {
+    border: "1px solid #e5e7eb",
+    padding: "6px"
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "6px",
+    border: "1px solid #d1d5db",
+    borderRadius: "4px"
+  };
+
+  const selectStyle = {
+    width: "100%",
+    padding: "6px",
+    border: "1px solid #d1d5db",
+    borderRadius: "4px"
+  };
+
+  // 🔥 dynamic total
+  const total = field.rows.reduce((sum, row) => {
+    return sum + (Number(values[`${field.name}_${row.key}_indicator`]) || 0);
+  }, 0);
+
+  return (
+    <table style={tableStyle}>
+
+      {/* HEADER */}
+      <thead>
+        <tr>
+          {field.headers.map((h, i) => (
+            <th key={i} style={thStyle}>{h}</th>
+          ))}
+        </tr>
+      </thead>
+
+      {/* BODY */}
+      <tbody>
+
+        {field.rows.map(row => (
+          <tr key={row.key}>
+
+            {/* LABEL */}
+            <td style={tdStyle}>{row.label}</td>
+
+            {/* DROPDOWN */}
+            <td style={tdStyle}>
+              <select
+                style={selectStyle}
+                value={values[`${field.name}_${row.key}_indicator`] || ""}
+                onChange={(e) =>
+                  onChange(`${field.name}_${row.key}_indicator`, e.target.value)
+                }
+              >
+                <option value="">Select</option>
+                {row.options.map(opt => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </td>
+
+            {/* 🔥 FULLY DYNAMIC DATE COLUMNS */}
+            {Array.from({ length: field.dateColumns }).map((_, i) => (
+              <td key={i} style={tdStyle}>
+              <input
+  type={field.dateType || "date"}   // 🔥 dynamic from schema
+  style={inputStyle}
+  value={values[`${field.name}_${row.key}_date${i+1}`] || ""}
+  onChange={(e) =>
+    onChange(`${field.name}_${row.key}_date${i+1}`, e.target.value)
+  }
+/>
+              </td>
+            ))}
+
+          </tr>
+        ))}
+
+        {/* TOTAL */}
+        <tr>
+          <td
+            colSpan={field.headers.length - 1}
+            style={{ ...tdStyle, textAlign: "right", fontWeight: 600 }}
+          >
+            TOTAL SCORE
+          </td>
+          <td style={{ ...tdStyle, textAlign: "center", fontWeight: 600 }}>
+            {total}
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  );
+}
+
     case "scale-table":
       return (
 
@@ -1484,7 +1600,6 @@ function renderField(
               <col key={i} style={{ width: `${55 / field.columns.length}%` }} />
             ))}
           </colgroup>
-
           <thead>
             <tr>
               <th style={styles.th}>
@@ -1502,7 +1617,6 @@ function renderField(
               ))}
             </tr>
           </thead>
-
           <tbody>
             {field.rows.map((rowLabel, rIdx) => {
               const rowKey = `${field.name}_${rIdx}`;
@@ -1525,8 +1639,6 @@ function renderField(
             })}
           </tbody>
         </table>
-
-
       );
 
 
