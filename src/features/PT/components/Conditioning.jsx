@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import SixMWTForm from "./SixMWTForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-export const CONDITIONING_ASSESSMENT_REGISTRY = {};
+export const CONDITIONING_ASSESSMENT_REGISTRY = {
+  sixmwt: SixMWTForm
+};
 
 export default function Conditioning({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
@@ -341,7 +344,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
       name: "neuro_scales",
       type: "assessment-launcher",
       options: [
-        { label: "6MWT", value: "6mwt" },
+        { label: "6MWT", value: "sixmwt" },
         { label: "Muscle meter", value: "mmt" },
         { label: "Y balance", value: "y_balance" },
         { label: "Leg press symmetry", value: "fac" },

@@ -9,6 +9,7 @@ import WISCIForm from "./WISCIForm"
 import SixMWTForm from "./SixMWTForm";
 import SixMWPTForm from "./SixMWPTForm";
 import { useState, useEffect } from "react";
+import TenMWTForm from "./TenMWTForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 
@@ -374,7 +375,7 @@ const OBJECTIVE_SCHEMA = {
             { label: "Range of Motion (ROM)", value: "rom" },
             { label: "Manual Muscle Test (MMT)", value: "mmt" },
             { label: "Muscle Tone (MAS)", value: "mas" },
-            { label: "10 Meter Walk Test", value: "10mwt" },
+            { label: "10 Meter Walk Test", value: "tenmwt" },
             { label: "Berg Balance Scale (BBS)", value: "bbs" },
             { label: "Timed Up and Go (TUG)", value: "tug" },
             { label: "6 Minutes Walk Test (6MWT)", value: "sixmwt" },
@@ -479,6 +480,7 @@ const SPINAL_ASSESSMENT_REGISTRY = {
   wst: WSTForm,
   mfrt: MFRTForm,
   wisci: WISCIForm,
+  tenmwt: TenMWTForm,
   sixmwt: SixMWTForm,
   sixmwpt: SixMWPTForm,
   bbs: BergBalanceScale,

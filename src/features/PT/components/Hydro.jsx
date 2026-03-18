@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import BergBalanceScale from "./BBS";
+import SixMWTForm from "./SixMWTForm"
 
 /* ===================== CONTAINER SCHEMA (SAME AS NEURO) ===================== */
 
@@ -461,7 +462,7 @@ const OBJECTIVE_SCHEMA = {
         { label: "LEFS – lower extremity functional scale", value: "lefs" },
         { label: "Berg Balance Scale", value: "berg" },
         { label: "DASH – upper limb disability", value: "dash" },
-        { label: "6-Minute Walk Test (6MWT)", value: "six_mwt" }
+        { label: "6-Minute Walk Test (6MWT)", value: "sixmwt" }
       ]
     },
 
@@ -775,7 +776,8 @@ const PLAN_SCHEMA = {
 };
 
 const HYDRO_ASSESSMENT_REGISTRY = {
-  berg: BergBalanceScale
+  berg: BergBalanceScale,
+  sixmwt: SixMWTForm
 };
 
 /* ===================== MAIN HYDRO ===================== */

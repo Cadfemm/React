@@ -8,6 +8,9 @@ import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
 import FMALEForm from "./FMALEForm";
 import ROMForm from "./ROMForm";
+import SixMWTForm from "./SixMWTForm"
+import TenMWTForm from "./TenMWTForm";
+import StrengthTestForm from "./StrengthTestForm";
 import FACForm from "./FunctionalAmbulationCategory"
 export const NEURO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
@@ -17,7 +20,10 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   sara: SARAForm,
   bbs: BergBalanceScale,
   fma_le: FMALEForm,
-fac:FACForm
+  fac:FACForm,
+  sixmwt: SixMWTForm,
+  tenmwt: TenMWTForm,
+  strength: StrengthTestForm
 };
 
 /* ===================== OPTIONS ===================== */
@@ -619,11 +625,11 @@ title:"Functional and Mobility Status",
         { label: "Motor Assessment Scale", value: "motor_mas" },
         { label: "Fugl Meyer Assessment – Lower Extremity (FMA-LE)", value: "fma_le" },
         { label: "Stand and Reposition Aids (SARA)", value: "sara" },
-        { label: "10 Meter Walk Test", value: "10mwt" },
+        { label: "10 Meter Walk Test", value: "tenmwt" },
         { label: "Berg Balance Scale (BBS)", value: "bbs" },
         { label: "Visual Analog Scale (VAS)", value: "vas" },
         { label: "Timed Up and Go (TUG)", value: "tug" },
-        { label: "6 Minutes Walk Test (6MWT)", value: "6mwt" },
+        { label: "6 Minutes Walk Test (6MWT)", value: "sixmwt" },
       ]
     },
 
