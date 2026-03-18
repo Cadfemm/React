@@ -2107,7 +2107,20 @@ case "grid-table-advanced": {
                 </div>
               );
             }
-
+            if ( typeof col === "object" && col.type === "input-number-range") {
+              return (
+                    <input
+                      min={field.min}
+                      max={field.max}
+                      type="number"
+                      style={styles.input}
+                      value={values[fieldKey] || ""}
+                      readOnly={readOnly}
+                      placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
+                      onChange={e => onChange(fieldKey, e.target.value)}
+                    />
+              );
+            }
             return (
               <input
                 key={fieldKey}
