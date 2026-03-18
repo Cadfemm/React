@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
+import MMTForm from "./MMTForm";
+import ROMForm from "./ROMForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const YES_NO_OPTIONS = [
   { label: "Yes", value: "yes" },
   { label: "No", value: "no" }
 ];
+
+const MUSCULOSKELETAL_ASSESSMENT_REGISTRY = {
+  mmt: MMTForm,
+  rom: ROMForm,
+}
 
 const MSK_CONTAINER_SCHEMA = {
   title: "Patient Information",
@@ -1028,6 +1035,7 @@ export default function Musculoskeletal({ patient, onSubmit, onBack }) {
           if (type === "clear") handleClear();
           if (type === "save") handleSave();
         }}
+        assessmentRegistry={MUSCULOSKELETAL_ASSESSMENT_REGISTRY}
       >
         <div style={submitRow}>
           {activeTab !== "plan" ? (
