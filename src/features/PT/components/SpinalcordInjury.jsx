@@ -369,7 +369,7 @@ const OBJECTIVE_SCHEMA = {
           label: "Scales / Outcome Measures"
         },
         {
-          name: "neuro_scales",
+          name: "spinal_scales",
           type: "assessment-launcher",
           options: [
             { label: "Range of Motion (ROM)", value: "rom" },
@@ -408,7 +408,7 @@ const ASSESSMENT_SCHEMA = {
 };
 
 const PLAN_SCHEMA = {
-  title: "PLAN",
+  title: "",
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
@@ -471,7 +471,6 @@ const schemaMap = {
     plan: PLAN_SCHEMA
 };
 
-// Registry for assessment-launcher buttons in Cardiorespiratory
 const SPINAL_ASSESSMENT_REGISTRY = {
   tug: TUG,
   rom: ROMForm,
@@ -535,14 +534,14 @@ export default function SpinalCordInjury({patient, onSubmit, onBack}) {
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Neuro draft saved");
+      alert("Spinal draft saved");
     }
   };
  
   const handleSubmit = () => {
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Neuro assessment submitted");
+    alert("Spinal assessment submitted");
   };
   
   return (
