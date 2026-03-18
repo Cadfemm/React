@@ -13,11 +13,13 @@ import FIMAssessment from "./Fim";
 import ARATAssessment from "./Arat";
 import JHFTAssessment from "./Jfht";
 import BoxAndBlockTest from "./BoxBlockTest";
+import SCIMaleSexualFunctionAssessment from "./SciMaleSexualAssessment"
+import SCIFemaleSexualFunctionAssessment from "./SciFeMaleSexualAssessment"
 
 export const NEURO_ASSESSMENT_REGISTRY = {
-  mmt: MMTForm,
+  mmt: SCIMaleSexualFunctionAssessment,
   tug: TUG,
-  mas: MASForm,
+  mas: SCIFemaleSexualFunctionAssessment,
   sara: SARAForm,
   bbs: BergBalanceScale,
   FIM: FIMAssessment,

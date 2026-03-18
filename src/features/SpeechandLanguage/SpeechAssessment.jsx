@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState } from "react";
 
 import PaedIASpeechLanguage from "./PaedSpeechAssessment";
 import PaedIAFeeding from "./PaedFeedingAssessment";
@@ -9,274 +9,115 @@ import VoiceAssessment from "./AdultVoice";
 import TracheostomyWeaningEvaluation from "./AdultTracheostomy";
 import VoiceIndices from "./VoiceHandicapAssessment";
 
-/* -------------------------------------------------------------
-   WRAPPERS
-------------------------------------------------------------- */
+export default function AssessmentForm({ patient }) {
 
-const Tracheostomy = ({ patient, onChange, onBack }) => (
-  <TracheostomyWeaningEvaluation
-    patient={patient}
-    onBack={onBack}
-    onSubmit={onChange}
-  />
-);
-
-const Voice = ({ patient, onChange, onBack }) => (
-  <VoiceAssessment patient={patient} onBack={onBack} onSubmit={onChange} />
-);
-
-const SpeechLanguage = ({ patient, onChange, onBack }) => (
-  <SpeechLanguageAssessment
-    patient={patient}
-    onBack={onBack}
-    onSubmit={onChange}
-  />
-);
-
-const ClinicalSwallowing = ({ patient, onChange, onBack }) => (
-  <ClinicalSwallowingEvaluation
-    patient={patient}
-    onBack={onBack}
-    onSubmit={onChange}
-  />
-);
-
-const PaedIAFeed = ({ patient, onChange, onBack }) => (
-  <PaedIAFeeding patient={patient} onBack={onBack} onSubmit={onChange} />
-);
-
-const PaedIASpeech = ({ patient, onChange, onBack }) => (
-  <PaedIASpeechLanguage
-    patient={patient}
-    onBack={onBack}
-    onSubmit={onChange}
-  />
-);
-
-/* -------------------------------------------------------------
-   MAIN ASSESSMENT FORM
-------------------------------------------------------------- */
-
-export default function AssessmentForm({ patient, onSave, onBack }) {
   const isAdult = patient?.age >= 20;
 
-  const tabs = useMemo(() => {
-    return isAdult
-      ? [
-          "ADULT CLINICAL SWALLOWING EVALUATION (CSE)",
-          "ADULT SPEECH-LANGUAGE",
-          "ADULT VOICE",
-          "ADULT TRACHEOSTOMY WEANING EVALUATION",
-          "Consensus Auditory-Perceptual Evaluation of Voice",
-          "Voice Handicap Index"
-        ]
-      : [
-          "PAEDIATRIC SPEECH-LANGUAGE",
-          "PAEDIATRIC FEEDING/SWALLOWING",
-        ];
-  }, [isAdult]);
+  const adultTabs = [
+    { key: "cse", label: "ADULT CLINICAL SWALLOWING" },
+    { key: "speech", label: "ADULT SPEECH-LANGUAGE" },
+    { key: "voice", label: "ADULT VOICE" },
+    { key: "trache", label: "TRACHEOSTOMY WEANING" },
+    { key: "cape", label: "CAPE-V" },
+    { key: "vhi", label: "VOICE HANDICAP INDEX" }
+  ];
 
-  const [activeTab, setActiveTab] = useState(0);
-  const scrollRef = useRef(null);
+  const paedTabs = [
+    { key: "speech", label: "PAEDIATRIC SPEECH-LANGUAGE" },
+    { key: "feeding", label: "PAEDIATRIC FEEDING/SWALLOWING" }
+  ];
 
-  /* --------- Store Form Results --------- */
-  const [adultCSE, setAdultCSE] = useState(null);
-  const [adultSpeech, setAdultSpeech] = useState(null);
-  const [adultVoice, setAdultVoice] = useState(null);
-  const [adultTrache, setAdultTrache] = useState(null);
+  const tabs = isAdult ? adultTabs : paedTabs;
 
-  const [paedSpeech, setPaedSpeech] = useState(null);
-  const [paedFeeding, setPaedFeeding] = useState(null);
+  const [activeTab, setActiveTab] = useState(tabs[0].key);
 
-  const handleTabClick = (index) => {
-    setActiveTab(index);
-    if (scrollRef.current && scrollRef.current.children[index]) {
-      scrollRef.current.children[index].scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-      });
+  /* ================= CONTENT ================= */
+
+  const renderContent = () => {
+    switch (activeTab) {
+
+      case "cse":
+        return <ClinicalSwallowingEvaluation patient={patient} />;
+
+      case "speech":
+        return isAdult
+          ? <SpeechLanguageAssessment patient={patient} />
+          : <PaedIASpeechLanguage patient={patient} />;
+
+      case "voice":
+        return <VoiceAssessment patient={patient} />;
+
+      case "trache":
+        return <TracheostomyWeaningEvaluation patient={patient} />;
+
+      case "cape":
+        return <VoiceQualityAssessment patient={patient} />;
+
+      case "vhi":
+        return <VoiceIndices patient={patient} />;
+
+      case "feeding":
+        return <PaedIAFeeding patient={patient} />;
+
+      default:
+        return null;
     }
-  };
-
-  const handleSaveAssessment = () => {
-    if (!patient) {
-      alert("No patient selected");
-      return;
-    }
-
-    const record = {
-      patientId: patient.id,
-      age: patient.age,
-      createdAt: new Date().toISOString(),
-      category: isAdult ? "ADULT" : "PAEDIATRIC",
-      data: isAdult
-        ? {
-            clinicalSwallowing: adultCSE,
-            speechLanguage: adultSpeech,
-            voice: adultVoice,
-            tracheostomy: adultTrache,
-          }
-        : {
-            speechLanguage: paedSpeech,
-            feeding: paedFeeding,
-          },
-    };
-
-    const key = `patient_${patient.id}_assessments`;
-    const existing = JSON.parse(localStorage.getItem(key) || "[]");
-    localStorage.setItem(key, JSON.stringify([...existing, record]));
-
-    onSave?.(record);
-    alert("Assessment saved successfully");
   };
 
   return (
-    <div style={styles.container}>
+    <div>
+
       {/* ================= TABS ================= */}
-      <div style={{ marginTop: 12 }}>
-        <div ref={scrollRef} style={styles.tabsRow}>
-          {tabs.map((tab, index) => (
-            <button
-              key={index}
-              onClick={() => handleTabClick(index)}
-              style={{
-                ...styles.tabBtn,
-                background: activeTab === index ? "#2563EB" : "transparent",
-                color: activeTab === index ? "#fff" : "#111827",
-                border:
-                  activeTab === index
-                    ? "2px solid #2563EB"
-                    : "1px solid #E5E7EB",
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+
+      <div style={tabRow}>
+        {tabs.map(tab => (
+          <div
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            style={{
+              ...tabItem,
+              ...(activeTab === tab.key ? activeTabStyle : {})
+            }}
+          >
+            {tab.label}
+          </div>
+        ))}
       </div>
 
-      <div style={styles.divider} />
+      {/* ================= CONTENT ================= */}
 
-      {/* ================= FORM CONTENT ================= */}
-      <div>
-        {tabs[activeTab] === "ADULT CLINICAL SWALLOWING EVALUATION (CSE)" && (
-          <ClinicalSwallowing
-            patient={patient}
-            onChange={setAdultCSE}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "ADULT SPEECH-LANGUAGE" && (
-          <SpeechLanguage
-            patient={patient}
-            onChange={setAdultSpeech}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "ADULT VOICE" && (
-          <Voice
-            patient={patient}
-            onChange={setAdultVoice}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "ADULT TRACHEOSTOMY WEANING EVALUATION" && (
-          <Tracheostomy
-            patient={patient}
-            onChange={setAdultTrache}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "PAEDIATRIC SPEECH-LANGUAGE" && (
-          <PaedIASpeech
-            patient={patient}
-            onChange={setPaedSpeech}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "PAEDIATRIC FEEDING/SWALLOWING" && (
-          <PaedIAFeed
-            patient={patient}
-            onChange={setPaedFeeding}
-            onBack={onBack}
-          />
-        )}
- {tabs[activeTab] === "Consensus Auditory-Perceptual Evaluation of Voice" && (
-          <VoiceQualityAssessment
-            patient={patient}
-            onChange={setPaedFeeding}
-            onBack={onBack}
-          />
-        )}
-
-        {tabs[activeTab] === "Voice Handicap Index" && (
-          <VoiceIndices
-            patient={patient}
-            onChange={setAdultVoice}
-            onBack={onBack}
-          />
-        )}
-
-      
+      <div style={contentContainer}>
+        {renderContent()}
       </div>
 
-     
     </div>
   );
 }
 
-const styles = {
-  container: {
-    width: "100%",
-    padding: 16,
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
-  },
+/* ================= STYLES ================= */
 
-  tabsRow: {
-    display: "flex",
-    gap: 14,
-    overflowX: "auto",
-    scrollbarWidth: "none",
-    msOverflowStyle: "none",
-  },
+const tabRow = {
+  display: "flex",
+  gap: 40,
+  padding: "12px 12px 0px 12px",
+  borderBottom: "1px solid #e5e7eb",
+  background: "#f9fafb"
+};
 
-  tabBtn: {
-    padding: "10px 18px",
-    borderRadius: 8,
-    cursor: "pointer",
-    fontSize: 14,
-    fontWeight: 500,
-    whiteSpace: "nowrap",
-    background: "transparent",
-  },
+const tabItem = {
+  paddingBottom: 8,
+  fontSize: 15,
+  fontWeight: 600,
+  cursor: "pointer",
+  color: "#111827",
+  borderBottom: "3px solid transparent"
+};
 
-  divider: {
-    margin: "12px 0",
-    borderBottom: "2px solid #E5E7EB",
-  },
+const activeTabStyle = {
+  color: "#2563eb",
+  borderBottom: "3px solid #2563eb"
+};
 
-  saveBtn: {
-    padding: "10px 16px",
-    borderRadius: 8,
-    background: "#2563EB",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    fontWeight: 600,
-  },
-
-  backBtn: {
-    padding: "10px 16px",
-    borderRadius: 8,
-    background: "#F3F4F6",
-    border: "1px solid #E5E7EB",
-    cursor: "pointer",
-  },
+const contentContainer = {
+  padding: 16
 };
