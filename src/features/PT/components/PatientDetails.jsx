@@ -42,7 +42,7 @@ export default function ProgramTabsWithContent({ patient }) {
         return <Cardiorespiratory patient={patient} />;
 
       case "amputee":
-        return <Amputee />;
+        return <Amputee patient={patient}/>;
 
       default:
         return null;
