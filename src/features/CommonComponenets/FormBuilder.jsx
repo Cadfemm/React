@@ -1417,9 +1417,27 @@ function renderField(
                 {languageConfig?.enabled
                   ? t(row.label, languageConfig.lang)
                   : row.label}
+                {row.info && <InfoTooltip info={row.info} />}
               </div>
-
-              {field.headers.map(h => {
+              
+              {row.isFullRow?( 
+                <div
+                  style={{
+                    gridColumn: `span ${colCount}`
+                  }}
+                >
+                  <input
+                  key={row.key+'_'+field.headers[0]}
+                  style={{
+                    ...styles.tableInput,
+                    width: field.boxWidth || "100%"
+                  }}
+                  value={values[field.name+'_'+row.key+'_'+field.headers[0]] || ""}
+                  onChange={e => onChange(field.name+'_'+row.key+'_'+field.headers[0], e.target.value)}
+                />
+                </div>
+                 ):(field.headers.map(h => {
+                row.colSpan = row.colSpan - 1
                 const cellKey = `${row.key}_${h}`;
                 if (isHidden(row.key, h)) {
                   return <div key={cellKey} />;
@@ -1457,7 +1475,8 @@ function renderField(
                     onChange={e => onChange(valueKey, e.target.value)}
                   />
                 );
-              })}
+                
+              }))}
             </div>
           ))}
         </div>
