@@ -80,43 +80,213 @@ const onChange = (name, value) => {
     alert("Functional Assessment submitted");
   };
 
+  /* ---------------- IADL (Lawton-Brody) scoring ---------------- */
+  const iadlScoreMap = {
+    telephone: { a: 1, b: 1, c: 1, d: 0 },
+    shopping: { a: 1, b: 0, c: 0, d: 0 },
+    food: { a: 1, b: 0, c: 0, d: 0 },
+    housekeeping: { a: 1, b: 1, c: 0, d: 0 },
+    laundry: { a: 1, b: 1, c: 0 },
+    transport: { a: 1, b: 1, c: 1, d: 0 },
+    medication: { a: 1, b: 0, c: 0 },
+    finance: { a: 1, b: 1, c: 0 }
+  };
+
+  const calculateIadlTotal = (vals) => {
+    const keys = ["telephone", "shopping", "food", "housekeeping", "laundry", "transport", "medication", "finance"];
+    return keys.reduce((sum, k) => {
+      const value = vals?.[k];
+      return sum + (iadlScoreMap[k] && iadlScoreMap[k][value] != null ? iadlScoreMap[k][value] : 0);
+    }, 0);
+  };
+
+  // Keep `iadl_total` in sync with selected Lawton IADL options.
+  useEffect(() => {
+    const total = calculateIadlTotal(values);
+    setValues((prev) => {
+      if (prev.iadl_total === total) return prev;
+      return { ...prev, iadl_total: total };
+    });
+  }, [values]);
+
   /* ===================== SCHEMAS ===================== */
+
+  const ACTIONS = [
+    { type: "back", label: "Back" },
+    { type: "clear", label: "Clear" },
+    { type: "save", label: "Save" }
+  ];
 
   const ADL_SCHEMA = {
     title: "Functional Assessment",
-    subtitle: "ADL & IADL",
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "save", label: "Save" }
-    ],
+    subtitle: "ADL",
+    actions: ACTIONS,
     fields: [
-      { name: "washing", label: "Washing oneself", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "body_care", label: "Caring for body parts", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "toileting", label: "Toileting", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "dressing", label: "Dressing", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "eating", label: "Eating", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "drinking", label: "Drinking", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "health_mgmt", label: "Looking after one’s health", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
-      { name: "other_selfcare", label: "Other self-care activities", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_washing", label: "Washing oneself", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_body_care", label: "Caring for body parts", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_toileting", label: "Toileting", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_dressing", label: "Dressing", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_eating", label: "Eating", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_drinking", label: "Drinking", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_health_mgmt", label: "Looking after one’s health", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
+      { name: "adl_other_selfcare", label: "Other self-care activities", type: "radio-matrix", options: DEPENDENCE_OPTIONS },
       {
-        name: "overall_selfcare",
+        name: "adl_overall_selfcare",
         label: "Overall self-care",
         type: "radio-matrix",
         options: DEPENDENCE_OPTIONS
       },
-            {
-        name: "other_selfcare_specify",
+      {
+        name: "adl_other_selfcare_specify",
         label: "Remarks",
         type: "textarea",
       },
     ]
   };
 
+  const IADL_SCHEMA = {
+    title: "Lawton - Brody Instrumental Activities of Daily Living (IADL) Scale",
+    actions: ACTIONS,
+    sections: [
+      {
+        title: "A. Ability to Use Telephone",
+        fields: [
+          {
+            type: "radio",
+            name: "telephone",
+            options: [
+              { label: "Operates telephone on own initiative", value: "a" },
+              { label: "Dials a few well known numbers", value: "b" },
+              { label: "Answers telephone but does not dial", value: "c" },
+              { label: "Does not use telephone at all", value: "d" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "B. Shopping",
+        fields: [
+          {
+            type: "radio",
+            name: "shopping",
+            options: [
+              { label: "Takes care of all shopping independently", value: "a" },
+              { label: "Shops independently for small purchases", value: "b" },
+              { label: "Needs to be accompanied on shopping", value: "c" },
+              { label: "Unable to shop", value: "d" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "C. Food Preparation",
+        fields: [
+          {
+            type: "radio",
+            name: "food",
+            options: [
+              { label: "Plans and prepares meals independently", value: "a" },
+              { label: "Prepares meals if supplied ingredients", value: "b" },
+              { label: "Heats and serves prepared meals only", value: "c" },
+              { label: "Needs meals prepared", value: "d" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "D. Housekeeping",
+        fields: [
+          {
+            type: "radio",
+            name: "housekeeping",
+            options: [
+              { label: "Maintains house alone with occasional assistance", value: "a" },
+              { label: "Performs light daily tasks", value: "b" },
+              { label: "Needs help with housekeeping", value: "c" },
+              { label: "Does not participate in housekeeping", value: "d" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "E. Laundry",
+        fields: [
+          {
+            type: "radio",
+            name: "laundry",
+            options: [
+              { label: "Does personal laundry completely", value: "a" },
+              { label: "Launders small items only", value: "b" },
+              { label: "Laundry must be done by others", value: "c" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "F. Mode of Transportation",
+        fields: [
+          {
+            type: "radio",
+            name: "transport",
+            options: [
+              { label: "Travels independently", value: "a" },
+              { label: "Arranges own travel via taxi", value: "b" },
+              { label: "Travels on public transport when accompanied", value: "c" },
+              { label: "Does not travel at all", value: "d" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "G. Responsibility for Medication",
+        fields: [
+          {
+            type: "radio",
+            name: "medication",
+            options: [
+              { label: "Responsible for taking medication correctly", value: "a" },
+              { label: "Medication prepared in advance", value: "b" },
+              { label: "Not capable of dispensing medication", value: "c" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "H. Ability to Handle Finances",
+        fields: [
+          {
+            type: "radio",
+            name: "finance",
+            options: [
+              { label: "Manages financial matters independently", value: "a" },
+              { label: "Manages small purchases but needs help", value: "b" },
+              { label: "Incapable of handling money", value: "c" }
+            ]
+          }
+        ]
+      },
+      {
+        title: "Results",
+        fields: [
+          {
+            type: "score-box",
+            name: "iadl_total",
+            label: "Total IADL Score"
+          },
+          {
+            type: "textarea",
+            name: "comments",
+            label: "Comments"
+          }
+        ]
+      }
+    ]
+  };
+
 const MOBILITY_SCHEMA = {
   title: "Functional Assessment",
   subtitle: "Mobility – Walking and moving",
-  actions: ADL_SCHEMA.actions,
+  actions: ACTIONS,
 
   fields: [
     /* ================= PRIMARY SELECTION ================= */
@@ -219,7 +389,13 @@ name:"Walking_Unaided",
           style={activeTab === "adl" ? tabActive : tabBtn}
           onClick={() => setActiveTab("adl")}
         >
-          ADL & IADL
+          ADL
+        </div>
+        <div
+          style={activeTab === "iadl" ? tabActive : tabBtn}
+          onClick={() => setActiveTab("iadl")}
+        >
+          IADL
         </div>
         <div
           style={activeTab === "mobility" ? tabActive : tabBtn}
@@ -230,7 +406,7 @@ name:"Walking_Unaided",
       </div>
 
       <CommonFormBuilder
-        schema={activeTab === "adl" ? ADL_SCHEMA : MOBILITY_SCHEMA}
+        schema={activeTab === "adl" ? ADL_SCHEMA : activeTab === "iadl" ? IADL_SCHEMA : MOBILITY_SCHEMA}
         values={values}
         onChange={onChange}
         submitted={submitted}
