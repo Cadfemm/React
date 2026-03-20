@@ -4,6 +4,8 @@ import BergBalanceScale from "./BBS";
 import SixMWTForm from "./SixMWTForm"
 import DASHAssessment from "../../OT/components/Dash";
 import LEFSForm from "./LEFS";
+import { calculateDuration, localDateTimeString } from "../../../shared/utils/dateFormatter";
+
 
 /* ===================== CONTAINER SCHEMA (SAME AS NEURO) ===================== */
 
@@ -118,31 +120,16 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
 function HydroPatientInfo({ patient }) {
   if (!patient) return null;
 
-  const today = new Date();
-
-  const formatDate = d => (d ? new Date(d).toLocaleDateString() : "-");
-
-  const calculateDuration = onset => {
-    if (!onset) return "-";
-    const diff = today - new Date(onset);
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-    if (years > 0) return `${years} yr ${months % 12} mo`;
-    if (months > 0) return `${months} mo`;
-    return `${days} days`;
-  };
-
   return (
     <div style={section}>
       <div style={patientGrid}>
         <div><b>Name:</b> {patient.name}</div>
         <div><b>IC:</b> {patient.id}</div>
-        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+        <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
         <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
         <div><b>ICD:</b> {patient.icd}</div>
-        <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
+        <div><b>Date of Onset:</b> {localDateTimeString(patient.date_of_onset)}</div>
         <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
         <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
         <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>

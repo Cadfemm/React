@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import SixMWTForm from "./SixMWTForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import { calculateDuration, localDateTimeString } from "../../../shared/utils/dateFormatter";
+
 
 export const CONDITIONING_ASSESSMENT_REGISTRY = {
   sixmwt: SixMWTForm
@@ -755,29 +757,6 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
   };
 
   /* ===================== UI ===================== */
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
-  const calculateDuration = (onset) => {
-    if (!onset) return "-";
-    const onsetDate = new Date(onset);
-    const diffMs = today - onsetDate;
-
-    if (diffMs < 0) return "-";
-
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-
-    if (years > 0) return `${years} yr ${months % 12} mo`;
-    if (months > 0) return `${months} mo`;
-    return `${days} days`;
-  };
-
   const schemaMap = {
     subjective: SUBJECTIVE_SCHEMA,
     objective: OBJECTIVE_SCHEMA,
@@ -794,11 +773,11 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
 
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
+          <div><b>Date of Onset:</b> {localDateTimeString(patient.date_of_onset)}</div>
           <div>
             <b>Duration of Diagnosis:</b>{" "}
             {calculateDuration(patient.date_of_onset)}

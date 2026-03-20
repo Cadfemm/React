@@ -7,6 +7,7 @@ import PHQ9FormBuilder from "./PhqForm";
 import GAD7FormBuilder from "./GadForm";
 import HAMDFormBuilder from "./HamdForm";
 import HAM_A_FormBuilder from "./HamaForm";
+import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -758,14 +759,6 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
   };
 
   /* ===================== PATIENT INFO ===================== */
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
   function PsychologyPatientInfo({ patient }) {
     if (!patient) return null;
 
@@ -774,13 +767,13 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack }) {
         <div style={patientGrid}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
           <div><b>Accommodation:</b> {patient.accommodation || "-"}</div>
           <div><b>Occupation:</b> {patient.occupation || "-"}</div>
           <div><b>Case Manager:</b> {patient.case_manager || patient.cm || "-"}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
         </div>
       </div>
     );

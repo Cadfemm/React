@@ -10,6 +10,7 @@ import BrainVisionInjury from "../BrainVisionInjury";
 import VisualFunctionForm from "../VisionFunctionalAssessmenmt";
 import BVDAssessment from "../BvdqAssessment";
 import LowVisionAssessment from "../LowVisionAssessment";
+import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -1951,13 +1952,6 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
     sections: []
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
   function OptometryPatientInfo({ patient }) {
     if (!patient) return null;
 
@@ -1970,10 +1964,10 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
         <div style={patientGrid}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
           <div style={{ gridColumn: "1 / -1" }}>
             <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
               Doctors Reports
