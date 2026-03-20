@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import BergBalanceScale from "./BBS";
 import SixMWTForm from "./SixMWTForm"
+import DASHAssessment from "../../OT/components/Dash";
+import LEFSForm from "./LEFS";
 
 /* ===================== CONTAINER SCHEMA (SAME AS NEURO) ===================== */
 
@@ -777,7 +779,9 @@ const PLAN_SCHEMA = {
 
 const HYDRO_ASSESSMENT_REGISTRY = {
   berg: BergBalanceScale,
-  sixmwt: SixMWTForm
+  sixmwt: SixMWTForm,
+  dash: DASHAssessment,
+  lefs: LEFSForm
 };
 
 /* ===================== MAIN HYDRO ===================== */
