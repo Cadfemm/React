@@ -12,6 +12,7 @@ import BowelAssessment from "./BowelAssessment";
 import BladderAssessment from "./BladderAssessment";
 import FunctionalAssessment from "./Functional";
 import SkinAssessment from "./SkinAssessment";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 /* -------------------------------------------------------------
    MULTISELECT CHECKBOX DROPDOWN  (UI ONLY - NO BUSINESS LOGIC)
@@ -266,6 +267,52 @@ const [BowelAssessmentData, setBowelAssessmentData] = useState(null);
 const [BladderAssessmentData, setBladderAssessmentData] = useState(null);
 const [FunctionalAssessmentData,setFunctionalAssessmentData] = useState(null);
 const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
+
+  // Patient history fields (stored back on the patient record).
+  const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: patient?.medical_history || "",
+    past_family_history: patient?.family_medical_history || "",
+  });
+
+  // Keep in sync when the selected patient changes.
+  useEffect(() => {
+    setPatientHistory({
+      past_medical_history: patient?.medical_history || "",
+      past_family_history: patient?.family_medical_history || "",
+    });
+  }, [patient?.id]);
+
+  // Persist changes so other department forms can see them.
+  useEffect(() => {
+    if (!patient?.id) return;
+    const updated = {
+      ...patient,
+      medical_history: patientHistory.past_medical_history,
+      family_medical_history: patientHistory.past_family_history,
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history]);
+
+  // Doctor Goals / Plan (below tabs).
+  const [doctorGoals, setDoctorGoals] = useState(patient?.doctor_goals || "");
+  const [doctorPlan, setDoctorPlan] = useState(patient?.doctor_plan || "");
+
+  useEffect(() => {
+    setDoctorGoals(patient?.doctor_goals || "");
+    setDoctorPlan(patient?.doctor_plan || "");
+  }, [patient?.id]);
+
+  useEffect(() => {
+    if (!patient?.id) return;
+    const updated = {
+      ...patient,
+      doctor_goals: doctorGoals,
+      doctor_plan: doctorPlan,
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, doctorGoals, doctorPlan]);
   /* --------- Tabs --------- */
   const tabs = [
     "Cognitive",
@@ -282,6 +329,122 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     "Social History",
     "Work History",
   ];
+
+  const today = new Date();
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "-";
+    }
+  };
+  const calculateDuration = (onset) => {
+    if (!onset) return "-";
+    const onsetDate = new Date(onset);
+    const diffMs = today - onsetDate;
+    if (Number.isNaN(diffMs) || diffMs < 0) return "-";
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+    if (years > 0) return `${years} yr ${months % 12} mo`;
+    if (months > 0) return `${months} mo`;
+    return `${days} days`;
+  };
+
+  const section = {
+    marginBottom: 24
+  };
+  const patientGrid = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 12,
+    fontSize: 14,
+  };
+
+  // Backward-compat: some hot-reload paths may still reference `patientCard`.
+  // The current patient header is rendered via `CommonFormBuilder`, but keeping this
+  // constant prevents runtime crashes.
+  const patientCard = {
+    border: "1px solid #e5e7eb",
+    borderRadius: 10,
+    padding: 18,
+    marginBottom: 20,
+    background: "#fafafa",
+    width: "100%",
+    boxSizing: "border-box",
+  };
+
+  const NEURO_CONTAINER_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  };
+
+  function DoctorsPatientInfo({ patient: pt, patientHistory, setPatientHistory }) {
+    if (!pt) return null;
+
+    return (
+      <div style={section}>
+        <div style={patientGrid}>
+          <div><b>Name:</b> {pt.name}</div>
+          <div><b>IC:</b> {pt.id}</div>
+          <div><b>DOB:</b> {formatDate(pt.dob)}</div>
+          <div><b>Age / Gender:</b> {pt.age} / {pt.sex}</div>
+          <div><b>ICD:</b> {pt.icd}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Onset:</b> {formatDate(pt.date_of_onset)}</div>
+          <div><b>Duration of Diagnosis:</b> {calculateDuration(pt.date_of_onset)}</div>
+          <div><b>Primary Diagnosis:</b> {pt.diagnosis_history || "-"}</div>
+          <div><b>Secondary Diagnosis:</b> {pt.medical_history || "-"}</div>
+          <div><b>Dominant Side:</b> {pt.dominant_side || "-"}</div>
+          <div><b>Language Preference:</b> {pt.language_preference || "-"}</div>
+          <div><b>Education Level:</b> {pt.education_background || "-"}</div>
+          <div><b>Occupation:</b> {pt.occupation || "-"}</div>
+          <div><b>Work Status:</b> {pt.employment_status || "-"}</div>
+          <div><b>Driving Status:</b> {pt.driving_status || "-"}</div>
+
+          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+              <textarea
+                value={patientHistory.past_medical_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div>
+
+            <div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Family History</div>
+              <textarea
+                value={patientHistory.past_family_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   /* --------- Referral Department Options --------- */
   const departmentOptions = [
@@ -422,7 +585,14 @@ const handleSubmitReferral = () => {
         flexDirection: "column",
       }}
     >
-   
+      {/* ===== PATIENT INFORMATION CARD (above all Doctors tabs) ===== */}
+      <CommonFormBuilder
+        schema={NEURO_CONTAINER_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <DoctorsPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
+      </CommonFormBuilder>
 
       {/* ------------------ TABS ------------------ */}
       <div style={{ flexShrink: 0, width: "100%", marginBottom: 20 }}>
@@ -525,11 +695,52 @@ const handleSubmitReferral = () => {
           </div>
         )}
        
-         {/* <div style={{paddingBottom:20}}>
-      <h3>Assessment</h3>
-      <textarea/></div> <div style={{paddingBottom:20}}>
-      <h3>Plan</h3>
-      <textarea/></div> */}
+        {/* ===== Doctor Goals & Plan (below tabs) ===== */}
+        <div
+          style={{
+            width: "90%",
+            margin: "0 auto",
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            padding: 24,
+            boxShadow: "0 4px 14px rgba(15,23,42,0.04)",
+            marginBottom: 20,
+          }}
+        >
+          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Goals</div>
+          <textarea
+            value={doctorGoals}
+            onChange={(e) => setDoctorGoals(e.target.value)}
+            style={{
+              width: "100%",
+              minHeight: 90,
+              padding: "10px 12px",
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+              fontSize: 14,
+              fontFamily: "inherit",
+              resize: "vertical",
+              marginBottom: 18,
+            }}
+          />
+
+          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Plan</div>
+          <textarea
+            value={doctorPlan}
+            onChange={(e) => setDoctorPlan(e.target.value)}
+            style={{
+              width: "100%",
+              minHeight: 90,
+              padding: "10px 12px",
+              borderRadius: 6,
+              border: "1px solid #d1d5db",
+              fontSize: 14,
+              fontFamily: "inherit",
+              resize: "vertical",
+            }}
+          />
+        </div>
         {/* REFER TO DEPARTMENTS DROPDOWN */}
         <MultiSelectDropdown
           options={departmentOptions}

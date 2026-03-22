@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import humanBodyImage from "../../../assets/Human Body.jpg";
+import faces0 from "../../../assets/faces-0.png";
+import faces2 from "../../../assets/faces-2.png";
+import faces4 from "../../../assets/faces-4.png";
+import faces6 from "../../../assets/faces-6.png";
+import faces8 from "../../../assets/faces-8.png";
+import faces10 from "../../../assets/faces-10.png";
 
 export default function PainAssessmentForm({ values, onChange }) {
   const schema = useMemo(() => {
@@ -208,6 +214,8 @@ export default function PainAssessmentForm({ values, onChange }) {
 
   const PAIN_SCALE_REGISTRY = useMemo(() => {
     return {
+      // Inline SVG faces so the MOH Faces Scale renders consistently without needing image assets.
+      // Scores follow the MOH faces anchors: 0, 2, 4, 6, 8, 10.
       moh_pain_scale: function MOHPainScale({ values: v, onChange: c }) {
         return (
           <CommonFormBuilder
@@ -240,6 +248,23 @@ export default function PainAssessmentForm({ values, onChange }) {
         );
       },
       flacc_scale: function FLACCScale({ values: v, onChange: c }) {
+        const scoreFields = ["flacc_face", "flacc_legs", "flacc_activity", "flacc_cry", "flacc_consolability"];
+
+        const toNum = (x) => {
+          if (x === null || x === undefined || x === "") return 0;
+          const n = typeof x === "number" ? x : Number(x);
+          return Number.isFinite(n) ? n : 0;
+        };
+
+        const recomputeTotal = (valuesObj) =>
+          scoreFields.reduce((sum, key) => sum + toNum(valuesObj?.[key]), 0);
+
+        const handleChange = (name, value) => {
+          const next = { ...(v || {}), [name]: value };
+          c(name, value);
+          c("flacc_score", recomputeTotal(next));
+        };
+
         return (
           <CommonFormBuilder
             schema={{
@@ -249,50 +274,207 @@ export default function PainAssessmentForm({ values, onChange }) {
                   fields: [
                     { type: "subheading", label: "FLACC Scale" },
                     {
+                      type: "grid-header",
+                      label: "Category",
+                      cols: ["0", "1", "2"],
+                      wideLabel: true,
+                    },
+                    {
+                      type: "radio-matrix",
+                      name: "flacc_face",
+                      label: "Face",
+                      wideLabel: true,
+                      options: [
+                        { label: "0", value: 0 },
+                        { label: "1", value: 1 },
+                        { label: "2", value: 2 },
+                      ],
+                      info: {
+                        title: "Face",
+                        content: [
+                          "0: No particular expression or smile",
+                          "1: Occasional grimace or frown, withdrawn, disinterested",
+                          "2: Frequent to constant quivering chin, clenched jaw",
+                        ],
+                      },
+                    },
+                    {
+                      type: "radio-matrix",
+                      name: "flacc_legs",
+                      label: "Legs",
+                      wideLabel: true,
+                      options: [
+                        { label: "0", value: 0 },
+                        { label: "1", value: 1 },
+                        { label: "2", value: 2 },
+                      ],
+                      info: {
+                        title: "Legs",
+                        content: [
+                          "0: Normal position or relaxed",
+                          "1: Uneasy, restless, tense",
+                          "2: Kicking or legs drawn up",
+                        ],
+                      },
+                    },
+                    {
+                      type: "radio-matrix",
+                      name: "flacc_activity",
+                      label: "Activity",
+                      wideLabel: true,
+                      options: [
+                        { label: "0", value: 0 },
+                        { label: "1", value: 1 },
+                        { label: "2", value: 2 },
+                      ],
+                      info: {
+                        title: "Activity",
+                        content: [
+                          "0: Lying quietly, normal position, moves easily",
+                          "1: Squirming, shifting back and forth, tense",
+                          "2: Arched, rigid or jerking",
+                        ],
+                      },
+                    },
+                    {
+                      type: "radio-matrix",
+                      name: "flacc_cry",
+                      label: "Cry",
+                      wideLabel: true,
+                      options: [
+                        { label: "0", value: 0 },
+                        { label: "1", value: 1 },
+                        { label: "2", value: 2 },
+                      ],
+                      info: {
+                        title: "Cry",
+                        content: [
+                          "0: No cry (awake or asleep)",
+                          "1: Moans or whimpers; occasional complaint",
+                          "2: Crying steadily, screams or sobs, frequent complaints",
+                        ],
+                      },
+                    },
+                    {
+                      type: "radio-matrix",
+                      name: "flacc_consolability",
+                      label: "Consolability",
+                      wideLabel: true,
+                      options: [
+                        { label: "0", value: 0 },
+                        { label: "1", value: 1 },
+                        { label: "2", value: 2 },
+                      ],
+                      info: {
+                        title: "Consolability",
+                        content: [
+                          "0: Content, relaxed",
+                          "1: Reassured by occasional touching, hugging or being talked to, distractible",
+                          "2: Difficult to console",
+                        ],
+                      },
+                    },
+                    {
                       name: "flacc_score",
-                      label: "Score (0–10)",
-                      type: "scale-slider",
-                      min: 0,
-                      max: 10,
-                      step: 1,
-                      showValue: true,
+                      label: "Total FLACC Score (0–10)",
+                      type: "score-box",
                     },
                   ],
                 },
               ],
             }}
             values={v}
-            onChange={c}
+            onChange={handleChange}
             layout="nested"
           />
         );
       },
       moh_faces_scale: function MOHFacesScale({ values: v, onChange: c }) {
+        const selected = v?.moh_faces_scale_score;
+        const setScore = (score) => c("moh_faces_scale_score", score);
+
+        const facesByScore = {
+          0: faces0,
+          2: faces2,
+          4: faces4,
+          6: faces6,
+          8: faces8,
+          10: faces10,
+        };
+
+        const options = [0, 2, 4, 6, 8, 10];
+        const descriptions = {
+          0: "Face 0 is very happy because he doesn’t hurt at all.",
+          2: "Face 2 hurts just a little.",
+          4: "Face 4 hurts a little more.",
+          6: "Face 6 hurts even more.",
+          8: "Face 8 hurts a whole lot.",
+          10: "Face 10 hurts as much as you can imagine, although you don’t have to be crying to feel this bad.",
+        };
+
         return (
-          <CommonFormBuilder
-            schema={{
-              title: "",
-              sections: [
-                {
-                  fields: [
-                    { type: "subheading", label: "MOH Faces Scale" },
-                    {
-                      name: "moh_faces_scale_score",
-                      label: "Score (0–10)",
-                      type: "scale-slider",
-                      min: 0,
-                      max: 10,
-                      step: 1,
-                      showValue: true,
-                    },
-                  ],
-                },
-              ],
-            }}
-            values={v}
-            onChange={c}
-            layout="nested"
-          />
+          <div style={{ width: "100%" }}>
+            <div style={{ fontWeight: 800, marginBottom: 10 }}>MOH Faces Scale</div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "flex-end" }}>
+              {options.map((score) => {
+                const isActive = Number(selected) === score;
+                return (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setScore(score)}
+                    style={{
+                      border: isActive ? "2px solid #2563eb" : "1px solid #e5e7eb",
+                      background: isActive ? "#eff6ff" : "#ffffff",
+                      borderRadius: 12,
+                      padding: "10px 10px 8px",
+                      cursor: "pointer",
+                      minWidth: 110,
+                      boxShadow: isActive ? "0 0 0 3px rgba(37,99,235,0.15)" : "none",
+                    }}
+                    aria-pressed={isActive}
+                  >
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <img
+                        src={facesByScore[score]}
+                        alt={`face-${score}`}
+                        style={{
+                          width: 96,
+                          height: 64,
+                          objectFit: "contain",
+                          background: "#fff",
+                        }}
+                      />
+                    </div>
+                    <div style={{ marginTop: 6, fontWeight: 800, textAlign: "center", color: "#111827" }}>
+                      {score}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{ marginTop: 12, fontWeight: 700 }}>
+              Selected score: <span style={{ fontWeight: 900 }}>{selected ?? ""}</span>
+            </div>
+
+            {selected !== undefined && selected !== null && selected !== "" && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: 12,
+                  border: "1px solid #bfdbfe",
+                  borderRadius: 10,
+                  background: "#eff6ff",
+                  color: "#111827",
+                  fontWeight: 700,
+                }}
+              >
+                {descriptions[Number(selected)] || ""}
+              </div>
+            )}
+          </div>
         );
       },
     };

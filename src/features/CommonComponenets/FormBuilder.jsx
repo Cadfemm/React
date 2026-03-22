@@ -386,7 +386,11 @@ export default function CommonFormBuilder({
                               <div
                                 style={{
                                   ...styles.field,
-                                  marginBottom: layout === "nested" ? 10 : 18
+                                  marginBottom: field.compact
+                                    ? 4
+                                    : layout === "nested"
+                                      ? 10
+                                      : 18
                                 }}
                               >
 
@@ -472,7 +476,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
+                                      {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -1818,10 +1822,68 @@ case "grid-table-advanced": {
         </div>
       );
     }
+    case "accordion": {
+      const summaryText =
+        field?.label != null
+          ? languageConfig?.enabled
+            ? t(field.label, languageConfig.lang)
+            : field.label
+          : "";
+      const children = field?.children || [];
+
+      return (
+        <details
+          open={field?.defaultOpen === true}
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: 10,
+            padding: 12,
+            background: "#fafafa"
+          }}
+        >
+          <summary
+            style={{
+              cursor: "pointer",
+              fontWeight: 800,
+              color: "#111827",
+              outline: "none",
+              userSelect: "none"
+            }}
+          >
+            {summaryText}
+          </summary>
+
+          <div style={{ marginTop: 12 }}>
+            {children.map((c, idx) => {
+              if (c?.showIf && !evaluateShowIf(c.showIf, values)) return null;
+              const childValue = c?.name ? values?.[c.name] : undefined;
+              return (
+                <div
+                  key={c?.name || c?.label || idx}
+                  style={{ marginBottom: c?.compact ? 4 : 10 }}
+                >
+                  {renderField(
+                    c,
+                    childValue,
+                    values,
+                    onChange,
+                    onAction,
+                    assessmentRegistry,
+                    formReadOnly,
+                    languageConfig
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      );
+    }
     case "row":
       // If this row is only buttons, pack them tightly like a toolbar (no big gaps)
       // Otherwise, keep a responsive grid for typical form fields.
       const rowAllButtons = (field.fields || []).every(f => f?.type === "button");
+      const rowGap = field.compact ? 8 : 16;
       return (
         <div
           style={{
@@ -1829,14 +1891,14 @@ case "grid-table-advanced": {
               ? {
                 display: "flex",
                 flexWrap: "wrap",
-                gap: 16,
+                gap: rowGap,
                 alignItems: "center",
                 justifyContent: "flex-start"
               }
               : {
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: 16
+                gap: rowGap
               })
           }}
         >
@@ -2819,16 +2881,21 @@ case "grid-table-advanced": {
     case "refraction-12col": {
       const rows = field.rows || [];
       const groups = field.groups || [];
+      const cornerLabel = field.cornerLabel || "";
+      const cornerLikeGroupHeader = field.cornerLikeGroupHeader === true;
 
       const flatCols = groups.flatMap(g => g.columns);
       const colCount = flatCols.length;
+      const showColumnHeaders = field.showColumnHeaders !== false;
 
       const gridTemplate = `200px repeat(${colCount}, 1fr)`;
 
       return (
         <div style={styles.vaWrap}>
           <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
-            <div style={styles.vaCorner} />
+            <div style={cornerLikeGroupHeader ? { ...styles.vaGroupHeader, borderRight: "1px solid #eef2f7" } : styles.vaCorner}>
+              {cornerLabel}
+            </div>
             {groups.map((g, i) => (
               <div
                 key={i}
@@ -2842,14 +2909,16 @@ case "grid-table-advanced": {
             ))}
           </div>
 
-          {/* <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
-  <div style={styles.vaCorner} />
-  {flatCols.map((c, i) => (
-    <div key={i} style={styles.vaColHeader}>
-      {c.key}
-    </div>
-  ))}
-</div> */}
+          {showColumnHeaders && (
+            <div style={{ display: "grid", gridTemplateColumns: gridTemplate }}>
+              <div style={styles.vaCorner} />
+              {flatCols.map((c, i) => (
+                <div key={i} style={styles.vaColHeader}>
+                  {c.key}
+                </div>
+              ))}
+            </div>
+          )}
 
 
           <div style={{ overflowX: "auto" }}>
@@ -2883,7 +2952,11 @@ case "grid-table-advanced": {
 
                       return (
                         <div key={key} style={styles.vaCell}>
-                          {col.type === "select" ? (
+                          {col.type === "static" ? (
+                            <div style={styles.vaStaticCell}>
+                              {col.value || ""}
+                            </div>
+                          ) : col.type === "select" ? (
                             <select
                               value={v}
                               onChange={e => onChange(key, e.target.value)}
@@ -4053,6 +4126,19 @@ const styles = {
     fontSize: 13,
     padding: "0 10px",
     background: "#ffffff"
+  },
+  vaStaticCell: {
+    width: "100%",
+    height: 40,
+    borderRadius: 8,
+    border: "1px solid #e5e7eb",
+    fontSize: 14,
+    fontWeight: 700,
+    padding: "0 10px",
+    background: "#f8fafc",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start"
   },
 
   vaRemark: {

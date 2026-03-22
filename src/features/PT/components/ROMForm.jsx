@@ -1,332 +1,364 @@
-import React from "react";
+import React, { useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-const ROM_CERVICAL_SCHEMA = {
+const ROM_FIELDS = {
   title: "RANGE OF MOTION MEASUREMENTS (Degrees)",
-  sections: [
+  fields: [
+    { type: "subheading", label: "Cervical Spine" },
     {
-      fields: [
-        { type: "subheading", label: "Cervical Spine" },
+      type: "refraction-12col",
+      name: "rom_cervical",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
         {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_cervical_flexion",
+          value: "flexion",
           label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "45°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_cervical_extension",
+          value: "extension",
           label: "Extension",
-          cols: ["input", "input", { type: "static", value: "45°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_cervical_rotation",
+          value: "rotation",
           label: "Rotation",
-          cols: ["input", "input", { type: "static", value: "60°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 60°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_cervical_lateral_flexion",
+          value: "lateral_flexion",
           label: "Lateral Flexion",
-          cols: ["input", "input", { type: "static", value: "45°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }],
         },
-        { type: "subheading", label: "Shoulder" },
+      ],
+    },
+
+    { type: "subheading", label: "Shoulder" },
+    {
+      type: "refraction-12col",
+      name: "rom_shoulder",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 135°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0°" }] },
+        { value: "abduction", label: "Abduction", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 180°" }] },
+        { value: "adduction", label: "Adduction", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 30°" }] },
+        { value: "internal_rotation", label: "Internal Rotation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 70°" }] },
+        { value: "external_rotation", label: "External Rotation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 90°" }] },
+      ],
+    },
+
+    { type: "subheading", label: "Elbow / Forearm" },
+    {
+      type: "refraction-12col",
+      name: "rom_elbow_forearm",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 150°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0°" }] },
+        { value: "pronation", label: "Pronation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 80°" }] },
+        { value: "supination", label: "Supination", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 80°" }] },
+      ],
+    },
+
+    { type: "subheading", label: "Wrist / Hand" },
+    {
+      type: "info-text",
+      text: "Fill Wrist only if needed it is not mandatory",
+      showIf: { field: "amp_upper_limb_location", equals: "carpal_metacarpal" },
+    },
+    {
+      type: "refraction-12col",
+      name: "rom_wrist_hand",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 80°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 70°" }] },
         {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "180°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "60°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_abduction",
-          label: "Abduction",
-          cols: ["input", "input", { type: "static", value: "180°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_adduction",
-          label: "Adduction",
-          cols: ["input", "input", { type: "static", value: "30°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_internal_rotation",
-          label: "Internal Rotation",
-          cols: ["input", "input", { type: "static", value: "70°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_shoulder_external_rotation",
-          label: "External Rotation",
-          cols: ["input", "input", { type: "static", value: "90°" }]
-        },
-        { type: "subheading", label: "Elbow / Forearm" },
-        {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_elbow_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "150°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_elbow_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "0°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_elbow_pronation",
-          label: "Pronation",
-          cols: ["input", "input", { type: "static", value: "80°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_elbow_supination",
-          label: "Supination",
-          cols: ["input", "input", { type: "static", value: "80°" }]
-        },
-        { type: "subheading", label: "Wrist / Hand" },
-        {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_wrist_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "80°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_wrist_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "70°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_wrist_radial_deviation",
+          value: "radial_deviation",
           label: "Radial Deviation",
-          cols: ["input", "input", { type: "static", value: "20°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 20°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_wrist_ulnar_deviation",
+          value: "ulnar_deviation",
           label: "Ulnar Deviation",
-          cols: ["input", "input", { type: "static", value: "30°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 30°" }],
         },
-        { type: "subheading", label: "Thoracolumbar Spine" },
+      ],
+    },
+
+    { type: "subheading", label: "Thoracolumbar Spine" },
+    {
+      type: "refraction-12col",
+      name: "rom_thoracolumbar",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 60°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 25°" }] },
+        { value: "rotation", label: "Rotation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 30°" }] },
+        { value: "side_bending", label: "Side Bending", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 25°" }] },
+      ],
+    },
+
+    { type: "subheading", label: "Hip" },
+    {
+      type: "refraction-12col",
+      name: "rom_hip",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 120°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 30°" }] },
+        { value: "abduction", label: "Abduction", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }] },
+        { value: "adduction", label: "Adduction", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 30°" }] },
+        { value: "internal_rotation", label: "Internal Rotation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }] },
+        { value: "external_rotation", label: "External Rotation", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 45°" }] },
+      ],
+    },
+
+    { type: "subheading", label: "Knee" },
+    {
+      type: "refraction-12col",
+      name: "rom_knee",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
+        { value: "flexion", label: "Flexion", columns: [{}, {}, {}, {}, { type: "static", value: "0 - 135°" }] },
+        { value: "extension", label: "Extension", columns: [{}, {}, {}, {}, { type: "static", value: "0°" }] },
+      ],
+    },
+
+    { type: "subheading", label: "Ankle / Foot" },
+    {
+      type: "info-text",
+      text: "If required, not Mandatory.",
+      showIf: { field: "amp_lower_limb_location", equals: "tarsal_metatarsal" },
+    },
+    {
+      type: "refraction-12col",
+      name: "rom_ankle_foot",
+      cornerLabel: "Movement",
+      cornerLikeGroupHeader: true,
+      showColumnHeaders: true,
+      groups: [
+        { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+        { label: "Normal", columns: [{ key: "" }] },
+      ],
+      rows: [
         {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_thoracolumbar_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "60°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_thoracolumbar_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "25°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_thoracolumbar_rotation",
-          label: "Rotation (R/L)",
-          cols: ["input", "input", { type: "static", value: "30°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_thoracolumbar_side_bending",
-          label: "Side Bending (R/L)",
-          cols: ["input", "input", { type: "static", value: "25°" }]
-        },
-        { type: "subheading", label: "Hip" },
-        {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "120°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "20°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_abduction",
-          label: "Abduction",
-          cols: ["input", "input", { type: "static", value: "45°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_adduction",
-          label: "Adduction",
-          cols: ["input", "input", { type: "static", value: "30°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_internal_rotation",
-          label: "Internal Rotation",
-          cols: ["input", "input", { type: "static", value: "40°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_hip_external_rotation",
-          label: "External Rotation",
-          cols: ["input", "input", { type: "static", value: "45°" }]
-        },
-        { type: "subheading", label: "Knee" },
-        {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_knee_flexion",
-          label: "Flexion",
-          cols: ["input", "input", { type: "static", value: "135°" }]
-        },
-        {
-          type: "grid-row",
-          name: "rom_knee_extension",
-          label: "Extension",
-          cols: ["input", "input", { type: "static", value: "0°" }]
-        },
-        { type: "subheading", label: "Ankle / Foot" },
-        {
-          type: "grid-header",
-          label: "Movement",
-          cols: ["Right", "Left", "Normal"]
-        },
-        {
-          type: "grid-row",
-          name: "rom_ankle_dorsiflexion",
+          value: "dorsiflexion",
           label: "Dorsiflexion",
-          cols: ["input", "input", { type: "static", value: "20°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 20°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_ankle_plantarflexion",
+          value: "plantarflexion",
           label: "Plantarflexion",
-          cols: ["input", "input", { type: "static", value: "50°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 50°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_ankle_inversion",
+          value: "inversion",
           label: "Inversion",
-          cols: ["input", "input", { type: "static", value: "35°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 35°" }],
         },
         {
-          type: "grid-row",
-          name: "rom_ankle_eversion",
+          value: "eversion",
           label: "Eversion",
-          cols: ["input", "input", { type: "static", value: "15°" }]
+          columns: [{}, {}, {}, {}, { type: "static", value: "0 - 15°" }],
         },
-        { type: "subheading", label: "Clinical Interpretation" },
-        {
-          type: "radio",
-          name: "rom_status",
-          label: "ROM Status",
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Mild restriction", value: "mild_restriction" },
-            { label: "Moderate restriction", value: "moderate_restriction" },
-            { label: "Severe restriction", value: "severe_restriction" }
-          ]
-        },
-        {
-          type: "radio",
-          name: "rom_pattern",
-          label: "Pattern",
-          options: [
-            { label: "Capsular", value: "capsular" },
-            { label: "non-capsular", value: "non_capsular" },
-            { label: "Pain-limited", value: "pain_limited" },
-            { label: "Structural", value: "structural" }
-          ]
-        },
-        {
-          type: "textarea",
-          name: "rom_contributing_factors",
-          label: "Contributing factors"
-        },
-        { type: "subheading", label: "Pain During Movement" },
-        {
-          type: "radio",
-          name: "rom_pain_at_rest",
-          label: "Pain at Rest",
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
-          ]
-        },
-        {
-          type: "radio",
-          name: "rom_pain_with_motion",
-          label: "Pain with Motion",
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
-          ]
-        },
-        {
-          type: "radio",
-          name: "rom_end_feel",
-          label: "End Feel",
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Capsular", value: "capsular" },
-            { label: "Spasm", value: "spasm" },
-            { label: "Empty", value: "empty" },
-            { label: "Hard", value: "hard" },
-            { label: "Soft", value: "soft" }
-          ]
-        }
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 };
 
+const SECTION_ORDER = [
+  "Cervical Spine",
+  "Shoulder",
+  "Elbow / Forearm",
+  "Wrist / Hand",
+  "Thoracolumbar Spine",
+  "Hip",
+  "Knee",
+  "Ankle / Foot",
+];
+
+function splitFieldsBySubheading(fields) {
+  const out = new Map();
+  let current = null;
+  fields.forEach(f => {
+    if (f?.type === "subheading") {
+      current = f.label;
+      if (!out.has(current)) out.set(current, []);
+      return;
+    }
+    if (!current) return;
+    out.get(current).push(f);
+  });
+  return out;
+}
+
+export function buildROMSchema(region, subRegion, category, ampLowerLimbLocation, ampUpperLimbLocation) {
+  const sectionsByName = splitFieldsBySubheading(ROM_FIELDS.fields);
+
+  const spineSections = ["Cervical Spine", "Thoracolumbar Spine"];
+  const upperSections = ["Shoulder", "Elbow / Forearm", "Wrist / Hand"];
+  const lowerSections = ["Hip", "Knee", "Ankle / Foot"];
+  const always = [];
+
+  const regionArr = Array.isArray(region)
+    ? region
+    : region
+      ? [region]
+      : [];
+
+  const hasSpine = regionArr.includes("spine");
+  const hasUpper = regionArr.includes("upper_limb");
+  const hasLower = regionArr.includes("lower_limb");
+
+  let wanted = [];
+  let forceEmpty = false;
+
+  const categoryArr = Array.isArray(category)
+    ? category
+    : category
+      ? [category]
+      : [];
+  const isAmputation = categoryArr.includes("amputation");
+  const normalizedAmpLowerLimbLocation =
+    typeof ampLowerLimbLocation === "string" ? ampLowerLimbLocation.trim() : ampLowerLimbLocation;
+  const normalizedAmpUpperLimbLocation =
+    typeof ampUpperLimbLocation === "string" ? ampUpperLimbLocation.trim() : ampUpperLimbLocation;
+
+  // Special case: amputations with lower-limb location
+  // Control which ROM sections appear based on location selection.
+  if (isAmputation) {
+    const hideEntireRom =
+      normalizedAmpLowerLimbLocation === "hip_disortation" || normalizedAmpUpperLimbLocation === "shoulder_disortation";
+
+    if (hideEntireRom) {
+      wanted = [];
+      forceEmpty = true;
+    } else {
+      let wantedUpper = [];
+      let wantedLower = [];
+
+      if (hasUpper) {
+        if (normalizedAmpUpperLimbLocation === "above_elbow") wantedUpper = ["Shoulder"];
+        else if (normalizedAmpUpperLimbLocation === "below_elbow") wantedUpper = ["Shoulder", "Elbow / Forearm"];
+        else if (normalizedAmpUpperLimbLocation === "rays_amputation") wantedUpper = ["Shoulder", "Elbow / Forearm", "Wrist / Hand"];
+        else if (normalizedAmpUpperLimbLocation === "carpal_metacarpal") {
+          wantedUpper = ["Shoulder", "Elbow / Forearm", "Wrist / Hand"];
+        }
+      }
+
+      if (hasLower) {
+        if (normalizedAmpLowerLimbLocation === "above_knee") wantedLower = ["Hip"];
+        else if (normalizedAmpLowerLimbLocation === "below_knee") wantedLower = ["Hip", "Knee"];
+        else if (normalizedAmpLowerLimbLocation === "rays_amputation") wantedLower = ["Hip", "Knee", "Ankle / Foot"];
+        else if (normalizedAmpLowerLimbLocation === "tarsal_metatarsal") wantedLower = ["Hip", "Knee", "Ankle / Foot"];
+      }
+
+      if (wantedUpper.length || wantedLower.length) wanted = [...wantedUpper, ...wantedLower];
+    }
+  }
+
+  // Default behavior (when not overridden by amputation-location logic)
+  if (!wanted.length && !forceEmpty) {
+    // For Upper Limb selection, include both cervical + thoracolumbar spine ROM too.
+    if (hasUpper) wanted = [...wanted, ...spineSections, ...upperSections, ...always];
+    else if (hasSpine) wanted = [...wanted, ...spineSections, ...always];
+
+    if (hasLower) wanted = [...wanted, ...lowerSections, ...always];
+  }
+
+  wanted = Array.from(new Set(wanted));
+
+  if (!wanted.length && !forceEmpty) {
+    wanted = SECTION_ORDER; // PT usage (no region) shows everything
+  }
+
+  return {
+    title: ROM_FIELDS.title,
+    // Render each ROM section as its own collapsible panel.
+    fields: wanted.map((title, idx) => ({
+      type: "accordion",
+      name: `rom_section_${title}`,
+      label: title,
+      defaultOpen: idx === 0,
+      children: sectionsByName.get(title) || [],
+    })),
+  };
+}
+
 export default function ROMForm({ values, onChange }) {
+  const region = values?.region;
+  const subRegion =
+    (Array.isArray(region) ? region.includes("upper_limb") : region === "upper_limb")
+      ? values?.region_upper_limb
+      : (Array.isArray(region) ? region.includes("lower_limb") : region === "lower_limb")
+        ? values?.region_lower_limb
+        : undefined;
+  const schema = useMemo(
+    () =>
+      buildROMSchema(
+        region,
+        subRegion,
+        values?.category,
+        values?.amp_lower_limb_location,
+        values?.amp_upper_limb_location
+      ),
+    [region, subRegion, values?.category, values?.amp_lower_limb_location, values?.amp_upper_limb_location]
+  );
   return (
     <CommonFormBuilder
-      schema={ROM_CERVICAL_SCHEMA}
+      schema={schema}
       values={values}
       onChange={onChange}
       layout="nested"
