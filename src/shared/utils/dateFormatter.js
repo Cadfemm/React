@@ -30,11 +30,11 @@ const calculateDuration = (date) => {
     const years = Math.floor(months/MONTHS)
 
     if (years>0){
-        return years + "yr" + months % MONTHS + "mo"
+        return years + " yr" + months % MONTHS + " mo"
     } else if(months>0){
-        return months + "mo"
+        return months + " mo"
     } else {
-        return days + "days"
+        return days + " days"
     }
 }
 
