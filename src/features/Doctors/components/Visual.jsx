@@ -324,12 +324,12 @@ export default function VisualAssessment() {
     },
 
     /* =========================
-       RAPD (2 options → radio)
+       Relative Afferent Pupillary Defects (RAPD) (2 options → radio)
     ========================== */
     {
       type: "radio",
       name: "right_rapd",
-      label: "Defects (RAPD) – Right Eye",
+      label: "Relative Afferent Pupillary Defects (RAPD) – Right Eye",
       options: [
         { label: "Positive", value: "positive" },
         { label: "Negative (Normal)", value: "negative" }
@@ -339,7 +339,7 @@ export default function VisualAssessment() {
     {
       type: "radio",
       name: "left_rapd",
-      label: "Defects (RAPD) – Left Eye",
+      label: "Relative Afferent Pupillary Defects (RAPD) – Left Eye",
       options: [
         { label: "Positive", value: "positive" },
         { label: "Negative (Normal)", value: "negative" }

@@ -6,8 +6,8 @@ import IADLAssessment from "./IADL";
 import SCIMaleSexualFunctionAssessment from "./SciMaleSexualAssessment"
 import SCIFemaleSexualFunctionAssessment from "./SciFeMaleSexualAssessment"
 import MoCAAssessment from "./MocA";
-import MMTForm from "./MMTForm";
-import masForm from "./MASForm";
+import MMTForm from "../../PT/components/MMTForm";
+import masForm from "../../PT/components/MASForm";
 import CUEQAssessment from "./CUEQ";
 import StrengthTest from "./Strengthtest";
 import PatientCard from "../../../shared/cards/PatientCard"

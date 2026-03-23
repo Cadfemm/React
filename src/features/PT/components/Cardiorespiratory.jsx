@@ -229,8 +229,27 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
         type: "scale-slider",
         min: 0,
         max: 10,
-        step: 1,
-        showValue: true
+        showValue: true,
+        ranges: [
+          {
+            min: 0,
+            max: 1,
+            label: "Mild",
+            color: "#22c55e"
+          },
+          {
+            min: 1,
+            max: 5,
+            label: "Moderate",
+            color: "#facc15"
+          },
+          {
+            min: 5,
+            max: 10,
+            label: "Severe",
+            color: "#ef4444"
+          }
+        ]
       },
       {
         type: "row",

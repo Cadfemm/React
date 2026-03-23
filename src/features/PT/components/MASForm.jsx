@@ -26,36 +26,54 @@ const MAS_INFO = {
 
 const mas = (name, label) => ({ type: "radio-matrix", name, label, options: MAS_OPTIONS, info: MAS_INFO, showInfoInRow: false });
 
+function splitMasGroupsBySubheading(fields) {
+  const groups = [];
+  let current = null;
+  (fields || []).forEach((f) => {
+    if (f?.type === "subheading") {
+      current = { label: f.label, children: [] };
+      groups.push(current);
+    } else if (current) {
+      current.children.push(f);
+    }
+  });
+  return groups;
+}
+
+const MAS_FIELDS_FLAT = [
+  { type: "subheading", label: "Shoulder" },
+  mas("mas_sh_flex_l", "Shoulder Flexion Left"),
+  mas("mas_sh_flex_r", "Shoulder Flexion Right"),
+  mas("mas_se_flex_l", "Shoulder Extension Left"),
+  mas("mas_se_flex_r", "Shoulder Extension Right"),
+  mas("mas_sa_flex_l", "Shoulder Abduction Left"),
+  mas("mas_sa_flex_r", "Shoulder Abduction Right"),
+  { type: "subheading", label: "Elbow" },
+  mas("mas_el_flex_l", "Elbow Flexion Left"),
+  mas("mas_el_flex_r", "Elbow Flexion Right"),
+  mas("mas_el_ext_l", "Elbow Extension Left"),
+  mas("mas_el_ext_r", "Elbow Extension Right"),
+  { type: "subheading", label: "Forearm" },
+  mas("mas_fa_flex_l", "Forearm supination/pronation Left"),
+  mas("mas_fa_flex_r", "Forearm supination/pronation Right"),
+  { type: "subheading", label: "Wrist" },
+  mas("mas_wr_flex_l", "Wrist Flexion Left"),
+  mas("mas_wr_flex_r", "Wrist Flexion Right"),
+  mas("mas_wr_ext_l", "Wrist Extension Left"),
+  mas("mas_wr_ext_r", "Wrist Extension Right"),
+];
+
 /* ===================== SCHEMA ===================== */
 
 const MAS_SCHEMA = {
   title: "Modified Ashworth Scale (MAS)",
-  sections: [
-    {
-      fields: [
-        { type: "subheading", label: "Shoulder" },
-        mas("mas_sh_flex_l", "Shoulder Flexion Left"),
-        mas("mas_sh_flex_r", "Shoulder Flexion Right"),
-        mas("mas_se_flex_l", "Shoulder Extension Left"),
-        mas("mas_se_flex_r", "Shoulder Extension Right"),
-        mas("mas_sa_flex_l", "Shoulder Abduction Left"),
-        mas("mas_sa_flex_r", "Shoulder Abduction Right"),
-        { type: "subheading", label: "Elbow" },
-        mas("mas_el_flex_l", "Elbow Flexion Left"),
-        mas("mas_el_flex_r", "Elbow Flexion Right"),
-        mas("mas_el_ext_l", "Elbow Extension Left"),
-        mas("mas_el_ext_r", "Elbow Extension Right"),
-        { type: "subheading", label: "Forearm" },
-        mas("mas_fa_flex_l", "Forearm supination/pronation Left"),
-        mas("mas_fa_flex_r", "Forearm supination/pronation Right"),
-        { type: "subheading", label: "Wrist" },
-        mas("mas_wr_flex_l", "Wrist Flexion Left"),
-        mas("mas_wr_flex_r", "Wrist Flexion Right"),
-        mas("mas_wr_ext_l", "Wrist Extension Left"),
-        mas("mas_wr_ext_r", "Wrist Extension Right")
-      ]
-    }
-  ]
+  fields: splitMasGroupsBySubheading(MAS_FIELDS_FLAT).map((g, idx) => ({
+    type: "accordion",
+    name: `mas_section_${String(g.label).replace(/[^a-z0-9]+/gi, "_").toLowerCase()}_${idx}`,
+    label: g.label,
+    defaultOpen: idx === 0,
+    children: g.children,
+  })),
 };
 
 /* ===================== COMPONENT ===================== */

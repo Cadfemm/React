@@ -309,7 +309,7 @@ export default function HearingAssessment() {
       label: "Whisper Test",
       cols: [
         {
-          type: "radio",
+          type: "single-select",
           name: "right_whisper_test",
           options: [
             { label: "Passed", value: "passed" },
@@ -317,7 +317,7 @@ export default function HearingAssessment() {
           ]
         },
         {
-          type: "radio",
+          type: "single-select",
           name: "left_whisper_test",
           options: [
             { label: "Passed", value: "passed" },
@@ -333,7 +333,7 @@ export default function HearingAssessment() {
       label: "Dix-Hallpike Test",
       cols: [
         {
-          type: "radio",
+          type: "single-select",
           name: "right_dix_hallpike",
           options: [
             { label: "Positive", value: "positive" },
@@ -341,7 +341,7 @@ export default function HearingAssessment() {
           ]
         },
         {
-          type: "radio",
+          type: "single-select",
           name: "left_dix_hallpike",
           options: [
             { label: "Positive", value: "positive" },
@@ -352,27 +352,6 @@ export default function HearingAssessment() {
     }
 
   ]
-},
-    /* =====================================================
-       PLAN
-    ===================================================== */
-    {
-      title: "Plan",
-      showIf: { field: "ear_status", equals: "impaired" },
-      fields: [
-         {
-            type: "textarea",
-            name: `hearing_plan`,
-            label: `For further evaluation by Audiologist`,
-           
-          },
-            {
-            type: "textarea",
-            name: `Others`,
-            label: `Others`,
-           
-          }
-      ]
     }
   ]
 };

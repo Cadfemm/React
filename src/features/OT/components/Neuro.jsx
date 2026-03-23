@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-// features/neuro/assessments/registry.js
-import MMTForm from "./MMTForm";
 import TUG from "./TUGForm";
-import MASForm from "./MASForm";
 import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
 import UpperExtremityAssessment from "./Flug";
@@ -13,15 +10,17 @@ import FIMAssessment from "./Fim";
 import ARATAssessment from "./Arat";
 import JHFTAssessment from "./Jfht";
 import BoxAndBlockTest from "./BoxBlockTest";
-import SCIMaleSexualFunctionAssessment from "./SciMaleSexualAssessment"
-import SCIFemaleSexualFunctionAssessment from "./SciFeMaleSexualAssessment"
+import MoCAAssessment from "./MocA";
+import MMTForm from "../../PT/components/MMTForm";
+import MASForm from "../../PT/components/MASForm";
 import PatientCard from "../../../shared/cards/PatientCard"
 
 
 export const NEURO_ASSESSMENT_REGISTRY = {
-  mmt: SCIMaleSexualFunctionAssessment,
+  mmt: MMTForm,
   tug: TUG,
-  mas: SCIFemaleSexualFunctionAssessment,
+  mas: MASForm,
+  moca: MoCAAssessment,
   sara: SARAForm,
   bbs: BergBalanceScale,
   FIM: FIMAssessment,

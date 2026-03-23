@@ -1882,6 +1882,73 @@ case "grid-table-advanced": {
           : "";
       const children = field?.children || [];
 
+      // Section-level rendering injects column headers before radio-matrix rows; nested
+      // accordion children only hit renderField → RadioMatrixRow (no headers). Mirror
+      // shouldShowScaleBeforeMatrix / matrixHeader behavior here for MMT, MAS, ROM, etc.
+      const optionsEqual = (a, b) => {
+        if (!a || !b || a.length !== b.length) return false;
+        return a.every(
+          (o, i) =>
+            (o?.value ?? o) === (b[i]?.value ?? b[i]) && (o?.label ?? o) === (b[i]?.label ?? b[i])
+        );
+      };
+      const getPrevVisibleMatrixField = (idx) => {
+        for (let i = idx - 1; i >= 0; i--) {
+          const ch = children[i];
+          if (ch?.showIf && !evaluateShowIf(ch.showIf, values)) continue;
+          if (ch?.type === "radio-matrix") return ch;
+        }
+        return null;
+      };
+      const shouldShowMatrixHeaderBeforeChild = (c, idx) => {
+        if (c?.type !== "radio-matrix" || !c.options?.length) return false;
+        const prevMatrix = getPrevVisibleMatrixField(idx);
+        return !prevMatrix || !optionsEqual(prevMatrix.options, c.options);
+      };
+      const firstMatrixField = children.find(
+        (f) =>
+          f?.type === "radio-matrix" &&
+          (!f?.showIf || evaluateShowIf(f.showIf, values))
+      );
+      const matrixColumnWidth = firstMatrixField?.options?.length
+        ? Math.max(
+            36,
+            Math.max(...firstMatrixField.options.map((o) => String(o?.label || "").length)) * 10 + 16
+          )
+        : 110;
+      const accordionChildLanguageConfig = {
+        ...languageConfig,
+        matrixColumnWidth
+      };
+
+      const renderRadioMatrixColumnHeader = (matrixField) => {
+        const questionColumnWidth = 200;
+        const optionsCount = matrixField.options?.length || 4;
+        const headerStyle = {
+          ...styles.matrixHeader,
+          marginBottom: 12,
+          gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
+        };
+        const lang = languageConfig?.enabled ? languageConfig.lang : "en";
+        return (
+          <div style={headerStyle}>
+            <div style={styles.matrixLabel}>
+              {matrixField.matrixHeaderLabel || "Scale"}
+              {matrixField.info && languageConfig?.showScores !== false && (
+                <InfoTooltip info={matrixField.info} />
+              )}
+            </div>
+            <div style={styles.matrixOptions}>
+              {matrixField.options.map((opt) => (
+                <div key={opt.value} style={styles.matrixHeaderCell}>
+                  {t(opt.label, lang)}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
       return (
         <details
           open={field?.defaultOpen === true}
@@ -1913,6 +1980,7 @@ case "grid-table-advanced": {
                   key={c?.name || c?.label || idx}
                   style={{ marginBottom: c?.compact ? 4 : 10 }}
                 >
+                  {shouldShowMatrixHeaderBeforeChild(c, idx) && renderRadioMatrixColumnHeader(c)}
                   {renderField(
                     c,
                     childValue,
@@ -1921,7 +1989,7 @@ case "grid-table-advanced": {
                     onAction,
                     assessmentRegistry,
                     formReadOnly,
-                    languageConfig
+                    accordionChildLanguageConfig
                   )}
                 </div>
               );
