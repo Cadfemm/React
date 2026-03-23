@@ -1,4 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+
+// OT cognitive assessment components (used by assessment-launcher buttons)
+import MoCAAssessment from "../../OT/components/MocA";
+import CASPAssessment from "../../OT/components/Casp";
+import DLOTCAForm from "../../OT/components/Slums";
+import LOTCAForm from "../../OT/components/Lotca";
+import DLOTCAFullAssessment from "../../OT/components/Dlocta";
+import DLOTCA_G_Full from "../../OT/components/Dlocta-g";
+import COTNABAssessment from "../../OT/components/Cotnab";
+import RPAB_Assessment from "../../OT/components/RPAB";
+import DCOGAssessment from "../../OT/components/Dcog";
+import COGBATAssessment from "../../OT/components/Cogbat";
+import MMSEAssessment from "../../OT/components/Mmse";
 
 const ComponentStyles = () => (
   <style>{`
@@ -256,7 +270,12 @@ export default function CognitiveSoapAssessment() {
   const [alert, setAlert] = useState("");
 
   const [orientation, setOrientation] = useState({
-    person: "", place: "", time: ""
+    person: "",
+    place: "",
+    time: "",
+    personSpecify: "",
+    placeSpecify: "",
+    timeSpecify: ""
   });
 
   const [memory, setMemory] = useState({
@@ -268,7 +287,16 @@ export default function CognitiveSoapAssessment() {
   const [mood, setMood] = useState("");
 
   const [visuo, setVisuo] = useState({
-    neglect: "", apraxia: ""
+    neglect: "",
+    neglectRemarks: "",
+    personal: "",
+    personalRemarks: "",
+    peripersonal: "",
+    peripersonalRemarks: "",
+    extraPersonal: "",
+    extraPersonalRemarks: "",
+    apraxia: "",
+    apraxiaRemarks: ""
   });
   const [gcsScore, setGcsScore] = useState(null);
 
@@ -341,6 +369,9 @@ export default function CognitiveSoapAssessment() {
   const [showMMSE, setShowMMSE] = useState(false);
   const [showMOCA, setShowMOCA] = useState(false);
   const [showRLAR, setShowRLAR] = useState(false);
+
+  // State for the OT-style `assessment-launcher` buttons in this card
+  const [additionalOutcomeLauncherValues, setAdditionalOutcomeLauncherValues] = useState({});
 
   const [mmseScore, setMmseScore] = useState(null);
   const [rlarScore, setRlarScore] = useState(null);
@@ -555,6 +586,9 @@ export default function CognitiveSoapAssessment() {
       </div>
     </div>
   );
+
+  // Some existing saved data may use "YES" instead of "Yes"
+  const isYes = (v) => v === "Yes" || v === "YES";
 
 
   const ScoreRow = ({ button, children }) => (
@@ -1940,7 +1974,7 @@ and put it on the floor.`}
     );
   };
 
-  const RanchoModal = ({ onClose, onSave, value }) => {
+  const RanchoModal = ({ onClose, onSave, value, inline = false }) => {
     const [selected, setSelected] = useState(value);
 
     const levels = [
@@ -2006,95 +2040,115 @@ and put it on the floor.`}
       }
     ];
 
-    return (
-      <div style={styles.modalOverlay}>
-        <div style={{ ...styles.modal, maxWidth: 720 }}>
+    const content = (
+      <>
+        <h3 style={{ marginBottom: 14 }}>Rancho Los Amigos Scale – Revised (RLAR-S)</h3>
 
-          <h3 style={{ marginBottom: 14 }}>
-            Rancho Los Amigos Scale – Revised (RLAR-S)
-          </h3>
-
-          {/* SCROLLABLE BODY */}
-          <div
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              paddingRight: 8
-            }}
-          >
-
-
-            {levels.map(lvl => (
-              <label
-                key={lvl.level}
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  padding: 12,
-                  borderRadius: 8,
-                  border:
-                    selected === lvl.level
-                      ? "2px solid #2563EB"
-                      : "1px solid #E5E7EB",
-                  marginBottom: 10,
-                  cursor: "pointer",
-                  background:
-                    selected === lvl.level ? "#EFF6FF" : "#fff"
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected === lvl.level}
-                  onChange={() => setSelected(lvl.level)}
-                />
-                <div>
-                  <div style={{ fontWeight: 700 }}>{lvl.title}</div>
-                  <div style={{ fontSize: 13, color: "#475569" }}>
-                    {lvl.desc}
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
-
-          {/* FOOTER */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: 12,
-              marginTop: 16
-            }}
-          >
-            <button
-              style={styles.secondaryBtn}
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              style={styles.primaryBtn}
-              disabled={!selected}
-              onClick={() => {
-                const selectedLevel = levels.find(l => l.level === selected);
-
-                onSave({
-                  level: selectedLevel.level,
-                  title: selectedLevel.title
-                });
-
-                onClose();
+        {/* SCROLLABLE BODY */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            paddingRight: 8
+          }}
+        >
+          {levels.map(lvl => (
+            <label
+              key={lvl.level}
+              style={{
+                display: "flex",
+                gap: 12,
+                padding: 12,
+                borderRadius: 8,
+                border:
+                  selected === lvl.level
+                    ? "2px solid #2563EB"
+                    : "1px solid #E5E7EB",
+                marginBottom: 10,
+                cursor: "pointer",
+                background: selected === lvl.level ? "#EFF6FF" : "#fff"
               }}
             >
-              Save
-            </button>
-
-          </div>
-
+              <input
+                type="checkbox"
+                checked={selected === lvl.level}
+                onChange={() => setSelected(lvl.level)}
+              />
+              <div>
+                <div style={{ fontWeight: 700 }}>{lvl.title}</div>
+                <div style={{ fontSize: 13, color: "#475569" }}>{lvl.desc}</div>
+              </div>
+            </label>
+          ))}
         </div>
+
+        {/* FOOTER */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 12,
+            marginTop: 16
+          }}
+        >
+          <button style={styles.secondaryBtn} onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            style={styles.primaryBtn}
+            disabled={!selected}
+            onClick={() => {
+              const selectedLevel = levels.find(l => l.level === selected);
+              onSave({
+                level: selectedLevel.level,
+                title: selectedLevel.title
+              });
+              onClose();
+            }}
+          >
+            Save
+          </button>
+        </div>
+      </>
+    );
+
+    if (inline) {
+      return (
+        <div
+          style={{
+            marginTop: 14,
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            background: "#fff",
+            padding: 18
+          }}
+        >
+          {content}
+        </div>
+      );
+    }
+
+    return (
+      <div style={styles.modalOverlay}>
+        <div style={{ ...styles.modal, maxWidth: 720 }}>{content}</div>
       </div>
     );
   };
+
+  // Assessment-launcher wrapper for RLAR-S using the existing RanchoModal UI.
+  // Collapses the assessment launcher by setting `cognitive_assessment_launchers_active` to null.
+  const RLARAssessmentLauncher = ({ values, onChange }) => (
+    <RanchoModal
+      inline
+      value={values?.rlar_level}
+      onClose={() => onChange("cognitive_assessment_launchers_active", null)}
+      onSave={({ level, title }) => {
+        onChange("rlar_level", level);
+        onChange("rlar_title", title);
+        onChange("cognitive_assessment_launchers_active", null);
+      }}
+    />
+  );
 
   const EssModal = ({ onClose = () => { }, onSave = () => { }, initialValues = {} }) => {
 
@@ -2201,7 +2255,7 @@ and put it on the floor.`}
 
           {/* EYE */}
           <Select
-            label="Eye Opening"
+            label="Eye Opening:"
             value={gcsValues.eye}
             onChange={v => {
               saveScroll();
@@ -2214,15 +2268,15 @@ and put it on the floor.`}
             }
             options={[
               { label: "1-None", value: 1 },
-              { label: "2-To pain", value: 2 },
-              { label: "3-To speech", value: 3 },
+              { label: "2-To Pressure", value: 2 },
+              { label: "3-To Sound", value: 3 },
               { label: "4-Spontaneous", value: 4 }
             ]}
           />
 
 
           <Select
-            label="Verbal Response"
+            label="Verbal Response:"
             value={gcsValues.verbal}
             onChange={v => {
               saveScroll();
@@ -2234,15 +2288,15 @@ and put it on the floor.`}
             }
             }
             options={[
-              { label: "1-No movement", value: 1 },
-              { label: "2-Incomprehensible", value: 2 },
-              { label: "3-Inappropriate", value: 3 },
+              { label: "1-None", value: 1 },
+              { label: "2-Sounds", value: 2 },
+              { label: "3-Words", value: 3 },
               { label: "4-Confused", value: 4 },
-              { label: "5-Oriented", value: 5 }
+              { label: "5-Orientated", value: 5 }
             ]}
           />
           <Select
-            label="Motor Response"
+            label="Motor Response:"
             value={gcsValues.motor}
             onChange={v => {
               saveScroll();
@@ -2254,12 +2308,12 @@ and put it on the floor.`}
             }
             }
             options={[
-              { label: "1-No movement", value: 1 },
+              { label: "1-None", value: 1 },
               { label: "2-Extension", value: 2 },
               { label: "3-Abnormal flexion", value: 3 },
-              { label: "4-Withdrawal(from painful stimulus)", value: 4 },
-              { label: "5-Localizes pain", value: 5 },
-              { label: "6-Obeys commands", value: 6 }
+              { label: "4-Normal flexion", value: 4 },
+              { label: "5-Localising", value: 5 },
+              { label: "6-Obey commands", value: 6 }
             ]}
           />
 
@@ -2755,9 +2809,11 @@ const PsqiModal = ({ onClose, onSave }) => {
             label="Cognitive"
             value={hasCognitiveImpairment}
             onChange={setHasCognitiveImpairment}
-            options={["Intact", "Impaired"]}
+            options={["Grossly Intact", "Grossly Impaired"]}
           />
+        </Card>
 
+        <Card title="State of consciousness">
           <RadioRow
             label="State of consciousness"
             value={alert}
@@ -2837,8 +2893,7 @@ const PsqiModal = ({ onClose, onSave }) => {
                   {
                     key: "carerEducation",
                     label: "Plan to teach carer regarding multimodal sensory stimulation",
-                    type: "textarea",
-                    placeholder: 'Plan to teach carer regarding multimodal sensory stimulation'
+                    // No free text needed after selection; checkbox only.
                   },
                   {
                     key: "others",
@@ -2866,26 +2921,71 @@ const PsqiModal = ({ onClose, onSave }) => {
               <RadioRow
                 label="Orientation to time"
                 value={orientation.time}
-                onChange={v => setOrientation({ ...orientation, time: v })}
+                onChange={v =>
+                  setOrientation({
+                    ...orientation,
+                    time: v,
+                    timeSpecify: v === "Yes" ? orientation.timeSpecify : ""
+                  })
+                }
                 options={["Yes", "No"]}
               />
+              {orientation.time === "Yes" && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify"
+                  value={orientation.timeSpecify || ""}
+                  onChange={e =>
+                    setOrientation({ ...orientation, timeSpecify: e.target.value })
+                  }
+                />
+              )}
 
               <RadioRow
                 label="Orientation to place"
                 value={orientation.place}
-                onChange={v => setOrientation({ ...orientation, place: v })}
+                onChange={v =>
+                  setOrientation({
+                    ...orientation,
+                    place: v,
+                    placeSpecify: v === "Yes" ? orientation.placeSpecify : ""
+                  })
+                }
                 options={["Yes", "No"]}
               />
+              {orientation.place === "Yes" && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify"
+                  value={orientation.placeSpecify || ""}
+                  onChange={e =>
+                    setOrientation({ ...orientation, placeSpecify: e.target.value })
+                  }
+                />
+              )}
 
               <RadioRow
                 label="Orientation to person"
                 value={orientation.person}
-                onChange={v => setOrientation({ ...orientation, person: v })}
+                onChange={v =>
+                  setOrientation({
+                    ...orientation,
+                    person: v,
+                    personSpecify: v === "Yes" ? orientation.personSpecify : ""
+                  })
+                }
                 options={["Yes", "No"]}
               />
-              <span style={styles.rowLabel}>Remarks</span>
-
-              <TextArea placeholder="Remarks" />
+              {orientation.person === "Yes" && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify"
+                  value={orientation.personSpecify || ""}
+                  onChange={e =>
+                    setOrientation({ ...orientation, personSpecify: e.target.value })
+                  }
+                />
+              )}
 
               <h3>Plans</h3>
 
@@ -2893,7 +2993,7 @@ const PsqiModal = ({ onClose, onSave }) => {
                 values={orientationPlans}
                 onChange={setOrientationPlans}
                 plans={[
-                  { key: "orientationBoard", label: "Orientation board", type: "textarea", placeholder: "orientationBoard" },
+                  { key: "orientationBoard", label: "Orientation board" },
                   { key: "others", label: "Others", type: "textarea", placeholder: 'Remarks' }
                 ]}
               />
@@ -2930,13 +3030,13 @@ const PsqiModal = ({ onClose, onSave }) => {
                     consistency: ""
                   })
                 }
-                options={["YES", "NO"]}
+                options={["Yes", "No"]}
               />
 
-              {language.cmd3 === "YES" && (
+              {language.cmd3 === "Yes" && (
                 <>
                   <SelectRow
-                    label="How did the patient obey the 3-step command?"
+                    label="Patient obeyed 3-step command"
                     value={language.cmd3Clue}
                     onChange={v =>
                       setLanguage({ ...language, cmd3Clue: v, cmd3CueType: "" })
@@ -2958,7 +3058,7 @@ const PsqiModal = ({ onClose, onSave }) => {
               )}
 
               {/* -------- 2 STEP -------- */}
-              {language.cmd3 === "NO" && (
+              {language.cmd3 === "No" && (
                 <RadioRow
                   label="Obey 2-step command"
                   value={language.cmd2}
@@ -2974,14 +3074,14 @@ const PsqiModal = ({ onClose, onSave }) => {
                       consistency: ""
                     })
                   }
-                  options={["YES", "NO"]}
+                  options={["Yes", "No"]}
                 />
               )}
 
-              {language.cmd3 === "NO" && language.cmd2 === "YES" && (
+              {language.cmd3 === "No" && language.cmd2 === "Yes" && (
                 <>
                   <SelectRow
-                    label="How did the patient obey the 2-step command?"
+                    label="Patient obeyed 2-step command"
                     value={language.cmd2Clue}
                     onChange={v =>
                       setLanguage({ ...language, cmd2Clue: v, cmd2CueType: "" })
@@ -3003,7 +3103,7 @@ const PsqiModal = ({ onClose, onSave }) => {
               )}
 
               {/* -------- 1 STEP -------- */}
-              {language.cmd3 === "NO" && language.cmd2 === "NO" && (
+              {language.cmd3 === "No" && language.cmd2 === "No" && (
                 <RadioRow
                   label="Obey 1-step command"
                   value={language.cmd1}
@@ -3016,16 +3116,16 @@ const PsqiModal = ({ onClose, onSave }) => {
                       consistency: ""
                     })
                   }
-                  options={["YES", "NO"]}
+                  options={["Yes", "No"]}
                 />
               )}
 
-              {language.cmd3 === "NO" &&
-                language.cmd2 === "NO" &&
-                language.cmd1 === "YES" && (
+              {language.cmd3 === "No" &&
+                language.cmd2 === "No" &&
+                language.cmd1 === "Yes" && (
                   <>
                     <SelectRow
-                      label="How did the patient obey the 1-step command?"
+                        label="Patient obeyed 1-step command"
                       value={language.cmd1Clue}
                       onChange={v =>
                         setLanguage({ ...language, cmd1Clue: v, cmd1CueType: "" })
@@ -3047,9 +3147,9 @@ const PsqiModal = ({ onClose, onSave }) => {
                 )}
 
               {/* -------- CONSISTENCY -------- */}
-              {(language.cmd3 === "YES" ||
-                language.cmd2 === "YES" ||
-                language.cmd1 === "YES") && (
+              {(language.cmd3 === "Yes" ||
+                language.cmd2 === "Yes" ||
+                language.cmd1 === "Yes") && (
                   <SelectRow
                     label="Consistency"
                     value={language.consistency}
@@ -3074,14 +3174,7 @@ const PsqiModal = ({ onClose, onSave }) => {
                   {
                     key: "simpleCommands",
                     label: "Use simple commands in all activities",
-                    type: "textarea",
-                    placeholder: 'Use simple commands in all activities'
-                  },
-                  {
-                    key: "cueBasedTraining",
-                    label: "Cue-based task execution",
-                    type: "textarea",
-                    placeholder: 'Cue-based task execution'
+                    // No free text needed after selection; checkbox only.
                   },
                   {
                     key: "others",
@@ -3107,15 +3200,16 @@ const PsqiModal = ({ onClose, onSave }) => {
 
           {memory.status === "Impaired" && (
             <>
-              <h3>Plans</h3>
+              <span style={styles.rowLabel}>Remarks</span>
+              <TextArea placeholder="Remarks" />
 
+              <h3>Plans</h3>
               <PlanMultiSelectAdvanced
                 values={memoryPlans}
                 onChange={setMemoryPlans}
                 plans={[
-                  { key: "memoryAids", label: "Use memory aids", type: "textarea", placeholder: 'Use memory aids' },
-                  { key: "sameRoutine", label: "Maintain same routine", type: "textarea", placeholder: "Maintain same routine" },
-                  { key: "others", label: "Others", type: "textarea", placeholder: 'Remarks' }
+                  { key: "sameRoutine", label: "Maintain same routine" },
+                  { key: "others", label: "Others" }
                 ]}
               />
             </>
@@ -3146,9 +3240,7 @@ const PsqiModal = ({ onClose, onSave }) => {
 
                   {
                     key: "lowStimulus",
-                    label: "Low stimulus environment to reduce distraction",
-                    type: "textarea",
-                    placeholder: 'Low stimulus environment to reduce distraction'
+                    label: "Do activities in low stimulus environment to reduce distraction"
                   },
                   {
                     key: "others",
@@ -3249,20 +3341,14 @@ const PsqiModal = ({ onClose, onSave }) => {
                   {
                     key: "monitorMood",
                     label: "Monitor patient's mood",
-                    type: "textarea",
-                    placeholder: 'Monitor patient mood'
                   },
                   {
                     key: "informAbnormal",
                     label: "Inform if patient exhibit abnormal behaviour",
-                    type: "textarea",
-                    placeholder: 'Inform if patient exhibit abnormal behaviour'
                   },
                   {
                     key: "repeatAssessment",
                     label: "Repeat assessment weekly / when needed",
-                    type: "textarea",
-                    placeholder: 'Repeat assessment weekly / when needed'
                   },
                   {
                     key: "others",
@@ -3289,20 +3375,132 @@ const PsqiModal = ({ onClose, onSave }) => {
               <RadioRow
                 label="Neglect"
                 value={visuo.neglect}
-                onChange={v => setVisuo({ ...visuo, neglect: v })}
-                options={["YES", "NO"]}
+                onChange={v =>
+                  setVisuo({
+                    ...visuo,
+                    neglect: v,
+                    neglectRemarks: isYes(v) ? visuo.neglectRemarks : "",
+                    // Clear dependent "Specify" fields when Neglect is not selected
+                    personal: "",
+                    personalRemarks: "",
+                    peripersonal: "",
+                    peripersonalRemarks: "",
+                    extraPersonal: "",
+                    extraPersonalRemarks: ""
+                  })
+                }
+                options={["Yes", "No"]}
               />
+
+              {isYes(visuo.neglect) && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify Neglect"
+                  value={visuo.neglectRemarks || ""}
+                  onChange={e =>
+                    setVisuo({ ...visuo, neglectRemarks: e.target.value })
+                  }
+                />
+              )}
+
+              <RadioRow
+                label="Personal"
+                value={visuo.personal}
+                onChange={v =>
+                  setVisuo({
+                    ...visuo,
+                    personal: v,
+                    personalRemarks: isYes(v) ? visuo.personalRemarks : ""
+                  })
+                }
+                options={["Yes", "No"]}
+              />
+              {isYes(visuo.personal) && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify Personal"
+                  value={visuo.personalRemarks || ""}
+                  onChange={e =>
+                    setVisuo({ ...visuo, personalRemarks: e.target.value })
+                  }
+                />
+              )}
+
+              <RadioRow
+                label="Peripersonal"
+                value={visuo.peripersonal}
+                onChange={v =>
+                  setVisuo({
+                    ...visuo,
+                    peripersonal: v,
+                    peripersonalRemarks: isYes(v) ? visuo.peripersonalRemarks : ""
+                  })
+                }
+                options={["Yes", "No"]}
+              />
+              {isYes(visuo.peripersonal) && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify Peripersonal"
+                  value={visuo.peripersonalRemarks || ""}
+                  onChange={e =>
+                    setVisuo({
+                      ...visuo,
+                      peripersonalRemarks: e.target.value
+                    })
+                  }
+                />
+              )}
+
+              <RadioRow
+                label="Extra personal"
+                value={visuo.extraPersonal}
+                onChange={v =>
+                  setVisuo({
+                    ...visuo,
+                    extraPersonal: v,
+                    extraPersonalRemarks: isYes(v) ? visuo.extraPersonalRemarks : ""
+                  })
+                }
+                options={["Yes", "No"]}
+              />
+              {isYes(visuo.extraPersonal) && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify Extra personal"
+                  value={visuo.extraPersonalRemarks || ""}
+                  onChange={e =>
+                    setVisuo({
+                      ...visuo,
+                      extraPersonalRemarks: e.target.value
+                    })
+                  }
+                />
+              )}
 
               <RadioRow
                 label="Apraxia"
                 value={visuo.apraxia}
-                onChange={v => setVisuo({ ...visuo, apraxia: v })}
-                options={["YES", "NO"]}
+                onChange={v =>
+                  setVisuo({
+                    ...visuo,
+                    apraxia: v,
+                    apraxiaRemarks: isYes(v) ? visuo.apraxiaRemarks : ""
+                  })
+                }
+                options={["Yes", "No"]}
               />
 
-              <span style={styles.rowLabel}>Remarks</span>
-
-              <TextArea placeholder="Remarks" />
+              {isYes(visuo.apraxia) && (
+                <textarea
+                  style={styles.textArea}
+                  placeholder="Specify Apraxia"
+                  value={visuo.apraxiaRemarks || ""}
+                  onChange={e =>
+                    setVisuo({ ...visuo, apraxiaRemarks: e.target.value })
+                  }
+                />
+              )}
               <h3>Plans</h3>
 
               <PlanMultiSelectAdvanced
@@ -3313,8 +3511,7 @@ const PsqiModal = ({ onClose, onSave }) => {
                   {
                     key: "leftApproach",
                     label: "To give more stimulation and approach from patient's left side",
-                    type: "textarea",
-                    placeholder: 'To give more stimulation and approach from patient left side'
+                    // No free text needed after selection.
                   },
                   {
                     key: "others",
@@ -3462,64 +3659,52 @@ const PsqiModal = ({ onClose, onSave }) => {
 
         <Card title="Additional Outcome Measure">
 
-          {/* ===== MMSE ROW ===== */}
-          <ScoreRow
-            button={
-              <button style={styles.secondaryBtn} onClick={() => setShowMMSE(true)}>
-                Mini-Mental State Examination (MMSE)
-              </button>
-            }
-          >
-            {mmseResult && (
-              <div
-                style={{
-                  marginTop: 12,
-                  padding: "10px 14px",
-
-                  fontSize: 18,
-                  fontWeight: 700,
-                }}
-              >
-                MMSE Score: {mmseResult.total} / 30
-                <span style={{
-                  marginLeft: 6, fontSize: 18,
-                  fontWeight: 700,
-                }}>
-                  ({mmseResult.interpretation})
-                </span>
-              </div>
-            )}
-
-          </ScoreRow>
-
-          <ScoreRow
-            button={
-              <button style={styles.secondaryBtn} onClick={() => setShowRancho(true)}>
-                Rancho Los Amigos Revised Scale (RLAR-S)
-              </button>
-            }
-          >
-            {ranchoValue && (
-              <div
-                style={{
-                  marginTop: 12,
-                  padding: "10px 14px",
-
-                  fontSize: 18,
-                  fontWeight: 700,
-                }}
-              >
-                RLAR-S Level: {ranchoValue.level}
-                <span style={{
-                  marginLeft: 6, fontSize: 18,
-                  fontWeight: 700,
-                }}>
-                  ({ranchoValue.title})
-                </span>
-              </div>
-            )}
-
-          </ScoreRow>
+          {/* OT-style assessment-launcher buttons (MoCA, CASP, SLUMS, LOTCA, DLOTCA, etc.) */}
+          <div style={{ marginTop: 14 }}>
+            <CommonFormBuilder
+              schema={{
+                fields: [
+                  {
+                    name: "cognitive_assessment_launchers",
+                    type: "assessment-launcher",
+                    options: [
+                      { label: "Mini-Mental State Examination (MMSE)", value: "mmse" },
+                      { label: "Rancho Los Amigos Scale – Revised (RLAR-S)", value: "rlar" },
+                      { label: "Montreal Cognitive Assessment (MoCA)", value: "moca" },
+                      { label: "Cognitive Assessment for Stroke Patients (CASP)", value: "casp" },
+                      { label: "SLUMS Examination (SLUMS)", value: "slums" },
+                      { label: "Loewenstein OT Cognitive Assessment (LOTCA)", value: "lotca" },
+                      { label: "Dynamic Loewenstein Occupational Therapy Cognitive Assessment (DLOTCA)", value: "dlocta" },
+                      { label: "Dynamic Loewenstein Occupational Therapy Cognitive Assessment – Geriatric Version (DLOTCA-G)", value: "dloctag" },
+                      { label: "Chessington OT Neuropsych Assessment Battery (COTNAB)", value: "cotnab" },
+                      { label: "Rivermead Perceptual Assessment Battery (RPAB)", value: "rpab" },
+                      { label: "Techcare Digital Cognitive (DCOG)", value: "dcog" },
+                      { label: "COGBAT (VTS)", value: "cogbat" }
+                    ]
+                  }
+                ]
+              }}
+              values={additionalOutcomeLauncherValues}
+              onChange={(name, value) =>
+                setAdditionalOutcomeLauncherValues(prev => ({ ...prev, [name]: value }))
+              }
+              layout="nested"
+              assessmentRegistry={{
+                mmse: MMSEAssessment,
+                moca: MoCAAssessment,
+                casp: CASPAssessment,
+                slums: DLOTCAForm,
+                lotca: LOTCAForm,
+                dlocta: DLOTCAFullAssessment,
+                dloctag: DLOTCA_G_Full,
+                cotnab: COTNABAssessment,
+                rpab: RPAB_Assessment,
+                dcog: DCOGAssessment,
+                cogbat: COGBATAssessment,
+                rlar: RLARAssessmentLauncher
+              }}
+            />
+          </div>
 
         </Card>
 
@@ -3540,17 +3725,7 @@ const PsqiModal = ({ onClose, onSave }) => {
         {showPhq9 && <Phq9Modal />}
         {showGad7 && <Gad7Modal />}
         {showDass && <DassModal />}
-        {showRancho && (
-          <RanchoModal
-            value={ranchoValue}
-            onClose={() => setShowRancho(false)}
-            onSave={(levelObj) => {
-              // levelObj = { level, title }
-              setRanchoValue(levelObj);
-              setShowRancho(false);
-            }}
-          />
-        )}
+        {/* RLAR-S now handled via assessment-launcher (no separate RanchoModal here) */}
 
 
         {

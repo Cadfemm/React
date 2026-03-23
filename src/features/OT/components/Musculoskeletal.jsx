@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 // features/neuro/assessments/registry.js
-import MMTForm from "./MMTForm";
-import TUG from "./TUGForm";
-import MASForm from "./MASForm";
+import MMTForm from "../../PT/components/MMTForm";
+import TUG from "../../PT/components/TUGForm";
+import MASForm from "../../PT/components/MASForm";
 import SARAForm from "./SARAForm";
 import BergBalanceScale from "./BBS";
 import UpperExtremityAssessment from "./Flug";
@@ -14,6 +14,7 @@ import FIMAssessment from "./Fim";
 import ARATAssessment from "./Arat";
 import JHFTAssessment from "./Jfht";
 import BoxAndBlockTest from "./BoxBlockTest";
+import SixMWTForm from "../../PT/components/SixMWTForm";
 import PurduePegboardTest from "./ppt";
 import ScarAssessmentForm from "./vas";
 import DASHAssessment from "./Dash";
@@ -28,7 +29,10 @@ export const NEURO_ASSESSMENT_REGISTRY = {
 vas:ScarAssessmentForm,
   bbs: BergBalanceScale,
   dash: DASHAssessment,
-  ppt: PurduePegboardTest
+  ppt: PurduePegboardTest,
+  tug: TUG,
+  six_mwt: SixMWTForm,
+  sixmwt: SixMWTForm
 };
 
 /* ===================== OPTIONS ===================== */

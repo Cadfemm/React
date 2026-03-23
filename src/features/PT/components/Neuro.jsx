@@ -12,6 +12,7 @@ import SixMWTForm from "./SixMWTForm"
 import TenMWTForm from "./TenMWTForm";
 import StrengthTestForm from "./StrengthTestForm";
 import FACForm from "./FunctionalAmbulationCategory"
+import ScarAssessmentForm from "../../OT/components/vas";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 
@@ -22,6 +23,7 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   mas: MASForm,
   sara: SARAForm,
   bbs: BergBalanceScale,
+  vas: ScarAssessmentForm,
   fma_le: FMALEForm,
   fac:FACForm,
   sixmwt: SixMWTForm,
@@ -533,25 +535,24 @@ title:"Functional and Mobility Status",
   type: "scale-slider",
 
   min: 0,
-  max: 100,
-  step: 10,
+  max: 10,
 
   ranges: [
     {
       min: 0,
-      max: 30,
+      max: 1,
       label: "Mild",
       color: "#22c55e"   // green
     },
     {
-      min: 40,
-      max: 60,
+      min: 1,
+      max: 5,
       label: "Moderate",
       color: "#facc15"   // yellow
     },
     {
-      min: 70,
-      max: 100,
+      min: 5,
+      max: 10,
       label: "Severe",
       color: "#ef4444"   // red
     }
@@ -627,7 +628,7 @@ title:"Functional and Mobility Status",
         { label: "Functional Ambulation Category (FAC)", value: "fac" },
         { label: "Motor Assessment Scale", value: "motor_mas" },
         { label: "Fugl Meyer Assessment – Lower Extremity (FMA-LE)", value: "fma_le" },
-        { label: "Stand and Reposition Aids (SARA)", value: "sara" },
+        { label: "Scale for the Assessment and Rating of Ataxia (SARA)", value: "sara" },
         { label: "10 Meter Walk Test", value: "tenmwt" },
         { label: "Berg Balance Scale (BBS)", value: "bbs" },
         { label: "Visual Analog Scale (VAS)", value: "vas" },

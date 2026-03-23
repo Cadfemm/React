@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-import MMTForm from "./MMTForm";
+import MMTForm from "../../PT/components/MMTForm";
 import TUG from "./TUGForm";
 import MASForm from "./MASForm";
 import SARAForm from "./SARAForm";
@@ -9,6 +9,7 @@ import FimAssessment from "./Fim";
 import TISAssessment from "./TsiAssessment";
 import ROMForm from "./RomForm";
 import IADLAssessment from "./IADL";
+import MoCAAssessment from "./MocA";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
@@ -20,7 +21,8 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   fim: FimAssessment,
   flug: IADLAssessment,
   tsi: TISAssessment,
-  rom: ROMForm
+  rom: ROMForm,
+  moca: MoCAAssessment
 };
 
 /* ===================== OPTIONS ===================== */

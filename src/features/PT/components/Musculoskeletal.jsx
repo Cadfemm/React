@@ -197,8 +197,28 @@ const SUBJECTIVE_SCHEMA = {
           type: "scale-slider",
           min: 0,
           max: 10,
-          step: 1,
           showValue: true
+          ,
+          ranges: [
+            {
+              min: 0,
+              max: 1,
+              label: "Mild",
+              color: "#22c55e"
+            },
+            {
+              min: 1,
+              max: 5,
+              label: "Moderate",
+              color: "#facc15"
+            },
+            {
+              min: 5,
+              max: 10,
+              label: "Severe",
+              color: "#ef4444"
+            }
+          ]
         },
         {
           name: "msk_pain_type",
@@ -292,15 +312,6 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Static", value: "static" },
             { label: "Worsening", value: "worsening" }
           ]
-        },
-        {
-          name: "msk_hpi_pain_nrs",
-          label: "Pain Scale (NRS)",
-          type: "scale-slider",
-          min: 0,
-          max: 10,
-          step: 1,
-          showValue: true
         },
         {
           name: "msk_red_flags",

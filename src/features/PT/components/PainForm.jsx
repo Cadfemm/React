@@ -20,7 +20,28 @@ const PAIN_ASSESSMENT_SCHEMA = {
                     label: "Pain score",
                     type: "scale-slider",
                     min: 0,
-                    max: 10
+                    max: 10,
+                    showValue: true,
+                    ranges: [
+                        {
+                            min: 0,
+                            max: 1,
+                            label: "Mild",
+                            color: "#22c55e"
+                        },
+                        {
+                            min: 1,
+                            max: 5,
+                            label: "Moderate",
+                            color: "#facc15"
+                        },
+                        {
+                            min: 5,
+                            max: 10,
+                            label: "Severe",
+                            color: "#ef4444"
+                        }
+                    ]
                 },
                 {
                     name: "phantom_limb_sensation",
@@ -59,7 +80,28 @@ const PAIN_ASSESSMENT_SCHEMA = {
                     label: "Pain Score (NRS)",
                     type: "scale-slider",
                     min: 0,
-                    max: 10
+                    max: 10,
+                    showValue: true,
+                    ranges: [
+                        {
+                            min: 0,
+                            max: 1,
+                            label: "Mild",
+                            color: "#22c55e"
+                        },
+                        {
+                            min: 1,
+                            max: 5,
+                            label: "Moderate",
+                            color: "#facc15"
+                        },
+                        {
+                            min: 5,
+                            max: 10,
+                            label: "Severe",
+                            color: "#ef4444"
+                        }
+                    ]
                 },
                 {
                     name: "area",
