@@ -12,6 +12,7 @@ import BowelAssessment from "./BowelAssessment";
 import BladderAssessment from "./BladderAssessment";
 import FunctionalAssessment from "./Functional";
 import SkinAssessment from "./SkinAssessment";
+import ProcedureAssessment from "./ProcedureAssessment";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 /* -------------------------------------------------------------
@@ -328,6 +329,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     "Functional",
     "Social History",
     "Work History",
+    "Procedure"
   ];
 
   const today = new Date();
@@ -685,6 +687,9 @@ const handleSubmitReferral = () => {
         ) :
          tabs[activeTab] === "Work History" ? (
           <WorkHistory />
+        ) :
+        tabs[activeTab] === "Procedure" ? (
+          <ProcedureAssessment patient={patient}/>
         ) :
          (
           <div style={{ padding: "20px 0" }}>
