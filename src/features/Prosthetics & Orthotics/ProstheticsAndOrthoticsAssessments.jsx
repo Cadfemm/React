@@ -740,7 +740,7 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
                 { label: "Below Knee (BK)", value: "bk" },
                 { label: "Hip Disarticulation", value: "hip" },
                 { label: "Rays Amputation", value: "rays" },
-                { label: "Carpal / Metacarpal", value: "carpal" },
+                { label: "Tarsal / Metatarsal", value: "tarsal" },
                 { label: "Others", value: "others" }
               ]
             },
