@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import PaedIASpeechLanguage from "./PaedSpeechAssessment";
 import PaedIAFeeding from "./PaedFeedingAssessment";
@@ -9,7 +9,7 @@ import VoiceAssessment from "./AdultVoice";
 import TracheostomyWeaningEvaluation from "./AdultTracheostomy";
 import VoiceIndices from "./VoiceHandicapAssessment";
 
-export default function AssessmentForm({ patient }) {
+export default function AssessmentForm({ patient, mode = "initial", onBack }) {
 
   const isAdult = patient?.age >= 20;
 
@@ -18,8 +18,8 @@ export default function AssessmentForm({ patient }) {
     { key: "speech", label: "ADULT SPEECH-LANGUAGE" },
     { key: "voice", label: "ADULT VOICE" },
     { key: "trache", label: "TRACHEOSTOMY WEANING" },
-    { key: "cape", label: "CAPE-V" },
-    { key: "vhi", label: "VOICE HANDICAP INDEX" }
+    // { key: "cape", label: "CAPE-V" },
+    // { key: "vhi", label: "VOICE HANDICAP INDEX" }
   ];
 
   const paedTabs = [
@@ -29,7 +29,11 @@ export default function AssessmentForm({ patient }) {
 
   const tabs = isAdult ? adultTabs : paedTabs;
 
-  const [activeTab, setActiveTab] = useState(tabs[0].key);
+  const [activeTab, setActiveTab] = useState(tabs[0]?.key);
+
+  useEffect(() => {
+    setActiveTab(isAdult ? "cse" : "speech");
+  }, [patient?.id, mode, isAdult]);
 
   /* ================= CONTENT ================= */
 
@@ -37,27 +41,31 @@ export default function AssessmentForm({ patient }) {
     switch (activeTab) {
 
       case "cse":
-        return <ClinicalSwallowingEvaluation patient={patient} />;
+        return (
+          <ClinicalSwallowingEvaluation patient={patient} onBack={onBack} mode={mode} />
+        );
 
       case "speech":
         return isAdult
-          ? <SpeechLanguageAssessment patient={patient} />
-          : <PaedIASpeechLanguage patient={patient} />;
+          ? <SpeechLanguageAssessment patient={patient} onBack={onBack} mode={mode} />
+          : <PaedIASpeechLanguage patient={patient} onBack={onBack} mode={mode} />;
 
       case "voice":
-        return <VoiceAssessment patient={patient} />;
+        return <VoiceAssessment patient={patient} onBack={onBack} mode={mode} />;
 
       case "trache":
-        return <TracheostomyWeaningEvaluation patient={patient} />;
+        return (
+          <TracheostomyWeaningEvaluation patient={patient} onBack={onBack} mode={mode} />
+        );
 
-      case "cape":
-        return <VoiceQualityAssessment patient={patient} />;
+      // case "cape":
+      //   return <VoiceQualityAssessment patient={patient} />;
 
-      case "vhi":
-        return <VoiceIndices patient={patient} />;
+      // case "vhi":
+      //   return <VoiceIndices patient={patient} />;
 
       case "feeding":
-        return <PaedIAFeeding patient={patient} />;
+        return <PaedIAFeeding patient={patient} onBack={onBack} mode={mode} />;
 
       default:
         return null;
@@ -66,14 +74,25 @@ export default function AssessmentForm({ patient }) {
 
   return (
     <div>
-
-      {/* ================= TABS ================= */}
-
-      <div style={tabRow}>
+      {/* ================= TABS (same as Initial) ================= */}
+      <div style={tabRow} role="tablist">
         {tabs.map(tab => (
           <div
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            role="tab"
+            tabIndex={0}
+            aria-selected={activeTab === tab.key}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setActiveTab(tab.key);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setActiveTab(tab.key);
+              }
+            }}
             style={{
               ...tabItem,
               ...(activeTab === tab.key ? activeTabStyle : {})
@@ -84,12 +103,10 @@ export default function AssessmentForm({ patient }) {
         ))}
       </div>
 
-      {/* ================= CONTENT ================= */}
-
+      {/* ================= CONTENT (patient info, common, SOAP - same as Initial; section checkboxes in followup) ================= */}
       <div style={contentContainer}>
         {renderContent()}
       </div>
-
     </div>
   );
 }

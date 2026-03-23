@@ -166,6 +166,57 @@ function evaluateShowIf(showIf, values) {
   return true;
 }
 
+/**
+ * Transforms schema fields to add optional-section toggles for follow-up mode.
+ * For each subheading whose label is in optionalSectionLabels, inserts an
+ * optional-section-toggle before it and adds showIf to all subsequent fields
+ * until the next optional section.
+ * @param {Array} fields - Flat array of field definitions
+ * @param {Array<string>} optionalSectionLabels - Subheading labels to make optional
+ * @returns {Array} Transformed fields
+ */
+export function withOptionalSections(fields, optionalSectionLabels = []) {
+  if (!fields || !Array.isArray(fields) || optionalSectionLabels.length === 0) {
+    return fields;
+  }
+  const labelSet = new Set(optionalSectionLabels.map(s => s.trim().toLowerCase()));
+  const result = [];
+  let currentControlField = null;
+
+  for (let i = 0; i < fields.length; i++) {
+    const f = fields[i];
+    const isOptionalSubheading =
+      f.type === "subheading" &&
+      f.label &&
+      labelSet.has(String(f.label).trim().toLowerCase());
+
+    if (isOptionalSubheading) {
+      const controlField = `_opt_${String(f.label)
+        .replace(/\s+/g, "")
+        .replace(/[^a-zA-Z0-9]/g, "")}`;
+      result.push({
+        type: "optional-section-toggle",
+        name: controlField,
+        label: f.label
+      });
+      currentControlField = controlField;
+      continue;
+    }
+
+    if (currentControlField) {
+      const sectionShowIf = { field: currentControlField, equals: true };
+      const combinedShowIf = f.showIf
+        ? { ...sectionShowIf, and: f.showIf }
+        : sectionShowIf;
+      result.push({ ...f, showIf: combinedShowIf });
+    } else {
+      result.push(f);
+    }
+  }
+
+  return result;
+}
+
 export default function CommonFormBuilder({
   schema,
   values,
@@ -448,7 +499,7 @@ export default function CommonFormBuilder({
                                   </div>
 
 
-                                ) : field.type === "subheading" ? (
+                                ) : field.type === "subheading" || field.type === "optional-section-toggle" ? (
 
                                   renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
                                     enabled: schema?.enableLanguageToggle === true,
@@ -476,7 +527,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
+                                      {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -2590,6 +2641,21 @@ case "grid-table-advanced": {
         </div>
       );
 
+    case "optional-section-toggle":
+      return (
+        <div style={styles.optionalSectionToggle}>
+          <label style={styles.optionalSectionLabel}>
+            <input
+              type="checkbox"
+              checked={!!value}
+              disabled={readOnly}
+              onChange={e => onChange(field.name, e.target.checked)}
+            />
+            <span>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</span>
+          </label>
+        </div>
+      );
+
     case "multi-select-dropdown":
       return (
         <MultiSelectDropdown
@@ -3637,6 +3703,21 @@ const styles = {
     color: "#0F172A",
     borderBottom: "2px solid #e5e7eb",
     paddingBottom: 8
+  },
+
+  optionalSectionToggle: {
+    marginTop: 16,
+    marginBottom: 10
+  },
+
+  optionalSectionLabel: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 14,
+    color: "#0F172A"
   },
 
   multiSelectWrap: {

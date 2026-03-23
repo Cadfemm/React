@@ -2,9 +2,19 @@
 import React, { useState } from "react";
 import SpeechAssessmentForm from "./SpeechAssessment";
 
+const OPTION_CARDS = [
+  { id: "initial", title: "Initial Assessment", description: "Full SOAP assessment for new patient", icon: "📋", color: "#2563EB" },
+  { id: "followup", title: "Follow-up Visit", description: "Follow-up visit documentation", icon: "🔄", color: "#059669" },
+  { id: "progress", title: "Progress Intervention", description: "Track progress and interventions", icon: "📈", color: "#7C3AED" },
+  { id: "group", title: "Group Intervention", description: "Group session documentation", icon: "👥", color: "#EA580C" }
+];
+
 export default function SpeechPatients({ Patients,onBack }) {
   const [tab, setTab] = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [assessmentView, setAssessmentView] = useState(null); // null | 'initial' | 'followup' | 'progress' | 'group'
+  const [submittedAssessments, setSubmittedAssessments] = useState({}); // { [patientId]: record } – initial only
+  const [submittedFollowups, setSubmittedFollowups] = useState({}); // { [patientId]: record } – follow-up only
   console.log("patients",Patients)
  const newPatients = (Patients || []).filter(p => p.status !== "Old");
 const existingPatients = []
@@ -12,13 +22,100 @@ const existingPatients = []
 
   const patients = tab === "new" ? newPatients : existingPatients;
 
-  /* ---------------- RENDER ASSESSMENT ---------------- */
-  if (selectedPatient) {
+  /* ---------------- RENDER INITIAL ASSESSMENT ---------------- */
+  if (selectedPatient && assessmentView === "initial") {
+    const initialSaved = submittedAssessments[selectedPatient.id] ?? null;
+    const initialReadOnly = !!initialSaved;
     return (
       <SpeechAssessmentForm
         patient={selectedPatient}
-        onBack={() => setSelectedPatient(null)}
+        mode="initial"
+        savedValues={initialSaved}
+        readOnly={initialReadOnly}
+        onSave={(record) => {
+          setSubmittedAssessments(prev => ({
+            ...prev,
+            [selectedPatient.id]: record
+          }));
+        }}
+        onBack={() => setAssessmentView(null)}
       />
+    );
+  }
+
+  /* ---------------- RENDER FOLLOW-UP (fresh visit, separate save key) ---------------- */
+  if (selectedPatient && assessmentView === "followup") {
+    const followupSaved = submittedFollowups[selectedPatient.id] ?? null;
+    const followupReadOnly = !!followupSaved;
+    return (
+      <SpeechAssessmentForm
+        patient={selectedPatient}
+        mode="followup"
+        savedValues={followupSaved}
+        readOnly={followupReadOnly}
+        onSave={(record) => {
+          setSubmittedFollowups(prev => ({
+            ...prev,
+            [selectedPatient.id]: record
+          }));
+        }}
+        onBack={() => setAssessmentView(null)}
+      />
+    );
+  }
+
+  /* ---------------- RENDER 4 OPTION CARDS when patient selected ---------------- */
+  if (selectedPatient) {
+    return (
+      <div style={styles.page}>
+        <div style={styles.header}>
+          <div>
+            <h1 style={styles.title}>Patient: {selectedPatient.name}</h1>
+            <p style={styles.subtitle}>Choose an assessment or visit type</p>
+          </div>
+          <button
+            style={styles.backBtn}
+            onClick={() => {
+              setSelectedPatient(null);
+              setAssessmentView(null);
+            }}
+          >
+            ← Back to Patients
+          </button>
+        </div>
+
+        <div style={styles.cardsGrid}>
+          {OPTION_CARDS.map((card) => (
+            <div
+              key={card.id}
+              style={{
+                ...styles.optionCard,
+                borderLeftColor: card.color
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.12)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+              onClick={() => {
+                if (card.id === "initial") setAssessmentView("initial");
+                else if (card.id === "followup") setAssessmentView("followup");
+                else alert(`${card.title} – Coming soon`);
+              }}
+            >
+              <div style={{ ...styles.optionCardIcon, background: `${card.color}20`, color: card.color }}>
+                {card.icon}
+              </div>
+              <h3 style={styles.optionCardTitle}>{card.title}</h3>
+              <p style={styles.optionCardDesc}>{card.description}</p>
+              <span style={{ ...styles.optionCardArrow, color: card.color }}>Open →</span>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 
@@ -29,7 +126,7 @@ const existingPatients = []
         <div>
           <h1 style={styles.title}>Patients</h1>
           <p style={styles.subtitle}>
-            Manage and start psychology assessments
+            Manage and start speech & language assessments
           </p>
         </div>
 
@@ -183,6 +280,49 @@ emptyState: {
     borderRadius: 16,
     border: "1px solid #E5E7EB",
     overflow: "hidden"
+  },
+
+  cardsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: 18,
+    marginTop: 14
+  },
+  optionCard: {
+    background: "#fff",
+    borderRadius: 16,
+    border: "1px solid #E5E7EB",
+    padding: 18,
+    cursor: "pointer",
+    transition: "all 0.15s ease",
+    borderLeft: "6px solid",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.08)"
+  },
+  optionCardIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 20,
+    marginBottom: 10
+  },
+  optionCardTitle: {
+    fontSize: 16,
+    fontWeight: 800,
+    color: "#0F172A",
+    margin: "6px 0"
+  },
+  optionCardDesc: {
+    fontSize: 13,
+    color: "#64748B",
+    margin: "0 0 10px 0",
+    lineHeight: 1.4
+  },
+  optionCardArrow: {
+    fontSize: 13,
+    fontWeight: 700
   },
 
   row: {
