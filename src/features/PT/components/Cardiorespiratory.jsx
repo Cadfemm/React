@@ -3,8 +3,7 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import ROMForm from "./ROMForm";
 import MMTForm from "./MMTForm";
 import SixMWTForm from "./SixMWTForm"
-import { calculateDuration, localDateTimeString } from "../../../shared/utils/dateFormatter";
-
+import PatientCard from "../../../shared/cards/PatientCard";
 
 const YES_NO_OPTIONS = [
   { label: "Yes", value: "yes" },
@@ -138,35 +137,6 @@ const CARDIO_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
   sixmwt: SixMWTForm
 };
-
-function CardioPatientInfo({ patient }) {
-  if (!patient) return null;
-  return (
-    <div style={section}>
-      <div style={patientGrid}>
-        <div><b>Name:</b> {patient.name}</div>
-        <div><b>IC:</b> {patient.id}</div>
-        <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
-        <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-        <div><b>ICD:</b> {patient.icd}</div>
-        <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-        <div><b>Date of Onset:</b> {localDateTimeString(patient.date_of_onset)}</div>
-    <div>
-          <b>Duration of Diagnosis:</b>{" "}
-          {calculateDuration(patient.date_of_onset)}
-        </div>
-        <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-        <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-        <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-        <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-        <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-        <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-        <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-        <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-      </div>
-    </div>
-  );
-}
 
 export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
@@ -970,7 +940,7 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
         values={{}}
         onChange={() => {}}
       >
-        <CardioPatientInfo patient={patient} />
+        <PatientCard patient={patient} />
       </CommonFormBuilder>
 
       {/* ===== CONSENT & REFERRAL ===== */}

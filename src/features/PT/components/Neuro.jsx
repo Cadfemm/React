@@ -12,7 +12,8 @@ import SixMWTForm from "./SixMWTForm"
 import TenMWTForm from "./TenMWTForm";
 import StrengthTestForm from "./StrengthTestForm";
 import FACForm from "./FunctionalAmbulationCategory"
-import { calculateDuration, localDateTimeString } from "../../../shared/utils/dateFormatter";
+import PatientCard from "../../../shared/cards/PatientCard";
+
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
@@ -1133,38 +1134,7 @@ const schemaMap = {
     assessment: ASSESSMENT_SCHEMA,
     plan: PLAN_SCHEMA
   };
-function NeuroPatientInfo({ patient }) {
-  if (!patient) return null;
- 
-return (
-  <div style={section}>
-    <div style={patientGrid}>
- 
-      <div><b>Name:</b> {patient.name}</div>
-      <div><b>IC:</b> {patient.id}</div>
-      <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
-      <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-            <div><b>ICD:</b> {patient.icd}</div>
-      <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-      <div><b>Date of Onset:</b> {localDateTimeString(patient.date_of_onset)}</div>
-      <div>
-        <b>Duration of Diagnosis:</b>{" "}
-        {calculateDuration(patient.date_of_onset)}
-      </div>
-      <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-      <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-      <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-      <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-      <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-      <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-      <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-      <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-    </div>
-  </div>
-);
- 
-}
- 
+
   return (
 <div style={mainContent}>
  
@@ -1174,7 +1144,7 @@ return (
       values={{}}
       onChange={() => {}}
     >
-      <NeuroPatientInfo patient={patient} />
+      <PatientCard patient={patient} />
     </CommonFormBuilder>
 
     {/* ===== CONSENT & REFERRAL (above Patient Environment) ===== */}
