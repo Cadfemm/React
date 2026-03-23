@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { localDateTimeString } from "../shared/utils/dateFormatter";
 
 export default function PatientReports({ patient, mode }) {
 
@@ -20,12 +21,6 @@ const filteredReports =
     : reports;
 
   if (!patient) return null;
-
-  const formatDateTime = (timestamp) => {
-    if (!timestamp) return "";
-    const d = new Date(timestamp);
-    return d.toLocaleString();
-  };
 
 const getTitle = (r) => {
   if (r.type === "progress") return "Diet Progress Report";  // 💡 or "Diet Progress Assessment"
@@ -358,7 +353,7 @@ return (
 
               <div style={{ fontSize: 13, color: "#444", marginTop: 4 }}>
                 {r.timestamp
-                  ? formatDateTime(r.timestamp)
+                  ? localDateTimeString(r.timestamp)
                   : r.date && r.time
                   ? `${r.date} — ${r.time}`
                   : ""}

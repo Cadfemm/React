@@ -16,6 +16,7 @@ import EyeAssessment from "../FocusedAssessment/EyeAssessment";
 import HeadNeckAssessment from "../FocusedAssessment/HeadNeckAssessment";
 import RenalAssessment from "../FocusedAssessment/RenalAssessment";
 import MusculoskeletalAssessment from "../FocusedAssessment/MusculoskeletalAssessment";
+import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -1996,13 +1997,6 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
     plan: PLAN_SCHEMA
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
   const NURSING_PATIENT_INFO_SCHEMA = {
     title: "Patient Information",
     sections: [
@@ -2077,7 +2071,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
     ...values,
     patient_name: patient?.name || "-",
     patient_ic: patient?.id || "-",
-    patient_dob: formatDate(patient?.dob),
+    patient_dob: localDateTimeString(patient?.dob),
     patient_age_gender: `${patient?.age ?? "-"} / ${patient?.sex || "-"}`,
     primary_diagnosis: patient?.icd || patient?.diagnosis_history || "-",
     secondary_diagnosis: patient?.secondary_diagnosis || "-",

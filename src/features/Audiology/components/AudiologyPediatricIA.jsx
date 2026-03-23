@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
 /* ===================== OPTIONS ===================== */
 
@@ -1132,29 +1133,6 @@ const OBJECTIVE_SCHEMA = {
     sections: []
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
-  const calculateDuration = (onset) => {
-    if (!onset) return "-";
-    const onsetDate = new Date(onset);
-    const diffMs = today - onsetDate;
-
-    if (diffMs < 0) return "-";
-
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-
-    if (years > 0) return `${years} yr ${months % 12} mo`;
-    if (months > 0) return `${months} mo`;
-    return `${days} days`;
-  };
-
   function AudioPatientInfo({ patient }) {
     if (!patient) return null;
 
@@ -1167,13 +1145,13 @@ const OBJECTIVE_SCHEMA = {
         <div style={patientGrid}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
           <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
           <div><b>Occupation:</b> {patient.occupation || "-"}</div>
           <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
           <div style={{ gridColumn: "1 / -1" }}>
             <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
               Doctors Reports

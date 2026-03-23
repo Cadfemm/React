@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SixMWTForm from "./SixMWTForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 export const CONDITIONING_ASSESSMENT_REGISTRY = {
   sixmwt: SixMWTForm
@@ -755,67 +756,12 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
   };
 
   /* ===================== UI ===================== */
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    return new Date(dateStr).toLocaleDateString();
-  };
-
-  const today = new Date();
-
-  const calculateDuration = (onset) => {
-    if (!onset) return "-";
-    const onsetDate = new Date(onset);
-    const diffMs = today - onsetDate;
-
-    if (diffMs < 0) return "-";
-
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const years = Math.floor(months / 12);
-
-    if (years > 0) return `${years} yr ${months % 12} mo`;
-    if (months > 0) return `${months} mo`;
-    return `${days} days`;
-  };
-
   const schemaMap = {
     subjective: SUBJECTIVE_SCHEMA,
     objective: OBJECTIVE_SCHEMA,
     assessment: ASSESSMENT_SCHEMA,
     plan: PLAN_SCHEMA
   };
-
-  function ConditioningPatientInfo({ patient }) {
-    if (!patient) return null;
-
-    return (
-      <div style={section}>
-        <div style={patientGrid}>
-
-          <div><b>Name:</b> {patient.name}</div>
-          <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-          <div>
-            <b>Duration of Diagnosis:</b>{" "}
-            {calculateDuration(patient.date_of_onset)}
-          </div>
-          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-        </div>
-      </div>
-    );
-  }
-
 
   return (
     <div style={mainContent}>
@@ -826,7 +772,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
         values={{}}
         onChange={() => { }}
       >
-        <ConditioningPatientInfo patient={patient} />
+        <PatientCard patient={patient} />
       </CommonFormBuilder>
 
       {/* ===== CONSENT & REFERRAL ===== */}
