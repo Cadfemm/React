@@ -8,10 +8,7 @@ export default function HearingAssessment() {
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
   };
- const HEARING_SCHEMA = {
-  title: "Hearing Assessment",
-
-  sections: [
+const HEARING_SECTIONS = [
     /* =====================================================
        EAR ISSUE
     ===================================================== */
@@ -61,7 +58,7 @@ export default function HearingAssessment() {
   "hyperacusis",
   "deformity"
 ].map(issue => ({
-  type: "textarea",
+  type: "input",
   name: `hearing_issue_${issue}_notes`,
   label: `Elaboration – ${issue.replace(/_/g, " ")}`,
   showIf: {
@@ -76,7 +73,7 @@ export default function HearingAssessment() {
        HEARING DEVICE
     ===================================================== */
     {
-      title: "Use of Hearing Device",
+      title: "",
       showIf: { field: "ear_status", equals: "impaired" },
       fields: [
         {
@@ -99,259 +96,268 @@ export default function HearingAssessment() {
       ]
     },
 
-    /* =====================================================
-       EXTERNAL EAR EXAMINATION
-    ===================================================== */
     {
-      title: "External Ear Examination",
+      title: "",
       showIf: { field: "ear_status", equals: "impaired" },
       fields: [
-        { type: "subheading", label: "Right Ear" },
-
-        ...["deformity", "redness", "swelling", "tenderness", "discharge"].flatMap(item => [
-          {
-            type: "radio",
-            name: `right_external_${item}`,
-            label: item.charAt(0).toUpperCase() + item.slice(1),
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            type: "textarea",
-            name: `right_external_${item}_notes`,
-            label: `Elaboration for ${item} (Right Ear)`,
-            showIf: {
-              field: `right_external_${item}`,
-              equals: "yes"
-            }
-          }
-        ]),
-
-        { type: "subheading", label: "Left Ear" },
-
-        ...["deformity", "redness", "swelling", "tenderness", "discharge"].flatMap(item => [
-          {
-            type: "radio",
-            name: `left_external_${item}`,
-            label: item.charAt(0).toUpperCase() + item.slice(1),
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            type: "textarea",
-            name: `left_external_${item}_notes`,
-            label: `Elaboration for ${item} (Left Ear)`,
-            showIf: {
-              field: `left_external_${item}`,
-              equals: "yes"
-            }
-          }
-        ])
-      ]
-    },
-
-    /* =====================================================
-       OTOSCOPY – EAR CANAL
-    ===================================================== */
-    {
-      title: "Otoscopy – Ear Canal",
-      showIf: { field: "ear_status", equals: "impaired" },
-      fields: [
-        { type: "subheading", label: "Right Ear" },
-
-        ...["wax", "redness", "swelling", "foreign_body", "discharge"].flatMap(item => [
-          {
-            type: "radio",
-            name: `right_canal_${item}`,
-            label: item.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase()),
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            type: "textarea",
-            name: `right_canal_${item}_notes`,
-            label: `Elaboration for ${item.replace("_", " ")} (Right Ear)`,
-            showIf: {
-              field: `right_canal_${item}`,
-              equals: "yes"
-            }
-          }
-        ]),
-
-        { type: "subheading", label: "Left Ear" },
-
-        ...["wax", "redness", "swelling", "foreign_body", "discharge"].flatMap(item => [
-          {
-            type: "radio",
-            name: `left_canal_${item}`,
-            label: item.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase()),
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            type: "textarea",
-            name: `left_canal_${item}_notes`,
-            label: `Elaboration for ${item.replace("_", " ")} (Left Ear)`,
-            showIf: {
-              field: `left_canal_${item}`,
-              equals: "yes"
-            }
-          }
-        ])
-      ]
-    },
-
-    /* =====================================================
-       TYMPANIC MEMBRANE
-    ===================================================== */
-    {
-      title: "Tympanic Membrane (TM)",
-      showIf: { field: "ear_status", equals: "impaired" },
-      fields: [
-        { type: "subheading", label: "Right Ear" },
-
         {
-          type: "radio",
-          name: "right_tm_color",
-          label: "Color: Pearly Grey (Normal)",
-          options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
-        },
-        {
-          type: "radio",
-          name: "right_tm_position",
-          label: "Position",
-          options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Bulging", value: "bulging" },
-            { label: "Retracted", value: "retracted" }
+          type: "refraction-12col",
+          name: "external_ear_table",
+          cornerLabel: "Sub heading",
+          showColumnHeaders: false,
+          groups: [
+            { label: "Right Ear", columns: [{ key: "Value" }] },
+            { label: "Left Ear", columns: [{ key: "Value" }] }
+          ],
+          rows: [
+            { label: "Deformity", value: "deformity", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Deformity - Specify",
+              value: "deformity_specify",
+              showIf: {
+                or: [
+                  { field: "external_ear_table_deformity_0", equals: "Yes" },
+                  { field: "external_ear_table_deformity_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Redness", value: "redness", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Redness - Specify",
+              value: "redness_specify",
+              showIf: {
+                or: [
+                  { field: "external_ear_table_redness_0", equals: "Yes" },
+                  { field: "external_ear_table_redness_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Swelling", value: "swelling", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Swelling - Specify",
+              value: "swelling_specify",
+              showIf: {
+                or: [
+                  { field: "external_ear_table_swelling_0", equals: "Yes" },
+                  { field: "external_ear_table_swelling_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Tenderness", value: "tenderness", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Tenderness - Specify",
+              value: "tenderness_specify",
+              showIf: {
+                or: [
+                  { field: "external_ear_table_tenderness_0", equals: "Yes" },
+                  { field: "external_ear_table_tenderness_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Discharge", value: "discharge", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Discharge - Specify",
+              value: "discharge_specify",
+              showIf: {
+                or: [
+                  { field: "external_ear_table_discharge_0", equals: "Yes" },
+                  { field: "external_ear_table_discharge_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            }
           ]
         },
-        ...["handle_malleus", "cone_light", "perforation_scarring"].flatMap(item => [
-          {
-            type: "radio",
-            name: `right_tm_${item}`,
-            label: item.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase()),
-            options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
-          },
-          {
-            type: "textarea",
-            name: `right_tm_${item}_notes`,
-            label: `Elaboration for ${item.replace("_", " ")} (Right Ear)`,
-            showIf: {
-              field: `right_tm_${item}`,
-              equals: "yes"
+
+        {
+          type: "refraction-12col",
+          name: "ear_canal_table",
+          cornerLabel: "Sub heading",
+          showColumnHeaders: false,
+          groups: [
+            { label: "Right Ear", columns: [{ key: "Value" }] },
+            { label: "Left Ear", columns: [{ key: "Value" }] }
+          ],
+          rows: [
+            { label: "Wax", value: "wax", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Wax - Specify",
+              value: "wax_specify",
+              showIf: {
+                or: [
+                  { field: "ear_canal_table_wax_0", equals: "Yes" },
+                  { field: "ear_canal_table_wax_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Redness", value: "redness", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Redness - Specify",
+              value: "redness_specify",
+              showIf: {
+                or: [
+                  { field: "ear_canal_table_redness_0", equals: "Yes" },
+                  { field: "ear_canal_table_redness_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Swelling", value: "swelling", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Swelling - Specify",
+              value: "swelling_specify",
+              showIf: {
+                or: [
+                  { field: "ear_canal_table_swelling_0", equals: "Yes" },
+                  { field: "ear_canal_table_swelling_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Foreign body", value: "foreign_body", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Foreign body - Specify",
+              value: "foreign_body_specify",
+              showIf: {
+                or: [
+                  { field: "ear_canal_table_foreign_body_0", equals: "Yes" },
+                  { field: "ear_canal_table_foreign_body_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Discharge", value: "discharge", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Discharge - Specify",
+              value: "discharge_specify",
+              showIf: {
+                or: [
+                  { field: "ear_canal_table_discharge_0", equals: "Yes" },
+                  { field: "ear_canal_table_discharge_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
             }
-          }
-        ]),
-
-        { type: "subheading", label: "Left Ear" },
-
-        {
-          type: "radio",
-          name: "left_tm_color",
-          label: "Color: Pearly Grey (Normal)",
-          options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
-        },
-        {
-          type: "radio",
-          name: "left_tm_position",
-          label: "Position",
-          options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Bulging", value: "bulging" },
-            { label: "Retracted", value: "retracted" }
           ]
         },
-        ...["handle_malleus", "cone_light", "perforation_scarring"].flatMap(item => [
-          {
-            type: "radio",
-            name: `left_tm_${item}`,
-            label: item.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase()),
-            options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
-          },
-          {
-            type: "textarea",
-            name: `left_tm_${item}_notes`,
-            label: `Elaboration for ${item.replace("_", " ")} (Left Ear)`,
-            showIf: {
-              field: `left_tm_${item}`,
-              equals: "yes"
+
+        { type: "subheading", label: "Tympanic membrane (TM)" },
+        {
+          type: "refraction-12col",
+          name: "tm_table",
+          cornerLabel: "",
+          showColumnHeaders: false,
+          groups: [
+            { label: "Right Ear", columns: [{ key: "Value" }] },
+            { label: "Left Ear", columns: [{ key: "Value" }] }
+          ],
+          rows: [
+            { label: "Color: pearly grey (normal)", value: "color", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Color - Specify",
+              value: "color_specify",
+              showIf: {
+                or: [
+                  { field: "tm_table_color_0", equals: "No" },
+                  { field: "tm_table_color_1", equals: "No" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Position", value: "position", columns: [{ type: "select", options: ["Neutral", "Bulging", "Retracted"] }, { type: "select", options: ["Neutral", "Bulging", "Retracted"] }] },
+            {
+              label: "Position - Specify",
+              value: "position_specify",
+              showIf: {
+                or: [
+                  { field: "tm_table_position_0", oneOf: ["Bulging", "Retracted"] },
+                  { field: "tm_table_position_1", oneOf: ["Bulging", "Retracted"] }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
+            },
+            { label: "Handle of malleus", value: "handle_of_malleus", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            { label: "Cone of light", value: "cone_of_light", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            { label: "Perforation or scarring", value: "perforation_scarring", columns: [{ type: "select", options: ["Yes", "No"] }, { type: "select", options: ["Yes", "No"] }] },
+            {
+              label: "Specify",
+              value: "landmarks_specify",
+              showIf: {
+                or: [
+                  { field: "tm_table_perforation_scarring_0", equals: "Yes" },
+                  { field: "tm_table_perforation_scarring_1", equals: "Yes" }
+                ]
+              },
+              columns: [{ type: "input" }, { type: "input" }]
             }
-          }
-        ])
-      ]
-    },
-
-    /* =====================================================
-       HEARING TEST
-    ===================================================== */
-   {
-  title: "Hearing Test",
-  showIf: { field: "ear_status", equals: "impaired" },
-  fields: [
-
-    {
-      type: "grid-header",
-      cols: [ "Right Ear", "Left Ear"]
-    },
-
-    {
-      type: "grid-row",
-      name: "whisper_test",
-      label: "Whisper Test",
-      cols: [
-        {
-          type: "single-select",
-          name: "right_whisper_test",
-          options: [
-            { label: "Passed", value: "passed" },
-            { label: "Failed", value: "failed" }
           ]
         },
-        {
-          type: "single-select",
-          name: "left_whisper_test",
-          options: [
-            { label: "Passed", value: "passed" },
-            { label: "Failed", value: "failed" }
-          ]
-        }
-      ]
-    },
 
-    {
-      type: "grid-row",
-      name: "dix_hallpike_test",
-      label: "Dix-Hallpike Test",
-      cols: [
+        { type: "subheading", label: "Hearing Test" },
         {
-          type: "single-select",
-          name: "right_dix_hallpike",
-          options: [
-            { label: "Positive", value: "positive" },
-            { label: "Negative", value: "negative" }
+          type: "refraction-12col",
+          name: "hearing_test_table",
+          cornerLabel: "",
+          showColumnHeaders: false,
+          groups: [
+            { label: "Right Ear", columns: [{ key: "Value" }] },
+            { label: "Left Ear", columns: [{ key: "Value" }] }
+          ],
+          rows: [
+            { label: "Whisper Test", value: "whisper_test", columns: [{ type: "select", options: ["Passed", "Failed"] }, { type: "select", options: ["Passed", "Failed"] }] },
+            { label: "Dix-Hallpike Test", value: "dix_hallpike_test", columns: [{ type: "select", options: ["Positive", "Negative"] }, { type: "select", options: ["Positive", "Negative"] }] }
           ]
         },
         {
-          type: "single-select",
-          name: "left_dix_hallpike",
+          type: "checkbox-group",
+          name: "hearing_plan",
+          label: "Plan",
           options: [
-            { label: "Positive", value: "positive" },
-            { label: "Negative", value: "negative" }
+            {
+              label: "For further evaluation by Audiologist - (notify Audiologist)",
+              value: "audiologist_evaluation"
+            },
+            { label: "Others", value: "others" }
           ]
+        },
+        {
+          type: "input",
+          name: "hearing_plan_others",
+          label: "Others (free text)",
+          showIf: { field: "hearing_plan", includes: "others" }
         }
       ]
     }
+];
 
-  ]
+const combineShowIf = (sectionShowIf, fieldShowIf) => {
+  if (!sectionShowIf) return fieldShowIf;
+  if (!fieldShowIf) return sectionShowIf;
+  return { ...sectionShowIf, and: fieldShowIf };
+};
+
+const HEARING_SCHEMA = {
+  title: "Hearing Assessment",
+  sections: [
+    {
+      title: null,
+      fields: HEARING_SECTIONS.flatMap((section) => {
+        const sectionTitleFields = section.title
+          ? [{ type: "subheading", label: section.title, showIf: section.showIf }]
+          : [];
+
+        const sectionFields = (section.fields || []).map((f) => ({
+          ...f,
+          showIf: combineShowIf(section.showIf, f.showIf)
+        }));
+
+        return [...sectionTitleFields, ...sectionFields];
+      })
     }
   ]
 };

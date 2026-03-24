@@ -3,6 +3,7 @@ import VisualAssessment  from "../components/Visual";
 import SwallowingAssessment from "./SwallowingAssessment";
 import BladderAssessment from "./BladderAssessment";
 import BowelAssessment from "./BowelAssessment";
+import SexualAssessment from "./SexualAssessment";
 import PatientReports from "../../PatientReports"; // 🔹 NEW
 
 /* -------------------------------------------------------------
@@ -176,6 +177,7 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
     "Pain",
     "Bowel Issue",
     "Bladder Issue",
+    "Sexual",
     "Skin",
     "Neuro",
     "Spinal Cord Injury",
@@ -507,6 +509,8 @@ export function ExaminationDAssessmentForm({ patient, onUpdatePatient }) {
           <SwallowingAssessment onChange={setSwallowingData} />
         ) : tabs[activeTab] === "Bladder Issue" ? (
           <BladderAssessment onChange={setBladderData} />
+        ) : tabs[activeTab] === "Sexual" ? (
+          <SexualAssessment patient={patient} />
         ) : tabs[activeTab] === "Bowel Issue" ? (
           <BowelAssessment onChange={setBowelData} />
         ) : (

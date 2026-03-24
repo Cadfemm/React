@@ -374,7 +374,7 @@ export default function CommonFormBuilder({
                       return (
                         <div key={`scale-${idx}`} style={headerStyle}>
                           <div style={styles.matrixLabel}>
-                            {nextMatrix.matrixHeaderLabel || "Scale"}
+                            {nextMatrix.matrixHeaderLabel ?? "Scale"}
                             {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
                           </div>
                           <div style={styles.matrixOptions}>
@@ -421,7 +421,7 @@ export default function CommonFormBuilder({
                                 return (
                                   <div style={headerStyle}>
                                     <div style={styles.matrixLabel}>
-                                      {field.matrixHeaderLabel || "Scale"}
+                                      {field.matrixHeaderLabel ?? "Scale"}
                                       {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
                                     </div>
                                     <div style={styles.matrixOptions}>
@@ -499,7 +499,7 @@ export default function CommonFormBuilder({
                                   </div>
 
 
-                                ) : field.type === "subheading" || field.type === "optional-section-toggle" ? (
+                                ) : field.type === "subheading" || field.type === "heading" || field.type === "optional-section-toggle" ? (
 
                                   renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
                                     enabled: schema?.enableLanguageToggle === true,
@@ -527,7 +527,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
+                                      {!["button", "subheading", "heading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -1933,7 +1933,7 @@ case "grid-table-advanced": {
         return (
           <div style={headerStyle}>
             <div style={styles.matrixLabel}>
-              {matrixField.matrixHeaderLabel || "Scale"}
+              {matrixField.matrixHeaderLabel ?? "Scale"}
               {matrixField.info && languageConfig?.showScores !== false && (
                 <InfoTooltip info={matrixField.info} />
               )}
@@ -2047,7 +2047,7 @@ case "grid-table-advanced": {
             const v = values[f.name];
             return (
               <div key={f.name} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
-                {f.label && !["button", "checkbox-group", "score-box"].includes(f.type) && (
+                {f.label && !["button", "checkbox-group", "score-box", "heading", "subheading", "optional-section-toggle"].includes(f.type) && (
                   <label
                     style={{
                       display: "block",
@@ -2709,6 +2709,13 @@ case "grid-table-advanced": {
         </div>
       );
 
+    case "heading":
+      return (
+        <div style={styles.heading}>
+          {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
+        </div>
+      );
+
     case "optional-section-toggle":
       return (
         <div style={styles.optionalSectionToggle}>
@@ -3057,6 +3064,9 @@ case "grid-table-advanced": {
 
           <div style={{ overflowX: "auto" }}>
             {rows.map(r => {
+              if (r.showIf && !evaluateShowIf(r.showIf, values)) {
+                return null;
+              }
               const rowCols = r.columns || flatCols;
 
               return (
@@ -3771,6 +3781,13 @@ const styles = {
     color: "#0F172A",
     borderBottom: "2px solid #e5e7eb",
     paddingBottom: 8
+  },
+  heading: {
+    marginTop: 24,
+    marginBottom: 14,
+    fontWeight: 700,
+    fontSize: 17,
+    color: "#0F172A"
   },
 
   optionalSectionToggle: {
