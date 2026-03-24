@@ -3,6 +3,33 @@ import { BoldIcon } from "lucide-react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { DIET_ASSESSMENT_REGISTRY } from "./DietAssessmentWrapper";
 
+const ET_OPTIONS = {
+  "increased_energy_expenditure": [
+    { label: "Voluntary or involuntary physical activity/movement", value: "voluntary_activity" },
+    { label: "Accelerated growth oranabolism", value: "accelerated_growth" },
+    { label: "Maintenance of body temperature", value: "body_temperature_maintenance"}
+  ],
+  "inadequate_energy_intake": [
+    { label: "Access to food, fluid, nutrients", value: "food_access"},
+    { label: "Food and nutrition knowledge deficit", value: "knowledge_deficit"},
+    { label: "Decreased ability to consume sufficient energy, nutrients", value: "decreased_ability"},
+    { label: "Prolonged catabolic illness", value: "prolonged_catabolic"},
+    { label: "Psychological causes such as depression and disordered eating", value: "eating_disordered"},
+    { label: "Food or artificial nutrition", value: "food_nutrition"}
+  ],
+
+  "predicted_excessive_energy_intake": [
+    { label: "Culture of overeating", value: "overeating_culture"},
+    { label: "Change in physical sctivity anticipated", value: "physical_activity_change"},
+    { label: "Genetic predisposition to overweight/obesity", value: "obesity"},
+    { label: "Altered metabolism", value: "altered_metabolism"},
+    { label: "Family or social history of overeating", value: "overeating_history"},
+    { label: "Increased psychological/life stress", value: "life_stress"},
+    { label: "Change in living situation", value: "living_situation"},
+    { label: "Planned therapy or medication predicted to reduce energy/nutrient need or metabolic rate/metabolism", value: "metabolism"}
+  ]
+}
+
 export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
   const [form, setForm] = useState({
     chief_complaint: "",
@@ -827,6 +854,22 @@ const submitAndSave = () => {
     setField(name, value);
   };
 
+  const diagnosisComputedValues = (problems) => {
+    var data = {}
+    problems.forEach((item, index) => {
+      data[`diagnosis_signs_${index}`] = item.signs
+      data[`diagnosis_problem_${index}`] = item.problem
+      data[`diagnosis_etiology_${index}`] = ET_OPTIONS[item.problem.toLowerCase().replaceAll(' ', '_')].map(item => item.value)
+      data[`nutrition_diagnosis_${index}`] = item.problem && item.etiology && item.signs ? `${item.problem} ${item.etiology} as evidenced by ${item.signs}` : ""
+    })
+    return data
+    
+  }                 
+
+  const diagnosisValues = {
+      ...diagnosisComputedValues(form.diagnosis_problems)
+  }
+
   return (
     <div style={dietOuterWrap}>
       <div style={dietFormBox}>
@@ -899,16 +942,11 @@ const submitAndSave = () => {
         <CommonFormBuilder
                       schema={{ title: `Nutrition Diagnosis ${index + 1}`, sections: [{ fields: [
                         { name: `diagnosis_problem_${index}`, label: "Problem", type: "input", readOnly: true },
-                        { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "input", readOnly: true },
+                        { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "multi-select-dropdown", options:ET_OPTIONS[diagnosis.problem.toLowerCase().replaceAll(' ', '_')], readOnly: true },
                         { name: `diagnosis_signs_${index}`, label: "Signs & Symptoms", type: "textarea" },
                         { name: `nutrition_diagnosis_${index}`, label: "Nutrition Diagnosis", type: "textarea", readOnly: true }
                       ]}]}}
-          values={{
-            [`diagnosis_problem_${index}`]: diagnosis.problem,
-            [`diagnosis_etiology_${index}`]: diagnosis.etiology,
-            [`diagnosis_signs_${index}`]: diagnosis.signs,
-                        [`nutrition_diagnosis_${index}`]: diagnosis.problem && diagnosis.etiology && diagnosis.signs ? `${diagnosis.problem} ${diagnosis.etiology} as evidenced by ${diagnosis.signs}` : ""
-          }}
+          values={diagnosisValues}
           onChange={(name, value) => {
                         if (name.startsWith(`diagnosis_signs_`)) {
                           const idx = parseInt(name.split("_")[2], 10);
