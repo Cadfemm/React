@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import spasticity1 from "../../../assets/spasticity1.png";
+import spasticity2 from "../../../assets/spasticity2.png";
+import spasticity3 from "../../../assets/spasticity3.jpg";
 
 const yesNo = ["Yes", "No"];
 
@@ -18,6 +21,15 @@ const PENN_OPTIONS = [
   { score: "2", text: "Infrequent spasms occurring less than once per hour" },
   { score: "3", text: "Spasms occurring more than once per hour" },
   { score: "4", text: "Spasms occurring more than 10 times per hour" },
+];
+
+const MAS_TABLE_OPTIONS = [
+  { label: "0 - No increase in tone", value: "0_no" },
+  { label: "1 - Slight increase in tone. Catch/Release at end ROM", value: "1" },
+  { label: "1+ - Slight increase in tone. Catch/Release and resistance through rest ROM (1/2 ROM)", value: "1+" },
+  { label: "2 - More marked increase in tone through ROM, but affected part moved easily", value: "2" },
+  { label: "3 - Considerable increase in tone, passive movement difficult", value: "3" },
+  { label: "4 - Affected part in rigid flexion and extension", value: "4" },
 ];
 
 function ModifiedAshworthAssessment({ values, onChange }) {
@@ -126,10 +138,31 @@ function PennAssessment({ values, onChange }) {
   );
 }
 
+function SpasticityReferenceImages() {
+  const imageStyle = {
+    width: "100%",
+    maxWidth: 760,
+    border: "1px solid #e5e7eb",
+    borderRadius: 8,
+    marginBottom: 12,
+    display: "block",
+  };
+
+  return (
+    <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: 12 }}>
+      <div style={{ fontWeight: 700, marginBottom: 10 }}>Spasticity Reference Images</div>
+      <img src={spasticity1} alt="Spasticity reference 1" style={imageStyle} />
+      <img src={spasticity2} alt="Spasticity reference 2" style={imageStyle} />
+      <img src={spasticity3} alt="Spasticity reference 3" style={imageStyle} />
+    </div>
+  );
+}
+
 const SPASM_SPASTICITY_REGISTRY = {
   modified_ashworth: ModifiedAshworthAssessment,
   mts: MTSAssessment,
   penn_scale: PennAssessment,
+  spasticity_reference_images: SpasticityReferenceImages,
 };
 
 const SPASM_SPASTICITY_SCHEMA = {
@@ -338,6 +371,114 @@ const SPASM_SPASTICITY_SCHEMA = {
           name: "spasticity_spasm_severity",
           label: "Severity",
           options: ["Mild", "Moderate", "Severe"],
+        },
+        {
+          type: "assessment-launcher",
+          name: "spasticity_reference_images_launcher",
+          label: "Reference Images",
+          options: [{ label: "View Spasticity Reference Images", value: "spasticity_reference_images" }],
+        },
+        { type: "subheading", label: "Upper limb" },
+        {
+          type: "refraction-12col",
+          name: "spasticity_muscle_tone_upper_table",
+          cornerLabel: "Muscle",
+          cornerLikeGroupHeader: true,
+          showColumnHeaders: true,
+          groups: [
+            { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R2)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R1)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R2-R1)", columns: [{ key: "Right" }, { key: "Left" }] },
+          ],
+          rows: [
+            { value: "pectoralis_major", label: "Pectoralis Major", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "subscapularis", label: "Subscapularis", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "triceps", label: "Triceps", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "biceps_brachii", label: "Biceps Brachii", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "brachialis", label: "Brachialis", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "brachioradialis", label: "Brachioradialis", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "pronator_teres", label: "Pronator Teres", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fcu", label: "Flexor Carpi Ulnaris (FCU)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fcr", label: "Flexor Carpi Radialis (FCR)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fdp", label: "Flexor Digitorum Profundus (FDP)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fds", label: "Flexor Digitorum Superficialis (FDS)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fpl", label: "Flexor Pollicis Longus (FPL)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+          ],
+        },
+        { type: "subheading", label: "Lower limb" },
+        {
+          type: "refraction-12col",
+          name: "spasticity_muscle_tone_lower_table",
+          cornerLabel: "Muscle",
+          cornerLikeGroupHeader: true,
+          showColumnHeaders: true,
+          groups: [
+            { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R2)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R1)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Tardieu Scale (R2-R1)", columns: [{ key: "Right" }, { key: "Left" }] },
+          ],
+          rows: [
+            { value: "bicep_femoris", label: "Bicep Femoris", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "semitendinosus", label: "Semitendinosus", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "semimembranosus", label: "Semimembranosus", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "adductors", label: "Adductors", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "gastrocnemius", label: "Gastrocnemius", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "soleus", label: "Soleus", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "posterior_tibialis", label: "Posterior Tibialis", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fdl", label: "Flexor Digitorum Longus (FDL)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+            { value: "fhl", label: "Flexor Hallucis Longus (FHL)", columns: [{ type: "select", options: MAS_TABLE_OPTIONS }, { type: "select", options: MAS_TABLE_OPTIONS }, {}, {}, {}, {}, {}, {}] },
+          ],
+        },
+        { type: "subheading", label: "Range of Motion (ROM) - Upper limb" },
+        {
+          type: "refraction-12col",
+          name: "spasticity_rom_upper_table",
+          cornerLabel: "Muscle",
+          cornerLikeGroupHeader: true,
+          showColumnHeaders: true,
+          groups: [
+            { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+          ],
+          rows: [
+            { value: "pectoralis_major", label: "Pectoralis Major", columns: [{}, {}, {}, {}] },
+            { value: "subscapularis", label: "Subscapularis", columns: [{}, {}, {}, {}] },
+            { value: "triceps", label: "Triceps", columns: [{}, {}, {}, {}] },
+            { value: "biceps_brachii", label: "Biceps Brachii", columns: [{}, {}, {}, {}] },
+            { value: "brachialis", label: "Brachialis", columns: [{}, {}, {}, {}] },
+            { value: "brachioradialis", label: "Brachioradialis", columns: [{}, {}, {}, {}] },
+            { value: "pronator_teres", label: "Pronator Teres", columns: [{}, {}, {}, {}] },
+            { value: "fcu", label: "Flexor Carpi Ulnaris (FCU)", columns: [{}, {}, {}, {}] },
+            { value: "fcr", label: "Flexor Carpi Radialis (FCR)", columns: [{}, {}, {}, {}] },
+            { value: "fdp", label: "Flexor Digitorum Profundus (FDP)", columns: [{}, {}, {}, {}] },
+            { value: "fds", label: "Flexor Digitorum Superficialis (FDS)", columns: [{}, {}, {}, {}] },
+            { value: "fpl", label: "Flexor Pollicis Longus (FPL)", columns: [{}, {}, {}, {}] },
+          ],
+        },
+        { type: "subheading", label: "Range of Motion (ROM) - Lower limb" },
+        {
+          type: "refraction-12col",
+          name: "spasticity_rom_lower_table",
+          cornerLabel: "Muscle",
+          cornerLikeGroupHeader: true,
+          showColumnHeaders: true,
+          groups: [
+            { label: "Active Range Of Motion (AROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+            { label: "Passive Range Of Motion (PROM)", columns: [{ key: "Right" }, { key: "Left" }] },
+          ],
+          rows: [
+            { value: "bicep_femoris", label: "Bicep Femoris", columns: [{}, {}, {}, {}] },
+            { value: "semitendinosus", label: "Semitendinosus", columns: [{}, {}, {}, {}] },
+            { value: "semimembranosus", label: "Semimembranosus", columns: [{}, {}, {}, {}] },
+            { value: "adductors", label: "Adductors", columns: [{}, {}, {}, {}] },
+            { value: "gastrocnemius", label: "Gastrocnemius", columns: [{}, {}, {}, {}] },
+            { value: "soleus", label: "Soleus", columns: [{}, {}, {}, {}] },
+            { value: "posterior_tibialis", label: "Posterior Tibialis", columns: [{}, {}, {}, {}] },
+            { value: "fdl", label: "Flexor Digitorum Longus (FDL)", columns: [{}, {}, {}, {}] },
+            { value: "fhl", label: "Flexor Hallucis Longus (FHL)", columns: [{}, {}, {}, {}] },
+          ],
         },
         { type: "subheading", label: "Associated Neurological Findings" },
         { type: "radio", name: "spasticity_hyperreflexia", label: "Hyperreflexia", options: yesNo },
@@ -575,6 +716,25 @@ export default function SpasmSpasticity() {
     const updated = { ...values, [name]: value };
     if (name === "spasm_penn_frequency_interpretation") {
       updated.spasm_frequency_score_interpretation = value;
+    }
+    if (name.startsWith("spasticity_muscle_tone_upper_table_") || name.startsWith("spasticity_muscle_tone_lower_table_")) {
+      const m = name.match(/^spasticity_muscle_tone_(upper|lower)_table_(.+)_(\d)$/);
+      if (m) {
+        const tablePrefix = `spasticity_muscle_tone_${m[1]}_table`;
+        const row = m[2];
+        const rightR2 = Number(updated[`${tablePrefix}_${row}_2`]);
+        const leftR2 = Number(updated[`${tablePrefix}_${row}_3`]);
+        const rightR1 = Number(updated[`${tablePrefix}_${row}_4`]);
+        const leftR1 = Number(updated[`${tablePrefix}_${row}_5`]);
+
+        const hasRight = String(updated[`${tablePrefix}_${row}_2`] ?? "").trim() !== "" &&
+          String(updated[`${tablePrefix}_${row}_4`] ?? "").trim() !== "";
+        const hasLeft = String(updated[`${tablePrefix}_${row}_3`] ?? "").trim() !== "" &&
+          String(updated[`${tablePrefix}_${row}_5`] ?? "").trim() !== "";
+
+        updated[`${tablePrefix}_${row}_6`] = hasRight ? String(rightR2 - rightR1) : "";
+        updated[`${tablePrefix}_${row}_7`] = hasLeft ? String(leftR2 - leftR1) : "";
+      }
     }
     setValues(updated);
   };

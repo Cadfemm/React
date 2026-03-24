@@ -310,8 +310,8 @@ const BTI_SCHEMA = {
                     showColumnHeaders: true,
                     groups: [
                         { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
-                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2", columns: [{ key: "Right" }, { key: "Left" }] },
+                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2-R1", columns: [{ key: "Right" }, { key: "Left" }] },
                     ],
                     rows: [
@@ -381,8 +381,8 @@ const BTI_SCHEMA = {
                     showColumnHeaders: true,
                     groups: [
                         { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
-                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2", columns: [{ key: "Right" }, { key: "Left" }] },
+                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2-R1", columns: [{ key: "Right" }, { key: "Left" }] },
                     ],
                     rows: [
@@ -431,8 +431,8 @@ const BTI_SCHEMA = {
                     showColumnHeaders: true,
                     groups: [
                         { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
-                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2", columns: [{ key: "Right" }, { key: "Left" }] },
+                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2-R1", columns: [{ key: "Right" }, { key: "Left" }] },
                     ],
                     rows: [
@@ -481,8 +481,8 @@ const BTI_SCHEMA = {
                     showColumnHeaders: true,
                     groups: [
                         { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
-                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2", columns: [{ key: "Right" }, { key: "Left" }] },
+                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2-R1", columns: [{ key: "Right" }, { key: "Left" }] },
                     ],
                     rows: [
@@ -541,8 +541,8 @@ const BTI_SCHEMA = {
                     showColumnHeaders: true,
                     groups: [
                         { label: "Modified Ashworth Scale (MAS)", columns: [{ key: "Right" }, { key: "Left" }] },
-                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2", columns: [{ key: "Right" }, { key: "Left" }] },
+                        { label: "Tardieu Scale R1", columns: [{ key: "Right" }, { key: "Left" }] },
                         { label: "Tardieu Scale R2-R1", columns: [{ key: "Right" }, { key: "Left" }] },
                     ],
                     rows: [
@@ -1201,13 +1201,35 @@ const SCHEMA = {
 const diffTardieu = (values) => {
     var diff = {}
     if (!values) return null
+    const asNumberOrNull = (v) => {
+        const raw = v ?? "";
+        if (String(raw).trim() === "") return null;
+        const n = Number(raw);
+        return Number.isFinite(n) ? n : null;
+    };
     Object.entries(values).map(([key, item]) => {
         if (key.endsWith('_0') || key.endsWith("_1")) {
             return null
         } else if (key.endsWith('_2')) {
-            diff[key.replace('_2', '_6')] = values[key.replace('_2', '_4')] - values[key]
+            if (key.startsWith("sc_")) {
+              const r1 = asNumberOrNull(values[key]);
+              const r2 = asNumberOrNull(values[key.replace('_2', '_4')]);
+              diff[key.replace('_2', '_6')] = r1 === null || r2 === null ? "" : (r2 - r1);
+            } else {
+              const r2 = asNumberOrNull(values[key]);
+              const r1 = asNumberOrNull(values[key.replace('_2', '_4')]);
+              diff[key.replace('_2', '_6')] = r2 === null || r1 === null ? "" : (r2 - r1);
+            }
         } else if (key.endsWith('_3')) {
-            diff[key.replace('_3', '_7')] = values[key.replace('_3', '_5')] - values[key]
+            if (key.startsWith("sc_")) {
+              const r1 = asNumberOrNull(values[key]);
+              const r2 = asNumberOrNull(values[key.replace('_3', '_5')]);
+              diff[key.replace('_3', '_7')] = r1 === null || r2 === null ? "" : (r2 - r1);
+            } else {
+              const r2 = asNumberOrNull(values[key]);
+              const r1 = asNumberOrNull(values[key.replace('_3', '_5')]);
+              diff[key.replace('_3', '_7')] = r2 === null || r1 === null ? "" : (r2 - r1);
+            }
         }
     })
     return diff

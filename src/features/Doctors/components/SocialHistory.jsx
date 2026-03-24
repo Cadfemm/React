@@ -3,17 +3,9 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 export default function SocialHistory() {
   const [values, setValues] = useState({});
-  const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
     setValues(prev => ({ ...prev, [name]: value }));
-  };
-
-  const onAction = (type) => {
-    if (type === "submit") {
-      setSubmitted(true);
-      console.log("Social History Data:", values);
-    }
   };
 
   const SOCIAL_HISTORY_SCHEMA = {
@@ -25,23 +17,15 @@ export default function SocialHistory() {
           {
             type: "row",
             fields: [
-              { name: "home_where_live", label: "Where do you live?", type: "input" },
-              { name: "home_who_lives_with", label: "Who lives with you?", type: "input" }
+              { name: "home_location_state_district", label: "Location (state and district)", type: "input" },
+              { name: "home_household_members", label: "Household member(s)", type: "input" }
             ]
           },
           {
             type: "row",
             fields: [
-              {
-                name: "home_accommodation_type",
-                label: "Type of accommodation (house, flat, care home, etc.)",
-                type: "input"
-              },
-              {
-                name: "home_stairs_mobility_issues",
-                label: "Any stairs or mobility issues at home?",
-                type: "input"
-              }
+              { name: "home_accommodation_type", label: "Type of accommodation (house, flat, care home, etc.)", type: "input" },
+              { name: "home_stairs_mobility_issues", label: "Stairs or mobility issues at home", type: "input" }
             ]
           }
         ]
@@ -49,8 +33,20 @@ export default function SocialHistory() {
       {
         title: "Occupation / Education",
         fields: [
-          { name: "occupation_current", label: "Current job", type: "input" },
-          { name: "occupation_previous", label: "Previous job", type: "input" }
+          {
+            type: "row",
+            fields: [
+              { name: "occupation_education_level", label: "Education level", type: "input" },
+              { name: "occupation_previous_job", label: "Previous job", type: "input" },
+            ]
+          },
+          {
+            type: "row",
+            fields: [
+              { name: "occupation_current_job", label: "Current job", type: "input" },
+              { name: "occupation_placeholder", label: "", type: "input", readOnly: true }
+            ]
+          }
         ]
       },
       {
@@ -60,27 +56,26 @@ export default function SocialHistory() {
             name: "family_marital_status",
             label: "Marital status",
             type: "radio",
-            options: [
-              { label: "Single", value: "single" },
-              { label: "Married", value: "married" },
-              { label: "Divorced", value: "divorced" },
-              { label: "Widowed", value: "widowed" }
+            options: ["single", "married", "divorced", "widowed"]
+          },
+          {
+            type: "row",
+            fields: [
+              { name: "family_children_dependents", label: "Children or dependents", type: "input" },
+              { name: "family_main_support", label: "Main support person", type: "input" },
             ]
           },
           {
-            name: "family_children_dependents",
-            label: "Any children or dependents?",
-            type: "input"
-          },
-          {
-            name: "family_main_support",
-            label: "Who is your main support person?",
-            type: "input"
-          },
-          {
             name: "family_medical_history",
-            label: "Family medical history (stroke / heart attack / seizure, etc.)",
-            type: "textarea"
+            label: "Family medical history",
+            type: "radio",
+            options: ["stroke", "heart attack", "seizure", "others"]
+          },
+          {
+            name: "family_medical_history_others",
+            label: "Family medical history - Others",
+            type: "input",
+            showIf: { field: "family_medical_history", equals: "others" }
           }
         ]
       },
@@ -92,73 +87,101 @@ export default function SocialHistory() {
             label: "Smoking"
           },
           {
-            name: "smoking_status",
-            label: "Do you smoke or have you ever smoked?",
+            name: "smoking_cigarette",
+            label: "Cigarette",
             type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
+            options: ["yes", "no"]
           },
           {
-            name: "smoking_pack_years",
-            label: "How much and for how long? (pack-years)",
-            type: "input",
-            showIf: { field: "smoking_status", equals: "yes" }
+            name: "smoking_vape",
+            label: "Vape / Electronic Cigarette",
+            type: "radio",
+            options: ["yes", "no"]
+          },
+          {
+            type: "row",
+            showIf: {
+              or: [
+                { field: "smoking_cigarette", equals: "yes" },
+                { field: "smoking_vape", equals: "yes" }
+              ]
+            },
+            fields: [
+              { name: "smoking_sticks_packs_per_day", label: "Sticks/Packs per day", type: "input" },
+              { name: "smoking_duration_years", label: "Duration (in years)", type: "input" }
+            ]
           },
           {
             name: "smoking_quit_interest",
             label: "Interested in quitting?",
-            type: "input",
-            showIf: { field: "smoking_status", equals: "yes" }
+            type: "radio",
+            options: ["yes", "no"],
+            showIf: {
+              or: [
+                { field: "smoking_cigarette", equals: "yes" },
+                { field: "smoking_vape", equals: "yes" }
+              ]
+            }
           },
 
           {
             type: "subheading",
-            label: "Alcohol"
+            label: "Alcoholic Drinker"
           },
           {
             name: "alcohol_status",
-            label: "Do you drink alcohol?",
+            label: "Alcoholic Drinker",
             type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
+            options: ["yes", "no"]
           },
           {
             type: "row",
             fields: [
-              { name: "alcohol_type", label: "Type", type: "input" },
+              { name: "alcohol_type", label: "Type of alcoholic beverage", type: "input" },
               { name: "alcohol_quantity", label: "Quantity", type: "input" },
-              { name: "alcohol_frequency", label: "Frequency", type: "input" }
             ],
-            showIf: { field: "alcohol_status", equals: "yes" }
+            showIf: { field: "alcohol_status", equals: "yes" },
           },
           {
-            name: "alcohol_cage_note",
-            label: "CAGE questions (Cut down, Annoyed, Guilty, Eye-opener) – notes",
-            type: "textarea",
-            showIf: { field: "alcohol_status", equals: "yes" }
+            type: "row",
+            fields: [
+              { name: "alcohol_frequency", label: "Frequency", type: "input" },
+              { name: "alcohol_cage_questions", label: "CAGE questions (if appropriate)", type: "input" },
+            ],
+            showIf: { field: "alcohol_status", equals: "yes" },
+          },
+          {
+            name: "alcohol_cage_radio",
+            label: "Cut down, Annoyed, Guilty, Eye-opener",
+            type: "radio",
+            options: ["yes", "no"],
+            showIf: { field: "alcohol_status", equals: "yes" },
           },
 
           {
             type: "subheading",
-            label: "Drugs"
+            label: "Recreational / Illicit Drugs Use"
           },
           {
             name: "drug_use",
-            label: "Any recreational or illicit drug use?",
+            label: "Recreational / Illicit Drugs Use",
             type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
+            options: ["yes", "no"]
           },
           {
-            name: "drug_use_details",
-            label: "Drug use details",
-            type: "textarea",
+            type: "row",
+            fields: [
+              { name: "drug_types", label: "Types of drug", type: "input" },
+              { name: "drug_quantity", label: "Quantity", type: "input" },
+            ],
+            showIf: { field: "drug_use", equals: "yes" }
+          },
+          {
+            type: "row",
+            fields: [
+              { name: "drug_frequency", label: "Frequency", type: "input" },
+              { name: "drug_additional_info", label: "Additional info", type: "textarea" },
+            ],
             showIf: { field: "drug_use", equals: "yes" }
           },
 
@@ -168,27 +191,21 @@ export default function SocialHistory() {
           },
           {
             name: "financial_difficulties",
-            label: "Any financial difficulties?",
+            label: "Financial difficulties",
             type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
+            options: ["yes", "no"]
           },
           {
             name: "financial_difficulties_details",
             label: "Financial difficulties – details",
             type: "textarea",
-            showIf: { field: "financial_difficulties", equals: "yes" }
+            showIf: { field: "financial_difficulties", equals: "yes" },
           },
           {
             name: "benefits_pension",
-            label: "Receive any benefits or pension?",
+            label: "Benefits or pension receive",
             type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
+            options: ["yes", "no"]
           },
           {
             name: "benefits_pension_details",
@@ -206,8 +223,7 @@ export default function SocialHistory() {
       schema={SOCIAL_HISTORY_SCHEMA}
       values={values}
       onChange={onChange}
-      submitted={submitted}
-      onAction={onAction}
+      submitted={false}
     />
   );
 }
