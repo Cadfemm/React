@@ -14,145 +14,746 @@ export default function SwallowingAndSpeechAssessment() {
     title: "Swallowing and Speech Assessment",
     sections: [
       {
-        title: "SWALLOWING",
+        title: "Swallowing",
         fields: [
           {
             type: "radio",
             name: "swallowing_difficulty",
-            label: "Is there any swallowing difficulty?",
-            options: yesNo
-          }
-        ]
-      },
-
-      /* ===== PROCEED ONLY IF YES ===== */
-      {
-        title: "",
-        showIf: { field: "swallowing_difficulty", equals: "Yes" },
-        fields: [
-          {
-            type: "single-select",
-            name: "onset",
-            label: "Onset",
-            options: select([
-              "Sudden onset",
-              "Gradual onset"
-            ])
+            label: "Swallowing",
+            options: swallowingIntactImpaired
           },
 
-          /* ---- PROGRESSION (SEPARATE QUESTION) ---- */
+          /* ===== PROCEED ONLY IF IMPAIRED ===== */
           {
-            type: "single-select",
-            name: "progression",
-            label: "Progression",
-             options: select([
-              "Sudden onset",
-              "Gradual onset"
-            ])
-          },
-
-          /* ---- FOOD / LIQUID DIFFICULTIES (MULTISELECT) ---- */
-          {
-            type: "checkbox-group",
-            name: "food_liquid_difficulty",
-            label: "Food / Liquid Difficulties",
+            name: "current_mode_feeding",
+            label: "Current mode of feeding:",
+            type: "radio",
+            labelAbove: true,
             options: [
-              { label: "Thin liquids", value: "Thin liquids" },
-              { label: "Thick liquids", value: "Thick liquids" },
-              { label: "Solids", value: "Solids" },
-              { label: "All textures", value: "All textures" }
+              { label: "Oral feeding", value: "oral" },
+              { label: "Enteral feeding (NGT or PEG)", value: "enteral" },
+              { label: "Mixed oral and enteral feeding", value: "mixed" }
+            ],
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" }
+          },
+
+          {
+            name: "current_feeding_regime",
+            label: "Current feeding regime",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "current_mode_feeding",
+                oneOf: ["enteral", "mixed"]
+              }
+            }
+          },
+
+          {
+            name: "last_tube_changed_on",
+            label: "Last tube changed on",
+            type: "date",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "current_mode_feeding",
+                oneOf: ["enteral", "mixed"]
+              }
+            }
+          },
+
+          /* ================= FEEDING ISSUE ================= */
+          {
+            name: "feeding_issue",
+            label: "Feeding issue",
+            type: "radio",
+            options: [
+              { label: "No issue", value: "no_issue" },
+              { label: "Oral feeding", value: "oral_feeding" },
+              { label: "Enteral feeding", value: "enteral_feeding" }
+            ],
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" }
+          },
+
+          {
+            name: "oral_feeding_issues",
+            label: "Oral feeding",
+            type: "checkbox-group",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "feeding_issue", equals: "oral_feeding" }
+            },
+            options: [
+              {
+                label: "Coughing or throat clearing",
+                value: "coughing_throat_clear"
+              },
+              { label: "Nausea or vomiting", value: "nausea_vomiting" },
+              {
+                label: "Drooling or food spillage",
+                value: "drooling_food_spillage"
+              },
+              { label: "Wet or gurgly voice", value: "wet_gurgly_voice" },
+              {
+                label: "Nasal regurgitation",
+                value: "nasal_regurgitation"
+              },
+              { label: "Choking", value: "choking" },
+              { label: "Slow eating", value: "slow_eating" }
             ]
           },
           {
-            type: "single-select",
-            name: "dietary_modifications",
-            label: "Dietary Modifications",
-            options: select([
-              "Normal diet",
-              "Soft/minced diet",
-              "Pureed diet",
-              "Thickened liquids",
-              "Assisted feeding",
-              "Enteral feeding (NGT/PEG)"
-            ])
+            name: "oral_feeding_issue_coughing_throat_clear",
+            label: "Coughing or throat clearing (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "coughing_throat_clear" }
+            }
           },
           {
-            type: "single-select",
-            name: "symptoms_during_meals",
-            label: "Symptoms During Meals",
-            options: select([
-              "No symptoms",
-              "Mild coughing/throat clearing",
-              "Drooling/food spillage",
-              "Wet or gurgly voice",
-              "Nasal regurgitation",
-              "Fatigue/prolonged mealtime",
-              "Choking/aspiration",
-              "Avoidance of eating"
-            ])
+            name: "oral_feeding_issue_nausea_vomiting",
+            label: "Nausea or vomiting (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "nausea_vomiting" }
+            }
+          },
+          {
+            name: "oral_feeding_issue_drooling_food_spillage",
+            label: "Drooling or food spillage (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "drooling_food_spillage" }
+            }
+          },
+          {
+            name: "oral_feeding_issue_wet_gurgly_voice",
+            label: "Wet or gurgly voice (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "wet_gurgly_voice" }
+            }
+          },
+          {
+            name: "oral_feeding_issue_nasal_regurgitation",
+            label: "Nasal regurgitation (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "nasal_regurgitation" }
+            }
+          },
+          {
+            name: "oral_feeding_issue_choking",
+            label: "Choking (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "choking" }
+            }
+          },
+          {
+            name: "oral_feeding_issue_slow_eating",
+            label: "Slow eating (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "oral_feeding_issues", includes: "slow_eating" }
+            }
+          },
+
+          {
+            name: "enteral_feeding_issues",
+            label: "Enteral feeding",
+            type: "checkbox-group",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "feeding_issue", equals: "enteral_feeding" }
+            },
+            options: [
+              { label: "Aspiration", value: "aspiration" },
+              { label: "Nausea or vomiting", value: "nausea_vomiting_enteral" },
+              { label: "Diarrhoea", value: "diarrhoea" },
+              { label: "Constipation", value: "constipation" },
+              {
+                label: "Abdominal distension or bloating",
+                value: "abdominal_distension"
+              },
+              {
+                label: "Coughing or chocking during feeding",
+                value: "coughing_choking_during_feeding"
+              },
+              {
+                label: "Skin irritation around the insertion site",
+                value: "skin_irritation_insertion_site"
+              }
+            ]
+          },
+          {
+            name: "enteral_feeding_issue_aspiration",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "enteral_feeding_issues", includes: "aspiration" }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_nausea_vomiting_enteral",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "enteral_feeding_issues",
+                includes: "nausea_vomiting_enteral"
+              }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_diarrhoea",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "enteral_feeding_issues", includes: "diarrhoea" }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_constipation",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "enteral_feeding_issues", includes: "constipation" }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_abdominal_distension",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "enteral_feeding_issues",
+                includes: "abdominal_distension"
+              }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_coughing_choking_during_feeding",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "enteral_feeding_issues",
+                includes: "coughing_choking_during_feeding"
+              }
+            }
+          },
+          {
+            name: "enteral_feeding_issue_skin_irritation_insertion_site",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "enteral_feeding_issues",
+                includes: "skin_irritation_insertion_site"
+              }
+            }
+          },
+
+          /* ================= TEXTURES ================= */
+          {
+            name: "current_food_texture",
+            label: "Current food texture:",
+            type: "radio",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "feeding_issue",
+                oneOf: ["oral_feeding", "enteral_feeding"]
+              }
+            },
+            options: [
+              { label: "Pureed", value: "pureed" },
+              { label: "Minced and moist", value: "minced_moist" },
+              { label: "Soft", value: "soft" },
+              { label: "Solids", value: "solids" }
+            ]
+          },
+          {
+            name: "current_liquid_texture",
+            label: "Current liquid texture:",
+            type: "radio",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "feeding_issue",
+                oneOf: ["oral_feeding", "enteral_feeding"]
+              }
+            },
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Modified", value: "modified" }
+            ]
+          },
+          {
+            name: "current_liquid_texture_modified_specify",
+            label: "Modified liquid texture (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "current_liquid_texture", equals: "modified" }
+            }
+          },
+
+          /* ================= DIETARY MODIFICATIONS ================= */
+          {
+            name: "dietary_modifications",
+            label: "Dietary Modifications",
+            type: "radio",
+            labelAbove: true,
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" },
+            options: [
+              { label: "Normal diet", value: "normal_diet" },
+              { label: "Soft or minced diet", value: "soft_minced_diet" },
+              { label: "Pureed diet", value: "pureed_diet" },
+              { label: "Thickened liquids", value: "thickened_liquids" },
+              { label: "Assisted feeding", value: "assisted_feeding" }
+            ]
+          },
+
+          /* ================= OTHER RELATED ISSUES ================= */
+          {
+            name: "other_related_issues",
+            label: "Other related issue",
+            type: "checkbox-group",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" },
+            options: [
+              { label: "Malnutrition", value: "malnutrition" },
+              { label: "Dehydration", value: "dehydration" },
+              { label: "Weight loss", value: "weight_loss" },
+              { label: "Avoidance of eating", value: "avoidance_eating" },
+              { label: "Fatigue", value: "fatigue" },
+              { label: "History of lung infection", value: "lung_infection_history" }
+            ]
+          },
+          {
+            name: "other_issue_malnutrition",
+            label: "Malnutrition (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "other_related_issues", includes: "malnutrition" }
+            }
+          },
+          {
+            name: "other_issue_dehydration",
+            label: "Dehydration (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "other_related_issues", includes: "dehydration" }
+            }
+          },
+          {
+            name: "other_issue_weight_loss",
+            label: "Weight loss (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "other_related_issues", includes: "weight_loss" }
+            }
+          },
+          {
+            name: "other_issue_avoidance_eating",
+            label: "Avoidance of eating (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "other_related_issues", includes: "avoidance_eating" }
+            }
+          },
+          {
+            name: "other_issue_fatigue",
+            label: "Fatigue (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "other_related_issues", includes: "fatigue" }
+            }
+          },
+          {
+            name: "other_issue_lung_infection_history",
+            label: "History of lung infection (Specify)",
+            type: "input",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: {
+                field: "other_related_issues",
+                includes: "lung_infection_history"
+              }
+            }
+          },
+
+          /* ================= PREVIOUS PROCEDURES ================= */
+          {
+            name: "previous_swallowing_procedures",
+            label: "Previous swallowing related procedures",
+            type: "radio",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" },
+            options: [
+              { label: "Nil", value: "nil" },
+              { label: "FEES", value: "fees" },
+              { label: "VFSS", value: "vfss" }
+            ]
+          },
+          {
+            name: "fees_date",
+            label: "FEES date",
+            type: "date",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "previous_swallowing_procedures", equals: "fees" }
+            }
+          },
+          {
+            name: "vfss_date",
+            label: "VFSS date",
+            type: "date",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "previous_swallowing_procedures", equals: "vfss" }
+            }
+          },
+
+          /* ================= PLAN ================= */
+          {
+            name: "swallowing_plan",
+            label: "Plan",
+            type: "multi-select-dropdown",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" },
+            options: [
+              {
+                label: "For further swallowing evaluation by Speech Therapist",
+                value: "speech_therapist_evaluation"
+              },
+              {
+                label: "For bedside swallowing assessment (water test)",
+                value: "bedside_water_test"
+              },
+              {
+                label: "For safe swallowing strategy / manoeuvre / posture",
+                value: "safe_strategy_posture"
+              },
+              {
+                label: "For nourishing fluids prescription / modification by Dietician",
+                value: "dietician_fluids_modification"
+              },
+              {
+                label: "To change Ryle's Tube on the next scheduled due date",
+                value: "change_ryles_tube_due_date"
+              },
+              {
+                label: "To monitor input / output chart",
+                value: "monitor_io_chart"
+              },
+              { label: "Others", value: "others" }
+            ]
+          },
+          {
+            name: "swallowing_plan_others",
+            label: "Others (free text)",
+            type: "textarea",
+            showIf: {
+              field: "swallowing_difficulty",
+              equals: "Impaired",
+              and: { field: "swallowing_plan", includes: "others" }
+            }
           }
         ]
       },
 
       {
-        title: "SPEECH AND LANGUAGE",
-        fields: [
-          { type: "radio", name: "voice_clear", label: "Voice functions – Clear", options: yesNo },
-          { type: "radio", name: "voice_hoarseness", label: "Hoarseness", options: yesNo },
-          { type: "radio", name: "voice_aphonia", label: "Aphonia", options: yesNo },
-
-          { type: "radio", name: "articulation_dysarthria", label: "Articulation functions – Dysarthria", options: yesNo },
-          { type: "radio", name: "articulation_repetition", label: "Repetition", options: yesNo },
-
-          { type: "radio", name: "fluency_smoothness", label: "Fluency of speech – Smoothness", options: yesNo },
-          { type: "radio", name: "fluency_continuity", label: "Continuity", options: yesNo },
-          {
-            type: "single-select",
-            name: "fluency_rate",
-            label: "Rate",
-            options: select(["APPROPRIATE"])
-          },
-          {
-            type: "textarea",
-            name: "fluency_others",
-            label: "Others"
-          },
-
-          { type: "radio", name: "language_comprehension", label: "Language comprehension", options: yesNo },
-          { type: "radio", name: "naming_through_speech", label: "Naming through speech", options: yesNo },
-          { type: "radio", name: "alternative_voice", label: "Alternative voice/speech functions", options: yesNo }
-        ]
-      },
-
-      /* ================= ACTIVITIES & PARTICIPATION ================= */
-      {
-        title: "2) Activities and Participation",
-        fields: [
-          { type: "radio", name: "communicating_receiving", label: "Communicating – Receiving", options: yesNo },
-          { type: "radio", name: "speaking", label: "Speaking", options: yesNo },
-          { type: "radio", name: "producing_sound", label: "Producing meaningful sound", options: yesNo },
-          { type: "radio", name: "simple_message", label: "Producing simple message", options: yesNo },
-          { type: "radio", name: "complex_message", label: "Producing complex message", options: yesNo }
-        ]
-      },
-
-      /* ================= ENVIRONMENTAL FACTORS ================= */
-      {
-        title: "3) Environmental Factors",
+        title: "Speech and Language",
         fields: [
           {
             type: "radio",
-            name: "assistive_device",
-            label: "Assistive device and technology",
-            options: yesNo
+            name: "language_speech_intact_impaired",
+            label: "Language / Speech",
+            options: swallowingIntactImpaired
+          },
+
+          /* ================= COMPREHENSION ================= */
+          {
+            type: "radio",
+            name: "language_comprehension",
+            label: "Comprehension",
+            options: goodPoor,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
           },
           {
-            type: "textarea",
-            name: "environment_notes",
-            label: "Please specify"
+            name: "language_comprehension_specify",
+            label: "Comprehension (Specify)",
+            type: "input",
+            showIf: {
+              field: "language_comprehension",
+              equals: "Poor",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= FLUENCY ================= */
+          {
+            type: "radio",
+            name: "speech_fluency",
+            label: "Fluency",
+            options: fluentNonFluent,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "speech_fluency_specify",
+            label: "Fluency (Specify)",
+            type: "input",
+            showIf: {
+              field: "speech_fluency",
+              equals: "Non fluent",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= PARAPHASIA ================= */
+          {
+            type: "radio",
+            name: "speech_paraphasia",
+            label: "Paraphasia",
+            options: presentAbsent,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "speech_paraphasia_specify",
+            label: "Paraphasia (Specify)",
+            type: "input",
+            showIf: {
+              field: "speech_paraphasia",
+              equals: "Present",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= REPETITION ================= */
+          {
+            type: "radio",
+            name: "speech_repetition",
+            label: "Repetition",
+            options: goodPoor,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "speech_repetition_specify",
+            label: "Repetition (Specify)",
+            type: "input",
+            showIf: {
+              field: "speech_repetition",
+              equals: "Poor",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= NAMING / READING / WRITING ================= */
+          {
+            type: "radio",
+            name: "naming",
+            label: "Naming",
+            options: yesNo,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "radio",
+            name: "reading",
+            label: "Reading",
+            options: yesNo,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "radio",
+            name: "writing",
+            label: "Writing",
+            options: yesNo,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+
+          /* ================= VOICE FUNCTIONS ================= */
+          {
+            type: "radio",
+            name: "voice_functions",
+            label: "Voice functions",
+            options: normalImpaired,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "voice_functions_specify",
+            label: "Voice functions (Specify)",
+            type: "input",
+            showIf: {
+              field: "voice_functions",
+              equals: "Impaired",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= ARTICULATION FUNCTIONS ================= */
+          {
+            type: "radio",
+            name: "articulation_functions",
+            label: "Articulation functions",
+            options: normalImpaired,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "articulation_functions_specify",
+            label: "Articulation functions (Specify)",
+            type: "input",
+            showIf: {
+              field: "articulation_functions",
+              equals: "Impaired",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
+          },
+
+          /* ================= COMMUNICATING - RECEIVING ================= */
+          {
+            type: "radio",
+            name: "communication_receiving_able",
+            label: "Communicating - Receiving",
+            options: ableNotAble,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "radio",
+            name: "communicating_receiving_message_type",
+            label: "Message type (Receiving)",
+            labelAbove: true,
+            options: [
+              { label: "Spoken message", value: "spoken_message" },
+              { label: "Non verbal message", value: "non_verbal_message" },
+              { label: "Sign language", value: "sign_language" },
+              { label: "Written message", value: "written_message" }
+            ],
+            showIf: {
+              field: "language_speech_intact_impaired",
+              equals: "Impaired",
+              and: { field: "communication_receiving_able", equals: "Able" }
+            }
+          },
+          {
+            name: "communicating_receiving_message_type_specify",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "language_speech_intact_impaired",
+              equals: "Impaired",
+              and: { field: "communication_receiving_able", equals: "Able" }
+            }
+          },
+
+          /* ================= COMMUNICATING - PRODUCING ================= */
+          {
+            type: "radio",
+            name: "communicating_producing",
+            label: "Communicating - Producing",
+            options: ableNotAble,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "radio",
+            name: "communicating_producing_message_type",
+            label: "Message type (Producing)",
+            labelAbove: true,
+            options: [
+              { label: "Speaking", value: "speaking" },
+              { label: "Non-speech vocal expression", value: "non_speech_vocal_expression" },
+              { label: "Singing", value: "singing" },
+              { label: "Non verbal message", value: "non_verbal_message_producing" },
+              { label: "Formal sign language", value: "formal_sign_language" },
+              { label: "Writing message", value: "writing_message" }
+            ],
+            showIf: {
+              field: "language_speech_intact_impaired",
+              equals: "Impaired",
+              and: { field: "communicating_producing", equals: "Able" }
+            }
+          },
+          {
+            name: "communicating_producing_message_type_specify",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "language_speech_intact_impaired",
+              equals: "Impaired",
+              and: { field: "communicating_producing", equals: "Able" }
+            }
+          },
+
+          /* ================= ASSISTIVE DEVICE ================= */
+          {
+            type: "radio",
+            name: "communication_assistive_device",
+            label: "Use of assistive device and technology for communication",
+            options: yesNo,
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            name: "communication_assistive_device_specify",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "communication_assistive_device",
+              equals: "Yes",
+              and: { field: "language_speech_intact_impaired", equals: "Impaired" }
+            }
           }
         ]
-      }
+      },
+
+      /* Removed extra Activities/Environmental sections per requirement */
     ]
   };
 
@@ -175,6 +776,36 @@ export default function SwallowingAndSpeechAssessment() {
 const yesNo = [
   { label: "Yes", value: "Yes" },
   { label: "No", value: "No" }
+];
+
+const swallowingIntactImpaired = [
+  { label: "Intact", value: "Intact" },
+  { label: "Impaired", value: "Impaired" }
+];
+
+const goodPoor = [
+  { label: "Good", value: "Good" },
+  { label: "Poor", value: "Poor" }
+];
+
+const fluentNonFluent = [
+  { label: "Fluent", value: "Fluent" },
+  { label: "Non fluent", value: "Non fluent" }
+];
+
+const presentAbsent = [
+  { label: "Present", value: "Present" },
+  { label: "Absent", value: "Absent" }
+];
+
+const normalImpaired = [
+  { label: "Normal", value: "Normal" },
+  { label: "Impaired", value: "Impaired" }
+];
+
+const ableNotAble = [
+  { label: "Able", value: "Able" },
+  { label: "Not able", value: "Not able" }
 ];
 
 const select = (arr) =>

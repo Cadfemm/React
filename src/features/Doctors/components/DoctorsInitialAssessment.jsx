@@ -10,6 +10,7 @@ import HearingAssessment from "./HearingAssessment";
 import CardiovascularRespiratoryAssessment from "./CardiovascularRespiratoryAssessment";
 import BowelAssessment from "./BowelAssessment";
 import BladderAssessment from "./BladderAssessment";
+import SexualAssessment from "./SexualAssessment";
 import FunctionalAssessment from "./Functional";
 import SkinAssessment from "./SkinAssessment";
 import ProcedureAssessment from "./ProcedureAssessment";
@@ -324,6 +325,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     "Physical",
     "Bowel Issue",
     "Bladder Issue",
+    "Sexual",
     "Spasm & Spasticity",
     "Skin",
     "Functional",
@@ -675,6 +677,9 @@ const handleSubmitReferral = () => {
         ) :
          tabs[activeTab] === "Bladder Issue" ? (
           <BladderAssessment onChange={setBladderAssessmentData} />
+        ) :
+         tabs[activeTab] === "Sexual" ? (
+          <SexualAssessment patient={patient} />
         ) :
         tabs[activeTab] === "Spasm & Spasticity" ? (
           <SpasmSpasticity />

@@ -20,10 +20,7 @@ export default function VisualAssessment() {
   { label: "YES", value: "YES" },
   { label: "NO", value: "NO" }
 ];
- const VISUAL_SCHEMA ={
-  title: "Vision Assessment",
-
-  sections: [
+const VISUAL_SECTIONS = [
 
     /* =====================================================
        VISION STATUS
@@ -81,7 +78,7 @@ export default function VisualAssessment() {
           "proptosis",
           "foreign_body"
         ].map(issue => ({
-          type: "textarea",
+          type: "input",
           name: `vision_issue_${issue}_notes`,
           label: `Elaboration – ${issue.replace(/_/g, " ")}`,
           showIf: {
@@ -96,13 +93,13 @@ export default function VisualAssessment() {
        USE OF VISUAL AID
     ===================================================== */
     {
-      title: "Use of Visual Aid",
+      title: "",
       showIf: { field: "vision_status", equals: "impaired" },
       fields: [
         {
-          type: "multi-select-dropdown",
+          type: "checkbox-group",
           name: "visual_aid_use",
-          label: "Use of visual aid",
+          label: "Use of Visual Aid",
           options: [
             { label: "No", value: "no" },
             { label: "Spectacles", value: "spectacles" },
@@ -123,7 +120,7 @@ export default function VisualAssessment() {
        VISUAL ACUITY & FIELD
     ===================================================== */
 {
-  title: "Visual Examination",
+  title: "",
   showIf: { field: "vision_status", equals: "impaired" },
   fields: [
 
@@ -131,388 +128,282 @@ export default function VisualAssessment() {
        VISUAL ACUITY – RIGHT
     ========================== */
     {
-      type: "single-select",
-      name: "right_visual_acuity",
-      label: "Visual Acuity – Right Eye",
-      options: [
-        { label: "Snellen Chart", value: "snellen" },
-        { label: "Counting Finger", value: "counting_finger" },
-        { label: "Hand Movement", value: "hand_movement" },
-        { label: "Perception of Light", value: "pol" },
-        { label: "Blind", value: "blind" }
+      type: "row",
+      fields: [
+        {
+          type: "single-select",
+          name: "right_visual_acuity",
+          label: "Visual Acuity – Right Eye",
+          options: [
+            { label: "Snellen Chart", value: "snellen" },
+            { label: "Counting Finger", value: "counting_finger" },
+            { label: "Hand Movement", value: "hand_movement" },
+            { label: "Perception of Light", value: "pol" },
+            { label: "Blind", value: "blind" }
+          ]
+        },
+        {
+          type: "single-select",
+          name: "left_visual_acuity",
+          label: "Visual Acuity – Left Eye",
+          options: [
+            { label: "Snellen Chart", value: "snellen" },
+            { label: "Counting Finger", value: "counting_finger" },
+            { label: "Hand Movement", value: "hand_movement" },
+            { label: "Perception of Light", value: "pol" },
+            { label: "Blind", value: "blind" }
+          ]
+        }
       ]
     },
     {
-      type: "textarea",
-      name: "right_visual_acuity_notes",
-      label: "Elaboration – Right Eye",
-      showIf: {
-        field: "right_visual_acuity",
-        exists: true
-      }
+      type: "row",
+      fields: [
+        {
+          type: "input",
+          name: "right_visual_acuity_notes",
+          label: "Elaboration – Right Eye",
+          showIf: {
+            field: "right_visual_acuity",
+            exists: true
+          }
+        },
+        {
+          type: "input",
+          name: "left_visual_acuity_notes",
+          label: "Elaboration – Left Eye",
+          showIf: {
+            field: "left_visual_acuity",
+            exists: true
+          }
+        }
+      ]
     },
 
     /* =========================
        VISUAL ACUITY – LEFT
     ========================== */
-    {
-      type: "single-select",
-      name: "left_visual_acuity",
-      label: "Visual Acuity – Left Eye",
-      options: [
-        { label: "Snellen Chart", value: "snellen" },
-        { label: "Counting Finger", value: "counting_finger" },
-        { label: "Hand Movement", value: "hand_movement" },
-        { label: "Perception of Light", value: "pol" },
-        { label: "Blind", value: "blind" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "left_visual_acuity_notes",
-      label: "Elaboration – Left Eye",
-      showIf: {
-        field: "left_visual_acuity",
-        exists: true
-      }
-    },
-
     /* =========================
        VISUAL FIELD – RIGHT
     ========================== */
     {
-      type: "single-select",
-      name: "right_visual_field",
-      label: "Visual Field – Right Eye",
-      options: [
-        { label: "Intact", value: "intact" },
-        { label: "Visual Field Defect", value: "defect" }
+      type: "row",
+      fields: [
+        {
+          type: "radio",
+          name: "right_visual_field",
+          label: "Visual Field – Right Eye",
+          options: [
+            { label: "Intact", value: "intact" },
+            { label: "Visual Field Defect", value: "defect" }
+          ]
+        },
+        {
+          type: "radio",
+          name: "left_visual_field",
+          label: "Visual Field – Left Eye",
+          options: [
+            { label: "Intact", value: "intact" },
+            { label: "Visual Field Defect", value: "defect" }
+          ]
+        }
       ]
     },
     {
-      type: "textarea",
-      name: "right_visual_field_notes",
-      label: "Elaboration – Right Eye (Visual Field)",
-      showIf: {
-        field: "right_visual_field",
-        exists: true
-      }
-    },
-
-    /* =========================
-       VISUAL FIELD – LEFT
-    ========================== */
-    {
-      type: "single-select",
-      name: "left_visual_field",
-      label: "Visual Field – Left Eye",
-      options: [
-        { label: "Intact", value: "intact" },
-        { label: "Visual Field Defect", value: "defect" }
+      type: "row",
+      fields: [
+        {
+          type: "input",
+          name: "right_visual_field_notes",
+          label: "Elaboration – Right Eye (Visual Field)",
+          showIf: {
+            field: "right_visual_field",
+            equals: "defect"
+          }
+        },
+        {
+          type: "input",
+          name: "left_visual_field_notes",
+          label: "Elaboration – Left Eye (Visual Field)",
+          showIf: {
+            field: "left_visual_field",
+            equals: "defect"
+          }
+        }
       ]
-    },
-    {
-      type: "textarea",
-      name: "left_visual_field_notes",
-      label: "Elaboration – Left Eye (Visual Field)",
-      showIf: {
-        field: "left_visual_field",
-        exists: true
-      }
     }
 
     
   ]
 },
 {
-  title: "Pupil & Ocular Examination",
+  title: "",
   showIf: { field: "vision_status", equals: "impaired" },
   fields: [
-
-{
-  type: "row",
-  fields: [
     {
-      type: "single-select",
-      name: "right_pupil_size",
-      label: "Pupil Size (mm) – Right Eye",
-      options: [1,2,3,4,5,6,7,8,9].map(v => ({
-        label: v.toString() + " mm" ,
-        value: v
-      }))
-    },
-    {
-      type: "single-select",
-      name: "left_pupil_size",
-      label: "Pupil Size (mm) – Left Eye",
-      options: [1,2,3,4,5,6,7,8,9].map(v => ({
-        label: v.toString() + " mm" ,
-        value: v
-      }))
-    }
-  ]
-},
-
-    /* =========================
-       DIRECT PUPILLARY REFLEX (Yes/No → radio)
-    ========================== */
-    {
-      type: "radio",
-      name: "right_direct_reflex",
-      label: "Direct Pupillary Reflex – Right Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "right_direct_reflex_notes",
-      label: "Elaboration – Right Eye",
-      showIf: { field: "right_direct_reflex", equals: "yes" }
-    },
-
-    {
-      type: "radio",
-      name: "left_direct_reflex",
-      label: "Direct Pupillary Reflex – Left Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "left_direct_reflex_notes",
-      label: "Elaboration – Left Eye",
-      showIf: { field: "left_direct_reflex", equals: "yes" }
-    },
-
-    /* =========================
-       INDIRECT PUPILLARY REFLEX
-    ========================== */
-    {
-      type: "radio",
-      name: "right_indirect_reflex",
-      label: "Indirect Pupillary Reflex – Right Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "right_indirect_reflex_notes",
-      label: "Elaboration – Right Eye",
-      showIf: { field: "right_indirect_reflex", equals: "yes" }
-    },
-
-    {
-      type: "radio",
-      name: "left_indirect_reflex",
-      label: "Indirect Pupillary Reflex – Left Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "left_indirect_reflex_notes",
-      label: "Elaboration – Left Eye",
-      showIf: { field: "left_indirect_reflex", equals: "yes" }
-    },
-
-    /* =========================
-       Relative Afferent Pupillary Defects (RAPD) (2 options → radio)
-    ========================== */
-    {
-      type: "radio",
-      name: "right_rapd",
-      label: "Relative Afferent Pupillary Defects (RAPD) – Right Eye",
-      options: [
-        { label: "Positive", value: "positive" },
-        { label: "Negative (Normal)", value: "negative" }
-      ]
-    },
-
-    {
-      type: "radio",
-      name: "left_rapd",
-      label: "Relative Afferent Pupillary Defects (RAPD) – Left Eye",
-      options: [
-        { label: "Positive", value: "positive" },
-        { label: "Negative (Normal)", value: "negative" }
-      ]
-    },
-
-    /* =========================
-       EYE MOVEMENT (EOM)
-    ========================== */
-    {
-      type: "radio",
-      name: "right_eom",
-      label: "Eye Movement (EOM) – Right Eye",
-      options: [
-        { label: "Full", value: "full" },
-        { label: "Limited", value: "limited" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "right_eom_notes",
-      label: "Elaboration – Right Eye",
-      showIf: { field: "right_eom", equals: "limited" }
-    },
-
-    {
-      type: "radio",
-      name: "left_eom",
-      label: "Eye Movement (EOM) – Left Eye",
-      options: [
-        { label: "Full", value: "full" },
-        { label: "Limited", value: "limited" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "left_eom_notes",
-      label: "Elaboration – Left Eye",
-      showIf: { field: "left_eom", equals: "limited" }
-    },
-
-    /* =========================
-       ACCOMMODATION REFLEX
-    ========================== */
-    {
-      type: "radio",
-      name: "right_accommodation",
-      label: "Accommodation Reflex – Right Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "right_accommodation_notes",
-      label: "Elaboration – Right Eye",
-      showIf: { field: "right_accommodation", equals: "yes" }
-    },
-
-    {
-      type: "radio",
-      name: "left_accommodation",
-      label: "Accommodation Reflex – Left Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "textarea",
-      name: "left_accommodation_notes",
-      label: "Elaboration – Left Eye",
-      showIf: { field: "left_accommodation", equals: "yes" }
-    },
-
-    /* =========================
-       DIPLOPIA (More than 2 → single-select)
-    ========================== */
-    {
-      type: "radio",
-      name: "right_diplopia",
-      label: "Diplopia – Right Eye",
-      options: [
-        { label: "Monocular", value: "monocular" },
-        { label: "Binocular", value: "binocular" }
-      ]
-    },
-    {
-      type: "radio",
-      name: "left_diplopia",
-      label: "Diplopia – Left Eye",
-      options: [
-        { label: "Monocular", value: "monocular" },
-        { label: "Binocular", value: "binocular" }
-      ]
-    },
-
-    /* =========================
-       NYSTAGMUS
-    ========================== */
-    {
-      type: "radio",
-      name: "right_nystagmus",
-      label: "Nystagmus – Right Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ]
-    },
-    {
-      type: "single-select",
-      name: "right_nystagmus_type",
-      label: "Type – Right Eye",
-      options: [
-        { label: "Horizontal", value: "horizontal" },
-        { label: "Vertical", value: "vertical" },
-        { label: "Rotary (Torsional)", value: "torsional" },
-        { label: "Mixed", value: "mixed" }
+      type: "refraction-12col",
+      name: "ocular_exam_table",
+      cornerLabel: "",
+      showColumnHeaders: false,
+      groups: [
+        {
+          label: "Right Eye",
+          columns: [{ key: "Value" }]
+        },
+        {
+          label: "Left Eye",
+          columns: [{ key: "Value" }]
+        }
       ],
-      showIf: { field: "right_nystagmus", equals: "yes" }
-    },
-
-    {
-      type: "radio",
-      name: "left_nystagmus",
-      label: "Nystagmus – Left Eye",
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
+      rows: [
+        {
+          label: "Pupil Size (mm)",
+          value: "pupil_size",
+          columns: [
+            { type: "select", options: ["1", "2", "3", "4", "5", "6", "7", "8", "9"] },
+            { type: "select", options: ["1", "2", "3", "4", "5", "6", "7", "8", "9"] }
+          ]
+        },
+        {
+          label: "Direct pupillary reflex",
+          value: "direct_pupillary_reflex",
+          columns: [
+            { type: "select", options: ["Yes", "No"] },
+            { type: "select", options: ["Yes", "No"] }
+          ]
+        },
+        {
+          label: "Indirect pupillary reflex",
+          value: "indirect_pupillary_reflex",
+          columns: [
+            { type: "select", options: ["Yes", "No"] },
+            { type: "select", options: ["Yes", "No"] }
+          ]
+        },
+        {
+          label: "Pupillary Defects",
+          value: "pupillary_defects",
+          columns: [
+            { type: "select", options: ["Positive", "Negative (Normal)"] },
+            { type: "select", options: ["Positive", "Negative (Normal)"] }
+          ]
+        },
+        {
+          label: "Eye movement (EOM)",
+          value: "eye_movement_eom",
+          columns: [
+            { type: "select", options: ["Full", "Limited"] },
+            { type: "select", options: ["Full", "Limited"] }
+          ]
+        },
+        {
+          label: "EOM - Specify",
+          value: "eye_movement_eom_notes",
+          showIf: {
+            or: [
+              { field: "ocular_exam_table_eye_movement_eom_0", equals: "Limited" },
+              { field: "ocular_exam_table_eye_movement_eom_1", equals: "Limited" }
+            ]
+          },
+          columns: [{ type: "input" }, { type: "input" }]
+        },
+        {
+          label: "Accomodation reflex",
+          value: "accomodation_reflex",
+          columns: [
+            { type: "select", options: ["Yes", "No"] },
+            { type: "select", options: ["Yes", "No"] }
+          ]
+        },
+        {
+          label: "Diplopia",
+          value: "diplopia",
+          columns: [
+            { type: "select", options: ["Monocular", "Binocular"] },
+            { type: "select", options: ["Monocular", "Binocular"] }
+          ]
+        },
+        {
+          label: "Nystagmus",
+          value: "nystagmus",
+          columns: [
+            { type: "select", options: ["Yes", "No"] },
+            { type: "select", options: ["Yes", "No"] }
+          ]
+        },
+        {
+          label: "Nystagmus Type",
+          value: "nystagmus_type",
+          showIf: {
+            or: [
+              { field: "ocular_exam_table_nystagmus_0", equals: "Yes" },
+              { field: "ocular_exam_table_nystagmus_1", equals: "Yes" }
+            ]
+          },
+          columns: [
+            { type: "select", options: ["Horizontal", "Vertical", "Rotary (Torsional)", "Mixed"] },
+            { type: "select", options: ["Horizontal", "Vertical", "Rotary (Torsional)", "Mixed"] }
+          ]
+        },
+        {
+          label: "Fundoscopy examination finding (if applicable)",
+          value: "fundoscopy",
+          columns: [{ type: "input" }, { type: "input" }]
+        }
       ]
-    },
-    {
-      type: "single-select",
-      name: "left_nystagmus_type",
-      label: "Type – Left Eye",
-      options: [
-        { label: "Horizontal", value: "horizontal" },
-        { label: "Vertical", value: "vertical" },
-        { label: "Rotary (Torsional)", value: "torsional" },
-        { label: "Mixed", value: "mixed" }
-      ],
-      showIf: { field: "left_nystagmus", equals: "yes" }
-    },
-
-    /* =========================
-       FUNDOSCOPY
-    ========================== */
-    {
-      type: "textarea",
-      name: "fundoscopy_findings",
-      label: "Fundoscopy examination finding"
     }
 
   ]
 },
 {
       title: "Plan",
-      showIf: { field: "ear_status", equals: "impaired" },
+      showIf: { field: "vision_status", equals: "impaired" },
       fields: [
-         {
-            type: "textarea",
-            name: `hearing_plan`,
-            label: `For further evaluation by Audiologist`,
-           
-          },
+        {
+          type: "checkbox-group",
+          name: "vision_plan",
+          label: "Plan",
+          options: [
             {
-            type: "textarea",
-            name: `Others`,
-            label: `Others`,
-           
-          }
+              label: "For further evaluation by Optometrist - (notify Optometrist)",
+              value: "optometrist_evaluation"
+            },
+            { label: "Others", value: "others" }
+          ]
+        },
+        {
+          type: "input",
+          name: "vision_plan_others",
+          label: "Others (free text)",
+          showIf: { field: "vision_plan", includes: "others" }
+        }
       ]
+    }
+];
+
+const combineShowIf = (sectionShowIf, fieldShowIf) => {
+  if (!sectionShowIf) return fieldShowIf;
+  if (!fieldShowIf) return sectionShowIf;
+  return { ...sectionShowIf, and: fieldShowIf };
+};
+
+const VISUAL_SCHEMA = {
+  title: "Vision Assessment",
+  sections: [
+    {
+      title: null,
+      fields: VISUAL_SECTIONS.flatMap((section) => {
+        const sectionTitleFields = section.title
+          ? [{ type: "subheading", label: section.title, showIf: section.showIf }]
+          : [];
+
+        const sectionFields = (section.fields || []).map((f) => ({
+          ...f,
+          showIf: combineShowIf(section.showIf, f.showIf)
+        }));
+
+        return [...sectionTitleFields, ...sectionFields];
+      })
     }
   ]
 };

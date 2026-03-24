@@ -6,166 +6,490 @@ export default function CardioRespiratoryAssessment() {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const [openNYHA, setOpenNYHA] = useState(false);
-  const [openSTOP, setOpenSTOP] = useState(false);
-
-  const [nyhaClass, setNyhaClass] = useState("");
-  const [stopBangScore, setStopBangScore] = useState(null);
-
   const onChange = (name, value) =>
     setValues(v => ({ ...v, [name]: value }));
+
+  const stopBangScoreRaw = values.stop_bang_score_display;
+  const stopBangScore = Number.isFinite(Number(stopBangScoreRaw))
+    ? Number(stopBangScoreRaw)
+    : null;
 
  
   const SCHEMA = {
     title: "Cardiovascular & Respiratory Assessment",
     sections: [
       {
-        title: "Respiratory – Symptoms",
+        title: "",
         fields: [
-          yn("dyspnoea_rest", "Dyspnoea at rest"),
-          yn("dyspnoea_exertion", "Dyspnoea on exertion"),
-          yn("orthopnoea", "Orthopnoea"),
-          yn("pnd", "Paroxysmal nocturnal dyspnoea"),
+          { type: "heading", label: "Symptoms" },
+          { type: "subheading", label: "Respiratory Symptoms." },
+
           yn("cough", "Cough"),
+          {
+            type: "radio",
+            name: "cough_type",
+            label: "Cough Type",
+            options: [
+              { label: "Productive", value: "productive" },
+              { label: "Non-Productive", value: "non_productive" }
+            ],
+            showIf: { field: "cough", equals: "Yes" }
+          },
+
           yn("sputum", "Sputum"),
+          {
+            type: "checkbox-group",
+            name: "sputum_color",
+            label: "Sputum Color",
+            options: [
+              { label: "Whitish", value: "whitish" },
+              { label: "Yellowish", value: "yellowish" },
+              { label: "Greenish", value: "greenish" }
+            ],
+            showIf: { field: "sputum", equals: "Yes" }
+          },
+          {
+            type: "checkbox-group",
+            name: "sputum_quantity",
+            label: "Sputum Quantity",
+            options: [
+              { label: "Minimal", value: "minimal" },
+              { label: "Moderate", value: "moderate" },
+              { label: "Large", value: "large" }
+            ],
+            showIf: { field: "sputum", equals: "Yes" }
+          },
+
           yn("wheeze", "Wheeze"),
-          yn("chest_pain_resp", "Chest pain"),
-          yn("fatigue_resp", "Fatigue"),
-          yn("weight_loss", "Weight loss")
-        ]
-      },
+          yn("chest_pain", "Chest Pain"),
+          yn("dyspnoea", "Dyspnoea"),
+          {
+            type: "checkbox-group",
+            name: "dyspnoea_type",
+            label: "Dyspnoea Type",
+            options: [
+              { label: "At rest", value: "at_rest" },
+              { label: "On exertion", value: "on_exertion" }
+            ],
+            showIf: { field: "dyspnoea", equals: "Yes" }
+          },
+          yn("orthopnoea", "Orthopnoea"),
+          yn("paroxysmal_nocturnal_dyspnoea", "Paroxysmal Nocturnal Dyspnoea"),
+          yn("fatigue", "Fatigue"),
+          yn("weight_loss", "Weight Loss"),
 
-      /* ================= RESPIRATORY – PAST HISTORY ================= */
-      {
-        title: "Respiratory – Past History",
-        fields: [
-          yn("copd", "COPD"),
-          yn("asthma", "Asthma"),
-          yn("pneumonia", "Pneumonia"),
-          yn("smoking_resp", "Smoking"),
-          yn("environment_exposure", "Exposure to environmental pollutants"),
-          yn("recent_infections", "Recent infections"),
-          yn("aspiration_risk", "Aspiration risk"),
-          yn("tracheostomy", "Tracheostomy"),
-          yn("ventilation", "Ventilation")
-        ]
-      },
+          yn("oxygen_requirement", "Oxygen Requirement"),
+          {
+            type: "radio",
+            name: "oxygen_mode",
+            label: "Oxygen Mode",
+            options: [
+              { label: "Nasal Prong", value: "nasal_prong" },
+              { label: "Face Mask", value: "face_mask" },
+              { label: "High Flow", value: "high_flow" },
+              { label: "Others", value: "others" }
+            ],
+            showIf: { field: "oxygen_requirement", equals: "Yes" }
+          },
+          {
+            type: "input",
+            name: "oxygen_free_text",
+            label: "Oxygen Free text",
+            showIf: {
+              field: "oxygen_requirement",
+              equals: "Yes",
+              and: { field: "oxygen_mode", equals: "others" }
+            }
+          },
 
-      /* ================= RESPIRATORY – EXAMINATION ================= */
-      {
-        title: "Respiratory – Examination",
-        fields: [
-          yn("cyanosis", "Cyanosis"),
-          yn("clubbing", "Clubbing"),
-          yn("oedema_resp", "Oedema"),
-          yn("accessory_muscles", "Use of accessory muscles"),
-          yn("symmetry_expansion", "Symmetry of expansion"),
-          yn("auscultation_resp", "Auscultation"),
+          { type: "subheading", label: "Cardiovascular Symptoms" },
+          cardioMatrix("palpitations", "Palpitations"),
+          cardioMatrix("syncope_presyncope", "Syncope / Pre-syncope"),
+          cardioMatrix("ankle_swelling", "Ankle Swelling"),
+          cardioMatrix("exercise_intolerance", "Exercise Intolerance"),
+          cardioMatrix("fluid_restriction", "Fluid Restriction"),
           {
             type: "textarea",
-            label: "Please specify",
-            name: "resp_ausc_notes"
+            name: "other_symptoms",
+            label: "Other Symptoms"
           },
-          yn("cough_strength", "Cough strength")
-        ]
-      },
 
-      {
-        title: "Cardiovascular – Symptoms",
-        fields: [
-          yn("chest_pain_cardio", "Chest pain"),
-          yn("palpitations", "Palpitations"),
-          yn("syncope", "Syncope / Pre syncope"),
-          yn("dyspnoea_exertion_cardio", "Dyspnoea on exertion"),
-          yn("orthopnea_cardio", "Orthopnea"),
-          yn("ankle_swelling", "Ankle swelling"),
-          yn("fatigue_cardio", "Fatigue"),
-          yn("exercise_tolerance", "Exercise tolerance")
-        ]
-      },
-
-      {
-        title: "Cardiovascular – Past History",
-        fields: [
-          yn("prior_mi", "Prior MI"),
-          yn("heart_failure", "Heart failure"),
-          yn("arrhythmias", "Arrhythmias"),
-          yn("hypertension", "Hypertension"),
-          yn("dyslipidaemia", "Dyslipidaemia"),
-          yn("valve_disease", "Valve disease"),
-          yn("echo_done", "ECHO done")
-        ]
-      },
-
-      {
-        title: "Cardiovascular – Risk Factors",
-        fields: [
-          yn("smoking_cardio", "Smoking"),
-          yn("dm", "DM"),
-          yn("dyslipidemia", "Dyslipidemia"),
-          yn("family_hx_cvd", "Family H/O CVD")
-        ]
-      },
-
-      {
-        title: "Vital Signs",
-        fields: [
+          { type: "heading", label: "Past Medical History" },
+          yn("pmh_copd", "COPD"),
+          yn("pmh_asthma", "Asthma"),
+          yn("pmh_osa", "Obstructive Sleep Apnea (OSA)"),
+          yn("pmh_recent_infections", "Recent Infections"),
           {
             type: "input",
-            label: "HEART RATE (beats/min)",
-            name: "heart_rate"
+            name: "pmh_recent_infections_specify",
+            label: "Recent Infections (Specify)",
+            showIf: { field: "pmh_recent_infections", equals: "Yes" }
           },
+          yn("pmh_smoking", "Smoking"),
+          yn("pmh_environment_exposure", "Environmental / Occupational Exposure"),
+          yn("pmh_tracheostomy", "Tracheostomy"),
           {
-            type: "input",
-            label: "ECG",
-            name: "ecg"
+            type: "date",
+            name: "pmh_tracheostomy_last_change_date",
+            label: "Last change date",
+            showIf: { field: "pmh_tracheostomy", equals: "Yes" }
           },
+          { type: "input", name: "pmh_prior_mi", label: "Prior Myocardial Infarction" },
+          { type: "input", name: "pmh_heart_failure", label: "Heart Failure" },
+          { type: "input", name: "pmh_arrhythmias", label: "Arrhythmias" },
+          yn("pmh_hypertension", "Hypertension"),
+          yn("pmh_dyslipidaemia", "Dyslipidaemia"),
+          yn("pmh_diabetes_mellitus", "Diabetes Mellitus"),
+          { type: "input", name: "pmh_valve_disease", label: "Valve Disease" },
+          { type: "input", name: "pmh_previous_surgery", label: "Previous Surgery" },
+          yn("pmh_echo_done", "Echo Done"),
           {
-            type: "input",
-            label: "BLOOD PRESSURE SITTING (mmHg)",
-            name: "bp_sitting"
-          },
-          {
-            type: "input",
-            label: "BLOOD PRESSURE STANDING (mmHg)",
-            name: "bp_standing"
-          },
-          {
-            type: "input",
-            label: "RESPIRATORY RATE (breath/min)",
-            name: "resp_rate"
-          },
-          yn("crt", "CRT <2SEC"),
-          {
-            type: "input",
-            label: "SKIN COLOUR",
-            name: "skin_colour"
-          },
-          yn("radial_pulse", "RADIAL PULSE"),
-          yn("dorsalis_pedis", "DORSALIS PEDIS"),
-          yn("posterior_tibialis", "POSTERIOR TIBIALIS"),
-          yn("jvp_raised", "JVP RAISED"),
-          yn("oedema", "OEDEMA"),
-          {
-            type: "single-select",
-            label: "PITTING / NON PITTING",
-            name: "oedema_type",
+            type: "checkbox-group",
+            name: "echo_details",
+            label: "Echo Details",
             options: [
-              { label: "PITTING", value: "PITTING" },
-              { label: "NON PITTING", value: "NON PITTING" }
-            ]
-          }
-        ]
-      },
+              { label: "Ejection Fraction (%)", value: "ejection_fraction" },
+              { label: "Regional Wall Motion Abnormality (RWMA)", value: "rwma" },
+              { label: "Tricuspid Regurgitation (TR)", value: "tr" },
+              { label: "Mitral Regurgitation (MR)", value: "mr" },
+              { label: "Other", value: "other" }
+            ],
+            showIf: { field: "pmh_echo_done", equals: "Yes" }
+          },
+          {
+            type: "input",
+            name: "echo_details_ejection_fraction_specify",
+            label: "Ejection Fraction (%) (Specify)",
+            showIf: { field: "echo_details", includes: "ejection_fraction" }
+          },
+          {
+            type: "input",
+            name: "echo_details_rwma_specify",
+            label: "Regional Wall Motion Abnormality (RWMA) (Specify)",
+            showIf: { field: "echo_details", includes: "rwma" }
+          },
+          {
+            type: "input",
+            name: "echo_details_tr_specify",
+            label: "Tricuspid Regurgitation (TR) (Specify)",
+            showIf: { field: "echo_details", includes: "tr" }
+          },
+          {
+            type: "input",
+            name: "echo_details_mr_specify",
+            label: "Mitral Regurgitation (MR) (Specify)",
+            showIf: { field: "echo_details", includes: "mr" }
+          },
+          {
+            type: "input",
+            name: "echo_details_other_specify",
+            label: "Other (Specify)",
+            showIf: { field: "echo_details", includes: "other" }
+          },
 
-      {
-        title: "Auscultation",
-        fields: [
-          yn("s1s2", "S1, S2"),
-          yn("extra_sounds", "EXTRA SOUNDS"),
-          yn("crepitations", "CREPITATIONS"),
-          yn("carotid_bruits", "CAROTID BRUITS"),
-          yn("abi_assessment", "FOR ABI ASSESSMENT")
+          { type: "heading", label: "Risk Factors" },
+          yn("risk_smoking", "Smoking"),
+          yn("risk_stress", "Stress"),
+          {
+            type: "input",
+            name: "risk_stress_specify",
+            label: "Stress (Specify)",
+            showIf: { field: "risk_stress", equals: "Yes" }
+          },
+          yn("risk_exercise", "Exercise"),
+          {
+            type: "input",
+            name: "risk_exercise_specify",
+            label: "Exercise (Specify)",
+            showIf: { field: "risk_exercise", equals: "Yes" }
+          },
+          yn("risk_physical_activity", "Physical Activity"),
+          {
+            type: "input",
+            name: "risk_physical_activity_specify",
+            label: "Physical Activity (Specify)",
+            showIf: { field: "risk_physical_activity", equals: "Yes" }
+          },
+          {
+            type: "row",
+            fields: [
+              { type: "input", name: "height", label: "Height", readOnly: true, placeholder: "Auto-populated from registration" },
+              { type: "input", name: "weight", label: "Weight", readOnly: true, placeholder: "Auto-populated from registration" },
+              { type: "input", name: "bmi", label: "BMI", readOnly: true, placeholder: "Auto-populated from registration" }
+            ]
+          },
+
+          { type: "heading", label: "Examination" },
+          { type: "subheading", label: "General & Respiratory Examination" },
+          {
+            type: "radio",
+            name: "speaking_ability",
+            label: "Speaking Ability",
+            options: [
+              { label: "Full sentences", value: "full_sentences" },
+              { label: "Short phrases", value: "short_phrases" },
+              { label: "Words", value: "words" },
+              { label: "Unable", value: "unable" }
+            ]
+          },
+          yn("cyanosis", "Cyanosis"),
+          yn("clubbing", "Clubbing"),
+          yn("accessory_muscles", "Use of Accessory Muscles"),
+          {
+            type: "radio",
+            name: "cough_effort",
+            label: "Cough Effort",
+            options: [
+              { label: "Good", value: "good" },
+              { label: "Poor", value: "poor" },
+              { label: "Absent", value: "absent" }
+            ]
+          },
+          {
+            type: "input",
+            name: "cough_effort_specify",
+            label: "Cough Effort (Specify)",
+            showIf: { field: "cough_effort", oneOf: ["poor", "absent"] }
+          },
+          {
+            type: "radio",
+            name: "respiratory_auscultation",
+            label: "Auscultation (Respiratory)",
+            labelAbove: true,
+            options: [
+              { label: "Clear", value: "clear" },
+              { label: "Reduced Air Entry", value: "reduced_air_entry" },
+              { label: "Absent", value: "absent" },
+              { label: "Crepitations", value: "crepitations" },
+              { label: "Rhonchi", value: "rhonchi" },
+              { label: "Transmitted sounds", value: "transmitted_sounds" }
+            ]
+          },
+          {
+            type: "input",
+            name: "respiratory_auscultation_specify",
+            label: "Auscultation (Respiratory) (Specify)",
+            showIf: {
+              field: "respiratory_auscultation",
+              oneOf: ["reduced_air_entry", "absent", "crepitations", "rhonchi", "transmitted_sounds"]
+            }
+          },
+
+          { type: "subheading", label: "Cardiovascular Examination" },
+          { type: "input", name: "heart_rate", label: "Heart Rate (bpm)", readOnly: true, placeholder: "Auto-populated" },
+          {
+            type: "row",
+            fields: [
+              { type: "input", name: "blood_pressure", label: "Blood Pressure" },
+              {
+                type: "radio",
+                name: "bp_position",
+                label: "Position",
+                options: [
+                  { label: "Lying", value: "lying" },
+                  { label: "Sitting", value: "sitting" },
+                  { label: "Standing", value: "standing" }
+                ]
+              }
+            ]
+          },
+          {
+            type: "row",
+            fields: [
+              { type: "input", name: "respiratory_rate", label: "Respiratory Rate", readOnly: true, placeholder: "Auto-populated" },
+              { type: "input", name: "spo2", label: "SpO2 (%)", readOnly: true, placeholder: "Auto-populated" },
+              { type: "input", name: "temperature", label: "Temperature (°C)", readOnly: true, placeholder: "Auto-populated" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "capillary_refill_time",
+            label: "Capillary Refill Time",
+            options: [
+              { label: "<3 sec", value: "lt_3_sec" },
+              { label: ">3 sec", value: "gt_3_sec" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "skin_colour",
+            label: "Skin Colour",
+            options: [
+              { label: "Pink", value: "pink" },
+              { label: "Pale", value: "pale" },
+              { label: "Cyanosed", value: "cyanosed" },
+              { label: "Others", value: "others" }
+            ]
+          },
+          {
+            type: "input",
+            name: "skin_colour_specify",
+            label: "Skin Colour (Specify)",
+            showIf: { field: "skin_colour", equals: "others" }
+          },
+          {
+            type: "radio",
+            name: "pulse_volume",
+            label: "Pulse Volume",
+            options: [
+              { label: "Strong", value: "strong" },
+              { label: "Feeble", value: "feeble" },
+              { label: "Not palpable", value: "not_palpable" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "pulse_rhythm",
+            label: "Pulse Rhythm",
+            options: [
+              { label: "Regular", value: "regular" },
+              { label: "Irregular", value: "irregular" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "dorsalis_pedis",
+            label: "Dorsalis Pedis",
+            options: [
+              { label: "Strong", value: "strong" },
+              { label: "Feeble", value: "feeble" },
+              { label: "Not palpable", value: "not_palpable" }
+            ]
+          },
+          {
+            type: "radio",
+            name: "posterior_tibial",
+            label: "Posterior Tibial",
+            options: [
+              { label: "Strong", value: "strong" },
+              { label: "Feeble", value: "feeble" },
+              { label: "Not palpable", value: "not_palpable" }
+            ]
+          },
+          yn("raised_jvp", "Raised Jugular Venous Pressure"),
+          yn("oedema", "Oedema"),
+          {
+            type: "radio",
+            name: "oedema_type",
+            label: "Oedema Type",
+            options: [
+              { label: "Pitting", value: "pitting" },
+              { label: "Non-pitting", value: "non_pitting" }
+            ],
+            showIf: { field: "oedema", equals: "Yes" }
+          },
+          {
+            type: "radio",
+            name: "cardiac_auscultation",
+            label: "Cardiac Auscultation",
+            labelAbove: true,
+            options: [
+              { label: "No Abnormality Detected", value: "no_abnormality_detected" },
+              { label: "Murmurs", value: "murmurs" },
+              { label: "S3", value: "s3" },
+              { label: "S4", value: "s4" },
+              { label: "Rubs", value: "rubs" },
+              { label: "Gallops", value: "gallops" }
+            ]
+          },
+          {
+            type: "input",
+            name: "cardiac_auscultation_specify",
+            label: "Cardiac Auscultation (Specify)",
+            showIf: {
+              field: "cardiac_auscultation",
+              oneOf: ["murmurs", "s3", "s4", "rubs", "gallops"]
+            }
+          },
+          { type: "textarea", name: "examination_others", label: "Others" },
+
+          { type: "heading", label: "Scoring & Classification" },
+          {
+            type: "assessment-launcher",
+            name: "cardio_scoring_assessments",
+            label: "",
+            options: [
+              { label: "NYHA Classification", value: "nyha" },
+              { label: "STOP-BANG Questionnaire", value: "stopbang" }
+            ]
+          },
+          {
+            type: "input",
+            name: "nyha_classification",
+            label: "NYHA Classification",
+            readOnly: true
+          },
+          {
+            type: "input",
+            name: "stop_bang_score_display",
+            label: "STOP-BANG Score",
+            readOnly: true
+          },
+          {
+            type: "info-text",
+            heading: "STOP-BANG Interpretation",
+            text:
+              stopBangScore === null
+                ? "Enter STOP-BANG score using questionnaire."
+                : stopBangScore >= 3
+                  ? ">=3 → High Risk of OSA"
+                  : "<3 → Low Risk of OSA"
+          },
+
+          { type: "heading", label: "Investigations" },
+          {
+            type: "input",
+            name: "ecg_data",
+            label: "ECG",
+            readOnly: true,
+            placeholder: "No reports are attached till now"
+          },
+
+          { type: "heading", label: "Plan" },
+          {
+            type: "checkbox-group",
+            name: "plan_options",
+            label: "",
+            options: [
+              { label: "Suction", value: "suction" },
+              { label: "Nebuliser", value: "nebuliser" },
+              { label: "Oxygen Supplement", value: "oxygen_supplement" },
+              { label: "Incentive Spirometry", value: "incentive_spirometry" },
+              { label: "High Frequency Chest Wall Oscillation (HFCWO)", value: "hfcwo" },
+              { label: "Fluid Restriction Monitoring", value: "fluid_restriction_monitoring" },
+              { label: "Serial ECG", value: "serial_ecg" },
+              { label: "ABI Assessment", value: "abi_assessment" },
+              { label: "BP Monitoring", value: "bp_monitoring" },
+              { label: "Others", value: "others" }
+            ]
+          },
+          ...[
+            ["suction", "Suction"],
+            ["nebuliser", "Nebuliser"],
+            ["oxygen_supplement", "Oxygen Supplement"],
+            ["incentive_spirometry", "Incentive Spirometry"],
+            ["hfcwo", "High Frequency Chest Wall Oscillation (HFCWO)"],
+            ["fluid_restriction_monitoring", "Fluid Restriction Monitoring"],
+            ["serial_ecg", "Serial ECG"],
+            ["abi_assessment", "ABI Assessment"],
+            ["bp_monitoring", "BP Monitoring"],
+            ["others", "Others"]
+          ].map(([value, label]) => ({
+            type: "input",
+            name: `plan_${value}_specify`,
+            label: `${label} (Specify)`,
+            showIf: { field: "plan_options", includes: value }
+          })),
+          {
+            type: "radio",
+            name: "bp_monitoring",
+            label: "BP Monitoring",
+            options: [
+              { label: "Lying", value: "lying" },
+              { label: "Upright", value: "upright" }
+            ],
+            showIf: { field: "plan_options", includes: "bp_monitoring" }
+          }
         ]
       }
     ]
@@ -178,37 +502,8 @@ export default function CardioRespiratoryAssessment() {
         values={values}
         onChange={onChange}
         submitted={submitted}
-      >
-        <div style={btnRow}>
-          <button style={pillBtn} onClick={() => setOpenNYHA(true)}>
-            NYHA Classification
-          </button>
-          <button style={pillBtn} onClick={() => setOpenSTOP(true)}>
-            STOP-BANG Questionnaire
-          </button>
-        </div>
-
-        {nyhaClass && <Score label="NYHA Class" value={nyhaClass} />}
-        {stopBangScore !== null && (
-          <Score label="STOP-BANG Score" value={stopBangScore} />
-        )}
-
-       
-      </CommonFormBuilder>
-
-      {openNYHA && (
-        <NYHAModal
-          onSave={setNyhaClass}
-          onClose={() => setOpenNYHA(false)}
-        />
-      )}
-
-      {openSTOP && (
-        <STOPBangModal
-          onSave={setStopBangScore}
-          onClose={() => setOpenSTOP(false)}
-        />
-      )}
+        assessmentRegistry={CARDIO_SCORING_ASSESSMENT_REGISTRY}
+      />
     </>
   );
 }
@@ -218,16 +513,50 @@ const yn = (name, label) => ({
   name,
   label,
   options: [
-    { label: "YES", value: "YES" },
-    { label: "NO", value: "NO" }
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" }
   ]
 });
 
-const Score = ({ label, value }) => (
-  <div style={scoreBox}>
-    <strong>{label}:</strong> {value}
-  </div>
-);
+const cardioMatrix = (name, label) => ({
+  type: "radio-matrix",
+  name,
+  label,
+  matrixHeaderLabel: "",
+  options: [
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" }
+  ]
+});
+
+function NYHAAssessmentLauncher({ onChange }) {
+  return (
+    <NYHAModal
+      onSave={(selected) => {
+        onChange("nyha_classification", selected);
+        onChange("cardio_scoring_assessments_active", null);
+      }}
+      onClose={() => onChange("cardio_scoring_assessments_active", null)}
+    />
+  );
+}
+
+function STOPBangAssessmentLauncher({ onChange }) {
+  return (
+    <STOPBangModal
+      onSave={(score) => {
+        onChange("stop_bang_score_display", score);
+        onChange("cardio_scoring_assessments_active", null);
+      }}
+      onClose={() => onChange("cardio_scoring_assessments_active", null)}
+    />
+  );
+}
+
+const CARDIO_SCORING_ASSESSMENT_REGISTRY = {
+  nyha: NYHAAssessmentLauncher,
+  stopbang: STOPBangAssessmentLauncher
+};
 
 function NYHAModal({ onSave, onClose }) {
   const options = [
@@ -308,10 +637,7 @@ function ModalFooter({ onCancel, onSave }) {
   );
 }
 
-const btnRow = { display: "flex", gap: 12, marginTop: 20 };
-const pillBtn = { padding: "8px 16px", borderRadius: 999,  fontWeight: 600 };
 const saveBtn = { marginTop: 20, padding: "10px 18px", background: "#111827", color: "#fff", borderRadius: 8 };
-const scoreBox = { marginTop: 12, padding: 12, background: "#eef6ff", borderRadius: 8 };
 
 const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", justifyContent: "center", alignItems: "center" };
 const modal = { background: "#fff", padding: 24, borderRadius: 16, width: "90%", maxWidth: 800 };
