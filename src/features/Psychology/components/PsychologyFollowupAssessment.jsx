@@ -190,7 +190,11 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
               {label: "Mild", value: "mild"},
               {label: "Moderate", value: "moderate"},
               {label: "Severe", value: "severe"}
-            ]
+            ],
+            showIf: {
+              field: "new_symptoms",
+              equals: "present"
+            }
           },
           {type: "subheading", label: "Medication Adherence"},
           {
