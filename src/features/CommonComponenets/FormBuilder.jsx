@@ -527,7 +527,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "heading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
+                                      {!["button", "subheading", "heading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -1370,7 +1370,7 @@ function renderField(
           {/* Header row */}
           <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
             <div style={styles.gridHeaderCell}>Time</div>
-            <div style={styles.gridHeaderCell}>Scoops</div>
+            <div style={styles.gridHeaderCell}>Regime</div>
             <div style={styles.gridHeaderCell}>Water</div>
             <div style={styles.gridHeaderCell}>Flushing</div>
             <div style={styles.gridHeaderCell}></div>

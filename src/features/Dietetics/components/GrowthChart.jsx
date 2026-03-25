@@ -1,4 +1,20 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import Girls02 from "../../../assets/Girls0-2.png";
+import Girls25 from "../../../assets/Girls2-5.png";
+import Girls510 from "../../../assets/Girls5-10.png";
+import Girls519 from "../../../assets/Girls5-19.png";
+import Girls05w from "../../../assets/Girls0-5w.png";
+import Girls05 from "../../../assets/Girls0-5.png";
+import Girls05h from "../../../assets/Girls0-5h.png";
+import Girls519h from "../../../assets/Girls5-19h.png";
+import Boys02 from "../../../assets/Boys0-2.png";
+import Boys25 from "../../../assets/Boys2-5.png";
+import Boys510 from "../../../assets/Boys5-10.png";
+import Boys519 from "../../../assets/Boys5-19.png";
+import Boys05w from "../../../assets/Boys0-5w.png";
+import Boys05 from "../../../assets/Boys0-5.png";
+import Boys05h from "../../../assets/Boys0-5h.png";
+import Boys519h from "../../../assets/Boys5-19h.png";
 
 /* ===================== PERCENTILE OPTIONS ===================== */
 
@@ -32,12 +48,60 @@ function getInterpretationFromPercentile(p) {
  * - onChange(field, value)
  */
 export default function GrowthChartAssessment({
-  ageMonths,
-  weightKg,
-  percentile,
-  interpretation,
+  ageMonths: ageMonthsProp,
+  weightKg: weightKgProp,
+  percentile: percentileProp,
+  interpretation: interpretationProp,
   onChange,
+  values = {},
+  patient,
 }) {
+  const [showReferenceImages, setShowReferenceImages] = useState(false);
+
+  const ageMonths = values.ageMonths ?? ageMonthsProp ?? "";
+  const weightKg = values.weightKg ?? weightKgProp ?? "";
+  const percentile = values.percentile ?? percentileProp ?? "";
+  const interpretation = values.interpretation ?? interpretationProp ?? "";
+
+  const setValue = (name, value) => {
+    if (typeof onChange === "function") {
+      onChange(name, value);
+    }
+  };
+
+  const genderValue = String(patient?.gender || patient?.sex || "").toLowerCase();
+  const isFemale = genderValue.includes("female") || genderValue === "f";
+  const ageYears = Number(patient?.age ?? 0);
+
+  const referenceImages = useMemo(() => {
+    const allFemale = [
+      { src: Girls02, label: "Girls 0-2" },
+      { src: Girls25, label: "Girls 2-5" },
+      { src: Girls510, label: "Girls 5-10" },
+      { src: Girls519, label: "Girls 5-19" },
+      { src: Girls05w, label: "Girls 0-5 (Weight-for-age)" },
+      { src: Girls05, label: "Girls 0-5" },
+      { src: Girls05h, label: "Girls 0-5 (Height-for-age)" },
+      { src: Girls519h, label: "Girls 5-19 (Height-for-age)" },
+    ];
+    const allMale = [
+      { src: Boys02, label: "Boys 0-2" },
+      { src: Boys25, label: "Boys 2-5" },
+      { src: Boys510, label: "Boys 5-10" },
+      { src: Boys519, label: "Boys 5-19" },
+      { src: Boys05w, label: "Boys 0-5 (Weight-for-age)" },
+      { src: Boys05, label: "Boys 0-5" },
+      { src: Boys05h, label: "Boys 0-5 (Height-for-age)" },
+      { src: Boys519h, label: "Boys 5-19 (Height-for-age)" },
+    ];
+    const pool = isFemale ? allFemale : allMale;
+    if (!Number.isFinite(ageYears) || ageYears <= 0) return pool;
+    if (ageYears <= 2) return pool.filter((i) => i.label.includes("0-2") || i.label.includes("0-5"));
+    if (ageYears <= 5) return pool.filter((i) => i.label.includes("2-5") || i.label.includes("0-5"));
+    if (ageYears <= 10) return pool.filter((i) => i.label.includes("5-10") || i.label.includes("5-19"));
+    return pool.filter((i) => i.label.includes("5-19"));
+  }, [isFemale, ageYears]);
+
   return (
     <div style={styles.container}>
       {/* HEADER */}
@@ -51,13 +115,13 @@ export default function GrowthChartAssessment({
           <Field
             label="Age (months)"
             value={ageMonths}
-            onChange={(v) => onChange("ageMonths", v)}
+            onChange={(v) => setValue("ageMonths", v)}
           />
 
           <Field
             label="Weight (kg)"
             value={weightKg}
-            onChange={(v) => onChange("weightKg", v)}
+            onChange={(v) => setValue("weightKg", v)}
           />
 
           {/* PERCENTILE DROPDOWN */}
@@ -68,8 +132,8 @@ export default function GrowthChartAssessment({
               value={percentile || ""}
               onChange={(e) => {
                 const val = e.target.value;
-                onChange("percentile", val);
-                onChange("interpretation", getInterpretationFromPercentile(val));
+                setValue("percentile", val);
+                setValue("interpretation", getInterpretationFromPercentile(val));
               }}
             >
               <option value="">Select percentile</option>
@@ -101,19 +165,35 @@ export default function GrowthChartAssessment({
       {/* GRAPH CARD */}
       <div style={styles.graphCard}>
         <div style={styles.graphHeader}>
-          WHO Child Growth Standards – Weight-for-Age (Girls, 0–5 years)
+          WHO Child Growth Standards
         </div>
-
-        <img
-          src="../../../five.png"
-          alt="WHO Weight for Age Girls 0-5 years"
-          style={styles.graphImage}
-        />
+        <button type="button" onClick={() => setShowReferenceImages(true)} style={styles.referenceButton}>
+          Reference Images
+        </button>
 
         <div style={styles.caption}>
           Source: World Health Organization – Child Growth Standards
         </div>
       </div>
+
+      {showReferenceImages && (
+        <div style={styles.modalOverlay} onClick={() => setShowReferenceImages(false)}>
+          <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalHeader}>
+              <div style={{ fontWeight: 700 }}>Growth Chart Reference Images</div>
+              <button type="button" onClick={() => setShowReferenceImages(false)} style={styles.closeButton}>Close</button>
+            </div>
+            <div style={styles.modalBody}>
+              {referenceImages.map((img) => (
+                <div key={img.label} style={{ marginBottom: 14 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{img.label}</div>
+                  <img src={img.src} alt={img.label} style={styles.modalImage} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -200,6 +280,16 @@ const styles = {
     marginBottom: 12,
     color: "#0f172a",
   },
+  referenceButton: {
+    padding: "8px 12px",
+    borderRadius: 6,
+    border: "1px solid #1d4ed8",
+    background: "#1d4ed8",
+    color: "#ffffff",
+    cursor: "pointer",
+    marginBottom: 12,
+    fontWeight: 600,
+  },
 
   graphImage: {
     width: "100%",
@@ -212,5 +302,47 @@ const styles = {
     fontSize: 12,
     color: "#64748b",
     textAlign: "right",
+  },
+  modalOverlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(15,23,42,0.45)",
+    zIndex: 1000,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalCard: {
+    width: "min(1000px, 96vw)",
+    maxHeight: "90vh",
+    overflow: "auto",
+    background: "#fff",
+    borderRadius: 10,
+    padding: 14,
+    border: "1px solid #e2e8f0",
+  },
+  modalHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  closeButton: {
+    padding: "6px 10px",
+    borderRadius: 6,
+    border: "1px solid #cbd5e1",
+    background: "#f8fafc",
+    cursor: "pointer",
+  },
+  modalBody: {
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gap: 8,
+  },
+  modalImage: {
+    width: "100%",
+    border: "1px solid #ddd",
+    borderRadius: 6,
   },
 };

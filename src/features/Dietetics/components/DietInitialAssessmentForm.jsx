@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { BoldIcon } from "lucide-react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { DIET_ASSESSMENT_REGISTRY } from "./DietAssessmentWrapper";
+import FFQAssessment from "./FFQAssessment";
+import GrowthChartAssessment from "./GrowthChart";
 
 const ET_OPTIONS = {
   "increased_energy_expenditure": [
@@ -31,6 +33,16 @@ const ET_OPTIONS = {
 }
 
 export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
+  const DietGrowthChartAssessment = (props) => (
+    <GrowthChartAssessment {...props} patient={patient} />
+  );
+
+  const DIET_REGISTRY = {
+    ...DIET_ASSESSMENT_REGISTRY,
+    "Growth Chart": DietGrowthChartAssessment,
+    FFQ: FFQAssessment,
+  };
+
   const [form, setForm] = useState({
     chief_complaint: "",
     additional_allergic_conditions: "",
@@ -655,7 +667,13 @@ const submitAndSave = () => {
           { name: "mixed_feeding_details", label: "Mixed Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "mixed" } },
           { name: "iddsi_level", label: "IDDSI Level", type: "input", readOnly: true, showIf: { field: "feeding_type", equals: "mixed" } },
           { name: "fluid_intake_details", label: "Fluid Intake", type: "input", showIf: { field: "feeding_type", oneOf: ["oral", "enteral", "mixed"] } },
-          { name: "ffq", label: "Food Frequency Questionnaire (FFQ)", type: "input", readOnly: true, placeholder: "List will be coming soon" },
+          {
+            name: "ffq_assessment",
+            label: "Food Frequency Questionnaire (FFQ)",
+            type: "assessment-launcher",
+            autoOpen: true,
+            options: [{ label: "Food Frequency Questionnaire (FFQ)", value: "FFQ" }],
+          },
           { name: "ons_regime", label: "Oral Nutrition Supplement Regime", type: "textarea" }
         ]
       }
@@ -697,18 +715,6 @@ const submitAndSave = () => {
               { label: "Heavy Duty Extra Wide Manual Wheelchair", value: "heavy_duty_extra_wide" }
             ]}
           ]},
-          { name: "wheelchair_size", label: "Wheelchair Size", type: "radio", options: [
-            { label: "16\"", value: "16" },
-            { label: "18\"", value: "18" },
-            { label: "20\"", value: "20" },
-            { label: "22\"", value: "22" }
-          ], showIf: { field: "wheelchair_type", oneOf: ["detachable_adult", "lightweight_adult", "reclining"] }},
-          { name: "wheelchair_size", label: "Wheelchair Size", type: "radio", options: [
-            { label: "20\"", value: "20" },
-            { label: "22\"", value: "22" },
-            { label: "24\"", value: "24" },
-            { label: "26\"", value: "26" }
-          ], showIf: { field: "wheelchair_type", equals: "heavy_duty_extra_wide" }},
           { name: "anthro_remarks", label: "Remarks", type: "textarea" },
           { type: "subheading", label: "Vital Signs & Measurements" },
           { type: "row", fields: [
@@ -755,25 +761,10 @@ const submitAndSave = () => {
       sections: [
         {
           fields: [
-            {
-            name: "diet_intervention",
-            label: "Intervention",
-            type: "checkbox-group",
-            options: [
-              { label: "Initiate nutritional Intervention", value: "initiate_nutrition" },
-              { label: "Monitor Oral Intake", value: "monitor_intake" },
-              { label: "Document follow-up plan", value: "document_plan" },
-              { label: "Order Nutrition consult", value: "order_consult" },
-              { label: "Start supplements/considering enteral", value: "supplements_enteral" },
-              { label: "Others", value: "others" }
-            ]
-          },
-          { name: "diet_intervention_initiate_nutrition", label: "Initiate nutritional Intervention – Details", type: "input", showIf: { field: "diet_intervention", includes: "initiate_nutrition" } },
-          { name: "diet_intervention_monitor_intake", label: "Monitor Oral Intake – Details", type: "input", showIf: { field: "diet_intervention", includes: "monitor_intake" } },
-          { name: "diet_intervention_document_plan", label: "Document follow-up plan – Details", type: "input", showIf: { field: "diet_intervention", includes: "document_plan" } },
-          { name: "diet_intervention_order_consult", label: "Order Nutrition consult – Details", type: "input", showIf: { field: "diet_intervention", includes: "order_consult" } },
-          { name: "diet_intervention_supplements_enteral", label: "Start supplements/considering enteral – Details", type: "input", showIf: { field: "diet_intervention", includes: "supplements_enteral" } },
-          { name: "diet_intervention_others", label: "Others – Details", type: "input", showIf: { field: "diet_intervention", includes: "others" } },
+          { type: "subheading", label: "Goals" },
+          { name: "plan_short_term_goals", label: "Short-Term Goals", type: "input" },
+          { name: "plan_long_term_goals", label: "Long-Term Goals", type: "input" },
+          { type: "heading", label: "Plan" },
           { type: "subheading", label: "Diet Type" },
           { name: "meal_plan_mod_feeding_type", label: "Feeding Type", type: "radio", options: [{ label: "Oral Feeding", value: "oral" }, { label: "Enteral Feeding", value: "enteral" }, { label: "Mixed Feeding", value: "mixed" }] },
           { name: "meal_plan_mod_oral", label: "Meal Plan", type: "multi-select-dropdown", options: DIET_MEAL_PLAN_OPTIONS, showIf: { field: "meal_plan_mod_feeding_type", equals: "oral" } },
@@ -785,9 +776,23 @@ const submitAndSave = () => {
           { name: "plan_mixed_feeding_table", label: "Mixed Feeding", type: "enteral-feeding-table", showIf: { field: "meal_plan_mod_feeding_type", equals: "mixed" } },
           { name: "plan_mixed_feeding_details", label: "Mixed Feeding Notes", type: "textarea", showIf: { field: "meal_plan_mod_feeding_type", equals: "mixed" } },
           { name: "plan_mixed_fluid_intake", label: "Fluid Intake", type: "input", showIf: { field: "meal_plan_mod_feeding_type", equals: "mixed" } },
-          { type: "subheading", label: "Goals" },
-          { name: "plan_short_term_goals", label: "Short-Term Goals", type: "input" },
-          { name: "plan_long_term_goals", label: "Long-Term Goals", type: "input" },
+            {
+            name: "diet_intervention",
+            label: "Intervention",
+            type: "checkbox-group",
+            options: [
+              { label: "Initiate nutritional Intervention", value: "initiate_nutrition" },
+              { label: "Monitor Oral Intake", value: "monitor_intake" },
+              { label: "Order Nutrition consult", value: "order_consult" },
+              { label: "Start supplements/considering enteral", value: "supplements_enteral" },
+              { label: "Others", value: "others" }
+            ]
+          },
+          { name: "diet_intervention_initiate_nutrition", label: "Initiate nutritional Intervention – Details", type: "input", showIf: { field: "diet_intervention", includes: "initiate_nutrition" } },
+          { name: "diet_intervention_monitor_intake", label: "Monitor Oral Intake – Details", type: "input", showIf: { field: "diet_intervention", includes: "monitor_intake" } },
+          { name: "diet_intervention_order_consult", label: "Order Nutrition consult – Details", type: "input", showIf: { field: "diet_intervention", includes: "order_consult" } },
+          { name: "diet_intervention_supplements_enteral", label: "Start supplements/considering enteral – Details", type: "input", showIf: { field: "diet_intervention", includes: "supplements_enteral" } },
+          { name: "diet_intervention_others", label: "Others – Details", type: "input", showIf: { field: "diet_intervention", includes: "others" } },
           { type: "subheading", label: "Follow-Up Plan" },
           { name: "plan_review_date", label: "Review in (select date)", type: "date" },
           { name: "plan_referral_type", label: "Referral", type: "radio", options: [{ label: "Internal", value: "internal" }, { label: "External", value: "external" }] },
@@ -849,7 +854,7 @@ const submitAndSave = () => {
   };
 
   const dietOnChange = (name, value) => {
-    const readonly = ["weight", "height", "bmi", "weight_record_date", "pmh_from_registration", "family_social_from_registration", "allergic_history", "bo", "pu", "medications", "ffq", "iddsi_level", "bp", "pulse", "rr", "temp", "spo2", "rbs", "pain"];
+    const readonly = ["weight", "height", "bmi", "weight_record_date", "pmh_from_registration", "family_social_from_registration", "allergic_history", "bo", "pu", "medications", "iddsi_level", "bp", "pulse", "rr", "temp", "spo2", "rbs", "pain"];
     if (readonly.includes(name)) return;
     setField(name, value);
   };
@@ -857,10 +862,19 @@ const submitAndSave = () => {
   const diagnosisComputedValues = (problems) => {
     var data = {}
     problems.forEach((item, index) => {
+      const problemKey = item.problem?.toLowerCase().replaceAll(' ', '_');
+      const etiologyOptions = ET_OPTIONS[problemKey] || [];
+      const selectedEtiologyValues = Array.isArray(item.etiology) ? item.etiology : [];
+      const selectedEtiologyLabels = etiologyOptions
+        .filter((opt) => selectedEtiologyValues.includes(opt.value))
+        .map((opt) => opt.label);
       data[`diagnosis_signs_${index}`] = item.signs
       data[`diagnosis_problem_${index}`] = item.problem
-      data[`diagnosis_etiology_${index}`] = ET_OPTIONS[item.problem.toLowerCase().replaceAll(' ', '_')].map(item => item.value)
-      data[`nutrition_diagnosis_${index}`] = item.problem && item.etiology && item.signs ? `${item.problem} ${item.etiology} as evidenced by ${item.signs}` : ""
+      data[`diagnosis_etiology_${index}`] = selectedEtiologyValues
+      data[`nutrition_diagnosis_${index}`] =
+        item.problem && selectedEtiologyLabels.length > 0 && item.signs
+          ? `${item.problem} related to ${selectedEtiologyLabels.join(", ")} as evidenced by ${item.signs}`
+          : ""
     })
     return data
     
@@ -912,7 +926,7 @@ const submitAndSave = () => {
           values={dietValues}
           onChange={dietOnChange}
           onAction={handleAction}
-          assessmentRegistry={DIET_ASSESSMENT_REGISTRY}
+          assessmentRegistry={DIET_REGISTRY}
         >
           {/* Know more for Vitals (Objective tab) - same as Resus Bay */}
           {activeTab === "objective" && (
@@ -942,18 +956,22 @@ const submitAndSave = () => {
         <CommonFormBuilder
                       schema={{ title: `Nutrition Diagnosis ${index + 1}`, sections: [{ fields: [
                         { name: `diagnosis_problem_${index}`, label: "Problem", type: "input", readOnly: true },
-                        { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "multi-select-dropdown", options:ET_OPTIONS[diagnosis.problem.toLowerCase().replaceAll(' ', '_')], readOnly: true },
+                        { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "multi-select-dropdown", options: ET_OPTIONS[diagnosis.problem.toLowerCase().replaceAll(' ', '_')] || [] },
                         { name: `diagnosis_signs_${index}`, label: "Signs & Symptoms", type: "textarea" },
                         { name: `nutrition_diagnosis_${index}`, label: "Nutrition Diagnosis", type: "textarea", readOnly: true }
                       ]}]}}
           values={diagnosisValues}
           onChange={(name, value) => {
-                        if (name.startsWith(`diagnosis_signs_`)) {
-                          const idx = parseInt(name.split("_")[2], 10);
-                          const updated = [...form.diagnosis_problems];
-                          if (updated[idx]) updated[idx] = { ...updated[idx], signs: value };
+                        const idx = parseInt(name.split("_")[2], 10);
+                        const updated = [...form.diagnosis_problems];
+                        if (!updated[idx]) return;
+                        if (name.startsWith("diagnosis_signs_")) {
+                          updated[idx] = { ...updated[idx], signs: value };
                           setField("diagnosis_problems", updated);
-            }
+                        } else if (name.startsWith("diagnosis_etiology_")) {
+                          updated[idx] = { ...updated[idx], etiology: Array.isArray(value) ? value : [] };
+                          setField("diagnosis_problems", updated);
+                        }
           }}
         />
                     <button type="button" onClick={() => setField("diagnosis_problems", form.diagnosis_problems.filter((_, i) => i !== index))} style={{ marginTop: 10, padding: "6px 12px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Remove</button>
@@ -1056,7 +1074,7 @@ const submitAndSave = () => {
                   // Add the problem
                   setField("diagnosis_problems", [
                     ...currentProblems,
-                    { problem: item.label, etiology: item.etiology, signs: "" }
+                    { problem: item.label, etiology: [], signs: "" }
                   ]);
                 } else {
                   // Remove the problem
