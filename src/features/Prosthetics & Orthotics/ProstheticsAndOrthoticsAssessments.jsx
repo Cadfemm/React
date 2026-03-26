@@ -262,6 +262,27 @@ const PLAN_COMMON_SCHEMA = [
   }
 ]
 
+const FOLLOW_UP_COMMON_SCHEMA = [
+  {
+    name: "adjustment",
+    label: "Adjustment",
+    type: "radio",
+    options: [
+      {label: "Yes", value: "yes"},
+      {label: "No", value: "no"}
+    ]
+  },
+  {
+    name: "adjustment_date",
+    label: "Adjustment Date",
+    type: "date"
+  },
+  {
+    name: "remarks",
+    label: "Remarks",
+    type: "textarea"
+  }
+]
 
 //  ORTHOSIS SCHEMAS
 
@@ -465,6 +486,7 @@ const ORTHO_ASSESSMENT_SCHEMA = {
 
 
 const ORTHO_PLAN_SCHEMA = {
+  title: "",
   actions: SUB_COMMON_SCHEMA.actions,
   sections: [
     {
@@ -565,6 +587,52 @@ const ORTHO_PLAN_SCHEMA = {
   ] 
 };
 
+const ORTHO_FOLLOW_UP_SCHEMA = {
+  title: "",
+  actions: SUB_COMMON_SCHEMA.actions,
+  sections: [
+    {
+      fields: FOLLOW_UP_COMMON_SCHEMA.concat([
+        {
+          name: "othosis_checkbox",
+          type: "checkbox-group",
+          options: [
+            {label: "Review Existing Orthosis", value: "existing_orthosis"},
+          ]
+        },
+        {
+          name: "fitting_issue_checkbox",
+          type: "checkbox-group",
+          options: [
+            {label:"Pressure", value: "pressure"},
+            {label: "Loose", value: "loose"},
+            {label: "Discomfort", value: "discomfort"}
+          ]
+        },
+        {
+          name: "gait_issue_checkbox",
+          type: "checkbox-group",
+          options: [
+            {label:"Gait Deviation Observed", value: "gait_deviation"},
+            {label: "Skin Issue Related to Orthosis", value: "skin_orthosis"},
+            {label: "Request New Orthosis", value: "request_new_orthosis"},
+            {label: "Reassessment After", value: "reassessment_after"},
+            {label: "Others", value: "others"}
+          ]
+        },
+        {
+          name: "others",
+          label: "Others",
+          type: "textarea",
+          showIf: {
+            field: "gait_issue_checkbox",
+            equals: "others"
+          }
+        }
+      ])
+    }
+  ]
+}
 /* ===================== PROSTHETICS SCHEMAS ===================== */
 
 const PROSTHETICS_OBJECTIVE_SCHEMA = {
@@ -674,6 +742,7 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
 };
 
 const PROSTHETICS_ASSESSMENT_SCHEMA = {
+  title: "",
   actions: SUB_COMMON_SCHEMA.actions,
   sections: [
     {
@@ -711,6 +780,7 @@ const PROSTHETICS_ASSESSMENT_SCHEMA = {
 };
 
 const PROSTHETICS_PLAN_SCHEMA = {
+  title: "",
   actions: SUB_COMMON_SCHEMA.actions,
   sections: [
     {
@@ -782,6 +852,261 @@ const PROSTHETICS_PLAN_SCHEMA = {
     }
   ]
 };
+
+const PROSTHETICS_FOLLOW_UP_SCHEMA = {
+  title: "",
+  actions: SUB_COMMON_SCHEMA.actions,
+  sections: [
+    {
+      fields: FOLLOW_UP_COMMON_SCHEMA.concat([
+        {
+          name: "stump_picture",
+          label: "Stump Picture",
+          type: "file-upload-modal"
+        },
+        {
+          name: "measurement_date",
+          label: "Measurement Date",
+          type: "date"
+        },
+        {
+          name: "stump_measurement_value",
+          label: "Stump Measurement Value",
+          type: "input"
+        },
+        {
+          name: "add_measurement",
+          label: "Add Measurement",
+          type: "button"
+        }
+      ])
+    }
+  ]
+}
+
+const PROSTHETICS_CHECKOUT_SCHEMA = {
+  title: "",
+  actions: SUB_COMMON_SCHEMA.actions,
+  sections: [
+    {
+      fields: [
+        {type: "subheading", label: "Prosthetic Fit & Tolerance"},
+        {
+          name: "socket_fit",
+          label: "Socket Fit",
+          type: "radio",
+          options: YES_NO
+        },
+        {
+          name: "details",
+          label: "Details",
+          type: "textarea",
+          showIf: {
+            field: "socket_fit",
+            equals: "yes"
+          }
+        },
+        {
+          name: "alignment",
+          label: "Alignment",
+          type: "radio",
+          options: [
+            {label: "Good", value:"good"},
+            {label: "Poor", value: "poor"}
+          ]
+        },
+        {
+          name: "details",
+          label: "Details",
+          type: "textarea",
+          showIf: {
+            field: "alignment",
+            equals: "poor"
+          }
+        },
+        {
+          name: "bony_prominence",
+          label: "Bony Prominence/Pressure Sensitive Area",
+          type: "radio",
+          options: YES_NO
+        },
+        {
+          name: "docuement",
+          label: "Upload Image",
+          type: "file-upload-modal",
+          showIf: {
+            field: "bony_prominence",
+            equals: "yes"
+          }
+        },
+        {type: "subheading", label: "Changing Body Position"},
+        {
+          name: "changing_body_position",
+          label: "Changing Body Position From Lying Down",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "from_squatting",
+          label: "From Squatting or Kneeling",
+          type: "radio",
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "from_sitting",
+          label: "From Sitting or Standing",
+          type: "radio",
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "rolling_over",
+          label: "Rolling Over",
+          type: "radio",
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "bending",
+          label: "Bending",
+          type: "radio",
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "shifting_body_garvity",
+          label: "Shifting the Body's Centre of Gravity",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "With Supervision", value: "super_vision"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"}
+          ]
+        },
+        {
+          name: "maintaining_body_position",
+          label: "Maintaining a Body Position",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Good", value: "good"},
+            {label: "Fair", value: "fair"},
+            {label: "Poor", value: "poor"},
+          ]
+        },
+        {
+          name: "transferring_oneself",
+          label: "Transferring Oneself",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "Supervision", value: "super_vision"},
+            {label: "Contract Guard", value: "contract_guard"},
+            {label: "Minimal Assist", value: "minimal_assist"},
+            {label: "Moderate Assist", value: "moderate_assist"},
+            {label: "Maximal Assist", value: "maximal_assist"},
+            {label: "Total Assist", value: "total_assist"}
+          ]
+        },
+        {type: "subheading", label: "Walking"},
+        {
+          name: "walking_short_distances",
+          label: "Walking Short Distances",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Without Aid", value: "without_aid"},
+            {label: "Walking Frame", value: "walking_frame"},
+            {label: "Axillary Crutches", value: "axillary_crutches"},
+            {label: "Elbow Crutches", value: "elbow_crutches"},
+            {label: "Quadripod", value: "quadripod"},
+            {label: "Walking Stick", value: "walking_stick"},
+            {label: "Wheelchair", value: "wheelchair"}
+          ]
+        },
+        {
+          name: "walking_long_distances",
+          label: "Walking Long Distances",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Without Aid", value: "without_aid"},
+            {label: "Walking Frame", value: "walking_frame"},
+            {label: "Axillary Crutches", value: "axillary_crutches"},
+            {label: "Elbow Crutches", value: "elbow_crutches"},
+            {label: "Quadripod", value: "quadripod"},
+            {label: "Walking Stick", value: "walking_stick"},
+            {label: "Wheelchair", value: "wheelchair"}
+          ]
+        },
+        {
+          name: "dressing",
+          label: "Dressing (Donning/Doffing Prosthesis)",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            {label: "Independent", value: "independent"},
+            {label: "Assisted", value: "assisted"}
+          ]
+        },
+        {type: "subheading", label: "Environmental Factors"},
+        {
+          name: "assistive_products",
+          label: "Assistive Products",
+          type: "radio",
+          labelAbove: true,
+          options:  [
+            {label: "Wheelchair", value: "wheelchair"},
+            {label: "Walking Frame", value: "walking_frame"},
+            {label: "Axillary Crutches", value: "axillary_crutches"},
+            {label: "Elbow Crutches", value: "elbow_crutches"},
+            {label: "Quadripod", value: "quadripod"},
+            {label: "Walking Stick", value: "walking_stick"}            
+          ]
+        },
+        {
+          name: "family_support",
+          label: "Family Support",
+          type: "radio",
+          options: YES_NO
+        }
+      ]
+    }
+  ]
+}
+
 const getConsentSchema = (assignmentType) => ({
   title: assignmentType === "orthotics"
     ? "Orthotics Status"
@@ -845,8 +1170,6 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({ assignment_type: 'orthotics' });
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
-
-  console.log('----------', values, '-----------------')
   const storageKey = patient ? `orthotics_draft_${patient.id}` : null;
 
   useEffect(() => {
@@ -872,6 +1195,22 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
       skin_auto: patient.skin
     }));
   }, [patient]);
+
+  useEffect(() => {
+    console.log(values?.visit_type)
+    console.log(schemaMap[activeTab])
+    if (values?.visit_type === "checkout" && values?.assignment_type === "prosthetics"){
+      console.log('-------------called---------------', values.visit_type)
+      setActiveTab("checkout")
+    } else if (values?.visit_type === "follow_up"){
+      console.log('-------------called followup---------------', values.visit_type)
+      setActiveTab("follow_up")
+    } else {
+      console.log('-------------------called subjective-------------')
+      setActiveTab("subjective")
+    }
+    console.log(schemaMap[activeTab])
+  }, [values])
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
@@ -904,15 +1243,14 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
     subjective: SUB_COMMON_SCHEMA,
     objective: ORTHO_OBJECTIVE_SCHEMA,
     assessment: ORTHO_ASSESSMENT_SCHEMA,
-    follow_up: SUB_COMMON_SCHEMA,
+    follow_up: ORTHO_FOLLOW_UP_SCHEMA,
   } : {
     plan: PROSTHETICS_PLAN_SCHEMA,
     subjective: SUB_COMMON_SCHEMA,
     objective: PROSTHETICS_OBJECTIVE_SCHEMA,
     assessment: PROSTHETICS_ASSESSMENT_SCHEMA,    
-
-    follow_up: SUB_COMMON_SCHEMA,
-    checkout: SUB_COMMON_SCHEMA
+    follow_up: PROSTHETICS_FOLLOW_UP_SCHEMA,
+    checkout: PROSTHETICS_CHECKOUT_SCHEMA
   };
 
   function PatientInfo({ patient, values, onChange }) {
@@ -991,9 +1329,9 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
         marginBottom: 12
       }}>
         {(
-          (values.visit_type?.includes("checkout") && values.assignment_type === "prosthetics" )
+          (values?.visit_type === "checkout" && values.assignment_type === "prosthetics" )
           ? ["checkout"]
-          : values.visit_type?.includes("follow_up")
+          : values?.visit_type === "follow_up"
           ? ["follow-up"]
           : ["subjective", "objective", "assessment", "plan"]
         ).map(tab => (
@@ -1006,7 +1344,7 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
               color: activeTab === tab ? "#2451b3" : "#0f172a",
               borderBottom: activeTab === tab ? "3px solid #2451b3" : "none"
             }}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => setActiveTab(tab.replace('-', '_'))}
           >
             {tab.toUpperCase()}
           </div>
