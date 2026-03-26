@@ -1197,19 +1197,13 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
   }, [patient]);
 
   useEffect(() => {
-    console.log(values?.visit_type)
-    console.log(schemaMap[activeTab])
     if (values?.visit_type === "checkout" && values?.assignment_type === "prosthetics"){
-      console.log('-------------called---------------', values.visit_type)
       setActiveTab("checkout")
     } else if (values?.visit_type === "follow_up"){
-      console.log('-------------called followup---------------', values.visit_type)
       setActiveTab("follow_up")
     } else {
-      console.log('-------------------called subjective-------------')
       setActiveTab("subjective")
     }
-    console.log(schemaMap[activeTab])
   }, [values])
 
   const onChange = (name, value) => {
@@ -1352,7 +1346,7 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
       </div>
 
       <CommonFormBuilder
-        schema={schemaMap[activeTab]}
+        schema={schemaMap[values?.assignment_type ==="orthotics" && values?.visit_type === "checkout" ? "subjective": activeTab]}
         values={values}
         onChange={onChange}
         submitted={submitted}
