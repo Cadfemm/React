@@ -425,14 +425,7 @@ export default function VoiceAssessment({ patient, onBack, mode = "initial" }) {
             ]
           },
 
-          {
-            type: "row",
-            fields: [
-              { name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
-
-
-            ]
-          },
+          { name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
 
 
           { type: "subheading", label: "Oral-motor Structure Observation" },
@@ -458,17 +451,11 @@ export default function VoiceAssessment({ patient, onBack, mode = "initial" }) {
           },
 
           {
-            type: "row",
-            fields: [
-
-              {
-                name: "soft_palate",
-                label: "Soft palate",
-                type: "single-select",
-                options: ["No Abnormality Detected (NAD)", "Reduced elevation", "Bifid uvula", "Scarring"]
-                  .map(v => ({ label: v, value: v }))
-              }
-            ]
+            name: "soft_palate",
+            label: "Soft palate",
+            type: "single-select",
+            options: ["No Abnormality Detected (NAD)", "Reduced elevation", "Bifid uvula", "Scarring"]
+              .map(v => ({ label: v, value: v }))
           },
 
           {
@@ -765,14 +752,19 @@ export default function VoiceAssessment({ patient, onBack, mode = "initial" }) {
     { name: "rr", label: "RR (Respiratory Rate)", type: "input" }
   ];
 
-  const commonSectionFields = useMemo(() => {
-    if (!isFollowup) return commonSectionFieldsBase;
-    return withOptionalSections(commonSectionFieldsBase, ["General Observation"]);
-  }, [isFollowup]);
-
+  const commonSectionFields = commonSectionFieldsBase
   const stripFromSection = (section) => ({
     ...section,
-    fields: (section.fields || []).filter(f => !ADULT_COMMON_FIELD_NAMES.includes(f?.name))
+    fields: (section.fields || []).flatMap(f => {
+      if (ADULT_COMMON_FIELD_NAMES.includes(f?.name)) return [];
+      if (f?.type === "row" && Array.isArray(f.fields)) {
+        const kept = f.fields.filter(child => !ADULT_COMMON_FIELD_NAMES.includes(child?.name));
+        if (kept.length === 0) return [];
+        if (kept.length === f.fields.length) return [f];
+        return [{ ...f, fields: kept }];
+      }
+      return [f];
+    })
   });
 
   const sectionByTitle = Object.fromEntries(

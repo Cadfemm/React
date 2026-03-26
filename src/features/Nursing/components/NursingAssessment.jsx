@@ -16,6 +16,7 @@ import EyeAssessment from "../FocusedAssessment/EyeAssessment";
 import HeadNeckAssessment from "../FocusedAssessment/HeadNeckAssessment";
 import RenalAssessment from "../FocusedAssessment/RenalAssessment";
 import MusculoskeletalAssessment from "../FocusedAssessment/MusculoskeletalAssessment";
+import WoundAssessment from "../pages/WoundAssessment";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
 // Create context to pass patient to assessment components
@@ -236,6 +237,17 @@ function MusculoskeletalAssessmentAdapter({ values, onChange }) {
   );
 }
 
+function WoundAssessmentAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleBack = () => onChange("pi_braden_scale_active", null);
+  return (
+    <WoundAssessment
+      patient={patient}
+      onBack={handleBack}
+    />
+  );
+}
+
 // Assessment Registry
 export const NURSING_ASSESSMENT_REGISTRY = {
   barthel: BarthelIndexAdapter,
@@ -243,6 +255,7 @@ export const NURSING_ASSESSMENT_REGISTRY = {
   patient_history: PatientHistoryAdapter,
   morse_fall_scale: MorseFallScaleAdapter,
   braden_scale: BradenScaleAdapter,
+  wound_assessment_watfs: WoundAssessmentAdapter,
   wound_treatment_flowsheet: WoundTreatmentFlowsheetAdapter,
   numeric_pain_rating_scale: NumericPainRatingScaleAdapter,
   diabetic_foot_assessment: DiabeticFootAssessmentAdapter,
@@ -1553,7 +1566,10 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             name: "pi_braden_scale",
             label: "",
             type: "assessment-launcher",
-            options: [{ label: "Braden Scale", value: "braden_scale" }],
+            options: [
+              { label: "Braden Scale", value: "braden_scale" },
+              { label: "Wound Assessment (WATFS)", value: "wound_assessment_watfs" }
+            ],
             showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
           },
           {

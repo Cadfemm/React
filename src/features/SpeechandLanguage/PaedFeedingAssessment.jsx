@@ -137,13 +137,7 @@ export default function PaedIAFeeding({ patient, onBack, mode = "initial" }) {
     };
   }, [isFollowup]);
 
-  const commonSchema = useMemo(() => {
-    if (!isFollowup) return COMMON_SCHEMA;
-    return applyOptionalSections(COMMON_SCHEMA, [
-      "General Observation",
-      "Oral-motor structure & function observation"
-    ]);
-  }, [isFollowup]);
+   const commonSchema = COMMON_SCHEMA;
 
   return (
     <div>

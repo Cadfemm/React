@@ -175,7 +175,7 @@ function evaluateShowIf(showIf, values) {
  * @param {Array<string>} optionalSectionLabels - Subheading labels to make optional
  * @returns {Array} Transformed fields
  */
-export function withOptionalSections(fields, optionalSectionLabels = []) {
+export function xwithOptionalSections(fields, optionalSectionLabels = []) {
   if (!fields || !Array.isArray(fields) || optionalSectionLabels.length === 0) {
     return fields;
   }
@@ -2702,12 +2702,19 @@ case "grid-table-advanced": {
 
 
 
-    case "subheading":
-      return (
-        <div style={styles.subheading}>
-          {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
-        </div>
-      );
+ case "subheading":
+  if (field.showIf && !evaluateShowIf(field.showIf, values)) {
+    return null;
+  }
+
+  return (
+    <div style={styles.subheading}>
+      {t(
+        field.label,
+        languageConfig?.enabled ? languageConfig.lang : "en"
+      )}
+    </div>
+  );
 
     case "heading":
       return (
