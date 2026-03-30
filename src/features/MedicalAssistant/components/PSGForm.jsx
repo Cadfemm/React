@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -136,6 +137,11 @@ export default function PSGForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const PSG_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "PSG (POLYSOMNOGRAM)", ms: "PSG (POLISOMNOGRAM)" },
@@ -155,7 +161,6 @@ export default function PSGForm({ patient, onBack }) {
           {
             type: "row",
             fields: [
-              { name: "gender", label: { en: "GENDER", ms: "JANTINA" }, type: "input", readOnly: true },
               { name: "height", label: { en: "HEIGHT (cm)", ms: "TINGGI (cm)" }, type: "input", readOnly: true }
             ]
           },
@@ -279,12 +284,21 @@ export default function PSGForm({ patient, onBack }) {
   };
 
   return (
-    <CommonFormBuilder
-      schema={PSG_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={PSG_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }

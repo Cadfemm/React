@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -111,6 +112,11 @@ export default function ESTForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const EST_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "EST (EXERCISE STRESS TEST)", ms: "EST (UJIAN TEKANAN SENAMAN)" },
@@ -137,7 +143,6 @@ export default function ESTForm({ patient, onBack }) {
           {
             type: "row",
             fields: [
-              { name: "age", label: { en: "AGE", ms: "UMUR" }, type: "input", readOnly: true },
               { name: "bmi", label: { en: "BMI", ms: "BMI" }, type: "input", readOnly: true }
             ]
           },
@@ -220,12 +225,21 @@ export default function ESTForm({ patient, onBack }) {
   };
 
   return (
-    <CommonFormBuilder
-      schema={EST_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={EST_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }

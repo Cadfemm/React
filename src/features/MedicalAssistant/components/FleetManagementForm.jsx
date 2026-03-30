@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const mainContent = {};
@@ -260,6 +261,11 @@ export default function FleetManagementForm({ patient, onBack }) {
     setValues(v => ({ ...v, [name]: value }));
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const FLEET_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "FLEET MANAGEMENT", ms: "PENGURUSAN FLEET" },
@@ -280,13 +286,6 @@ export default function FleetManagementForm({ patient, onBack }) {
                 readOnly: true,
                 placeholder: { en: "Auto-generated from Case Manager (Customer Service)", ms: "Dijana secara automatik daripada Case Manager (Perkhidmatan Pelanggan)" }
               },
-              {
-                name: "nama_ob",
-                label: { en: "Patient Name", ms: "Nama OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              }
             ]
           },
           {
@@ -299,20 +298,6 @@ export default function FleetManagementForm({ patient, onBack }) {
                 readOnly: true,
                 placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
               },
-              {
-                name: "no_kp_ob",
-                label: { en: "IC Number", ms: "No K/P OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              },
-              {
-                name: "no_phone_ob",
-                label: { en: "Phone Number", ms: "No Phone OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              }
             ]
           },
                     {
@@ -670,6 +655,13 @@ export default function FleetManagementForm({ patient, onBack }) {
 
   return (
     <div style={mainContent}>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+      </CommonFormBuilder>
       <CommonFormBuilder
         schema={FLEET_SCHEMA}
         values={values}
