@@ -34,21 +34,21 @@ function buildSchema(values) {
       type: "row",
       fields: [
         { name: "assessment_date", label: "Date", type: "date" },
-        { name: "shift", label: "Shift", type: "radio", options: opt(["Morning","Evening","Night"]) }
+        { name: "shift", label: "Shift", type: "radio", options: opt(["To Monitor","To Heal","To Monitor/Manage"]) }
       ]
     },
-    {
-      type: "row",
-      fields: [
-        { name: "assessed_by",  label: "Assessed by (Nurse name)", type: "input" },
-        { name: "reviewed_by", label: "Reviewed by (MO / Senior / PIC Wound)", type: "input" }
-      ]
-    },
+    // {
+    //   type: "row",
+    //   fields: [
+    //     { name: "assessed_by",  label: "Assessed by (Nurse name)", type: "input" },
+    //     { name: "reviewed_by", label: "Reviewed by (MO / Senior / PIC Wound)", type: "input" }
+    //   ]
+    // },
 
     /* ── Goal of Care ── */
     { type: "subheading", label: "Goal of Care" },
     {
-      name: "goal_of_care", label: "Goal of Care (mandatory)",
+      name: "goal_of_care", label: "Goal of Care ",
       type: "checkbox-group",
       options: opt(["Healing","Maintenance","Infection control","Palliative / comfort care","Pre-surgical optimization"])
     },
@@ -56,7 +56,7 @@ function buildSchema(values) {
     /* ── Wound Identification ── */
     { type: "subheading", label: "Wound Identification" },
     {
-      name: "wound_type", label: "Wound Type (multi-select)",
+      name: "wound_type", label: "Wound Type ",
       type: "checkbox-group",
       options: opt([
         "Pressure Injury","Venous Insufficiency","Arterial Insufficiency",
@@ -70,25 +70,25 @@ function buildSchema(values) {
       ...(highStage ? [{ type: "alert-box", severity: "danger",
         message: "🔴 Pressure Injury Stage ≥ 3 — Notify: MO + Senior Nurse + PIC Wound immediately." }] : [])
     ] : []),
-    { name: "new_wound", label: "New Wound?", type: "radio", options: opt(["Yes","No"]) },
-    ...(isNewWound ? [{ type: "alert-box", severity: "danger",
-      message: "🔴 New wound identified — Immediate notification required: MO + Senior Nurse + PIC Wound." }] : []),
+    // { name: "new_wound", label: "New Wound?", type: "radio", options: opt(["Yes","No"]) },
+    // ...(isNewWound ? [{ type: "alert-box", severity: "danger",
+    //   message: "🔴 New wound identified — Immediate notification required: MO + Senior Nurse + PIC Wound." }] : []),
 
     /* ── Location Mapping ── */
     { type: "subheading", label: "Location Mapping" },
-    { name: "body_region", label: "Body Region", type: "radio",
-      options: opt(["Head / Neck","Upper Limb","Lower Limb","Trunk"]) },
-    { name: "specific_site", label: "Specific Site", type: "input",
-      placeholder: "e.g. Sacrum, Heel, Plantar foot, Calf, Forearm" },
-    { name: "laterality", label: "Laterality", type: "radio",
-      options: opt(["Left","Right","Bilateral","N/A"]) },
+    // { name: "body_region", label: "Body Region", type: "radio",
+    //   options: opt(["Head / Neck","Upper Limb","Lower Limb","Trunk"]) },
+    // { name: "specific_site", label: "Specific Site", type: "input",
+    //   placeholder: "e.g. Sacrum, Heel, Plantar foot, Calf, Forearm" },
+    // { name: "laterality", label: "Laterality", type: "radio",
+    //   options: opt(["Left","Right","Bilateral","N/A"]) },
     {
       name: "wound_location_pins", label: "Mark Wound Location on Body Diagram",
       type: "wound-location-marker",
       views: [
         { key: "body",  label: "Body (Front/Back)", src: "/body_high.png" },
-        { key: "feet",  label: "Hands",             src: "/feet_high.png" },
-        { key: "hands", label: "Feet",              src: "/hands_high.png" }
+        { key: "feet",  label: "Feet",             src: "/feet_high.png" },
+        { key: "handsfeet", label: "Hands",              src: "/hands_high.png" }
       ]
     },
 
@@ -151,9 +151,12 @@ function buildSchema(values) {
 
     /* ── Odour ── */
     { type: "subheading", label: "Odour" },
-    { name: "odour", label: "Odour", type: "radio",
-      options: opt(["None","Present before cleansing","Present after cleansing"]) },
-    ...(values.odour === "Present after cleansing" ? [{ type: "alert-box", severity: "warning",
+    { name: "odour_before_cleansing", label: "Present before cleansing", type: "radio",
+      options: opt(["Yes","No"]) },
+    { name: "odour_after_cleansing", label: "Present after cleansing", type: "radio",
+      options: opt(["Yes","No"]) },
+    { name: "odour_nil", label: "NIL", type: "radio", options: opt(["Yes","No"]) },
+    ...(values.odour_after_cleansing === "Yes" ? [{ type: "alert-box", severity: "warning",
       message: "⚠️ Persistent odour after cleansing — infection indicator. Review wound status." }] : []),
 
     /* ── Wound Edge ── */
@@ -196,16 +199,16 @@ function buildSchema(values) {
 
     /* ── Treatment Plan ── */
     { type: "subheading", label: "Treatment Plan" },
-    { name: "dressing_type", label: "Dressing Type", type: "input",
-      placeholder: "e.g. Foam, Hydrocolloid, Alginate..." },
-    { name: "dressing_frequency", label: "Frequency", type: "radio",
-      options: opt(["Daily","Every 2 days","Every 3 days","Weekly","As needed"]) },
-    { name: "debridement_needed", label: "Debridement Needed", type: "radio", options: opt(["Yes","No"]) },
-    { name: "antibiotics", label: "Antibiotics", type: "radio",
-      options: opt(["None","Topical","Systemic","Both"]) },
-    { name: "no_improvement_14days", label: "Wound not improving for 14+ days?", type: "radio", options: opt(["Yes","No"]) },
-    ...(noImprovement ? [{ type: "alert-box", severity: "warning",
-      message: "⚠️ No improvement in 14 days — consider changing dressing type or escalating care." }] : []),
+    // { name: "dressing_type", label: "Dressing Type", type: "input",
+    //   placeholder: "e.g. Foam, Hydrocolloid, Alginate..." },
+    // { name: "dressing_frequency", label: "Frequency", type: "radio",
+    //   options: opt(["Daily","Every 2 days","Every 3 days","Weekly","As needed"]) },
+    // { name: "debridement_needed", label: "Debridement Needed", type: "radio", options: opt(["Yes","No"]) },
+    // { name: "antibiotics", label: "Antibiotics", type: "radio",
+    //   options: opt(["None","Topical","Systemic","Both"]) },
+    // { name: "no_improvement_14days", label: "Wound not improving for 14+ days?", type: "radio", options: opt(["Yes","No"]) },
+    // ...(noImprovement ? [{ type: "alert-box", severity: "warning",
+    //   message: "⚠️ No improvement in 14 days — consider changing dressing type or escalating care." }] : []),
     { name: "treatment_notes", label: "Treatment Notes", type: "textarea",
       placeholder: "Additional treatment details..." },
 
@@ -252,7 +255,6 @@ export default function WoundAssessment({ patient, onBack }) {
       onChange={onChange}
       onAction={handleAction}
       patient={patient}
-      layout="nested"
     />
   );
 }

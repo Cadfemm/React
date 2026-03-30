@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AnatomyImageOverlayInputs from "./AnatomyImageSelector";
 import AudiogramGraph from "../Audiology/components/AudioGramGraph";
+import WoundLocationMarker from "../Nursing/components/WoundLocationMarker";
 
 function DrawCanvasField({ field, value, onChange }) {
   const canvasRef = useRef(null);
@@ -175,7 +176,7 @@ function evaluateShowIf(showIf, values) {
  * @param {Array<string>} optionalSectionLabels - Subheading labels to make optional
  * @returns {Array} Transformed fields
  */
-export function xwithOptionalSections(fields, optionalSectionLabels = []) {
+export function withOptionalSections(fields, optionalSectionLabels = []) {
   if (!fields || !Array.isArray(fields) || optionalSectionLabels.length === 0) {
     return fields;
   }
@@ -374,7 +375,7 @@ export default function CommonFormBuilder({
                       return (
                         <div key={`scale-${idx}`} style={headerStyle}>
                           <div style={styles.matrixLabel}>
-                            {nextMatrix.matrixHeaderLabel ?? "Scale"}
+                            {nextMatrix.matrixHeaderLabel || "Scale"}
                             {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
                           </div>
                           <div style={styles.matrixOptions}>
@@ -421,7 +422,7 @@ export default function CommonFormBuilder({
                                 return (
                                   <div style={headerStyle}>
                                     <div style={styles.matrixLabel}>
-                                      {field.matrixHeaderLabel ?? "Scale"}
+                                      {field.matrixHeaderLabel || "Scale"}
                                       {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
                                     </div>
                                     <div style={styles.matrixOptions}>
@@ -499,7 +500,7 @@ export default function CommonFormBuilder({
                                   </div>
 
 
-                                ) : field.type === "subheading" || field.type === "heading" || field.type === "optional-section-toggle" ? (
+                                ) : field.type === "subheading" || field.type === "optional-section-toggle" ? (
 
                                   renderField(field, value, values, onChange, onAction, assessmentRegistry, formReadOnly, {
                                     enabled: schema?.enableLanguageToggle === true,
@@ -527,7 +528,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "heading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
+                                      {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -1370,7 +1371,7 @@ function renderField(
           {/* Header row */}
           <div style={{ ...styles.gridHeaderRow, gridTemplateColumns: template }}>
             <div style={styles.gridHeaderCell}>Time</div>
-            <div style={styles.gridHeaderCell}>Regime</div>
+            <div style={styles.gridHeaderCell}>Scoops</div>
             <div style={styles.gridHeaderCell}>Water</div>
             <div style={styles.gridHeaderCell}>Flushing</div>
             <div style={styles.gridHeaderCell}></div>
@@ -1882,73 +1883,6 @@ case "grid-table-advanced": {
           : "";
       const children = field?.children || [];
 
-      // Section-level rendering injects column headers before radio-matrix rows; nested
-      // accordion children only hit renderField → RadioMatrixRow (no headers). Mirror
-      // shouldShowScaleBeforeMatrix / matrixHeader behavior here for MMT, MAS, ROM, etc.
-      const optionsEqual = (a, b) => {
-        if (!a || !b || a.length !== b.length) return false;
-        return a.every(
-          (o, i) =>
-            (o?.value ?? o) === (b[i]?.value ?? b[i]) && (o?.label ?? o) === (b[i]?.label ?? b[i])
-        );
-      };
-      const getPrevVisibleMatrixField = (idx) => {
-        for (let i = idx - 1; i >= 0; i--) {
-          const ch = children[i];
-          if (ch?.showIf && !evaluateShowIf(ch.showIf, values)) continue;
-          if (ch?.type === "radio-matrix") return ch;
-        }
-        return null;
-      };
-      const shouldShowMatrixHeaderBeforeChild = (c, idx) => {
-        if (c?.type !== "radio-matrix" || !c.options?.length) return false;
-        const prevMatrix = getPrevVisibleMatrixField(idx);
-        return !prevMatrix || !optionsEqual(prevMatrix.options, c.options);
-      };
-      const firstMatrixField = children.find(
-        (f) =>
-          f?.type === "radio-matrix" &&
-          (!f?.showIf || evaluateShowIf(f.showIf, values))
-      );
-      const matrixColumnWidth = firstMatrixField?.options?.length
-        ? Math.max(
-            36,
-            Math.max(...firstMatrixField.options.map((o) => String(o?.label || "").length)) * 10 + 16
-          )
-        : 110;
-      const accordionChildLanguageConfig = {
-        ...languageConfig,
-        matrixColumnWidth
-      };
-
-      const renderRadioMatrixColumnHeader = (matrixField) => {
-        const questionColumnWidth = 200;
-        const optionsCount = matrixField.options?.length || 4;
-        const headerStyle = {
-          ...styles.matrixHeader,
-          marginBottom: 12,
-          gridTemplateColumns: `${questionColumnWidth}px repeat(${optionsCount}, 1fr)`
-        };
-        const lang = languageConfig?.enabled ? languageConfig.lang : "en";
-        return (
-          <div style={headerStyle}>
-            <div style={styles.matrixLabel}>
-              {matrixField.matrixHeaderLabel ?? "Scale"}
-              {matrixField.info && languageConfig?.showScores !== false && (
-                <InfoTooltip info={matrixField.info} />
-              )}
-            </div>
-            <div style={styles.matrixOptions}>
-              {matrixField.options.map((opt) => (
-                <div key={opt.value} style={styles.matrixHeaderCell}>
-                  {t(opt.label, lang)}
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      };
-
       return (
         <details
           open={field?.defaultOpen === true}
@@ -1980,7 +1914,6 @@ case "grid-table-advanced": {
                   key={c?.name || c?.label || idx}
                   style={{ marginBottom: c?.compact ? 4 : 10 }}
                 >
-                  {shouldShowMatrixHeaderBeforeChild(c, idx) && renderRadioMatrixColumnHeader(c)}
                   {renderField(
                     c,
                     childValue,
@@ -1989,7 +1922,7 @@ case "grid-table-advanced": {
                     onAction,
                     assessmentRegistry,
                     formReadOnly,
-                    accordionChildLanguageConfig
+                    languageConfig
                   )}
                 </div>
               );
@@ -1998,84 +1931,57 @@ case "grid-table-advanced": {
         </details>
       );
     }
-    case "row":
+    case "row": {
       // If this row is only buttons, pack them tightly like a toolbar (no big gaps)
-      // Otherwise, keep a responsive grid for typical form fields.
+      // Otherwise, keep a fixed 2-column grid with top-aligned cells.
       const rowAllButtons = (field.fields || []).every(f => f?.type === "button");
       const rowGap = field.compact ? 8 : 16;
+      const visibleChildren = (field.fields || []).filter(f => {
+        if (!f?.showIf) return true;
+        const depVal = values[f.showIf.field];
+        if ("equals" in f.showIf && depVal !== f.showIf.equals) return false;
+        if ("exists" in f.showIf && !depVal) return false;
+        if ("includes" in f.showIf && (!Array.isArray(depVal) || !depVal.includes(f.showIf.includes))) return false;
+        if ("oneOf" in f.showIf) {
+          const allowed = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
+          if (!allowed.includes(depVal)) return false;
+        }
+        return true;
+      });
+      const colCount = rowAllButtons ? undefined : (field.cols || Math.min(visibleChildren.length, 2));
       return (
         <div
-          style={{
-            ...(rowAllButtons
-              ? {
-                display: "flex",
-                flexWrap: "wrap",
-                gap: rowGap,
-                alignItems: "center",
-                justifyContent: "flex-start"
-              }
-              : {
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: rowGap
-              })
-          }}
+          style={rowAllButtons
+            ? { display: "flex", flexWrap: "wrap", gap: rowGap, alignItems: "center", justifyContent: "flex-start" }
+            : { display: "grid", gridTemplateColumns: `repeat(${colCount}, 1fr)`, gap: rowGap, alignItems: "start" }
+          }
         >
-          {field.fields.map(f => {
-
-
+          {(field.fields || []).map((f, fi) => {
             if (f.showIf) {
               const depVal = values[f.showIf.field];
-              if ("equals" in f.showIf && depVal !== f.showIf.equals) {
-                return null;
-              }
-              if ("exists" in f.showIf && !depVal) {
-                return null;
-              }
-              if ("includes" in f.showIf) {
-                if (!Array.isArray(depVal) || !depVal.includes(f.showIf.includes)) {
-                  return null;
-                }
-              }
+              if ("equals" in f.showIf && depVal !== f.showIf.equals) return null;
+              if ("exists" in f.showIf && !depVal) return null;
+              if ("includes" in f.showIf && (!Array.isArray(depVal) || !depVal.includes(f.showIf.includes))) return null;
               if ("oneOf" in f.showIf) {
-                const allowedValues = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
-                if (!allowedValues.includes(depVal)) return null;
+                const allowed = Array.isArray(f.showIf.oneOf) ? f.showIf.oneOf : [f.showIf.oneOf];
+                if (!allowed.includes(depVal)) return null;
               }
-              // Note: oneOf check appears twice (lines 1134-1137 and 1139-1142) - likely a duplicate
             }
-
             const v = values[f.name];
             return (
-              <div key={f.name} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
-                {f.label && !["button", "checkbox-group", "score-box", "heading", "subheading", "optional-section-toggle"].includes(f.type) && (
-                  <label
-                    style={{
-                      display: "block",
-                      fontWeight: 600,
-                      marginBottom: 6,
-                      color: "#0f172a"
-                    }}
-                  >
+              <div key={f.name || fi} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
+                {f.label && !["button", "checkbox-group", "score-box", "subheading"].includes(f.type) && (
+                  <label style={{ display: "block", fontWeight: 600, marginBottom: 6, color: "#0f172a" }}>
                     {languageConfig?.enabled ? t(f.label, languageConfig.lang) : f.label}
                   </label>
                 )}
-
-                {/* ✅ Pass correct arguments */}
-                {renderField(
-                  f,
-                  v,
-                  values,
-                  onChange,
-                  onAction,
-                  assessmentRegistry,
-                  formReadOnly,
-                  languageConfig
-                )}
+                {renderField(f, v, values, onChange, onAction, assessmentRegistry, formReadOnly, languageConfig)}
               </div>
             );
           })}
         </div>
       );
+    }
 
     case "multi-notes":
       const selected = values[field.source] || [];
@@ -2716,13 +2622,6 @@ case "grid-table-advanced": {
     </div>
   );
 
-    case "heading":
-      return (
-        <div style={styles.heading}>
-          {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
-        </div>
-      );
-
     case "optional-section-toggle":
       return (
         <div style={styles.optionalSectionToggle}>
@@ -3071,9 +2970,6 @@ case "grid-table-advanced": {
 
           <div style={{ overflowX: "auto" }}>
             {rows.map(r => {
-              if (r.showIf && !evaluateShowIf(r.showIf, values)) {
-                return null;
-              }
               const rowCols = r.columns || flatCols;
 
               return (
@@ -3315,10 +3211,826 @@ case "grid-table-advanced": {
           </div>
         )
     }
+    case "clock-marker":
+      return (
+        <ClockMarker
+          field={field}
+          values={values}
+          onChange={onChange}
+          readOnly={readOnly}
+        />
+      );
+
+    // case "wound-assessment-inline":
+    //   return <WoundAssessmentInline value={value} onChange={v => onChange(field.name, v)} />;
+
+    case "wound-measurement-clock":
+      return (
+        <WoundMeasurementClock
+          field={field}
+          values={values}
+          onChange={onChange}
+          readOnly={readOnly}
+        />
+      );
+
+    case "wound-location-marker":
+      return (
+        <WoundLocationMarker
+          value={value || {}}
+          onChange={(v) => onChange(field.name, v)}
+          readOnly={readOnly}
+          views={field.views}
+        />
+      );
+
+    case "alert-box": {
+      const severity = field.severity || "info"; // "info" | "warning" | "danger"
+      const colors = {
+        info:    { bg: "#eff6ff", border: "#3b82f6", text: "#1e40af", icon: "ℹ️" },
+        warning: { bg: "#fffbeb", border: "#f59e0b", text: "#92400e", icon: "⚠️" },
+        danger:  { bg: "#fef2f2", border: "#ef4444", text: "#991b1b", icon: "🔴" }
+      };
+      const c = colors[severity] || colors.info;
+      return (
+        <div style={{
+          background: c.bg, border: `1px solid ${c.border}`, borderLeft: `4px solid ${c.border}`,
+          borderRadius: 6, padding: "10px 14px", color: c.text, fontSize: 13, fontWeight: 500,
+          display: "flex", alignItems: "flex-start", gap: 8
+        }}>
+          <span>{c.icon}</span>
+          <span>{field.message}</span>
+        </div>
+      );
+    }
+    case "wound-tracking-grid":
+      return <WoundTrackingGrid value={value || []} onChange={v => onChange(field.name, v)} readOnly={readOnly} />;
+
     default:
       return null;
   }
 }
+
+/* ── Inline Wound Assessment embedded inside Admission Nursing ── */
+function WoundAssessmentInline({ value, onChange }) {
+  const [collapsed, setCollapsed] = React.useState(false);
+  const v = (value && typeof value === "object") ? value : {};
+  const set = (k, val) => onChange({ ...v, [k]: val });
+
+  return (
+    <div style={{ border: "2px solid #2563eb", borderRadius: 10, marginTop: 8, overflow: "hidden" }}>
+      {/* Header bar */}
+      <div
+        onClick={() => setCollapsed(c => !c)}
+        style={{
+          background: "#2563eb", color: "#fff", padding: "10px 16px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          cursor: "pointer", userSelect: "none"
+        }}
+      >
+        <span style={{ fontWeight: 700, fontSize: 14 }}>📋 Wound Assessment (WATFS)</span>
+        <span style={{ fontSize: 13 }}>{collapsed ? "▼ Expand" : "▲ Collapse"}</span>
+      </div>
+
+      {!collapsed && (
+        <div style={{ padding: 16, background: "#f8fafc" }}>
+          <WoundAssessmentForm values={v} onChange={set} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Minimal self-contained wound form reusing the same table layout */
+function WoundAssessmentForm({ values, onChange }) {
+  // Dynamically import the standalone WoundAssessment component
+  // We render it by directly using the same table-based UI
+  const [WA, setWA] = React.useState(null);
+
+  React.useEffect(() => {
+    import("../Nursing/pages/WoundAssessment")
+      .then(m => setWA(() => m.default))
+      .catch(() => setWA(null));
+  }, []);
+
+  if (!WA) return <div style={{ color: "#94a3b8", fontSize: 13, padding: 8 }}>Loading wound assessment...</div>;
+
+  return <WA patient={null} embeddedValues={values} onEmbeddedChange={onChange} />;
+}
+
+function WoundMeasurementClock({ field, values, onChange, readOnly }) {
+  const CX = 150, CY = 150, R = 110;
+
+  // Derived values
+  const L = parseFloat(values.wound_length) || 0;
+  const W = parseFloat(values.wound_width)  || 0;
+  const D = parseFloat(values.wound_depth)  || 0;
+  const area = L && W ? (L * W).toFixed(2) : null;
+  const depthEnabled = D > 0;
+
+  const markers = field.markers || [];
+  const [activeKey, setActiveKey] = React.useState(markers[0]?.key || null);
+
+  const hourPos = React.useMemo(() => Array.from({ length: 12 }, (_, i) => {
+    const hour = i === 0 ? 12 : i;
+    const angle = (i * 30 - 90) * (Math.PI / 180);
+    const rLabel = R - 22;
+    return {
+      hour,
+      lx: CX + rLabel * Math.cos(angle),
+      ly: CY + rLabel * Math.sin(angle),
+      hx: CX + (R - 6) * Math.cos(angle),
+      hy: CY + (R - 6) * Math.sin(angle),
+    };
+  }), []);
+
+  const getList = (key) => {
+    const v = values[key];
+    if (!v) return [];
+    if (Array.isArray(v)) return v.map(Number);
+    return [Number(v)].filter(Boolean);
+  };
+
+  const toggleHour = (hour) => {
+    if (readOnly || !activeKey) return;
+    const cur = getList(activeKey);
+    const next = cur.includes(hour) ? cur.filter(h => h !== hour) : [...cur, hour];
+    onChange(activeKey, next.length ? next : null);
+  };
+
+  const removeHour = (key, hour) => {
+    const next = getList(key).filter(h => h !== hour);
+    onChange(key, next.length ? next : null);
+  };
+
+  const hourDotMap = {};
+  markers.forEach(m => getList(m.key).forEach(h => {
+    if (!hourDotMap[h]) hourDotMap[h] = [];
+    hourDotMap[h].push(m);
+  }));
+
+  const activeMarker = markers.find(m => m.key === activeKey);
+  const sinusMarkers     = markers.filter(m => m.key.startsWith("sinus"));
+  const undermineMarkers = markers.filter(m => m.key.startsWith("undermining"));
+
+  const inp = (name, placeholder) => (
+    <input
+      type="number" min="0" step="0.1"
+      value={values[name] || ""}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      onChange={e => !readOnly && onChange(name, e.target.value)}
+      style={{
+        width: 72, padding: "5px 8px", border: "1.5px solid #cbd5e1",
+        borderRadius: 6, fontSize: 13, textAlign: "center",
+        background: readOnly ? "#f8fafc" : "#fff", outline: "none"
+      }}
+    />
+  );
+
+  return (
+    <div style={{
+      background: "#f8fafc", border: "1px solid #e2e8f0",
+      borderRadius: 14, padding: 20, display: "flex",
+      gap: 28, flexWrap: "wrap", alignItems: "flex-start"
+    }}>
+
+      {/* ── LEFT: Clock SVG ── */}
+      <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#334155", marginBottom: 8, letterSpacing: 0.3 }}>
+          Wound Measurements in cm
+        </div>
+        <svg viewBox="0 0 300 330" width={320} height={330}
+          style={{ display: "block", cursor: readOnly ? "default" : "crosshair" }}>
+
+          <circle cx={CX} cy={CY} r={R + 4} fill="#e2e8f0" />
+          <circle cx={CX} cy={CY} r={R} fill="white" stroke="#94a3b8" strokeWidth="2.5" />
+
+          {/* LENGTH axis 12→6 */}
+          <line x1={CX} y1={CY - R + 12} x2={CX} y2={CY + R - 12}
+            stroke="#2563eb" strokeWidth="2" strokeDasharray="7 4" opacity="0.55" />
+          <text x={CX - 8} y={CY - R + 26} textAnchor="end" fontSize={11} fill="#2563eb" fontWeight="800" fontFamily="Arial">L</text>
+          <text x={CX - 8} y={CY + R - 14} textAnchor="end" fontSize={11} fill="#2563eb" fontWeight="800" fontFamily="Arial">L</text>
+
+          {/* WIDTH axis 3→9 */}
+          <line x1={CX - R + 12} y1={CY} x2={CX + R - 12} y2={CY}
+            stroke="#16a34a" strokeWidth="2" strokeDasharray="7 4" opacity="0.55" />
+          <text x={CX - R + 20} y={CY - 7} textAnchor="middle" fontSize={11} fill="#16a34a" fontWeight="800" fontFamily="Arial">W</text>
+          <text x={CX + R - 20} y={CY - 7} textAnchor="middle" fontSize={11} fill="#16a34a" fontWeight="800" fontFamily="Arial">W</text>
+
+          {/* Ticks */}
+          {hourPos.map(({ hour }) => {
+            const angle = ((hour === 12 ? 0 : hour) * 30 - 90) * (Math.PI / 180);
+            const isMajor = hour % 3 === 0;
+            const r1 = R, r2 = isMajor ? R - 14 : R - 7;
+            return (
+              <line key={hour}
+                x1={CX + r1 * Math.cos(angle)} y1={CY + r1 * Math.sin(angle)}
+                x2={CX + r2 * Math.cos(angle)} y2={CY + r2 * Math.sin(angle)}
+                stroke={isMajor ? "#475569" : "#94a3b8"} strokeWidth={isMajor ? 2.5 : 1.5} />
+            );
+          })}
+
+          {/* Hour numbers */}
+          {hourPos.map(({ hour, lx, ly }) => (
+            <text key={hour} x={lx} y={ly + 5} textAnchor="middle"
+              fontSize={hour % 3 === 0 ? 16 : 12}
+              fontWeight={hour % 3 === 0 ? "700" : "400"}
+              fontFamily="Arial" fill={hour % 3 === 0 ? "#1e293b" : "#64748b"}>
+              {hour}
+            </text>
+          ))}
+
+          <circle cx={CX} cy={CY} r={4} fill="#94a3b8" />
+
+          <text x={CX} y={20} textAnchor="middle" fontSize={13} fontFamily="Arial" fill="#64748b" fontStyle="italic">Head</text>
+          <text x={CX} y={320} textAnchor="middle" fontSize={13} fontFamily="Arial" fill="#64748b" fontStyle="italic">Toe</text>
+
+          {/* Marker dots */}
+          {hourPos.map(({ hour, hx, hy }) => {
+            const dots = hourDotMap[hour] || [];
+            const isActiveSel = getList(activeKey).includes(hour);
+            return (
+              <g key={hour} onClick={() => toggleHour(hour)} style={{ cursor: readOnly ? "default" : "pointer" }}>
+                <circle cx={hx} cy={hy} r={16} fill="transparent" />
+                {!readOnly && isActiveSel && (
+                  <circle cx={hx} cy={hy} r={14} fill="none"
+                    stroke={activeMarker?.color || "#3b82f6"} strokeWidth={2}
+                    strokeDasharray="4 2" opacity={0.7} />
+                )}
+                {dots.map((m, di) => (
+                  <circle key={m.key}
+                    cx={hx + (di - (dots.length - 1) / 2) * 9}
+                    cy={hy} r={8}
+                    fill={m.color} stroke="white" strokeWidth={2} opacity={0.93} />
+                ))}
+                {dots.map((m, di) => (
+                  <text key={m.key + "t"}
+                    x={hx + (di - (dots.length - 1) / 2) * 9} y={hy + 4}
+                    textAnchor="middle" fontSize={7} fontWeight="700"
+                    fontFamily="Arial" fill="white">
+                    {m.label.replace(/[^A-Z0-9]/gi, "").slice(0, 2).toUpperCase()}
+                  </text>
+                ))}
+              </g>
+            );
+          })}
+        </svg>
+
+        <div style={{ display: "flex", gap: 16, marginTop: 8, fontSize: 11, color: "#64748b" }}>
+          <span><span style={{ color: "#2563eb", fontWeight: 700 }}>─ ─ L</span> = 12→6 (Head→Toe)</span>
+          <span><span style={{ color: "#16a34a", fontWeight: 700 }}>─ ─ W</span> = 3→9</span>
+        </div>
+        <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 4 }}>
+          Click clock to mark sinus/undermining positions
+        </div>
+      </div>
+
+      {/* ── RIGHT: Inputs + Markers ── */}
+      <div style={{ flex: 1, minWidth: 260, display: "flex", flexDirection: "column", gap: 16 }}>
+
+        <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px 16px" }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#334155", marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Core Dimensions
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+            {[
+              { name: "wound_length", label: "Length", hint: "12→6", color: "#2563eb" },
+              { name: "wound_width",  label: "Width",  hint: "3→9",  color: "#16a34a" },
+              { name: "wound_depth",  label: "Depth",  hint: "deepest", color: "#7c3aed" }
+            ].map(f => (
+              <div key={f.name} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <label style={{ fontSize: 11, fontWeight: 600, color: f.color }}>
+                  {f.label} <span style={{ fontWeight: 400, color: "#94a3b8" }}>({f.hint})</span>
+                </label>
+                {inp(f.name, "cm")}
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 10, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 7, padding: "6px 12px", fontSize: 12, color: "#1d4ed8", fontWeight: 600 }}>
+              Area = {area ? `${area} cm²` : "L × W"}
+            </div>
+            {area && D > 0 && (
+              <div style={{ background: "#f5f3ff", border: "1px solid #ddd6fe", borderRadius: 7, padding: "6px 12px", fontSize: 12, color: "#6d28d9", fontWeight: 600 }}>
+                Vol ≈ {(L * W * D * 0.327).toFixed(2)} cm³
+              </div>
+            )}
+          </div>
+        </div>
+
+        {[
+          { title: "B. Sinus Tracts", list: sinusMarkers },
+          { title: "C. Undermining",  list: undermineMarkers }
+        ].map(({ title, list }) => (
+          <div key={title} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px 16px" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", marginBottom: 12, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              {title} {!depthEnabled && <span style={{ fontSize: 11, color: "#64748b", fontWeight: 500, textTransform: "none" }}>(enter Depth to enable)</span>}
+            </div>
+            {list.map((m, i) => {
+              const depthKey = m.key.replace("_clock", "_depth");
+              const positions = getList(m.key);
+              return (
+                <div key={m.key} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: i < list.length - 1 ? 10 : 0 }}>
+                  <div style={{ width: 12, height: 12, borderRadius: "50%", background: m.color, flexShrink: 0, boxShadow: `0 0 0 2px ${m.color}44` }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", minWidth: 90 }}>{m.label}</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontSize: 11, color: "#475569", fontWeight: 600 }}>Depth (cm)</span>
+                    {inp(depthKey, "cm")}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontSize: 11, color: "#475569", fontWeight: 600 }}>Clock positions</span>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, minHeight: 28, alignItems: "center" }}>
+                      {positions.length === 0
+                        ? <span style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic", border: "1px dashed #cbd5e1", borderRadius: 6, padding: "2px 8px" }}>click clock to mark</span>
+                        : positions.sort((a, b) => a - b).map(h => (
+                          <span key={h} style={{ background: m.color, color: "#fff", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4, boxShadow: `0 1px 4px ${m.color}66` }}>
+                            {h} o'clock
+                            {!readOnly && (
+                              <button type="button" onClick={() => removeHour(m.key, h)}
+                                style={{ background: "rgba(255,255,255,0.35)", border: "none", borderRadius: "50%", width: 14, height: 14, cursor: "pointer", color: "#fff", fontSize: 9, padding: 0, lineHeight: 1 }}>✕</button>
+                            )}
+                          </span>
+                        ))
+                      }
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+
+        <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "12px 16px" }}>
+          <div style={{ fontSize: 11, color: "#64748b", marginBottom: 8 }}>Active marker for clock clicks:</div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {markers.map(m => {
+              const isActive = activeKey === m.key;
+              return (
+                <button key={m.key} type="button" onClick={() => !readOnly && setActiveKey(m.key)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 20,
+                    cursor: readOnly ? "default" : "pointer",
+                    border: `2px solid ${isActive ? m.color : "#e2e8f0"}`,
+                    background: isActive ? `${m.color}18` : "#fafafa",
+                    fontSize: 12, fontWeight: isActive ? 700 : 500, color: "#334155",
+                    transition: "all 0.15s", boxShadow: isActive ? `0 0 0 3px ${m.color}22` : "none"
+                  }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: m.color }} />
+                  {m.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function ClockMarker({ field, values, onChange, readOnly }) {
+  const CX = 100, CY = 108, R_FACE = 78, R_LABEL = 60, R_HIT = 72;
+
+  // Precompute (x,y) for each hour on the label ring
+  const hourPositions = React.useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => {
+      const hour = i === 0 ? 12 : i;
+      const angle = (i * 30 - 90) * (Math.PI / 180);
+      return {
+        hour,
+        lx: CX + R_LABEL * Math.cos(angle),
+        ly: CY + R_LABEL * Math.sin(angle),
+        hx: CX + R_HIT * Math.cos(angle),
+        hy: CY + R_HIT * Math.sin(angle),
+      };
+    });
+  }, []);
+
+  const markers = field.markers || [];
+  const [activeKey, setActiveKey] = React.useState(markers[0]?.key || null);
+
+  // value stored as { sinus1_clock: [3,4], undermining1_clock: [9], ... }
+  const getList = (key) => {
+    const v = values[key];
+    if (!v) return [];
+    if (Array.isArray(v)) return v.map(Number);
+    return [Number(v)].filter(Boolean);
+  };
+
+  const toggleHour = (hour) => {
+    if (readOnly || !activeKey) return;
+    const current = getList(activeKey);
+    const next = current.includes(hour)
+      ? current.filter(h => h !== hour)
+      : [...current, hour];
+    onChange(activeKey, next.length ? next : null);
+  };
+
+  const removeHour = (key, hour) => {
+    const next = getList(key).filter(h => h !== hour);
+    onChange(key, next.length ? next : null);
+  };
+
+  // Build a map: hour -> list of {color, label, key} for rendering dots
+  const hourDotMap = {};
+  markers.forEach(m => {
+    getList(m.key).forEach(h => {
+      if (!hourDotMap[h]) hourDotMap[h] = [];
+      hourDotMap[h].push(m);
+    });
+  });
+
+  const activeMarker = markers.find(m => m.key === activeKey);
+
+  return (
+    <div style={{
+      display: "flex", gap: 28, alignItems: "flex-start", flexWrap: "wrap",
+      background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 12,
+      padding: 20
+    }}>
+      {/* ── Clock SVG ── */}
+      <div style={{ flexShrink: 0 }}>
+        <div style={{ fontSize: 11, color: "#64748b", textAlign: "center", marginBottom: 4, fontStyle: "italic" }}>
+          Click positions to mark
+        </div>
+        <svg viewBox="0 0 200 230" width={210} height={230}
+          style={{ display: "block", cursor: readOnly ? "default" : "crosshair" }}>
+
+          {/* Shadow */}
+          <circle cx={CX} cy={CY} r={R_FACE + 2} fill="#e2e8f0" />
+          {/* Face */}
+          <circle cx={CX} cy={CY} r={R_FACE} fill="white" stroke="#94a3b8" strokeWidth="2" />
+
+          {/* Tick marks */}
+          {hourPositions.map(({ hour, lx, ly }) => {
+            const angle = ((hour === 12 ? 0 : hour) * 30 - 90) * (Math.PI / 180);
+            const isMajor = hour % 3 === 0;
+            const r1 = R_FACE - 2, r2 = isMajor ? R_FACE - 10 : R_FACE - 6;
+            return (
+              <line key={hour}
+                x1={CX + r1 * Math.cos(angle)} y1={CY + r1 * Math.sin(angle)}
+                x2={CX + r2 * Math.cos(angle)} y2={CY + r2 * Math.sin(angle)}
+                stroke={isMajor ? "#475569" : "#94a3b8"} strokeWidth={isMajor ? 2 : 1} />
+            );
+          })}
+
+          {/* Hour numbers */}
+          {hourPositions.map(({ hour, lx, ly }) => (
+            <text key={hour} x={lx} y={ly + 4} textAnchor="middle"
+              fontSize={hour % 3 === 0 ? 13 : 10}
+              fontWeight={hour % 3 === 0 ? "700" : "400"}
+              fontFamily="Arial, sans-serif"
+              fill={hour % 3 === 0 ? "#1e293b" : "#475569"}>
+              {hour}
+            </text>
+          ))}
+
+          {/* Center dot */}
+          <circle cx={CX} cy={CY} r={3} fill="#94a3b8" />
+
+          {/* Head / Toe labels */}
+          <text x={CX} y={14} textAnchor="middle" fontSize={10} fontFamily="Arial" fill="#64748b" fontStyle="italic">Head</text>
+          <text x={CX} y={226} textAnchor="middle" fontSize={10} fontFamily="Arial" fill="#64748b" fontStyle="italic">Toe</text>
+
+          {/* Marker dots on clock */}
+          {hourPositions.map(({ hour, hx, hy }) => {
+            const dots = hourDotMap[hour] || [];
+            const isActiveSelected = getList(activeKey).includes(hour);
+            return (
+              <g key={hour} onClick={() => toggleHour(hour)}>
+                {/* Invisible hit area */}
+                <circle cx={hx} cy={hy} r={12} fill="transparent" />
+                {/* Hover ring for active marker */}
+                {!readOnly && isActiveSelected && (
+                  <circle cx={hx} cy={hy} r={11} fill="none"
+                    stroke={activeMarker?.color || "#3b82f6"} strokeWidth={1.5} strokeDasharray="3 2" opacity={0.6} />
+                )}
+                {/* Stacked colored dots */}
+                {dots.map((m, di) => (
+                  <circle key={m.key}
+                    cx={hx + (di - (dots.length - 1) / 2) * 6}
+                    cy={hy}
+                    r={6}
+                    fill={m.color}
+                    stroke="white" strokeWidth={1.5}
+                    opacity={0.92}
+                  />
+                ))}
+                {/* Dot initials */}
+                {dots.map((m, di) => (
+                  <text key={m.key + "_t"}
+                    x={hx + (di - (dots.length - 1) / 2) * 6}
+                    y={hy + 3.5}
+                    textAnchor="middle" fontSize={6} fontWeight="700"
+                    fontFamily="Arial" fill="white">
+                    {m.label.replace(/[^A-Z0-9]/g, "").slice(0, 2)}
+                  </text>
+                ))}
+              </g>
+            );
+          })}
+        </svg>
+        <div style={{ fontSize: 9, color: "#94a3b8", textAlign: "center", marginTop: 2, lineHeight: 1.5 }}>
+          12=Head · 6=Toe · 3=Pt. Right · 9=Pt. Left
+        </div>
+      </div>
+
+      {/* ── Right panel ── */}
+      <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "#334155", marginBottom: 2 }}>
+          Active marker — click clock to place:
+        </div>
+
+        {markers.map(m => {
+          const list = getList(m.key);
+          const isActive = activeKey === m.key;
+          return (
+            <div
+              key={m.key}
+              onClick={() => !readOnly && setActiveKey(m.key)}
+              style={{
+                borderRadius: 8,
+                border: `2px solid ${isActive ? m.color : "#e2e8f0"}`,
+                background: isActive ? `${m.color}12` : "#fff",
+                padding: "10px 12px",
+                cursor: readOnly ? "default" : "pointer",
+                transition: "border-color 0.15s, background 0.15s",
+                boxShadow: isActive ? `0 0 0 3px ${m.color}22` : "none"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: list.length ? 8 : 0 }}>
+                <div style={{
+                  width: 12, height: 12, borderRadius: "50%",
+                  background: m.color, flexShrink: 0,
+                  boxShadow: isActive ? `0 0 0 3px ${m.color}44` : "none"
+                }} />
+                <span style={{ fontSize: 13, fontWeight: isActive ? 700 : 500, color: "#1e293b" }}>
+                  {m.label}
+                </span>
+                {isActive && (
+                  <span style={{
+                    marginLeft: "auto", fontSize: 10, background: m.color,
+                    color: "#fff", borderRadius: 4, padding: "1px 7px", fontWeight: 600
+                  }}>Active</span>
+                )}
+              </div>
+
+              {/* Position chips */}
+              {list.length > 0 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {list.sort((a, b) => a - b).map(h => (
+                    <span key={h} style={{
+                      display: "inline-flex", alignItems: "center", gap: 4,
+                      background: m.color, color: "#fff",
+                      borderRadius: 20, padding: "2px 9px 2px 9px",
+                      fontSize: 11, fontWeight: 600
+                    }}>
+                      {h} o'clock
+                      {!readOnly && (
+                        <button type="button"
+                          onClick={e => { e.stopPropagation(); removeHour(m.key, h); }}
+                          style={{
+                            background: "rgba(255,255,255,0.3)", border: "none",
+                            borderRadius: "50%", width: 14, height: 14,
+                            cursor: "pointer", color: "#fff", fontSize: 9,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            padding: 0, lineHeight: 1
+                          }}>✕</button>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {list.length === 0 && (
+                <div style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>No positions marked</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function WoundTrackingGrid({ value, onChange, readOnly }) {
+  const data  = (value && typeof value === "object" && !Array.isArray(value)) ? value : {};
+  const month = data.month || "";
+  const days  = data.days  || {};
+
+  const daysInMonth = React.useMemo(() => {
+    if (!month) return 0;
+    const [y, m] = month.split("-").map(Number);
+    return new Date(y, m, 0).getDate();
+  }, [month]);
+
+  const dayNums = daysInMonth > 0 ? Array.from({ length: daysInMonth }, (_, i) => i + 1) : [];
+
+  const setMonth = (val) => onChange({ month: val, days: {} });
+
+  const updateDay = (d, key, val) => {
+    const prev = days[d] || {};
+    onChange({ ...data, days: { ...days, [d]: { ...prev, [key]: val } } });
+  };
+
+  const toggleCheck = (d, key) => updateDay(d, key, !(days[d]?.[key]));
+
+  const setRadio = (d, group, val) => {
+    const prev = days[d] || {};
+    const cleared = Object.fromEntries(Object.entries(prev).filter(([k]) => !k.startsWith(group + "__")));
+    onChange({ ...data, days: { ...days, [d]: { ...cleared, [`${group}__${val}`]: true } } });
+  };
+
+  const isRadioSet = (d, group, val) => !!(days[d]?.[`${group}__${val}`]);
+
+  const EXUDATE_AMOUNT_OPTS = ["None", "Scant/small", "Moderate", "Large/copious"];
+  const EXUDATE_TYPE_OPTS   = ["Serous", "Sanguineous", "Purulent", "Other:"];
+  const WOUND_EDGE_OPTS = [
+    { label: "Attached",          sub: 'flush w/ wound bed or "sloping edge"' },
+    { label: "Non-Attached",      sub: 'edge appears as a "cliff"' },
+    { label: "Demarcated",        sub: "edges clearly seen" },
+    { label: "Diffuse",           sub: "edges not clear" },
+    { label: "Rolled",            sub: "edge curled under" },
+    { label: "Epithelialization", sub: "" },
+  ];
+  const PERI_SKIN_OPTS = [
+    { label: "Intact",                         sub: "" },
+    { label: "Erythema (reddened) in cm",      sub: "" },
+    { label: "Indurated",                      sub: "firmness around wound in cm" },
+    { label: "Macerated (white, waterlogged)", sub: "" },
+    { label: "Excoriated/Denuded",             sub: "superficial loss of tissue" },
+    { label: "Callused",                       sub: "" },
+    { label: "Fragile",                        sub: "" },
+    { label: "Other:",                         sub: "" },
+  ];
+
+  const thCat  = { border: "1px solid #b2c8d8", padding: "6px 10px", fontSize: 11, fontWeight: 700, background: "#1a6b8a", color: "#fff", verticalAlign: "middle", textAlign: "left", minWidth: 130, maxWidth: 160, position: "sticky", left: 0, zIndex: 3 };
+  const thSub  = { border: "1px solid #b2c8d8", padding: "5px 10px", fontSize: 10, background: "#e8f4f8", color: "#0d3d52", verticalAlign: "middle", minWidth: 180, maxWidth: 220, fontWeight: 600, position: "sticky", left: 130, zIndex: 3 };
+  const thDay  = { border: "1px solid #b2c8d8", padding: "4px 2px", fontSize: 11, fontWeight: 700, background: "#2a8aad", color: "#fff", textAlign: "center", minWidth: 36, width: 36 };
+  const tdCat  = { border: "1px solid #b2c8d8", padding: "5px 10px", fontSize: 11, fontWeight: 700, background: "#d6eaf3", color: "#0d3d52", verticalAlign: "top", position: "sticky", left: 0, zIndex: 2 };
+  const tdSub  = { border: "1px solid #b2c8d8", padding: "4px 10px", fontSize: 10, background: "#f7fbfd", color: "#1e293b", verticalAlign: "middle", position: "sticky", left: 130, zIndex: 2 };
+  const tdCell = { border: "1px solid #b2c8d8", padding: "2px", textAlign: "center", background: "#fff", verticalAlign: "middle" };
+
+  const Chk = ({ d, field }) => (
+    <input type="checkbox" checked={!!(days[d]?.[field])} disabled={readOnly}
+      onChange={() => !readOnly && toggleCheck(d, field)}
+      style={{ width: 13, height: 13, cursor: readOnly ? "default" : "pointer", accentColor: "#2563eb" }} />
+  );
+
+  const Radio = ({ d, group, val }) => (
+    <input type="radio" checked={isRadioSet(d, group, val)} disabled={readOnly}
+      name={`${group}_day${d}`}
+      onChange={() => !readOnly && setRadio(d, group, val)}
+      style={{ width: 13, height: 13, cursor: readOnly ? "default" : "pointer", accentColor: "#2563eb" }} />
+  );
+
+  const PainCell = ({ d }) => {
+    const v = days[d]?.wound_pain || "";
+    const n = parseInt(v) || 0;
+    const color = n >= 7 ? "#ef4444" : n >= 4 ? "#f59e0b" : n > 0 ? "#22c55e" : "#94a3b8";
+    return (
+      <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 28 }}>
+        <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.1 }} viewBox="0 0 32 32" preserveAspectRatio="none">
+          <line x1="0" y1="32" x2="32" y2="0" stroke="#475569" strokeWidth="1.5" />
+          <line x1="0" y1="20" x2="20" y2="0" stroke="#475569" strokeWidth="1.5" />
+          <line x1="12" y1="32" x2="32" y2="12" stroke="#475569" strokeWidth="1.5" />
+        </svg>
+        <input type="number" min={0} max={10} value={v} disabled={readOnly}
+          onChange={e => !readOnly && updateDay(d, "wound_pain", e.target.value)}
+          style={{ width: 28, fontSize: 10, border: `1px solid ${color}`, borderRadius: 3,
+            textAlign: "center", padding: "1px", color, fontWeight: 700,
+            background: v ? `${color}12` : "#fff", position: "relative", zIndex: 1 }}
+          placeholder="/10" />
+      </div>
+    );
+  };
+
+  const monthLabel = month
+    ? new Date(month + "-01").toLocaleDateString("en-GB", { month: "long", year: "numeric" })
+    : "";
+
+  return (
+    <div style={{ marginTop: 4 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+        <label style={{ fontWeight: 700, fontSize: 13, color: "#1e293b" }}>Month / Year:</label>
+        <input type="month" value={month} disabled={readOnly}
+          onChange={e => !readOnly && setMonth(e.target.value)}
+          style={{ fontSize: 13, padding: "5px 10px", border: "1.5px solid #cbd5e1", borderRadius: 6 }} />
+        {month && (
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#475569" }}>
+            {monthLabel} — {daysInMonth} days
+          </span>
+        )}
+      </div>
+
+      {!month && (
+        <div style={{ color: "#94a3b8", fontSize: 13, fontStyle: "italic" }}>
+          Select a Month / Year above — daily columns will auto-generate.
+        </div>
+      )}
+
+      {month && daysInMonth > 0 && (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ borderCollapse: "collapse", fontSize: 11, tableLayout: "auto" }}>
+            <thead>
+              <tr>
+                <th style={{ ...thCat, background: "#0d3d52" }}>Wound<br />Location:</th>
+                <th style={{ ...thSub, background: "#1a6b8a", color: "#fff", fontWeight: 700 }}>Month/Year &nbsp;&nbsp;&nbsp; Day</th>
+                {dayNums.map(d => <th key={d} style={thDay}>{d}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ ...tdCat, background: "#e8f4f8", fontWeight: 600, fontSize: 10 }}></td>
+                <td style={{ ...tdSub, fontSize: 10, color: "#0d3d52", fontWeight: 600 }}>Time of dressing</td>
+                {dayNums.map(d => (
+                  <td key={d} style={{ ...tdCell, padding: "2px 1px", minWidth: 60 }}>
+                    <input
+                      type="time"
+                      value={days[d]?.time || ""}
+                      disabled={readOnly}
+                      onChange={e => !readOnly && updateDay(d, "time", e.target.value)}
+                      style={{
+                        width: 58, fontSize: 10, border: "1px solid #b2c8d8", borderRadius: 3,
+                        background: "#fff", color: "#0d3d52", padding: "2px 3px",
+                        cursor: readOnly ? "default" : "pointer"
+                      }}
+                    />
+                  </td>
+                ))}
+              </tr>
+              {EXUDATE_AMOUNT_OPTS.map((opt, oi) => (
+                <tr key={`ea-${oi}`}>
+                  {oi === 0 && <td rowSpan={EXUDATE_AMOUNT_OPTS.length} style={tdCat}>Exudate Amount<br /><span style={{ fontSize: 9, fontWeight: 400, color: "#475569" }}>[✓] one</span></td>}
+                  <td style={tdSub}>{opt}</td>
+                  {dayNums.map(d => <td key={d} style={tdCell}><Radio d={d} group="exudate_amount" val={opt} /></td>)}
+                </tr>
+              ))}
+              {EXUDATE_TYPE_OPTS.map((opt, oi) => (
+                <tr key={`et-${oi}`}>
+                  {oi === 0 && <td rowSpan={EXUDATE_TYPE_OPTS.length} style={tdCat}>Exudate Type<br /><span style={{ fontSize: 9, fontWeight: 400, color: "#475569" }}>[✓] all that apply</span></td>}
+                  <td style={tdSub}>{opt}</td>
+                  {dayNums.map(d => <td key={d} style={tdCell}><Chk d={d} field={`exudate_type__${opt}`} /></td>)}
+                </tr>
+              ))}
+              <tr>
+                <td style={tdCat}>Odour</td>
+                <td style={tdSub}>Odour present after cleansing<br /><span style={{ fontSize: 9 }}>Yes or No</span></td>
+                {dayNums.map(d => (
+                  <td key={d} style={tdCell}>
+                    <select value={days[d]?.odour || ""} disabled={readOnly}
+                      onChange={e => !readOnly && updateDay(d, "odour", e.target.value)}
+                      style={{ width: 30, fontSize: 9, border: "1px solid #ccc", borderRadius: 2, padding: "1px" }}>
+                      <option value="">—</option>
+                      <option value="Y">Y</option>
+                      <option value="N">N</option>
+                    </select>
+                  </td>
+                ))}
+              </tr>
+              {WOUND_EDGE_OPTS.map((opt, oi) => (
+                <tr key={`we-${oi}`}>
+                  {oi === 0 && <td rowSpan={WOUND_EDGE_OPTS.length} style={tdCat}>Wound Edge<br /><span style={{ fontSize: 9, fontWeight: 400, color: "#475569" }}>[✓] all that apply</span></td>}
+                  <td style={tdSub}><span style={{ fontWeight: 600 }}>{opt.label}</span>{opt.sub && <span style={{ fontSize: 9, color: "#64748b", display: "block" }}>{opt.sub}</span>}</td>
+                  {dayNums.map(d => <td key={d} style={tdCell}><Chk d={d} field={`wound_edge__${opt.label}`} /></td>)}
+                </tr>
+              ))}
+              {PERI_SKIN_OPTS.map((opt, oi) => (
+                <tr key={`ps-${oi}`}>
+                  {oi === 0 && <td rowSpan={PERI_SKIN_OPTS.length} style={tdCat}>Peri-wound Skin<br /><span style={{ fontSize: 9, fontWeight: 400, color: "#475569" }}>[✓] all that apply</span></td>}
+                  <td style={tdSub}><span style={{ fontWeight: 600 }}>{opt.label}</span>{opt.sub && <span style={{ fontSize: 9, color: "#64748b", display: "block" }}>{opt.sub}</span>}</td>
+                  {dayNums.map(d => <td key={d} style={tdCell}><Chk d={d} field={`peri_skin__${opt.label}`} /></td>)}
+                </tr>
+              ))}
+              <tr>
+                <td style={tdCat}>Wound Pain<br /><span style={{ fontSize: 9, fontWeight: 400, color: "#475569" }}>(10 = worst)</span></td>
+                <td style={{ ...tdSub, fontSize: 9, color: "#475569" }}>Scored from 10 point analogue Pain Scale. See Pain Assessment for details</td>
+                {dayNums.map(d => <td key={d} style={{ ...tdCell, padding: "2px 1px" }}><PainCell d={d} /></td>)}
+              </tr>
+              <tr>
+                <td style={tdCat}>Packing Count</td>
+                <td style={{ ...tdSub, fontSize: 9, color: "#475569" }}>Any depth 1cm or greater, Out count # packing pieces in</td>
+                {dayNums.map(d => (
+                  <td key={d} style={tdCell}>
+                    <input type="text" value={days[d]?.packing_count || ""} disabled={readOnly}
+                      onChange={e => !readOnly && updateDay(d, "packing_count", e.target.value)}
+                      style={{ width: 28, fontSize: 9, border: "1px solid #ccc", borderRadius: 2, padding: "1px", textAlign: "center" }} placeholder="—" />
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td style={tdCat}>Treatment</td>
+                <td style={{ ...tdSub, fontSize: 9, color: "#475569" }}>Treatment done as per Treatment Plan</td>
+                {dayNums.map(d => <td key={d} style={tdCell}><Chk d={d} field="treatment_done" /></td>)}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function FilePreview({ file, previewSize }) {
   if (!file) return null;
@@ -3348,57 +4060,80 @@ function FilePreview({ file, previewSize }) {
 
 function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
   const { min, max, step = 1, ranges = [], showValue } = field;
+  const span = max - min;
 
-  const steps = Math.floor((max - min) / step);
+  // support both {from,to} and {min,max} range shapes
+  const normalised = ranges.map(r => ({
+    ...r,
+    from: r.from ?? r.min ?? min,
+    to:   r.to   ?? r.max ?? max,
+  }));
 
-  const gradient =
-    ranges.length > 0
-      ? `linear-gradient(to right, ${ranges
-        .map(r => `${r.color} ${(r.min - min) / (max - min) * 100}% ${(r.max - min) / (max - min) * 100}%`)
-        .join(",")})`
-      : "linear-gradient(to right, #9ca3af, #9ca3af)";
+  const gradient = normalised.length > 0
+    ? `linear-gradient(to right, ${normalised.map(r =>
+        `${r.color} ${((r.from - min) / span) * 100}% ${((r.to - min) / span) * 100}%`
+      ).join(",")})`
+    : "linear-gradient(to right, #9ca3af, #9ca3af)";
 
-  const getRange = v =>
-    ranges.find(r => v >= r.min && v <= r.max);
+  const activeRange = normalised.find(r => Number(value) >= r.from && Number(value) <= r.to);
 
   return (
     <div style={{ marginTop: 10 }}>
-      {/* NUMBERS */}
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
-        {Array.from({ length: steps + 1 }, (_, i) => min + i * step).map(n => (
-          <span key={n}>{n}</span>
+      {/* Colour band labels */}
+      {normalised.length > 0 && (
+        <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+          {normalised.map(r => {
+            const isActive = activeRange?.label === r.label;
+            return (
+              <div key={r.label} style={{
+                display: "flex", alignItems: "center", gap: 5,
+                padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: isActive ? 700 : 500,
+                background: isActive ? r.color : `${r.color}22`,
+                color: isActive ? "#fff" : r.color,
+                border: `1.5px solid ${r.color}`,
+                transition: "all 0.15s"
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.color, display: "inline-block" }} />
+                {r.label}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Number ticks */}
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 2 }}>
+        {Array.from({ length: Math.floor(span / step) + 1 }, (_, i) => min + i * step).map(n => (
+          <span key={n} style={{ fontWeight: Number(value) === n ? 700 : 400, color: activeRange?.color || "#64748b" }}>{n}</span>
         ))}
       </div>
 
-      {/* SLIDER */}
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        disabled={readOnly}
-        onChange={e => onChange(field.name, Number(e.target.value))}
-        style={{
-          width: "100%",
-          marginTop: 6,
-          appearance: "none",
-          height: 8,
-          borderRadius: 999,
-          background: gradient,
-          outline: "none"
-        }}
-      />
+      {/* Slider track */}
+      <div style={{ position: "relative" }}>
+        <input
+          type="range" min={min} max={max} step={step}
+          value={value} disabled={readOnly}
+          onChange={e => onChange(field.name, Number(e.target.value))}
+          style={{
+            width: "100%", appearance: "none", WebkitAppearance: "none",
+            height: 10, borderRadius: 999, background: gradient,
+            outline: "none", cursor: readOnly ? "default" : "pointer"
+          }}
+        />
+      </div>
 
-      {/* VALUE */}
+      {/* Selected value badge */}
       {showValue && (
-        <div style={{ marginTop: 6, fontSize: 13 }}>
-          Selected: <b>{value}</b>
-          {getRange(value) && (
-            <> – <span style={{ color: getRange(value).color }}>
-              {getRange(value).label}
-            </span></>
-          )}
+        <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            padding: "4px 14px", borderRadius: 20, fontSize: 13, fontWeight: 700,
+            background: activeRange ? activeRange.color : "#e2e8f0",
+            color: activeRange ? "#fff" : "#334155"
+          }}>
+            Score: {value}
+            {activeRange && <span style={{ fontWeight: 400, fontSize: 11 }}>— {activeRange.label}</span>}
+          </div>
         </div>
       )}
     </div>
@@ -3788,13 +4523,6 @@ const styles = {
     color: "#0F172A",
     borderBottom: "2px solid #e5e7eb",
     paddingBottom: 8
-  },
-  heading: {
-    marginTop: 24,
-    marginBottom: 14,
-    fontWeight: 700,
-    fontSize: 17,
-    color: "#0F172A"
   },
 
   optionalSectionToggle: {

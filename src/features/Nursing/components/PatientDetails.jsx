@@ -33,7 +33,16 @@ export default function PatientDetails({ patient, department, onBack }) {
       </div>
 
       {/* ===== TAB CONTENT ===== */}
-      {activeMainTab === "admission" && (
+      {activeMainTab === "wound" && (
+        <WoundAssessment
+          patient={patient}
+          onSubmit={(values) => {
+            console.log("wound assessment submitted:", values);
+          }}
+          onBack={onBack}
+        />
+      )}
+         {activeMainTab === "admission" && (
         <NursingAssessment
           patient={patient}
           onSubmit={(values) => {
