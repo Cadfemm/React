@@ -25,6 +25,7 @@ export default function PatientCard({ patient }) {
                 <div><b>Occupation:</b> {patient.occupation || "-"}</div>
                 <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
                 <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+                <div><b>PP/OB:</b> {patient.pp_ob || "-"}</div>
 
                 {/* Display all items of patient if its not empty */}
                 {/* {Object.entries(patient).map(([key, item]) => {

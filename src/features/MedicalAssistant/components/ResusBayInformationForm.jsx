@@ -93,37 +93,31 @@ export default function ResusBayInformationForm({ patient, onBack }) {
                 name: "bp", 
                 label: { en: "BP", ms: "BP" }, 
                 type: "input", 
-                readOnly: true 
               },
               { 
                 name: "rr", 
                 label: { en: "RR", ms: "RR" }, 
                 type: "input", 
-                readOnly: true 
               },
               { 
                 name: "spo2", 
                 label: { en: "SPO2", ms: "SPO2" }, 
                 type: "input", 
-                readOnly: true 
               },
               { 
                 name: "hr", 
                 label: { en: "HR", ms: "HR" }, 
                 type: "input", 
-                readOnly: true 
               },
               { 
                 name: "temp", 
                 label: { en: "T", ms: "T" }, 
                 type: "input", 
-                readOnly: true 
               },
               { 
                 name: "ps", 
                 label: { en: "P/S", ms: "P/S" }, 
                 type: "input", 
-                readOnly: true 
               }
             ]
           },
@@ -233,6 +227,9 @@ export default function ResusBayInformationForm({ patient, onBack }) {
         onChange={()=>{}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={RESUS_BAY_SCHEMA}
@@ -258,3 +255,15 @@ export default function ResusBayInformationForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

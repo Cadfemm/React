@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 /* ================= STYLES (match PT/Neuro FormBuilder) ================= */
@@ -227,11 +228,10 @@ export default function XRayInformationForm({ patient, onBack }) {
   const patientAge = patient?.age ? parseInt(patient.age, 10) : NaN;
   const showLmpField = isFemale && !isNaN(patientAge) && patientAge > 8;
 
-  const PATIENT_INFO_SCHEMA = {
-    enableLanguageToggle: true,
-    title: { en: "Patient Information", ms: "Maklumat Pesakit" },
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
     sections: []
-  };
+  }
 
   /* Single flat section with subheadings - matches Physiotherapy (no nested cards) */
   const XRAY_SCHEMA = {
@@ -296,38 +296,6 @@ export default function XRayInformationForm({ patient, onBack }) {
             label: { en: "Client Status", ms: "Status Klien" },
             type: "radio",
             options: CLIENT_STATUS_OPTIONS
-          },
-          {
-            name: "doctor_name",
-            label: { en: "Doctor Name", ms: "Nama Doktor" },
-            type: "radio",
-            options: DOCTOR_OPTIONS
-          },
-          {
-            name: "doctor_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Enter doctor name", ms: "Masukkan nama doktor" },
-            showIf: { field: "doctor_name", equals: "other" }
-          },
-          {
-            name: "radiographer_name",
-            label: { en: "Radiographer Name", ms: "Nama Ahli Radiografi" },
-            type: "radio",
-            options: RADIOGRAPHER_OPTIONS
-          },
-          {
-            name: "radiographer_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Enter radiographer name", ms: "Masukkan nama ahli radiografi" },
-            showIf: { field: "radiographer_name", equals: "others" }
-          },
-          {
-            name: "status_ob_pp",
-            label: { en: "Status OB/PP", ms: "Status OB/PP" },
-            type: "radio",
-            options: STATUS_OB_PP_OPTIONS
           },
           {
             name: "status_ob_pp_others",
@@ -453,16 +421,16 @@ export default function XRayInformationForm({ patient, onBack }) {
   return (
     <div style={mainContent} className="xray-form-print">
       {/* Patient Information - from Customer Manager (same as Diet, PT, Neuro) */}
-      <div style={{ marginBottom: 24 }}>
-        <CommonFormBuilder
-          schema={PATIENT_INFO_SCHEMA}
-          values={{}}
-          onChange={() => {}}
-          language={language}
-        >
-          <XRayPatientInfo patient={patient} language={language} />
-        </CommonFormBuilder>
-      </div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
 
       {/* X-Ray Form - using FormBuilder (layout=root for full card styling like PT/Neuro) */}
       <CommonFormBuilder
@@ -482,3 +450,15 @@ export default function XRayInformationForm({ patient, onBack }) {
   );
 }
 
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

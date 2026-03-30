@@ -153,12 +153,6 @@ export default function ESTForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" },
-            type: "input",
-            readOnly: true
-          },
-          {
             name: "indication",
             label: { en: "INDICATION", ms: "INDIKASI" },
             type: "radio",
@@ -232,6 +226,9 @@ export default function ESTForm({ patient, onBack }) {
         onChange={() => {}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={EST_SCHEMA}
@@ -243,3 +240,15 @@ export default function ESTForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

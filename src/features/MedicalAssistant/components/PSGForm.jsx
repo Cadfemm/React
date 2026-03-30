@@ -161,28 +161,9 @@ export default function PSGForm({ patient, onBack }) {
           {
             type: "row",
             fields: [
-              { name: "height", label: { en: "HEIGHT (cm)", ms: "TINGGI (cm)" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "weight", label: { en: "WEIGHT (kg)", ms: "BERAT (kg)" }, type: "input", readOnly: true },
-              { name: "neck_circumference", label: { en: "NECK CIRCUMFERENCE (CM)", ms: "LILITAN LEHER (CM)" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "bmi", label: { en: "BMI", ms: "BMI" }, type: "input", readOnly: true },
+              { name: "neck_circumference", label: { en: "NECK CIRCUMFERENCE (CM)", ms: "LILITAN LEHER (CM)" }, type: "input" },
               { name: "bmi_conclusion", label: { en: "BMI Conclusion", ms: "Kesimpulan BMI" }, type: "input", readOnly: true }
             ]
-          },
-          {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" },
-            type: "input",
-            readOnly: true
           },
           { type: "subheading", label: { en: "Sleep Assessment", ms: "Penilaian Tidur" } },
           {
@@ -291,6 +272,9 @@ export default function PSGForm({ patient, onBack }) {
         onChange={() => {}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={PSG_SCHEMA}
@@ -302,3 +286,15 @@ export default function PSGForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

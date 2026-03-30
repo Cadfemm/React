@@ -144,18 +144,6 @@ export default function NCSEMGForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            type: "row",
-            fields: [
-              { name: "diagnosis", label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" }, type: "input", readOnly: true },
-            ]
-          },
-          {
-            name: "height",
-            label: { en: "HEIGHT (cm)", ms: "TINGGI (cm)" },
-            type: "input",
-            readOnly: true
-          },
-          {
             name: "trace_old_report",
             label: { en: "TRACE OLD REPORT", ms: "JEJAK LAPORAN LAMA" },
             type: "radio",
@@ -272,6 +260,9 @@ export default function NCSEMGForm({ patient, onBack }) {
         onChange={() => {}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={NCSEMG_SCHEMA}
@@ -283,3 +274,15 @@ export default function NCSEMGForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

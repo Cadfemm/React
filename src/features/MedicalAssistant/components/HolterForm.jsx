@@ -124,12 +124,6 @@ export default function HolterForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            type: "row",
-            fields: [
-              { name: "diagnosis", label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" }, type: "input", readOnly: true },
-            ]
-          },
-          {
             name: "hours_recording",
             label: { en: "HOURS RECORDING", ms: "JAM RAKAMAN" },
             type: "radio",
@@ -171,8 +165,7 @@ export default function HolterForm({ patient, onBack }) {
           {
             name: "final_report",
             label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
+            type: "textarea",
           },
         ]
       }
@@ -187,6 +180,9 @@ export default function HolterForm({ patient, onBack }) {
         onChange={() => {}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={HOLTER_SCHEMA}
@@ -198,3 +194,15 @@ export default function HolterForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

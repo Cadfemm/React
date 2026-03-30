@@ -170,19 +170,6 @@ export default function EEGForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS", ms: "DIAGNOSIS" },
-            type: "radio",
-            options: DIAGNOSIS_OPTIONS
-          },
-          {
-            name: "diagnosis_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "diagnosis", equals: "others" }
-          },
-          {
             name: "general_appearance",
             label: { en: "GENERAL APPEARANCE & MENTAL STATUS", ms: "PENAMPAKAN UMUM & STATUS MENTAL" },
             type: "textarea",
@@ -192,6 +179,7 @@ export default function EEGForm({ patient, onBack }) {
             name: "medication",
             label: { en: "MEDICATION", ms: "UBATAN" },
             type: "textarea",
+            readOnly: true,
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
@@ -308,6 +296,9 @@ export default function EEGForm({ patient, onBack }) {
         onChange={() => {}}
       >
         <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
       </CommonFormBuilder>
       <CommonFormBuilder
         schema={EEG_SCHEMA}
@@ -319,3 +310,15 @@ export default function EEGForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const mainContent = {};
@@ -32,7 +33,8 @@ const LOCATION_OPTIONS = [
 
 const MEAL_OPTIONS = [
   { value: "fasting", label: { en: "Fasting", ms: "Berpuasa" } },
-  { value: "non_fasting", label: { en: "Non Fasting", ms: "Tidak Berpuasa" } }
+  { value: "random", label: { en: "Random", ms: "Tidak Berpuasa" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain"}}
 ];
 
 const PROFILE_TEST_OPTIONS = [
@@ -136,6 +138,11 @@ export default function LabRequestForm({ patient, onBack }) {
 
   const onChange = (name, value) => setValues(v => ({ ...v, [name]: value }));
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const LAB_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "Lab Request Form", ms: "Borang Permintaan Makmal" },
@@ -147,12 +154,8 @@ export default function LabRequestForm({ patient, onBack }) {
       {
         fields: [
           { type: "subheading", label: { en: "Sample details", ms: "Butiran sampel" } },
-          { name: "pp_ob", label: { en: "PP/OB", ms: "PP/OB" }, type: "radio", options: PP_OB_OPTIONS },
           { name: "lab", label: { en: "LAB", ms: "MAKMAL" }, type: "radio", options: LAB_OPTIONS },
-          { type: "subheading", label: { en: "Requester details", ms: "Butiran pemohon" } },
-          { name: "requester_name", label: { en: "Name", ms: "Nama" }, type: "single-select", options: DOCTOR_OPTIONS },
-          { name: "requester_telephone", label: { en: "Telephone number", ms: "Nombor telefon" }, type: "input", placeholder: { en: "Enter telephone", ms: "Masukkan nombor telefon" } },
-          { name: "location", label: { en: "LOCATION", ms: "LOKASI" }, type: "single-select", options: LOCATION_OPTIONS },
+          { name: "location", label: { en: "LOCATION", ms: "LOKASI" }, readOnly: true, type: "single-select", options: LOCATION_OPTIONS },
           {
             type: "row",
             fields: [
@@ -160,12 +163,10 @@ export default function LabRequestForm({ patient, onBack }) {
               { name: "requester_time", label: { en: "TIME", ms: "MASA" }, type: "input", placeholder: { en: "HH:MM", ms: "HH:MM" } }
             ]
           },
-          { type: "subheading", label: { en: "Patient Details", ms: "Butiran Pesakit" } },
-          { name: "patient_name", label: { en: "Name", ms: "Nama" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
-          { name: "patient_address", label: { en: "Address", ms: "Alamat" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service (residence)", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan (tempat tinggal)" } },
-          { name: "patient_dob", label: { en: "Date of Birth", ms: "Tarikh Lahir" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
-          { name: "patient_gender", label: { en: "Gender", ms: "Jantina" }, type: "input", readOnly: true, placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" } },
           { name: "meal", label: { en: "MEAL", ms: "MAKANAN" }, type: "radio", options: MEAL_OPTIONS },
+          { name: "meal_others", label: "Others", type: "textarea",
+            showIf: { field: "meal", equals: "others"}
+          },
           { type: "subheading", label: { en: "Profile test", ms: "Ujian profil" } },
           {
             name: "profile_test",
@@ -264,6 +265,16 @@ export default function LabRequestForm({ patient, onBack }) {
   return (
     <div style={mainContent}>
       <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
         schema={LAB_SCHEMA}
         values={values}
         onChange={onChange}
@@ -273,3 +284,15 @@ export default function LabRequestForm({ patient, onBack }) {
     </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};
