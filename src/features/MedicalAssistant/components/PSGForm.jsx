@@ -32,10 +32,10 @@ const TECHNICAL_AIRFLOW_OPTIONS = [
 ];
 
 const SCORING_TABLE_OPTIONS = [
-  { value: "normal", label: { en: "0-5 apnoea + hypopnoea events per hour / Normal", ms: "0-5 kejadian apnoea + hipopnoea sejam / Normal" } },
-  { value: "mild", label: { en: "6-15 apnoea + hypopnoea events per hour / Mild sleep apnoea", ms: "6-15 kejadian apnoea + hipopnoea sejam / Apnoea tidur ringan" } },
-  { value: "moderate", label: { en: "16-29 apnoea + hypopnoea events per hour / Moderate sleep apnoea", ms: "16-29 kejadian apnoea + hipopnoea sejam / Apnoea tidur sederhana" } },
-  { value: "severe", label: { en: "30 or greater apnoea + hypopnoea events per hour / Severe sleep apnoea", ms: "30 atau lebih kejadian apnoea + hipopnoea sejam / Apnoea tidur teruk" } }
+  { value: "normal", label: { en: "0-5 Apnoea + hypopnoea events per hour / Normal", ms: "0-5 kejadian apnoea + hipopnoea sejam / Normal" } },
+  { value: "mild", label: { en: "6-15 Apnoea + hypopnoea events per hour / Mild sleep apnoea", ms: "6-15 kejadian apnoea + hipopnoea sejam / Apnoea tidur ringan" } },
+  { value: "moderate", label: { en: "16-29 Apnoea + hypopnoea events per hour / Moderate sleep apnoea", ms: "16-29 kejadian apnoea + hipopnoea sejam / Apnoea tidur sederhana" } },
+  { value: "severe", label: { en: "30 Or greater apnoea + hypopnoea events per hour / Severe sleep apnoea", ms: "30 atau lebih kejadian apnoea + hipopnoea sejam / Apnoea tidur teruk" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [

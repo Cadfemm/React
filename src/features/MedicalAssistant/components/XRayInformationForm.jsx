@@ -287,7 +287,11 @@ export default function XRayInformationForm({ patient, onBack }) {
           {
             name: "consent_from_client",
             label: { en: "Consent from Client", ms: "Persetujuan dari Klien" },
-            type: "textarea",
+            type: "radio",
+            options: [
+              {label: {en: "Yes", ms: "Ya"}, value: "yes"},
+              {label: {en: "No", ms: "No"}, value: "no"}
+            ],
             placeholder: { en: "Enter consent information", ms: "Masukkan maklumat persetujuan" }
           },
           { type: "subheading", label: { en: "Clinical Details", ms: "Butiran Klinikal" } },
