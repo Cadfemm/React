@@ -161,19 +161,6 @@ export default function ESTForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            name: "underlying",
-            label: { en: "UNDERLYING", ms: "PENYEBAB ASAS" },
-            type: "radio",
-            options: UNDERLYING_OPTIONS
-          },
-          {
-            name: "underlying_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "underlying", equals: "others" }
-          },
-          {
             name: "protocol",
             label: { en: "PROTOCOL", ms: "PROTOKOL" },
             type: "radio",

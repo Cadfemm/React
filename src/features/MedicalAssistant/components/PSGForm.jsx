@@ -237,6 +237,15 @@ export default function PSGForm({ patient, onBack }) {
             type: "radio",
             options: YES_NO_OPTIONS
           },
+          {
+            name: "previous_psg_image",
+            label: "Upload Report",
+            type: "attach-file",
+            showIf: {
+              field: "previous_psg",
+              equals: "yes"
+            }
+          },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
             name: "graf",

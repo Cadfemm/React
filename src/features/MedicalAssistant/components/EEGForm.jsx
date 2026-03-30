@@ -295,13 +295,6 @@ export default function EEGForm({ patient, onBack }) {
             type: "textarea",
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "borderline" }
-          },
-          {
-            name: "emr_factual_report",
-            label: { en: "EMR FACTUAL REPORT", ms: "LAPORAN FAKTA EMR" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
           }
         ]
       }

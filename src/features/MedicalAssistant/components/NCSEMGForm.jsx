@@ -10,7 +10,8 @@ const t = (text, lang) => {
 
 const TYPE_OF_STUDY_OPTIONS = [
   { value: "ncs", label: { en: "Nerves Conduction Study (NCS)", ms: "Kajian Pengaliran Saraf (NCS)" } },
-  { value: "emg", label: { en: "Electromyogram (EMG)", ms: "Elektromiogram (EMG)" } }
+  { value: "emg", label: { en: "Electromyogram (EMG)", ms: "Elektromiogram (EMG)" } },
+  { value: "both", label: {en: "Both", ms: "Both"}}
 ];
 
 const YES_NO_OPTIONS = [
@@ -56,7 +57,6 @@ const EMR_REPORT_OPTIONS = [
 const FINAL_REPORT_OPTIONS = [
   { value: "normal", label: { en: "NORMAL FINDINGS", ms: "PEMERHATIAN NORMAL" } },
   { value: "abnormal", label: { en: "ABNORMAL FINDINGS", ms: "PEMERHATIAN TIDAK NORMAL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
 ];
 
 function formatToday() {
@@ -221,13 +221,6 @@ export default function NCSEMGForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "time_base", equals: "others" }
           },
-          {
-            name: "emr_factual_report",
-            label: { en: "EMR FACTUAL REPORT", ms: "LAPORAN FAKTA EMR" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
           { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
           {
             type: "row",
@@ -259,7 +252,7 @@ export default function NCSEMGForm({ patient, onBack }) {
             label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
             type: "input",
             placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "others" }
+            showIf: { field: "final_report", oneOf: ["normal", "abnormal"] }
           },
         ]
       }

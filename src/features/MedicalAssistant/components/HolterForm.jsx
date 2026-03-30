@@ -126,19 +126,6 @@ export default function HolterForm({ patient, onBack }) {
             ]
           },
           {
-            name: "underlying",
-            label: { en: "UNDERLYING", ms: "PENYEBAB ASAS" },
-            type: "radio",
-            options: UNDERLYING_OPTIONS
-          },
-          {
-            name: "underlying_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "underlying", equals: "others" }
-          },
-          {
             name: "hours_recording",
             label: { en: "HOURS RECORDING", ms: "JAM RAKAMAN" },
             type: "radio",

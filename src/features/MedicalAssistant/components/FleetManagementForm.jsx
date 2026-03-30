@@ -315,6 +315,20 @@ export default function FleetManagementForm({ patient, onBack }) {
               }
             ]
           },
+                    {
+            name: "booking_location",
+            label: "Booking Location",
+            labelAbove: true,
+            type: "radio",
+            options: BOOKING_LOCATION_OPTIONS
+          },
+          {
+            name: "booking_location_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
+            showIf: { field: "booking_location", equals: "others" }
+          },
           { type: "subheading", label: { en: "Condition & Aid", ms: "Keadaan & Alat Bantu" } },
           {
             name: "kondisi_ob",
@@ -341,20 +355,6 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "input",
             placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
             showIf: { field: "ambulatory_aid", equals: "others" }
-          },
-          { type: "subheading", label: { en: "Booking Location", ms: "Lokasi Tempahan" } },
-          {
-            name: "booking_location",
-            label: "",
-            type: "radio",
-            options: BOOKING_LOCATION_OPTIONS
-          },
-          {
-            name: "booking_location_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
-            showIf: { field: "booking_location", equals: "others" }
           },
           {
             name: "jenis_kes",
