@@ -16,7 +16,7 @@ const TABS = [
 ];
 
 const URGENT_OPTIONS = [
-  { key: "resusbay", label: "RESUS BAY" },
+  { key: "resusbay", label: "Clinical Entry" },
   { key: "fleet", label: "FLEET Management" },
   { key: "lab", label: "Lab" },
   { key: "xray", label: "X-Ray" },
