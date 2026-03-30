@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const mainContent = {};
@@ -57,12 +58,14 @@ export default function ResusBayInformationForm({ patient, onBack }) {
     others
   };
 
+  const CLINICAL_ENTRY_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const RESUS_BAY_SCHEMA = {
     enableLanguageToggle: true,
-    title: {
-      en: "RESUS BAY INFORMATION",
-      ms: "MAKLUMAT BAY RESUS"
-    },
+    title: "Clinical Entry",
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -70,37 +73,6 @@ export default function ResusBayInformationForm({ patient, onBack }) {
     sections: [
       {
         fields: [
-          { 
-            type: "subheading", 
-            label: { 
-              en: "Patient Identification", 
-              ms: "Pengenalan Pesakit" 
-            } 
-          },
-          { 
-            name: "nama", 
-            label: { en: "Name", ms: "NAMA" }, 
-            type: "input", 
-            readOnly: true 
-          },
-          { 
-            name: "ic", 
-            label: { en: "IC", ms: "IC" }, 
-            type: "input", 
-            readOnly: true 
-          },
-          { 
-            name: "umur", 
-            label: { en: "Age", ms: "UMUR" }, 
-            type: "input", 
-            readOnly: true 
-          },
-          { 
-            name: "cm", 
-            label: { en: "CM", ms: "CM" }, 
-            type: "input", 
-            readOnly: true 
-          },
           { 
             name: "aduan", 
             label: { en: "Complaint", ms: "ADUAN" }, 
@@ -210,12 +182,6 @@ export default function ResusBayInformationForm({ patient, onBack }) {
             readOnly: true,
             showIf: { field: "lab_status", equals: "done" }
           },
-          {
-            name: "doctor_plan",
-            label: { en: "Doctor Plan / Management", ms: "PELAN DOKTOR / PENGURUSAN" },
-            type: "textarea",
-            readOnly: true
-          },
           { 
             type: "subheading", 
             label: { 
@@ -235,11 +201,11 @@ export default function ResusBayInformationForm({ patient, onBack }) {
             type: "input", 
             readOnly: true 
           },
-          { 
-            name: "status_ob_pp", 
-            label: { en: "Status OB/PP", ms: "STATUS OB/PP" }, 
-            type: "input", 
-            readOnly: true 
+          {
+            name: "doctor_plan",
+            label: { en: "Plan / Management", ms: "PELAN / PENGURUSAN" },
+            type: "textarea",
+            readOnly: true
           },
           { 
             name: "others", 
@@ -261,6 +227,13 @@ export default function ResusBayInformationForm({ patient, onBack }) {
 
   return (
     <div style={mainContent}>
+      <CommonFormBuilder
+        schema={CLINICAL_ENTRY_SCHEMA}
+        values={{}}
+        onChange={()=>{}}
+      >
+        <PatientCard patient={patient}/>
+      </CommonFormBuilder>
       <CommonFormBuilder
         schema={RESUS_BAY_SCHEMA}
         values={values}
