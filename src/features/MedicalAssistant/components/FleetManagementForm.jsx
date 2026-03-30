@@ -384,15 +384,15 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "tarikh_penghantaran",
-            label: { en: "Delivery Date", ms: "Tarikh Penghantaran" },
+            label: { en: "Departure date", ms: "Tarikh Penghantaran" },
             type: "date",
-            placeholder: { en: "Delivery date", ms: "Tarikh penghantaran" }
+            placeholder: { en: "Departure date", ms: "Tarikh penghantaran" }
           },
           {
             name: "masa_penghantaran",
-            label: { en: "Delivery Time", ms: "Masa Penghantaran" },
+            label: { en: "Departure time", ms: "Masa Penghantaran" },
             type: "input",
-            placeholder: { en: "Delivery time", ms: "Masa penghantaran" }
+            placeholder: { en: "Departure time", ms: "Masa penghantaran" }
           },
           { type: "subheading", label: { en: "Trip & Appointment", ms: "Perjalanan & Temujanji" } },
           {
