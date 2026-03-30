@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PsychologyAssessment from "./PsychologyAssessment";
+import PsychologyFollowUpAssessment from "./PsychologyFollowupAssessment";
 
 export default function Patients({ onBack }) {
   const [tab, setTab] = useState("new");
@@ -19,6 +20,14 @@ export default function Patients({ onBack }) {
 
   /* ---------------- RENDER ASSESSMENT ---------------- */
   if (selectedPatient) {
+    if(selectedPatient.status === "Follow-up") {
+      return (
+        <PsychologyFollowUpAssessment
+          patient={selectedPatient}
+          onBack={()=>setSelectedPatient(null)}
+        />
+      )
+    }
     return (
       <PsychologyAssessment
         patient={selectedPatient}
