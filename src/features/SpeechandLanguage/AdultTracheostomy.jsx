@@ -197,15 +197,7 @@ export default function TracheostomyWeaningEvaluation({ patient, onBack, mode = 
   ]
 },
 
-{
-  type: "row",
-  fields: [
-    
-    { name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
-    
-   
-  ]
-},
+{ name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
 
 
           { type: "subheading", label: "Suction needs (airway clearance function)" },
@@ -460,16 +452,7 @@ export default function TracheostomyWeaningEvaluation({ patient, onBack, mode = 
               { name: "sv_spo2", label: "SPO2 (%)", type: "input" }
             ]
           },
-          {
-  type: "row",
-  fields: [
-        { name: "hr", type: "input", label: "HR (Heart Rate):", placeholder: "" },
 
-    { name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
-    
-   
-  ]
-},
           {
             name: "digitalOcclusionTrial",
             label: "Digital Occlusion trial ",
@@ -808,14 +791,20 @@ export default function TracheostomyWeaningEvaluation({ patient, onBack, mode = 
     { name: "rr", label: "RR (Respiratory Rate)", type: "input" }
   ];
 
-  const commonSectionFields = useMemo(() => {
-    if (!isFollowup) return commonSectionFieldsBase;
-    return withOptionalSections(commonSectionFieldsBase, ["General Observation"]);
-  }, [isFollowup]);
+  const commonSectionFields = commonSectionFieldsBase;
 
   const stripFromSection = (section) => ({
     ...section,
-    fields: (section.fields || []).filter(f => !ADULT_COMMON_FIELD_NAMES.includes(f?.name))
+    fields: (section.fields || []).flatMap(f => {
+      if (ADULT_COMMON_FIELD_NAMES.includes(f?.name)) return [];
+      if (f?.type === "row" && Array.isArray(f.fields)) {
+        const kept = f.fields.filter(child => !ADULT_COMMON_FIELD_NAMES.includes(child?.name));
+        if (kept.length === 0) return [];
+        if (kept.length === f.fields.length) return [f];
+        return [{ ...f, fields: kept }];
+      }
+      return [f];
+    })
   });
 
   const sectionByTitle = Object.fromEntries(

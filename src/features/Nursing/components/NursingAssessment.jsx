@@ -1557,6 +1557,12 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
           },
           {
+            name: "pi_wound_assessment",
+            label: "Wound Assessment (WATFS)",
+            type: "wound-assessment-inline",
+            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
+          },
+          {
             name: "pi_drainage",
             label: "Drainage",
             type: "radio",

@@ -1311,10 +1311,7 @@ export default function PaedIASpeechLanguage({ patient, onBack, mode = "initial"
     };
   }, [isFollowup]);
 
-  const commonSchema = useMemo(() => {
-    if (!isFollowup) return COMMON_SCHEMA;
-    return applyOptionalSections(COMMON_SCHEMA, PAED_SPEECH_OPTIONAL_SECTIONS.common);
-  }, [isFollowup]);
+  const commonSchema = COMMON_SCHEMA;
   function NeuroPatientInfo({ patient }) {
     if (!patient) return null;
 

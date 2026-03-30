@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import NursingAssessment from "./NursingAssessment";
+import WoundAssessment from "../pages/WoundAssessment";
 
 const MAIN_TABS = [
   { key: "admission", label: "Admission Nursing" },
   { key: "shift", label: "Shift Assessment" },
+  { key: "wound", label: "Wound Assessment (WATFS)" },
   { key: "reassessment", label: "Re Assessment" },
   { key: "discharge", label: "Discharge" }
 ];
@@ -31,7 +33,16 @@ export default function PatientDetails({ patient, department, onBack }) {
       </div>
 
       {/* ===== TAB CONTENT ===== */}
-      {activeMainTab === "admission" && (
+      {activeMainTab === "wound" && (
+        <WoundAssessment
+          patient={patient}
+          onSubmit={(values) => {
+            console.log("wound assessment submitted:", values);
+          }}
+          onBack={onBack}
+        />
+      )}
+         {activeMainTab === "admission" && (
         <NursingAssessment
           patient={patient}
           onSubmit={(values) => {

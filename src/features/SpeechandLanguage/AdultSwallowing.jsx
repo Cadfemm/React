@@ -340,11 +340,7 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
 },
 
 {
-  type: "row",
-  fields: [
-    { name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min" },
-    { type: "subheading", label: "" } // empty placeholder to keep 2-column balance
-  ]
+  name: "rr", type: "input", label: "RR (Respiratory Rate)", placeholder: "breaths/min"
 },
 
 
@@ -391,16 +387,11 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
 },
 
 {
-  type: "row",
-  fields: [
-    {
-      name: "lips",
-      label: "Lips",
-      type: "single-select",
-      options: ["No Abnormality Detected (NAD)", "Reduced seal", "Asymmetry", "Cleft", "Scarring"]
-        .map(v => ({ label: v, value: v }))
-    },
-  ]
+  name: "lips",
+  label: "Lips",
+  type: "single-select",
+  options: ["No Abnormality Detected (NAD)", "Reduced seal", "Asymmetry", "Cleft", "Scarring"]
+    .map(v => ({ label: v, value: v }))
 },
 {
   name: "hard_palate_remarks",
@@ -487,16 +478,10 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
 },
 
 {
-  type: "row",
-  fields: [
-    {
-      name: "cn12_motor",
-      label: "CN XII: Motor (Tongue ROM/strength)",
-      type: "single-select",
-      options: ["Within Normal Limits (WNL)", "Reduced"].map(v => ({ label: v, value: v }))
-    },
-   
-  ]
+  name: "cn12_motor",
+  label: "CN XII: Motor (Tongue ROM/strength)",
+  type: "single-select",
+  options: ["Within Normal Limits (WNL)", "Reduced"].map(v => ({ label: v, value: v }))
 },
 
 
@@ -577,20 +562,14 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
 },
 
 {
-  type: "row",
-  fields: [
-    {
-      name: "cseOralResidue",
-      label: "Oral residue",
-      type: "single-select",
-      options: [
-        { label: "None", value: "none" },
-        { label: "Mild", value: "mild" },
-        { label: "Moderate", value: "moderate" },
-        { label: "Severe", value: "severe" }
-      ]
-    },
-  
+  name: "cseOralResidue",
+  label: "Oral residue",
+  type: "single-select",
+  options: [
+    { label: "None", value: "none" },
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" }
   ]
 },
 
@@ -720,7 +699,7 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
          P – PLAN
       ====================================================== */
      {
-  title: "P – Plan",
+  title: "Plan",
   fields: [
 
     { type: "subheading", label: "Swallowing Recommendations" },
@@ -862,12 +841,6 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
 
     { type: "subheading", label: "Other Management" },
 
-    {
-      name: "referral_specialist",
-      label: "Referral – Specialist",
-      type: "textarea",
-      placeholder: "Free text"
-    }
   ]
 }
 
@@ -927,23 +900,35 @@ export default function ClinicalSwallowingEvaluation({ patient, onBack, mode = "
     { name: "rr", label: "RR (Respiratory Rate)", type: "input" }
   ];
 
-  const commonSectionFields = useMemo(() => {
-    if (!isFollowup) return commonSectionFieldsBase;
-    return withOptionalSections(commonSectionFieldsBase, ["General Observation"]);
-  }, [isFollowup]);
-
+  const commonSectionFields = commonSectionFieldsBase
   const stripFromSection = (section) => ({
     ...section,
-    fields: (section.fields || []).filter(f => {
-      if (f?.type === "subheading" && f?.label === "General Observation") return false;
-      return !ADULT_COMMON_FIELD_NAMES.includes(f?.name);
+    fields: (section.fields || []).flatMap(f => {
+      if (f?.type === "subheading" && f?.label === "General Observation") return [];
+      if (ADULT_COMMON_FIELD_NAMES.includes(f?.name)) return [];
+      if (f?.type === "row" && Array.isArray(f.fields)) {
+        const kept = f.fields.filter(child => !ADULT_COMMON_FIELD_NAMES.includes(child?.name));
+        if (kept.length === 0) return [];
+        if (kept.length === f.fields.length) return [f];
+        return [{ ...f, fields: kept }];
+      }
+      return [f];
     })
   });
+
+  const normalizeSoapTitle = (title) => {
+    const raw = String(title || "").trim().toLowerCase();
+    if (raw === "subjective" || raw.endsWith("subjective")) return "subjective";
+    if (raw === "objective" || raw.endsWith("objective")) return "objective";
+    if (raw === "assessment" || raw.endsWith("assessment")) return "assessment";
+    if (raw === "plan" || raw.endsWith("plan")) return "plan";
+    return raw;
+  };
 
   const sectionByTitle = Object.fromEntries(
     (normalizedSchema.sections || [])
       .filter(s => typeof s?.title === "string")
-      .map(s => [s.title.toLowerCase(), s])
+      .map(s => [normalizeSoapTitle(s.title), s])
   );
   const schemaMap = useMemo(() => {
     const base = {
