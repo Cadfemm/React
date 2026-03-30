@@ -164,6 +164,19 @@ export default function EEGForm({ patient, onBack }) {
             labelAbove: true
           },
           {
+            name: "diagnosis",
+            label: { en: "DIAGNOSIS", ms: "DIAGNOSIS" },
+            type: "radio",
+            options: DIAGNOSIS_OPTIONS
+          },
+          {
+            name: "diagnosis_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "diagnosis", equals: "others" }
+          },
+          {
             type: "row",
             fields: [
               { name: "gender", label: { en: "GENDER", ms: "JANTINA" }, type: "input", readOnly: true },
@@ -258,17 +271,10 @@ export default function EEGForm({ patient, onBack }) {
           },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS", ms: "DIAGNOSIS" },
-            type: "radio",
-            options: DIAGNOSIS_OPTIONS
-          },
-          {
-            name: "diagnosis_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "diagnosis", equals: "others" }
+            name: "graf",
+            title: { en: "GRAF (RUNNING GRAF REPORT & VIDEO)", ms: "GRAF (LAPORAN GRAF BERJALAN & VIDEO)" },
+            type: "attach-file",
+            accept: "image/*,.pdf,video/*"
           },
           {
             name: "final_report",
@@ -289,12 +295,6 @@ export default function EEGForm({ patient, onBack }) {
             type: "textarea",
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "borderline" }
-          },
-          {
-            name: "graf",
-            title: { en: "GRAF (RUNNING GRAF REPORT & VIDEO)", ms: "GRAF (LAPORAN GRAF BERJALAN & VIDEO)" },
-            type: "attach-file",
-            accept: "image/*,.pdf,video/*"
           },
           {
             name: "emr_factual_report",

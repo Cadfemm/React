@@ -239,6 +239,19 @@ export default function PSGForm({ patient, onBack }) {
           },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
+            name: "graf",
+            title: { en: "GRAF", ms: "GRAF" },
+            type: "attach-file",
+            accept: "image/*,.pdf,video/*"
+          },
+          {
+            name: "emr_technical_report",
+            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            type: "radio",
+            options: EMR_REPORT_OPTIONS,
+            labelAbove: true
+          },
+          {
             name: "final_report",
             label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
             type: "radio",
@@ -251,19 +264,6 @@ export default function PSGForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "others" }
           },
-          {
-            name: "graf",
-            title: { en: "GRAF", ms: "GRAF" },
-            type: "attach-file",
-            accept: "image/*,.pdf,video/*"
-          },
-          {
-            name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          }
         ]
       }
     ]

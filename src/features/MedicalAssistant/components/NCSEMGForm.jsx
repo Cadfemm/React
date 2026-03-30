@@ -228,19 +228,6 @@ export default function NCSEMGForm({ patient, onBack }) {
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
           },
-          {
-            name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
-          {
-            name: "final_report_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "others" }
-          },
           { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
           {
             type: "row",
@@ -260,7 +247,20 @@ export default function NCSEMGForm({ patient, onBack }) {
                 accept: "image/*,.pdf"
               }
             ]
-          }
+          },
+          {
+            name: "final_report",
+            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
+          {
+            name: "final_report_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", equals: "others" }
+          },
         ]
       }
     ]

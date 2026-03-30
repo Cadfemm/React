@@ -157,12 +157,6 @@ export default function HolterForm({ patient, onBack }) {
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
           },
-          {
-            name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
           { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
           {
             type: "row",
@@ -182,7 +176,13 @@ export default function HolterForm({ patient, onBack }) {
                 accept: "image/*,.pdf"
               }
             ]
-          }
+          },
+          {
+            name: "final_report",
+            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
         ]
       }
     ]
