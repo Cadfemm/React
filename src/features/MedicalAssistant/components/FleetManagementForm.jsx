@@ -401,6 +401,10 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "radio",
             options: OTHER_APPOINTMENT_OPTIONS
           },
+        ]
+      },
+      {
+        fields: [
           { type: "subheading", label: { en: "Driver Fleet Management", ms: "Pengurusan Armada Pemandu" } },
           {
             name: "fleet_checklist",
