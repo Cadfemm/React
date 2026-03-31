@@ -274,6 +274,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: patient?.medical_history || "",
     past_family_history: patient?.family_medical_history || "",
+    alerts_and_allergies: patient?.alerts_and_allergies_history || "",
   });
 
   // Keep in sync when the selected patient changes.
@@ -281,6 +282,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     setPatientHistory({
       past_medical_history: patient?.medical_history || "",
       past_family_history: patient?.family_medical_history || "",
+      alerts_and_allergies: patient?.alerts_and_allergies_history || "",
     });
   }, [patient?.id]);
 
@@ -291,10 +293,11 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
       ...patient,
       medical_history: patientHistory.past_medical_history,
       family_medical_history: patientHistory.past_family_history,
+      alerts_and_allergies_history: patientHistory.alerts_and_allergies,
     };
     localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
     onUpdatePatient?.(updated);
-  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history]);
+  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history, patientHistory.alerts_and_allergies]);
 
   // Doctor Goals / Plan (below tabs).
   const [doctorGoals, setDoctorGoals] = useState(patient?.doctor_goals || "");
@@ -406,6 +409,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
           <div><b>Occupation:</b> {pt.occupation || "-"}</div>
           <div><b>Work Status:</b> {pt.employment_status || "-"}</div>
           <div><b>Driving Status:</b> {pt.driving_status || "-"}</div>
+          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
 
           <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
             <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
@@ -428,7 +432,7 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
             </div>
 
             <div>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Family History</div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
               <textarea
                 value={patientHistory.past_family_history}
                 onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
@@ -444,6 +448,50 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
                 }}
               />
             </div>
+            <div>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+              <textarea
+                value={patientHistory.alerts_and_allergies}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div> 
+            <div style={{ marginBottom: 10 }}>
+              <button
+                type="button"
+                onClick={() => {
+                  // Your button logic here
+                  console.log("Alerts button clicked!");
+                  // Example: setShowAlertsModal(true);
+                }}
+                style={{
+                  marginTop: "10px",
+                  padding: "10px 20px",
+                  borderRadius: 6,
+                  border: "1.5px solid rgb(0, 123, 255)",
+                  background: "rgb(0, 123, 255)",
+                  color: "rgb(255, 255, 255)",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
+                }}
+              >
+                🚨 Alerts
+              </button>
+            </div>           
           </div>
         </div>
       </div>
@@ -706,7 +754,7 @@ const handleSubmitReferral = () => {
         )}
        
         {/* ===== Doctor Goals & Plan (below tabs) ===== */}
-        <div
+        {/* <div
           style={{
             width: "90%",
             margin: "0 auto",
@@ -717,9 +765,9 @@ const handleSubmitReferral = () => {
             boxShadow: "0 4px 14px rgba(15,23,42,0.04)",
             marginBottom: 20,
           }}
-        >
-          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Goals</div>
-          <textarea
+        > */}
+          {/* <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Goals</div> */}
+          {/* <textarea
             value={doctorGoals}
             onChange={(e) => setDoctorGoals(e.target.value)}
             style={{
@@ -733,10 +781,10 @@ const handleSubmitReferral = () => {
               resize: "vertical",
               marginBottom: 18,
             }}
-          />
+          /> */}
 
-          <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Plan</div>
-          <textarea
+          {/* <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Plan</div> */}
+          {/* <textarea
             value={doctorPlan}
             onChange={(e) => setDoctorPlan(e.target.value)}
             style={{
@@ -749,8 +797,8 @@ const handleSubmitReferral = () => {
               fontFamily: "inherit",
               resize: "vertical",
             }}
-          />
-        </div>
+          /> */}
+        {/* </div> */}
         {/* REFER TO DEPARTMENTS DROPDOWN */}
         <MultiSelectDropdown
           options={departmentOptions}

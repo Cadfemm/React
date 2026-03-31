@@ -444,7 +444,12 @@ export default function CardioRespiratoryAssessment() {
             readOnly: true,
             placeholder: "No reports are attached till now"
           },
-
+          { type: "subheading", label: "Goals" },
+          {
+            type: "textarea",
+            name: "cardiovascular_goals",
+            placeholder: "Enter goals"
+          },
           { type: "heading", label: "Plan" },
           {
             type: "checkbox-group",

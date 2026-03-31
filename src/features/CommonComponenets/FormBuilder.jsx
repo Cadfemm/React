@@ -1017,7 +1017,88 @@ const cell = (values, row, key, onChange) => {
 const getColSpan = (col) =>
   col.groups.reduce((sum, g) => sum + g.options.length, 0);
 
+export const DynamicInput = ({ 
+  value, 
+  onChange, 
+  field, 
+  readOnly, 
+  styles, 
+  t, 
+  languageConfig 
+}) => {
+  const [isTextarea, setIsTextarea] = useState(false);
+  const currentValue = value || "";
+  const inputRef = useRef(null);
 
+  // 1. Auto-switch based on character count
+  useEffect(() => {
+    if (currentValue.length >= 50) {
+      setIsTextarea(true);
+    } else {
+      // Only switch back if it wasn't forced by Enter/Newline logic
+      // Note: If you want it to strictly follow length, keep this. 
+      // If you want it to stay textarea once Enter is hit, remove the 'else'.
+      setIsTextarea(false);
+    }
+  }, [currentValue.length]);
+
+  // 2. Restore focus after switching types
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      // Place cursor at the very end
+      const len = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(len, len);
+    }
+  }, [isTextarea]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Stop form submission
+      
+      // CRITICAL: Force switch to textarea immediately so the new line renders
+      setIsTextarea(true); 
+      
+      // Add the newline character
+      const newValue = currentValue + '\n';
+      onChange(field.name, newValue);
+    }
+  };
+
+  const placeholder = t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || "";
+
+  // Render Textarea
+  if (isTextarea) {
+    return (
+      <textarea
+        ref={inputRef}
+        style={{
+          ...styles.input,
+          whiteSpace: 'pre-wrap', // Ensures new lines render correctly
+          overflowY: 'auto'
+        }}
+        value={currentValue}
+        readOnly={readOnly}
+        placeholder={placeholder}
+        onChange={(e) => !readOnly && onChange(field.name, e.target.value)}
+        rows={3}
+      />
+    );
+  }
+
+  // Render Input
+  return (
+    <input
+      ref={inputRef}
+      style={styles.input}
+      value={currentValue}
+      readOnly={readOnly}
+      placeholder={placeholder}
+      onKeyDown={handleKeyDown}
+      onChange={(e) => !readOnly && onChange(field.name, e.target.value)}
+    />
+  );
+};
 
 function renderField(
   field,
@@ -1034,14 +1115,14 @@ function renderField(
   switch (field.type) {
     case "input":
       return (
-        <input
-          style={styles.input}
-          value={value || ""}
+        <DynamicInput
+          value={value}
+          onChange={onChange}
+          field={field}
           readOnly={readOnly}
-          placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
-          onChange={e =>
-            !readOnly && onChange(field.name, e.target.value)
-          }
+          styles={styles}
+          t={t}
+          languageConfig={languageConfig}
         />
       );
     case "scale-slider":

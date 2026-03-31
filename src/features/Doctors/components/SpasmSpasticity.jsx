@@ -536,6 +536,16 @@ const SPASM_SPASTICITY_SCHEMA = {
             { label: "Improve gait / mobility", value: "improve_gait_mobility" },
           ],
         },
+                  /* ========== GOALS ========== */
+          {
+            type: "subheading",
+            label: "Goals"
+          },
+          {
+            name: "spasticity_goals",
+            type: "textarea",
+            placeholder: "Enter goals"
+          },
         { type: "heading", label: "Plan" },
         {
           type: "checkbox-group",
@@ -690,7 +700,18 @@ const SPASM_SPASTICITY_SCHEMA = {
         { type: "input", name: "spasm_afo_type_other_specify", label: "AFO - Others (Specify)", showIf: { field: "spasm_afo_type", equals: "Others" } },
         { type: "radio", name: "spasm_orthopaedic_procedure", label: "Orthopaedic procedure", options: yesNo, showIf: { field: "spasm_present", equals: "Yes" } },
         { type: "input", name: "spasm_orthopaedic_procedure_specify", label: "Orthopaedic procedure (Specify)", showIf: { field: "spasm_orthopaedic_procedure", equals: "Yes" } },
-        { type: "subheading", label: "Plan", showIf: { field: "spasm_present", equals: "Yes" } },
+        {
+            type: "subheading",
+            label: "Goals",
+            showIf: { field: "spasm_present", equals: "Yes" },
+          },
+          {
+            name: "spasm_goals",
+            type: "textarea",
+            placeholder: "Enter goals",
+            showIf: { field: "spasm_present", equals: "Yes" },
+        },
+        { type: "subheading", label: "Plan", showIf: { field: "spasm_present", equals: "Yes" } },       
         {
           type: "checkbox-group",
           name: "spasm_plan",

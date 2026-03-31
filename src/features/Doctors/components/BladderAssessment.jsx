@@ -198,7 +198,16 @@ const BLADDER_SCHEMA = {
         yn("tx_surgery", "Surgery"),
         { type: "input", name: "tx_surgery_specify", label: "Surgery (Specify)", showIf: { field: "tx_surgery", equals: "Yes" } },
         { type: "input", name: "tx_others", label: "Others" },
-
+          /* ========== GOALS ========== */
+          {
+            type: "subheading",
+            label: "Goals"
+          },
+          {
+            name: "bladder_goals",
+            type: "textarea",
+            placeholder: "Enter goals"
+          },
         { type: "subheading", label: "Plan" },
         {
           type: "checkbox-group",

@@ -398,7 +398,16 @@ export default function SexualAssessment({ onChange: onParentChange, patient }) 
               ]
             },
             { type: "input", name: "female_adverse_event_other_specify", label: "Others (Specify)", showIf: { field: "female_adverse_event_type", equals: "others" } },
-
+          /* ========== GOALS ========== */
+          {
+            type: "subheading",
+            label: "Goals"
+          },
+          {
+            name: "sexual_goals",
+            type: "textarea",
+            placeholder: "Enter goals"
+          },
             { type: "subheading", label: "Plan" },
             {
               type: "checkbox-group",

@@ -356,13 +356,24 @@ const VISUAL_SECTIONS = [
   ]
 },
 {
+  title: "Goals",
+  showIf: { field: "vision_status", equals: "impaired" },
+  fields: [
+    {
+      type: "textarea",
+      name: "vision_goals",
+      placeholder: "Enter goals"
+    }
+  ]
+},
+{
       title: "Plan",
       showIf: { field: "vision_status", equals: "impaired" },
       fields: [
         {
           type: "checkbox-group",
           name: "vision_plan",
-          label: "Plan",
+          // label: "Plan",
           options: [
             {
               label: "For further evaluation by Optometrist - (notify Optometrist)",

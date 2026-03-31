@@ -235,7 +235,15 @@ export default function BowelAssessmentForm({ onChange: onParentChange }) {
             text: "4 - Complete problem: No voluntary control / total dependent",
             showIf: { field: "qualifier_scale", equals: "4" }
           },
-
+          {
+            type: "subheading",
+            label: "Goals"
+          },
+          {
+            name: "bowel_goals",
+            type: "textarea",
+            placeholder: "Enter goals"
+          },
           { type: "heading", label: "Plan" },
           {
             type: "checkbox-group",

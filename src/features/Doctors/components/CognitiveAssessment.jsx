@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import CommonFormBuilder, { DynamicInput } from "../../CommonComponenets/FormBuilder";
 
 // OT cognitive assessment components (used by assessment-launcher buttons)
 import MoCAAssessment from "../../OT/components/MocA";
@@ -262,7 +262,7 @@ function useScrollLock() {
   return { scrollRef, saveScroll, restoreScroll };
 }
 
-export default function CognitiveSoapAssessment() {
+export default function CognitiveSoapAssessment(patient, onUpdatePatient) {
 
   const [hasCognitiveImpairment, setHasCognitiveImpairment] = useState("");
   const { scrollRef, saveScroll, restoreScroll } = useScrollLock();
@@ -2796,7 +2796,24 @@ const PsqiModal = ({ onClose, onSave }) => {
   );
 };
 
+  const [doctorGoals, setDoctorGoals] = useState(patient?.doctor_goals || "");
+  const [doctorPlan, setDoctorPlan] = useState(patient?.doctor_plan || "");
+  
+  useEffect(() => {
+    setDoctorGoals(patient?.doctor_goals || "");
+    setDoctorPlan(patient?.doctor_plan || "");
+  }, [patient?.id]);
 
+  useEffect(() => {
+    if (!patient?.id) return;
+    const updated = {
+      ...patient,
+      doctor_goals: doctorGoals,
+      doctor_plan: doctorPlan,
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, doctorGoals, doctorPlan]);
 
   return (
     <>
@@ -3212,6 +3229,23 @@ const PsqiModal = ({ onClose, onSave }) => {
                   { key: "others", label: "Others" }
                 ]}
               />
+              {memoryPlans.others && (
+                <div style={{ marginTop: '10px' }}>
+                  <span style={styles.rowLabel}>Specify</span>
+                  <DynamicInput
+                    value={memory.othersSpecify || ""}
+                    onChange={(field, val) => setMemory({ ...memory, othersSpecify: val })}
+                    field={{
+                      name: "othersSpecify",
+                      placeholder: ""
+                    }}
+                    readOnly={false}
+                    styles={styles} // ✅ Pass your local styles object
+                    t={(key) => key} // ✅ Simple pass-through if no i18n needed
+                    languageConfig={undefined}
+                  />
+                </div>
+              )}
             </>
           )}
         </Card>
@@ -3705,7 +3739,51 @@ const PsqiModal = ({ onClose, onSave }) => {
               }}
             />
           </div>
+        {/* ===== Doctor Goals & Plan (MOVED INSIDE THIS CARD) ===== */}
+          <div
+            style={{
+              width: "100%",
+              margin: "20px auto 0",
+              background: "#fff",
+              // border: "1px solid #e5e7eb",
+              borderRadius: 12,
+              padding: 24,
+              boxShadow: "0 4px 14px rgba(15,23,42,0.04)",
+            }}
+          >
+            <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Goals</div>
+            <textarea
+              value={doctorGoals}
+              onChange={(e) => setDoctorGoals(e.target.value)}
+              style={{
+                width: "100%",
+                minHeight: 90,
+                padding: "10px 12px",
+                borderRadius: 6,
+                border: "1px solid #d1d5db",
+                fontSize: 14,
+                fontFamily: "inherit",
+                resize: "vertical",
+                marginBottom: 18,
+              }}
+            />
 
+            <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 10 }}>Plan</div>
+            <textarea
+              value={doctorPlan}
+              onChange={(e) => setDoctorPlan(e.target.value)}
+              style={{
+                width: "100%",
+                minHeight: 90,
+                padding: "10px 12px",
+                borderRadius: 6,
+                border: "1px solid #d1d5db",
+                fontSize: 14,
+                fontFamily: "inherit",
+                resize: "vertical",
+              }}
+            />
+          </div>
         </Card>
 
 

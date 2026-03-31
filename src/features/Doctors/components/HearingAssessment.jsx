@@ -103,7 +103,7 @@ const HEARING_SECTIONS = [
         {
           type: "refraction-12col",
           name: "external_ear_table",
-          cornerLabel: "Sub heading",
+          cornerLabel: "External Ear",
           showColumnHeaders: false,
           groups: [
             { label: "Right Ear", columns: [{ key: "Value" }] },
@@ -176,7 +176,7 @@ const HEARING_SECTIONS = [
         {
           type: "refraction-12col",
           name: "ear_canal_table",
-          cornerLabel: "Sub heading",
+          cornerLabel: "Internal Ear",
           showColumnHeaders: false,
           groups: [
             { label: "Right Ear", columns: [{ key: "Value" }] },
@@ -312,6 +312,17 @@ const HEARING_SECTIONS = [
             { label: "Whisper Test", value: "whisper_test", columns: [{ type: "select", options: ["Passed", "Failed"] }, { type: "select", options: ["Passed", "Failed"] }] },
             { label: "Dix-Hallpike Test", value: "dix_hallpike_test", columns: [{ type: "select", options: ["Positive", "Negative"] }, { type: "select", options: ["Positive", "Negative"] }] }
           ]
+        },
+        {
+          type: "subheading",
+          label: "Goals",
+          showIf: { field: "ear_status", equals: "impaired" }
+        },
+        {
+          type: "textarea",
+          name: "hearing_goals",
+          placeholder: "Enter goals",
+          showIf: { field: "ear_status", equals: "impaired" }
         },
         {
           type: "checkbox-group",

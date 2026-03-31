@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-
-
 export default function SwallowingAndSpeechAssessment() {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -464,10 +462,27 @@ export default function SwallowingAndSpeechAssessment() {
             }
           },
 
+          {
+            type: "subheading",
+            label: "Goals",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" }
+          },
+          {
+            type: "textarea",
+            name: "swallowing_goals",
+            placeholder: "Enter goals",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" }
+          },
+
           /* ================= PLAN ================= */
           {
-            name: "swallowing_plan",
+            type: "subheading",
             label: "Plan",
+            showIf: { field: "swallowing_difficulty", equals: "Impaired" }
+          },
+          {
+            name: "swallowing_plan",
+            // label: "Plan",
             type: "multi-select-dropdown",
             showIf: { field: "swallowing_difficulty", equals: "Impaired" },
             options: [
@@ -749,7 +764,29 @@ export default function SwallowingAndSpeechAssessment() {
               equals: "Yes",
               and: { field: "language_speech_intact_impaired", equals: "Impaired" }
             }
-          }
+          },
+          {
+            type: "subheading",
+            label: "Goals",
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "textarea",
+            name: "swallowing_goals",
+            placeholder: "Enter goals",
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "subheading",
+            label: "Plan",
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },
+          {
+            type: "textarea",
+            name: "swallowing_plans",
+            placeholder: "Enter goals",
+            showIf: { field: "language_speech_intact_impaired", equals: "Impaired" }
+          },          
         ]
       },
 

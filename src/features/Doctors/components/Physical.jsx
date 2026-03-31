@@ -2439,7 +2439,26 @@ export default function Physical({ onChange }) {
           },
           { name: "pe_special_wrist_tinnel", label: "Tinnel sign", type: "radio", options: [{ label: "Positive", value: "positive" }, { label: "Negative", value: "negative" }], showIf: { field: "pe_special_wrist_tests", includes: "tinnel" } },
           { name: "pe_special_wrist_phallens", label: "Phallen's test", type: "radio", options: [{ label: "Positive", value: "positive" }, { label: "Negative", value: "negative" }], showIf: { field: "pe_special_wrist_tests", includes: "phallens" } },
+          /* ========== GOALS & PLAN ========== */
+          {
+            type: "subheading",
+            label: "Goals"
+          },
+          {
+            name: "physical_goals",
+            type: "textarea",
+            placeholder: "Enter goals"
+          },
 
+          {
+            type: "subheading",
+            label: "Plan"
+          },
+          {
+            name: "physical_plan",
+            type: "textarea",
+            placeholder: "Enter plan"
+          },
           /* ========== SPINAL CORD INJURY (SCI) ========== */
           {
             name: "sci_asia_launcher",
