@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const mainContent = {};
@@ -35,13 +36,13 @@ const JENIS_KES_OPTIONS = [
 ];
 
 const TRIP_OPTIONS = [
-  { value: "sehala", label: { en: "Sehala", ms: "Sehala" } },
-  { value: "dua_hala", label: { en: "Dua hala", ms: "Dua hala" } }
+  { value: "one_way", label: { en: "One Way", ms: "Sehala" } },
+  { value: "two_way", label: { en: "Two Way", ms: "Dua hala" } }
 ];
 
 const OTHER_APPOINTMENT_OPTIONS = [
-  { value: "cancel_half_day", label: { en: "Cancel Half Day", ms: "Batal Separuh Hari" } },
-  { value: "cancel_full_day", label: { en: "Cancel Full Day", ms: "Batal Sepenuh Hari" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "No" } }
 ];
 
 const PERALATAN_MAIN_OPTIONS = [
@@ -99,8 +100,8 @@ const NAMA_PEMANDU_OPTIONS = [
 ];
 
 const TAHAP_KESIHATAN_OPTIONS = [
-  { value: "sihat", label: { en: "Sihat", ms: "Sihat" } },
-  { value: "tidak_sihat", label: { en: "Tidak Sihat", ms: "Tidak Sihat" } },
+  { value: "sihat", label: { en: "Healthy", ms: "Sihat" } },
+  { value: "tidak_sihat", label: { en: "Unhealthy", ms: "Tidak Sihat" } },
   { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
@@ -111,8 +112,8 @@ const PENGAMBILAN_UBATAN_OPTIONS = [
 ];
 
 const REHAT_TIDUR_OPTIONS = [
-  { value: "cukup", label: { en: "Cukup", ms: "Cukup" } },
-  { value: "tidak_cukup", label: { en: "Tidak Cukup", ms: "Tidak Cukup" } },
+  { value: "cukup", label: { en: "Enough", ms: "Cukup" } },
+  { value: "tidak_cukup", label: { en: "Not Enough", ms: "Tidak Cukup" } },
   { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
@@ -260,9 +261,13 @@ export default function FleetManagementForm({ patient, onBack }) {
     setValues(v => ({ ...v, [name]: value }));
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const FLEET_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "FLEET MANAGEMENT", ms: "PENGURUSAN FLEET" },
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -270,6 +275,7 @@ export default function FleetManagementForm({ patient, onBack }) {
     sections: [
       {
         fields: [
+          { type: "subheading", label: "Patient Fleet Management"},
           {
             type: "row",
             fields: [
@@ -280,13 +286,6 @@ export default function FleetManagementForm({ patient, onBack }) {
                 readOnly: true,
                 placeholder: { en: "Auto-generated from Case Manager (Customer Service)", ms: "Dijana secara automatik daripada Case Manager (Perkhidmatan Pelanggan)" }
               },
-              {
-                name: "nama_ob",
-                label: { en: "Patient Name", ms: "Nama OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              }
             ]
           },
           {
@@ -299,21 +298,21 @@ export default function FleetManagementForm({ patient, onBack }) {
                 readOnly: true,
                 placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
               },
-              {
-                name: "no_kp_ob",
-                label: { en: "IC Number", ms: "No K/P OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              },
-              {
-                name: "no_phone_ob",
-                label: { en: "Phone Number", ms: "No Phone OB" },
-                type: "input",
-                readOnly: true,
-                placeholder: { en: "Auto-generated from Customer Service", ms: "Dijana secara automatik daripada Perkhidmatan Pelanggan" }
-              }
             ]
+          },
+                    {
+            name: "booking_location",
+            label: "Booking Location",
+            labelAbove: true,
+            type: "radio",
+            options: BOOKING_LOCATION_OPTIONS
+          },
+          {
+            name: "booking_location_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
+            showIf: { field: "booking_location", equals: "others" }
           },
           { type: "subheading", label: { en: "Condition & Aid", ms: "Keadaan & Alat Bantu" } },
           {
@@ -341,20 +340,6 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "input",
             placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
             showIf: { field: "ambulatory_aid", equals: "others" }
-          },
-          { type: "subheading", label: { en: "Booking Location", ms: "Lokasi Tempahan" } },
-          {
-            name: "booking_location",
-            label: "",
-            type: "radio",
-            options: BOOKING_LOCATION_OPTIONS
-          },
-          {
-            name: "booking_location_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Enter if Others selected", ms: "Masukkan jika Lain-lain dipilih" },
-            showIf: { field: "booking_location", equals: "others" }
           },
           {
             name: "jenis_kes",
@@ -384,15 +369,15 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "tarikh_penghantaran",
-            label: { en: "Delivery Date", ms: "Tarikh Penghantaran" },
+            label: { en: "Departure date", ms: "Tarikh Penghantaran" },
             type: "date",
-            placeholder: { en: "Delivery date", ms: "Tarikh penghantaran" }
+            placeholder: { en: "Departure date", ms: "Tarikh penghantaran" }
           },
           {
             name: "masa_penghantaran",
-            label: { en: "Delivery Time", ms: "Masa Penghantaran" },
+            label: { en: "Departure time", ms: "Masa Penghantaran" },
             type: "input",
-            placeholder: { en: "Delivery time", ms: "Masa penghantaran" }
+            placeholder: { en: "Departure time", ms: "Masa penghantaran" }
           },
           { type: "subheading", label: { en: "Trip & Appointment", ms: "Perjalanan & Temujanji" } },
           {
@@ -402,12 +387,21 @@ export default function FleetManagementForm({ patient, onBack }) {
             options: TRIP_OPTIONS
           },
           {
+            name: "estimated_arrival_time",
+            label: "Estimated Arrival Time",
+            type: "time-input",
+            showIf: {
+              field: "trip",
+              equals: "two_way"
+            }
+          },
+          {
             name: "other_appointment",
             label: { en: "Other Appointment", ms: "Temujanji Lain" },
             type: "radio",
             options: OTHER_APPOINTMENT_OPTIONS
           },
-          { type: "subheading", label: { en: "Checklists", ms: "Senarai Semak" } },
+          { type: "subheading", label: { en: "Driver Fleet Management", ms: "Pengurusan Armada Pemandu" } },
           {
             name: "fleet_checklist",
             label: "",
@@ -671,6 +665,16 @@ export default function FleetManagementForm({ patient, onBack }) {
   return (
     <div style={mainContent}>
       <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
         schema={FLEET_SCHEMA}
         values={values}
         onChange={onChange}
@@ -709,4 +713,16 @@ const optionContentStyle = {
   border: "1px solid #e5e7eb",
   borderRadius: 8,
   background: "#f9fafb"
+};
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
 };

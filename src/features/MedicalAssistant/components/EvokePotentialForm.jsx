@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -102,6 +103,11 @@ export default function EvokePotentialForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const EVOKE_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "EVOKE POTENTIAL STUDY", ms: "KAJIAN POTENSI TERANGSANG" },
@@ -124,12 +130,6 @@ export default function EvokePotentialForm({ patient, onBack }) {
             type: "radio",
             options: TYPE_OF_STUDY_OPTIONS,
             labelAbove: true
-          },
-          {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" },
-            type: "input",
-            readOnly: true
           },
           {
             name: "trace_old_report",
@@ -193,12 +193,36 @@ export default function EvokePotentialForm({ patient, onBack }) {
   };
 
   return (
-    <CommonFormBuilder
-      schema={EVOKE_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={EVOKE_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

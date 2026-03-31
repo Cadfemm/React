@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -94,6 +95,11 @@ export default function HolterForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const HOLTER_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "HOLTER", ms: "HOLTER" },
@@ -118,27 +124,6 @@ export default function HolterForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            type: "row",
-            fields: [
-              { name: "diagnosis", label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" }, type: "input", readOnly: true },
-              { name: "age", label: { en: "AGE", ms: "UMUR" }, type: "input", readOnly: true },
-              { name: "gender", label: { en: "GENDER", ms: "JANTINA" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            name: "underlying",
-            label: { en: "UNDERLYING", ms: "PENYEBAB ASAS" },
-            type: "radio",
-            options: UNDERLYING_OPTIONS
-          },
-          {
-            name: "underlying_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "underlying", equals: "others" }
-          },
-          {
             name: "hours_recording",
             label: { en: "HOURS RECORDING", ms: "JAM RAKAMAN" },
             type: "radio",
@@ -156,12 +141,6 @@ export default function HolterForm({ patient, onBack }) {
             type: "radio",
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
-          },
-          {
-            name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
           },
           { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
           {
@@ -182,19 +161,48 @@ export default function HolterForm({ patient, onBack }) {
                 accept: "image/*,.pdf"
               }
             ]
-          }
+          },
+          {
+            name: "final_report",
+            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            type: "textarea",
+          },
         ]
       }
     ]
   };
 
   return (
-    <CommonFormBuilder
-      schema={HOLTER_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={HOLTER_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -140,6 +141,11 @@ export default function EEGForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const EEG_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "EEG", ms: "EEG" },
@@ -164,13 +170,6 @@ export default function EEGForm({ patient, onBack }) {
             labelAbove: true
           },
           {
-            type: "row",
-            fields: [
-              { name: "gender", label: { en: "GENDER", ms: "JANTINA" }, type: "input", readOnly: true },
-              { name: "age", label: { en: "AGE", ms: "UMUR" }, type: "input", readOnly: true }
-            ]
-          },
-          {
             name: "general_appearance",
             label: { en: "GENERAL APPEARANCE & MENTAL STATUS", ms: "PENAMPAKAN UMUM & STATUS MENTAL" },
             type: "textarea",
@@ -180,6 +179,7 @@ export default function EEGForm({ patient, onBack }) {
             name: "medication",
             label: { en: "MEDICATION", ms: "UBATAN" },
             type: "textarea",
+            readOnly: true,
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
@@ -258,17 +258,10 @@ export default function EEGForm({ patient, onBack }) {
           },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS", ms: "DIAGNOSIS" },
-            type: "radio",
-            options: DIAGNOSIS_OPTIONS
-          },
-          {
-            name: "diagnosis_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "diagnosis", equals: "others" }
+            name: "graf",
+            title: { en: "GRAF (RUNNING GRAF REPORT & VIDEO)", ms: "GRAF (LAPORAN GRAF BERJALAN & VIDEO)" },
+            type: "attach-file",
+            accept: "image/*,.pdf,video/*"
           },
           {
             name: "final_report",
@@ -289,19 +282,6 @@ export default function EEGForm({ patient, onBack }) {
             type: "textarea",
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "borderline" }
-          },
-          {
-            name: "graf",
-            title: { en: "GRAF (RUNNING GRAF REPORT & VIDEO)", ms: "GRAF (LAPORAN GRAF BERJALAN & VIDEO)" },
-            type: "attach-file",
-            accept: "image/*,.pdf,video/*"
-          },
-          {
-            name: "emr_factual_report",
-            label: { en: "EMR FACTUAL REPORT", ms: "LAPORAN FAKTA EMR" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
           }
         ]
       }
@@ -309,12 +289,36 @@ export default function EEGForm({ patient, onBack }) {
   };
 
   return (
-    <CommonFormBuilder
-      schema={EEG_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={EEG_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

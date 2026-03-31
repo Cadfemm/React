@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -10,7 +11,8 @@ const t = (text, lang) => {
 
 const TYPE_OF_STUDY_OPTIONS = [
   { value: "ncs", label: { en: "Nerves Conduction Study (NCS)", ms: "Kajian Pengaliran Saraf (NCS)" } },
-  { value: "emg", label: { en: "Electromyogram (EMG)", ms: "Elektromiogram (EMG)" } }
+  { value: "emg", label: { en: "Electromyogram (EMG)", ms: "Elektromiogram (EMG)" } },
+  { value: "both", label: {en: "Both", ms: "Both"}}
 ];
 
 const YES_NO_OPTIONS = [
@@ -56,7 +58,6 @@ const EMR_REPORT_OPTIONS = [
 const FINAL_REPORT_OPTIONS = [
   { value: "normal", label: { en: "NORMAL FINDINGS", ms: "PEMERHATIAN NORMAL" } },
   { value: "abnormal", label: { en: "ABNORMAL FINDINGS", ms: "PEMERHATIAN TIDAK NORMAL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
 ];
 
 function formatToday() {
@@ -114,6 +115,11 @@ export default function NCSEMGForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const NCSEMG_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "NCS & EMG", ms: "NCS & EMG" },
@@ -136,19 +142,6 @@ export default function NCSEMGForm({ patient, onBack }) {
             type: "radio",
             options: TYPE_OF_STUDY_OPTIONS,
             labelAbove: true
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "diagnosis", label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" }, type: "input", readOnly: true },
-              { name: "age", label: { en: "AGE", ms: "UMUR" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            name: "height",
-            label: { en: "HEIGHT (cm)", ms: "TINGGI (cm)" },
-            type: "input",
-            readOnly: true
           },
           {
             name: "trace_old_report",
@@ -221,26 +214,6 @@ export default function NCSEMGForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "time_base", equals: "others" }
           },
-          {
-            name: "emr_factual_report",
-            label: { en: "EMR FACTUAL REPORT", ms: "LAPORAN FAKTA EMR" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
-          {
-            name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
-          {
-            name: "final_report_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "others" }
-          },
           { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
           {
             type: "row",
@@ -260,19 +233,56 @@ export default function NCSEMGForm({ patient, onBack }) {
                 accept: "image/*,.pdf"
               }
             ]
-          }
+          },
+          {
+            name: "final_report",
+            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
+          {
+            name: "final_report_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", oneOf: ["normal", "abnormal"] }
+          },
         ]
       }
     ]
   };
 
   return (
-    <CommonFormBuilder
-      schema={NCSEMG_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={NCSEMG_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};

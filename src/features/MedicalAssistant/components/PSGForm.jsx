@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
 const t = (text, lang) => {
@@ -31,10 +32,10 @@ const TECHNICAL_AIRFLOW_OPTIONS = [
 ];
 
 const SCORING_TABLE_OPTIONS = [
-  { value: "normal", label: { en: "0-5 apnoea + hypopnoea events per hour / Normal", ms: "0-5 kejadian apnoea + hipopnoea sejam / Normal" } },
-  { value: "mild", label: { en: "6-15 apnoea + hypopnoea events per hour / Mild sleep apnoea", ms: "6-15 kejadian apnoea + hipopnoea sejam / Apnoea tidur ringan" } },
-  { value: "moderate", label: { en: "16-29 apnoea + hypopnoea events per hour / Moderate sleep apnoea", ms: "16-29 kejadian apnoea + hipopnoea sejam / Apnoea tidur sederhana" } },
-  { value: "severe", label: { en: "30 or greater apnoea + hypopnoea events per hour / Severe sleep apnoea", ms: "30 atau lebih kejadian apnoea + hipopnoea sejam / Apnoea tidur teruk" } }
+  { value: "normal", label: { en: "0-5 Apnoea + hypopnoea events per hour / Normal", ms: "0-5 kejadian apnoea + hipopnoea sejam / Normal" } },
+  { value: "mild", label: { en: "6-15 Apnoea + hypopnoea events per hour / Mild sleep apnoea", ms: "6-15 kejadian apnoea + hipopnoea sejam / Apnoea tidur ringan" } },
+  { value: "moderate", label: { en: "16-29 Apnoea + hypopnoea events per hour / Moderate sleep apnoea", ms: "16-29 kejadian apnoea + hipopnoea sejam / Apnoea tidur sederhana" } },
+  { value: "severe", label: { en: "30 Or greater apnoea + hypopnoea events per hour / Severe sleep apnoea", ms: "30 atau lebih kejadian apnoea + hipopnoea sejam / Apnoea tidur teruk" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
@@ -136,6 +137,11 @@ export default function PSGForm({ patient, onBack }) {
     if (type === "back") onBack?.();
   };
 
+  const PATIENT_SCHEMA = {
+    title: "Patient Information",
+    sections: []
+  }
+
   const PSG_SCHEMA = {
     enableLanguageToggle: true,
     title: { en: "PSG (POLYSOMNOGRAM)", ms: "PSG (POLISOMNOGRAM)" },
@@ -155,29 +161,9 @@ export default function PSGForm({ patient, onBack }) {
           {
             type: "row",
             fields: [
-              { name: "gender", label: { en: "GENDER", ms: "JANTINA" }, type: "input", readOnly: true },
-              { name: "height", label: { en: "HEIGHT (cm)", ms: "TINGGI (cm)" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "weight", label: { en: "WEIGHT (kg)", ms: "BERAT (kg)" }, type: "input", readOnly: true },
-              { name: "neck_circumference", label: { en: "NECK CIRCUMFERENCE (CM)", ms: "LILITAN LEHER (CM)" }, type: "input", readOnly: true }
-            ]
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "bmi", label: { en: "BMI", ms: "BMI" }, type: "input", readOnly: true },
+              { name: "neck_circumference", label: { en: "NECK CIRCUMFERENCE (CM)", ms: "LILITAN LEHER (CM)" }, type: "input" },
               { name: "bmi_conclusion", label: { en: "BMI Conclusion", ms: "Kesimpulan BMI" }, type: "input", readOnly: true }
             ]
-          },
-          {
-            name: "diagnosis",
-            label: { en: "DIAGNOSIS (Grouping ICD)", ms: "DIAGNOSIS (Kumpulan ICD)" },
-            type: "input",
-            readOnly: true
           },
           { type: "subheading", label: { en: "Sleep Assessment", ms: "Penilaian Tidur" } },
           {
@@ -237,7 +223,29 @@ export default function PSGForm({ patient, onBack }) {
             type: "radio",
             options: YES_NO_OPTIONS
           },
+          {
+            name: "previous_psg_image",
+            label: "Upload Report",
+            type: "attach-file",
+            showIf: {
+              field: "previous_psg",
+              equals: "yes"
+            }
+          },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
+          {
+            name: "graf",
+            title: { en: "GRAF", ms: "GRAF" },
+            type: "attach-file",
+            accept: "image/*,.pdf,video/*"
+          },
+          {
+            name: "emr_technical_report",
+            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            type: "radio",
+            options: EMR_REPORT_OPTIONS,
+            labelAbove: true
+          },
           {
             name: "final_report",
             label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
@@ -251,31 +259,42 @@ export default function PSGForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "others" }
           },
-          {
-            name: "graf",
-            title: { en: "GRAF", ms: "GRAF" },
-            type: "attach-file",
-            accept: "image/*,.pdf,video/*"
-          },
-          {
-            name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          }
         ]
       }
     ]
   };
 
   return (
-    <CommonFormBuilder
-      schema={PSG_SCHEMA}
-      values={values}
-      onChange={onChange}
-      onAction={handleAction}
-      language={language}
-    />
+    <div>
+      <CommonFormBuilder
+        schema={PATIENT_SCHEMA}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient}/>
+        <button style={doctorsReportBtn}>
+          Doctors Reports
+        </button>
+      </CommonFormBuilder>
+      <CommonFormBuilder
+        schema={PSG_SCHEMA}
+        values={values}
+        onChange={onChange}
+        onAction={handleAction}
+        language={language}
+      />
+    </div>
   );
 }
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
+};
