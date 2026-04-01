@@ -39,7 +39,7 @@ export default function RespiratoryAssessment({ layout = "root" }) {
             options: [
               { label: "Shortness of breath", value: "shortness_of_breath" },
               { label: "Cough", value: "cough" },
-              { label: "Frank hemoptysis (if selected, must go to doctor)", value: "frank_hemoptysis" },
+              { label: "Frank hemoptysis", value: "frank_hemoptysis" },
               { label: "Wheeze", value: "wheeze" },
               { label: "Chest tightness", value: "chest_tightness" },
               { label: "Chest pain on breathing", value: "chest_pain_breathing" },
@@ -62,19 +62,10 @@ export default function RespiratoryAssessment({ layout = "root" }) {
           },
           // ─── 2. Dyspnea ───
           {
-            name: "resp_dyspnea_present",
-            label: "2. Dyspnea — Dyspnea present?",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
             name: "resp_dyspnea_onset",
             label: "Onset",
             type: "radio",
-            showIf: { field: "resp_dyspnea_present", equals: "yes" },
+            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
             options: [
               { label: "Sudden", value: "sudden" },
               { label: "Gradual", value: "gradual" },
@@ -85,7 +76,7 @@ export default function RespiratoryAssessment({ layout = "root" }) {
             name: "resp_dyspnea_occurs",
             label: "Occurs",
             type: "radio",
-            showIf: { field: "resp_dyspnea_present", equals: "yes" },
+            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
             options: [
               { label: "At rest", value: "at_rest" },
               { label: "With exertion", value: "with_exertion" },
@@ -100,13 +91,13 @@ export default function RespiratoryAssessment({ layout = "root" }) {
             max: 10,
             step: 1,
             showValue: true,
-            showIf: { field: "resp_dyspnea_present", equals: "yes" }
+            showIf: { field: "resp_complaint", includes: "shortness_of_breath" }
           },
           {
             name: "resp_orthopnea",
             label: "Orthopnea",
             type: "radio",
-            showIf: { field: "resp_dyspnea_present", equals: "yes" },
+            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
@@ -116,23 +107,25 @@ export default function RespiratoryAssessment({ layout = "root" }) {
             name: "resp_orthopnea_pillows",
             label: "Pillows used",
             type: "input",
-            showIf: { field: "resp_orthopnea", equals: "yes" }
+            showIf: {
+              field: "resp_orthopnea",
+              equals: "yes",
+              and: { field: "resp_complaint", includes: "shortness_of_breath" }
+            }
           },
           {
             name: "resp_pnd",
             label: "Paroxysmal nocturnal Dyspnea",
             type: "radio",
-            showIf: { field: "resp_dyspnea_present", equals: "yes" },
+            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
           },
-          // ─── 3. Cough ───
-          { type: "subheading", label: "3. Cough" },
           {
             name: "resp_cough_present",
-            label: "Cough present?",
+            label: "3. Cough",
             type: "radio",
             options: [
               { label: "No", value: "no" },

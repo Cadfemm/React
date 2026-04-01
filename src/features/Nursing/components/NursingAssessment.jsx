@@ -273,6 +273,37 @@ function SeizureChartAdapter({ onChange }) {
   return <SeizureChart patient={patient} />;
 }
 
+function shouldShowRespiratoryLauncher(data = {}) {
+  const hasAbnormalBreathingPattern = ["labored", "shallow"].includes(data.resp_breathing_pattern);
+  const hasAsymmetricalChestExpansion = data.resp_chest_expansion === "asymmetrical";
+  const breathSounds = Array.isArray(data.resp_breath_sounds) ? data.resp_breath_sounds : [];
+  const hasAbnormalBreathSound = ["wheeze", "crackles", "diminished"].some((sound) => breathSounds.includes(sound));
+  const hasRespiratoryDistress = ["retractions", "nasal_flaring", "cyanosis"].includes(data.resp_distress_signs);
+  const spo2 = Number.parseFloat(data.obj_spo2 ?? data.resp_o2_saturation);
+  const respiratoryRate = Number.parseFloat(data.obj_resp_rate);
+  const hasLowSpo2 = Number.isFinite(spo2) && spo2 < 94;
+  const hasHighRespiratoryRate = Number.isFinite(respiratoryRate) && respiratoryRate > 30;
+
+  return hasAbnormalBreathingPattern
+    || hasAsymmetricalChestExpansion
+    || hasAbnormalBreathSound
+    || hasRespiratoryDistress
+    || hasLowSpo2
+    || hasHighRespiratoryRate;
+}
+
+function shouldShowGiGuLauncher(data = {}) {
+  const isInspectionDistended = data.gi_inspection === "distended";
+  const hasAbnormalPalpation = ["tender", "guarding", "masses"].includes(data.gi_palpation);
+  const hasNauseaVomiting = data.gi_nausea_vomiting === "yes";
+  const isIncontinent = data.gi_continence === "incontinent";
+
+  return isInspectionDistended
+    || hasAbnormalPalpation
+    || hasNauseaVomiting
+    || isIncontinent;
+}
+
 // Assessment Registry
 export const NURSING_ASSESSMENT_REGISTRY = {
   barthel: BarthelIndexAdapter,
@@ -319,15 +350,11 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
       const h = parseFloat(loaded.obj_height);
       const w = parseFloat(loaded.obj_weight);
       if (h > 0 && w > 0) loaded.obj_bmi = (w / Math.pow(h / 100, 2)).toFixed(1);
-      const bpRaw = loaded.obj_bp;
-      const sysPart = String(bpRaw || "").split("/")[0].trim();
-      const sys = parseInt(sysPart, 10);
-      const bpOutOfRange = Number.isFinite(sys) && (sys < 90 || sys > 180);
-      const anyPulseAbsent = loaded.hv_radial_quality === "absent" || loaded.hv_dorsalis_pedis_quality === "absent" || loaded.hv_posterior_tibial_quality === "absent";
-      loaded.show_cardiac_launcher = bpOutOfRange || anyPulseAbsent;
-      const nauseaYes = loaded.gi_nausea_vomiting === "yes";
-      const uo = parseFloat(loaded.gu_urine_output);
-      loaded.show_gi_gu_launcher = nauseaYes || (Number.isFinite(uo) && uo < 0.5);
+      const hasSubjectiveCardiacConcern = loaded.chest_pain === "yes"
+        || loaded.dyspnea === "yes"
+        || loaded.palpitations === "yes";
+      loaded.show_cardiac_launcher = !!hasSubjectiveCardiacConcern;
+      loaded.show_gi_gu_launcher = shouldShowGiGuLauncher(loaded);
       const renalUo = parseFloat(loaded.gu_urine_output);
       loaded.show_renal_launcher = Number.isFinite(renalUo) && renalUo < 0.5;
       const mskAbnormal = loaded.msk_rom === "limited" || loaded.msk_strength === "decreased"
@@ -336,6 +363,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         || loaded.msk_pain_with_movement === "yes"
         || ["weak", "edematous"].includes(loaded.msk_lower_extremity);
       loaded.show_msk_launcher = !!mskAbnormal;
+      loaded.show_respiratory_launcher = shouldShowRespiratoryLauncher(loaded);
       setValues(loaded);
     }
   }, [storageKey]);
@@ -348,22 +376,18 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         const w = parseFloat(name === "obj_weight" ? value : v.obj_weight);
         if (h > 0 && w > 0) next.obj_bmi = (w / Math.pow(h / 100, 2)).toFixed(1);
       }
-      // Show Cardiac Assessment launcher when BP systolic < 90 or > 180, or any peripheral pulse is absent
-      const bpPulseNames = ["obj_bp", "obj_height", "obj_weight", "hv_radial_quality", "hv_dorsalis_pedis_quality", "hv_posterior_tibial_quality"];
-      if (bpPulseNames.includes(name)) {
-        const bpRaw = next.obj_bp;
-        const sysPart = String(bpRaw || "").split("/")[0].trim();
-        const sys = parseInt(sysPart, 10);
-        const bpOutOfRange = Number.isFinite(sys) && (sys < 90 || sys > 180);
-        const anyPulseAbsent = next.hv_radial_quality === "absent" || next.hv_dorsalis_pedis_quality === "absent" || next.hv_posterior_tibial_quality === "absent";
-        next.show_cardiac_launcher = bpOutOfRange || anyPulseAbsent;
+      // Show Cardiac Assessment launcher when subjective cardio-respiratory symptoms are present
+      const cardiacSubjectiveNames = ["chest_pain", "dyspnea", "palpitations"];
+      if (cardiacSubjectiveNames.includes(name)) {
+        const hasSubjectiveCardiacConcern = next.chest_pain === "yes"
+          || next.dyspnea === "yes"
+          || next.palpitations === "yes";
+        next.show_cardiac_launcher = !!hasSubjectiveCardiacConcern;
       }
-      // Show GI/GU Assessment launcher when Nausea/vomiting = Yes (Abdomen/GI) or Urine output < 0.5 mL/hr (Genitourinary)
-      const giGuNames = ["gi_nausea_vomiting", "gu_urine_output"];
+      // Show GI/GU Assessment launcher when any selected GI/GU abnormal criterion is present
+      const giGuNames = ["gi_inspection", "gi_palpation", "gi_nausea_vomiting", "gi_continence"];
       if (giGuNames.includes(name)) {
-        const nauseaYes = next.gi_nausea_vomiting === "yes";
-        const uo = parseFloat(next.gu_urine_output);
-        next.show_gi_gu_launcher = nauseaYes || (Number.isFinite(uo) && uo < 0.5);
+        next.show_gi_gu_launcher = shouldShowGiGuLauncher(next);
       }
       // Show Renal Assessment launcher when urine output < 0.5 mL/hr (Genitourinary)
       if (name === "gu_urine_output") {
@@ -379,6 +403,11 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           || next.msk_pain_with_movement === "yes"
           || ["weak", "edematous"].includes(next.msk_lower_extremity);
         next.show_msk_launcher = !!mskAbnormal;
+      }
+      // Show Respiratory Assessment launcher when respiratory findings are abnormal
+      const respNames = ["resp_breathing_pattern", "resp_chest_expansion", "resp_breath_sounds", "resp_distress_signs", "obj_spo2", "obj_resp_rate", "resp_o2_saturation"];
+      if (respNames.includes(name)) {
+        next.show_respiratory_launcher = shouldShowRespiratoryLauncher(next);
       }
       return next;
     });
@@ -590,6 +619,13 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           { name: "chest_pain", label: "Chest pain", type: "radio", options: YES_NO_OPTIONS },
           { name: "dyspnea", label: "Dyspnea at rest/exertion", type: "radio", options: YES_NO_OPTIONS },
           { name: "palpitations", label: "Palpitations", type: "radio", options: YES_NO_OPTIONS },
+          {
+            name: "cardiac_assessment_launcher_subjective",
+            label: "",
+            type: "assessment-launcher",
+            options: [{ label: "Cardiac Assessment", value: "cardiac_assessment" }],
+            showIf: { field: "show_cardiac_launcher", equals: true }
+          },
           { name: "dizziness_syncope", label: "Dizziness/syncope", type: "radio", options: YES_NO_OPTIONS },
           { name: "orthostatic_symptoms", label: "Orthostatic symptoms", type: "radio", options: YES_NO_OPTIONS },
           { name: "exercise_intolerance", label: "Exercise intolerance/fatigue", type: "radio", options: YES_NO_OPTIONS },
@@ -646,14 +682,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             label: "",
             type: "assessment-launcher",
             options: [{ label: "Cardiac Assessment", value: "cardiac_assessment" }],
-            showIf: {
-              or: [
-                { field: "show_cardiac_launcher", equals: true },
-                { field: "hv_radial_quality", equals: "absent" },
-                { field: "hv_dorsalis_pedis_quality", equals: "absent" },
-                { field: "hv_posterior_tibial_quality", equals: "absent" }
-              ]
-            }
+            showIf: { field: "show_cardiac_launcher", equals: true }
           },
           { type: "subheading", label: "Anthropometry" },
           { type: "row", fields: [
@@ -986,7 +1015,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             label: "",
             type: "assessment-launcher",
             options: [{ label: "Respiratory Assessment", value: "respiratory_assessment" }],
-            showIf: { field: "resp_distress_signs", oneOf: ["retractions", "nasal_flaring", "cyanosis"] }
+            showIf: { field: "show_respiratory_launcher", equals: true }
           },
           {
             name: "resp_work_of_breathing",
@@ -1067,14 +1096,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             label: "",
             type: "assessment-launcher",
             options: [{ label: "Cardiac Assessment", value: "cardiac_assessment" }],
-            showIf: {
-              or: [
-                { field: "show_cardiac_launcher", equals: true },
-                { field: "hv_radial_quality", equals: "absent" },
-                { field: "hv_dorsalis_pedis_quality", equals: "absent" },
-                { field: "hv_posterior_tibial_quality", equals: "absent" }
-              ]
-            }
+            showIf: { field: "show_cardiac_launcher", equals: true }
           },
           {
             name: "hv_cap_refill",
@@ -1153,16 +1175,6 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
-          },
-          {
-            name: "gi_focused_referral",
-            label: "GI focused assessment indicated",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ],
-            showIf: { field: "gi_nausea_vomiting", equals: "yes" }
           },
           {
             name: "gi_gu_assessment_launcher",
@@ -1286,13 +1298,6 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             label: "Urine output (mL/hr)",
             type: "input",
             placeholder: "mL/hr"
-          },
-          {
-            name: "gi_gu_assessment_launcher_gu",
-            label: "",
-            type: "assessment-launcher",
-            options: [{ label: "GI or GU Assessment", value: "gi_gu_assessment" }],
-            showIf: { field: "show_gi_gu_launcher", equals: true }
           },
           {
             name: "gu_urine_appearance",
@@ -1890,7 +1895,6 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "Barthel Index", value: "barthel" },
               { label: "ADL", value: "adl" },
-              { label: "Patient History", value: "patient_history" },
               { label: "Morse Fall Scale", value: "morse_fall_scale" },
               { label: "Braden Scale", value: "braden_scale" },
               { label: "Wound Treatment Flowsheet", value: "wound_treatment_flowsheet" },

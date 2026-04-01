@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import SixMWTForm from "./SixMWTForm";
+import MMTForm from "./MMTForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 export const CONDITIONING_ASSESSMENT_REGISTRY = {
-  sixmwt: SixMWTForm
+  sixmwt: SixMWTForm,
+  mmt: MMTForm
 };
 
 export default function Conditioning({ patient, onSubmit, onBack }) {
@@ -346,7 +348,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
       type: "assessment-launcher",
       options: [
         { label: "6MWT", value: "sixmwt" },
-        { label: "Muscle meter", value: "mmt" },
+        { label: "Manual Muscle Test (MMT)", value: "mmt" },
         { label: "Y balance", value: "y_balance" },
         { label: "Leg press symmetry", value: "fac" },
       ]
@@ -412,28 +414,6 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
               }
             ]
           }
-        ]
-      },
-
-      /* ===================================================== */
-      /* MUSCULOSKELETAL ASSESSMENT - MMT                      */
-      /* ===================================================== */
-
-      {
-        title: "Musculoskeletal Assessment - MMT",
-        fields: [
-
-          {
-            type: "grid-table-flat",
-            name: "mmt_table",
-            headers: ["Left", "Right", "Interpretation"],
-            rows: [
-              { key: "hip_flexors", label: "Hip Flexors" },
-              { key: "knee_extensors", label: "Knee Extensors" },
-              { key: "ankle_df", label: "Ankle DF" },
-            ]
-          }
-
         ]
       },
 

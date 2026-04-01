@@ -528,7 +528,7 @@ export default function CommonFormBuilder({
                                   <div style={{ marginBottom: 16 }}>
 
                                     <>
-                                      {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header"].includes(field.type)
+                                      {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
                                           <label style={styles.label}>
@@ -2051,7 +2051,7 @@ case "grid-table-advanced": {
             const v = values[f.name];
             return (
               <div key={f.name || fi} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
-                {f.label && !["button", "checkbox-group", "score-box", "subheading"].includes(f.type) && (
+                {f.label && !["button", "checkbox-group", "score-box", "subheading", "accordion"].includes(f.type) && (
                   <label style={{ display: "block", fontWeight: 600, marginBottom: 6, color: "#0f172a" }}>
                     {languageConfig?.enabled ? t(f.label, languageConfig.lang) : f.label}
                   </label>
@@ -2483,6 +2483,7 @@ case "grid-table-advanced": {
               const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
               const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
               const optTooltip = typeof opt === "object" && opt !== null ? opt.tooltip : undefined;
+              const optColor = typeof opt === "object" && opt !== null ? opt.color : undefined;
               // Ensure both values are same type for comparison
               const isChecked = value != null && (value === optVal || String(value) === String(optVal));
               const labelText =
@@ -2512,7 +2513,7 @@ case "grid-table-advanced": {
                     disabled={readOnly}
                     onChange={() => !readOnly && onChange(field.name, optVal)}
                   />
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, color: optColor || undefined }}>
                     {renderedLabel}
                   </span>
                 </label>

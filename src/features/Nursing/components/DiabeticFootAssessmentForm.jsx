@@ -307,9 +307,9 @@ export default function DiabeticFootAssessmentForm({ patient, onSubmit, onBack }
             label: "",
             type: "radio",
             options: [
-              { value: "low", label: "Low risk" },
-              { value: "moderate", label: "Moderate risk" },
-              { value: "high", label: "High risk" }
+              { value: "low", label: "Low risk", color: "#16A34A" },
+              { value: "moderate", label: "Moderate risk", color: "#EAB308" },
+              { value: "high", label: "High risk", color: "#F97316" }
             ]
           }
         ]
