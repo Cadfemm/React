@@ -1900,7 +1900,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "Bladder Diary", value: "bladder_diary" },
               { label: "Agitated Behaviour Scale", value: "agitated_behaviour_scale" },
               { label: "Glucose Monitor", value: "glucose_monitor" },
-              { label: "Rehab Checklist", value: "rehab_checklist" },
+              // { label: "Rehab Checklist", value: "rehab_checklist" },
               { label: "Seizure Chart", value: "seizure_chart" }
             ]
           }
