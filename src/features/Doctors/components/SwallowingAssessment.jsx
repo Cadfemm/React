@@ -105,73 +105,23 @@ export default function SwallowingAndSpeechAssessment() {
             ]
           },
           {
-            name: "oral_feeding_issue_coughing_throat_clear",
-            label: "Coughing or throat clearing (Specify)",
+            name: "oral_feeding_issue_specify",
+            label: "Specify",
             type: "input",
             showIf: {
               field: "swallowing_difficulty",
               equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "coughing_throat_clear" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_nausea_vomiting",
-            label: "Nausea or vomiting (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "nausea_vomiting" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_drooling_food_spillage",
-            label: "Drooling or food spillage (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "drooling_food_spillage" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_wet_gurgly_voice",
-            label: "Wet or gurgly voice (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "wet_gurgly_voice" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_nasal_regurgitation",
-            label: "Nasal regurgitation (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "nasal_regurgitation" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_choking",
-            label: "Choking (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "choking" }
-            }
-          },
-          {
-            name: "oral_feeding_issue_slow_eating",
-            label: "Slow eating (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "oral_feeding_issues", includes: "slow_eating" }
+              and: {
+                or: [
+                  { field: "oral_feeding_issues", includes: "coughing_throat_clear" },
+                  { field: "oral_feeding_issues", includes: "nausea_vomiting" },
+                  { field: "oral_feeding_issues", includes: "drooling_food_spillage" },
+                  { field: "oral_feeding_issues", includes: "wet_gurgly_voice" },
+                  { field: "oral_feeding_issues", includes: "nasal_regurgitation" },
+                  { field: "oral_feeding_issues", includes: "choking" },
+                  { field: "oral_feeding_issues", includes: "slow_eating" }
+                ]
+              }
             }
           },
 
@@ -203,87 +153,25 @@ export default function SwallowingAndSpeechAssessment() {
               }
             ]
           },
-          {
-            name: "enteral_feeding_issue_aspiration",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "enteral_feeding_issues", includes: "aspiration" }
+         {
+          name: "enteral_feeding_issue_specify",
+          label: "Specify",
+          type: "input",
+          showIf: {
+            field: "swallowing_difficulty",
+            equals: "Impaired",
+            and: {
+              or: [
+                { field: "enteral_feeding_issues", includes: "aspiration" },
+                { field: "enteral_feeding_issues", includes: "nausea_vomiting_enteral" },
+                { field: "enteral_feeding_issues", includes: "diarrhoea" },
+                { field: "enteral_feeding_issues", includes: "constipation" },
+                { field: "enteral_feeding_issues", includes: "abdominal_distension" },
+                { field: "enteral_feeding_issues", includes: "coughing_choking_during_feeding" },
+                { field: "enteral_feeding_issues", includes: "skin_irritation_insertion_site" }
+              ]
             }
-          },
-          {
-            name: "enteral_feeding_issue_nausea_vomiting_enteral",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: {
-                field: "enteral_feeding_issues",
-                includes: "nausea_vomiting_enteral"
-              }
-            }
-          },
-          {
-            name: "enteral_feeding_issue_diarrhoea",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "enteral_feeding_issues", includes: "diarrhoea" }
-            }
-          },
-          {
-            name: "enteral_feeding_issue_constipation",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "enteral_feeding_issues", includes: "constipation" }
-            }
-          },
-          {
-            name: "enteral_feeding_issue_abdominal_distension",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: {
-                field: "enteral_feeding_issues",
-                includes: "abdominal_distension"
-              }
-            }
-          },
-          {
-            name: "enteral_feeding_issue_coughing_choking_during_feeding",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: {
-                field: "enteral_feeding_issues",
-                includes: "coughing_choking_during_feeding"
-              }
-            }
-          },
-          {
-            name: "enteral_feeding_issue_skin_irritation_insertion_site",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: {
-                field: "enteral_feeding_issues",
-                includes: "skin_irritation_insertion_site"
-              }
-            }
+          }
           },
 
           /* ================= TEXTURES ================= */
@@ -366,67 +254,23 @@ export default function SwallowingAndSpeechAssessment() {
             ]
           },
           {
-            name: "other_issue_malnutrition",
-            label: "Malnutrition (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "other_related_issues", includes: "malnutrition" }
+          name: "other_related_issue_specify",
+          label: "Specify",
+          type: "input",
+          showIf: {
+            field: "swallowing_difficulty",
+            equals: "Impaired",
+            and: {
+              or: [
+                { field: "other_related_issues", includes: "malnutrition" },
+                { field: "other_related_issues", includes: "dehydration" },
+                { field: "other_related_issues", includes: "weight_loss" },
+                { field: "other_related_issues", includes: "avoidance_eating" },
+                { field: "other_related_issues", includes: "fatigue" },
+                { field: "other_related_issues", includes: "lung_infection_history" }
+              ]
             }
-          },
-          {
-            name: "other_issue_dehydration",
-            label: "Dehydration (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "other_related_issues", includes: "dehydration" }
-            }
-          },
-          {
-            name: "other_issue_weight_loss",
-            label: "Weight loss (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "other_related_issues", includes: "weight_loss" }
-            }
-          },
-          {
-            name: "other_issue_avoidance_eating",
-            label: "Avoidance of eating (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "other_related_issues", includes: "avoidance_eating" }
-            }
-          },
-          {
-            name: "other_issue_fatigue",
-            label: "Fatigue (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: { field: "other_related_issues", includes: "fatigue" }
-            }
-          },
-          {
-            name: "other_issue_lung_infection_history",
-            label: "History of lung infection (Specify)",
-            type: "input",
-            showIf: {
-              field: "swallowing_difficulty",
-              equals: "Impaired",
-              and: {
-                field: "other_related_issues",
-                includes: "lung_infection_history"
-              }
-            }
+          }
           },
 
           /* ================= PREVIOUS PROCEDURES ================= */

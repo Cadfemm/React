@@ -599,28 +599,21 @@ export default function Physical({ onChange }) {
             showIf: { field: "motor_muscle_weakness", equals: "Yes" },
           },
           {
-            name: "motor_muscle_weakness_site_rul_specify",
-            label: "Right Upper Limb - Specify",
+            name: "motor_muscle_weakness_site_specify",
+            label: "Specify",
             type: "input",
-            showIf: { field: "motor_muscle_weakness_sites", includes: "rul" },
-          },
-          {
-            name: "motor_muscle_weakness_site_lul_specify",
-            label: "Left Upper Limb - Specify",
-            type: "input",
-            showIf: { field: "motor_muscle_weakness_sites", includes: "lul" },
-          },
-          {
-            name: "motor_muscle_weakness_site_rll_specify",
-            label: "Right Lower Limb - Specify",
-            type: "input",
-            showIf: { field: "motor_muscle_weakness_sites", includes: "rll" },
-          },
-          {
-            name: "motor_muscle_weakness_site_lll_specify",
-            label: "Left Lower Limb - Specify",
-            type: "input",
-            showIf: { field: "motor_muscle_weakness_sites", includes: "lll" },
+            showIf: {
+              field: "motor_muscle_weakness",
+              equals: "Yes",
+              and: {
+                or: [
+                  { field: "motor_muscle_weakness_sites", includes: "rul" },
+                  { field: "motor_muscle_weakness_sites", includes: "lul" },
+                  { field: "motor_muscle_weakness_sites", includes: "rll" },
+                  { field: "motor_muscle_weakness_sites", includes: "lll" }
+                ]
+              }
+            }
           },
 
           {

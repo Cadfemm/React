@@ -644,9 +644,22 @@ const SPASM_SPASTICITY_SCHEMA = {
           ],
           showIf: { field: "spasm_present", equals: "Yes" },
         },
-        { type: "input", name: "spasm_site_lower_limbs_specify", label: "Lower limbs (Specify)", showIf: { field: "spasm_sites", includes: "lower_limbs" } },
-        { type: "input", name: "spasm_site_upper_limbs_specify", label: "Upper limbs (Specify)", showIf: { field: "spasm_sites", includes: "upper_limbs" } },
-        { type: "input", name: "spasm_site_trunk_specify", label: "Trunk (Specify)", showIf: { field: "spasm_sites", includes: "trunk" } },
+        {
+          type: "input",
+          name: "spasm_site_specify",
+          label: "Specify",
+          showIf: {
+            field: "spasm_present",
+            equals: "Yes",
+            and: {
+              or: [
+                { field: "spasm_sites", includes: "lower_limbs" },
+                { field: "spasm_sites", includes: "upper_limbs" },
+                { field: "spasm_sites", includes: "trunk" }
+              ]
+            }
+          }
+        },
         {
           type: "assessment-launcher",
           name: "spasm_penn_frequency_assessment",
