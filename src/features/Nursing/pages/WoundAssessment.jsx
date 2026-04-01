@@ -60,8 +60,8 @@ function buildSchema(values) {
       type: "checkbox-group",
       options: opt([
         "Pressure Injury","Venous Insufficiency","Arterial Insufficiency",
-        "Diabetic Foot Ulcer","Surgical – Primary intention","Surgical – Secondary intention",
-        "Skin Tear","IAD (Incontinence-Associated Dermatitis)","Traumatic","Unknown","Other"
+        "Diabetic Foot Ulcer","Surgical – 20 intension",
+        "Skin Tear","IAD (Incontinence-Associated Dermatitis)","Unknown","Other"
       ])
     },
     ...(pressureInjurySelected ? [
@@ -133,20 +133,19 @@ function buildSchema(values) {
     { name: "tissue_other_pct", label: "% Other", type: "input", placeholder: "%" },
     { type: "subheading", label: "Infection Status" },
     { name: "infection_status", label: "Infection", type: "radio",
-      options: opt(["No infection","Suspected infection","Confirmed infection"]) },
-    ...((infectionStatus === "Suspected infection" || infectionStatus === "Confirmed infection") ? [
+      options: opt(["No","Yes"]) },
+    ...(infectionStatus === "Yes" ? [
       { type: "alert-box", severity: "warning",
         message: "🟠 Infection present — amber alert. Review wound management plan." },
-      { name: "superbug", label: "MDRO / Superbug?", type: "radio", options: opt(["Yes","No"]) },
-      ...(isSuperBug ? [{ type: "alert-box", severity: "danger",
-        message: "🔴 MDRO (Superbug) identified — Red alert. Implement contact precautions immediately." }] : [])
+      { name: "infection_signs", label: "Infection Signs (select all that apply)", type: "checkbox-group", position:"side",
+        options: opt(["Pain","Malodour","Pus","Swelling – picture with marking","Fever"]) }
     ] : []),
 
     /* ── Exudate ── */
-    { type: "subheading", label: "Exudate Assessment" },
-    { name: "exudate_amount", label: "Amount", type: "radio",
+    // { type: "subheading", label: "Exudate Assessment" },
+    { name: "exudate_amount", label: "Exudate Amount", type: "radio",
       options: opt(["None","Scant / Small","Moderate","Large / Copious"]) },
-    { name: "exudate_type", label: "Type (all that apply)", type: "checkbox-group",
+    { name: "exudate_type", label: "Exudate Type",position:"side", type: "checkbox-group",
       options: opt(["Serous","Serosanguineous","Sanguineous","Purulent","Hemorrhagic","Other"]) },
 
     /* ── Odour ── */
@@ -160,19 +159,25 @@ function buildSchema(values) {
       message: "⚠️ Persistent odour after cleansing — infection indicator. Review wound status." }] : []),
 
     /* ── Wound Edge ── */
-    { type: "subheading", label: "Wound Edge" },
-    { name: "wound_edge", label: "Wound Edge (all that apply)", type: "checkbox-group",
-      options: opt(["Attached","Non-Attached","Rolled (Epibole)","Macerated","Undermined","Demarcated","Diffuse","Epithelialization"]) },
+    // { type: "subheading", label: "Wound Edge" },
+    { name: "wound_edge", label: "Wound Edge", type: "radio", labelAbove:true,
+      options: opt([ "Attached (flush w/ wound bed or 'sloping edge')",
+  "Non-attached (edge appears as a 'cliff')",
+  "Demarcated (edges clearly seen)",
+  "Diffuse (edges not clearly seen)",
+  "Rolled (edge curled under)",
+  "Epithelialization"]) },
 
     /* ── Peri-Wound Skin ── */
-    { type: "subheading", label: "Peri-Wound Skin" },
-    { name: "peri_wound_skin", label: "Peri-wound Skin (all that apply)", type: "checkbox-group",
+    // { type: "subheading", label: "Peri-Wound Skin" },
+    { name: "peri_wound_skin", label: "Peri-wound Skin ", type: "radio",
       options: opt(["Intact","Erythema","Indurated","Macerated","Excoriated / Denuded","Callused","Fragile","Other"]) },
     ...((values.peri_wound_skin || []).some(v => ["Macerated","Erythema"].includes(v)) ? [{ type: "alert-box", severity: "warning",
       message: "🟠 Severe maceration / erythema detected — clinical review recommended." }] : []),
 
     /* ── Pain Assessment ── */
-    { type: "subheading", label: "Pain Assessment" },
+
+    { type: "subheading", label: "Body Function" },
     {
       name: "pain_score", label: "Pain Score (0–10 VAS)",
       type: "scale-slider",
@@ -209,7 +214,7 @@ function buildSchema(values) {
     // { name: "no_improvement_14days", label: "Wound not improving for 14+ days?", type: "radio", options: opt(["Yes","No"]) },
     // ...(noImprovement ? [{ type: "alert-box", severity: "warning",
     //   message: "⚠️ No improvement in 14 days — consider changing dressing type or escalating care." }] : []),
-    { name: "treatment_notes", label: "Treatment Notes", type: "textarea",
+    { name: "treatment_notes", label: "", type: "textarea",
       placeholder: "Additional treatment details..." },
 
     /* ── Weekly Wound Image ── */
