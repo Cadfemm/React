@@ -17,6 +17,12 @@ import HeadNeckAssessment from "../FocusedAssessment/HeadNeckAssessment";
 import RenalAssessment from "../FocusedAssessment/RenalAssessment";
 import MusculoskeletalAssessment from "../FocusedAssessment/MusculoskeletalAssessment";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+import MedicationAdministrationChart from "./MedicationAdministrationChart";
+import BladderDiaryChart from "./BladderDiaryChart";
+import AgitatedBehaviourScale from "./AgitatedBehaviourScale";
+import GlucoseMonitorChart from "./GlucoseMonitorChart";
+import NursingRehabChecklist from "./NursingRehabChecklist";
+import SeizureChart from "./SeizureChart";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -236,6 +242,37 @@ function MusculoskeletalAssessmentAdapter({ values, onChange }) {
   );
 }
 
+function MedicationChartAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  return <MedicationAdministrationChart patient={patient} />;
+}
+
+function BladderDiaryAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  return <BladderDiaryChart patient={patient} />;
+}
+
+function AgitatedBehaviourAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  return <AgitatedBehaviourScale patient={patient} />;
+}
+
+function GlucoseMonitorAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  return <GlucoseMonitorChart patient={patient} />;
+}
+
+function RehabChecklistAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  const handleBack = () => onChange("nursing_assessments_active", null);
+  return <NursingRehabChecklist patient={patient} onBack={handleBack} />;
+}
+
+function SeizureChartAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  return <SeizureChart patient={patient} />;
+}
+
 // Assessment Registry
 export const NURSING_ASSESSMENT_REGISTRY = {
   barthel: BarthelIndexAdapter,
@@ -253,7 +290,13 @@ export const NURSING_ASSESSMENT_REGISTRY = {
   eye_assessment: EyeAssessmentAdapter,
   head_neck_assessment: HeadNeckAssessmentAdapter,
   renal_assessment: RenalAssessmentAdapter,
-  musculoskeletal_assessment: MusculoskeletalAssessmentAdapter
+  musculoskeletal_assessment: MusculoskeletalAssessmentAdapter,
+  medication_chart: MedicationChartAdapter,
+  bladder_diary: BladderDiaryAdapter,
+  agitated_behaviour_scale: AgitatedBehaviourAdapter,
+  glucose_monitor: GlucoseMonitorAdapter,
+  rehab_checklist: RehabChecklistAdapter,
+  seizure_chart: SeizureChartAdapter,
 };
 
 /* ===================== COMPONENT ===================== */
@@ -1852,7 +1895,13 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "Braden Scale", value: "braden_scale" },
               { label: "Wound Treatment Flowsheet", value: "wound_treatment_flowsheet" },
               { label: "Numeric Rating Scale (NRS) 0-10", value: "numeric_pain_rating_scale" },
-              { label: "Diabetic Foot Assessment", value: "diabetic_foot_assessment" }
+              { label: "Diabetic Foot Assessment", value: "diabetic_foot_assessment" },
+              { label: "Medication Chart", value: "medication_chart" },
+              { label: "Bladder Diary", value: "bladder_diary" },
+              { label: "Agitated Behaviour Scale", value: "agitated_behaviour_scale" },
+              { label: "Glucose Monitor", value: "glucose_monitor" },
+              // { label: "Rehab Checklist", value: "rehab_checklist" },
+              { label: "Seizure Chart", value: "seizure_chart" }
             ]
           }
         ]

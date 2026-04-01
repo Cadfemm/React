@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import NursingAssessment from "./NursingAssessment";
 import WoundAssessment from "../pages/WoundAssessment";
+import MedicationAdministrationChart from "./MedicationAdministrationChart";
+import BladderDiaryChart from "./BladderDiaryChart";
+import AgitatedBehaviourScale from "./AgitatedBehaviourScale";
+import GlucoseMonitorChart from "./GlucoseMonitorChart";
+import NursingRehabChecklist from "./NursingRehabChecklist";
+import SeizureChart from "./SeizureChart";
 
 const MAIN_TABS = [
-  { key: "admission", label: "Admission Nursing" },
-  { key: "shift", label: "Shift Assessment" },
-  { key: "wound", label: "Wound Assessment (WATFS)" },
+  { key: "admission",    label: "Admission Nursing" },
+  { key: "shift",        label: "Shift Assessment" },
+  { key: "wound",        label: "Wound Assessment (WATFS)" },
   { key: "reassessment", label: "Re Assessment" },
-  { key: "discharge", label: "Discharge" }
+  { key: "discharge",    label: "Discharge" },
 ];
 
 export default function PatientDetails({ patient, department, onBack }) {
