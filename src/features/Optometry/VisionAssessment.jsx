@@ -57,7 +57,7 @@ export default function VisionAssessment({ onBack, layout = "root" }) {
             label: "Status",
             options: [
               { label: "Pass", value: "Pass" },
-              { label: "Pass  Exception", value: "Pass Exception" },
+              { label: "Pass With Exception", value: "Pass Exception" },
               { label: "Red Flag", value: "Red Flag" },
               { label: "Fail", value: "Fail" }
             ]
