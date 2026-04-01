@@ -158,33 +158,21 @@ export default function CardioRespiratoryAssessment() {
           },
           {
             type: "input",
-            name: "echo_details_ejection_fraction_specify",
-            label: "Ejection Fraction (%) (Specify)",
-            showIf: { field: "echo_details", includes: "ejection_fraction" }
-          },
-          {
-            type: "input",
-            name: "echo_details_rwma_specify",
-            label: "Regional Wall Motion Abnormality (RWMA) (Specify)",
-            showIf: { field: "echo_details", includes: "rwma" }
-          },
-          {
-            type: "input",
-            name: "echo_details_tr_specify",
-            label: "Tricuspid Regurgitation (TR) (Specify)",
-            showIf: { field: "echo_details", includes: "tr" }
-          },
-          {
-            type: "input",
-            name: "echo_details_mr_specify",
-            label: "Mitral Regurgitation (MR) (Specify)",
-            showIf: { field: "echo_details", includes: "mr" }
-          },
-          {
-            type: "input",
-            name: "echo_details_other_specify",
-            label: "Other (Specify)",
-            showIf: { field: "echo_details", includes: "other" }
+            name: "echo_details_specify",
+            label: "Specify",
+            showIf: {
+              field: "pmh_echo_done",
+              equals: "Yes",
+              and: {
+                or: [
+                  { field: "echo_details", includes: "ejection_fraction" },
+                  { field: "echo_details", includes: "rwma" },
+                  { field: "echo_details", includes: "tr" },
+                  { field: "echo_details", includes: "mr" },
+                  { field: "echo_details", includes: "other" }
+                ]
+              }
+            }
           },
 
           { type: "heading", label: "Risk Factors" },
@@ -468,23 +456,25 @@ export default function CardioRespiratoryAssessment() {
               { label: "Others", value: "others" }
             ]
           },
-          ...[
-            ["suction", "Suction"],
-            ["nebuliser", "Nebuliser"],
-            ["oxygen_supplement", "Oxygen Supplement"],
-            ["incentive_spirometry", "Incentive Spirometry"],
-            ["hfcwo", "High Frequency Chest Wall Oscillation (HFCWO)"],
-            ["fluid_restriction_monitoring", "Fluid Restriction Monitoring"],
-            ["serial_ecg", "Serial ECG"],
-            ["abi_assessment", "ABI Assessment"],
-            ["bp_monitoring", "BP Monitoring"],
-            ["others", "Others"]
-          ].map(([value, label]) => ({
-            type: "input",
-            name: `plan_${value}_specify`,
-            label: `${label} (Specify)`,
-            showIf: { field: "plan_options", includes: value }
-          })),
+          {
+              type: "input",
+              name: "plan_specify",
+              label: "Specify",
+              showIf: {
+                or: [
+                  { field: "plan_options", includes: "suction" },
+                  { field: "plan_options", includes: "nebuliser" },
+                  { field: "plan_options", includes: "oxygen_supplement" },
+                  { field: "plan_options", includes: "incentive_spirometry" },
+                  { field: "plan_options", includes: "hfcwo" },
+                  { field: "plan_options", includes: "fluid_restriction_monitoring" },
+                  { field: "plan_options", includes: "serial_ecg" },
+                  { field: "plan_options", includes: "abi_assessment" },
+                  { field: "plan_options", includes: "bp_monitoring" },
+                  { field: "plan_options", includes: "others" }
+                ]
+              }
+            },
           {
             type: "radio",
             name: "bp_monitoring",

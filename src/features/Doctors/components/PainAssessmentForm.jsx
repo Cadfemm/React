@@ -177,35 +177,19 @@ export default function PainAssessmentForm({ values, onChange }) {
               ],
             },
             {
-              name: "pain_associated_numbness_specify",
-              label: "Numbness - Specify",
-              type: "input",
-              showIf: { field: "pain_associated_symptoms", includes: "numbness" },
-            },
-            {
-              name: "pain_associated_tingling_specify",
-              label: "Tingling - Specify",
-              type: "input",
-              showIf: { field: "pain_associated_symptoms", includes: "tingling" },
-            },
-            {
-              name: "pain_associated_allodynia_specify",
-              label: "Allodynia - Specify",
-              type: "input",
-              showIf: { field: "pain_associated_symptoms", includes: "allodynia" },
-            },
-            {
-              name: "pain_associated_hyperalgesia_specify",
-              label: "Hyperalgesia - Specify",
-              type: "input",
-              showIf: { field: "pain_associated_symptoms", includes: "hyperalgesia" },
-            },
-            {
-              name: "pain_associated_weakness_specify",
-              label: "Weakness - Specify",
-              type: "input",
-              showIf: { field: "pain_associated_symptoms", includes: "weakness" },
-            },
+            name: "pain_associated_specify",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              or: [
+                { field: "pain_associated_symptoms", includes: "numbness" },
+                { field: "pain_associated_symptoms", includes: "tingling" },
+                { field: "pain_associated_symptoms", includes: "allodynia" },
+                { field: "pain_associated_symptoms", includes: "hyperalgesia" },
+                { field: "pain_associated_symptoms", includes: "weakness" }
+              ]
+            }
+          },
           ],
         },
       ],

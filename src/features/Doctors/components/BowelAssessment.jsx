@@ -152,24 +152,30 @@ export default function BowelAssessmentForm({ onChange: onParentChange }) {
               { label: "Others", value: "others" }
             ]
           },
-          ...[
-            ["bowel_accident", "Bowel accident"],
-            ["constipation", "Constipation"],
-            ["anorexia", "Anorexia"],
-            ["nausea_vomiting", "Nausea & vomiting"],
-            ["abdominal_distension", "Abdominal distension"],
-            ["autonomic_dysreflexia", "Autonomic dysreflexia"],
-            ["skin_breakdown", "Skin breakdown"],
-            ["haemorrhoids", "Haemorrhoids"],
-            ["fistula", "Fistula"],
-            ["anal_abscess", "Anal abscess"],
-            ["others", "Others"]
-          ].map(([value, label]) => ({
+          {
             type: "input",
-            name: `complication_${value}_specify`,
-            label: `${label} (Specify)`,
-            showIf: { field: "complication_types", includes: value }
-          })),
+            name: "complication_specify",
+            label: "Specify",
+            showIf: {
+              field: "complication",
+              equals: "Yes",
+              and: {
+                or: [
+                  { field: "complication_types", includes: "bowel_accident" },
+                  { field: "complication_types", includes: "constipation" },
+                  { field: "complication_types", includes: "anorexia" },
+                  { field: "complication_types", includes: "nausea_vomiting" },
+                  { field: "complication_types", includes: "abdominal_distension" },
+                  { field: "complication_types", includes: "autonomic_dysreflexia" },
+                  { field: "complication_types", includes: "skin_breakdown" },
+                  { field: "complication_types", includes: "haemorrhoids" },
+                  { field: "complication_types", includes: "fistula" },
+                  { field: "complication_types", includes: "anal_abscess" },
+                  { field: "complication_types", includes: "others" }
+                ]
+              }
+            }
+          },
           yn("equipment_usage", "Equipment usage: commode chair/wheelchair"),
 
           { type: "subheading", label: "Per rectal (PR) examination" },
@@ -271,19 +277,21 @@ export default function BowelAssessmentForm({ onChange: onParentChange }) {
               { label: "Others", value: "others" }
             ]
           },
-          ...[
-            ["imaging_abdominal_xray", "Imaging: abdominal x ray"],
-            ["diet_fluid_management", "Diet and fluid management"],
-            ["prescription_oral_rectal", "Prescription of Oral or rectal medication or both"],
-            ["monitor_bristol_io", "Monitor bristol chart and Input-Output chart"],
-            ["education_bowel_care", "Education on bowel care/ carer training"],
-            ["independent_bowel_evacuation", "For independent bowel evacuation in toilet"]
-          ].map(([value, label]) => ({
+          {
             type: "input",
-            name: `plan_${value}_specify`,
-            label: `${label} (Specify)`,
-            showIf: { field: "plan_options", includes: value }
-          }))
+            name: "plan_specify",
+            label: "Specify",
+            showIf: {
+              or: [
+                { field: "plan_options", includes: "imaging_abdominal_xray" },
+                { field: "plan_options", includes: "diet_fluid_management" },
+                { field: "plan_options", includes: "prescription_oral_rectal" },
+                { field: "plan_options", includes: "monitor_bristol_io" },
+                { field: "plan_options", includes: "education_bowel_care" },
+                { field: "plan_options", includes: "independent_bowel_evacuation" }
+              ]
+            }
+          },
         ]
       }
     ]
