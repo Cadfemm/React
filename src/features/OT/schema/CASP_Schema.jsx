@@ -4,6 +4,11 @@ const CASP_SCHEMA = {
         {
             title: "Education Level",
             fields: [
+                         {
+                    type: "button",
+                    label: "Reference Images",
+                    action: "education_reference"
+                },
                 {
                     type: "radio",
                     name: "education_level_naming",
@@ -41,23 +46,24 @@ const CASP_SCHEMA = {
                     options: [0, 1, 2]
                 },
                 {
-                    type: "row",
-                    fields: [
-                        { name: "image_recall", label: "Image Recall", type: "scale-slider", min: 0, max: 6}
-                    ]
-                },
+                    type: "radio",
+                    name: "image_recall",
+                    label: "Image Recall",
+                    options: [0, 1, 2, 3, 4, 5, 6]
+                },                
                 {
-                    type: "row",
-                    fields: [
-                        { name: "calendar", label: "Calendar", type: "scale-slider", min: 0, max: 6}
-                    ]
-                },
+                    type: "radio",
+                    name: "calendar",
+                    label: "Calendar",
+                    options: [0, 1, 2, 3, 4, 5, 6]
+                }, 
                 {
-                    type: "row",
-                    fields: [
-                        { name: "praxis", label: "Praxis", type: "scale-slider", min:0, max:6}
-                    ]
-                },
+                    type: "radio",
+                    name: "praxis",
+                    label: "Praxis",
+                    options: [0, 1, 2, 3, 4, 5, 6]
+                },                            
+
                 {
                     name: "total_casp_score",
                     label: "Total CASP Score",

@@ -14,8 +14,14 @@ export default function WorkHistory() {
       {
         title: "",
         fields: [
-          { type: "input", name: "current_occupation", label: "Current occupation" },
-          { type: "input", name: "working_at", label: "Working at" },
+          // { type: "input", name: "current_occupation", label: "Current occupation" },
+          {
+            type: "row",
+            fields: [
+              { type: "input", name: "working_at", label: "Current job" },
+              { type: "input", name: "occupation_previous_job", label: "Previous job" }
+            ]
+          },
           { type: "date", name: "employed_since", label: "Employed since" },
           { type: "textarea", name: "main_duties", label: "Main duties" },
           { type: "input", name: "physical_demands", label: "Physical demands" },
