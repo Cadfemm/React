@@ -297,15 +297,12 @@ return (
     {/* ORTHOSTATICS */}
     <div className="section" style={{margin:"12px 20px"}}>
       <div className="box-title" style={{marginBottom:6}}>Orthostatics (HR & BP)</div>
-
-      <table className="vtable">
-        <thead>
-          <tr>
-            <th className="right" style={{textAlign:"left"}}>Position</th>
-            <th>HR (bpm)</th><th>Sys</th><th>Dia</th>
-          </tr>
-        </thead>
-      </table>
+      <div className="vrow" style={{fontWeight: 600, borderBottom: "1px solid #e6eef6", color: "#0f172a"}}>
+        <div className="pos" style={{backgroundColor: "#2a6592",}}>Position</div>
+        <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>HR (bpm)</div>
+        <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>Sys</div>
+        <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>Dia</div>
+      </div>
 
       <div className="vrow">
         <div className="pos">Supine</div>
