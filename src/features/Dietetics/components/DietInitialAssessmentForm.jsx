@@ -937,7 +937,7 @@ const submitAndSave = () => {
   }}
                 onClick={() => typeof window?.openVitals === "function" && window.openVitals(patient)}
 >
-  Know more →
+  Vital & Medical Reports →
 </span>
   </div>
           )}
