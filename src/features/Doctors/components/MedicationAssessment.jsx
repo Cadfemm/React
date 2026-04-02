@@ -6,9 +6,27 @@ export default function MedicationAssessment({patient, onSubmit, onBack}) {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target
+        let finalValue = value
+
+        // Validate and clamp dose (1-1000)
+        if (name === "dose" && value !== "") {
+            const numValue = parseInt(value)
+            if (numValue < 1) finalValue = "1"
+            else if (numValue > 1000) finalValue = "1000"
+            else finalValue = numValue
+        }
+
+        // Validate and clamp duration (1-30)
+        if (name === "duration" && value !== "") {
+            const numValue = parseInt(value)
+            if (numValue < 1) finalValue = "1"
+            else if (numValue > 30) finalValue = "30"
+            else finalValue = numValue
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: finalValue
         }))
     }
 
@@ -102,26 +120,15 @@ export default function MedicationAssessment({patient, onSubmit, onBack}) {
                                     </select>
                                 </td>
                                 <td style={tdStyle}>
-                                    <select 
-                                        style={selectStyle} 
+                                    <input 
+                                        min="1"
+                                        max="1000"
+                                        type="number"                                        
                                         name="dose" 
+                                        style={selectStyle} 
                                         value={formData.dose || ""}
                                         onChange={handleInputChange}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="1">1</option>
-                                        <option value="4">4</option>
-                                        <option value="8">8</option>
-                                        <option value="10">10</option>
-                                        <option value="15">15</option>
-                                        <option value="20">20</option>
-                                        <option value="30">30</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="200">200</option>
-                                        <option value="300">300</option>
-                                        <option value="600">600</option>
-                                    </select>
+                                    />
                                 </td>
                                 <td style={tdStyle}>
                                     <select 
@@ -158,7 +165,7 @@ export default function MedicationAssessment({patient, onSubmit, onBack}) {
                                 <td style={tdStyle}>
                                     <input 
                                         type="date" 
-                                        style={inputStyle} 
+                                        style={selectStyle} 
                                         name="prescribed_date" 
                                         value={formData.prescribed_date || ""}
                                         onChange={handleInputChange}
@@ -166,8 +173,10 @@ export default function MedicationAssessment({patient, onSubmit, onBack}) {
                                 </td>
                                 <td style={tdStyle}>
                                     <input 
+                                        min="1"
+                                        max="30"
                                         type="number" 
-                                        style={inputStyle} 
+                                        style={selectStyle} 
                                         name="duration" 
                                         placeholder="Days" 
                                         value={formData.duration || ""}
@@ -177,7 +186,7 @@ export default function MedicationAssessment({patient, onSubmit, onBack}) {
                                 <td style={tdStyle}>
                                     <input 
                                         type="text" 
-                                        style={inputStyle} 
+                                        style={selectStyle} 
                                         name="remark" 
                                         placeholder="Notes" 
                                         value={formData.remark || ""}
@@ -309,17 +318,10 @@ const selectStyle = {
     fontSize: "12px",
     border: "1px solid #ccc",
     borderRadius: "3px",
-    fontFamily: "inherit"
-}
-
-const inputStyle = {
-    width: "100%",
-    padding: "6px 8px",
-    fontSize: "12px",
-    border: "1px solid #ccc",
-    borderRadius: "3px",
+    fontFamily: "inherit",
     boxSizing: "border-box",
-    fontFamily: "inherit"
+    height: "32px",
+    lineHeight: "1.5"
 }
 
 const footerStyle = {
