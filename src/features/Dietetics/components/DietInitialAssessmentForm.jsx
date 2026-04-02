@@ -4,7 +4,6 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { DIET_ASSESSMENT_REGISTRY } from "./DietAssessmentWrapper";
 import FFQAssessment from "./FFQAssessment";
 import GrowthChartAssessment from "./GrowthChart";
-import { Label } from "recharts";
 
 const ET_OPTIONS = {
   "increased_energy_expenditure": [
