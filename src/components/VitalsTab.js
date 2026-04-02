@@ -18,6 +18,28 @@ function VitalsTab({ patientId, encounterId, onSaved }) {
     const m = Number(cm) / 100;
     return m > 0 ? Number(kg) / (m * m) : "";
   };
+
+  // Check if BP is within normal range
+  const isBPNormal = (sys, dia) => {
+    const systolic = Number(sys);
+    const diastolic = Number(dia);
+    // Normal BP: Systolic < 120 and Diastolic < 80
+    return systolic > 0 && diastolic > 0 && systolic < 120 && diastolic < 80;
+  };
+
+  // Get BP status text
+  const getBPStatus = (sys, dia) => {
+    if (sys === "" || dia === "") return "";
+    const systolic = Number(sys);
+    const diastolic = Number(dia);
+    
+    if (systolic >= 140 || diastolic >= 90) return "Stage 2 Hypertension";
+    if ((systolic >= 130 && systolic < 140) || (diastolic >= 80 && diastolic < 90)) return "Stage 1 Hypertension";
+    if ((systolic >= 120 && systolic < 130) && diastolic < 80) return "Elevated";
+    if (systolic < 120 && diastolic < 80) return "Normal";
+    return "Not a Normal Condition";
+  };
+
 const [activeTab, setActiveTab] = React.useState("VITALS"); 
 // "VITALS" | "REPORTS"
 
@@ -247,11 +269,55 @@ return (
       <div className="grid" style={{marginTop:10, alignItems:"end"}}>
         <div className="field" style={{gridColumn:"span 2"}}>
           <div className="label-sm">BP systolic</div>
-          <input type="number" className="input-sm num" value={v.bp_sys} onChange={set("bp_sys")} />
+          <input 
+            type="number" 
+            min="70" 
+            max="250" 
+            className="input-sm num" 
+            value={v.bp_sys} 
+            onChange={(e) => {
+              let val = e.target.value;
+              if (val === "") {
+                setV((p) => ({ ...p, bp_sys: "" }));
+              } else {
+                let numVal = Number(val);
+                // Clamp to range
+                if (numVal < 70) numVal = 70;
+                if (numVal > 250) numVal = 250;
+                setV((p) => ({ ...p, bp_sys: String(numVal) }));
+              }
+            }}
+            style={{
+              borderColor: v.bp_sys && !isBPNormal(v.bp_sys, v.bp_dia) ? "#ef4444" : "",
+              color: v.bp_sys && !isBPNormal(v.bp_sys, v.bp_dia) ? "#ef4444" : ""
+            }}
+          />
         </div>
         <div className="field" style={{gridColumn:"span 2"}}>
           <div className="label-sm">BP diastolic</div>
-          <input type="number" className="input-sm num" value={v.bp_dia} onChange={set("bp_dia")} />
+          <input 
+            type="number" 
+            min="40" 
+            max="150" 
+            className="input-sm num" 
+            value={v.bp_dia} 
+            onChange={(e) => {
+              let val = e.target.value;
+              if (val === "") {
+                setV((p) => ({ ...p, bp_dia: "" }));
+              } else {
+                let numVal = Number(val);
+                // Clamp to range
+                if (numVal < 40) numVal = 40;
+                if (numVal > 150) numVal = 150;
+                setV((p) => ({ ...p, bp_dia: String(numVal) }));
+              }
+            }}
+            style={{
+              borderColor: v.bp_dia && !isBPNormal(v.bp_sys, v.bp_dia) ? "#ef4444" : "",
+              color: v.bp_dia && !isBPNormal(v.bp_sys, v.bp_dia) ? "#ef4444" : ""
+            }}
+          />
         </div>
         <div className="field" style={{gridColumn:"span 2"}}>
           <div className="label-sm">MAP (auto)</div>
@@ -271,6 +337,25 @@ return (
           <div className="chip-info">Last edited auto-saves on Save</div>
         </div>
       </div>
+
+      {/* BP Status Display */}
+      {(v.bp_sys && v.bp_dia) && (
+        <div style={{
+          marginTop: 10,
+          padding: "10px 12px",
+          borderRadius: "4px",
+          backgroundColor: isBPNormal(v.bp_sys, v.bp_dia) ? "#ecfdf5" : "#fef2f2",
+          borderLeft: `4px solid ${isBPNormal(v.bp_sys, v.bp_dia) ? "#10b981" : "#ef4444"}`,
+        }}>
+          <div style={{
+            fontSize: "14px",
+            fontWeight: 500,
+            color: isBPNormal(v.bp_sys, v.bp_dia) ? "#058a4a" : "#ef4444",
+          }}>
+            {isBPNormal(v.bp_sys, v.bp_dia) ? "✓ Normal Condition" : `⚠ ${getBPStatus(v.bp_sys, v.bp_dia)}`}
+          </div>
+        </div>
+      )}
 
       <div className="grid" style={{marginTop:10}}>
         <div className="field" style={{gridColumn:"span 2"}}>
@@ -298,7 +383,7 @@ return (
     <div className="section" style={{margin:"12px 20px"}}>
       <div className="box-title" style={{marginBottom:6}}>Orthostatics (HR & BP)</div>
       <div className="vrow" style={{fontWeight: 600, borderBottom: "1px solid #e6eef6", color: "#0f172a"}}>
-        <div className="pos" style={{backgroundColor: "#2a6592",}}>Position</div>
+        <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>Position</div>
         <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>HR (bpm)</div>
         <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>Sys</div>
         <div style={{flex: 1, textAlign: "center", backgroundColor: "#2a6592",}}>Dia</div>
