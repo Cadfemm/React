@@ -2119,6 +2119,9 @@ case "grid-table-advanced": {
       );
     }
 
+    case "visual-field":
+      return <VisualFieldInteractive />;
+
     case "draw-canvas":
       return (
         <DrawCanvasField
@@ -4250,7 +4253,106 @@ function validateField(value, rules) {
   }
   return null;
 }
+function VisualFieldInteractive() {
+  const [hovered, setHovered] = React.useState(null);
 
+  const handleMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    // 🔥 Normalize (IMPORTANT for non-square image)
+    const dx = (x - centerX) / (rect.width / 2);
+    const dy = (y - centerY) / (rect.height / 2);
+
+    // Elliptical distance
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // 🎯 ZONES (NOW SCALE-INDEPENDENT)
+
+    if (distance < 0.50) {
+      setHovered("central");
+    } 
+    else if (distance > 0.85) {
+      setHovered("peripheral");
+    } 
+    else if (Math.abs(dx) < 0.15) {
+      setHovered("bitemporal");
+    } 
+    else if (dx > 0 && dy < 0) {
+      setHovered("quadrant-parietal");
+    } 
+    else if (dx > 0 && dy > 0) {
+      setHovered("quadrant-temporal");
+    } 
+    else if (dx > 0) {
+      setHovered("monocular-right");
+    } 
+    else {
+      setHovered("homonymous-right");
+    }
+  };
+
+  const handleLeave = () => {
+    setHovered(null);
+  };
+
+  return (
+    <div style={{ display: "flex", gap: 40, alignItems: "center" }}>
+      
+      {/* 👁 Eye */}
+      <div
+        onMouseMove={handleMove}
+        onMouseLeave={handleLeave}
+        style={{
+          width: 500,
+          height: 180,
+          cursor: "crosshair"
+        }}
+      >
+        <img
+          src="/eye.svg"
+          alt="eye"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain"
+          }}
+        />
+      </div>
+
+      {/* 🎯 Defect Output */}
+      <div
+        style={{
+          width: 220,
+          height: 180,
+          border: "1px solid #e5e7eb",
+          borderRadius: 10,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#fff"
+        }}
+      >
+        {hovered ? (
+          <img
+            src={`/${hovered}.png`}
+            alt={hovered}
+            style={{ width: "100%", height: "100%" }}
+          />
+        ) : (
+          <div style={{ fontSize: 12, color: "#6b7280" }}>
+            Hover on eye
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const styles = {
   actionsBar: {

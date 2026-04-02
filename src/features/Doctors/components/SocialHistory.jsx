@@ -31,22 +31,21 @@ export default function SocialHistory() {
         ]
       },
       {
-        title: "Occupation / Education",
+        title: "Education",
         fields: [
           {
             type: "row",
             fields: [
               { name: "occupation_education_level", label: "Education level", type: "input" },
-              { name: "occupation_previous_job", label: "Previous job", type: "input" },
             ]
           },
-          {
-            type: "row",
-            fields: [
-              { name: "occupation_current_job", label: "Current job", type: "input" },
-              { name: "occupation_placeholder", label: "", type: "input", readOnly: true }
-            ]
-          }
+          // {
+          //   type: "row",
+          //   fields: [
+          //     { name: "occupation_current_job", label: "Current job", type: "input" },
+          //     { name: "occupation_placeholder", label: "", type: "input", readOnly: true }
+          //   ]
+          // }
         ]
       },
       {

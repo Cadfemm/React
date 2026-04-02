@@ -15,104 +15,155 @@ export default function CardioRespiratoryAssessment() {
     : null;
 
  
-  const SCHEMA = {
-    title: "Cardiovascular & Respiratory Assessment",
-    sections: [
-      {
-        title: "",
-        fields: [
-          { type: "heading", label: "Symptoms" },
-          { type: "subheading", label: "Respiratory Symptoms." },
+const showIfYes = (field) => ({ field, equals: "Yes" });
 
-          yn("cough", "Cough"),
-          {
-            type: "radio",
-            name: "cough_type",
-            label: "Cough Type",
-            options: [
-              { label: "Productive", value: "productive" },
-              { label: "Non-Productive", value: "non_productive" }
-            ],
-            showIf: { field: "cough", equals: "Yes" }
-          },
+const SCHEMA = {
+  title: "Cardiovascular & Respiratory Assessment",
+  sections: [
+    {
+      title: "",
+      fields: [
+        // { type: "heading", label: "Symptoms" },
 
-          yn("sputum", "Sputum"),
-          {
-            type: "checkbox-group",
-            name: "sputum_color",
-            label: "Sputum Color",
-            options: [
-              { label: "Whitish", value: "whitish" },
-              { label: "Yellowish", value: "yellowish" },
-              { label: "Greenish", value: "greenish" }
-            ],
-            showIf: { field: "sputum", equals: "Yes" }
-          },
-          {
-            type: "checkbox-group",
-            name: "sputum_quantity",
-            label: "Sputum Quantity",
-            options: [
-              { label: "Minimal", value: "minimal" },
-              { label: "Moderate", value: "moderate" },
-              { label: "Large", value: "large" }
-            ],
-            showIf: { field: "sputum", equals: "Yes" }
-          },
+        // =========================
+        // RESPIRATORY
+        // =========================
+       {
+          ...yn("respiratory_section", "Respiratory Symptoms"),
+          options: [
+            { label: "Issue", value: "Yes" },
+            { label: "No Issue", value: "No" }
+          ]
+        },
 
-          yn("wheeze", "Wheeze"),
-          yn("chest_pain", "Chest Pain"),
-          yn("dyspnoea", "Dyspnoea"),
-          {
-            type: "checkbox-group",
-            name: "dyspnoea_type",
-            label: "Dyspnoea Type",
-            options: [
-              { label: "At rest", value: "at_rest" },
-              { label: "On exertion", value: "on_exertion" }
-            ],
-            showIf: { field: "dyspnoea", equals: "Yes" }
-          },
-          yn("orthopnoea", "Orthopnoea"),
-          yn("paroxysmal_nocturnal_dyspnoea", "Paroxysmal Nocturnal Dyspnoea"),
-          yn("fatigue", "Fatigue"),
-          yn("weight_loss", "Weight Loss"),
+        { ...yn("cough", "Cough"), showIf: showIfYes("respiratory_section") },
+        {
+          type: "radio",
+          name: "cough_type",
+          label: "Cough Type",
+          options: [
+            { label: "Productive", value: "productive" },
+            { label: "Non-Productive", value: "non_productive" }
+          ],
+          showIf: {
+            field: "cough",
+            equals: "Yes",
+            and: showIfYes("respiratory_section")
+          }
+        },
 
-          yn("oxygen_requirement", "Oxygen Requirement"),
-          {
-            type: "radio",
-            name: "oxygen_mode",
-            label: "Oxygen Mode",
-            options: [
-              { label: "Nasal Prong", value: "nasal_prong" },
-              { label: "Face Mask", value: "face_mask" },
-              { label: "High Flow", value: "high_flow" },
-              { label: "Others", value: "others" }
-            ],
-            showIf: { field: "oxygen_requirement", equals: "Yes" }
-          },
-          {
-            type: "input",
-            name: "oxygen_free_text",
-            label: "Oxygen Free text",
-            showIf: {
-              field: "oxygen_requirement",
-              equals: "Yes",
-              and: { field: "oxygen_mode", equals: "others" }
+        { ...yn("sputum", "Sputum"), showIf: showIfYes("respiratory_section") },
+        {
+          type: "checkbox-group",
+          name: "sputum_color",
+          label: "Sputum Color",
+          options: [
+            { label: "Whitish", value: "whitish" },
+            { label: "Yellowish", value: "yellowish" },
+            { label: "Greenish", value: "greenish" },
+            { label: "Pinkish", value: "pinkish" },
+            { label: "Reddish", value: "reddish" }
+          ],
+          showIf: {
+            field: "sputum",
+            equals: "Yes",
+            and: showIfYes("respiratory_section")
+          }
+        },
+        {
+          type: "checkbox-group",
+          name: "sputum_quantity",
+          label: "Sputum Quantity",
+          options: [
+            { label: "Minimal", value: "minimal" },
+            { label: "Moderate", value: "moderate" },
+            { label: "Large", value: "large" }
+          ],
+          showIf: {
+            field: "sputum",
+            equals: "Yes",
+            and: showIfYes("respiratory_section")
+          }
+        },
+
+        { ...yn("wheeze", "Wheeze"), showIf: showIfYes("respiratory_section") },
+        { ...yn("chest_pain", "Chest Pain"), showIf: showIfYes("respiratory_section") },
+        { ...yn("dyspnoea", "Dyspnoea"), showIf: showIfYes("respiratory_section") },
+
+        {
+          type: "checkbox-group",
+          name: "dyspnoea_type",
+          label: "Dyspnoea Type",
+          options: [
+            { label: "At rest", value: "at_rest" },
+            { label: "On exertion", value: "on_exertion" }
+          ],
+          showIf: {
+            field: "dyspnoea",
+            equals: "Yes",
+            and: showIfYes("respiratory_section")
+          }
+        },
+
+        { ...yn("orthopnoea", "Orthopnoea"), showIf: showIfYes("respiratory_section") },
+        { ...yn("paroxysmal_nocturnal_dyspnoea", "Paroxysmal Nocturnal Dyspnoea"), showIf: showIfYes("respiratory_section") },
+        { ...yn("fatigue", "Fatigue"), showIf: showIfYes("respiratory_section") },
+        { ...yn("weight_loss", "Weight Loss"), showIf: showIfYes("respiratory_section") },
+
+        { ...yn("oxygen_requirement", "Oxygen Requirement"), showIf: showIfYes("respiratory_section") },
+        {
+          type: "radio",
+          name: "oxygen_mode",
+          label: "Oxygen Mode",
+          options: [
+            { label: "Nasal Prong", value: "nasal_prong" },
+            { label: "Face Mask", value: "face_mask" },
+            { label: "High Flow", value: "high_flow" },
+            { label: "Others", value: "others" }
+          ],
+          showIf: {
+            field: "oxygen_requirement",
+            equals: "Yes",
+            and: showIfYes("respiratory_section")
+          }
+        },
+        {
+          type: "input",
+          name: "oxygen_free_text",
+          label: "Oxygen Free text",
+          showIf: {
+            field: "oxygen_requirement",
+            equals: "Yes",
+            and: {
+              field: "oxygen_mode",
+              equals: "others"
             }
+          }
+        },
+
+        // =========================
+        // CARDIOVASCULAR (NOW SAME STYLE ✅)
+        // =========================
+        {
+            ...yn("cardio_section", "Cardiovascular Symptoms"),
+            options: [
+              { label: "Issue", value: "Yes" },
+              { label: "No Issue", value: "No" }
+            ]
           },
 
-          { type: "subheading", label: "Cardiovascular Symptoms" },
-          cardioMatrix("palpitations", "Palpitations"),
-          cardioMatrix("syncope_presyncope", "Syncope / Pre-syncope"),
-          cardioMatrix("ankle_swelling", "Ankle Swelling"),
-          cardioMatrix("exercise_intolerance", "Exercise Intolerance"),
-          cardioMatrix("fluid_restriction", "Fluid Restriction"),
-          {
-            type: "textarea",
-            name: "other_symptoms",
-            label: "Other Symptoms"
-          },
+        { ...yn("palpitations", "Palpitations"), showIf: showIfYes("cardio_section") },
+        { ...yn("syncope_presyncope", "Syncope / Pre-syncope"), showIf: showIfYes("cardio_section") },
+        { ...yn("ankle_swelling", "Ankle Swelling"), showIf: showIfYes("cardio_section") },
+        { ...yn("exercise_intolerance", "Exercise Intolerance"), showIf: showIfYes("cardio_section") },
+        { ...yn("fluid_restriction", "Fluid Restriction"), showIf: showIfYes("cardio_section") },
+
+        {
+          type: "textarea",
+          name: "other_symptoms",
+          label: "Other Symptoms",
+          showIf: showIfYes("cardio_section")
+        },
 
           { type: "heading", label: "Past Medical History" },
           yn("pmh_copd", "COPD"),

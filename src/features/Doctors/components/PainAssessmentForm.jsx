@@ -67,7 +67,12 @@ export default function PainAssessmentForm({ values, onChange }) {
                 { label: "Throbbing", value: "throbbing" },
                 { label: "Well Localised", value: "well_localised" },
               ],
-              showIf: { field: "pain_type", equals: "nociceptive" },
+              showIf: {
+                  or: [
+                    { field: "pain_type", equals: "nociceptive" },
+                    { field: "pain_type", equals: "mixed" }
+                  ]
+                }
             },
             {
               name: "neuropathic_pain_quality",
@@ -80,7 +85,12 @@ export default function PainAssessmentForm({ values, onChange }) {
                 { label: "Lancinating", value: "lancinating" },
                 { label: "Poorly Localised", value: "poorly_localised" },
               ],
-              showIf: { field: "pain_type", equals: "neuropathic" },
+              showIf: {
+                  or: [
+                    { field: "pain_type", equals: "neuropathic" },
+                    { field: "pain_type", equals: "mixed" }
+                  ]
+                }
             },
             {
               name: "pain_pattern",

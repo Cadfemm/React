@@ -229,13 +229,18 @@ const VISUAL_SECTIONS = [
             field: "left_visual_field",
             equals: "defect"
           }
-        }
-      ]
-    }
+        },
 
-    
+      ]
+    } ,
+    {
+    type: "visual-field",
+    name: "left_visual_field_map",
+    label: "Eye image",
+  },
   ]
 },
+
 {
   title: "",
   showIf: { field: "vision_status", equals: "impaired" },
