@@ -293,107 +293,115 @@ const MOBILITY_SCHEMA = {
       name: "mobility_present",
       label: "Mobility",
       type: "radio",
-      options: ["Walking", "Walking & moving"],
+      options: ["Ambulant", "Non-Ambulant"],
     },
-    {
-      type: "subheading",
-      label: "Walking and moving",
-      showIf: { field: "mobility_present", oneOf: ["Walking", "Walking & moving"] },
-    },
-    {
-      type: "subheading",
-      label: "Walking",
-      showIf: { field: "mobility_present", oneOf: ["Walking", "Walking & moving"] },
-    },
-    {
-      name: "mobility_walking_level",
-      label: "",
-      type: "radio",
-      options: [
-        "Independent",
-        "Minimal assistance",
-        "Moderate assistance",
-        "Maximum assistance",
-        "Total Dependent",
-      ],
-      showIf: { field: "mobility_present", oneOf: ["Walking", "Walking & moving"] },
-    },
+
     {
       name: "mobility_support_modes",
       label: "",
       type: "radio",
       options: [
-        { label: "Mobility Aid", value: "mobility_aid" },
-        { label: "Wheel Chair", value: "wheel_chair" },
+        { label: "Walking Aids", value: "walking_aids" },
+        { label: "Wheelchair", value: "wheelchair" },
         { label: "Others", value: "others" },
+        { label: "Unaided", value: "unaided" },
       ],
-      showIf: {
-        field: "mobility_walking_level",
-        oneOf: ["Minimal assistance", "Moderate assistance", "Maximum assistance", "Total Dependent"],
-      },
+      showIf: { field: "mobility_present", oneOf: ["Ambulant", "Non-Ambulant"] },
     },
+
     {
       name: "mobility_aid_type",
-      label: "Mobility Aid",
+      label: "",
       type: "radio",
-      labelAbove: true,
       options: [
-        "Using walking aids",
         "Walking stick/cane",
-        "Elbow crutches",
-        "Axillary crutches",
-        "Platform crutches",
+        "Elbow crutches (single/bilateral)",
+        "Axillary crutches (single/bilateral)",
+        "Platform crutches (single/bilateral)",
         "Quadripod",
         "Walking frame",
         "Wheeled walker",
         "Rollator/reverse rollator",
       ],
-      showIf: { field: "mobility_support_modes", equals: "mobility_aid" },
+      showIf: { field: "mobility_support_modes", equals: "walking_aids" },
     },
-    {
-      name: "mobility_aid_elbow_crutches",
-      label: "Elbow crutches",
-      type: "radio",
-      options: ["single", "bilateral"],
-      showIf: { field: "mobility_aid_type", equals: "Elbow crutches" },
-    },
-    {
-      name: "mobility_aid_axillary_crutches",
-      label: "Axillary crutches",
-      type: "radio",
-      options: ["single", "bilateral"],
-      showIf: { field: "mobility_aid_type", equals: "Axillary crutches" },
-    },
-    {
-      name: "mobility_aid_platform_crutches",
-      label: "Platform crutches",
-      type: "radio",
-      options: ["single", "bilateral"],
-      showIf: { field: "mobility_aid_type", equals: "Platform crutches" },
-    },
+
     {
       name: "mobility_wheelchair_type",
-      label: "Wheelchair",
+      label: "",
       type: "radio",
-      options: [
-        "Manual wheelchair",
-        "Electric wheelchair",
-      ],
-      showIf: { field: "mobility_support_modes", equals: "wheel_chair" },
+      options: ["Manual wheelchair", "Electric wheelchair"],
+      showIf: { field: "mobility_support_modes", equals: "wheelchair" },
     },
+
     {
       name: "mobility_others",
-      label: "Others",
-      type: "textarea",
+      label: "Others (Specify)",
+      type: "input",
       showIf: { field: "mobility_support_modes", equals: "others" },
     },
+
+{
+  name: "mobility_walking_aid_level",
+  label: "",
+  type: "radio",
+  options: [
+    "Independent",
+    "Minimal assistance",
+    "Moderate assistance",
+    "Maximum assistance",
+    "Total Dependent",
+  ],
+  showIf: {
+    field: "mobility_support_modes",
+    equals: "walking_aids",
+    and: {
+      field: "mobility_aid_type",
+      oneOf: [
+        "Walking stick/cane",
+        "Elbow crutches (single/bilateral)",
+        "Axillary crutches (single/bilateral)",
+        "Platform crutches (single/bilateral)",
+        "Quadripod",
+        "Walking frame",
+        "Wheeled walker",
+        "Rollator/reverse rollator",
+      ],
+    },
+  },
+},
+{
+  name: "mobility_wheelchair_level",
+  label: "",
+  type: "radio",
+  options: [
+    "Independent",
+    "Minimal assistance",
+    "Moderate assistance",
+    "Maximum assistance",
+    "Total Dependent",
+  ],
+  showIf: {
+    field: "mobility_support_modes",
+    equals: "wheelchair",
+    and: {
+      field: "mobility_wheelchair_type",
+      oneOf: ["Manual wheelchair", "Electric wheelchair"],
+    },
+  },
+},
+
+
+    // ================= ORTHOSIS / PROSTHESIS =================
     {
       name: "mobility_orthosis_prosthesis",
       label: "Orthosis / Prosthesis",
       type: "radio",
       options: ["Orthosis", "Prosthesis"],
-      showIf: { field: "mobility_present", oneOf: ["Walking", "Walking & moving"] },
+      showIf: { field: "mobility_present", oneOf: ["Ambulant", "Non-Ambulant"] },
     },
+
+    // -------- ORTHOSIS --------
     {
       name: "mobility_orthosis_type",
       label: "Orthosis",
@@ -402,17 +410,19 @@ const MOBILITY_SCHEMA = {
       showIf: { field: "mobility_orthosis_prosthesis", equals: "Orthosis" },
     },
     {
-      name: "mobility_orthosis_brace_specify",
+      name: "mobility_orthosis_brace",
       label: "Brace (Specify)",
       type: "input",
       showIf: { field: "mobility_orthosis_type", equals: "Brace" },
     },
     {
-      name: "mobility_orthosis_others_specify",
-      label: "Orthosis - Others (Specify)",
+      name: "mobility_orthosis_other",
+      label: "Others (Specify)",
       type: "input",
       showIf: { field: "mobility_orthosis_type", equals: "Others" },
     },
+
+    // -------- PROSTHESIS --------
     {
       name: "mobility_prosthesis_type",
       label: "Prosthesis",
@@ -421,14 +431,45 @@ const MOBILITY_SCHEMA = {
       showIf: { field: "mobility_orthosis_prosthesis", equals: "Prosthesis" },
     },
     {
-      name: "mobility_prosthesis_others_specify",
-      label: "Prosthesis - Others (Specify)",
+      name: "mobility_prosthesis_other",
+      label: "Others (Specify)",
       type: "input",
       showIf: { field: "mobility_prosthesis_type", equals: "Others" },
     },
-  ]
+    {
+  name: "mobility_assistance_level_orthosis",
+  label: "Assistance Level",
+  type: "radio",
+  options: [
+    "Independent",
+    "Minimal assistance",
+    "Moderate assistance",
+    "Maximum assistance",
+    "Total Dependent",
+  ],
+  showIf: {
+    field: "mobility_orthosis_type",
+    oneOf: ["AFO", "KAFO", "HKAFO"],
+  },
+},
+{
+  name: "mobility_assistance_level_prosthesis",
+  label: "Assistance Level",
+  type: "radio",
+  options: [
+    "Independent",
+    "Minimal assistance",
+    "Moderate assistance",
+    "Maximum assistance",
+    "Total Dependent",
+  ],
+  showIf: {
+    field: "mobility_prosthesis_type",
+    oneOf: ["Below knee prosthesis", "Above knee prosthesis"],
+  },
+}
+  ],
 };
-
 
 
   /* ===================== UI ===================== */

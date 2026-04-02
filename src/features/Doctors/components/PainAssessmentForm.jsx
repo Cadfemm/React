@@ -17,14 +17,14 @@ export default function PainAssessmentForm({ values, onChange }) {
           fields: [
             { type: "subheading", label: "History Taking" },
             {
-              name: "pain_site_drawing",
-              label: "Site of Pain (draw)",
-              type: "draw-canvas",
-              backgroundImage: humanBodyImage,
-              width: 520,
-              height: 420,
+              name: "wound_location_pins", label: "Mark Wound Location on Body Diagram",
+              type: "wound-location-marker",
+              views: [
+                { key: "body",  label: "Body (Front/Back)", src: "/body_high.png" },
+                { key: "feet",  label: "Feet",             src: "/feet_high.png" },
+                { key: "handsfeet", label: "Hands",              src: "/hands_high.png" }
+              ]
             },
-            { name: "pain_history_specify", label: "Specify", type: "textarea" },
             {
               name: "pain_onset",
               label: "Onset",

@@ -11,6 +11,7 @@ const SubTab = [
     "BTI",
     "SC",
     "FEES",
+    "RTMS",
     "TDCS",
     "NESA",
     "EST",
@@ -86,8 +87,21 @@ const NESA_SCHEMA = {
                 {
                     name: "complication",
                     label: "Complication",
-                    type: "textarea"
+                    type: "radio",
+                    options: [
+                        { label: "Yes", value: "yes" },
+                        { label: "No", value: "no" }
+                    ]
                 },
+                {
+                    name: "complication_details",
+                    label: "Please specify complication",
+                    type: "textarea",
+                    showIf: {
+                        field: "complication",
+                        equals: "yes"
+                    }
+                }
             ]
         }
     ]
@@ -645,11 +659,24 @@ const BTI_SCHEMA = {
                     label: "Total Injection Unit",
                     type: "textarea"
                 },
-                {
-                    name: "post_procedure_complication",
-                    label: "Post Procedure Complication (if any)",
-                    type: "textarea"
+ {
+                name: "complication",
+                label: "Post Procedure Complication (if any)",
+                type: "radio",
+                options: [
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" }
+                ]
+            },
+            {
+                name: "complication_details",
+                label: "Please specify complication",
+                type: "textarea",
+                showIf: {
+                    field: "complication",
+                    equals: "yes"
                 }
+            }
             ]
         }
     ]
@@ -874,10 +901,23 @@ const SC_SCHEMA = {
                     type: "textarea"
                 },
                 {
-                    name: "post_procedure",
-                    label: "Post Procedure Complication",
-                    type: "textarea"
+                name: "complication",
+                label: "Post Procedure Complication",
+                type: "radio",
+                options: [
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" }
+                ]
+            },
+            {
+                name: "complication_details",
+                label: "Please specify complication",
+                type: "textarea",
+                showIf: {
+                    field: "complication",
+                    equals: "yes"
                 }
+            }
             ]
         }    
     ]
@@ -894,30 +934,28 @@ const FEES_SCHEMA = {
         }
     ]
 }
-
-const TDCS_SCHEMA = {
-    title: "",
+const RTMS_SCHEMA = {
+    title: "Repetitive Transcranial Magnetic Stimulation (rTMS)",
     actions: ACTIONS,
     sections: [
         {
-            title: "Repetitive Transcranial Magnetic Stimulation(rTMS)",
             fields: [
                 {
-                    name: "consent",
+                    name: "rtms_consent",
                     type: "checkbox-group",
                     options: [{label: 'Consent/Checklist', value: 'yes'}]
                 },
                 {
-                    name: "document_upload",
+                    name: "rtms_document_upload",
                     label: "Upload",
                     type: "file-upload-modal",
                     showIf: {
-                        field: "consent",
+                        field: "rtms_consent",
                         includes: "yes"
                     }
                 },
                 {
-                    name: "protocol",
+                    name: "rtms_protocol",
                     label: "Protocol",
                     type: "radio",
                     labelAbove: true,
@@ -930,16 +968,16 @@ const TDCS_SCHEMA = {
                     ]
                 },
                 {
-                    name: "specify",
+                    name: "rtms_specify",
                     label: "Specify",
                     type: "textarea",
                     showIf: {
-                        field: "protocol",
+                        field: "rtms_protocol",
                         equals: "others"
                     }
                 },
                 {
-                    name: "stimulation_site",
+                    name: "rtms_stimulation_site",
                     label: "Stimulation Site",
                     type: "single-select",
                     options: [
@@ -948,30 +986,7 @@ const TDCS_SCHEMA = {
                     ]
                 },
                 {
-                    name: "stimulation_site_select",
-                    type: "single-select",
-                    options: [
-                        { label: "M1", value: "m1"},
-                        { label: "DLPFC", value: "dlpfc"},
-                        { label: "BROCA", value: "broca"},
-                        { label: "Others", value: "others"}
-                    ],
-                    showIf: {
-                        field: "stimulation_site",
-                        oneOf: ["right", "left"]
-                    }
-                },
-                {
-                    name: "specify",
-                    label: "Specify",
-                    type: "textarea",
-                    showIf: {
-                        field: "stimulation_site_select",
-                        equals: "others"
-                    }
-                },
-                {
-                    name: "frequency",
+                    name: "rtms_frequency",
                     label: "Frequency",
                     type: "radio",
                     options: [
@@ -982,26 +997,37 @@ const TDCS_SCHEMA = {
                     ]
                 },
                 {
-                    name: "specify",
-                    label: "Specify",
-                    type: "textarea",
-                    showIf: {
-                        field: "frequency",
-                        equals: "others"
-                    }
-                },
-                {
-                    name: "intensity",
+                    name: "rtms_intensity",
                     label: "Intensity (MEP)",
                     type: "textarea"
                 },
-                {
-                    name: "complication",
-                    label: "Complication",
-                    type: "textarea"
-                },
+               {
+                name: "complication",
+                label: "Complication",
+                type: "radio",
+                options: [
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" }
+                ]
+            },
+            {
+                name: "complication_details",
+                label: "Please specify complication",
+                type: "textarea",
+                showIf: {
+                    field: "complication",
+                    equals: "yes"
+                }
+            }
             ]
-        },
+        }
+    ]
+}
+const TDCS_SCHEMA = {
+    title: "",
+    actions: ACTIONS,
+    sections: [
+        
         {
             title: "Transcranial Direct Current Stimulation(tDCS)",
             fields: [
@@ -1020,7 +1046,7 @@ const TDCS_SCHEMA = {
                     }
                 },
                 {
-                    name: "protocol",
+                    name: "tdcs_protocol",
                     label: "Protocol",
                     type: "radio",
                     labelAbove: true,
@@ -1084,10 +1110,23 @@ const TDCS_SCHEMA = {
                     ]
                 },
                 {
-                    name: "complication",
-                    label: "Complication",
-                    type: "textarea"
-                },
+                name: "complication",
+                label: "Complication",
+                type: "radio",
+                options: [
+                    { label: "Yes", value: "yes" },
+                    { label: "No", value: "no" }
+                ]
+            },
+            {
+                name: "complication_details",
+                label: "Please specify complication",
+                type: "textarea",
+                showIf: {
+                    field: "complication",
+                    equals: "yes"
+                }
+            }
             ]
         }
     ]
@@ -1152,8 +1191,17 @@ const MUSCU_SCHEMA = {
                     type: "input"
                 },
                 {
-                    name: "complication",
+                    name: "has_complication",
                     label: "Complication",
+                    type: "radio",
+                    options: [
+                        { label: "Yes", value: "yes" },
+                        { label: "No", value: "no" }
+                    ]
+                },
+                {
+                    name: "complication",
+                    label: "Select Complication",
                     type: "multi-select-dropdown",
                     options: [
                         { label: "Bleeding", value: "bleeding" },
@@ -1161,7 +1209,11 @@ const MUSCU_SCHEMA = {
                         { label: "Bruises", value: "bruises" },
                         { label: "Allergic Skin Reaction", value: "allergic_skin_reaction" },
                         { label: "Others", value: "others"}
-                    ]
+                    ],
+                    showIf: {
+                        field: "has_complication",
+                        equals: "yes"
+                    }
                 },
                 {
                     name: "specify",
@@ -1193,6 +1245,7 @@ const SCHEMA = {
     BSU: BSU_SCHEMA,
     EST: EST_SCHEMA,
     NESA: NESA_SCHEMA,
+    RTMS: RTMS_SCHEMA,
     TDCS: TDCS_SCHEMA,
     FEES: FEES_SCHEMA,
     Musculoskeletal: MUSCU_SCHEMA
