@@ -6,13 +6,6 @@ export const sgaSchema = {
   subtitle: "Nutritional status assessment",
   sections: [
     {
-      title: "Medical History",
-      fields: [
-        { type: "input", name: "patient_name", label: "Patient Name" },
-        { type: "date", name: "assessment_date", label: "Date" }
-      ]
-    },
-    {
       title: "Nutrient Intake",
       fields: [
         {
