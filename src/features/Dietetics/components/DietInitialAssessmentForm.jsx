@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BoldIcon } from "lucide-react";
+import PatientCard from "../../../shared/cards/PatientCard"
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { DIET_ASSESSMENT_REGISTRY } from "./DietAssessmentWrapper";
 import FFQAssessment from "./FFQAssessment";
 import GrowthChartAssessment from "./GrowthChart";
+import { Label } from "recharts";
 
 const ET_OPTIONS = {
   "increased_energy_expenditure": [
@@ -624,7 +625,6 @@ const submitAndSave = () => {
           { type: "subheading", label: "Past Medical & Family History" },
           { name: "pmh_from_registration", label: "Medical History (From Doctor)", type: "textarea", readOnly: true },
           { name: "family_social_from_registration", label: "Family History (From Doctor)", type: "textarea", readOnly: true },
-          { name: "allergic_history", label: "Allergic History", type: "input", readOnly: true },
           { name: "additional_allergic_conditions", label: "Additional Allergic Conditions", type: "input" },
           { type: "subheading", label: "Initial Evaluation - Screening" },
           { name: "oral_intake", label: "Oral Intake", type: "radio", options: [{ label: "Normal", value: "Yes" }, { label: "Impaired", value: "No" }] },
@@ -648,6 +648,7 @@ const submitAndSave = () => {
           ]},
           { name: "voiding_method_other", label: "Specify other", type: "input", showIf: { field: "voiding_method", equals: "Other" } },
           { name: "sleep", label: "Sleeping Pattern", type: "single-select", options: [{ label: "Good", value: "Good" }, { label: "Difficulty in sleeping due to Pain", value: "PAIN" }, { label: "Difficulty in sleeping due to other reason", value: "OTHER" }, { label: "Difficulty in sleeping", value: "NOREASON" }] },
+          { name: "sleep_difficulty_reason", label: "Reason", type: "textarea", showIf: { field: "sleep", oneOf: ["OTHER"] } },
           { name: "hypoglycemic_episode", label: "Hypoglycemic Episode", type: "single-select", options: [{ label: "Never", value: "Never" }, { label: "Occasional", value: "Occasional" }, { label: "Frequent", value: "Frequent" }, { label: "Unknown", value: "UNKNOWN" }, { label: "Not Relevant", value: "NOT_RELEVANT" }] },
           { name: "other_complaints", label: "Other Nutrition-Related Complaints", type: "textarea" },
           { type: "subheading", label: "Food / Nutrition Related History" },
@@ -798,7 +799,6 @@ const submitAndSave = () => {
           { name: "plan_referral_type", label: "Referral", type: "radio", options: [{ label: "Internal", value: "internal" }, { label: "External", value: "external" }] },
           { name: "plan_referral_internal", label: "Internal Referral", type: "multi-select-dropdown", options: [{ label: "Optometry", value: "Optometry" }, { label: "Psychology", value: "Psychology" }, { label: "Doctors", value: "Doctors" }, { label: "Audiology", value: "Audiology" }, { label: "Speech", value: "Speech" }, { label: "Others", value: "Others" }], showIf: { field: "plan_referral_type", equals: "internal" } },
           { name: "plan_referral_internal_others", label: "Others – Please specify", type: "input", showIf: { field: "plan_referral_internal", includes: "Others" } },
-          { name: "plan_referral_internal_memo", label: "Upload Memo", type: "file-upload", showIf: { field: "plan_referral_type", equals: "internal" } },
           { name: "plan_referral_external_memo", label: "Upload Memo", type: "file-upload", showIf: { field: "plan_referral_type", equals: "external" } }
         ]
       }
@@ -887,26 +887,24 @@ const submitAndSave = () => {
   return (
     <div style={dietOuterWrap}>
       <div style={dietFormBox}>
-        {/* ===== PATIENT INFORMATION - top (Psychology style) ===== */}
         <CommonFormBuilder
-          schema={{ title: "Patient Information", sections: [] }}
+          schema={{title: "Patient Information", sections: []}}
           values={{}}
-    onChange={() => {}}
-  >
-          <div style={dietSection}>
-            <div style={dietPatientGrid}>
-              <div><b>Name:</b> {patient.name || "-"}</div>
-              <div><b>IC/MRN:</b> {patient.id || patient.mrn || patient.ic || "-"}</div>
-              <div><b>Age/Gender:</b> {patient.age != null ? patient.age : "-"} / {patient.sex || patient.gender || "-"}</div>
-              <div><b>Accommodation:</b> {patient.accommodation || "-"}</div>
-              <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
-              <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-              <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
-              <div><b>ICD Group:</b> {patient.icd || "-"}</div>
-            </div>
-          </div>
+          onChange={() => {}}
+        >
+          <PatientCard patient={patient}/>
+          <label>Allergic History</label>
+          <input
+            type="text"
+            name="allergic_history"
+            label="Allergic History"
+            value={dietValues.allergic_history}
+            onChange={(e) => dietOnChange("allergic_history", e.target.value)}
+          />
+          <button style={doctorsReportBtn}>
+            Doctors Reports
+          </button>
         </CommonFormBuilder>
-
         {/* ===== TABS - middle (Psychology style) ===== */}
         <div style={dietTabBar}>
           {["subjective", "objective", "assessment", "plan"].map(tab => (
@@ -1451,4 +1449,16 @@ const modalBox = {
   width: 400,
   maxHeight: "80vh",
   overflowY: "auto",
+};
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8
 };
