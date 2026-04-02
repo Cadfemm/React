@@ -111,6 +111,12 @@ ons_regime: "",
     plan_referral_type: "",
     plan_referral_internal: [],
     plan_referral_internal_others: "",
+    plan_referral_optometry_details: "",
+    plan_referral_psychology_details: "",
+    plan_referral_doctors_details: "",
+    plan_referral_audiology_details: "",
+    plan_referral_speech_details: "",
+    plan_referral_others_details: "",
     plan_referral_internal_memo: null,
     plan_referral_external_memo: null,
   });
@@ -557,6 +563,12 @@ const submitAndSave = () => {
           plan_referral_type: "",
           plan_referral_internal: [],
           plan_referral_internal_others: "",
+          plan_referral_optometry_details: "",
+          plan_referral_psychology_details: "",
+          plan_referral_doctors_details: "",
+          plan_referral_audiology_details: "",
+          plan_referral_speech_details: "",
+          plan_referral_others_details: "",
           plan_referral_internal_memo: null,
           plan_referral_external_memo: null
         });
@@ -797,7 +809,12 @@ const submitAndSave = () => {
           { name: "plan_review_date", label: "Review in (select date)", type: "date" },
           { name: "plan_referral_type", label: "Referral", type: "radio", options: [{ label: "Internal", value: "internal" }, { label: "External", value: "external" }] },
           { name: "plan_referral_internal", label: "Internal Referral", type: "multi-select-dropdown", options: [{ label: "Optometry", value: "Optometry" }, { label: "Psychology", value: "Psychology" }, { label: "Doctors", value: "Doctors" }, { label: "Audiology", value: "Audiology" }, { label: "Speech", value: "Speech" }, { label: "Others", value: "Others" }], showIf: { field: "plan_referral_type", equals: "internal" } },
-          { name: "plan_referral_internal_others", label: "Others – Please specify", type: "input", showIf: { field: "plan_referral_internal", includes: "Others" } },
+          { name: "plan_referral_optometry_details", label: "Optometry – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Optometry" } },
+          { name: "plan_referral_psychology_details", label: "Psychology – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Psychology" } },
+          { name: "plan_referral_doctors_details", label: "Doctors – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Doctors" } },
+          { name: "plan_referral_audiology_details", label: "Audiology – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Audiology" } },
+          { name: "plan_referral_speech_details", label: "Speech – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Speech" } },
+          { name: "plan_referral_others_details", label: "Others – Please specify", type: "textarea", showIf: { field: "plan_referral_internal", includes: "Others" } },
           { name: "plan_referral_external_memo", label: "Upload Memo", type: "file-upload", showIf: { field: "plan_referral_type", equals: "external" } }
         ]
       }
