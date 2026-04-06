@@ -723,7 +723,7 @@ export function MainContent({
       return <OtDepartmentPage patients={patients} department="Occupational Therapy" />;
 
     case "Psychology":
-      return <PsychologyDashboard />;
+      return <PsychologyDashboard patients={patients} />;
     case "Optometry":
       return <OptometryDashboard patients={patients} />;
      case "Prosthetics & Orthotics":

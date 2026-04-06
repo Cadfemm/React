@@ -1326,10 +1326,12 @@ const getConsentSchema = (assignmentType) => ({
       type: "radio",
       labelAbove: true,
       options: [
-        { label: "Walk-in", value: "walk_in"},
-        { label: "IA", value: "ia"},
-        { label: "Follow-Up", value: "follow_up"},
-        { label: "Checkout", value: "checkout"}
+        { label: "Walk-in", value: "walk_in" },
+        { label: "IA", value: "ia" },
+        { label: "Follow-Up", value: "follow_up" },
+        ...(assignmentType === "orthotics"
+          ? []
+          : [{ label: "Checkout", value: "checkout" }])
       ]
     }
   ]
@@ -1366,18 +1368,29 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
     }));
   }, [patient]);
 
+  // Only sync tab when visit/assignment mode changes — not on every field edit (that was resetting SOA&P tabs to Subjective).
   useEffect(() => {
-    if (values?.visit_type === "checkout" && values?.assignment_type === "prosthetics"){
-      setActiveTab("checkout")
-    } else if (values?.visit_type === "follow_up"){
-      setActiveTab("follow_up")
+    if (values?.visit_type === "checkout" && values?.assignment_type === "prosthetics") {
+      setActiveTab("checkout");
+    } else if (values?.visit_type === "follow_up") {
+      setActiveTab("follow_up");
     } else {
-      setActiveTab("subjective")
+      setActiveTab("subjective");
     }
-  }, [values])
+  }, [values?.visit_type, values?.assignment_type]);
 
   const onChange = (name, value) => {
-    setValues(v => ({ ...v, [name]: value }));
+    setValues(v => {
+      const next = { ...v, [name]: value };
+      if (name === "assignment_type" && value === "orthotics" && v.visit_type === "checkout") {
+        delete next.visit_type;
+      }
+      return next;
+    });
+    // Orthotics has no checkout schema; avoid one frame with activeTab "checkout" + orthotics (crashes FormBuilder).
+    if (name === "assignment_type" && value === "orthotics") {
+      setActiveTab(t => (t === "checkout" ? "subjective" : t));
+    }
   };
 
   const handleAction = (type) => {
@@ -1416,6 +1429,13 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
     follow_up: PROSTHETICS_FOLLOW_UP_SCHEMA,
     checkout: PROSTHETICS_CHECKOUT_SCHEMA
   };
+
+  const assessmentSchemaKey =
+    values?.assignment_type === "orthotics" && values?.visit_type === "checkout"
+      ? "subjective"
+      : activeTab;
+  const assessmentSchema =
+    schemaMap[assessmentSchemaKey] ?? schemaMap.subjective;
 
   function PatientInfo({ patient, values, onChange }) {
     if (!patient) return null;
@@ -1505,8 +1525,8 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
               padding: "10px 22px",
               fontWeight: 600,
               cursor: "pointer",
-              color: activeTab === tab ? "#2451b3" : "#0f172a",
-              borderBottom: activeTab === tab ? "3px solid #2451b3" : "none"
+              color: activeTab === tab.replace("-", "_") ? "#2451b3" : "#0f172a",
+              borderBottom: activeTab === tab.replace("-", "_") ? "3px solid #2451b3" : "none"
             }}
             onClick={() => setActiveTab(tab.replace('-', '_'))}
           >
@@ -1516,7 +1536,7 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
       </div>
 
       <CommonFormBuilder
-        schema={schemaMap[values?.assignment_type ==="orthotics" && values?.visit_type === "checkout" ? "subjective": activeTab]}
+        schema={assessmentSchema}
         values={values}
         onChange={onChange}
         submitted={submitted}

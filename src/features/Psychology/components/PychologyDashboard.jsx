@@ -628,6 +628,9 @@ export default function PsychologyDashboard({
   onOpenPatients,
   onOpenFollowUps
 }) {
+  const psychologyPatients = patients.filter(
+    (p) => Array.isArray(p.departments) && p.departments.includes("Psychology")
+  );
 
   const cards = [
     {
@@ -950,7 +953,10 @@ const [showPatients, setShowPatients] = useState(false);
   return (
     <>
      {showPatients ? (
-      <Patients onBack={() => setShowPatients(false)} />
+      <Patients
+        Patients={psychologyPatients}
+        onBack={() => setShowPatients(false)}
+      />
     ) : (
       <div style={styles.wrapper}>
         <div style={styles.row}>
