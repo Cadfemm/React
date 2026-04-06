@@ -330,7 +330,7 @@ const HEARING_SECTIONS = [
           label: "Plan",
           options: [
             {
-              label: "For further evaluation by Audiologist - (notify Audiologist)",
+              label: "For further evaluation by Audiologist",
               value: "audiologist_evaluation"
             },
             { label: "Others", value: "others" }
@@ -339,7 +339,7 @@ const HEARING_SECTIONS = [
         {
           type: "input",
           name: "hearing_plan_others",
-          label: "Others (free text)",
+          label: "Others (Specify)",
           showIf: { field: "hearing_plan", includes: "others" }
         }
       ]

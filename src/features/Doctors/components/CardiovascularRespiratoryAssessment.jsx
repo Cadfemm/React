@@ -176,8 +176,6 @@ const SCHEMA = {
             label: "Recent Infections (Specify)",
             showIf: { field: "pmh_recent_infections", equals: "Yes" }
           },
-          yn("pmh_smoking", "Smoking"),
-          yn("pmh_environment_exposure", "Environmental / Occupational Exposure"),
           yn("pmh_tracheostomy", "Tracheostomy"),
           {
             type: "date",
@@ -191,8 +189,37 @@ const SCHEMA = {
           yn("pmh_hypertension", "Hypertension"),
           yn("pmh_dyslipidaemia", "Dyslipidaemia"),
           yn("pmh_diabetes_mellitus", "Diabetes Mellitus"),
-          { type: "input", name: "pmh_valve_disease", label: "Valve Disease" },
-          { type: "input", name: "pmh_previous_surgery", label: "Previous Surgery" },
+          {
+            type: "radio",
+            name: "pmh_valve_disease",
+            label: "Valve Disease",
+            options: [
+              { label: "Yes", value: "Yes" },
+              { label: "No", value: "No" }
+            ]
+          },
+          {
+            type: "input",
+            name: "pmh_valve_disease_details",
+            label: "Specify",
+            showIf: { field: "pmh_valve_disease", equals: "Yes" }
+          },
+
+          {
+            type: "radio",
+            name: "pmh_previous_surgery",
+            label: "Previous Surgery",
+            options: [
+              { label: "Yes", value: "Yes" },
+              { label: "No", value: "No" }
+            ]
+          },
+          {
+            type: "input",
+            name: "pmh_previous_surgery_details",
+            label: "Specify",
+            showIf: { field: "pmh_previous_surgery", equals: "Yes" }
+          },
           yn("pmh_echo_done", "Echo Done"),
           {
             type: "checkbox-group",
@@ -228,6 +255,7 @@ const SCHEMA = {
 
           { type: "heading", label: "Risk Factors" },
           yn("risk_smoking", "Smoking"),
+          yn("pmh_environment_exposure", "Environmental / Occupational Exposure"),
           yn("risk_stress", "Stress"),
           {
             type: "input",

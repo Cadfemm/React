@@ -757,32 +757,6 @@ export default function Physical({ onChange }) {
             type: "input",
             showIf: { field: "sensory_numbness", equals: "Yes" },
           },
-
-          {
-            name: "sensory_pain",
-            label: "Pain",
-            type: "radio",
-            options: ["Yes", "No"],
-          },
-          {
-            name: "sensory_pain_sites",
-            label: "Site",
-            type: "checkbox-group",
-            options: [
-              { label: "Right Upper Limb", value: "rul" },
-              { label: "Left Upper Limb", value: "lul" },
-              { label: "Right Lower Limb", value: "rll" },
-              { label: "Left Lower Limb", value: "lll" },
-            ],
-            showIf: { field: "sensory_pain", equals: "Yes" },
-          },
-          {
-            name: "sensory_pain_specify",
-            label: "Specify",
-            type: "input",
-            showIf: { field: "sensory_pain", equals: "Yes" },
-          },
-
           {
             name: "sensory_reduced_sensation",
             label: "Reduced sensation",
