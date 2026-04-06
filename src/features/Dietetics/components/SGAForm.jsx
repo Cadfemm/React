@@ -142,12 +142,132 @@ export const sgaSchema = {
       ]
     },
     {
+      title: "Subcutaneous Fat",
+      fields: [
+        {
+          type: "radio-matrix",
+          name: "under_eyes",
+          label: "Under the eyes",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "triceps",
+          label: "Triceps",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "biceps",
+          label: "Biceps",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        }
+      ]
+    },
+    {
+      title: "Muscle Wasting",
+      fields: [
+        {
+          type: "radio-matrix",
+          name: "temple",
+          label: "Temple",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "clavicle",
+          label: "Clavicle",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "shoulder",
+          label: "Shoulder",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "scapula",
+          label: "Scapula/Ribs",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "quadriceps",
+          label: "Quadriceps",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "calf",
+          label: "Calf",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "knee",
+          label: "Knee",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+        {
+          type: "radio-matrix",
+          name: "interosseous",
+          label: "Interosseous",
+          options: [
+            { label: "None", value: "none" },
+            { label: "Mild / Moderate", value: "moderate" },
+            { label: "Severe", value: "severe" }
+          ]
+        },
+      ]
+    },
+    {
       title: "Physical Examination",
       fields: [
         {
           type: "radio-matrix",
-          name: "fat_loss",
-          label: "Loss of body fat",
+          name: "oedema",
+          label: "Oedema",
           options: [
             { label: "None", value: "none" },
             { label: "Mild / Moderate", value: "moderate" },
@@ -156,18 +276,8 @@ export const sgaSchema = {
         },
         {
           type: "radio-matrix",
-          name: "muscle_loss",
-          label: "Loss of muscle mass",
-          options: [
-            { label: "None", value: "none" },
-            { label: "Mild / Moderate", value: "moderate" },
-            { label: "Severe", value: "severe" }
-          ]
-        },
-        {
-          type: "radio-matrix",
-          name: "edema",
-          label: "Edema / Ascites",
+          name: "ascites",
+          label: "Ascites",
           options: [
             { label: "None", value: "none" },
             { label: "Mild / Moderate", value: "moderate" },
