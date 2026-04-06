@@ -53,16 +53,29 @@ const NESA_SCHEMA = {
                     label: "Protocol",
                     type: "radio",
                     labelAbove: true,
-                    options: [
-                        { label: "Motor Stroke", value: "motor_stoke"},
-                        { label: "Cognitive", value: "cognitive"},
-                        { label: "Neuropathic Pain", value: "neuropathic_pain"},
-                        { label: "Others", value: "others"}
+                   options: [
+                        { label: "Generalized Pain", value: "generalized_pain" },
+                        { label: "Neuropathic Pain", value: "neuropathic_pain" },
+                        { label: "Nerve Damage", value: "nerve_damage" },
+                        { label: "Trigeminal Neuralgia", value: "trigeminal_neuralgia" },
+                        { label: "Chronic Non-Specific Back Pain", value: "chronic_non_specific_back_pain" },
+                        { label: "Phantom Limb Syndrome Lower Limb", value: "phantom_limb_lower_limb" },
+                        { label: "Phantom Limb Syndrome Upper Limb", value: "phantom_limb_upper_limb" },
+                        { label: "Sleep", value: "sleep" },
+                        { label: "Anxiety and Non-Specific Mood Disorder", value: "anxiety_mood_disorder" },
+                        { label: "Generalized Fatigue", value: "generalized_fatigue" },
+                        { label: "Non-Specific Headache and Migraines", value: "headache_migraines" },
+                        { label: "Stroke", value: "stroke" },
+                        { label: "Acquired Brain Injury", value: "acquired_brain_injury" },
+                        { label: "Central Dizziness", value: "central_dizziness" },
+                        { label: "Parkinson's Disease", value: "parkinsons_disease" },
+                        { label: "Multiple Sclerosis", value: "multiple_sclerosis" },
+                        { label: "Others", value: "others" }
                     ]
                 },
                 {
                     name: "specify",
-                    label: "Specify",
+                    label: "Other Protocol",
                     type: "textarea",
                     showIf: {
                         field: "protocol",
@@ -70,19 +83,89 @@ const NESA_SCHEMA = {
                     }
                 },
                 {
-                    name: "directional_electrode",
-                    label: "Directional Electrode",
-                    type: "textarea"
+                    type: "subheading",
+                    label: "Protocol Settings"
+                },
+
+                {
+                    type: "custom-image",
+                    src: "/generalized_pain.png",
+                    showIf: { field: "protocol", equals: "generalized_pain" }
                 },
                 {
-                    name: "protocol_settings",
-                    label: "Protocol Settings",
-                    type: "textarea"
+                    type: "custom-image",
+                    src: "/neuropathic_pain.png",
+                    showIf: { field: "protocol", equals: "neuropathic_pain" }
                 },
                 {
-                    name: "other_protocol",
-                    label: "Other Protocol",
-                    type: "textarea"
+                    type: "custom-image",
+                    src: "/nerve_damage.png",
+                    showIf: { field: "protocol", equals: "nerve_damage" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/trigeminal_neuralgia.png",
+                    showIf: { field: "protocol", equals: "trigeminal_neuralgia" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/chronic_non_specific_back_pain.png",
+                    showIf: { field: "protocol", equals: "chronic_non_specific_back_pain" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/phantom_limb_lower_limb.png",
+                    showIf: { field: "protocol", equals: "phantom_limb_lower_limb" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/phantom_limb_upper_limb.png",
+                    showIf: { field: "protocol", equals: "phantom_limb_upper_limb" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/sleep.png",
+                    showIf: { field: "protocol", equals: "sleep" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/anxiety_mood_disorder.png",
+                    showIf: { field: "protocol", equals: "anxiety_mood_disorder" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/generalized_fatigue.png",
+                    showIf: { field: "protocol", equals: "generalized_fatigue" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/headache_migraines.png",
+                    showIf: { field: "protocol", equals: "headache_migraines" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/stroke.png",
+                    showIf: { field: "protocol", equals: "stroke" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/acquired_brain_injury.png",
+                    showIf: { field: "protocol", equals: "acquired_brain_injury" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/central_dizziness.png",
+                    showIf: { field: "protocol", equals: "central_dizziness" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/parkinsons_disease.png",
+                    showIf: { field: "protocol", equals: "parkinsons_disease" }
+                },
+                {
+                    type: "custom-image",
+                    src: "/multiple_sclerosis.png",
+                    showIf: { field: "protocol", equals: "multiple_sclerosis" }
                 },
                 {
                     name: "complication",
@@ -101,6 +184,26 @@ const NESA_SCHEMA = {
                         field: "complication",
                         equals: "yes"
                     }
+                },
+                 /* ========== GOALS & PLAN ========== */
+                {
+                    type: "subheading",
+                    label: "Goals"
+                },
+                {
+                    name: "nesa_goals",
+                    type: "textarea",
+                    placeholder: "Enter goals"
+                },
+
+                {
+                    type: "subheading",
+                    label: "Plan"
+                },
+                {
+                    name: "nesa_plan",
+                    type: "textarea",
+                    placeholder: "Enter plan"
                 }
             ]
         }
@@ -152,23 +255,6 @@ const EST_SCHEMA = {
                     type: "input"
                 },
                 {
-                    name: "diagnosis",
-                    label: "Diagnosis",
-                    type: "input"
-                },
-                {
-                    name: "indication",
-                    label: "Indication",
-                    type: "single-select",
-                    options: [
-                        { label: "Induce Aneurysm", value: "induce_aneurysm"},
-                        { label: "Cronotropic factor", value: "cronotropic_factor"},
-                        { label: "Ischemic Changes", value: "ischemic_changes"},
-                        { label: "CAD Screening", value: "cad_screening"},
-                        { label: "Treatment Progression", value: "treatment_progression"}
-                    ]
-                },
-                {
                     name: "underlying",
                     label: "Underlying",
                     type: "radio",
@@ -184,6 +270,33 @@ const EST_SCHEMA = {
                     type: "textarea",
                     showIf: {
                         field: "underlying",
+                        equals: "others"
+                    }
+                },                
+                {
+                    name: "diagnosis",
+                    label: "Diagnosis",
+                    type: "input"
+                },
+               {
+                    name: "indication",
+                    label: "Indication",
+                    type: "radio",
+                    labelAbove: true,
+                    options: [
+                        { label: "Pre Cardiac Rehabilitation Phase II", value: "pre_cardiac_rehab_phase_2" },
+                        { label: "Post Cardiac Rehabilitation Phase II", value: "post_cardiac_rehab_phase_2" },
+                        { label: "Post Cardiac Rehabilitation Phase III", value: "post_cardiac_rehab_phase_3" },
+                        { label: "Cardiac Screening", value: "cardiac_screening" },
+                        { label: "Others", value: "others" }
+                    ]
+                },
+                {
+                    name: "specify",
+                    label: "Others",
+                    type: "textarea",
+                    showIf: {
+                        field: "indication",
                         equals: "others"
                     }
                 },
@@ -208,14 +321,12 @@ const EST_SCHEMA = {
                     }
                 },
                 {
-                    name: "emr_technical",
-                    label: "EMR Technical Report by",
+                    name: "graf",
+                    label: "GRAF",
                     type: "radio",
                     options: [
-                        { label: "Medical Assistant", value: "medical_assistant"},
-                        { label: "Cardiovascular Technologyst", value: "cardiovascular_technologyst"},
-                        { label: "Medical Officer", value: "medical_officer"},
-                        { label: "Specialist", value: "specialist"}
+                        { label: "Running GRAF Report", value: "running_graf_report"},
+                        { label: "Technical Report", value: "technical_report"},
                     ]
                 },
                 {
@@ -237,19 +348,31 @@ const EST_SCHEMA = {
                         equals: "others"
                     }
                 },
-                {
-                    name: "graf",
-                    label: "GRAF",
-                    type: "radio",
-                    options: [
-                        { label: "Running GRAF Report", value: "running_graf_report"},
-                        { label: "Technical Report", value: "technical_report"},
-                    ]
-                },
+                
                 {
                     name: "remarks",
                     label: "Remarks",
                     type: "textarea"
+                },
+                 /* ========== GOALS & PLAN ========== */
+                {
+                    type: "subheading",
+                    label: "Goals"
+                },
+                {
+                    name: "est_goals",
+                    type: "textarea",
+                    placeholder: "Enter goals"
+                },
+
+                {
+                    type: "subheading",
+                    label: "Plan"
+                },
+                {
+                    name: "est_plan",
+                    type: "textarea",
+                    placeholder: "Enter plan"
                 }
             ]
         }
@@ -293,6 +416,26 @@ const BSU_SCHEMA = {
                     name: "impression",
                     label: "Impression",
                     type: "textarea"
+                },
+                 /* ========== GOALS & PLAN ========== */
+                {
+                    type: "subheading",
+                    label: "Goals"
+                },
+                {
+                    name: "bsu_goals",
+                    type: "textarea",
+                    placeholder: "Enter goals"
+                },
+
+                {
+                    type: "subheading",
+                    label: "Plan"
+                },
+                {
+                    name: "bsu_plan",
+                    type: "textarea",
+                    placeholder: "Enter plan"
                 }
             ]
         }
@@ -676,7 +819,27 @@ const BTI_SCHEMA = {
                     field: "complication",
                     equals: "yes"
                 }
-            }
+            },
+                      /* ========== GOALS & PLAN ========== */
+            {
+                type: "subheading",
+                label: "Goals"
+            },
+            {
+                name: "bti_goals",
+                type: "textarea",
+                placeholder: "Enter goals"
+            },
+
+            {
+                type: "subheading",
+                label: "Plan"
+            },
+            {
+                name: "bti_plan",
+                type: "textarea",
+                placeholder: "Enter plan"
+            },
             ]
         }
     ]
@@ -917,7 +1080,27 @@ const SC_SCHEMA = {
                     field: "complication",
                     equals: "yes"
                 }
-            }
+            },
+                      /* ========== GOALS & PLAN ========== */
+            {
+                type: "subheading",
+                label: "Goals"
+            },
+            {
+                name: "sc_goals",
+                type: "textarea",
+                placeholder: "Enter goals"
+            },
+
+            {
+                type: "subheading",
+                label: "Plan"
+            },
+            {
+                name: "sc_plan",
+                type: "textarea",
+                placeholder: "Enter plan"
+            },
             ]
         }    
     ]
@@ -930,10 +1113,32 @@ const FEES_SCHEMA = {
         {
             fields: [
 
+                /* ========== GOALS & PLAN ========== */
+                {
+                    type: "subheading",
+                    label: "Goals"
+                },
+                {
+                    name: "fees_goals",
+                    type: "textarea",
+                    placeholder: "Enter goals"
+                },
+
+                {
+                    type: "subheading",
+                    label: "Plan"
+                },
+                {
+                    name: "fees_plan",
+                    type: "textarea",
+                    placeholder: "Enter plan"
+                }
+
             ]
         }
     ]
 }
+
 const RTMS_SCHEMA = {
     title: "Repetitive Transcranial Magnetic Stimulation (rTMS)",
     actions: ACTIONS,
@@ -1018,7 +1223,27 @@ const RTMS_SCHEMA = {
                     field: "complication",
                     equals: "yes"
                 }
-            }
+            },
+                                  /* ========== GOALS & PLAN ========== */
+            {
+                type: "subheading",
+                label: "Goals"
+            },
+            {
+                name: "rtms_goals",
+                type: "textarea",
+                placeholder: "Enter goals"
+            },
+
+            {
+                type: "subheading",
+                label: "Plan"
+            },
+            {
+                name: "rtms_plan",
+                type: "textarea",
+                placeholder: "Enter plan"
+            },
             ]
         }
     ]
@@ -1126,7 +1351,27 @@ const TDCS_SCHEMA = {
                     field: "complication",
                     equals: "yes"
                 }
-            }
+            },
+                                  /* ========== GOALS & PLAN ========== */
+            {
+                type: "subheading",
+                label: "Goals"
+            },
+            {
+                name: "tdcs_goals",
+                type: "textarea",
+                placeholder: "Enter goals"
+            },
+
+            {
+                type: "subheading",
+                label: "Plan"
+            },
+            {
+                name: "tdcs_plan",
+                type: "textarea",
+                placeholder: "Enter plan"
+            },
             ]
         }
     ]
@@ -1167,7 +1412,7 @@ const MUSCU_SCHEMA = {
                 },
                 {
                     name: "valleix_point_injected",
-                    label: "Valleix Point Injected / Area Injected",
+                    label: "Area Injected",
                     type: "input"
                 },
                 {
@@ -1233,7 +1478,27 @@ const MUSCU_SCHEMA = {
                     name: "remarks",
                     label: "Remarks",
                     type: "textarea"
-                }
+                },
+                                      /* ========== GOALS & PLAN ========== */
+            {
+                type: "subheading",
+                label: "Goals"
+            },
+            {
+                name: "muscu_goals",
+                type: "textarea",
+                placeholder: "Enter goals"
+            },
+
+            {
+                type: "subheading",
+                label: "Plan"
+            },
+            {
+                name: "muscu_plan",
+                type: "textarea",
+                placeholder: "Enter plan"
+            },
             ]
         }
     ]
