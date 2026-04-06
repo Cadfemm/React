@@ -10,43 +10,43 @@ const t = (text, lang) => {
 };
 
 const TYPE_EST_OPTIONS = [
-  { value: "treadmill", label: { en: "Exercise stress test treadmill", ms: "Ujian tekanan senaman treadmill" } },
-  { value: "treadmill_wheelchair", label: { en: "Exercise stress test treadmill with wheelchair", ms: "Ujian tekanan senaman treadmill dengan kerusi roda" } },
+  { value: "treadmill", label: { en: "Exercise Stress Test Treadmill", ms: "Ujian Tekanan Senaman Treadmill" } },
+  { value: "treadmill_wheelchair", label: { en: "Exercise Stress Test Treadmill With Wheelchair", ms: "Ujian Tekanan Senaman Treadmill Dengan Kerusi Roda" } },
   { value: "ergometry", label: { en: "Ergometry", ms: "Ergometri" } }
 ];
 
 const INDICATION_OPTIONS = [
-  { value: "induce_aneurysm", label: { en: "INDUCE Aneurysm", ms: "INDUCE Aneurisma" } },
-  { value: "chronotropic_factor", label: { en: "CHRONOTROPIC FACTOR", ms: "FAKTOR KRONOTROPIK" } },
-  { value: "ischemic_changes", label: { en: "ISCHEMIC CHANGES", ms: "PERUBAHAN ISKEMIK" } },
-  { value: "cad_screening", label: { en: "CAD SCREENING", ms: "SISTING CAD" } },
-  { value: "treatment_progressing", label: { en: "TREATMENT PROGRESSING", ms: "KEMAJUAN RAWATAN" } }
+  { value: "induce_aneurysm", label: { en: "Induce Aneurysm", ms: "Induce Aneurisma" } },
+  { value: "chronotropic_factor", label: { en: "Chronotropic Factor", ms: "Faktor Kronotropik" } },
+  { value: "ischemic_changes", label: { en: "Ischemic Changes", ms: "Perubahan Iskemik" } },
+  { value: "cad_screening", label: { en: "CAD Screening", ms: "Saringan CAD" } },
+  { value: "treatment_progressing", label: { en: "Treatment Progressing", ms: "Kemajuan Rawatan" } }
 ];
 
 const UNDERLYING_OPTIONS = [
-  { value: "major", label: { en: "MAJOR CARDIAC ISSUE", ms: "MASALAH JANTUNG UTAMA" } },
-  { value: "minor", label: { en: "MINOR CARDIAC ISSUE", ms: "MASALAH JANTUNG KECIL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "major", label: { en: "Major Cardiac Issue", ms: "Masalah Jantung Utama" } },
+  { value: "minor", label: { en: "Minor Cardiac Issue", ms: "Masalah Jantung Kecil" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const PROTOCOL_OPTIONS = [
   { value: "bruce", label: { en: "Bruce", ms: "Bruce" } },
-  { value: "modified_bruce", label: { en: "Modified Bruce", ms: "Bruce Diubahsuai" } },
+  { value: "modified_bruce", label: { en: "Modified Bruce", ms: "Bruce Diubah Suai" } },
   { value: "who", label: { en: "WHO", ms: "WHO" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "cardiovascular_technologist", label: { en: "CARDIOVASCULAR TECHNOLOGIST", ms: "TEKNOLOGIST KARDIOVASKULAR" } },
-  { value: "medical_officer", label: { en: "MEDICAL OFFICER", ms: "PEGAWAI PERUBATAN" } },
-  { value: "cardiologist", label: { en: "CARDIOLOGIST", ms: "PAKAR KARDIOLOGI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "cardiovascular_technologist", label: { en: "Cardiovascular Technologist", ms: "Teknologis Kardiovaskular" } },
+  { value: "medical_officer", label: { en: "Medical Officer", ms: "Pegawai Perubatan" } },
+  { value: "cardiologist", label: { en: "Cardiologist", ms: "Pakar Kardiologi" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "positive", label: { en: "POSITIVE STRESS TEST", ms: "UJIAN TEKANAN POSITIF" } },
-  { value: "negative", label: { en: "NEGATIVE STRESS TEST", ms: "UJIAN TEKANAN NEGATIF" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "positive", label: { en: "Positive Stress Test", ms: "Ujian Tekanan Positif" } },
+  { value: "negative", label: { en: "Negative Stress Test", ms: "Ujian Tekanan Negatif" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 function formatToday() {
@@ -119,8 +119,7 @@ export default function ESTForm({ patient, onBack }) {
 
   const EST_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "EST (EXERCISE STRESS TEST)", ms: "EST (UJIAN TEKANAN SENAMAN)" },
-    actions: [
+      title: { en: "EST (Exercise Stress Test)", ms: "EST (Ujian Tekanan Senaman)" },    actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
     ],
@@ -129,13 +128,13 @@ export default function ESTForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_est",
-            label: { en: "TYPE OF EST", ms: "JENIS EST" },
+            label: { en: "Type Of EST", ms: "Jenis EST" },
             type: "radio",
             options: TYPE_EST_OPTIONS,
             labelAbove: true
@@ -148,20 +147,20 @@ export default function ESTForm({ patient, onBack }) {
           },
           {
             name: "target_heart_rate",
-            label: { en: "TARGET HEART RATE", ms: "KADAR DENYUTAN JANTUNG SASARAN" },
+            label: { en: "Target Heart Rate", ms: "Kadar Denyutan Jantung Sasaran" },
             type: "input",
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
             name: "indication",
-            label: { en: "INDICATION", ms: "INDIKASI" },
+            label: { en: "Indication", ms: "Indikasi" },
             type: "radio",
             options: INDICATION_OPTIONS,
             labelAbove: true
           },
           {
             name: "protocol",
-            label: { en: "PROTOCOL", ms: "PROTOKOL" },
+            label: { en: "Protocol", ms: "Protokol" },
             type: "radio",
             options: PROTOCOL_OPTIONS
           },
@@ -174,7 +173,7 @@ export default function ESTForm({ patient, onBack }) {
           },
           {
             name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
             type: "radio",
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
@@ -201,7 +200,7 @@ export default function ESTForm({ patient, onBack }) {
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "radio",
             // labelAbove:true,
             options: FINAL_REPORT_OPTIONS

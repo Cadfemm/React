@@ -10,14 +10,14 @@ const t = (text, lang) => {
 };
 
 const TYPE_EEG_OPTIONS = [
-  { value: "routine", label: { en: "ROUTINE EEG", ms: "EEG RUTIN" } },
-  { value: "sleep_deprived", label: { en: "SLEEP DEPRIVED EEG", ms: "EEG KURANG TIDUR" } },
-  { value: "video_telemetry", label: { en: "VIDEO TELEMETRY RECORDING", ms: "RAKAMAN TELEMETRI VIDEO" } }
+  { value: "routine", label: { en: "Routine EEG", ms: "EEG Rutin" } },
+  { value: "sleep_deprived", label: { en: "Sleep Deprived EEG", ms: "EEG Kurang Tidur" } },
+  { value: "video_telemetry", label: { en: "Video Telemetry Recording", ms: "Rakaman Telemetri Video" } }
 ];
 
 const SEDATION_OPTIONS = [
-  { value: "yes", label: { en: "YES", ms: "YA" } },
-  { value: "no", label: { en: "NO", ms: "TIDAK" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const SENSITIVITY_OPTIONS = [
@@ -52,36 +52,36 @@ const MONTAGES_OPTIONS = [
   { value: "av_referential", label: { en: "AV Referential", ms: "AV Referential" } },
   { value: "bipolar", label: { en: "Bipolar / Double Banana", ms: "Bipolar / Double Banana" } },
   { value: "transverse", label: { en: "Transverse", ms: "Melintang" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const YES_NO_OPTIONS = [
-  { value: "yes", label: { en: "YES", ms: "YA" } },
-  { value: "no", label: { en: "NO", ms: "TIDAK" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const HYPERVENTILATION_OPTIONS = [
-  { value: "3_min", label: { en: "3 MINUTES", ms: "3 MINIT" } },
-  { value: "5_min", label: { en: "5 MINUTES", ms: "5 MINIT" } },
-  { value: "not_done", label: { en: "NOT DONE", ms: "TIDAK DILAKUKAN" } }
+  { value: "3_min", label: { en: "3 Minutes", ms: "3 Minit" } },
+  { value: "5_min", label: { en: "5 Minutes", ms: "5 Minit" } },
+  { value: "not_done", label: { en: "Not Done", ms: "Tidak Dilakukan" } }
 ];
 
 const DIAGNOSIS_OPTIONS = [
   { value: "stroke", label: { en: "STROKE", ms: "STROK" } },
   { value: "tbi", label: { en: "TBI", ms: "TBI" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "normal", label: { en: "NORMAL EEG", ms: "EEG NORMAL" } },
-  { value: "abnormal", label: { en: "ABNORMAL EEG", ms: "EEG TIDAK NORMAL" } },
-  { value: "borderline", label: { en: "BORDERLINE EEG", ms: "EEG SEMPADAN" } }
+  { value: "normal", label: { en: "Normal EEG", ms: "EEG Normal" } },
+  { value: "abnormal", label: { en: "Abnormal EEG", ms: "EEG Tidak Normal" } },
+  { value: "borderline", label: { en: "Borderline EEG", ms: "EEG Sempadan" } }
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "eeg_technologist", label: { en: "EEG TECHNOLOGIST", ms: "TEKNOLOGIST EEG" } },
-  { value: "neurologist", label: { en: "NEUROLOGIST", ms: "PAKAR NEUROLOGI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "eeg_technologist", label: { en: "EEG Technologist", ms: "Teknologis EEG" } },
+  { value: "neurologist", label: { en: "Neurologist", ms: "Pakar Neurologi" } }
 ];
 
 function formatToday() {
@@ -158,64 +158,64 @@ export default function EEGForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_eeg",
-            label: { en: "TYPE OF EEG", ms: "JENIS EEG" },
+            label: { en: "Type Of EEG", ms: "Jenis EEG" },
             type: "radio",
             options: TYPE_EEG_OPTIONS,
             labelAbove: true
           },
           {
             name: "general_appearance",
-            label: { en: "GENERAL APPEARANCE & MENTAL STATUS", ms: "PENAMPAKAN UMUM & STATUS MENTAL" },
+            label: { en: "General Appearance & Mental Status", ms: "Penampakan Umum & Status Mental" },
             type: "textarea",
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
             name: "medication",
-            label: { en: "MEDICATION", ms: "UBATAN" },
+            label: { en: "Medication", ms: "Ubatan" },
             type: "textarea",
             readOnly: true,
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
           {
             name: "sedation",
-            label: { en: "SEDATION", ms: "SEDASI" },
+            label: { en: "Sedation", ms: "Sedasi" },
             type: "radio",
             options: SEDATION_OPTIONS
           },
           { type: "subheading", label: { en: "Technical Settings", ms: "Tetapan Teknikal" } },
           {
             name: "sensitivity",
-            label: { en: "SENSITIVITY", ms: "KEHASILAN" },
+            label: { en: "Sensitivity", ms: "Kehasilan" },
             type: "radio",
             options: SENSITIVITY_OPTIONS
           },
           {
             name: "high_freq_filter",
-            label: { en: "HIGH FREQUENCY FILTER", ms: "PENAPIS FREKUENSI TINGGI" },
+            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
             type: "radio",
             options: HIGH_FREQ_OPTIONS
           },
           {
             name: "low_freq_filter",
-            label: { en: "LOW FREQUENCY FILTER", ms: "PENAPIS FREKUENSI RENDAH" },
+            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
             type: "radio",
             options: LOW_FREQ_OPTIONS
           },
           {
             name: "paper_speed",
-            label: { en: "PAPER SPEED", ms: "KELAJUAN KERTAS" },
+            label: { en: "Paper Speed", ms: "Kelajuan Kertas" },
             type: "radio",
             options: PAPER_SPEED_OPTIONS
           },
           {
             name: "montages",
-            label: { en: "MONTAGES", ms: "MONTAGES" },
+            label: { en: "Montages", ms: "Montages" },
             type: "radio",
             options: MONTAGES_OPTIONS
           },
@@ -228,44 +228,44 @@ export default function EEGForm({ patient, onBack }) {
           },
           {
             name: "electrocardiogram",
-            label: { en: "ELECTROCARDIOGRAM", ms: "ELEKTROKARDIOGRAM" },
+            label: { en: "Electrocardiogram", ms: "Elektrokardiogram" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "electromyogram",
-            label: { en: "ELECTROMYOGRAM", ms: "ELEKTROMIOGRAM" },
+            label: { en: "Electromyogram", ms: "Elektromiogram" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "photic_stimulation",
-            label: { en: "PHOTIC STIMULATION", ms: "RANGSANGAN FOTIK" },
+            label: { en: "Photic Stimulation", ms: "Rangsangan Fotik" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "hyperventilation",
-            label: { en: "HYPERVENTILATION", ms: "HIPERVENTILASI" },
+            label: { en: "Hyperventilation", ms: "Hiperventilasi" },
             type: "radio",
             options: HYPERVENTILATION_OPTIONS
           },
           {
             name: "previous_eeg",
-            label: { en: "PREVIOUS EEG", ms: "EEG SEBELUMNYA" },
+            label: { en: "Previous EEG", ms: "EEG Sebelumnya" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
             name: "graf",
-            title: { en: "GRAF (RUNNING GRAF REPORT & VIDEO)", ms: "GRAF (LAPORAN GRAF BERJALAN & VIDEO)" },
+            title: { en: "Graf (Running Graf Report & Video)", ms: "Graf (Laporan Graf Berjalan & Video)" },
             type: "attach-file",
             accept: "image/*,.pdf,video/*"
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "radio",
             options: FINAL_REPORT_OPTIONS
           },

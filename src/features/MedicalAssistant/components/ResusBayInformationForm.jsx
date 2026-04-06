@@ -75,7 +75,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
         fields: [
           { 
             name: "aduan", 
-            label: { en: "Complaint", ms: "ADUAN" }, 
+            label: { en: "Complaint", ms: "Aduan" }, 
             type: "textarea", 
             readOnly: true 
           },
@@ -83,7 +83,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
             type: "subheading", 
             label: { 
               en: "Vital Signs & Measurements", 
-              ms: "TANDA VITAL" 
+              ms: "Tanda Vital" 
             } 
           },
           {
@@ -130,7 +130,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
           },
           {
             name: "xray_status",
-            label: { en: "X-Ray", ms: "X-RAY" },
+            label: { en: "X-Ray", ms: "X-Ray" },
             type: "radio",
             options: [
               { 
@@ -146,7 +146,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
           },
           {
             name: "xray_result",
-            label: { en: "X-Ray Result", ms: "KEPUTUSAN X-RAY" },
+            label: { en: "X-Ray Result", ms: "Keputusan X-Ray" },
             type: "textarea",
             placeholder: { en: "X-Ray result", ms: "Keputusan X-Ray" },
             readOnly: true,
@@ -154,7 +154,7 @@ export default function ResusBayInformationForm({ patient, onBack }) {
           },
           {
             name: "lab_status",
-            label: { en: "Lab Result", ms: "KEPUTUSAN MAKMAL" },
+            label: { en: "Lab Result", ms: "Keputusan Makmal" },
             type: "radio",
             options: [
               { 
@@ -185,25 +185,25 @@ export default function ResusBayInformationForm({ patient, onBack }) {
           },
           { 
             name: "diagnosis", 
-            label: { en: "Diagnosis", ms: "DIAGNOSIS" }, 
+            label: { en: "Diagnosis", ms: "Diagnosis" }, 
             type: "input", 
             readOnly: true 
           },
           { 
             name: "dirawat_oleh_doktor", 
-            label: { en: "Treated by Doctor", ms: "DIRAWAT OLEH DOKTOR" }, 
+            label: { en: "Treated by Doctor", ms: "Dirawat Oleh Doktor" }, 
             type: "input", 
             readOnly: true 
           },
           {
             name: "doctor_plan",
-            label: { en: "Plan / Management", ms: "PELAN / PENGURUSAN" },
+            label: { en: "Plan / Management", ms: "Pelan / Pengurusan" },
             type: "textarea",
             readOnly: true
           },
           { 
             name: "others", 
-            label: { en: "Others", ms: "LAIN-LAIN" }, 
+            label: { en: "Others", ms: "Lain-Lain" }, 
             type: "textarea", 
             readOnly: true 
           }

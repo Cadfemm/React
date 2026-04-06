@@ -236,7 +236,7 @@ export default function XRayInformationForm({ patient, onBack }) {
   /* Single flat section with subheadings - matches Physiotherapy (no nested cards) */
   const XRAY_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "X-RAY INFORMATION (E-FORM)", ms: "MAKLUMAT X-RAY (E-FORM)" },
+    title: { en: "X-Ray Information (E-Form)", ms: "Maklumat X-Ray (E-Form)" },
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -246,7 +246,7 @@ export default function XRayInformationForm({ patient, onBack }) {
         fields: [
           {
             name: "xray",
-            label: { en: "XRAY", ms: "XRAY" },
+            label: { en: "XRay", ms: "XRay" },
             type: "radio",
             options: XRAY_OPTIONS
           },
@@ -347,39 +347,39 @@ export default function XRayInformationForm({ patient, onBack }) {
               }
             ]
           },
-          { type: "subheading", label: { en: "XRAY IMAGE UPLOAD", ms: "MUAT NAIK GAMBAR XRAY" } },
+          { type: "subheading", label: { en: "XRay Image Upload", ms: "Muat Naik Gambar XRay" } },
           {
             type: "row",
             fields: [
               {
                 name: "xray_image_1",
-                title: { en: "XRAY IMAGE 1", ms: "GAMBAR XRAY 1" },
+                title: { en: "XRay Image 1", ms: "Gambar XRay 1" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "xray_image_2",
-                title: { en: "XRAY IMAGE 2", ms: "GAMBAR XRAY 2" },
+                title: { en: "XRay Image 2", ms: "Gambar XRay 2" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "xray_image_3",
-                title: { en: "XRAY IMAGE 3", ms: "GAMBAR XRAY 3" },
+                title: { en: "XRay Image 3", ms: "Gambar XRay 3" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", oneOf: ["3", "4", "5"] }
               },
               {
                 name: "xray_image_4",
-                title: { en: "XRAY IMAGE 4", ms: "GAMBAR XRAY 4" },
+                title: { en: "XRay Image 4", ms: "Gambar XRay 4" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", oneOf: ["4", "5"] }
               },
               {
                 name: "xray_image_5",
-                title: { en: "XRAY IMAGE 5", ms: "GAMBAR XRAY 5" },
+                title: { en: "XRay Image 5", ms: "Gambar XRay 5" },
                 type: "attach-file",
                 accept: "image/*,.pdf",
                 showIf: { field: "_xray_image_count", equals: "5" }
@@ -388,7 +388,7 @@ export default function XRayInformationForm({ patient, onBack }) {
           },
           {
             type: "button",
-            label: { en: "ADDED IMAGE FILE (+)", ms: "TAMBAH FAIL GAMBAR (+)" },
+            label: { en: "Added Image File (+)", ms: "Tambah Fail Gambar (+)" },
             action: "add_xray_image"
           },
           { type: "subheading", label: { en: "Report from Radiographer", ms: "Laporan dari Ahli Radiografi" } },
@@ -446,7 +446,7 @@ export default function XRayInformationForm({ patient, onBack }) {
       >
         <div style={submitRow}>
           <button style={submitBtn} onClick={handlePrint} type="button">
-            {t({ en: "PRINT", ms: "CETAK" }, language)}
+            {t({ en: "Print", ms: "Cetak" }, language)}
           </button>
         </div>
       </CommonFormBuilder>

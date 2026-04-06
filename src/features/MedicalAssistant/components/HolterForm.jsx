@@ -15,9 +15,9 @@ const TYPE_HOLTER_OPTIONS = [
 ];
 
 const UNDERLYING_OPTIONS = [
-  { value: "major", label: { en: "MAJOR CARDIAC ISSUE", ms: "MASALAH JANTUNG UTAMA" } },
-  { value: "minor", label: { en: "MINOR CARDIAC ISSUE", ms: "MASALAH JANTUNG KECIL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "major", label: { en: "Major Cardiac Issue", ms: "Masalah Jantung Utama" } },
+  { value: "minor", label: { en: "Minor Cardiac Issue", ms: "Masalah Jantung Kecil" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const HOURS_RECORDING_OPTIONS = [
@@ -37,15 +37,15 @@ const ECG_CHANNEL_OPTIONS = [
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "cardiovascular_technologist", label: { en: "CARDIOVASCULAR TECHNOLOGIST", ms: "TEKNOLOGIST KARDIOVASKULAR" } },
-  { value: "medical_officer", label: { en: "MEDICAL OFFICER", ms: "PEGAWAI PERUBATAN" } },
-  { value: "cardiologist", label: { en: "CARDIOLOGIST", ms: "PAKAR KARDIOLOGI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "cardiovascular_technologist", label: { en: "Cardiovascular Technologist", ms: "Teknologis Kardiovaskular" } },
+  { value: "medical_officer", label: { en: "Medical Officer", ms: "Pegawai Perubatan" } },
+  { value: "cardiologist", label: { en: "Cardiologist", ms: "Pakar Kardiologi" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "positive", label: { en: "POSITIVE STUDY", ms: "KAJIAN POSITIF" } },
-  { value: "negative", label: { en: "NEGATIVE STUDY", ms: "KAJIAN NEGATIF" } }
+  { value: "positive", label: { en: "Positive Study", ms: "Kajian Positif" } },
+  { value: "negative", label: { en: "Negative Study", ms: "Kajian Negatif" } }
 ];
 
 function formatToday() {
@@ -112,32 +112,32 @@ export default function HolterForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_holter",
-            label: { en: "TYPE OF HOLTER", ms: "JENIS HOLTER" },
+            label: { en: "Type Of Holter", ms: "Jenis Holter" },
             type: "radio",
             options: TYPE_HOLTER_OPTIONS,
             labelAbove: true
           },
           {
             name: "hours_recording",
-            label: { en: "HOURS RECORDING", ms: "JAM RAKAMAN" },
+            label: { en: "Hours Recording", ms: "Jam Rakaman" },
             type: "radio",
             options: HOURS_RECORDING_OPTIONS
           },
           {
             name: "ecg_channel",
-            label: { en: "ECG CHANNEL", ms: "SALURAN ECG" },
+            label: { en: "ECG Channel", ms: "Saluran ECG" },
             type: "radio",
             options: ECG_CHANNEL_OPTIONS
           },
           {
             name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
             type: "radio",
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
@@ -164,7 +164,7 @@ export default function HolterForm({ patient, onBack }) {
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "textarea",
           },
         ]

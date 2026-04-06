@@ -199,7 +199,7 @@ const SUBJECTIVE_SCHEMA = {
           name: "ototoxic_notes",
           label: "",
           type: "textarea",
-          showIf: { field: "ototoxic_medications", exists: true }
+          showIf: { field: "ototoxic_medications", oneOf: ["1", "2", "3", "4"] }
         },
 
         {
@@ -592,6 +592,11 @@ const SUBJECTIVE_SCHEMA = {
     {
       title: "Audiometry",
       fields: [
+          {
+      name: "audifile",
+      label: "Upload Audiometry File",
+      type: "file-upload-modal",
+    },
         { type: "audiogram-graph", name: "audiogram_graph"},    
         {
           type: "row",
@@ -1289,14 +1294,30 @@ const OBJECTIVE_SCHEMA = {
 
     {/* 👇 ADD THIS BLOCK HERE */}
 
-
-
-    {/* Submit button stays */}
-    <div style={submitRow}>
-      <button style={submitBtn} onClick={handleSubmit}>
-        Submit Audiology Assessment
-      </button>
-    </div>
+   {/* Submit button stays */}
+     <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={() => {
+                if (activeTab === "subjective") setActiveTab("objective");
+                else if (activeTab === "objective") setActiveTab("assessment");
+                else if (activeTab === "assessment") setActiveTab("plan");
+              }}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={handleSubmit}
+            >
+              Submit Audiology
+            </button>
+          )}
+        </div>
   </CommonFormBuilder>
 </div>
 

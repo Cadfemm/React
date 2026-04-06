@@ -10,19 +10,19 @@ const t = (text, lang) => {
 };
 
 const YES_NO_OPTIONS = [
-  { value: "yes", label: { en: "YES", ms: "YA" } },
-  { value: "no", label: { en: "NO", ms: "TIDAK" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const STOP_BANG_OPTIONS = [
-  { value: "1_3", label: { en: "1-3 ITEMS", ms: "1-3 ITEM" } },
-  { value: "3_8", label: { en: "3-8 ITEMS", ms: "3-8 ITEM" } }
+  { value: "1_3", label: { en: "1-3 Items", ms: "1-3 Item" } },
+  { value: "3_8", label: { en: "3-8 Items", ms: "3-8 Item" } }
 ];
 
 const NIGHT_OPTIONS = [
-  { value: "1", label: { en: "1 NIGHT", ms: "1 MALAM" } },
-  { value: "2", label: { en: "2 NIGHT", ms: "2 MALAM" } },
-  { value: "3", label: { en: "3 NIGHT", ms: "3 MALAM" } }
+  { value: "1", label: { en: "1 Night", ms: "1 Malam" } },
+  { value: "2", label: { en: "2 Night", ms: "2 Malam" } },
+  { value: "3", label: { en: "3 Night", ms: "3 Malam" } }
 ];
 
 const TECHNICAL_AIRFLOW_OPTIONS = [
@@ -39,16 +39,16 @@ const SCORING_TABLE_OPTIONS = [
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "normal", label: { en: "NORMAL", ms: "NORMAL" } },
-  { value: "abnormal", label: { en: "ABNORMAL", ms: "TIDAK NORMAL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "normal", label: { en: "Normal", ms: "Normal" } },
+  { value: "abnormal", label: { en: "Abnormal", ms: "Tidak Normal" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "sleep_technologist", label: { en: "SLEEP TECHNOLOGIST", ms: "TEKNOLOGIST TIDUR" } },
-  { value: "neurologist", label: { en: "NEUROLOGIST", ms: "PAKAR NEUROLOGI" } },
-  { value: "respiratory_therapist", label: { en: "RESPIRATORY THERAPIST", ms: "AHLI TERAPI RESPIRATORI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "sleep_technologist", label: { en: "Sleep Technologist", ms: "Teknologis Tidur" } },
+  { value: "neurologist", label: { en: "Neurologist", ms: "Pakar Neurologi" } },
+  { value: "respiratory_therapist", label: { en: "Respiratory Therapist", ms: "Ahli Terapi Respiratori" } }
 ];
 
 function formatToday() {
@@ -144,7 +144,7 @@ export default function PSGForm({ patient, onBack }) {
 
   const PSG_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "PSG (POLYSOMNOGRAM)", ms: "PSG (POLISOMNOGRAM)" },
+    title: { en: "PSG (Polysomnogram)", ms: "PSG (Polysomnogram)" },
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -154,21 +154,21 @@ export default function PSGForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             type: "row",
             fields: [
-              { name: "neck_circumference", label: { en: "NECK CIRCUMFERENCE (CM)", ms: "LILITAN LEHER (CM)" }, type: "input" },
+              { name: "neck_circumference", label: { en: "Neck Circumference (Cm)", ms: "Lilitan Leher (Cm)" }, type: "input" },
               { name: "bmi_conclusion", label: { en: "BMI Conclusion", ms: "Kesimpulan BMI" }, type: "input", readOnly: true }
             ]
           },
           { type: "subheading", label: { en: "Sleep Assessment", ms: "Penilaian Tidur" } },
           {
             name: "stop_bang",
-            label: { en: "STOP BANG SLEEP SCORE", ms: "SKOR TIDUR STOP BANG" },
+            label: { en: "Stop Bang Sleep Score", ms: "Skor Tidur Stop Bang" },
             type: "radio",
             options: STOP_BANG_OPTIONS
           },
@@ -177,13 +177,13 @@ export default function PSGForm({ patient, onBack }) {
             fields: [
               {
                 name: "high_risk_osa",
-                label: { en: "HIGH RISK OF OSA", ms: "RISIKO TINGGI OSA" },
+                label: { en: "High Risk Of OSA", ms: "Risiko Tinggi OSA" },
                 type: "radio",
                 options: YES_NO_OPTIONS
               },
               {
                 name: "low_risk_osa",
-                label: { en: "LOW RISK OF OSA", ms: "RISIKO RENDAH OSA" },
+                label: { en: "Low Risk Of OSA", ms: "Risiko Rendah OSA" },
                 type: "radio",
                 options: YES_NO_OPTIONS
               }
@@ -191,14 +191,14 @@ export default function PSGForm({ patient, onBack }) {
           },
           {
             name: "night_procedure",
-            label: { en: "NIGHT / PROCEDURE", ms: "MALAM / PROSEDUR" },
+            label: { en: "Night / Procedure", ms: "Malam / Prosedur" },
             type: "radio",
             options: NIGHT_OPTIONS
           },
           { type: "subheading", label: { en: "Technical Airflow", ms: "Aliran Udara Teknikal" } },
           {
             name: "technical_airflow",
-            label: { en: "TECHNICAL AIRFLOW", ms: "ALIRAN UDARA TEKNIKAL" },
+            label: { en: "Technical Airflow", ms: "Aliran Udara Teknikal" },
             type: "checkbox-group",
             options: TECHNICAL_AIRFLOW_OPTIONS
           },
@@ -207,19 +207,19 @@ export default function PSGForm({ patient, onBack }) {
             fields: [
               { name: "cpap", label: { en: "CPAP", ms: "CPAP" }, type: "radio", options: YES_NO_OPTIONS },
               { name: "bpap", label: { en: "BPAP", ms: "BPAP" }, type: "radio", options: YES_NO_OPTIONS },
-              { name: "snoring", label: { en: "SNORING", ms: "DENGKURAN" }, type: "radio", options: YES_NO_OPTIONS }
+              { name: "snoring", label: { en: "Snoring", ms: "Dengkuran" }, type: "radio", options: YES_NO_OPTIONS }
             ]
           },
           {
             name: "scoring_table",
-            label: { en: "SCORING TABLE", ms: "JADUAL SKOR" },
+            label: { en: "Scoring Table", ms: "Jadual Skor" },
             type: "radio",
             options: SCORING_TABLE_OPTIONS,
             labelAbove: true
           },
           {
             name: "previous_psg",
-            label: { en: "PREVIOUS PSG", ms: "PSG SEBELUMNYA" },
+            label: { en: "Previous PSG", ms: "PSG Sebelumnya" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
@@ -241,14 +241,14 @@ export default function PSGForm({ patient, onBack }) {
           },
           {
             name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
             type: "radio",
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "radio",
             options: FINAL_REPORT_OPTIONS
           },
