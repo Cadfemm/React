@@ -972,7 +972,7 @@ const submitAndSave = () => {
                         { name: `diagnosis_problem_${index}`, label: "Problem", type: "input", readOnly: true },
                         { name: `diagnosis_etiology_${index}`, label: "Etiology", type: "multi-select-dropdown", options: ET_OPTIONS[diagnosis.problem.toLowerCase().replaceAll(' ', '_')] || [] },
                         { name: `diagnosis_signs_${index}`, label: "Signs & Symptoms", type: "textarea" },
-                        { name: `nutrition_diagnosis_${index}`, label: "Nutrition Diagnosis", type: "textarea", readOnly: true }
+                        { name: `nutrition_diagnosis_${index}`, label: "Nutrition Diagnosis", type: "textarea" }
                       ]}]}}
           values={diagnosisValues}
           onChange={(name, value) => {
