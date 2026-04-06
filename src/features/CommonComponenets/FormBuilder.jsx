@@ -231,6 +231,9 @@ export default function CommonFormBuilder({
   readOnly: formReadOnly = false,
   showScores
 }) {
+  if (!schema) {
+    return null;
+  }
   const sections = schema.sections || [
     { title: null, fields: schema.fields }
   ];
@@ -1029,6 +1032,7 @@ export const DynamicInput = ({
   const [isTextarea, setIsTextarea] = useState(false);
   const currentValue = value || "";
   const inputRef = useRef(null);
+  const skipFocusOnNextIsTextareaEffect = useRef(true);
 
   // 1. Auto-switch based on character count
   useEffect(() => {
@@ -1042,11 +1046,14 @@ export const DynamicInput = ({
     }
   }, [currentValue.length]);
 
-  // 2. Restore focus after switching types
+  // 2. Restore focus only after input <-> textarea switch (not on mount / tab change — avoids scroll-jump and focus stealing).
   useEffect(() => {
+    if (skipFocusOnNextIsTextareaEffect.current) {
+      skipFocusOnNextIsTextareaEffect.current = false;
+      return;
+    }
     if (inputRef.current) {
       inputRef.current.focus();
-      // Place cursor at the very end
       const len = inputRef.current.value.length;
       inputRef.current.setSelectionRange(len, len);
     }
