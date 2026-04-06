@@ -362,8 +362,8 @@ return (
           <div className="label-sm">Temp (°C)</div>
           <input type="number" step="0.1" className="input-sm num" value={v.temp_c} onChange={set("temp_c")} />
         </div>
-        <div className="field" style={{gridColumn:"span 2"}}>
-          <div className="label-sm">Method</div>
+        <div className="field" style={{gridColumn:"span 3"}}>
+          <div className="label-sm">Temp Measurement Method</div>
           <select className="select-sm" value={v.temp_method} onChange={set("temp_method")}>
             <option>Oral</option><option>Tympanic</option><option>Axillary</option><option>Rectal</option>
           </select>
