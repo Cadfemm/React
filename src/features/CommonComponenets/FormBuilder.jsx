@@ -3104,6 +3104,17 @@ case "grid-table-advanced": {
                                 );
                               })}
                             </select>
+                          ) : col.type === "radio" ? (
+                            <div style={{ display: "flex", justifyContent: "center" }}>
+                              <input
+                                type="radio"
+                                name={`${field.name}_${r.value}`}
+                                value={col.value ?? col.key ?? i}
+                                checked={v === (col.value ?? col.key ?? i)}
+                                onChange={() => onChange(key, col.value ?? col.key ?? i)}
+                                style={{ cursor: "pointer" }}
+                              />
+                            </div>
                           ) : (
                             <input
                               value={v}
