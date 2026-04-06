@@ -1,11 +1,6 @@
 import React from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-const FFQ_MARK_OPTIONS = [
-  { label: "", value: "" },
-  { label: "✓", value: "checked" },
-];
-
 const ffqTableGroups = [
   { label: "Never (0 time/week)", columns: [{ key: "" }] },
   { label: "Seldom (1-2 times/week)", columns: [{ key: "" }] },
@@ -18,10 +13,10 @@ const ffqRow = (value, label) => ({
   value,
   label,
   columns: [
-    { type: "select", options: FFQ_MARK_OPTIONS },
-    { type: "select", options: FFQ_MARK_OPTIONS },
-    { type: "select", options: FFQ_MARK_OPTIONS },
-    { type: "select", options: FFQ_MARK_OPTIONS },
+    { type: "radio", value: "never" },
+    { type: "radio", value: "seldom" },
+    { type: "radio", value: "occasionally" },
+    { type: "radio", value: "frequent" },
     {},
   ],
 });
