@@ -56,30 +56,14 @@ export default function RepositioningSkinChart({ patient, onBack }) {
     <div style={{ maxWidth: 1400, margin: "0 auto", padding: "20px 40px", fontFamily: "Segoe UI, sans-serif", color: C.text }}>
 
       {/* ── Header ── */}
-      <div style={{ border: `2px solid ${C.primaryDark}`, borderRadius: 10, overflow: "hidden", marginBottom: 20 }}>
-        <div style={{ background: C.primaryDark, padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-          <div>
-            <div style={{ fontSize: 11, color: "#cce4f5", fontWeight: 600, letterSpacing: 1 }}>PUSAT REHABILITASI PERKESO</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: C.white, marginTop: 2 }}>Daily Repositioning & Skin Inspection Chart</div>
+      <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: C.primary }}>Daily Repositioning & Skin Inspection Chart</div>
+        {patient?.name && (
+          <div style={{ fontSize: 13, color: C.muted }}>
+            {patient.name}
+            {patient.id && <span style={{ marginLeft: 10 }}>| MRN: {patient.id}</span>}
           </div>
-          {patient?.name && (
-            <div style={{ fontSize: 13, color: "#cce4f5" }}>
-              {patient.name}
-              {patient.id && <span style={{ marginLeft: 10 }}>| MRN: {patient.id}</span>}
-              {patient.ward && <span style={{ marginLeft: 10 }}>| Ward: {patient.ward}</span>}
-              {patient.bed && <span style={{ marginLeft: 10 }}>| Bed: {patient.bed}</span>}
-            </div>
-          )}
-        </div>
-
-        {/* Instructions */}
-        <div style={{ background: C.primaryLight, padding: "12px 20px", borderTop: `1px solid ${C.border}` }}>
-          <ul style={{ margin: 0, paddingLeft: 20 }}>
-            {INSTRUCTIONS.map((inst, i) => (
-              <li key={i} style={{ fontSize: 12, color: C.primaryDark, marginBottom: 4 }}>{inst}</li>
-            ))}
-          </ul>
-        </div>
+        )}
       </div>
 
       {/* ── Codes Legend ── */}
