@@ -132,8 +132,8 @@ const BAHAN_API_OPTIONS = [
 ];
 
 const BAIK_TIDAK_BAIK_OPTIONS = [
-  { value: "baik", label: { en: "Good", ms: "BAIK" } },
-  { value: "tidak_baik", label: { en: "Not Good", ms: "TIDAK BAIK" } },
+  { value: "baik", label: { en: "Good", ms: "Baik" } },
+  { value: "tidak_baik", label: { en: "Not Good", ms: "Tidak Baik" } },
   { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
 
@@ -330,7 +330,7 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "ambulatory_aid",
-            label: { en: "AMBULATORY AID", ms: "ALAT BANTU BERJALAN" },
+            label: { en: "Ambulatory Aid", ms: "Alat Bantu Berjalan" },
             type: "radio",
             options: AMBULATORY_AID_OPTIONS
           },
@@ -369,13 +369,13 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "tarikh_penghantaran",
-            label: { en: "Departure date", ms: "Tarikh Penghantaran" },
+            label: { en: "Departure Date", ms: "Tarikh Penghantaran" },
             type: "date",
             placeholder: { en: "Departure date", ms: "Tarikh penghantaran" }
           },
           {
             name: "masa_penghantaran",
-            label: { en: "Departure time", ms: "Masa Penghantaran" },
+            label: { en: "Departure Time", ms: "Masa Penghantaran" },
             type: "input",
             placeholder: { en: "Departure time", ms: "Masa penghantaran" }
           },
@@ -411,15 +411,15 @@ export default function FleetManagementForm({ patient, onBack }) {
             label: "",
             type: "checkbox-group",
             options: [
-              { value: "peralatan", label: { en: "MEDICAL EQUIPMENT CHECKLIST", ms: "SENARAI SEMAK PERALATAN PERUBATAN" } },
-              { value: "kesihatan", label: { en: "HEALTH & SAFETY CHECKLIST BEFORE DRIVING", ms: "SENARAI SEMAK KESIHATAN DAN KESELAMATAN SEBELUM PEMANDU" } },
-              { value: "kenderaan", label: { en: "VEHICLE SAFETY BEFORE DRIVING", ms: "KESELAMATAN KENDERAAN SEBELUM MEMANDU" } },
-              { value: "perkeso", label: { en: "PERKESO OFFICIAL VEHICLE INFORMATION", ms: "MAKLUMAT KENDERAAN RASMI PERKESO" } }
+              { value: "peralatan", label: { en: "Medical Equipment Checklist", ms: "Senarai Semak Peralatan Perubatan" } },
+              { value: "kesihatan", label: { en: "Health & Safety Checklist Before Driving", ms: "Senarai Semak Kesihatan Dan Keselamatan Sebelum Pemandu" } },
+              { value: "kenderaan", label: { en: "Vehicle Safety Before Driving", ms: "Keselamatan Kenderaan Sebelum Memandu" } },
+              { value: "perkeso", label: { en: "Perkeso Official Vehicle Information", ms: "Makluma Kenderaan Rasmi Perkeso" } }
             ]
           },
           {
             name: "peralatan_main",
-            label: { en: "MEDICAL EQUIPMENT CHECKLIST", ms: "SENARAI SEMAK PERALATAN PERUBATAN" },
+            label: { en: "Medical Equipment Checklist", ms: "Senarai Semak Peralatan Perubatan" },
             type: "multi-select-dropdown",
             options: PERALATAN_MAIN_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "peralatan" }
@@ -438,10 +438,10 @@ export default function FleetManagementForm({ patient, onBack }) {
             options: TRAUMA_BAG_OPTIONS,
             showIf: { field: "peralatan_main", includes: "trauma_bag" }
           },
-          { type: "subheading", label: { en: "HEALTH & SAFETY CHECKLIST BEFORE DRIVING", ms: "SENARAI SEMAK KESIHATAN DAN KESELAMATAN SEBELUM PEMANDU" }, showIf: { field: "fleet_checklist", includes: "kesihatan" } },
+          { type: "subheading", label: { en: "Health & Safety Checklist Before Driving", ms: "Senarai Semak Kesihatan Dan Keselamatan Sebelum Pemandu" }, showIf: { field: "fleet_checklist", includes: "kesihatan" } },
           {
             name: "nama_pemandu",
-            label: { en: "DRIVER NAME", ms: "NAMA PEMANDU" },
+            label: { en: "Driver Name", ms: "Nama Pemandu" },
             type: "single-select",
             options: NAMA_PEMANDU_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kesihatan" }
@@ -455,7 +455,7 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "tahap_kesihatan_pemandu",
-            label: { en: "DRIVER HEALTH STATUS", ms: "TAHAP KESIHATAN PEMANDU" },
+            label: { en: "Driver Health Status", ms: "Tahap Kesihatan Pemandu" },
             type: "radio",
             options: TAHAP_KESIHATAN_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kesihatan" }
@@ -469,21 +469,21 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "pengambilan_ubatan",
-            label: { en: "MEDICATION INTAKE", ms: "PENGAMBILAN UBATAN" },
+            label: { en: "Medication Intake", ms: "Pengambilan Ubatan" },
             type: "radio",
             options: PENGAMBILAN_UBATAN_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kesihatan" }
           },
           {
             name: "pengambilan_ubatan_others",
-            label: { en: "MEDICATION TYPE", ms: "JENIS UBAT" },
+            label: { en: "Medication Type", ms: "JENIS UBAT" },
             type: "input",
             placeholder: { en: "Enter type of medication", ms: "Masukkan jenis ubat" },
             showIf: { field: "pengambilan_ubatan", equals: "others" }
           },
           {
             name: "rehat_tidur_cukup",
-            label: { en: "REST & SLEEP SUFFICIENT", ms: "REHAT & TIDUR CUKUP" },
+            label: { en: "Rest & Sleep Sufficient", ms: "Rehat & Tidur Cukup" },
             type: "radio",
             options: REHAT_TIDUR_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kesihatan" }
@@ -497,7 +497,7 @@ export default function FleetManagementForm({ patient, onBack }) {
           },
           {
             name: "lesen_memandu",
-            label: { en: "DRIVING LICENSE", ms: "LESEN MEMANDU" },
+            label: { en: "Driving License", ms: "Lesen Memandu" },
             type: "radio",
             options: LESEN_MEMANDU_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kesihatan" }
@@ -509,26 +509,26 @@ export default function FleetManagementForm({ patient, onBack }) {
             placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "lesen_memandu", equals: "others" }
           },
-          { type: "subheading", label: { en: "VEHICLE SAFETY BEFORE DRIVING", ms: "KESELAMATAN KENDERAAN SEBELUM MEMANDU" }, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { type: "subheading", label: { en: "Vehicle Safety Before Driving", ms: "Keselamatan Kenderaan Sebelum Memandu" }, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
           {
             type: "row",
             showIf: { field: "fleet_checklist", includes: "kenderaan" },
             fields: [
-              { name: "tarikh_kenderaan", label: { en: "DATE", ms: "TARIKH" }, type: "date" },
-              { name: "masa_kenderaan", label: { en: "TIME", ms: "MASA" }, type: "input", placeholder: { en: "Time", ms: "Masa" } }
+              { name: "tarikh_kenderaan", label: { en: "Date", ms: "Tarikh" }, type: "date" },
+              { name: "masa_kenderaan", label: { en: "Time", ms: "Masa" }, type: "input", placeholder: { en: "Time", ms: "Masa" } }
             ]
           },
           {
             type: "row",
             showIf: { field: "fleet_checklist", includes: "kenderaan" },
             fields: [
-              { name: "no_plate_kenderaan", label: { en: "NUMBER PLATE", ms: "NO PLATE" }, type: "input", placeholder: { en: "Number plate", ms: "Nombor plat" } },
-              { name: "odometer_kenderaan", label: { en: "ODOMETER", ms: "ODOMETER" }, type: "input", placeholder: { en: "Odometer reading", ms: "Bacaan odometer" } }
+              { name: "no_plate_kenderaan", label: { en: "Number Plate", ms: "No Plate" }, type: "input", placeholder: { en: "Number plate", ms: "Nombor plat" } },
+              { name: "odometer_kenderaan", label: { en: "Odometer", ms: "Odometer" }, type: "input", placeholder: { en: "Odometer reading", ms: "Bacaan odometer" } }
             ]
           },
           {
             name: "bahan_api",
-            label: { en: "FUEL", ms: "BAHAN API" },
+            label: { en: "Fuel", ms: "Bahan Api" },
             type: "radio",
             options: BAHAN_API_OPTIONS,
             showIf: { field: "fleet_checklist", includes: "kenderaan" }
@@ -540,44 +540,61 @@ export default function FleetManagementForm({ patient, onBack }) {
             placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "bahan_api", equals: "others" }
           },
-          { name: "keadaan_cermin_hadapan", label: { en: "FRONT MIRROR CONDITION", ms: "KEADAAN CERMIN HADAPAN" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "keadaan_cermin_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "keadaan_cermin_hadapan", equals: "others" } },
-          { name: "wiper", label: { en: "WIPER", ms: "WIPER" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "wiper_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "wiper", equals: "others" } },
-          { name: "bonet_hadapan", label: { en: "FRONT HOOD", ms: "BONET HADAPAN" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "bonet_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "bonet_hadapan", equals: "others" } },
-          { name: "hos_getah_engine", label: { en: "ENGINE RUBBER HOSE", ms: "HOS GETAH ENGINE" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "hos_getah_engine_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "hos_getah_engine", equals: "others" } },
-          { name: "bateri", label: { en: "BATTERY", ms: "BATERI" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "bateri_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "bateri", equals: "others" } },
-          { name: "lampu_hadapan", label: { en: "HEADLIGHTS", ms: "LAMPU HADAPAN" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "lampu_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "lampu_hadapan", equals: "others" } },
-          { name: "lampu_isyarat", label: { en: "SIGNAL LIGHTS", ms: "LAMPU ISYARAT" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "lampu_isyarat_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "lampu_isyarat", equals: "others" } },
-          { name: "tekanan_tayar", label: { en: "TIRE PRESSURE", ms: "TEKANAN TAYAR" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "tekanan_tayar_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "tekanan_tayar", equals: "others" } },
-          { name: "keadaan_tayar", label: { en: "TIRE CONDITION", ms: "KEADAAN TAYAR" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "keadaan_tayar_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "keadaan_tayar", equals: "others" } },
-          { name: "cermin_sisi", label: { en: "SIDE MIRRORS (LEFT/RIGHT)", ms: "CERMIN SISI (KIRI/KANAN)" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "cermin_sisi_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "cermin_sisi", equals: "others" } },
-          { name: "lampu_brek", label: { en: "BRAKE LIGHTS", ms: "LAMPU BREK" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "lampu_brek_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "lampu_brek", equals: "others" } },
-          { name: "lampu_reverse", label: { en: "REVERSE LIGHTS", ms: "LAMPU REVERSE" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "lampu_reverse_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "lampu_reverse", equals: "others" } },
-          { name: "no_plat_depan_belakang", label: { en: "NUMBER PLATE (FRONT/BACK)", ms: "NO PLAT (DEPAN/BELAKANG)" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "no_plat_depan_belakang_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "no_plat_depan_belakang", equals: "others" } },
-          { name: "minyak_brake", label: { en: "BRAKE FLUID", ms: "MINYAK BRAKE" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "minyak_brake_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "minyak_brake", equals: "others" } },
-          { name: "air_kenderaan", label: { en: "VEHICLE WATER", ms: "AIR KENDERAAN" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "air_kenderaan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "air_kenderaan", equals: "others" } },
-          { name: "minyak_power_steering", label: { en: "POWER STEERING FLUID", ms: "MINYAK POWER STEERING" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "minyak_power_steering_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "minyak_power_steering", equals: "others" } },
-          { name: "minyak_engine", label: { en: "ENGINE OIL", ms: "MINYAK ENGINE" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
-          { name: "minyak_engine_others", label: { en: "Specify Other", ms: "Nyatakan Lain-lain" }, type: "input", placeholder: { en: "Enter details", ms: "Masukkan butiran" }, showIf: { field: "minyak_engine", equals: "others" } },
-          { type: "subheading", label: { en: "PERKESO OFFICIAL VEHICLE INFORMATION", ms: "MAKLUMAT KENDERAAN RASMI PERKESO" }, showIf: { field: "fleet_checklist", includes: "perkeso" } },
+          { name: "keadaan_cermin_hadapan", label: { en: "Front Mirror Condition", ms: "Keadaan Cermin Hadapan" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "keadaan_cermin_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "keadaan_cermin_hadapan", equals: "others" } },
+
+          { name: "wiper", label: { en: "Wiper", ms: "Wiper" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "wiper_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "wiper", equals: "others" } },
+
+          { name: "bonet_hadapan", label: { en: "Front Hood", ms: "Bonet Hadapan" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "bonet_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "bonet_hadapan", equals: "others" } },
+
+          { name: "hos_getah_engine", label: { en: "Engine Rubber Hose", ms: "Hos Getah Engine" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "hos_getah_engine_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "hos_getah_engine", equals: "others" } },
+
+          { name: "bateri", label: { en: "Battery", ms: "Bateri" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "bateri_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "bateri", equals: "others" } },
+
+          { name: "lampu_hadapan", label: { en: "Headlights", ms: "Lampu Hadapan" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "lampu_hadapan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "lampu_hadapan", equals: "others" } },
+
+          { name: "lampu_isyarat", label: { en: "Signal Lights", ms: "Lampu Isyarat" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "lampu_isyarat_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "lampu_isyarat", equals: "others" } },
+
+          { name: "tekanan_tayar", label: { en: "Tire Pressure", ms: "Tekanan Tayar" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "tekanan_tayar_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "tekanan_tayar", equals: "others" } },
+
+          { name: "keadaan_tayar", label: { en: "Tire Condition", ms: "Keadaan Tayar" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "keadaan_tayar_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "keadaan_tayar", equals: "others" } },
+
+          { name: "cermin_sisi", label: { en: "Side Mirrors (Left/Right)", ms: "Cermin Sisi (Kiri/Kanan)" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "cermin_sisi_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "cermin_sisi", equals: "others" } },
+
+          { name: "lampu_brek", label: { en: "Brake Lights", ms: "Lampu Brek" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "lampu_brek_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "lampu_brek", equals: "others" } },
+
+          { name: "lampu_reverse", label: { en: "Reverse Lights", ms: "Lampu Reverse" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "lampu_reverse_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "lampu_reverse", equals: "others" } },
+
+          { name: "no_plat_depan_belakang", label: { en: "Number Plate (Front/Back)", ms: "No Plat (Depan/Belakang)" }, type: "radio", options: BAIK_TIDAK_BAIK_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "no_plat_depan_belakang_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "no_plat_depan_belakang", equals: "others" } },
+
+          { name: "minyak_brake", label: { en: "Brake Fluid", ms: "Minyak Brake" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "minyak_brake_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "minyak_brake", equals: "others" } },
+
+          { name: "air_kenderaan", label: { en: "Vehicle Water", ms: "Air Kenderaan" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "air_kenderaan_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "air_kenderaan", equals: "others" } },
+
+          { name: "minyak_power_steering", label: { en: "Power Steering Fluid", ms: "Minyak Power Steering" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "minyak_power_steering_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "minyak_power_steering", equals: "others" } },
+
+          { name: "minyak_engine", label: { en: "Engine Oil", ms: "Minyak Engine" }, type: "radio", options: CUKUP_TIDAK_CUKUP_OPTIONS, showIf: { field: "fleet_checklist", includes: "kenderaan" } },
+          { name: "minyak_engine_others", label: { en: "Specify Other", ms: "Nyatakan Lain-Lain" }, type: "input", placeholder: { en: "Enter Details", ms: "Masukkan Butiran" }, showIf: { field: "minyak_engine", equals: "others" } },
+
+          { type: "subheading", label: { en: "Perkeso Official Vehicle Information", ms: "Makluma Kenderaan Rasmi Perkeso" }, showIf: { field: "fleet_checklist", includes: "perkeso" } },
           {
             name: "perkeso_gambar_geran",
-            title: { en: "VEHICLE REGISTRATION DOCUMENT IMAGE", ms: "GAMBAR GERAN KENDERAAN" },
+            title: { en: "Vehicle Registration Document Image", ms: "Gambar Geran Kenderaan" },
             type: "attach-file",
             accept: "image/*,.pdf",
             showIf: { field: "fleet_checklist", includes: "perkeso" }
@@ -586,20 +603,20 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "row",
             showIf: { field: "fleet_checklist", includes: "perkeso" },
             fields: [
-              { name: "perkeso_tarikh_puspakom", label: { en: "VEHICLE PUSPAKOM DATE", ms: "TARIKH PUSPAKOM KENDERAAN" }, type: "date" },
-              { name: "perkeso_tarikh_servis", label: { en: "VEHICLE SERVICE DATE", ms: "TARIKH SERVIS KENDERAAN" }, type: "date" }
+            { name: "perkeso_tarikh_puspakom", label: { en: "Vehicle Puspakom Date", ms: "Tarikh Puspakom Kenderaan" }, type: "date" },
+            { name: "perkeso_tarikh_servis", label: { en: "Vehicle Service Date", ms: "Tarikh Servis Kenderaan" }, type: "date" }
             ]
           },
           {
             name: "perkeso_jenis_kenderaan",
-            label: { en: "VEHICLE TYPE", ms: "JENIS KENDERAAN" },
+            label: { en: "Vehicle Type", ms: "Jenis Kenderaan" },
             type: "input",
             placeholder: { en: "Vehicle type", ms: "Jenis kenderaan" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
           },
           {
             name: "perkeso_jenis_bahan_bakar",
-            label: { en: "FUEL TYPE", ms: "JENIS BAHAN BAKAR" },
+            label: { en: "Fuel Type", ms: "Jenis Bahan Bakar" },
             type: "input",
             placeholder: { en: "Fuel type", ms: "Jenis bahan bakar" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
@@ -608,34 +625,34 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "row",
             showIf: { field: "fleet_checklist", includes: "perkeso" },
             fields: [
-              { name: "perkeso_tarikh_isi_bahan_bakar", label: { en: "VEHICLE FUEL REFILL DATE", ms: "TARIKH ISI BAHAN BAKAR KENDERAAN" }, type: "date" },
-              { name: "perkeso_tarikh_insuran", label: { en: "VEHICLE INSURANCE DATE", ms: "TARIKH INSURAN KENDERAAN" }, type: "date" }
+              { name: "perkeso_tarikh_isi_bahan_bakar", label: { en: "Vehicle Fuel Refill Date", ms: "Tarikh Isi Bahan Bakar Kenderaan" }, type: "date" },
+              { name: "perkeso_tarikh_insuran", label: { en: "Vehicle Insurance Date", ms: "Tarikh Insuran Kenderaan" }, type: "date" }
             ]
           },
           {
             name: "perkeso_odo_sebelum_guna",
-            label: { en: "VEHICLE ODOMETER BEFORE USE", ms: "ODO METER KENDERAAN SEBELUM DIGUNA" },
+            label: { en: "Vehicle Odometer Before Use", ms: "Odometer Kenderaan Sebelum Diguna" },
             type: "input",
             placeholder: { en: "Odometer before use", ms: "Odometer sebelum digunakan" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
           },
           {
             name: "perkeso_odo_selepas_guna",
-            label: { en: "VEHICLE ODOMETER AFTER USE", ms: "ODO METER KENDERAAN SELEPAS DIGUNA" },
+            label: { en: "Vehicle Odometer After Use", ms: "Odometer Kenderaan Selepas Diguna" },
             type: "input",
             placeholder: { en: "Odometer after use", ms: "Odometer selepas digunakan" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
           },
           {
             name: "perkeso_odo_sebelum_isi",
-            label: { en: "ODOMETER BEFORE FUEL REFILL", ms: "ODOMETER SEBELUM ISI BAHAN BAKAR" },
+            label: { en: "Odometer Before Fuel Refill", ms: "Odometer Sebelum Isi Bahan Bakar" },
             type: "input",
             placeholder: { en: "Odometer before fuel refill", ms: "Odometer sebelum isi bahan bakar" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
           },
           {
             name: "perkeso_baki_touch_n_go",
-            label: { en: "VEHICLE TOUCH N GO BALANCE", ms: "BAKI TOUCH N GO KENDERAAN" },
+            label: { en: "Vehicle Touch N Go Balance", ms: "Baki Touch N Go Kenderaan" },
             type: "input",
             placeholder: { en: "Touch N Go balance", ms: "Baki Touch N Go" },
             showIf: { field: "fleet_checklist", includes: "perkeso" }
@@ -644,8 +661,8 @@ export default function FleetManagementForm({ patient, onBack }) {
             type: "row",
             showIf: { field: "fleet_checklist", includes: "perkeso" },
             fields: [
-              { name: "perkeso_tarikh_penggunaan", label: { en: "VEHICLE AND MA USAGE DATE", ms: "TARIKH PENGGUNAAN KENDERAAN DAN MA" }, type: "date" },
-              { name: "perkeso_tarikh_pemulangan", label: { en: "VEHICLE AND MA RETURN DATE", ms: "TARIKH PEMULANGAN KENDERAAN DAN MA" }, type: "date" }
+                { name: "perkeso_tarikh_penggunaan", label: { en: "Vehicle And Ma Usage Date", ms: "Tarikh Penggunaan Kenderaan Dan Ma" }, type: "date" },
+                { name: "perkeso_tarikh_pemulangan", label: { en: "Vehicle And Ma Return Date", ms: "Tarikh Pemulangan Kenderaan Dan Ma" }, type: "date" }
             ]
           }
         ]

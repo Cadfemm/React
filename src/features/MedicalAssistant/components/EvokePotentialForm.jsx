@@ -17,8 +17,8 @@ const TYPE_OF_STUDY_OPTIONS = [
 ];
 
 const YES_NO_OPTIONS = [
-  { value: "yes", label: { en: "YES", ms: "YA" } },
-  { value: "no", label: { en: "NO", ms: "TIDAK" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const MODE_SELECTION_OPTIONS = [
@@ -49,16 +49,16 @@ const IMPEDANCE_OPTIONS = [
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "electroneuro_technician", label: { en: "ELECTRONEURODIAGNOSTIC TECHNICIAN", ms: "TEKNIKAL ELEKTRONEURODIAGNOSTIK" } },
-  { value: "medical_officer", label: { en: "MEDICAL OFFICER", ms: "PEGAWAI PERUBATAN" } },
-  { value: "neurologist", label: { en: "NEUROLOGIST", ms: "PAKAR NEUROLOGI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "electroneuro_technician", label: { en: "Electroneurodiagnostic Technician", ms: "Teknikal Elektroneurodiagnostik" } },
+  { value: "medical_officer", label: { en: "Medical Officer", ms: "Pegawai Perubatan" } },
+  { value: "neurologist", label: { en: "Neurologist", ms: "Pakar Neurologi" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "normal", label: { en: "NORMAL FINDINGS", ms: "PEMERHATIAN NORMAL" } },
-  { value: "abnormal", label: { en: "ABNORMAL FINDINGS", ms: "PEMERHATIAN TIDAK NORMAL" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "normal", label: { en: "Normal Findings", ms: "Pemerhatian Normal" } },
+  { value: "abnormal", label: { en: "Abnormal Findings", ms: "Pemerhatian Tidak Normal" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 function formatToday() {
@@ -110,7 +110,7 @@ export default function EvokePotentialForm({ patient, onBack }) {
 
   const EVOKE_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "EVOKE POTENTIAL STUDY", ms: "KAJIAN POTENSI TERANGSANG" },
+    title: { en: "Evoke Potential Study", ms: "Kajian Potensi Terangsang" },
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -120,63 +120,63 @@ export default function EvokePotentialForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
-            placeholder: { en: "Select date", ms: "Pilih tarikh" }
+            placeholder: { en: "Select Date", ms: "Pilih Tarikh" }
           },
           {
             name: "type_of_study",
-            label: { en: "TYPE OF STUDY", ms: "JENIS KAJIAN" },
+            label: { en: "Type Of Study", ms: "Jenis Kajian" },
             type: "radio",
             options: TYPE_OF_STUDY_OPTIONS,
             labelAbove: true
           },
           {
             name: "trace_old_report",
-            label: { en: "TRACE OLD REPORT", ms: "JEJAK LAPORAN LAMA" },
+            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "mode_selection",
-            label: { en: "MODE SELECTION", ms: "PEMILIHAN MOD" },
+            label: { en: "Mode Selection", ms: "Pemilihan Mod" },
             type: "radio",
             options: MODE_SELECTION_OPTIONS
           },
           {
             name: "sensitivity",
-            label: { en: "SENSITIVITY", ms: "KEHASILAN" },
+            label: { en: "Sensitivity", ms: "Kehasilan" },
             type: "radio",
             options: SENSITIVITY_OPTIONS
           },
           {
             name: "high_freq_filter",
-            label: { en: "HIGH FREQUENCY FILTER", ms: "PENAPIS FREKUENSI TINGGI" },
+            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
             type: "radio",
             options: HIGH_FREQ_OPTIONS
           },
           {
             name: "low_freq_filter",
-            label: { en: "LOW FREQUENCY FILTER", ms: "PENAPIS FREKUENSI RENDAH" },
+            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
             type: "radio",
             options: LOW_FREQ_OPTIONS
           },
           {
             name: "impedance_check",
-            label: { en: "IMPEDANCE CHECK", ms: "SEMAKAN IMPEDANS" },
+            label: { en: "Impedance Check", ms: "Semakan Impedans" },
             type: "radio",
             options: IMPEDANCE_OPTIONS
           },
           {
             name: "emr_technical_report",
-            label: { en: "EMR TECHNICAL REPORT BY", ms: "LAPORAN TEKNIKAL EMR OLEH" },
+            label: { en: "Emr Technical Report By", ms: "Laporan Teknikal Emr Oleh" },
             type: "radio",
             options: EMR_REPORT_OPTIONS,
             labelAbove: true
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "radio",
             options: FINAL_REPORT_OPTIONS
           },

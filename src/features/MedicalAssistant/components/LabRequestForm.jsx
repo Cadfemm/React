@@ -67,13 +67,13 @@ const MICROBIOLOGY_OPTIONS = [
   { value: "ufeme", label: { en: "UFEME", ms: "UFEME" } },
   { value: "urine_cs", label: { en: "Urine C&S", ms: "Urin C&S" } },
   { value: "microscopy", label: { en: "Microscopy", ms: "Mikroskopi" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const SPECIMEN_OPTIONS = [
   { value: "sputum", label: { en: "Sputum", ms: "Kahak" } },
   { value: "faeces", label: { en: "Faeces", ms: "Najis" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const NOTIFY_DOCTOR_OPTIONS = [
@@ -153,21 +153,20 @@ export default function LabRequestForm({ patient, onBack }) {
     sections: [
       {
         fields: [
-          { type: "subheading", label: { en: "Sample details", ms: "Butiran sampel" } },
-          { name: "lab", label: { en: "LAB", ms: "MAKMAL" }, type: "radio", options: LAB_OPTIONS },
-          { name: "location", label: { en: "LOCATION", ms: "LOKASI" }, readOnly: true, type: "single-select", options: LOCATION_OPTIONS },
+          { type: "subheading", label: { en: "Sample details", ms: "Butiran Sampel" } },
+          { name: "lab", label: { en: "Lab", ms: "Makmal" }, type: "radio", options: LAB_OPTIONS },
+          { name: "location", label: { en: "Location", ms: "Lokasi" }, readOnly: true, type: "single-select", options: LOCATION_OPTIONS },
           {
             type: "row",
             fields: [
-              { name: "requester_date", label: { en: "DATE", ms: "TARIKH" }, type: "date" },
-              { name: "requester_time", label: { en: "TIME", ms: "MASA" }, type: "input", placeholder: { en: "HH:MM", ms: "HH:MM" } }
+            { name: "requester_date", label: { en: "Date", ms: "Tarikh" }, type: "date" },
+            { name: "requester_time", label: { en: "Time", ms: "Masa" }, type: "input", placeholder: { en: "HH:MM", ms: "HH:MM" } }
             ]
           },
-          { name: "meal", label: { en: "MEAL", ms: "MAKANAN" }, type: "radio", options: MEAL_OPTIONS },
-          { name: "meal_others", label: "Others", type: "textarea",
+          { name: "meal", label: { en: "Meal", ms: "Makanan" }, type: "radio", options: MEAL_OPTIONS },          { name: "meal_others", label: "Others", type: "textarea",
             showIf: { field: "meal", equals: "others"}
           },
-          { type: "subheading", label: { en: "Profile test", ms: "Ujian profil" } },
+          { type: "subheading", label: { en: "Profile Test", ms: "Ujian Profil" } },
           {
             name: "profile_test",
             label: "",
@@ -242,14 +241,14 @@ export default function LabRequestForm({ patient, onBack }) {
             placeholder: { en: "Enter details", ms: "Masukkan butiran" },
             showIf: { field: "specimen", includes: "others" }
           },
-          { name: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" }, type: "textarea", placeholder: { en: "Free text", ms: "Teks bebas" } },
+          { name: "others", label: { en: "Others", ms: "Lain-Lain" }, type: "textarea", placeholder: { en: "Free text", ms: "Teks bebas" } },
           {
             name: "result_upload",
-            title: { en: "UPLOAD THE RESULT", ms: "MUAT NAIK KEPUTUSAN" },
+            title: { en: "Upload The Result", ms: "Muat Naik Keputusan" },
             type: "attach-file",
             accept: "image/*,.pdf"
           },
-          { name: "notify_doctor", label: { en: "NOTIFY DOCTOR", ms: "MAKLUMKAN DOKTOR" }, type: "radio", options: NOTIFY_DOCTOR_OPTIONS }
+          { name: "notify_doctor", label: { en: "Notify Doctor", ms: "Maklumkan Doktor" }, type: "radio", options: NOTIFY_DOCTOR_OPTIONS }
         ]
       }
     ]

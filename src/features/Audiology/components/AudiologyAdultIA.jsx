@@ -854,7 +854,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "communication_difficulties",
           label: "Communication Difficulties",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "None", value: "none" },
             { label: "In quiet", value: "in_quiet" },
@@ -914,7 +914,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "psychosocial_impact",
           label: "Psychosocial Impact",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "0" },
             { label: "Withdrawal", value: "1" },
@@ -927,7 +927,7 @@ const SUBJECTIVE_SCHEMA = {
           name: "psychosocial_notes",
           label: "",
           type: "textarea",
-          showIf: { field: "psychosocial_impact", exists: true }
+          showIf: { field: "psychosocial_impact", oneOf: ["1", "2", "3", "4"] }
         },
 
         {
@@ -973,7 +973,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "vestibular_symptoms",
           label: "Symptoms",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "0" },
             { label: "Vertigo", value: "1" },
@@ -986,7 +986,7 @@ const SUBJECTIVE_SCHEMA = {
           name: "vestibular_notes",
           label: "",
           type: "textarea",
-          showIf: { field: "vestibular_symptoms", exists: true }
+          showIf: { field: "vestibular_symptoms", oneOf: ["1", "2", "3", "4"] }
         },
 
         {
@@ -998,7 +998,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "triggers",
           label: "Triggers",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "0" },
             { label: "Positional", value: "1" },
@@ -1011,7 +1011,7 @@ const SUBJECTIVE_SCHEMA = {
           name: "trigger_notes",
           label: "",
           type: "textarea",
-          showIf: { field: "triggers", exists: true }
+          showIf: { field: "triggers", oneOf: ["1", "2", "3", "4"] }
         },
 
         {
@@ -1030,6 +1030,11 @@ const SUBJECTIVE_SCHEMA = {
         {
       title: "Audiometry",
       fields: [
+         {
+      name: "audifile",
+      label: "Upload Audiometry File",
+      type: "file-upload-modal",
+    },
         { type: "audiogram-graph", name: "audiogram_graph"},
         {
           type: "row",
@@ -1043,7 +1048,7 @@ const SUBJECTIVE_SCHEMA = {
               name: "impression_l",
               label: "Impression – Left Ear",
               type: "textarea"
-            }
+            },
           ]
         },
         {
@@ -1735,11 +1740,29 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
 
 
     {/* Submit button stays */}
-    <div style={submitRow}>
-      <button style={submitBtn} onClick={handleSubmit}>
-        Submit Audiology Assessment
-      </button>
-    </div>
+     <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={() => {
+                if (activeTab === "subjective") setActiveTab("objective");
+                else if (activeTab === "objective") setActiveTab("assessment");
+                else if (activeTab === "assessment") setActiveTab("plan");
+              }}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={handleSubmit}
+            >
+              Submit Audiology
+            </button>
+          )}
+        </div>
   </CommonFormBuilder>
 </div>
 

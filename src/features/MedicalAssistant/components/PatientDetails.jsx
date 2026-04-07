@@ -17,7 +17,7 @@ const TABS = [
 
 const URGENT_OPTIONS = [
   { key: "resusbay", label: "Clinical Entry" },
-  { key: "fleet", label: "FLEET Management" },
+  { key: "fleet", label: "Fleet Management" },
   { key: "lab", label: "Lab" },
   { key: "xray", label: "X-Ray" },
   { key: "daycare", label: "Day care" }

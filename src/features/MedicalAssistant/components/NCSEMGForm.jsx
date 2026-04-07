@@ -16,48 +16,48 @@ const TYPE_OF_STUDY_OPTIONS = [
 ];
 
 const YES_NO_OPTIONS = [
-  { value: "yes", label: { en: "YES", ms: "YA" } },
-  { value: "no", label: { en: "NO", ms: "TIDAK" } }
+  { value: "yes", label: { en: "Yes", ms: "Ya" } },
+  { value: "no", label: { en: "No", ms: "Tidak" } }
 ];
 
 const LOCATION_OPTIONS = [
-  { value: "upper", label: { en: "UPPER EXTREMITY", ms: "ANGGOTA BADAN ATAS" } },
-  { value: "lower", label: { en: "LOWER EXTREMITY", ms: "ANGGOTA BADAN BAWAH" } },
-  { value: "upper_lower", label: { en: "UPPER & LOWER EXTREMITY", ms: "ANGGOTA BADAN ATAS & BAWAH" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "upper", label: { en: "Upper Extremity", ms: "Anggota Badan Atas" } },
+  { value: "lower", label: { en: "Lower Extremity", ms: "Anggota Badan Bawah" } },
+  { value: "upper_lower", label: { en: "Upper & Lower Extremity", ms: "Anggota Badan Atas & Bawah" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const STUDY_MODALITY_OPTIONS = [
-  { value: "motor", label: { en: "MOTOR STUDY", ms: "KAJIAN MOTOR" } },
-  { value: "sensory", label: { en: "SENSORY STUDY", ms: "KAJIAN DERIA" } },
-  { value: "motor_sensory", label: { en: "MOTOR & SENSORY STUDY", ms: "KAJIAN MOTOR & DERIA" } },
-  { value: "late_response", label: { en: "LATE RESPONSE", ms: "RESPON LAMBAT" } }
+  { value: "motor", label: { en: "Motor Study", ms: "Kajian Motor" } },
+  { value: "sensory", label: { en: "Sensory Study", ms: "Kajian Deria" } },
+  { value: "motor_sensory", label: { en: "Motor & Sensory Study", ms: "Kajian Motor & Deria" } },
+  { value: "late_response", label: { en: "Late Response", ms: "Respon Lambat" } }
 ];
 
 const SENSITIVITY_OPTIONS = [
   { value: "20", label: { en: "20 μV", ms: "20 μV" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const DURATION_OPTIONS = [
   { value: "1", label: { en: "1 m/sec", ms: "1 m/saat" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const TIME_BASE_OPTIONS = [
   { value: "2", label: { en: "2 m/sec", ms: "2 m/saat" } },
-  { value: "others", label: { en: "OTHERS", ms: "LAIN-LAIN" } }
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
 ];
 
 const EMR_REPORT_OPTIONS = [
-  { value: "medical_assistant", label: { en: "MEDICAL ASSISTANT", ms: "PEMBANTU PERUBATAN" } },
-  { value: "electroneuro_technician", label: { en: "ELECTRONEURODIAGNOSTIC TECHNICIAN", ms: "TEKNIKAL ELEKTRONEURODIAGNOSTIK" } },
-  { value: "neurologist", label: { en: "NEUROLOGIST", ms: "PAKAR NEUROLOGI" } }
+  { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
+  { value: "electroneuro_technician", label: { en: "Electroneurodiagnostic Technician", ms: "Teknikal Elektroneurodiagnostik" } },
+  { value: "neurologist", label: { en: "Neurologist", ms: "Pakar Neurologi" } }
 ];
 
 const FINAL_REPORT_OPTIONS = [
-  { value: "normal", label: { en: "NORMAL FINDINGS", ms: "PEMERHATIAN NORMAL" } },
-  { value: "abnormal", label: { en: "ABNORMAL FINDINGS", ms: "PEMERHATIAN TIDAK NORMAL" } },
+  { value: "normal", label: { en: "Normal Findings", ms: "Pemerhatian Normal" } },
+  { value: "abnormal", label: { en: "Abnormal Findings", ms: "Pemerhatian Tidak Normal" } },
 ];
 
 function formatToday() {
@@ -132,26 +132,26 @@ export default function NCSEMGForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "DATE OF APPOINTMENT", ms: "TARIKH TEMUJANJI" },
+            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_of_study",
-            label: { en: "TYPE OF STUDY", ms: "JENIS KAJIAN" },
+            label: { en: "Type Of Study", ms: "Jenis Kajian" },
             type: "radio",
             options: TYPE_OF_STUDY_OPTIONS,
             labelAbove: true
           },
           {
             name: "trace_old_report",
-            label: { en: "TRACE OLD REPORT", ms: "JEJAK LAPORAN LAMA" },
+            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "location",
-            label: { en: "LOCATION", ms: "LOKASI" },
+            label: { en: "Location", ms: "Lokasi" },
             type: "radio",
             options: LOCATION_OPTIONS
           },
@@ -164,20 +164,20 @@ export default function NCSEMGForm({ patient, onBack }) {
           },
           {
             name: "study_modality",
-            label: { en: "TYPE OF STUDY (Modality)", ms: "JENIS KAJIAN (Modaliti)" },
+            label: { en: "Type Of Study (Modality)", ms: "Jenis Kajian (Modaliti)" },
             type: "radio",
             options: STUDY_MODALITY_OPTIONS,
             labelAbove: true
           },
           {
             name: "previous_study",
-            label: { en: "PREVIOUS STUDY", ms: "KAJIAN SEBELUMNYA" },
+            label: { en: "Previous Study", ms: "Kajian Sebelumnya" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
           {
             name: "sensitivity",
-            label: { en: "SENSITIVITY", ms: "KEHASILAN" },
+            label: { en: "Sensitivity", ms: "Kehasilan" },
             type: "radio",
             options: SENSITIVITY_OPTIONS
           },
@@ -190,7 +190,7 @@ export default function NCSEMGForm({ patient, onBack }) {
           },
           {
             name: "duration",
-            label: { en: "DURATION", ms: "TEMPOH" },
+            label: { en: "Duration", ms: "Tempoh" },
             type: "radio",
             options: DURATION_OPTIONS
           },
@@ -203,7 +203,7 @@ export default function NCSEMGForm({ patient, onBack }) {
           },
           {
             name: "time_base",
-            label: { en: "TIME BASE", ms: "ASAAS MASA" },
+            label: { en: "Time Base", ms: "Asas Masa" },
             type: "radio",
             options: TIME_BASE_OPTIONS
           },
@@ -236,7 +236,7 @@ export default function NCSEMGForm({ patient, onBack }) {
           },
           {
             name: "final_report",
-            label: { en: "FINAL REPORT", ms: "LAPORAN AKHIR" },
+            label: { en: "Final Report", ms: "Laporan Akhir" },
             type: "radio",
             options: FINAL_REPORT_OPTIONS
           },
