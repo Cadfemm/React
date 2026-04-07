@@ -159,14 +159,13 @@ export default function NursingSwallowScreener({ patient, onBack }) {
     <div style={{ maxWidth: 1400, margin: "0 auto", padding: "20px 40px", fontFamily: "Segoe UI, sans-serif", color: C.text }}>
 
       {/* Title */}
-      <div style={{ textAlign: "center", marginBottom: 20 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, color: C.headerBg, letterSpacing: 0.5 }}>
-          Nursing Swallow Screener
-        </div>
+      <div style={{ marginBottom: 22, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: C.primary }}>Nursing Swallow Screener</div>
         {patient?.name && (
-          <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>
-            Patient: <strong>{patient.name}</strong>
-            {patient.id && <span style={{ marginLeft: 12 }}>ID: {patient.id}</span>}
+          <div style={{ fontSize: 13, color: C.muted }}>
+            {patient.name}
+            {patient.id && <span style={{ marginLeft: 10, color: C.border }}>|</span>}
+            {patient.id && <span style={{ marginLeft: 10 }}>MRN: {patient.id}</span>}
           </div>
         )}
       </div>

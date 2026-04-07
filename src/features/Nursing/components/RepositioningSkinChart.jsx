@@ -57,17 +57,19 @@ export default function RepositioningSkinChart({ patient, onBack }) {
 
       {/* ── Header ── */}
       <div style={{ border: `2px solid ${C.primaryDark}`, borderRadius: 10, overflow: "hidden", marginBottom: 20 }}>
-        <div style={{ background: C.primaryDark, padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ background: C.primaryDark, padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
           <div>
             <div style={{ fontSize: 11, color: "#cce4f5", fontWeight: 600, letterSpacing: 1 }}>PUSAT REHABILITASI PERKESO</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: C.white, marginTop: 2 }}>Daily Repositioning & Skin Inspection Chart</div>
           </div>
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-            <InfoField label="Name" value={patient?.name || ""} />
-            <InfoField label="MRN" value={patient?.id || ""} />
-            <InfoField label="Ward" value={patient?.ward || ""} />
-            <InfoField label="Bed" value={patient?.bed || ""} />
-          </div>
+          {patient?.name && (
+            <div style={{ fontSize: 13, color: "#cce4f5" }}>
+              {patient.name}
+              {patient.id && <span style={{ marginLeft: 10 }}>| MRN: {patient.id}</span>}
+              {patient.ward && <span style={{ marginLeft: 10 }}>| Ward: {patient.ward}</span>}
+              {patient.bed && <span style={{ marginLeft: 10 }}>| Bed: {patient.bed}</span>}
+            </div>
+          )}
         </div>
 
         {/* Instructions */}
@@ -186,16 +188,7 @@ export default function RepositioningSkinChart({ patient, onBack }) {
   );
 }
 
-function InfoField({ label, value }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <span style={{ fontSize: 12, color: "#cce4f5", fontWeight: 600, minWidth: 36 }}>{label}:</span>
-      <span style={{ fontSize: 13, color: C.white, fontWeight: 500, minWidth: 80, borderBottom: "1px solid #cce4f5", paddingBottom: 1 }}>
-        {value || <span style={{ opacity: 0.4 }}>—</span>}
-      </span>
-    </div>
-  );
-}
+
 
 function CodeSelect({ value, onChange, placeholder }) {
   return (

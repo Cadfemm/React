@@ -150,18 +150,19 @@ export default function WaterSwallowTest({ patient, onBack }) {
     <div style={{ maxWidth: 1400, margin: "0 auto", padding: "20px 40px", fontFamily: "Segoe UI, sans-serif", color: C.text }}>
 
       {/* Title */}
-      <div style={{ textAlign: "center", marginBottom: 22 }}>
-        <div style={{ fontSize: 24, fontWeight: 800, color: C.primary, letterSpacing: 0.5 }}>Water Swallow Test</div>
-        <div style={{ fontSize: 13, color: C.muted, marginTop: 4, maxWidth: 700, margin: "6px auto 0" }}>
-          To be carried out with patients admitted with acute Stroke or Transient Ischemic Attack symptoms
-          within <strong>4 hours</strong> of admission to ED / CAU by a nurse trained in the procedure.
-        </div>
+      <div style={{ marginBottom: 22, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: C.primary }}>Water Swallow Test</div>
         {patient?.name && (
-          <div style={{ fontSize: 13, color: C.muted, marginTop: 6 }}>
-            Patient: <strong>{patient.name}</strong>
-            {patient.id && <span style={{ marginLeft: 12 }}>ID: {patient.id}</span>}
+          <div style={{ fontSize: 13, color: C.muted }}>
+            {patient.name}
+            {patient.id && <span style={{ marginLeft: 10, color: C.border }}>|</span>}
+            {patient.id && <span style={{ marginLeft: 10 }}>MRN: {patient.id}</span>}
           </div>
         )}
+      </div>
+      <div style={{ fontSize: 12, color: C.muted, marginBottom: 18, maxWidth: 800 }}>
+        To be carried out with patients admitted with acute Stroke or Transient Ischemic Attack symptoms
+        within <strong>4 hours</strong> of admission to ED / CAU by a nurse trained in the procedure.
       </div>
 
       {/* ── PART 1A ── */}
