@@ -21,9 +21,6 @@ function buildSchema(values) {
   const infectionStatus = values.infection_status || "";
   const isSuperBug    = values.superbug === "Yes";
   const painScore     = parseInt(values.pain_score) || 0;
-  const packIn        = parseInt(values.packing_count_in) || 0;
-  const packOut       = parseInt(values.packing_count_out) || 0;
-  const packMismatch  = (packIn > 0 || packOut > 0) && packIn !== packOut;
   const noImprovement = values.no_improvement_14days === "Yes";
 
   const fields = [
@@ -64,6 +61,9 @@ function buildSchema(values) {
         "Skin Tear","IAD (Incontinence-Associated Dermatitis)","Unknown","Other"
       ])
     },
+    ...((values.wound_type || []).includes("Other") ? [
+      { name: "wound_type_other", label: "Please specify wound type", type: "input", placeholder: "Describe wound type..." }
+    ] : []),
     ...(pressureInjurySelected ? [
       { name: "pressure_stage", label: "Pressure Injury Stage", type: "radio",labelAbove:true,
         options: opt(["Stage 1","Stage 2","Stage 3","Stage 4","Unstageable","DTI (Deep Tissue Injury)","Medical Device","Mucosal"]) },
@@ -147,6 +147,9 @@ function buildSchema(values) {
       options: opt(["None","Scant / Small","Moderate","Large / Copious"]) },
     { name: "exudate_type", label: "Exudate Type",position:"side", type: "checkbox-group",
       options: opt(["Serous","Serosanguineous","Sanguineous","Purulent","Hemorrhagic","Other"]) },
+    ...((values.exudate_type || []).includes("Other") ? [
+      { name: "exudate_type_other", label: "Please specify exudate type", type: "input", placeholder: "Describe exudate type..." }
+    ] : []),
 
     /* ── Odour ── */
     { type: "subheading", label: "Odour" },
@@ -159,21 +162,26 @@ function buildSchema(values) {
       message: "⚠️ Persistent odour after cleansing — infection indicator. Review wound status." }] : []),
 
     /* ── Wound Edge ── */
-    // { type: "subheading", label: "Wound Edge" },
     { name: "wound_edge", label: "Wound Edge", type: "radio", labelAbove:true,
       options: opt([ "Attached (flush w/ wound bed or 'sloping edge')",
   "Non-attached (edge appears as a 'cliff')",
   "Demarcated (edges clearly seen)",
   "Diffuse (edges not clearly seen)",
   "Rolled (edge curled under)",
-  "Epithelialization"]) },
+  "Epithelialization",
+  "Other"]) },
+    ...(values.wound_edge === "Other" ? [
+      { name: "wound_edge_other", label: "Please specify", type: "input", placeholder: "Describe wound edge..." }
+    ] : []),
 
     /* ── Peri-Wound Skin ── */
-    // { type: "subheading", label: "Peri-Wound Skin" },
     { name: "peri_wound_skin", label: "Peri-wound Skin ", type: "radio",
       options: opt(["Intact","Erythema","Indurated","Macerated","Excoriated / Denuded","Callused","Fragile","Other"]) },
-    ...((values.peri_wound_skin || []).some(v => ["Macerated","Erythema"].includes(v)) ? [{ type: "alert-box", severity: "warning",
+    ...(["Macerated","Erythema"].includes(values.peri_wound_skin) ? [{ type: "alert-box", severity: "warning",
       message: "🟠 Severe maceration / erythema detected — clinical review recommended." }] : []),
+    ...(values.peri_wound_skin === "Other" ? [
+      { name: "peri_wound_skin_other", label: "Please specify", type: "input", placeholder: "Describe peri-wound skin condition..." }
+    ] : []),
 
     /* ── Pain Assessment ── */
 
@@ -195,12 +203,7 @@ function buildSchema(values) {
     /* ── Packing Count ── */
     { type: "subheading", label: "Packing Count" },
     { type: "info-text", text: "Required if wound depth ≥ 1 cm." },
-    { type: "row", fields: [
-      { name: "packing_count_in",  label: "Count IN",  type: "input", placeholder: "pieces" },
-      { name: "packing_count_out", label: "Count OUT", type: "input", placeholder: "pieces" }
-    ]},
-    ...(packMismatch ? [{ type: "alert-box", severity: "danger",
-      message: "🔴 Packing count mismatch — CRITICAL SAFETY ALERT. Recount immediately." }] : []),
+    { name: "packing_count", label: "Packing Count", type: "input", placeholder: "e.g. 2 pieces" },
 
     /* ── Treatment Plan ── */
     { type: "subheading", label: "Treatment Plan" },
@@ -248,6 +251,7 @@ export default function WoundAssessment({ patient, onBack }) {
   };
 
   return (
+    <div onScroll={e => e.stopPropagation()} style={{ scrollBehavior: "auto" }}>
     <CommonFormBuilder
       schema={{
         ...schema,
@@ -261,5 +265,6 @@ export default function WoundAssessment({ patient, onBack }) {
       onAction={handleAction}
       patient={patient}
     />
+    </div>
   );
 }
