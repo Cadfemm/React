@@ -23,6 +23,9 @@ import AgitatedBehaviourScale from "./AgitatedBehaviourScale";
 import GlucoseMonitorChart from "./GlucoseMonitorChart";
 import NursingRehabChecklist from "./NursingRehabChecklist";
 import SeizureChart from "./SeizureChart";
+import NursingSwallowScreener from "./NursingSwallowScreener";
+import WaterSwallowTest from "./WaterSwallowTest";
+import RepositioningSkinChart from "./RepositioningSkinChart";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -303,6 +306,23 @@ function shouldShowGiGuLauncher(data = {}) {
     || hasNauseaVomiting
     || isIncontinent;
 }
+function SwallowScreenerAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  const handleBack = () => onChange("nursing_assessments_active", null);
+  return <NursingSwallowScreener patient={patient} onBack={handleBack} />;
+}
+
+function WaterSwallowTestAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  const handleBack = () => onChange("nursing_assessments_active", null);
+  return <WaterSwallowTest patient={patient} onBack={handleBack} />;
+}
+
+function RepositioningSkinChartAdapter({ onChange }) {
+  const patient = useContext(PatientContext);
+  const handleBack = () => onChange("nursing_assessments_active", null);
+  return <RepositioningSkinChart patient={patient} onBack={handleBack} />;
+}
 
 // Assessment Registry
 export const NURSING_ASSESSMENT_REGISTRY = {
@@ -328,6 +348,9 @@ export const NURSING_ASSESSMENT_REGISTRY = {
   glucose_monitor: GlucoseMonitorAdapter,
   rehab_checklist: RehabChecklistAdapter,
   seizure_chart: SeizureChartAdapter,
+  swallow_screener: SwallowScreenerAdapter,
+  water_swallow_test: WaterSwallowTestAdapter,
+  repositioning_skin_chart: RepositioningSkinChartAdapter,
 };
 
 /* ===================== COMPONENT ===================== */
@@ -1905,7 +1928,10 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "Agitated Behaviour Scale", value: "agitated_behaviour_scale" },
               { label: "Glucose Monitor", value: "glucose_monitor" },
               // { label: "Rehab Checklist", value: "rehab_checklist" },
-              { label: "Seizure Chart", value: "seizure_chart" }
+              { label: "Seizure Chart", value: "seizure_chart" },
+              { label: "Swallow Screener", value: "swallow_screener" },
+              { label: "Water Swallow Test", value: "water_swallow_test" },
+              { label: "Repositioning & Skin Inspection", value: "repositioning_skin_chart" }
             ]
           }
         ]
