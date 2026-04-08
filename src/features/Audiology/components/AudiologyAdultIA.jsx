@@ -856,7 +856,7 @@ const SUBJECTIVE_SCHEMA = {
           label: "Communication Difficulties",
           type: "checkbox-group",
           options: [
-            { label: "None", value: "none" },
+            { label: "None", value: "none", exclusive: true },
             { label: "In quiet", value: "in_quiet" },
             { label: "In noise", value: "in_noise" },
             { label: "Group", value: "group" },
@@ -916,7 +916,7 @@ const SUBJECTIVE_SCHEMA = {
           label: "Psychosocial Impact",
           type: "checkbox-group",
           options: [
-            { label: "No", value: "0" },
+            { label: "No", value: "0", exclusive: true },
             { label: "Withdrawal", value: "1" },
             { label: "Stress", value: "2" },
             { label: "Anxiety", value: "3" },
@@ -975,7 +975,7 @@ const SUBJECTIVE_SCHEMA = {
           label: "Symptoms",
           type: "checkbox-group",
           options: [
-            { label: "No", value: "0" },
+            { label: "No", value: "0", exclusive: true },
             { label: "Vertigo", value: "1" },
             { label: "Imbalance", value: "2" },
             { label: "Dizziness", value: "3" },
@@ -1000,7 +1000,7 @@ const SUBJECTIVE_SCHEMA = {
           label: "Triggers",
           type: "checkbox-group",
           options: [
-            { label: "No", value: "0" },
+            { label: "No", value: "0", exclusive: true },
             { label: "Positional", value: "1" },
             { label: "Head movement", value: "2" },
             { label: "Visual stimuli", value: "3" },
