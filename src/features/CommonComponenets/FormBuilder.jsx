@@ -1188,6 +1188,9 @@ function renderField(
         </div>
       );
 
+    case "custom":
+      return field.render({ values, onChange });
+
     case "dynamic-goals": {
       const rows = values[field.name] || [];
 
@@ -2536,41 +2539,70 @@ case "grid-table-advanced": {
     case "attach-file":
       return (
         <div style={{ marginBottom: 0 }}>
+          {/* LABEL */}
           <label style={styles.label}>
             {t(field.title, languageConfig?.enabled ? languageConfig.lang : "en")}
             {field.required && <span style={{ color: "red" }}> *</span>}
           </label>
 
           <div style={styles.inlineGroup}>
+
+            {/* FILE INPUT */}
             {(!value || !field.hideInputAfterSelect) && (
               <input
                 type="file"
                 accept={field.accept}
                 multiple={field.multiple}
                 onChange={e => {
-                  const files = field.multiple
+                  const selectedFiles = field.multiple
                     ? Array.from(e.target.files || [])
                     : e.target.files?.[0] || null;
 
-                  onChange(field.name, files);
+                  onChange(field.name, selectedFiles);
                 }}
                 style={styles.fileInput}
               />
             )}
 
-            {/* Preview / filename */}
+            {/* ================= SINGLE FILE ================= */}
             {value && !Array.isArray(value) && (
-              <FilePreview file={value} previewSize={field.previewSize} />
+              <FilePreview
+                key={
+                  value?.data
+                    ? value.data // after drawing
+                    : value?.name || "single-file"
+                }
+                file={value}
+                field={field}
+                onChange={(name, updatedFile) => {
+                  onChange(name, updatedFile);
+                }}
+                previewSize={field.previewSize}
+              />
             )}
 
-            {Array.isArray(value) &&
+            {/* ================= MULTIPLE FILES ================= */}
+            {Array.isArray(value) && value.length > 0 &&
               value.map((file, idx) => (
-                <FilePreview key={idx} file={file} previewSize={field.previewSize} />
+                <FilePreview
+                  key={
+                    file?.data
+                      ? file.data // after drawing
+                      : `${file?.name || "file"}-${idx}`
+                  }
+                  file={file}
+                  field={field}
+                  onChange={(name, updatedFile) => {
+                    const updatedFiles = [...value];
+                    updatedFiles[idx] = updatedFile;
+                    onChange(name, updatedFiles);
+                  }}
+                  previewSize={field.previewSize}
+                />
               ))}
           </div>
         </div>
       );
-
 
     case "paired-text":
       const pairs = field.pairs || [];
@@ -2652,9 +2684,15 @@ case "grid-table-advanced": {
                     disabled={readOnly}
                     onChange={() => {
                       if (readOnly) return;
-                      const next = value?.includes(opt.value)
-                        ? value.filter(v => v !== opt.value)
-                        : [...(value || []), opt.value];
+                      const exclusiveValues = (field.options || []).filter(o => o.exclusive).map(o => o.value);
+                      let next;
+                      if ((value || []).includes(opt.value)) {
+                        next = (value || []).filter(v => v !== opt.value);
+                      } else if (opt.exclusive) {
+                        next = [opt.value];
+                      } else {
+                        next = [...(value || []).filter(v => !exclusiveValues.includes(v)), opt.value];
+                      }
                       onChange(field.name, next);
                     }}
                   />
@@ -2682,9 +2720,15 @@ case "grid-table-advanced": {
                   disabled={readOnly}
                   onChange={() => {
                     if (readOnly) return;
-                    const next = (value || []).includes(opt.value)
-                      ? value.filter((v) => v !== opt.value)
-                      : [...(value || []), opt.value];
+                    const exclusiveValues = (field.options || []).filter(o => o.exclusive).map(o => o.value);
+                    let next;
+                    if ((value || []).includes(opt.value)) {
+                      next = (value || []).filter((v) => v !== opt.value);
+                    } else if (opt.exclusive) {
+                      next = [opt.value];
+                    } else {
+                      next = [...(value || []).filter(v => !exclusiveValues.includes(v)), opt.value];
+                    }
                     onChange(field.name, next);
                   }}
                 />
@@ -4135,28 +4179,151 @@ function WoundTrackingGrid({ value, onChange, readOnly }) {
 }
 
 
-function FilePreview({ file, previewSize }) {
-  if (!file) return null;
-  const fileName = file.name ?? file.filename ?? "File";
-  const fileType = typeof file.type === "string" ? file.type : "";
-  const isBlobOrFile = file instanceof File || file instanceof Blob;
-  const isImage = fileType.startsWith("image/") && isBlobOrFile;
+function FilePreview({ file, field, onChange, previewSize }) {
+  // ✅ HOOKS FIRST (no conditions before this)
+  const canvasRef = React.useRef(null);
+  const [drawing, setDrawing] = React.useState(false);
+  const [history, setHistory] = React.useState([]);
 
-  if (isImage) {
-    try {
-      const url = URL.createObjectURL(file);
-      return <FilePreviewImage url={url} fileName={fileName} previewSize={previewSize} />;
-    } catch {
-      return (
-        <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
-          📄 {fileName}
-        </div>
-      );
+  const fileName = file?.name ?? file?.filename ?? "File";
+  const fileType = typeof file?.type === "string" ? file.type : "";
+
+  // ✅ Handle both File + base64
+  const getImageSrc = () => {
+    if (file?.data) return file.data;
+    if (file instanceof File || file instanceof Blob) {
+      return URL.createObjectURL(file);
     }
+    return null;
+  };
+
+  const isImage = fileType.startsWith("image/") || file?.data;
+
+  // ✅ LOAD IMAGE INTO CANVAS
+  React.useEffect(() => {
+    if (!canvasRef.current || !file || !isImage) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+
+    img.src = getImageSrc();
+  }, [file]);
+
+  // ✏️ DRAW START
+  const startDraw = (e) => {
+    setDrawing(true);
+    saveState();
+
+    const ctx = canvasRef.current.getContext("2d");
+    const rect = canvasRef.current.getBoundingClientRect();
+
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+  };
+
+  // ✏️ DRAW MOVE
+  const draw = (e) => {
+    if (!drawing) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const ctx = canvasRef.current.getContext("2d");
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "red";
+    ctx.lineCap = "round";
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const endDraw = () => {
+    setDrawing(false);
+  };
+
+  // 🧠 SAVE HISTORY
+  const saveState = () => {
+    const canvas = canvasRef.current;
+    setHistory(prev => [...prev, canvas.toDataURL()]);
+  };
+
+  // ↩ UNDO
+  const undo = () => {
+    if (history.length === 0) return;
+
+    const prev = history[history.length - 1];
+    setHistory(h => h.slice(0, -1));
+
+    const img = new Image();
+    img.src = prev;
+    img.onload = () => {
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      ctx.drawImage(img, 0, 0);
+    };
+  };
+
+  // 💾 SAVE BACK TO FORM
+  const saveDrawing = () => {
+    const canvas = canvasRef.current;
+    const newData = canvas.toDataURL();
+
+    onChange(field.name, {
+      ...file,
+      data: newData,
+      type: "image/png" // ✅ ensures preview works
+    });
+  };
+
+  // ✅ SAFE RETURN AFTER HOOKS
+  if (!file) return null;
+
+  // 📄 NON-IMAGE FILE
+  if (!isImage) {
+    return (
+      <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
+        📄 {fileName}
+      </div>
+    );
   }
+
+  // 🖼️ IMAGE + DRAW
   return (
-    <div style={{ marginTop: 6, fontSize: 13, color: "#2563eb" }}>
-      📄 {fileName}
+    <div style={{ marginTop: 8 }}>
+      <canvas
+        ref={canvasRef}
+        width={previewSize?.width || 300}
+        height={previewSize?.height || 300}
+        style={{
+          width: previewSize?.width || 300,
+          height: previewSize?.height || 300,
+          borderRadius: 8,
+          border: "1px solid #e5e7eb",
+          cursor: "crosshair"
+        }}
+        onMouseDown={startDraw}
+        onMouseMove={draw}
+        onMouseUp={endDraw}
+        onMouseLeave={endDraw}
+      />
+
+      {/* 🎮 CONTROLS */}
+      <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
+        <button type="button" onClick={undo}>
+          Undo
+        </button>
+        <button type="button" onClick={saveDrawing}>
+          Save
+        </button>
+      </div>
     </div>
   );
 }
