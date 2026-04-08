@@ -55,14 +55,14 @@ import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotic
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
-const username = localStorage.getItem("username");
-const userRole = localStorage.getItem("userRole");
 
 /* If CRA proxy set to http://127.0.0.1:5000 keep API="". Otherwise set REACT_APP_API. */
 const API = process.env.REACT_APP_API || "";
 
 export default function App() {
-  const [tab, setTab] = useState(""); // "PERSONAL" | "ICD" | "ICF" | "ICHI" | "SUMMARY"
+  const username = localStorage.getItem("username") || "";
+  const userRole = localStorage.getItem("userRole") || "";
+  const [tab, setTab] = useState("");
 
   const { mode } = useParams();
   const [userType, setUserType] = useState("");

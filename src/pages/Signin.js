@@ -33,6 +33,9 @@ const handleSignIn = () => {
   else if (username.trim() === "SystemAdmin" && password === "cadcad") {
     userRole = "DOCTOR";
     redirectPath = "/Doctor";
+  } else if (username.trim() === "optometry" && password === "optometry123") {
+    userRole = "CS_OPTOMETRY";
+    redirectPath = "/Doctor";
   } else {
     alert("Username or password is incorrect.");
     return;

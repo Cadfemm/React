@@ -39,6 +39,7 @@ export default function RepositioningSkinChart({ patient, onBack }) {
     Array.from({ length: DEFAULT_ROWS }, () => ({ ...EMPTY_ROW }))
   );
   const [saved, setSaved] = useState(false);
+  const [chartDate, setChartDate] = useState("");
 
   const updateRow = (i, field, val) => {
     setRows((prev) => prev.map((r, idx) => idx === i ? { ...r, [field]: val } : r));
@@ -66,7 +67,16 @@ export default function RepositioningSkinChart({ patient, onBack }) {
         )}
       </div>
 
-      {/* ── Codes Legend ── */}
+      {/* ── Date Selector ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <label style={{ fontSize: 13, fontWeight: 600, color: C.primaryDark }}>Date:</label>
+        <input
+          type="date"
+          value={chartDate}
+          onChange={e => setChartDate(e.target.value)}
+          style={{ padding: "6px 12px", border: `1.5px solid ${C.border}`, borderRadius: 6, fontSize: 13, color: C.text }}
+        />
+      </div>
       <div style={{ border: `1.5px solid ${C.border}`, borderRadius: 8, padding: "10px 18px", background: C.white, marginBottom: 16, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <span style={{ fontWeight: 700, fontSize: 13, color: C.primaryDark, marginRight: 4 }}>Codes:</span>
         {CODES.map(({ code, desc }) => (
