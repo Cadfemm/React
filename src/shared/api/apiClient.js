@@ -25,19 +25,28 @@ export const clearAccessToken = () => {
   }
 }
 
+// Generate new access token using refresh token
+const refreshAccessToken = () => {
+  try{
+    api.post(
+      API_URL.REFRESH,
+      { withCredentials: true }
+    ).then(res => {
+        setAccessToken(res.data.access.token);
+     })
+  }catch(err){
+    return Promise.reject(err);
+  }
+}
+
 // Start automatic refresh of access token every 5 minutes 
 export const startTokenRefresh = () => {
-  refreshInterval = setInterval(() => {
-    try{
-      const res = api.post(
-        BASE_API + API_URL.REFRESH,
-        {},
-        { withCredentials: true }
-      )
-      setAccessToken(res.data.access.access_token);
-    }catch(err){
+  refreshInterval = setInterval( async () => {
+    try {
+      refreshAccessToken();
+    } catch (err) {
       clearInterval(refreshInterval);
-    }
+    }    
   }, 4.5 * 60 * 1000)
 };
 
@@ -59,7 +68,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      startTokenRefresh();
+      refreshAccessToken();
     }
     return Promise.reject(error);
   }
