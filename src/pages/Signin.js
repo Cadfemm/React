@@ -65,8 +65,9 @@ const handleLogin = async() => {
   // }
 
   // Store login info for later use
+  localStorage.setItem("user", JSON.stringify(user));
   localStorage.setItem("username", user.username.trim());
-  localStorage.setItem("userRole", user.user_type);
+  localStorage.setItem("userRole", userRole);
   history.push(redirectPath);
 };
 
