@@ -45,7 +45,6 @@ export const startTokenRefresh = () => {
 // Attach token automatically (if available)
 api.interceptors.request.use(
   (config) => {
-    console.log('token interceptor called, accessToken:', accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
