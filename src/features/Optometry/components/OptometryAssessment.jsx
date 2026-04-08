@@ -271,11 +271,25 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
+    try{
+      const res = await api.post(
+        API_URL.FORM + 'optometry/',
+        {
+          "form_id": 1,
+          "visit_type": "IN",
+          "data": values?.data || {},
+          "score": values?.score || {},
+          "total_score": values?.total_score || 0
+        }
+      )
+      alert(res.data.message || "Optometry assessment submitted successfully")
+    } catch(err){
+        alert("Error submitting optometry assessment"); 
+    }
     if (readOnly) return;
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Optometry assessment submitted");
   };
 
   /* ===================== SCHEMAS ===================== */
