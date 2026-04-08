@@ -154,8 +154,8 @@ export default function OptometryPatients({ Patients, onBack }) {
         (e.currentTarget.style.background = "#FFFFFF")
       }
     >
-      <div style={styles.name}>{p.name}</div>
-      <div style={styles.icd}>{p.icd}</div>
+      <div style={styles.name}>{p.email}</div>
+      <div style={styles.icd}>{p.mrn}</div>
 
       <div>
         <span style={styles.badge(p.status)}>{p.status ?? "New"}</span>
