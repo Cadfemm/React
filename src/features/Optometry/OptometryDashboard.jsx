@@ -628,7 +628,6 @@ export default function OptometryDashboard({
   onOpenPatients,
   onOpenFollowUps
 }) {
-  console.log('dashboard',patients)
   const cards = [
     {
       title: "My Appointments",
@@ -927,7 +926,7 @@ export default function OptometryDashboard({
   }
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, text: "" });
   const history = useHistory();
-const [showPatients, setShowPatients] = useState(false);
+  const [showPatients, setShowPatients] = useState(false);
 
   const donutRef = useRef(null);
 
@@ -945,8 +944,11 @@ const [showPatients, setShowPatients] = useState(false);
     setTooltip(t => ({ ...t, x: e.clientX - rect.left + 8, y: e.clientY - rect.top + 8 }));
   };
 
+  if (patients.length === 0) {
+    patients = [JSON.parse(localStorage.getItem('user'))];
+  }
+
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "" });
-  console.log('--------',patients)
   return (
     <>
      {showPatients ? (
