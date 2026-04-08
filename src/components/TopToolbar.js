@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { API_URL, BASE_API } from "../platform/config/api.config";
+import { API_URL } from "../platform/config/api.config";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import api, { clearAccessToken } from "../shared/api/apiClient";
 

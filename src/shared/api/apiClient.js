@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_API, API_URL } from "../../platform/config/api.config";
+import { API_URL } from "../../platform/config/api.config";
 
 // Store the access token in memory for security reasons (not in localStorage/sessionStorage)
 let accessToken = null;   
@@ -7,7 +7,6 @@ let refreshInterval = null;  // Set refresh interval for access token (e.g., eve
 
 // Create an Axios instance with default settings
 const api = axios.create({
-  baseURL: BASE_API,
   withCredentials: true,
   headers: { "Content-Type": "application/json" }
 });
