@@ -322,9 +322,6 @@ useEffect(() => {
             onBook={() => setTab("BOOK_APPOINTMENT")}
             onOrder={() => setTab("ORDER_INVESTIGATIONS")}
             onSaveAll={saveEverything}
-            onLogout={() => {
-              window.location.href = "http://localhost:3000/";
-            }}
           />
 
 
