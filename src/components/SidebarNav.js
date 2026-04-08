@@ -23,21 +23,23 @@ React.useEffect(() => {
 }, [username, userType, setTab]);
 const [showDeptMenu, setShowDeptMenu] = React.useState(false);
 
-const departments = [
-  "Customer Service",
-  "Nursing",
-  "Medical Assistant",
-  "Doctor",
-  "Physio Therapy",
-  "Vocational + Work Rehab",
-  "Occupational Therapy",
-  "Optometry",
-  "Prosthetics & Orthotics",
-  "Audiology",
-  "Dietetics",
-  "Speech & Language Therapy",
-  "Psychology"
-];
+const departments = username === "optometry"
+  ? ["Customer Service", "Optometry"]
+  : [
+    "Customer Service",
+    "Nursing",
+    "Medical Assistant",
+    "Doctor",
+    "Physio Therapy",
+    "Vocational + Work Rehab",
+    "Occupational Therapy",
+    "Optometry",
+    "Prosthetics & Orthotics",
+    "Audiology",
+    "Dietetics",
+    "Speech & Language Therapy",
+    "Psychology"
+  ];
 
 
   return (
@@ -226,6 +228,20 @@ const departments = [
          </button>
         </>)}
 
+
+        {username === "optometry" && (
+          <>
+            <button className={`tab ${tab === "PERSONAL" ? "active" : ""}`} onClick={() => setTab("PERSONAL")}>
+              <User className="icon" size={25} /> Patient Demographics <ChevronRight size={20} style={{ marginLeft: "auto" }} />
+            </button>
+            <button className={`tab ${tab === "DOCUMENTS" ? "active" : ""}`} onClick={() => setTab("DOCUMENTS")}>
+              <FileStack className="icon" size={25} /> Documents <ChevronRight size={20} style={{ marginLeft: "auto" }} />
+            </button>
+            <button className={`tab ${tab === "SUMMARY" ? "active" : ""}`} onClick={() => setTab("SUMMARY")}>
+              <FileText className="icon" size={25} /> Patient Summary <ChevronRight size={20} style={{ marginLeft: "auto" }} />
+            </button>
+          </>
+        )}
 
         {username === "SystemAdmin"  && userType === "NEW_USER" &&(<>
             <button
