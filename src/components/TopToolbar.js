@@ -1,5 +1,8 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
+import { API_URL, BASE_API } from "../platform/config/api.config";
 import { FaBell, FaUserCircle } from "react-icons/fa";
+import api, { clearAccessToken } from "../shared/api/apiClient";
 
 function TopToolbar({
   showProfileMenu,
@@ -7,8 +10,21 @@ function TopToolbar({
   onBook,
   onOrder,
   onSaveAll,
-  onLogout,
 }) {
+  const history = useHistory();
+
+  const handleLogout = async () => {
+    try {
+      const res = await api.post(
+        API_URL.LOGOUT,
+      )
+      clearAccessToken();
+      history.push('/');
+    } catch (err) {
+      alert("Logout failed. Please try again.");
+    }
+  }
+
   return (
     <>
       {/* ---- First row: Home, Files, Upload, Notifications, Profile ---- */}
@@ -121,7 +137,7 @@ function TopToolbar({
                     textAlign: "left",
                     cursor: "pointer",
                   }}
-                  onClick={onLogout}
+                  onClick={handleLogout}
                 >
                   Logout
                 </button>
