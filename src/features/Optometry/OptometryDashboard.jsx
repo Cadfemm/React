@@ -944,10 +944,6 @@ export default function OptometryDashboard({
     setTooltip(t => ({ ...t, x: e.clientX - rect.left + 8, y: e.clientY - rect.top + 8 }));
   };
 
-  if (patients.length === 0) {
-    patients = [JSON.parse(localStorage.getItem('user'))];
-  }
-
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "" });
   return (
     <>
