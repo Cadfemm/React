@@ -14,6 +14,9 @@ const API_URL = {
 
     // Forms apis
     FORM: BASE_API + 'form/',
+
+    // Patients apis
+    PATIENT: BASE_API + 'patient/',
 }
 
 export {

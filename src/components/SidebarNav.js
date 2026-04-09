@@ -1,6 +1,5 @@
 import * as React from "react";
 import { User, ClipboardList, Layers, Stethoscope, Target,ShieldCheck, FileText ,FileStack, Briefcase, ChevronRight , LayoutDashboard ,CircleCheckBig, ChartCandlestick ,Calendar, FlaskConical, Settings, SquareCheckBig,SquareActivity } from "lucide-react";
-import { MainContent } from "../pages/Menu";
 function SidebarNav({ tab, setTab, userType, icdCode, icfCode, rapPercent, username, userRole }) {
 
 React.useEffect(() => {
