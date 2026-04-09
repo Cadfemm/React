@@ -278,7 +278,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
         {
           "form_id": 1,
           "visit_type": "IN",
-          "data": values?.data || {},
+          "data": values || {},
           "score": values?.score || {},
           "total_score": values?.total_score || 0
         }
