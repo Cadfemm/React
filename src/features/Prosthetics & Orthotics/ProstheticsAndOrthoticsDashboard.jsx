@@ -638,6 +638,18 @@ export default function ProstheticsAndOrthoticsDashboard({
       color: "#2563EB"
     },
     {
+      title: "Wheelchair",
+      value: 2,
+      icon: "🦽",
+      color: "#0EA5E9"
+    },
+    {
+      title: "3D",
+      value: 4,
+      icon: "🧊",
+      color: "#8B5CF6"
+    },
+    {
       title: "Billing",
       value: 5,
       icon: "💳",
@@ -945,13 +957,13 @@ const [showPatients, setShowPatients] = useState(false);
     const rect = donutRef.current.getBoundingClientRect();
     setTooltip(t => ({ ...t, x: e.clientX - rect.left + 8, y: e.clientY - rect.top + 8 }));
   };
-
+const [selectedCard, setSelectedCard] = useState("My Appointments");
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "" });
   console.log('--------',patients)
   return (
     <>
      {showPatients ? (
-      <ProstheticsAndOrthoticsPatients Patients={patients} onBack={() => setShowPatients(false)} />
+      <ProstheticsAndOrthoticsPatients Patients={patients} selectedCard={selectedCard} onBack={() => setShowPatients(false)} />
     ) : (
       <div style={styles.wrapper}>
         <div style={styles.row}>
@@ -960,13 +972,14 @@ const [showPatients, setShowPatients] = useState(false);
               key={i}
               style={{
                 ...styles.card,
-                cursor: card.title === "My Appointments" ? "pointer" : "default"
+                cursor: ["My Appointments", "Wheelchair", "3D"].includes(card.title) ? "pointer" : "default"
               }}
              onClick={() => {
-  if (card.title === "My Appointments") {
-    setShowPatients(true);
-  }
-}}
+              if (["My Appointments", "Wheelchair", "3D"].includes(card.title)) {
+                setSelectedCard(card.title);
+                setShowPatients(true);
+              }
+            }}
 
             >
 

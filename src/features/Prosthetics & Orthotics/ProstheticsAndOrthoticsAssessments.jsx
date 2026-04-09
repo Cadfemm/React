@@ -126,6 +126,8 @@ const ORTHOSIS_TYPES = [
   "Cervical Collar"
 ].map(v => ({ label: v, value: v }));
 
+
+
 /* ===================== SCHEMAS ===================== */
 
 const ORTHOTICS_CONTAINER_SCHEMA = {
@@ -145,10 +147,14 @@ const SUB_COMMON_SCHEMA = {
     {
       fields: [
         {
-          name: "k_level", 
+          name: "k_level",
           label: "K-Level (ammo pro)",
           type: "input",
-          readOnly: true
+          readOnly: true,
+          showIf: {
+            field: "assignment_type",
+            equals: "prosthetics"
+          }
         },
         {
           name: "grip_strength",
@@ -673,7 +679,111 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
         {
           name: "amputation_level",
           label: "Amputation Level",
-          type: "input",
+          type: "radio",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+          ],
+        },
+        
+        {
+          name: "wound_body_diagram",
+          label: "Mark Wound Location on Body Diagram",
+          type: "wound-location-marker",
+          views: [
+            { key: "body", label: "Body (Front/Back)", src: "/body_high.png" },
+            { key: "hands", label: "Hands", src: "/hands_high.png" },
+            { key: "feet", label: "Feet", src: "/feet_high.png" },
+          ],
+          showIf: {
+            field: "amputation_level",
+            equals: "yes"
+          }
+        },
+        {
+          name: "region",
+          label: "Region",
+          type: "checkbox-group",
+          options: [
+            { label: "Upper Limb", value: "upper_limb" },
+            { label: "Lower Limb", value: "lower_limb" },
+          ],
+          showIf: {
+            field: "amputation_level",
+            equals: "yes",
+          },
+        },
+        {
+          name: "amp_upper_limb_location",
+          label: "Upper Limb Location",
+          type: "checkbox-group",
+          options: [
+            { label: "Above Elbow", value: "above_elbow" },
+            { label: "Below Elbow", value: "below_elbow" },
+            { label: "Shoulder", value: "shoulder" },
+            { label: "Elbow", value: "elbow" },
+            { label: "Carpal / Metacarpal", value: "carpal_metacarpal" },
+            { label: "Finger", value: "finger" },
+          ],
+          showIf: {
+            field: "region",
+            includes: "upper_limb",
+            and: {
+              field: "amputation_level",
+              equals: "yes",
+            },
+          },
+        },
+        {
+          name: "amp_upper_limb_location_notes",
+          label: "Specify",
+          type: "textarea",
+          showIf: {
+            or: [
+              { field: "amp_upper_limb_location", includes: "above_elbow" },
+              { field: "amp_upper_limb_location", includes: "below_elbow" },
+              { field: "amp_upper_limb_location", includes: "shoulder" },
+              { field: "amp_upper_limb_location", includes: "elbow" },
+              { field: "amp_upper_limb_location", includes: "carpal_metacarpal" },
+              { field: "amp_upper_limb_location", includes: "finger" },
+            ],
+          },
+        },
+        {
+          name: "amp_lower_limb_location",
+          label: "Lower Limb Location",
+          type: "checkbox-group",
+          options: [
+            { label: "Above Knee", value: "above_knee" },
+            { label: "Below Knee", value: "below_knee" },
+            { label: "Hip Disarticulation", value: "hip_disarticulation" },
+            { label: "Knee Disarticulation", value: "knee_disarticulation" },
+            { label: "Carpal / Metacarpal", value: "carpal_metacarpal" },
+            { label: "Rays Amputation", value: "rays_amputation" },
+          ],
+          showIf: {
+            field: "region",
+            includes: "lower_limb",
+            and: {
+              field: "amputation_level",
+              equals: "yes",
+            },
+          },
+        },
+        {
+          name: "amp_lower_limb_location_notes",
+          label: "Specify",
+          type: "textarea",
+          showIf: {
+            or: [
+              { field: "amp_lower_limb_location", includes: "above_knee" },
+              { field: "amp_lower_limb_location", includes: "below_knee" },
+              { field: "amp_lower_limb_location", includes: "hip_disarticulation" },
+              { field: "amp_lower_limb_location", includes: "knee_disarticulation" },
+              { field: "amp_lower_limb_location", includes: "carpal_metacarpal" },
+              { field: "amp_lower_limb_location", includes: "rays_amputation" },
+            ],
+          },
         },
         { 
           name: "stump_shape",
@@ -762,7 +872,46 @@ const PROSTHETICS_ASSESSMENT_SCHEMA = {
         {
           name: "stump_picture",
           label: "Stump Picture",
-          type: "file-upload-modal"
+          type: "attach-file",
+          accept: "application/pdf,image/*",
+          multiple: false,
+          previewSize: { width: 400, height: 400 },
+          hideInputAfterSelect: true
+        },
+        {
+          type: "row",
+          cols: 5,
+          compact: true,
+          fields: [
+            { label: "Date", type: "label" },
+            { label: "Proximal", type: "label" },
+            { label: "Middle", type: "label" },
+            { label: "Distal", type: "label" },
+            { label: "Flexion", type: "label" }
+          ]
+        },
+        {
+          type: "dynamic-section",
+          name: "stump_measurements",
+          fields: [
+            {
+              type: "row",
+              cols: 5,
+              compact: true,
+              fields: [
+                { type: "date", name: "date" },
+                { type: "input", name: "proximal" },
+                { type: "input", name: "middle" },
+                { type: "input", name: "distal" },
+                { type: "input", name: "flexion" }
+              ]
+            }
+          ]
+        },
+        {
+          name: "stump_length",
+          label: "Stump Length",
+          type: "input"
         },
         {
           name: "measurement_date",
@@ -832,8 +981,12 @@ const PROSTHETICS_PLAN_SCHEMA = {
             { label: "Eco Liner Lock", value: "eco_liner_lock" },
             { label: "Eco Liner Cushion", value: "eco_liner_cushion" },
             { label: "Free Text", value: "free_text" }
-          ]
-        },
+          ],
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
+      },
         {
           name: "socker_design",
           label: "Socket Design",
@@ -867,7 +1020,11 @@ const PROSTHETICS_PLAN_SCHEMA = {
             { label: "Above Knee 3D Socket", value: "above_knee_3d_socket" },
             { label: "Through Knee Transparent Check Socket", value: "through_knee_transparent_check_socket" },
             { label: "Free Text", value: "free_text" }
-          ]
+          ],
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "knee_joint",
@@ -909,7 +1066,11 @@ const PROSTHETICS_PLAN_SCHEMA = {
             { label: "Graph Lite 4-Bar Pneumatic Knee Disarticulation Knee", value: "graph_lite_4_bar_pneumatic_knee_disarticulation_knee" },
             { label: "Graph Lite 4 Bar Pneumatic Knee (Mini)", value: "graph_lite_4_bar_pneumatic_knee_mini" },
             { label: "Free Text", value: "free_text" }
-          ]
+          ],
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "foot",
@@ -977,22 +1138,38 @@ const PROSTHETICS_PLAN_SCHEMA = {
             { label: "High Definition Silicone Foot Cover For Partial Foot - High Top Ankle", value: "high_definition_silicone_foot_cover_partial_high_top" },
             { label: "HDSF (With Carbon Fibre Foot Plate) - High Top Ankle", value: "hdsf_with_carbon_fibre_foot_plate_high_top" },
             { label: "Free Text", value: "free_text" }
-          ]
+          ],
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "others",
           label: "Others",
-          type: "textarea"
+          type: "textarea",
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "casting_date",
           label: "Casting Date",
-          type: "date"
+          type: "date",
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "fitting_date",
           label: "Fitting Date",
-          type: "date"
+          type: "date",
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "follow_up",
@@ -1002,7 +1179,11 @@ const PROSTHETICS_PLAN_SCHEMA = {
             { label: "2 Weeks", value: "weeks_2"},
             { label: "4 Weeks", value: "weeks_4"},
             { label: "Others", value: "others"}
-          ]
+          ],
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         },
         {
           name: "others",
@@ -1016,7 +1197,11 @@ const PROSTHETICS_PLAN_SCHEMA = {
         {
           name: "upload_measurement",
           label: "Upload Measurement Form",
-          type: "file-upload-modal"
+          type: "file-upload-modal",
+          showIf: {
+            field: "intervention",
+            equals: "yes"
+        }
         }
       ])
     }
@@ -1044,11 +1229,11 @@ const PROSTHETICS_FOLLOW_UP_SCHEMA = {
           label: "Stump Measurement Value",
           type: "input"
         },
-        {
-          name: "add_measurement",
-          label: "Add Measurement",
-          type: "button"
-        }
+        // {
+        //   name: "add_measurement",
+        //   label: "Add Measurement",
+        //   type: "button"
+        // }
       ])
     }
   ]
@@ -1295,7 +1480,7 @@ const getConsentSchema = (assignmentType) => ({
     {
       type: "radio",
       name: "inspire_scheme",
-      label: "INSPIRE Scheme",
+      label: "Inspire Scheme",
       options: [
         { label: "Yes", value: "yes" },
         { label: "No", value: "no" }
@@ -1339,7 +1524,8 @@ const getConsentSchema = (assignmentType) => ({
 /* ===================== COMPONENT ===================== */
 
 export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
-  const [values, setValues] = useState({ assignment_type: 'orthotics' });
+  const [values, setValues] = useState({ assignment_type: 'orthotics', amp_upper_limb_location: [],
+  amp_lower_limb_location: [], });
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
   const storageKey = patient ? `orthotics_draft_${patient.id}` : null;
@@ -1396,7 +1582,8 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
   const handleAction = (type) => {
     if (type === "back") onBack?.();
     if (type === "clear") {
-      setValues({ assignment_type: 'orthotics' });
+      setValues({ assignment_type: 'orthotics',amp_upper_limb_location: [],
+    amp_lower_limb_location: [], });
       setSubmitted(false);
       localStorage.removeItem(storageKey);
     }

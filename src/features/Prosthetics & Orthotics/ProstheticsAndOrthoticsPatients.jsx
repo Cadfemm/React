@@ -1,8 +1,10 @@
 
 import React, { useState } from "react";
 import OrthoticsAssessment from "./ProstheticsAndOrthoticsAssessments";
+import WheelchairAssessment from "./WheelchairAssessment";
+import ThreeDAssessment from "./ThreeDAssessment";
 
-export default function ProstheticsAndOrthoticsPatients({ Patients, onBack }) {
+export default function ProstheticsAndOrthoticsPatients({ Patients,selectedCard, onBack }) {
   const [tab, setTab] = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
   console.log("patients", Patients)
@@ -14,6 +16,25 @@ export default function ProstheticsAndOrthoticsPatients({ Patients, onBack }) {
 
   /* ---------------- RENDER ASSESSMENT ---------------- */
 if (selectedPatient) {
+  console.log("Opening for:", selectedCard, selectedPatient);
+
+  if (selectedCard === "Wheelchair") {
+    return (
+      <WheelchairAssessment
+        patient={selectedPatient}
+        onBack={() => setSelectedPatient(null)}
+      />
+    );
+  }
+
+  if (selectedCard === "3D") {
+    return (
+      <ThreeDAssessment
+        patient={selectedPatient}
+        onBack={() => setSelectedPatient(null)}
+      />
+    );
+  }
   return (
     <div style={{ width: "100%", padding: 0 }}>
       <OrthoticsAssessment
