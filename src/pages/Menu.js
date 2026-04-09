@@ -55,6 +55,9 @@ import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotic
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
+import api from "../shared/api/apiClient"
+import { API_URL } from "../platform/config/api.config";
+
 const username = localStorage.getItem("username");
 const userRole = localStorage.getItem("userRole");
 
@@ -97,6 +100,7 @@ export default function App() {
     }
     // if mode is undefined, your normal landing stays
   }, [mode]);
+
   // Patient controlled form state in App (for summary & persistence)
   const [patient, setPatient] = useState({
     patient_id: "",
@@ -113,6 +117,21 @@ export default function App() {
     occupation: "",
   });
   const [patients, setPatients] = useState([]);
+  
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT
+        )
+        setPatients(res.data);
+      } catch(e){
+        setPatients([]);
+      }
+    }
+    fetchPatients();
+  }, [])
+
   function updatePatientInMainList(updatedPatient) {
     setPatients(prev =>
       prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
