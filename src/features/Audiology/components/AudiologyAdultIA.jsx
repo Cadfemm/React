@@ -684,6 +684,285 @@ export default function AudiologyDepartmentAdultPage({ patient, onSubmit, onBack
     alert("Audiology assessment submitted");
   };
 
+  const AUDIOLOGY_ASSESSMENT_REGISTRY = {
+    tinnitus_form: TinnitusAdvancedAdapter,
+    loudness_form: HyperacusisAdvancedAdapter,
+    hearing_form: AuditoryAdvancedAdapter,
+    vestibular_form: VestibularAdvancedAdapter
+  };
+function TinnitusAdvancedAdapter({ onChange }) {
+  return (
+    <TinnitusAdvancedForm
+      onBack={() => onChange("hearing_assessments_launcher", null)}
+    />
+  );
+}
+
+function HyperacusisAdvancedAdapter({ onChange }) {
+  return (
+    <HyperacusisAdvancedForm
+      onBack={() => onChange("hearing_assessments_launcher", null)}
+    />
+  );
+}
+
+function AuditoryAdvancedAdapter({ onChange }) {
+  return (
+    <AuditoryAdvancedForm
+      onBack={() => onChange("hearing_assessments_launcher", null)}
+    />
+  );
+}
+
+function VestibularAdvancedAdapter({ onChange }) {
+  return (
+    <VestibularAdvancedForm
+      onBack={() => onChange("vestibular_assessments_launcher", null)}
+    />
+  );
+}
+
+function TinnitusAdvancedForm({ onBack }) {
+  const [values, setValues] = useState({});
+
+  const schema = {
+    title: "Additional Tinnitus Profile",
+    actions: [{ type: "back", label: "Back" }],
+    sections: [
+      {
+        title: "VAS & Tinnitus Details",
+        fields: [
+          {
+            name: "tinnitus_vas_loudness",
+            label: "Loudness (0–10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "tinnitus_vas_annoyance",
+            label: "Annoyance (0–10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "tinnitus_vas_awareness",
+            label: "Awareness (0–10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "tinnitus_handicap",
+            label: "Tinnitus Handicap Inventory (THI)",
+            type: "textarea"
+          },
+          {
+            name: "tinnitus_functional",
+            label: "Tinnitus Functional Index (TFI)",
+            type: "textarea"
+          },
+          {
+            name: "tinnitus_lifestyle",
+            label: "Lifestyle & Functional Impact (tinnitus)",
+            type: "textarea"
+          }
+        ]
+      }
+    ]
+  };
+
+  return (
+    <CommonFormBuilder
+      schema={schema}
+      values={values}
+      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
+      onAction={(type) => type === "back" && onBack()}
+    />
+  );
+}
+function HyperacusisAdvancedForm({ onBack }) {
+  const [values, setValues] = useState({});
+
+  const schema = {
+    title: "Additional Hyperacusis Profile",
+    actions: [{ type: "back", label: "Back" }],
+    sections: [
+      {
+        title: "Hyperacusis Details",
+        fields: [
+          // --- VAS ---
+          {
+            name: "hyperacusis_loudness",
+            label: "Loudness Discomfort (0–10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "hyperacusis_annoyance",
+            label: "Annoyance (0–10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+
+          // --- Questionnaires ---
+          {
+            name: "hq_completed",
+            label: "Hyperacusis Questionnaire",
+            type: "radio",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ]
+          },
+          {
+            name: "khalfa_completed",
+            label: "Modified Khalfa Questionnaire",
+            type: "radio",
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ]
+          },
+          {
+            name: "hyperacusis_impact",
+            label: "Daily Life Impact",
+            type: "textarea"
+          }
+        ]
+      }
+    ]
+  };
+
+  return (
+    <CommonFormBuilder
+      schema={schema}
+      values={values}
+      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
+      onAction={(type) => type === "back" && onBack()}
+    />
+  );
+}
+function AuditoryAdvancedForm({ onBack }) {
+  const [values, setValues] = useState({});
+
+  const schema = {
+    title: "Additional Auditory Profile",
+    actions: [{ type: "back", label: "Back" }],
+    sections: [
+      {
+        title: "Auditory Details",
+        fields: [
+          {
+            name: "auditory_emotional",
+            label: "Analogue Scale : Emotional (0-10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "auditory_social",
+            label: "Analogue Scale : Social/ situational (0-10)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "auditory_handicap",
+            label: "Hearing handicap inventory for adults (HHIA)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "auditory_improvement",
+            label: "Client Oriented Scale of Improvement (COSI)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+        ]
+      }
+    ]
+  };
+
+  return (
+    <CommonFormBuilder
+      schema={schema}
+      values={values}
+      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
+      onAction={(type) => type === "back" && onBack()}
+    />
+  );
+}
+function VestibularAdvancedForm({ onBack }) {
+  const [values, setValues] = useState({});
+
+  const schema = {
+    title: "Additional Vestibular Profile",
+    actions: [{ type: "back", label: "Back" }],
+    sections: [
+        {
+        title: "Vestibular Details",
+        fields: [
+          {
+            name: "dhi_score",
+            label: "Dizziness Handicap Inventory (DHI)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "vvas_score",
+            label: "Visual Vertigo Analogue Score (VVAS)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "vhq_score",
+            label: "Vertigo Handicap Questionnaire (VHQ)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+          {
+            name: "mvvss_score",
+            label: "Malay Version Vertigo Symptom Scale (MVVSS)",
+            type: "scale-slider",
+            min: 0,
+            max: 10,
+            step: 1
+          },
+        ]
+      }
+    ]
+  };
+
+  return (
+    <CommonFormBuilder
+      schema={schema}
+      values={values}
+      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
+      onAction={(type) => type === "back" && onBack()}
+    />
+  );
+}
   /* ===================== SCHEMAS ===================== */
 
 const SUBJECTIVE_SCHEMA = {
@@ -962,6 +1241,16 @@ const SUBJECTIVE_SCHEMA = {
           label: "",
           type: "textarea",
           showIf: { field: "presence_amplification", equals: "1" }
+        },
+        {
+          name: "hearing_assessments_launcher",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Additional Tinnitus Profile", value: "tinnitus_form" },
+            { label: "Additional Hyperacusis Profile", value: "loudness_form" },
+            { label: "Additional Auditory Profile ", value: "hearing_form" }
+          ]
         }
       ]
     },
@@ -1024,6 +1313,14 @@ const SUBJECTIVE_SCHEMA = {
           name: "vestibular_others",
           label: "Others",
           type: "textarea"
+        },
+        {
+          name: "vestibular_assessments_launcher",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Additional Vestibular Profile", value: "vestibular_form" },
+          ]
         }
       ]
     },
@@ -1734,6 +2031,7 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
     onChange={onChange}
     submitted={submitted}
     onAction={handleAction}
+    assessmentRegistry={AUDIOLOGY_ASSESSMENT_REGISTRY}
   >
 
 

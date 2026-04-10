@@ -54,6 +54,7 @@ import OptometryDashboard from "../features/Optometry/OptometryDashboard";
 import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
+import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 import api from "../shared/api/apiClient"
 import { API_URL } from "../platform/config/api.config";
@@ -733,11 +734,12 @@ export function MainContent({
     case "Customer Service":
       return <PatientRegister addPatient={addPatient} />;
 
-    case "Physio Therapy":
+    case "Physiotherapy":
       return <DepartmentPage patients={patients} department="Physio Therapy" />;
      case "Occupational Therapy":
       return <OtDepartmentPage patients={patients} department="Occupational Therapy" />;
-
+     case "Work & Vocational Rehab":
+      return <WandRDepartmentPage patients={patients} department="Work & Vocational Rehab" />;
     case "Psychology":
       return <PsychologyDashboard patients={patients} />;
     case "Optometry":

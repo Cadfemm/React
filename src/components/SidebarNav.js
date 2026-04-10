@@ -11,8 +11,8 @@ const departments =
     "Nursing",
     "Medical Assistant",
     "Doctor",
-    "Physio Therapy",
-    "Vocational + Work Rehab",
+  "Physiotherapy",
+  "Work & Vocational Rehab",
     "Occupational Therapy",
     "Optometry",
     "Prosthetics & Orthotics",
@@ -20,8 +20,7 @@ const departments =
     "Dietetics",
     "Speech & Language Therapy",
     "Psychology"
-  ];
- 
+  ]; 
  
   return (
     <aside className="rail">

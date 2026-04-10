@@ -12,7 +12,7 @@ import COTNABAssessment from "../../OT/components/Cotnab";
 import RPAB_Assessment from "../../OT/components/RPAB";
 import DCOGAssessment from "../../OT/components/Dcog";
 import COGBATAssessment from "../../OT/components/Cogbat";
-import MMSEAssessment from "../../OT/components/Mmse";
+import MMSEAssessment from "../../OT/components/Mmsenew";
 
 const ComponentStyles = () => (
   <style>{`

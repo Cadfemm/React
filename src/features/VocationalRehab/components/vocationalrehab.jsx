@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-import ROMForm from "./RomForm";
-import FIMAssessment from "./Fim";
-import IADLAssessment from "./IADL";
-import SCIMaleSexualFunctionAssessment from "./SciMaleSexualAssessment"
-import SCIFemaleSexualFunctionAssessment from "./SciFeMaleSexualAssessment"
-import MoCAAssessment from "./MocA";
+import ROMForm from "../../OT/components/RomForm";
+import FIMAssessment from "../../OT/components/Fim";
+import IADLAssessment from "../../OT/components/IADL";
+import SCIMaleSexualFunctionAssessment from "../../OT/components/SciMaleSexualAssessment";
+import SCIFemaleSexualFunctionAssessment from "../../OT/components/SciFeMaleSexualAssessment";
+import MoCAAssessment from "../../OT/components/MocA";
 import MMTForm from "../../PT/components/MMTForm";
 import masForm from "../../PT/components/MASForm";
-import CUEQAssessment from "./CUEQ";
-import StrengthTest from "./Strengthtest";
-import PatientCard from "../../../shared/cards/PatientCard"
+import CUEQAssessment from "../../OT/components/CUEQ";
+import StrengthTest from "../../OT/components/Strengthtest";
 
-
-export const NEURO_ASSESSMENT_REGISTRY = {
+export const VOCATIONAL_REHAB_REGISTRY = {
   rom: ROMForm,
   mmt: MMTForm,
   mas: masForm,
@@ -64,10 +62,17 @@ const AMBULATORY_OPTIONS = [
   { label: "Others", value: "others" }
 ];
 
-export default function NeuroAssessment({ patient, onSubmit, onBack }) {
+export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+
+  /* --------- Patient History State --------- */
+  const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: patient?.medical_history || "",
+    past_family_history: patient?.family_medical_history || "",
+    alerts_and_allergies: patient?.alerts_and_allergies_history || "",
+  });
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -81,6 +86,7 @@ export default function NeuroAssessment({ patient, onSubmit, onBack }) {
       setValues(JSON.parse(saved).values || {});
     }
   }, [storageKey]);
+
   useEffect(() => {
     if (!patient) return;
 
@@ -93,6 +99,28 @@ export default function NeuroAssessment({ patient, onSubmit, onBack }) {
         patient.diagnosis_history || "No data available"
     }));
   }, [patient]);
+
+  /* --------- Keep patient history in sync --------- */
+  useEffect(() => {
+    setPatientHistory({
+      past_medical_history: patient?.medical_history || "",
+      past_family_history: patient?.family_medical_history || "",
+      alerts_and_allergies: patient?.alerts_and_allergies_history || "",
+    });
+  }, [patient?.id]);
+
+  /* --------- Persist patient history changes --------- */
+  useEffect(() => {
+    if (!patient?.id) return;
+    const updated = {
+      ...patient,
+      medical_history: patientHistory.past_medical_history,
+      family_medical_history: patientHistory.past_family_history,
+      alerts_and_allergies_history: patientHistory.alerts_and_allergies,
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history, patientHistory.alerts_and_allergies]);
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
@@ -119,6 +147,29 @@ export default function NeuroAssessment({ patient, onSubmit, onBack }) {
     onSubmit?.(values);
     alert("Neuro assessment submitted");
   };
+
+  const today = new Date();
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "-";
+    }
+  };
+  const calculateDuration = (onset) => {
+    if (!onset) return "-";
+    const onsetDate = new Date(onset);
+    const diffMs = today - onsetDate;
+    if (Number.isNaN(diffMs) || diffMs < 0) return "-";
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const months = Math.floor(days / 30);
+    const years = Math.floor(months / 12);
+    if (years > 0) return `${years} yr ${months % 12} mo`;
+    if (months > 0) return `${months} mo`;
+    return `${days} days`;
+  };
+
 const SUBJECTIVE_SCHEMA = {
   title: "Subjective",
 
@@ -389,12 +440,12 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
     }
   ]
 };
+
   const NEURO_CONTAINER_SCHEMA = {
     title: "Patient Information",
-    sections: [
-
-    ]
+    sections: []
   };
+
  const OBJECTIVE_SCHEMA = {
   title: "",
 
@@ -422,84 +473,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
           label: "Standardized Outcome Measures"
         },
 
-        // {
-        //   type: "checkbox-group",
-        //   name: "standardized_outcome_measures",
-        //   label: "Outcome Measures",
-        //   options: [
-
-        //     {
-        //       label: "American Spinal Injury Association (ASIA) Impairment Scale",
-        //       value: "asia"
-        //     },
-
-        //     {
-        //       label: "Spinal Cord Independence Measure (SCIM)",
-        //       value: "scim"
-        //     },
-
-        //     {
-        //       label: "Functional Independence Measure (FIM)",
-        //       value: "fim"
-        //     },
-
-        //     {
-        //       label: "Lawton Instrumental Activities of Daily Living Scale (IADL)",
-        //       value: "iadl"
-        //     },
-
-        //     {
-        //       label: "Range of Motion (Active/Passive)",
-        //       value: "rom"
-        //     },
-
-        //     {
-        //       label: "Manual Muscle Testing (MMT)",
-        //       value: "mmt"
-        //     },
-
-        //     {
-        //       label: "Modified Ashworth Scale (MAS)",
-        //       value: "mas"
-        //     },
-
-        //     {
-        //       label: "Hand Grip Strength Test",
-        //       value: "grip_strength"
-        //     },
-
-        //     {
-        //       label: "Pinch Strength Test",
-        //       value: "pinch_strength"
-        //     },
-
-        //     {
-        //       label: "Function in Sitting Test (FIST)",
-        //       value: "fist"
-        //     },
-
-        //     {
-        //       label: "Capabilities of Upper Extremity Questionnaire (CUE-Q)",
-        //       value: "cueq"
-        //     },
-
-        //     {
-        //       label: "Cognitive Screening (MoCA)",
-        //       value: "moca"
-        //     },
-
-        //     {
-        //       label: "International Spinal Cord Injury Male Sexual Function",
-        //       value: "sci_male_sexual_function"
-        //     },
-
-        //     {
-        //       label: "International Spinal Cord Injury Female Sexual and Reproductive Function",
-        //       value: "sci_female_sexual_function"
-        //     }
-
-        //   ]
-        // },
  {
           name: "neuro_scales",
           type: "assessment-launcher",
@@ -791,154 +764,115 @@ const PLAN_SCHEMA = {
 
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
 
-  // function NeuroPatientInfo({ patient }) {
-  //   if (!patient) return null;
+  function VocationalRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
+    if (!patient) return null;
 
-  // return (
-  //   <div style={section}>
-  //     <div style={patientGrid}>
+    return (
+      <div style={section}>
+        <div style={patientGrid}>
+          <div><b>Name:</b> {patient.name}</div>
+          <div><b>IC:</b> {patient.id}</div>
+          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+          <div><b>ICD:</b> {patient.icd}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+          <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
+          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
+          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
 
-  //       <div><b>Name:</b> {patient.name}</div>
-  //       <div><b>IC:</b> {patient.id}</div>
-  //       <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-  //       <div><b>Age:</b> {patient.age}</div> 
-  //       {/* <div><b>ICD:</b> {patient.icd}</div> */}
-  //       <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-  //       {/* <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-  //       <div>
-  //         <b>Duration of Diagnosis:</b>{" "}
-  //         {calculateDuration(patient.date_of_onset)}
-  //       </div>
-  //   */}
+          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+              <textarea
+                value={patientHistory.past_medical_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div>
 
-
-  //     </div>
-  //   </div>
-  // );
-
-  // }
-  const [patientHistory, setPatientHistory] = useState({
-  past_medical_history: patient?.medical_history || "",
-  past_family_history: patient?.family_medical_history || "",
-  alerts_and_allergies: patient?.alerts_and_allergies_history || ""
-});
-function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-  if (!patient) return null;
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "-";
-    try {
-      return new Date(dateStr).toLocaleDateString();
-    } catch {
-      return "-";
-    }
-  };
-
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: 12,
-        fontSize: 14
-      }}>
-        <div><b>Name:</b> {patient.name}</div>
-        <div><b>IC:</b> {patient.id}</div>
-        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-
-        <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-        <div><b>ICD:</b> {patient.icd}</div>
-        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
-
-        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-        <div><b>Duration of Diagnosis:</b> -</div>
-        <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-
-        <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-        <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-        <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-
-        <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-        <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-        <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-
-        <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-        <div><b>Marital Status:</b> {patient.marital_status || "-"}</div>
-
-        {/* ===== HISTORY ===== */}
-        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-          <h3>Patient History</h3>
-
-          <div>
-            <b>Past Medical History</b>
-            <textarea
-              style={textarea}
-              value={patientHistory.past_medical_history}
-              onChange={(e) =>
-                setPatientHistory(prev => ({
-                  ...prev,
-                  past_medical_history: e.target.value
-                }))
-              }
-            />
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+              <textarea
+                value={patientHistory.past_family_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+              <textarea
+                value={patientHistory.alerts_and_allergies}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+                style={{
+                  width: "100%",
+                  minHeight: 90,
+                  padding: "10px 12px",
+                  borderRadius: 6,
+                  border: "1px solid #d1d5db",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div> 
+            <div style={{ marginBottom: 10 }}>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Alerts button clicked!");
+                }}
+                style={{
+                  marginTop: "10px",
+                  padding: "10px 20px",
+                  borderRadius: 6,
+                  border: "1.5px solid rgb(0, 123, 255)",
+                  background: "rgb(0, 123, 255)",
+                  color: "rgb(255, 255, 255)",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
+                }}
+              >
+                🚨 Alerts
+              </button>
+            </div>           
           </div>
-
-          <div>
-            <b>Family History</b>
-            <textarea
-              style={textarea}
-              value={patientHistory.past_family_history}
-              onChange={(e) =>
-                setPatientHistory(prev => ({
-                  ...prev,
-                  past_family_history: e.target.value
-                }))
-              }
-            />
-          </div>
-
-          <div>
-            <b>Allergies</b>
-            <textarea
-              style={textarea}
-              value={patientHistory.alerts_and_allergies}
-              onChange={(e) =>
-                setPatientHistory(prev => ({
-                  ...prev,
-                  alerts_and_allergies: e.target.value
-                }))
-              }
-            />
-          </div>
-
-          <button style={alertBtn}>🚨 Alerts</button>
         </div>
       </div>
-    </div>
-  );
-}
-const textarea = {
-  width: "100%",
-  minHeight: 90,
-  marginTop: 6,
-  marginBottom: 12,
-  padding: "10px 12px",
-  borderRadius: 6,
-  border: "1px solid #d1d5db",
-  fontSize: 14,
-  resize: "vertical"
-};
+    );
+  }
 
-const alertBtn = {
-  marginTop: 10,
-  padding: "10px 20px",
-  borderRadius: 6,
-  border: "1.5px solid #007bff",
-  background: "#007bff",
-  color: "#fff",
-  fontWeight: 600,
-  cursor: "pointer"
-};
   return (
     <div style={mainContent}>
 
@@ -948,7 +882,7 @@ const alertBtn = {
         values={{}}
         onChange={() => { }}
       >
-        <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
+        <VocationalRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
       </CommonFormBuilder>
 
       {/* ===== NEW ENVIRONMENT CARD ===== */}
@@ -972,14 +906,13 @@ const alertBtn = {
       </div>
 
       {/* ===== TAB CONTENT ===== */}
-      {/* ===== TAB CONTENT ===== */}
       <CommonFormBuilder
         schema={schemaMap[activeTab]}
         values={values}
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
-        assessmentRegistry={NEURO_ASSESSMENT_REGISTRY}
+        assessmentRegistry={VOCATIONAL_REHAB_REGISTRY}
       >
 
         {/* 🔹 ADD MATRIX ONLY IN PLAN TAB */}
@@ -1065,24 +998,8 @@ const alertBtn = {
 
 const mainContent = { margin: "0 auto" };
 
-const tabBar = {
-  display: "flex",
-  gap: 12,
-  justifyContent: "center",
-  borderBottom: "1px solid #ddd",
-  marginBottom: 12
-};
 const section = {
   marginBottom: 24
-};
-
-const sectionTitle = {
-  fontSize: 16,
-  fontWeight: 700,
-  marginBottom: 12,
-  borderBottom: "1px solid #e5e7eb",
-  paddingBottom: 6,
-  color: "#0F172A"
 };
 
 const patientGrid = {
@@ -1090,6 +1007,14 @@ const patientGrid = {
   gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
   gap: 12,
   fontSize: 14
+};
+
+const tabBar = {
+  display: "flex",
+  gap: 12,
+  justifyContent: "center",
+  borderBottom: "1px solid #ddd",
+  marginBottom: 12
 };
 
 const tabBtn = {
