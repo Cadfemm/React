@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
+import api from "../../shared/api/apiClient"
+import { API_URL } from "../../platform/config/api.config";
 
 const OPTION_CARDS = [
   { id: "initial", title: "Initial Assessment", description: "Full SOAP assessment for new patient", icon: "📋", color: "#2563EB" },
@@ -13,7 +15,22 @@ export default function OptometryPatients({ Patients, onBack }) {
   const [assessmentView, setAssessmentView] = useState(null); // null | 'initial' | 'followup' | 'progress' | 'group'
   const [submittedAssessments, setSubmittedAssessments] = useState({}); // { [patientId]: values } – initial only
   const [submittedFollowups, setSubmittedFollowups] = useState({}); // { [patientId]: values } – follow-up only
-  const patients = Patients || [];
+  const [patients, setPatients] = useState(Patients)
+
+  useEffect(() => {
+    if (patients.length > 0) return;
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT
+        )
+        setPatients(res.data)
+        } catch(e){
+          setPatients([])
+        }
+      }
+      fetchPatients();
+  }, [])
 
   /* ---------------- RENDER INITIAL ASSESSMENT (full patient page) ---------------- */
   if (selectedPatient && assessmentView === "initial") {
