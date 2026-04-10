@@ -16,6 +16,8 @@ import { API_URL } from "../../../platform/config/api.config";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
+const SUB_ASSESSMENT_SCHEMA = {}
+const OBJ_ASSESSMENT_SCHEMA = {}
 
 // Adapter components that bridge values/onChange to patient/onSubmit/onBack
 function BinocularVisionAdapter({ values, onChange, layout }) {
@@ -31,7 +33,7 @@ function BinocularVisionAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <BinocularVisionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <BinocularVisionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={OBJ_ASSESSMENT_SCHEMA.BINOCULAR_VISION} />;
 }
 
 function LowVisionAssessmentAdapter({values, onChange, layout}) {
@@ -52,9 +54,9 @@ function LowVisionAssessmentAdapter({values, onChange, layout}) {
             onSubmit={handleSubmit}
             onBack={handleBack}
             layout={layout}
+            schema={OBJ_ASSESSMENT_SCHEMA.LOW_VISION_ASSESSMENT}
         />
 }
-
 
 function RefractionAdapter({ values, onChange, layout }) {
   const patient = useContext(PatientContext);
@@ -69,7 +71,7 @@ function RefractionAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <RefractionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <RefractionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={OBJ_ASSESSMENT_SCHEMA.REFRACTION} />;
 }
 
 function VisionAdapter({ values, onChange, layout }) {
@@ -85,7 +87,7 @@ function VisionAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <VisionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <VisionAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={OBJ_ASSESSMENT_SCHEMA.VISION_DRIVING}/>;
 }
 
 function OcularHealthAdapter({ values, onChange, layout }) {
@@ -101,7 +103,7 @@ function OcularHealthAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <OcularHealthAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <OcularHealthAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={OBJ_ASSESSMENT_SCHEMA.OCULAR_HEALTH}/>;
 }
 
 function SpecialDiagnosticAdapter({ values, onChange, layout }) {
@@ -117,7 +119,7 @@ function SpecialDiagnosticAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <SpecialDiagnosticAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <SpecialDiagnosticAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={OBJ_ASSESSMENT_SCHEMA.SPECIAL_DIAGNOSTIC} />;
 }
 
 function LVQoLAdapter({ values, onChange, layout }) {
@@ -133,7 +135,7 @@ function LVQoLAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <LVQoLForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <LVQoLForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={SUB_ASSESSMENT_SCHEMA.LVQOL}/>;
 }
 
 function BrainVisionAdapter({ values, onChange, layout }) {
@@ -149,7 +151,7 @@ function BrainVisionAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <BrainVisionInjury patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <BrainVisionInjury patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={SUB_ASSESSMENT_SCHEMA.BRAIN_VISION} />;
 }
 
 function VisualFunctionAdapter({ values, onChange, layout }) {
@@ -165,7 +167,7 @@ function VisualFunctionAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <VisualFunctionForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+  return <VisualFunctionForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={SUB_ASSESSMENT_SCHEMA.VISUAL_FUNCTION} />;
 }
 
 function BVDQAdapter({ values, onChange, layout }) {
@@ -181,7 +183,8 @@ function BVDQAdapter({ values, onChange, layout }) {
     const activeKey = "optometry_assessments_active";
     onChange(activeKey, null);
   };
-  return <BVDAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} />;
+ 
+  return <BVDAssessment patient={patient} onSubmit={handleSubmit} onBack={handleBack} layout={layout} schema={SUB_ASSESSMENT_SCHEMA.BVDQ} />;
 }
 
 // Assessment Registry
@@ -205,6 +208,8 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
   const [submitted, setSubmitted] = useState(readOnly);
   const [activeTab, setActiveTab] = useState("subjective");
   const [forms, setForms] = useState([]);
+  const [subforms, setSubForms] = useState([]);
+  const [objforms, setObjForms] = useState([]);
 
   const isFollowup = mode === "followup";
 
@@ -311,7 +316,7 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
 
   useEffect(() => {
     const getSOAPForm = async () => {
-      try {
+    try {
         const res = await api.get(API_URL.FORM + 'optometry/')
         setForms(res.data)
       } catch (err) {
@@ -337,6 +342,62 @@ export default function OptometryAssessment({ patient, onSubmit, onBack, savedVa
       } else if (form.assessment_type === "Plan") {
         schemaMap.plan = form.body
         schemaMap.plan.actions = ACTIONS_WITH_NEXT
+      }
+  })}
+
+  // Fetch subjective forms
+  useEffect(() => {
+    const getSOAPForm = async () => {
+    try {
+        const res = await api.get(API_URL.FORM + 'optometry/subjective')
+        setSubForms(res.data)
+      } catch (err) {
+        setSubForms([])
+      }
+    }
+    getSOAPForm()
+  }, [])
+
+  if (subforms.length > 0) {
+    subforms.forEach((form) => {
+      if (form.name === "Brain Injury Vision Symptoms Survey (BIVSS)") {
+        SUB_ASSESSMENT_SCHEMA.BRAIN_VISION = form.body   
+      } else if (form.name === "Visual Function Questionnaire") {
+        SUB_ASSESSMENT_SCHEMA.VISUAL_FUNCTION = form.body  
+      } else if (form.name === "Binocular Vision Dysfunction Questionnaire (BVDQ)") {
+        SUB_ASSESSMENT_SCHEMA.BVDQ = form.body  
+      } else if (form.name === "Low Vision Quality of Life Questionnaire (LVQoL)") {
+        SUB_ASSESSMENT_SCHEMA.LVQOL = form.body  
+      }
+  })}
+
+  // Fetch objective forms
+  useEffect(() => {
+    const getSOAPForm = async () => {
+    try {
+        const res = await api.get(API_URL.FORM + 'optometry/objective')
+        setObjForms(res.data)
+      } catch (err) {
+        setObjForms([])
+      }
+    }
+    getSOAPForm()
+  }, [])
+
+  if (objforms.length > 0) {
+    objforms.forEach((form) => {
+      if (form.name === "Binocular Vision") {
+        OBJ_ASSESSMENT_SCHEMA.BINOCULAR_VISION = form.body   
+      } else if (form.name === "Refraction Assessment") {
+        OBJ_ASSESSMENT_SCHEMA.REFRACTION = form.body  
+      } else if (form.name === "Special Diagnostic") {
+        OBJ_ASSESSMENT_SCHEMA.SPECIAL_DIAGNOSTIC = form.body  
+      } else if (form.name === "Vision For Driving") {
+        OBJ_ASSESSMENT_SCHEMA.VISION_DRIVING = form.body  
+      } else if (form.name === "Ocular Health / Structure") {
+        OBJ_ASSESSMENT_SCHEMA.OCULAR_HEALTH = form.body
+      } else if (form.name === "Low Vision Assessment") {
+        OBJ_ASSESSMENT_SCHEMA.LOW_VISION_ASSESSMENT = form.body
       }
   })}
 

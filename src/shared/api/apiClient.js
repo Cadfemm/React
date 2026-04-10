@@ -24,7 +24,7 @@ export const clearAccessToken = () => {
   expireAt = null;
   accessToken = null;
   if (refreshInterval) {
-    clearInterval(refreshInterval);
+    clearTimeout(refreshInterval);
   }
 }
 
@@ -42,6 +42,7 @@ const refreshAccessToken = () => {
      })
   }catch(err){
     isRefreshing = false
+    clearAccessToken();
     return Promise.reject(err);
   }
 }
