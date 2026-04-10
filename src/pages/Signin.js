@@ -26,7 +26,7 @@ const Login = () => {
 const handleLogin = async() => {
   try {
     const response = await api.post(API_URL.LOGIN, { username, password }, { withCredentials: true });
-    setAccessToken(response.data.access.token);
+    setAccessToken(response.data);
   } catch (error) {
     alert(error.response?.data?.message?.[0]);
     return;
