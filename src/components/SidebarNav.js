@@ -23,7 +23,6 @@ React.useEffect(() => {
 }, [username, userType, setTab]);
 const [showDeptMenu, setShowDeptMenu] = React.useState(false);
 
-<<<<<<< Updated upstream
 const departments = username === "optometry"
   ? ["Customer Service", "Optometry"]
   : [
@@ -31,8 +30,8 @@ const departments = username === "optometry"
     "Nursing",
     "Medical Assistant",
     "Doctor",
-    "Physio Therapy",
-    "Vocational + Work Rehab",
+  "Physiotherapy",
+  "Work & Vocational Rehab",
     "Occupational Therapy",
     "Optometry",
     "Prosthetics & Orthotics",
@@ -41,23 +40,7 @@ const departments = username === "optometry"
     "Speech & Language Therapy",
     "Psychology"
   ];
-=======
-const departments = [
-  "Customer Service",
-  "Nursing",
-  "Medical Assistant",
-  "Doctor",
-  "Physiotherapy",
-  "Work & Vocational Rehab",
-  "Occupational Therapy",
-  "Optometry",
-  "Prosthetics & Orthotics",
-  "Audiology",
-  "Dietetics",
-  "Speech & Language Therapy",
-  "Psychology"
-];
->>>>>>> Stashed changes
+
 
 
   return (
