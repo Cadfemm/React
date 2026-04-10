@@ -140,18 +140,6 @@ const SUBJECTIVE_SCHEMA = {
 
         {
           type: "textarea",
-          name: "case_medical_history",
-          label: "Case & Medical History"
-        },
-
-        {
-          type: "textarea",
-          name: "family_social_history",
-          label: "Family & Social History"
-        },
-
-        {
-          type: "textarea",
           name: "work_history",
           label: "Work History"
         },
@@ -803,7 +791,128 @@ const PLAN_SCHEMA = {
 
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
 
+  const [patientHistory, setPatientHistory] = useState({
+  past_medical_history: patient?.medical_history || "",
+  past_family_history: patient?.family_medical_history || "",
+  alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+});
+function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "-";
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {patient.name}</div>
+        <div><b>IC:</b> {patient.id}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+        <div><b>ICD:</b> {patient.icd}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+
+        <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+        <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+        <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+
+        <div><b>Education Level:</b> {patient.education_background || "-"}</div>
+        <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+        <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+
+        <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+        <div><b>Marital Status:</b> {patient.marital_status || "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+          <h3>Patient History</h3>
+
+          <div>
+            <b>Past Medical History</b>
+            <textarea
+              style={textarea}
+              value={patientHistory.past_medical_history}
+              onChange={(e) =>
+                setPatientHistory(prev => ({
+                  ...prev,
+                  past_medical_history: e.target.value
+                }))
+              }
+            />
+          </div>
+
+          <div>
+            <b>Family History</b>
+            <textarea
+              style={textarea}
+              value={patientHistory.past_family_history}
+              onChange={(e) =>
+                setPatientHistory(prev => ({
+                  ...prev,
+                  past_family_history: e.target.value
+                }))
+              }
+            />
+          </div>
+
+          <div>
+            <b>Allergies</b>
+            <textarea
+              style={textarea}
+              value={patientHistory.alerts_and_allergies}
+              onChange={(e) =>
+                setPatientHistory(prev => ({
+                  ...prev,
+                  alerts_and_allergies: e.target.value
+                }))
+              }
+            />
+          </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+const textarea = {
+  width: "100%",
+  minHeight: 90,
+  marginTop: 6,
+  marginBottom: 12,
+  padding: "10px 12px",
+  borderRadius: 6,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  resize: "vertical"
+};
+
+const alertBtn = {
+  marginTop: 10,
+  padding: "10px 20px",
+  borderRadius: 6,
+  border: "1.5px solid #007bff",
+  background: "#007bff",
+  color: "#fff",
+  fontWeight: 600,
+  cursor: "pointer"
+};
   return (
     <div style={mainContent}>
 
@@ -813,7 +922,7 @@ const PLAN_SCHEMA = {
         values={{}}
         onChange={() => { }}
       >
-        <PatientCard patient={patient} />
+        <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
       </CommonFormBuilder>
 
       {/* ===== NEW ENVIRONMENT CARD ===== */}
