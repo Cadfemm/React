@@ -30,8 +30,8 @@ const departments = username === "optometry"
     "Nursing",
     "Medical Assistant",
     "Doctor",
-    "Physio Therapy",
-    "Vocational + Work Rehab",
+  "Physiotherapy",
+  "Work & Vocational Rehab",
     "Occupational Therapy",
     "Optometry",
     "Prosthetics & Orthotics",
@@ -40,6 +40,7 @@ const departments = username === "optometry"
     "Speech & Language Therapy",
     "Psychology"
   ];
+
 
 
   return (
