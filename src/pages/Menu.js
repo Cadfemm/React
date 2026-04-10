@@ -85,13 +85,6 @@ export default function App() {
   const [rapPercent, setRapPercent] = useState(0); // show "60%" in left rail
   const handleUserSelection = (type) => {
     setUserType(type);
-    if (type === "NEW_USER") {
-      // Show the Patient Details tab for New User
-      setTab("PERSONAL");
-    } else {
-      // Show the Dashboard tab for Existing User
-      setTab("DASHBOARD");
-    }
   };
   useEffect(() => {
     if (mode === "new") {

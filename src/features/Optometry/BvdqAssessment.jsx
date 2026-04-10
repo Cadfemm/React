@@ -89,4 +89,3 @@ const pill = {
   alignItems: "center",
   minHeight: 52
 };
-

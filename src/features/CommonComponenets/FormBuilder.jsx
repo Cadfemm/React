@@ -4574,7 +4574,7 @@ const styles = {
   },
 
   card: {
-    width: "90%",
+    width: "100%",
     background: "#fff",
     border: "1px solid #e5e7eb",
     borderRadius: 12,

@@ -67,3 +67,4 @@ const pill = (bg, border, color) => ({
   fontWeight: 700,
   color
 });
+ 

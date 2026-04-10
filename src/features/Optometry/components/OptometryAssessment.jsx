@@ -575,3 +575,4 @@ const doctorsReportBtn = {
   cursor: "pointer",
   marginTop: 8
 };
+ 
