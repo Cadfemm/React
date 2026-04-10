@@ -79,6 +79,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      isRefreshing = false
       refreshAccessToken();
     }
     return Promise.reject(error);
