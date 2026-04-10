@@ -1,47 +1,24 @@
 import React, { useState } from "react";
-/* ===== Import department components ===== */
-import Neuro from "./Neuro";
-import SpinalCordInjury from "./SpinalcordInjury";
-import Hydro from "./Hydro";
-import Musculoskeletal from "./Musculoskeletal";
-import Conditioning from "./Conditioning";
-import Cardiorespiratory from "./Cardiorespiratory";
-import Amputee from "./Amputee";
 
-export default function ProgramTabsWithContent({ patient }) {
+/* ===== Import department components ===== */
+import WorkRehab from "./workrehab";
+import VocationalRehab from "./vocationalrehab";
+
+export default function PatientDetails({ patient, department, onBack }) {
   const tabs = [
-    { key: "conditioning", label: "Cognitive" },
-    { key: "neuro", label: "Neurology" },
-    { key: "msk", label: "Musculoskeletal" },
-    { key: "sci", label: "Spinal Cord Injury" },
-    { key: "amputee", label: "Amputee" },
-    { key: "cardio", label: "Cardiorespiratory" },
+    { key: "workrehab", label: "Work Rehab" },
+    { key: "vocationalrehab", label: "Vocational Rehab" },
   ];
 
-  const [activeTab, setActiveTab] = useState("sci");
+  const [activeTab, setActiveTab] = useState("workrehab");
 
   const renderContent = () => {
     switch (activeTab) {
-      case "neuro":
-        return <Neuro patient={patient} />;
+      case "workrehab":
+        return <WorkRehab patient={patient} />;
 
-      case "sci":
-        return <SpinalCordInjury  patient={patient}/>;
-
-      case "hydro":
-        return <Hydro />;
-
-      case "msk":
-        return <Musculoskeletal patient={patient}/>;
-
-      case "conditioning":
-        return <Conditioning patient={patient}/>;
-
-      case "cardio":
-        return <Cardiorespiratory  patient={patient}/>;
-
-      case "amputee":
-        return <Amputee patient={patient}/>;
+      case "vocationalrehab":
+        return <VocationalRehab patient={patient} />;
 
       default:
         return null;
@@ -50,6 +27,13 @@ export default function ProgramTabsWithContent({ patient }) {
 
   return (
     <div>
+      {/* ================= BACK BUTTON ================= */}
+      {/* {onBack && (
+        <div style={headerRow}>
+          <button onClick={onBack} style={backBtn}>← Back to Patients</button>
+        </div>
+      )} */}
+
       {/* ================= TABS ================= */}
       <div style={tabRow}>
         {tabs.map(tab => (
@@ -75,6 +59,20 @@ export default function ProgramTabsWithContent({ patient }) {
 }
 
 /* ================= STYLES ================= */
+
+const headerRow = {
+  padding: "12px 12px 0px 12px",
+  marginBottom: 8
+};
+
+const backBtn = {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  color: "#2563eb",
+  fontSize: 14,
+  fontWeight: 600
+};
 
 const tabRow = {
   display: "flex",
