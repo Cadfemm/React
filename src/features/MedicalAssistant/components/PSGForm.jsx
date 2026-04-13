@@ -1,14 +1,17 @@
+ 
 import React, { useState, useEffect } from "react";
-import PatientCard from "../../../shared/cards/PatientCard"
+import PatientCard from "../../../shared/cards/PatientCard";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
+// 🌐 Translation helper
 const t = (text, lang) => {
   if (!text) return "";
   if (typeof text === "string" || typeof text === "number") return text;
-  if (typeof text === "object" && text !== null && !Array.isArray(text)) return text[lang] || text.en || "";
+  if (typeof text === "object") return text[lang] || text.en || "";
   return String(text);
 };
 
+// ✅ OPTIONS
 const YES_NO_OPTIONS = [
   { value: "yes", label: { en: "Yes", ms: "Ya" } },
   { value: "no", label: { en: "No", ms: "Tidak" } }
@@ -38,12 +41,6 @@ const SCORING_TABLE_OPTIONS = [
   { value: "severe", label: { en: "30 Or greater apnoea + hypopnoea events per hour / Severe sleep apnoea", ms: "30 atau lebih kejadian apnoea + hipopnoea sejam / Apnoea tidur teruk" } }
 ];
 
-const FINAL_REPORT_OPTIONS = [
-  { value: "normal", label: { en: "Normal", ms: "Normal" } },
-  { value: "abnormal", label: { en: "Abnormal", ms: "Tidak Normal" } },
-  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
-];
-
 const EMR_REPORT_OPTIONS = [
   { value: "medical_assistant", label: { en: "Medical Assistant", ms: "Pembantu Perubatan" } },
   { value: "sleep_technologist", label: { en: "Sleep Technologist", ms: "Teknologis Tidur" } },
@@ -51,10 +48,25 @@ const EMR_REPORT_OPTIONS = [
   { value: "respiratory_therapist", label: { en: "Respiratory Therapist", ms: "Ahli Terapi Respiratori" } }
 ];
 
+const FINAL_REPORT_OPTIONS = [
+  { value: "normal", label: { en: "Normal", ms: "Normal" } },
+  { value: "abnormal", label: { en: "Abnormal", ms: "Tidak Normal" } },
+  { value: "others", label: { en: "Others", ms: "Lain-Lain" } }
+];
+
+// 📅 Helpers
 function formatToday() {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
+  return new Date().toISOString().split("T")[0];
 }
+
+function computeBmi(height, weight) {
+  const h = parseFloat(height);
+  const w = parseFloat(weight);
+  if (isNaN(h) || isNaN(w) || h <= 0) return "";
+  const hm = h / 100;
+  return (w / (hm * hm)).toFixed(1);
+}
+
 
 function getBmiConclusion(bmi) {
   const n = parseFloat(bmi);
@@ -67,14 +79,9 @@ function getBmiConclusion(bmi) {
   return "Greater than 35.0 – Severely Obese";
 }
 
-function computeBmi(height, weight) {
-  const h = parseFloat(height);
-  const w = parseFloat(weight);
-  if (isNaN(h) || isNaN(w) || h <= 0) return "";
-  const hm = h / 100;
-  return (w / (hm * hm)).toFixed(1);
-}
 
+
+// 🧠 COMPONENT
 export default function PSGForm({ patient, onBack }) {
   const [language, setLanguage] = useState("en");
   const gender = patient?.sex || patient?.gender || "-";
@@ -85,8 +92,23 @@ export default function PSGForm({ patient, onBack }) {
   const bmiRaw = patient?.bmi ?? computeBmi(height, weight);
   const bmiConclusion = getBmiConclusion(bmiRaw);
 
+
   const [values, setValues] = useState({
     date_of_appointment: formatToday(),
+    show_stop_bang: false,
+
+    // STOP BANG
+    sb_snoring: "",
+    sb_tired: "",
+    sb_observed: "",
+    sb_bp: "",
+    sb_bmi: "",
+    sb_age: "",
+    sb_neck: "",
+    sb_gender: "",
+    osa_result: "",
+
+    // Patient
     gender,
     height,
     weight,
@@ -110,31 +132,27 @@ export default function PSGForm({ patient, onBack }) {
     emr_technical_report: ""
   });
 
+  // 👤 Load patient
   useEffect(() => {
-    const h = patient?.height ?? "";
-    const w = patient?.weight ?? "";
-    const bmi = patient?.bmi ?? computeBmi(h, w);
+    if (!patient) return;
+
+    const bmi = patient?.bmi || computeBmi(patient.height, patient.weight);
+
     setValues(v => ({
       ...v,
-      gender: patient?.sex || patient?.gender || "-",
-      height: h,
-      weight: w,
-      neck_circumference: patient?.neck_circumference ?? patient?.neck_cm ?? "-",
-      bmi: bmi,
+      gender: patient.gender || "-",
+      height: patient.height || "",
+      weight: patient.weight || "",
+      neck_circumference: patient.neck_cm || "",
+      bmi,
       bmi_conclusion: getBmiConclusion(bmi),
-      diagnosis: patient?.icd ?? patient?.diagnosis ?? "-"
+      diagnosis: patient.diagnosis || "-"
     }));
   }, [patient]);
 
+  // 🔄 Change handler
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
-  };
-
-  const handleAction = (type) => {
-    if (type === "toggle-language") {
-      setLanguage(l => (l === "en" ? "ms" : "en"));
-    }
-    if (type === "back") onBack?.();
   };
 
   const PATIENT_SCHEMA = {
@@ -142,22 +160,85 @@ export default function PSGForm({ patient, onBack }) {
     sections: []
   }
 
+  // 🔘 Actions
+  const handleAction = (type) => {
+    if (type === "toggle-language") {
+      setLanguage(l => (l === "en" ? "ms" : "en"));
+    }
+
+    if (type === "back") onBack?.();
+
+    if (type === "start-stop-bang") {
+      setValues(v => ({
+        ...v,
+        show_stop_bang: !v.show_stop_bang
+      }));
+    }
+  };
+
+
+
+
+  // 🧮 OSA Calculation
+  useEffect(() => {
+    const fields = [
+      values.sb_snoring,
+      values.sb_tired,
+      values.sb_observed,
+      values.sb_bp,
+      values.sb_bmi,
+      values.sb_age,
+      values.sb_neck,
+      values.sb_gender
+    ];
+
+    const yesCount = fields.filter(v => v === "yes").length;
+
+    let result = "";
+    if (yesCount >= 3) result = "High Risk of OSA";
+    else if (yesCount > 0) result = "Low Risk of OSA";
+
+    setValues(v => ({ ...v, osa_result: result }));
+  }, [
+    values.sb_snoring,
+    values.sb_tired,
+    values.sb_observed,
+    values.sb_bp,
+    values.sb_bmi,
+    values.sb_age,
+    values.sb_neck,
+    values.sb_gender
+  ]);
+
+  // 🔁 Auto-fill High/Low risk
+  // useEffect(() => {
+  //   if (values.osa_result === "High Risk of OSA") {
+  //     setValues(v => ({ ...v, high_risk_osa: "yes", low_risk_osa: "no" }));
+  //   } else if (values.osa_result === "Low Risk of OSA") {
+  //     setValues(v => ({ ...v, high_risk_osa: "no", low_risk_osa: "yes" }));
+  //   }
+  // }, [values.osa_result]);
+
+  // 🧾 FORM SCHEMA
   const PSG_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "PSG (Polysomnogram)", ms: "PSG (Polysomnogram)" },
+    title: { en: "PSG (Polysomnogram)" },
+
     actions: [
       { type: "toggle-language" },
-      { type: "back", label: { en: "Back", ms: "Kembali" } }
+      { type: "back", label: { en: "Back" } }
     ],
+
     sections: [
       {
         fields: [
-          {
+{
             name: "date_of_appointment",
-            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
+
           {
             type: "row",
             fields: [
@@ -165,6 +246,7 @@ export default function PSGForm({ patient, onBack }) {
               { name: "bmi_conclusion", label: { en: "BMI Conclusion", ms: "Kesimpulan BMI" }, type: "input", readOnly: true }
             ]
           },
+
           { type: "subheading", label: { en: "Sleep Assessment", ms: "Penilaian Tidur" } },
           {
             name: "stop_bang",
@@ -195,6 +277,159 @@ export default function PSGForm({ patient, onBack }) {
             type: "radio",
             options: NIGHT_OPTIONS
           },
+
+
+          {
+            type: "button",
+            action: "start-stop-bang",
+            label: values.show_stop_bang
+              ? { en: "Stop Band Questionnaire" }
+              : { en: "Stop Band Questionnaire" }
+          },
+
+          
+          ...(values.show_stop_bang
+  ? [
+      {
+        type: "subheading",
+        label: { en: "STOP-BANG Questionnaire" }
+      },
+
+      // 1️⃣ SNORING
+      {
+        type: "subheading",
+        label: { en: "1. Snoring" }
+      },
+      {
+        name: "sb_snoring",
+        label: {
+          en: "Do you snore loudly (louder than talking or loud enough to be heard through closed doors)?"
+        },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 2️⃣ TIRED
+      {
+        type: "subheading",
+        label: { en: "2. Tired" }
+      },
+      {
+        name: "sb_tired",
+        label: {
+          en: "Do you often feel tired, fatigued, or sleepy during daytime?"
+        },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 3️⃣ OBSERVED
+      {
+        type: "subheading",
+        label: { en: "3. Observed" }
+      },
+      {
+        name: "sb_observed",
+        label: {
+          en: "Has anyone observed you stop breathing during your sleep?"
+        },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 4️⃣ BLOOD PRESSURE
+      {
+        type: "subheading",
+        label: { en: "4. Blood Pressure" }
+      },
+      {
+        name: "sb_bp",
+        label: {
+          en: "Do you have or are you being treated for high blood pressure?"
+        },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 5️⃣ BMI
+      {
+        type: "subheading",
+        label: { en: "5. BMI" }
+      },
+      {
+        name: "sb_bmi",
+        label: { en: "BMI more than 35 kg/m²?" },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 6️⃣ AGE
+      {
+        type: "subheading",
+        label: { en: "6. Age" }
+      },
+      {
+        name: "sb_age",
+        label: { en: "Age over 50 years old?" },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 7️⃣ NECK
+      {
+        type: "subheading",
+        label: { en: "7. Neck Circumference" }
+      },
+      {
+        name: "sb_neck",
+        label: { en: "Neck circumference greater than 40 cm?" },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 8️⃣ GENDER
+      {
+        type: "subheading",
+        label: { en: "8. Gender" }
+      },
+      {
+        name: "sb_gender",
+        label: { en: "Gender male?" },
+        type: "radio",
+        options: YES_NO_OPTIONS
+      },
+
+      // 📌 NOTE
+      {
+        type: "note",
+        label: { en: "* Neck circumference is measured by staff" }
+      },
+
+      // RESULT
+      {
+        name: "osa_result",
+        label: { en: "OSA Risk Result" },
+        type: "input",
+        readOnly: true
+      },
+
+      // 📊 RESULT INFO
+      {
+        type: "note",
+        label: {
+          en: "High risk of OSA: answering YES to 3 or more items"
+        }
+      },
+      {
+        type: "note",
+        label: {
+          en: "Low risk of OSA: answering YES to less than 3 items"
+        }
+      }
+    ]
+  : []),
+
+
           { type: "subheading", label: { en: "Technical Airflow", ms: "Aliran Udara Teknikal" } },
           {
             name: "technical_airflow",
@@ -223,6 +458,14 @@ export default function PSGForm({ patient, onBack }) {
             type: "radio",
             options: YES_NO_OPTIONS
           },
+                 
+          {
+  name: "previous_study_upload",
+  label: { en: "Upload Previous PSG", ms: "Muat naik PSG Sebelumnya" },
+  type: "attach-file",
+  accept: "image/*,.pdf",
+  showIf: { field: "previous_study", equals: "yes" }
+},
           {
             name: "previous_psg_image",
             label: "Upload Report",
@@ -235,17 +478,17 @@ export default function PSGForm({ patient, onBack }) {
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
             name: "graf",
-            title: { en: "GRAF", ms: "GRAF" },
+            title: { en: "Graph", ms: "Graph" },
             type: "attach-file",
             accept: "image/*,.pdf,video/*"
           },
-          {
-            name: "emr_technical_report",
-            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
+          // {
+          //   name: "emr_technical_report",
+          //   label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
+          //   type: "radio",
+          //   options: EMR_REPORT_OPTIONS,
+          //   labelAbove: true
+          // },
           {
             name: "final_report",
             label: { en: "Final Report", ms: "Laporan Akhir" },
@@ -259,6 +502,7 @@ export default function PSGForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "final_report", equals: "others" }
           },
+
         ]
       }
     ]
@@ -266,7 +510,7 @@ export default function PSGForm({ patient, onBack }) {
 
   return (
     <div>
-      <CommonFormBuilder
+        <CommonFormBuilder
         schema={PATIENT_SCHEMA}
         values={{}}
         onChange={() => {}}
@@ -276,6 +520,7 @@ export default function PSGForm({ patient, onBack }) {
           Doctors Reports
         </button>
       </CommonFormBuilder>
+
       <CommonFormBuilder
         schema={PSG_SCHEMA}
         values={values}
@@ -298,3 +543,4 @@ const doctorsReportBtn = {
   cursor: "pointer",
   marginTop: 8
 };
+

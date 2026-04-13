@@ -148,7 +148,7 @@ export default function EEGForm({ patient, onBack }) {
 
   const EEG_SCHEMA = {
     enableLanguageToggle: true,
-    title: { en: "EEG", ms: "EEG" },
+    title: { en: "EEG(Electroencephalogram)", ms: "EEG" },
     actions: [
       { type: "toggle-language" },
       { type: "back", label: { en: "Back", ms: "Kembali" } }
@@ -158,13 +158,13 @@ export default function EEGForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_eeg",
-            label: { en: "Type Of EEG", ms: "Jenis EEG" },
+            label: { en: "Type of EEG", ms: "Jenis EEG" },
             type: "radio",
             options: TYPE_EEG_OPTIONS,
             labelAbove: true
@@ -250,16 +250,26 @@ export default function EEGForm({ patient, onBack }) {
             type: "radio",
             options: HYPERVENTILATION_OPTIONS
           },
-          {
-            name: "previous_eeg",
-            label: { en: "Previous EEG", ms: "EEG Sebelumnya" },
+
+  {
+            name: "previous_study",
+            label: { en: " Previous Study", ms: "Muat naik EEG Sebelumnya" },
             type: "radio",
             options: YES_NO_OPTIONS
           },
+          {
+  name: "previous_study_upload",
+  label: { en: "Upload Previous EEG", ms: "Muat naik EEG Sebelumny" },
+  type: "attach-file",
+  accept: "image/*,.pdf",
+  showIf: { field: "previous_study", equals: "yes" }
+},
+          
+          
           { type: "subheading", label: { en: "Report", ms: "Laporan" } },
           {
             name: "graf",
-            title: { en: "Graf (Running Graf Report & Video)", ms: "Graf (Laporan Graf Berjalan & Video)" },
+            title: { en: "Graph (Running Graph Report & Video)", ms: "Graph (Laporan Graph Berjalan & Video)" },
             type: "attach-file",
             accept: "image/*,.pdf,video/*"
           },

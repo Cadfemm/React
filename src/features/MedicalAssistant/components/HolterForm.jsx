@@ -112,13 +112,13 @@ export default function HolterForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_holter",
-            label: { en: "Type Of Holter", ms: "Jenis Holter" },
+            label: { en: "Type of Holter", ms: "Jenis Holter" },
             type: "radio",
             options: TYPE_HOLTER_OPTIONS,
             labelAbove: true
@@ -135,28 +135,28 @@ export default function HolterForm({ patient, onBack }) {
             type: "radio",
             options: ECG_CHANNEL_OPTIONS
           },
-          {
-            name: "emr_technical_report",
-            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
-          { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
+          // {
+          //   name: "emr_technical_report",
+          //   label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
+          //   type: "radio",
+          //   options: EMR_REPORT_OPTIONS,
+          //   labelAbove: true
+          // },
+          { type: "subheading", label: { en: "Graph", ms: "Graph" } },
           {
             type: "row",
             fields: [
               {
                 name: "graf_1",
                 label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "GRAF 1", ms: "GRAF 1" },
+                title: { en: "Graph 1", ms: "Graph 1" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "graf_2",
                 label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "GRAF 2", ms: "GRAF 2" },
+                title: { en: "Graph 2", ms: "Graph 2" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               }
