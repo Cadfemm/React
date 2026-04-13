@@ -1,23 +1,19 @@
-import React, { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-export default function VisionAssessment({schema, onBack, layout = "root" }) {
-  const [values, setValues] = useState({});
+const VisionAssessment = memo(function VisionAssessment({ schema, onBack, layout = "root" }) {
+  const [values,    setValues]    = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const onChange = (name, value) => {
+
+  const onChange = useCallback((name, value) => {
     setValues(v => ({ ...v, [name]: value }));
-  };
+  }, []);
 
-  const onAction = (type) => {
-    if (type === "submit") {
-      setSubmitted(true);
-      console.log("PAED IA Speech & Language", values);
-    }
+  const onAction = useCallback((type) => {
+    if (type === "submit") setSubmitted(true);
+    if (type === "back")   onBack?.();
+  }, [onBack]);
 
-    if (type === "back") {
-      onBack?.();
-    }
-  };
   return (
     <CommonFormBuilder
       schema={schema}
@@ -28,5 +24,6 @@ export default function VisionAssessment({schema, onBack, layout = "root" }) {
       layout={layout}
     />
   );
-}
- 
+});
+
+export default VisionAssessment;

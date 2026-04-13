@@ -764,7 +764,22 @@ export function MainContent({
       return <MedicalAssistantPatientspage patients={patients} department="Medical Assistant" />;
 
     default:
-      return <div>Select a department</div>;
+      return (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+          gap: 12,
+          color: "#6c757d",
+          fontFamily: "Inter, Roboto, sans-serif",
+        }}>
+          <div style={{ fontSize: 48 }}>🏥</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "#212529" }}>Welcome to RMS</div>
+          <div style={{ fontSize: 14 }}>Select a department from the sidebar to get started</div>
+        </div>
+      );
   }
 }
 

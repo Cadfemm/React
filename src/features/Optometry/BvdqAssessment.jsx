@@ -1,91 +1,72 @@
-import React from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
+import ScorePill from "../../shared/ui/ScorePill";
 
+// Pure calculations — outside component
+function sumScale(values, prefix) {
+  return Object.entries(values || {}).reduce((acc, [key, val]) => {
+    if (!key.startsWith(`${prefix}_`) || !/\d+$/.test(key)) return acc;
+    const n = Number(val);
+    return acc + (Number.isFinite(n) ? n : 0);
+  }, 0);
+}
 
-export default function BVDAssessment({ schema, layout = "root"}) {
-    /* ---------------- CALCULATIONS ---------------- */
-  function sumScale(values, prefix) {
-    return Object.entries(values || {}).reduce((acc, [key, val]) => {
-      // Only count radio answers like "ssi_0", not derived fields like "ssi_total"
-      const isAnswerKey = key.startsWith(`${prefix}_`) && /\d+$/.test(key);
-      if (!isAnswerKey) return acc;
-      const numeric = Number(val);
-      return acc + (Number.isFinite(numeric) ? numeric : 0);
-    }, 0);
-  }
+function calculateBVD(values) {
+  const total = sumScale(values, "bvdq");
+  return { total, result: total >= 15 ? "Suggestive of BVD" : "Within normal range" };
+}
 
-  function calculateBVD(values) {
-    const total = sumScale(values, "bvdq");
-    const result = total >= 15 ? "Suggestive of BVD" : "Within normal range";
-    return { total, result };
-  }
+function calculateSSI(values) {
+  const total = sumScale(values, "ssi");
+  return { total, result: total >= 15 ? "Suggestive of BVD" : "Within normal range" };
+}
 
-  function calculateSSI(values) {
-    const total = sumScale(values, "ssi");
-    const result = total >= 15 ? "Suggestive of BVD" : "Within normal range";
-    return { total, result };
-  }
-    
-  const [values, setValues] = React.useState({});
+const BVDAssessment = memo(function BVDAssessment({ schema, onBack, layout = "root" }) {
+  const [values, setValues] = useState({});
 
-  const handleChange = (name, payload) => {
-    const next = { ...values };
+  const handleChange = useCallback((name, payload) => {
+    setValues(prev => {
+      const next = { ...prev };
+      if (payload && typeof payload === "object" && "row" in payload) {
+        const arr = Array.isArray(prev[name]) ? [...prev[name]] : [];
+        arr[payload.row] = payload.value;
+        next[name] = arr;
+      } else {
+        next[name] = payload;
+      }
+      const bvd = calculateBVD(next);
+      const ssi = calculateSSI(next);
+      next.bvdq_total  = bvd.total;
+      next.bvdq_result = bvd.result;
+      next.ssi_total   = ssi.total;
+      next.ssi_result  = ssi.result;
+      return next;
+    });
+  }, []);
 
-    // scale-table sends: { row, value }
-    if (payload && typeof payload === "object" && "row" in payload) {
-      const prev = Array.isArray(values[name]) ? values[name] : [];
-      const updated = [...prev];
-      updated[payload.row] = payload.value;
-      next[name] = updated;
-    } else {
-      // normal fields
-      next[name] = payload;
-    }
+  const summary = useMemo(() => ({
+    bvdTotal:  values.bvdq_total  || 0,
+    bvdResult: values.bvdq_result || "-",
+    ssiTotal:  values.ssi_total   || 0,
+    ssiResult: values.ssi_result  || "-",
+  }), [values.bvdq_total, values.bvdq_result, values.ssi_total, values.ssi_result]);
 
-    const bvd = calculateBVD(next);
-    const ssi = calculateSSI(next);
-
-    next.bvdq_total = bvd.total;
-    next.bvdq_result = bvd.result;
-    next.ssi_total = ssi.total;
-    next.ssi_result = ssi.result;
-
-    setValues(next);
-  };
   return (
     <>
       <CommonFormBuilder
         schema={schema}
         values={values}
         onChange={handleChange}
-          layout={layout}
+        layout={layout}
       />
-
-      <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(260px, 1fr))",
-    gap: 16,
-    margin: "24px 0"
-  }}
->
-  <div style={pill}>BVDQ Total: {values.bvdq_total || 0}</div>
-  <div style={pill}>BVDQ Result: {values.bvdq_result || "-"}</div>
-  <div style={pill}>SSI Total: {values.ssi_total || 0}</div>
-  <div style={pill}>SSI Result: {values.ssi_result || "-"}</div>
-</div>
-
+      <div className="opto-score-row">
+        <ScorePill label="BVDQ Total"  value={summary.bvdTotal}  color="blue"   />
+        <ScorePill label="BVDQ Result" value={summary.bvdResult} color={summary.bvdTotal >= 15 ? "red" : "green"} />
+        <ScorePill label="SSI Total"   value={summary.ssiTotal}  color="purple" />
+        <ScorePill label="SSI Result"  value={summary.ssiResult} color={summary.ssiTotal >= 15 ? "red" : "green"} />
+      </div>
     </>
   );
-}
+});
 
-const pill = {
-  padding: "14px 18px",
-  borderRadius: 12,
-  border: "1px solid #CBD5E1",
-  fontWeight: 700,
-  background: "#F8FAFC",
-  display: "flex",
-  alignItems: "center",
-  minHeight: 52
-};
+export default BVDAssessment;

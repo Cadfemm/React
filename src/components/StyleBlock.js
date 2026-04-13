@@ -7,31 +7,29 @@ function StyleBlock() {
       * { box-sizing:border-box; }
       body { margin:0; background:var(--bg); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
       .page { display:grid; grid-template-columns:300px 1fr; min-height:100vh;background-color:#F1F4F4 !important; }
-      .rail { background:#fff; box-shadow: 2px 0 8px rgb(0 0 0 / 3%);color:#cbd5e1;gap:12px; 
-               position:sticky; top:0; padding-top:45px; height:100vh; display:flex; flex-direction:column;  }
-      .brand { color:#e2e8f0; font-weight:900; letter-spacing:.2px; padding:10px 12px; border-radius:12px;
-               background:rgba(255,255,255,.04); box-shadow:inset 0 0 0 1px rgba(255,255,255,.05); }
-      .tabs { display:flex; flex-direction:column;  }
+      .rail { background:#fff; border-right:1px solid #dee2e6; color:#212529; gap:0;
+               position:sticky; top:0; padding-top:45px; height:100vh; display:flex; flex-direction:column; overflow:visible; }
+      .tabs { display:flex; flex-direction:column; padding:4px 0; }
       .tab {
-  appearance:none;
-  padding:16px 10px;
-  font-size:14px;
-  width:100%;
-  text-align:left;
-  background:#fff;
-  color:#000332 !important;
-  border:0;
-  border-radius:12px;
-  cursor:pointer;
-  transition:background .18s, color .18s, box-shadow .18s, transform .02s;
-  display:flex; align-items:center; gap:8px; /* NEW */
-}
-
-      .tab:hover { background:rgb(190 205 207 / 22%); color:#fff; }
-      .tab:active { transform:translateY(1px); }
-      .tab.active { color:#fff; background:rgb(190 205 207 / 22%);
-                    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 10px 24px rgba(2,132,199,.18); }
-      .tab:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(56,189,248,.45); }
+        appearance:none;
+        padding:10px 16px;
+        font-size:14px;
+        width:100%;
+        text-align:left;
+        background:transparent;
+        color:#212529 !important;
+        border:0;
+        border-radius:8px;
+        cursor:pointer;
+        transition:background .15s, color .15s;
+        display:flex; align-items:center; gap:10px;
+        margin:1px 0;
+      }
+      .tab:hover { background:#e6f0ff; color:#0058ff !important; }
+      .tab:active { background:#dbeafe; }
+      .tab.active { color:#fff !important; background:#0058ff;
+                    border-radius:8px; }
+      .tab:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(0,88,255,.25); }
  
       // .main { padding:24px; }
       .card { background:transparent; border:none; }

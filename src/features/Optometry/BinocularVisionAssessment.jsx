@@ -1,62 +1,29 @@
-import React, { useState } from "react";
-
+import { useState, useCallback, memo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
-
-
-export default function BinocularVisionAssessment({ schema, onBack, layout = "root" }) {
-
-  const [values, setValues] = useState({});
-
+const BinocularVisionAssessment = memo(function BinocularVisionAssessment({ schema, onBack, layout = "root" }) {
+  const [values,    setValues]    = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const onChange = (name, value) => {
-
+  const onChange = useCallback((name, value) => {
     setValues(v => ({ ...v, [name]: value }));
+  }, []);
 
-  };
-
-
-
-  const onAction = (type) => {
-
-    if (type === "submit") {
-
-      setSubmitted(true);
-
-      console.log("PAED IA Speech & Language", values);
-
-    }
-
-
-
-    if (type === "back") {
-
-      onBack?.();
-
-    }
-
-  };
+  const onAction = useCallback((type) => {
+    if (type === "submit") setSubmitted(true);
+    if (type === "back")   onBack?.();
+  }, [onBack]);
 
   return (
-
     <CommonFormBuilder
-
       schema={schema}
-
       values={values}
-
       onChange={onChange}
-
       submitted={submitted}
-
       onAction={onAction}
-
       layout={layout}
-
     />
-
   );
+});
 
-}
-
+export default BinocularVisionAssessment;

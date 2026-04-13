@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react";
-import { createPortal } from "react-dom";
+import ReactDOM from "react-dom";
 
 if (typeof document !== "undefined" && !document.getElementById("__cm_kf__")) {
   const s = document.createElement("style");
@@ -96,7 +96,7 @@ const ConfirmModal = memo(function ConfirmModal({
     </div>
   );
 
-  return createPortal(modal, document.body);
+  return ReactDOM.createPortal(modal, document.body);
 });
 
 export default ConfirmModal;
