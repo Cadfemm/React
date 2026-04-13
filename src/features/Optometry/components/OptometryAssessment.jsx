@@ -574,7 +574,7 @@ const PI = {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "14px 20px",
-    background: "linear-gradient(90deg, #bae6fd 0%, #e0f2fe 100%)",
+    background: "#dbeafe",
     borderBottom: "1px solid #bae6fd",
   },
   headerLeft: {
