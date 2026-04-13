@@ -163,7 +163,9 @@ const calculateAge = (dob) => {
 
 
       <label>Gender</label>
-      <select value={form.sex} onChange={e => setField("sex", e.target.value)} style={{ width:"100%" }}>
+      
+<select value={form.sex} onChange={e => setField("sex", e.target.value)} style={{ width:"100%" }}>
+      {/* <select value={form.sex} onChange={e => setField("sex", e.target.value)} style={{ width:"100%" }}> */}
         <option value="">Select</option>
         <option>Male</option>
         <option>Female</option>
@@ -399,7 +401,7 @@ const calculateAge = (dob) => {
       {/* ANTHROPOMETRIC SECTION */}
       <h3 style={{ marginTop: 20 }}>Anthropometric Measurement</h3>
 
-      <label>Weight (kg)</label>
+      {/* <label>Weight (kg)</label>
       <input
         type="number"
         value={form.weight}
@@ -411,7 +413,28 @@ const calculateAge = (dob) => {
           }
         }}
         style={{ width:"100%" }}
-      />
+      /> */}
+      <label>Weight (kg)</label>
+<input
+  type="number"
+  value={form.weight}
+  onChange={e => {
+    setField("weight", e.target.value);
+
+    // Auto-capture date
+    if (e.target.value && !form.weight_record_date) {
+      setField("weight_record_date", new Date().toISOString().split('T')[0]);
+    }
+  }}
+  style={{ width: "100%" }}
+/>
+
+{/* Optional: Show BMI instantly */}
+{bmi && (
+  <p style={{ fontWeight: "bold" }}>
+    BMI: {bmi}
+  </p>
+)}
 
       <label>Height (cm)</label>
       <input

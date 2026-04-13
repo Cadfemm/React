@@ -16,12 +16,20 @@ const TYPE_EST_OPTIONS = [
 ];
 
 const INDICATION_OPTIONS = [
-  { value: "induce_aneurysm", label: { en: "Induce Aneurysm", ms: "Induce Aneurisma" } },
-  { value: "chronotropic_factor", label: { en: "Chronotropic Factor", ms: "Faktor Kronotropik" } },
-  { value: "ischemic_changes", label: { en: "Ischemic Changes", ms: "Perubahan Iskemik" } },
-  { value: "cad_screening", label: { en: "CAD Screening", ms: "Saringan CAD" } },
-  { value: "treatment_progressing", label: { en: "Treatment Progressing", ms: "Kemajuan Rawatan" } }
+  { value: "pre_phase_ii", label: { en: "Pre Cardiac Rehabilitation Phase II", ms: "Fasa II Rehabilitasi Jantung Awal" } },
+  { value: "post_phase_ii", label: { en: "Post Cardiac Rehabilitation Phase II", ms: "Fasa II Rehabilitasi Jantung Selepas" } },
+  { value: "post_phase_iii", label: { en: "Post Cardiac Rehabilitation Phase III", ms: "Fasa III Rehabilitasi Jantung Selepas" } },
+  { value: "cardiac_screening", label: { en: "Cardiac Screening", ms: "Saringan Jantung" } },
+  { value: "others", label: { en: "Others", ms: "Lain-lain" } }
 ];
+
+// const INDICATION_OPTIONS = [
+//   { value: "induce_aneurysm", label: { en: "Induce Aneurysm", ms: "Induce Aneurisma" } },
+//   { value: "chronotropic_factor", label: { en: "Chronotropic Factor", ms: "Faktor Kronotropik" } },
+//   { value: "ischemic_changes", label: { en: "Ischemic Changes", ms: "Perubahan Iskemik" } },
+//   { value: "cad_screening", label: { en: "CAD Screening", ms: "Saringan CAD" } },
+//   { value: "treatment_progressing", label: { en: "Treatment Progressing", ms: "Kemajuan Rawatan" } }
+// ];
 
 const UNDERLYING_OPTIONS = [
   { value: "major", label: { en: "Major Cardiac Issue", ms: "Masalah Jantung Utama" } },
@@ -128,13 +136,13 @@ export default function ESTForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select date", ms: "Pilih tarikh" }
           },
           {
             name: "type_est",
-            label: { en: "Type Of EST", ms: "Jenis EST" },
+            label: { en: "Type of EST", ms: "Jenis EST" },
             type: "radio",
             options: TYPE_EST_OPTIONS,
             labelAbove: true
@@ -151,13 +159,27 @@ export default function ESTForm({ patient, onBack }) {
             type: "input",
             placeholder: { en: "Free text", ms: "Teks bebas" }
           },
+          // {
+          //   name: "indication",
+          //   label: { en: "Indication", ms: "Indikasi" },
+          //   type: "radio",
+          //   options: INDICATION_OPTIONS,
+          //   labelAbove: true
+          // },
           {
-            name: "indication",
-            label: { en: "Indication", ms: "Indikasi" },
-            type: "radio",
-            options: INDICATION_OPTIONS,
-            labelAbove: true
-          },
+  name: "indication",
+  label: { en: "Indication", ms: "Indikasi" },
+  type: "radio",
+  options: INDICATION_OPTIONS,
+  labelAbove: true
+},
+{
+  name: "indication_others",
+  label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+  type: "input",
+  placeholder: { en: "Free text", ms: "Teks bebas" },
+  showIf: { field: "indication", equals: "others" }
+},
           {
             name: "protocol",
             label: { en: "Protocol", ms: "Protokol" },
@@ -171,28 +193,28 @@ export default function ESTForm({ patient, onBack }) {
             placeholder: { en: "Free text", ms: "Teks bebas" },
             showIf: { field: "protocol", equals: "others" }
           },
-          {
-            name: "emr_technical_report",
-            label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
-          { type: "subheading", label: { en: "GRAF", ms: "GRAF" } },
+          // {
+          //   name: "emr_technical_report",
+          //   label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
+          //   type: "radio",
+          //   options: EMR_REPORT_OPTIONS,
+          //   labelAbove: true
+          // },
+          { type: "subheading", label: { en: "Graph", ms: "Graph" } },
           {
             type: "row",
             fields: [
               {
                 name: "graf_1",
                 label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "GRAF 1", ms: "GRAF 1" },
+                title: { en: "Graph 1", ms: "Graph 1" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               },
               {
                 name: "graf_2",
                 label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "GRAF 2", ms: "GRAF 2" },
+                title: { en: "Graph 2", ms: "Graph 2" },
                 type: "attach-file",
                 accept: "image/*,.pdf"
               }
