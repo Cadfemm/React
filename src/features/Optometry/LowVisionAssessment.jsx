@@ -1,32 +1,29 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
-import {LOW_VISION_ASSESSMENT_SCHEMA} from "./schema/lowVisionAssessmentSchema"
 
-export default function LowVisionAssessment({ onBack, layout="root"}) {
-    const [values, setValues] = useState({})
-    const [submitted, setSubmitted] = useState(false)
+const LowVisionAssessment = memo(function LowVisionAssessment({ schema, onBack, layout = "root" }) {
+  const [values,    setValues]    = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
-    const onChange = (name, value)=> {
-        setValues(v=>({...v, [name]: value}))
-    }
+  const onChange = useCallback((name, value) => {
+    setValues(v => ({ ...v, [name]: value }));
+  }, []);
 
-    const handleAction = (type) => {
-        if (type === "submit"){
-            setSubmitted(true)
-            console.log("PAED IA Speech & Language", values)
-        } else if ( type === "back") {
-            onBack?.()
-        }
-    }
-    
-    return (
+  const onAction = useCallback((type) => {
+    if (type === "submit") setSubmitted(true);
+    if (type === "back")   onBack?.();
+  }, [onBack]);
+
+  return (
     <CommonFormBuilder
-        schema={LOW_VISION_ASSESSMENT_SCHEMA}
-        values={values}
-        onChange={onChange}
-        submitted={submitted}
-        onAction={handleAction}
-        layout={layout}
+      schema={schema}
+      values={values}
+      onChange={onChange}
+      submitted={submitted}
+      onAction={onAction}
+      layout={layout}
     />
-    );
-}
+  );
+});
+
+export default LowVisionAssessment;

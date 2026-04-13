@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
 import OptometryPatients from "../Optometry/OptometryPatients";
 import { Line } from "react-chartjs-2";
 import {
@@ -11,6 +10,8 @@ import {
   Tooltip,
   Filler
 } from "chart.js";
+import { ShimmerCard } from "../../shared/ui/Shimmer";
+import EmptyState from "../../shared/ui/EmptyState";
 
 ChartJS.register(
   LineElement,
@@ -628,7 +629,6 @@ export default function OptometryDashboard({
   onOpenPatients,
   onOpenFollowUps
 }) {
-  console.log('dashboard',patients)
   const cards = [
     {
       title: "My Appointments",
@@ -926,8 +926,8 @@ export default function OptometryDashboard({
 
   }
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, text: "" });
-  const history = useHistory();
-const [showPatients, setShowPatients] = useState(false);
+  const [showPatients, setShowPatients] = useState(false);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
 
   const donutRef = useRef(null);
 
@@ -946,7 +946,6 @@ const [showPatients, setShowPatients] = useState(false);
   };
 
   const hideTooltip = () => setTooltip({ visible: false, x: 0, y: 0, text: "" });
-  console.log('--------',patients)
   return (
     <>
      {showPatients ? (
@@ -954,7 +953,9 @@ const [showPatients, setShowPatients] = useState(false);
     ) : (
       <div style={styles.wrapper}>
         <div style={styles.row}>
-          {cards.map((card, i) => (
+          {dashboardLoading
+            ? Array.from({ length: 6 }, (_, i) => <ShimmerCard key={i} />)
+            : cards.map((card, i) => (
             <div
               key={i}
               style={{

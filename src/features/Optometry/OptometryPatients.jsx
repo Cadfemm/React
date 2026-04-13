@@ -1,344 +1,420 @@
-import React, { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
+import { ShimmerRow } from "../../shared/ui/Shimmer";
+import EmptyState from "../../shared/ui/EmptyState";
 
+/* ── Status palette ─────────────────────────────────────────────────────── */
+const STATUS = {
+  new:      { bg: "#ECFDF5", color: "#166534", border: "#A7F3D0", dot: "#22C55E" },
+  ongoing:  { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE", dot: "#3B82F6" },
+  done:     { bg: "#F0FDF4", color: "#15803D", border: "#BBF7D0", dot: "#22C55E" },
+  inactive: { bg: "#F8FAFC", color: "#64748B", border: "#E2E8F0", dot: "#94A3B8" },
+};
+
+function StatusPill({ status }) {
+  const normalized = (status || "New").trim().toLowerCase();
+  const s = STATUS[normalized] || STATUS.inactive;
+  const label = normalized === "new" ? "New" : (status || "Unknown");
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      padding: "6px 12px", borderRadius: 999,
+      fontSize: 12, fontWeight: 700, letterSpacing: "0.15px",
+      background: s.bg, color: s.color, border: `1px solid ${s.border}`,
+      boxShadow: "0 6px 12px rgba(15,23,42,0.035)",
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
+      {label}
+    </span>
+  );
+}
+
+/* ── Option cards ───────────────────────────────────────────────────────── */
 const OPTION_CARDS = [
-  { id: "initial", title: "Initial Assessment", description: "Full SOAP assessment for new patient", icon: "📋", color: "#2563EB" },
-  { id: "followup", title: "Follow-up Visit", description: "Follow-up visit documentation", icon: "🔄", color: "#059669" },
-  { id: "progress", title: "Progress Intervention", description: "Track progress and interventions", icon: "📈", color: "#7C3AED" },
-  { id: "group", title: "Group Intervention", description: "Group session documentation", icon: "👥", color: "#EA580C" }
+  { id: "initial",  title: "Initial Assessment",    desc: "Full SOAP assessment for new patient",  icon: "📋", accent: "#1D4ED8" },
+  { id: "followup", title: "Follow-up Visit",        desc: "Follow-up visit documentation",          icon: "🔄", accent: "#059669" },
+  { id: "progress", title: "Progress Intervention",  desc: "Track progress and interventions",       icon: "📈", accent: "#7C3AED" },
+  { id: "group",    title: "Group Intervention",     desc: "Group session documentation",            icon: "👥", accent: "#DC2626" },
 ];
 
-export default function OptometryPatients({ Patients, onBack }) {
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [assessmentView, setAssessmentView] = useState(null); // null | 'initial' | 'followup' | 'progress' | 'group'
-  const [submittedAssessments, setSubmittedAssessments] = useState({}); // { [patientId]: values } – initial only
-  const [submittedFollowups, setSubmittedFollowups] = useState({}); // { [patientId]: values } – follow-up only
+export default function OptometryPatients({ Patients, onBack, loading = false }) {
+  const [selectedPatient,      setSelectedPatient]      = useState(null);
+  const [assessmentView,       setAssessmentView]       = useState(null);
+  const [submittedAssessments, setSubmittedAssessments] = useState({});
+  const [submittedFollowups,   setSubmittedFollowups]   = useState({});
+  const [search,               setSearch]               = useState("");
+
   const patients = Patients || [];
 
-  /* ---------------- RENDER INITIAL ASSESSMENT (full patient page) ---------------- */
+  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
+  const handleBackToCards    = useCallback(() => setAssessmentView(null), []);
+  const handleInitialSubmit  = useCallback((v) => setSubmittedAssessments(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
+  const handleFollowupSubmit = useCallback((v) => setSubmittedFollowups(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
+
+  /* hooks must be before early returns */
+  const filtered = useMemo(() => patients.filter(p => {
+    const q = search.toLowerCase();
+    return !q || (p.name||"").toLowerCase().includes(q) || (p.email||"").toLowerCase().includes(q) || (p.mrn||"").toLowerCase().includes(q);
+  }), [patients, search]);
+
+  /* ── Assessment views ── */
   if (selectedPatient && assessmentView === "initial") {
-    const initialSaved = submittedAssessments[selectedPatient.id] ?? null;
-    const initialReadOnly = !!initialSaved;
-    return (
-      <OptometryAssessment
-        patient={selectedPatient}
-        mode="initial"
-        savedValues={initialSaved}
-        readOnly={initialReadOnly}
-        onSubmit={(values) => {
-          setSubmittedAssessments((prev) => ({
-            ...prev,
-            [selectedPatient.id]: values
-          }));
-          console.log("Optometry initial assessment submitted:", values);
-        }}
-        onBack={() => setAssessmentView(null)}
-      />
-    );
+    const saved = submittedAssessments[selectedPatient.id] ?? null;
+    return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
   }
-
-  /* ---------------- RENDER FOLLOW-UP (same layout, always fresh from initial; own saved state) ---------------- */
   if (selectedPatient && assessmentView === "followup") {
-    const followupSaved = submittedFollowups[selectedPatient.id] ?? null;
-    const followupReadOnly = !!followupSaved;
+    const saved = submittedFollowups[selectedPatient.id] ?? null;
+    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+  }
+  if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
+    const card = OPTION_CARDS.find(c => c.id === assessmentView);
     return (
-      <OptometryAssessment
-        patient={selectedPatient}
-        mode="followup"
-        savedValues={followupSaved}
-        readOnly={followupReadOnly}
-        onSubmit={(values) => {
-          setSubmittedFollowups((prev) => ({
-            ...prev,
-            [selectedPatient.id]: values
-          }));
-          console.log("Optometry follow-up submitted:", values);
-        }}
-        onBack={() => setAssessmentView(null)}
-      />
+      <div style={S.page}>
+        <PageHeader title={card.title} sub={`Patient: ${selectedPatient.name || selectedPatient.email}`} onBack={handleBackToCards} backLabel="← Back" />
+        <EmptyState icon={card.icon} title={`${card.title} — Coming Soon`} message="This module is under development." action={{ label: "← Back to Options", onClick: handleBackToCards }} />
+      </div>
     );
   }
 
-  /* ---------------- RENDER 4 OPTION CARDS when patient selected ---------------- */
+  /* ── Assessment type selection ── */
   if (selectedPatient) {
     return (
-      <div style={styles.page}>
-        <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>Patient: {selectedPatient.name}</h1>
-            <p style={styles.subtitle}>Choose an assessment or visit type</p>
-          </div>
-          <button style={styles.backBtn} onClick={() => { setSelectedPatient(null); setAssessmentView(null); }}>
-            ← Back to Patients
-          </button>
-        </div>
-
-        <div style={styles.cardsGrid}>
-          {OPTION_CARDS.map((card) => (
-            <div
-              key={card.id}
-              style={{
-                ...styles.optionCard,
-                borderLeftColor: card.color
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.12)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-              onClick={() => {
-                if (card.id === "initial") {
-                  setAssessmentView("initial");
-                } else if (card.id === "followup") {
-                  setAssessmentView("followup");
-                } else {
-                  // Placeholder for other types – can be replaced with actual views later
-                  alert(`${card.title} – Coming soon`);
-                }
-              }}
-            >
-              <div style={{ ...styles.optionCardIcon, background: `${card.color}20`, color: card.color }}>
-                {card.icon}
-              </div>
-              <h3 style={styles.optionCardTitle}>{card.title}</h3>
-              <p style={styles.optionCardDesc}>{card.description}</p>
-              <span style={{ ...styles.optionCardArrow, color: card.color }}>Open →</span>
+      <div style={S.selectionPage}>
+        <div style={S.selectionHeaderRow}>
+          <div style={S.headerTitleRow}>
+            <button style={S.headerBackBtn} onClick={handleBackToPatients}>&lt;</button>
+            <div>
+              <h1 style={S.pageTitle}>{selectedPatient.name || selectedPatient.email}</h1>
             </div>
+          </div>
+        </div>
+        <div style={S.selectionIntro}>
+        </div>
+        <div style={S.cardsGrid}>
+          {OPTION_CARDS.map(card => (
+            <AssessmentCard key={card.id} card={card} onClick={() => setAssessmentView(card.id)} />
           ))}
         </div>
       </div>
     );
   }
 
+  /* ── Patient list ── */
   return (
-    <div style={styles.page}>
-      {/* ================= HEADER ================= */}
-      <div style={styles.header}>
-        <div>
-          <h1 style={styles.title}>Patients</h1>
-          <p style={styles.subtitle}>
-            Manage and start optometry assessments
-          </p>
+    <div style={S.page}>
+      <div style={S.headerRow}>
+        <div style={S.headerTitleRow}>
+          <button style={S.headerBackBtn} onClick={onBack}>&lt;</button>
+          <div>
+            <h1 style={S.pageTitle}>Patients</h1>
+            <p style={S.pageSub}>Premium optometry patient queue</p>
+          </div>
         </div>
 
-        <button style={styles.backBtn} onClick={onBack}>
-          ← Back to Dashboard
-        </button>
+        <div style={S.headerActions}>
+          <div style={S.searchBox}>
+            <svg style={S.searchIcon} width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="#64748B" strokeWidth="1.8"/>
+              <path d="M12.5 12.5l3 3" stroke="#64748B" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+            <input
+              style={S.searchInput}
+              placeholder="Search patient name, MRN or ICD"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+              <button style={S.clearBtn} onClick={() => setSearch("")}>✕</button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* ================= TABLE ================= */}
-      <div style={styles.card}>
-        <div style={{ ...styles.row, ...styles.headerRow }}>
-          <div>Patient</div>
-          <div>ICD</div>
-          <div>Status</div>
-          <div style={{ textAlign: "right" }}>Action</div>
+      {/* ── Table ── */}
+      <div style={S.tableCard}>
+        {/* Header */}
+        <div style={S.thead}>
+          <div style={S.th}>Patient</div>
+          <div style={S.th}>MRN / ICD</div>
+          <div style={S.th}>Status</div>
+          <div style={{ ...S.th, textAlign: "right" }}>Action</div>
         </div>
 
-      {patients.length === 0 ? (
-  <div style={styles.emptyState}>
-    No patients assigned
-  </div>
-) : (
-  patients.map((p) => (
-    <div
-      key={p.id}
-      style={styles.row}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.background = "#F8FAFC")
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.background = "#FFFFFF")
-      }
-    >
-      <div style={styles.name}>{p.name}</div>
-      <div style={styles.icd}>{p.icd}</div>
+        {/* Body */}
+        {loading ? (
+          Array.from({ length: 5 }, (_, i) => <ShimmerRow key={i} />)
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon="🧑‍⚕️"
+            title={search ? "No patients match your search" : "No patients assigned"}
+            message={search ? "Try a different name or MRN." : "Patients assigned to you will appear here once registered."}
+          />
+        ) : (
+          filtered.map((p, idx) => (
+            <PatientRow
+              key={p.id}
+              patient={p}
+              idx={idx}
+              onStart={() => setSelectedPatient(p)}
+            />
+          ))
+        )}
+      </div>
 
+      {/* Footer count */}
+      {!loading && filtered.length > 0 && (
+        <div style={S.footerCount}>
+          Showing <strong>{filtered.length}</strong> of <strong>{patients.length}</strong> patient{patients.length !== 1 ? "s" : ""}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Sub-components ─────────────────────────────────────────────────────── */
+
+function PageHeader({ title, sub, onBack, backLabel }) {
+  return (
+    <div style={S.pageHeader}>
       <div>
-        <span style={styles.badge(p.status)}>{p.status ?? "New"}</span>
+        <h1 style={S.pageTitle}>{title}</h1>
+        {sub && <p style={S.pageSub}>{sub}</p>}
+      </div>
+      <button
+        style={S.backBtn}
+        onMouseEnter={e => e.currentTarget.style.background = "#F1F5F9"}
+        onMouseLeave={e => e.currentTarget.style.background = "#fff"}
+        onClick={onBack}
+      >
+        {backLabel}
+      </button>
+    </div>
+  );
+}
+
+function PatientRow({ patient: p, idx, onStart }) {
+  const [hovered, setHovered] = useState(false);
+  const initial = ((p.name || p.email || "P")[0] || "P").toUpperCase();
+  return (
+    <div
+      style={{
+        ...S.tr,
+        background: hovered ? "#F8FAFF" : idx % 2 === 0 ? "#fff" : "#FAFBFC",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Patient */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ ...S.avatar, background: AVATAR_COLORS[initial.charCodeAt(0) % AVATAR_COLORS.length] }}>
+          {initial}
+        </div>
+        <div>
+          <div style={S.tdName}>{p.name || p.email}</div>
+          {(p.age || p.gender) && (
+            <div style={S.tdSub}>{[p.age && `${p.age} yrs`, p.gender].filter(Boolean).join(" · ")}</div>
+          )}
+        </div>
       </div>
 
+      {/* MRN */}
+      <div style={S.tdMuted}>{p.mrn || p.icd || "—"}</div>
+
+      {/* Status */}
+      <div><StatusPill status={p.status} /></div>
+
+      {/* Action */}
       <div style={{ textAlign: "right" }}>
         <button
-          style={styles.startBtn}
-          onClick={() => setSelectedPatient(p)}
+          style={S.startBtn}
+          onMouseEnter={e => { e.currentTarget.style.background = "#0058FF"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#0058FF"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.color = "#0058FF"; e.currentTarget.style.borderColor = "#BFDBFE"; }}
+          onClick={onStart}
         >
-          Start →
+          Begin assessment
         </button>
-      </div>
-    </div>
-  ))
-)}
-
       </div>
     </div>
   );
 }
 
-/* ================= STYLES ================= */
+function AssessmentCard({ card, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        ...S.card,
+        boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.1)" : "0 1px 4px rgba(0,0,0,0.06)",
+        transform: hovered ? "translateY(-3px)" : "none",
+        borderTopColor: card.accent,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+    >
+      <div style={{ fontSize: 30, marginBottom: 12 }}>{card.icon}</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>{card.title}</div>
+      <div style={{ fontSize: 13, color: "#64748B", flex: 1, lineHeight: 1.55 }}>{card.desc}</div>
+      <div style={{ marginTop: 16, fontSize: 13, fontWeight: 600, color: card.accent }}>Open →</div>
+    </div>
+  );
+}
 
-const styles = {
-  page: {
-    padding: 32,
-    background: "#F8FAFC",
-    minHeight: "100vh"
-  },
-emptyState: {
-  padding: "40px 20px",
-  textAlign: "center",
-  color: "#64748B",
-  fontSize: 15,
-  fontWeight: 500
-},
+/* ── Avatar color palette ───────────────────────────────────────────────── */
+const AVATAR_COLORS = ["#DBEAFE", "#D1FAE5", "#FEF3C7", "#FCE7F3", "#EDE9FE", "#FFEDD5"];
 
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 28
-  },
+/* ── Styles ─────────────────────────────────────────────────────────────── */
+const S = {
+  page:       { padding: "28px 28px 32px", background: "#F2F6FB", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" },
 
-  title: {
-    fontSize: 28,
-    fontWeight: 800,
+  pageHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22 },
+  pageTitle:  { fontSize: 24, fontWeight: 800, color: "#0F172A", margin: "0 0 4px 0", lineHeight: 1.12 },
+  pageSub:    { fontSize: 13, color: "#475569", margin: 0, opacity: 0.92 },
+  headerBackBtn: {
+    background: "#fff",
+    border: "1px solid #D1D5DB",
     color: "#0F172A",
-    marginBottom: 4
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: "#64748B"
-  },
-
-  backBtn: {
-    background: "transparent",
-    border: "1px solid #CBD5E1",
+    borderRadius: 999,
     padding: "8px 14px",
-    borderRadius: 10,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
-    color: "#2563EB"
+    boxShadow: "0 8px 20px rgba(15,23,42,0.08)",
+    transition: "background .15s, transform .15s",
+  },
+  backBtn:    {
+    display: "inline-flex", alignItems: "center", gap: 6,
+    background: "#fff", border: "1px solid #E2E8F0",
+    color: "#475569", borderRadius: 8,
+    padding: "8px 16px", fontSize: 13, fontWeight: 500,
+    cursor: "pointer", whiteSpace: "nowrap",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+    transition: "background .15s",
   },
 
-  card: {
-    background: "#FFFFFF",
-    borderRadius: 16,
-    border: "1px solid #E5E7EB",
-    overflow: "hidden"
-  },
-
-  row: {
-    display: "grid",
-    gridTemplateColumns: "2fr 2fr 1.5fr 1fr",
-    padding: "16px 20px",
-    alignItems: "center"
-  },
-
+  /* toolbar */
   headerRow: {
-    background: "#F9FAFB",
-    fontSize: 13,
-    fontWeight: 700,
-    color: "#6B7280"
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 20,
+    marginBottom: 20,
+  },
+  headerTitleRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+  },
+  headerActions: {
+    display: "flex",
+    justifyContent: "flex-end",
+    width: "100%",
+    maxWidth: 520,
+  },
+  controls: { display: "flex", gap: 12, marginBottom: 18, alignItems: "flex-end", flexWrap: "wrap" },
+  searchBox:    {
+    width: "100%",
+    maxWidth: 520,
+    minWidth: 260,
+    position: "relative",
+    display: "flex", alignItems: "center",
+    background: "#fff", border: "1px solid #D1D5DB",
+    borderRadius: 16, boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
+  },
+  searchIcon:   { position: "absolute", left: 16, pointerEvents: "none", flexShrink: 0, color: "#94A3B8" },
+  searchInput:  {
+    width: "100%", padding: "12px 44px 12px 44px",
+    border: "none", borderRadius: 16,
+    fontSize: 13, fontWeight: 500, color: "#111827", background: "transparent",
+    outline: "none", boxSizing: "border-box",
+  },
+  clearBtn:     { position: "absolute", right: 10, background: "none", border: "none", cursor: "pointer", color: "#64748B", fontSize: 13, padding: 2 },
+
+  /* table */
+  tableCard:  {
+    background: "#fff", borderRadius: 28,
+    border: "1px solid #E5E7EB", overflow: "hidden",
+    boxShadow: "0 24px 80px rgba(15,23,42,0.08)",
+  },
+  thead:      {
+    display: "grid", gridTemplateColumns: "2.5fr 2fr 1.2fr 1fr",
+    padding: "18px 24px", background: "#F8FAFC",
+    borderBottom: "1px solid #E6E8F0",
+  },
+  th:         { fontSize: 11, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.18em" },
+  tr:         {
+    display: "grid", gridTemplateColumns: "2.5fr 1.8fr 1.2fr 1fr",
+    padding: "14px 20px", alignItems: "center",
+    borderBottom: "1px solid #F1F5F9",
+    transition: "background .15s, transform .15s",
   },
 
-  name: {
-    fontWeight: 700,
-    fontSize: 15,
-    color: "#0F172A"
+  avatar:     {
+    width: 32, height: 32, borderRadius: "50%",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: 13, fontWeight: 700, color: "#1E40AF", flexShrink: 0,
+  },
+  tdName:     { fontSize: 15, fontWeight: 700, color: "#111827" },
+  tdSub:      { fontSize: 12, color: "#6B7280", marginTop: 4, lineHeight: 1.4 },
+  tdMuted:    { fontSize: 13, color: "#6B7280", fontFamily: "monospace" },
+
+  startBtn:   {
+    background: "#fff", border: "1px solid #2563EB",
+    color: "#2563EB", borderRadius: 999,
+    padding: "8px 18px", fontSize: 13, fontWeight: 700,
+    cursor: "pointer", transition: "transform .18s, box-shadow .18s, background .18s, color .18s",
+    boxShadow: "0 10px 24px rgba(37,99,235,0.12)",
   },
 
-  icd: {
-    fontSize: 14,
-    color: "#475569"
-  },
+  footerCount: { marginTop: 12, fontSize: 12, color: "#94A3B8", textAlign: "right" },
 
-  badge: (status) => ({
-    padding: "5px 12px",
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 700,
-    background:
-      status === "New"
-        ? "#EEF2FF"
-        : status === "Ongoing"
-        ? "#ECFDF5"
-        : "#FFF7ED",
-    color:
-      status === "New"
-        ? "#4338CA"
-        : status === "Ongoing"
-        ? "#047857"
-        : "#B45309"
-  }),
-
-  startBtn: {
-    background: "#2563EB",
-    color: "#FFFFFF",
-    border: "none",
-    padding: "8px 16px",
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 700,
-    cursor: "pointer"
-  },
-
-  cardsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: 24,
-    marginTop: 8,
-    maxWidth: 640,
-    marginLeft: "auto",
-    marginRight: "auto"
-  },
-
-  optionCard: {
-    background: "#FFFFFF",
-    borderRadius: 16,
-    border: "1px solid #E5E7EB",
-    borderLeftWidth: 4,
-    padding: 24,
-    cursor: "pointer",
-    transition: "box-shadow 0.2s ease, transform 0.2s ease",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+  /* cards */
+  selectionPage: {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    minHeight: 180
+    justifyContent: "flex-start",
+    width: "100%",
+    minHeight: "calc(100vh - 80px)",
+    background: "#F2F6FB",
+    padding: "32px 28px 40px",
   },
-
-  optionCardIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+  selectionHeaderRow: {
     display: "flex",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "100%",
+    maxWidth: 1040,
+    marginBottom: 10,
+  },
+  selectionIntro: {
+    maxWidth: 760,
+    width: "100%",
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  selectionText: {
+    margin: 0,
+    fontSize: 14,
+    color: "#556987",
+    lineHeight: 1.7,
+  },
+  cardsGrid:  {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(280px, 1fr))",
+    gap: 20,
     justifyContent: "center",
-    fontSize: 22,
-    marginBottom: 14
+    width: "100%",
+    maxWidth: 720,
+    margin: "0 auto",
   },
-
-  optionCardTitle: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: "#0F172A",
-    margin: "0 0 8px 0"
+  card:       {
+    background: "#fff", border: "1px solid #E9ECEF",
+    borderRadius: 22,
+    padding: "24px 22px",
+    cursor: "pointer",
+    transition: "box-shadow .2s, transform .2s",
+    display: "flex", flexDirection: "column", minHeight: 210,
+    width: "100%",
+    maxWidth: 320,
   },
-
-  optionCardDesc: {
-    fontSize: 14,
-    color: "#64748B",
-    margin: "0 0 12px 0",
-    flex: 1,
-    lineHeight: 1.4
-  },
-
-  optionCardArrow: {
-    fontSize: 14,
-    fontWeight: 600
-  }
 };

@@ -56,6 +56,9 @@ import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
+import api from "../shared/api/apiClient"
+import { API_URL } from "../platform/config/api.config";
+
 
 /* If CRA proxy set to http://127.0.0.1:5000 keep API="". Otherwise set REACT_APP_API. */
 const API = process.env.REACT_APP_API || "";
@@ -82,13 +85,6 @@ export default function App() {
   const [rapPercent, setRapPercent] = useState(0); // show "60%" in left rail
   const handleUserSelection = (type) => {
     setUserType(type);
-    if (type === "NEW_USER") {
-      // Show the Patient Details tab for New User
-      setTab("PERSONAL");
-    } else {
-      // Show the Dashboard tab for Existing User
-      setTab("DASHBOARD");
-    }
   };
   useEffect(() => {
     if (mode === "new") {
@@ -98,6 +94,7 @@ export default function App() {
     }
     // if mode is undefined, your normal landing stays
   }, [mode]);
+
   // Patient controlled form state in App (for summary & persistence)
   const [patient, setPatient] = useState({
     patient_id: "",
@@ -114,6 +111,21 @@ export default function App() {
     occupation: "",
   });
   const [patients, setPatients] = useState([]);
+  
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT
+        )
+        setPatients(res.data);
+      } catch(e){
+        setPatients([]);
+      }
+    }
+    fetchPatients();
+  }, [])
+
   function updatePatientInMainList(updatedPatient) {
     setPatients(prev =>
       prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
@@ -323,9 +335,6 @@ useEffect(() => {
             onBook={() => setTab("BOOK_APPOINTMENT")}
             onOrder={() => setTab("ORDER_INVESTIGATIONS")}
             onSaveAll={saveEverything}
-            onLogout={() => {
-              window.location.href = "http://localhost:3000/";
-            }}
           />
 
 
@@ -755,7 +764,22 @@ export function MainContent({
       return <MedicalAssistantPatientspage patients={patients} department="Medical Assistant" />;
 
     default:
-      return <div>Select a department</div>;
+      return (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+          gap: 12,
+          color: "#6c757d",
+          fontFamily: "Inter, Roboto, sans-serif",
+        }}>
+          <div style={{ fontSize: 48 }}>🏥</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "#212529" }}>Welcome to RMS</div>
+          <div style={{ fontSize: 14 }}>Select a department from the sidebar to get started</div>
+        </div>
+      );
   }
 }
 
