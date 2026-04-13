@@ -22,10 +22,14 @@ const NAV = [
   { key: "AUDIT",     label: "Audit Trial",                 icon: <ShieldCheck size={17} />    },
 ];
 
-function SidebarNav({ tab, setTab, rapPercent }) {
+function SidebarNav({ tab, setTab, rapPercent, username }) {
   const [deptOpen, setDeptOpen] = React.useState(false);
 
-  const isDeptActive = DEPARTMENTS.includes(tab);
+  const visibleDepts = username === "rmsuser"
+    ? DEPARTMENTS.filter(d => d === "Customer Service" || d === "Optometry")
+    : DEPARTMENTS;
+
+  const isDeptActive = visibleDepts.includes(tab);
 
   return (
     <aside style={rail}>
@@ -56,7 +60,7 @@ function SidebarNav({ tab, setTab, rapPercent }) {
           {/* Inline department list */}
           {deptOpen && (
             <div style={deptList}>
-              {DEPARTMENTS.map(dept => (
+              {visibleDepts.map(dept => (
                 <button
                   key={dept}
                   style={{
