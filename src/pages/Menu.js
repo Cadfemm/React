@@ -55,6 +55,7 @@ import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotic
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage";
+import AudiologyPatients from "../features/Audiology/AudiologyPatients";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 import api from "../shared/api/apiClient"
 import { API_URL } from "../platform/config/api.config";

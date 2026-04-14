@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+import { TinnitusAdvancedForm,TinnitusAdvancedFormObj } from "../tinnitusassessment";
+import { HyperacusisAdvancedForm, HyperacusisAdvancedFormObj } from "../hyperacusisassessment";
+import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassessment";
+import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
 
 /* ===================== OPTIONS ===================== */
 
@@ -82,6 +86,78 @@ export default function AudiologyDepartmentPediatricPage({ patient, onSubmit, on
     alert("Audiology assessment submitted");
   };
 
+    const AUDIOLOGY_ASSESSMENT_REGISTRY = {
+      tinnitus_form: TinnitusAdvancedAdapter,
+      loudness_form: HyperacusisAdvancedAdapter,
+      hearing_form: AuditoryAdvancedAdapter,
+      vestibular_form: VestibularAdvancedAdapter,
+      tinnitus_form_obj: TinnitusAdvancedAdapterObj,
+      loudness_form_obj: HyperacusisAdvancedAdapterObj,
+      hearing_form_obj: AuditoryAdvancedAdapterObj,
+      vestibular_form_obj: VestibularAdvancedAdapterObj
+    };
+  function TinnitusAdvancedAdapter({ onChange }) {
+    return (
+      <TinnitusAdvancedForm
+        onBack={() => onChange("hearing_assessments_launcher", null)}
+      />
+    );
+  }
+  
+  function HyperacusisAdvancedAdapter({ onChange }) {
+    return (
+      <HyperacusisAdvancedForm
+        onBack={() => onChange("hearing_assessments_launcher", null)}
+      />
+    );
+  }
+  
+  function AuditoryAdvancedAdapter({ onChange }) {
+    return (
+      <AuditoryAdvancedForm
+        onBack={() => onChange("hearing_assessments_launcher", null)}
+      />
+    );
+  }
+  
+  function VestibularAdvancedAdapter({ onChange }) {
+    return (
+      <VestibularAdvancedForm
+        onBack={() => onChange("vestibular_assessments_launcher", null)}
+      />
+    );
+  }
+  function TinnitusAdvancedAdapterObj({ onChange }) {
+    return (
+      <TinnitusAdvancedFormObj
+        onBack={() => onChange("hearing_assessments_launcher_obj", null)}
+      />
+    );
+  }
+  
+  function HyperacusisAdvancedAdapterObj({ onChange }) {
+    return (
+      <HyperacusisAdvancedFormObj
+        onBack={() => onChange("hearing_assessments_launcher_obj", null)}
+      />
+    );
+  }
+  
+  function AuditoryAdvancedAdapterObj({ onChange }) {
+    return (
+      <AuditoryAdvancedFormObj
+        onBack={() => onChange("hearing_assessments_launcher_obj", null)}
+      />
+    );
+  }
+  
+  function VestibularAdvancedAdapterObj({ onChange }) {
+    return (
+      <VestibularAdvancedFormObj
+        onBack={() => onChange("hearing_assessments_launcher_obj", null)}
+      />
+    );
+  }
   /* ===================== SCHEMAS ===================== */
 
 const SUBJECTIVE_SCHEMA = {
@@ -547,12 +623,21 @@ const SUBJECTIVE_SCHEMA = {
           showIf:{field:"startle_to_loud_sound" ,equals:"1"}
         },
 
-
         {
           name: "amplification_use",
           label: "Does your child use any amplification devices?",
           type: "radio",
           options: YES_NO
+        },
+        {
+          name: "hearing_assessments_launcher",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Additional Tinnitus Profile", value: "tinnitus_form" },
+            { label: "Additional Hyperacusis Profile", value: "loudness_form" },
+            { label: "Additional Auditory Profile ", value: "hearing_form" }
+          ]
         }
       ]
     },
@@ -584,6 +669,14 @@ const SUBJECTIVE_SCHEMA = {
           label: "",
           type: "textarea",
                     showIf:{field:"dizziness_history",equals:"1"}
+        },
+        {
+          name: "vestibular_assessments_launcher",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Additional Vestibular Profile", value: "vestibular_form" },
+          ]
         }
       ]
     },
@@ -686,6 +779,22 @@ const AUDIO_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const OBJECTIVE_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
+             {
+      title: "",
+      fields: [
+        {
+          name: "hearing_assessments_launcher_obj",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Auditory", value: "hearing_form_obj" },
+            { label: "Tinnitus", value: "tinnitus_form_obj" },
+            { label: "Hyperacusis", value: "loudness_form_obj" },
+            { label: "Vestibular", value: "vestibular_form_obj" },
+          ]
+        }
+      ]
+    },
     /* ===================== OTOSCOPIC EXAMINATION ===================== */
     {
       title: "Otoscopic Examination",
@@ -1022,6 +1131,35 @@ const OBJECTIVE_SCHEMA = {
         type: "date"
       },
       {
+        name: "intervention_plan",
+        label: "Intervention",
+        type: "checkbox-group",
+        options: [
+          // Auditory
+          { label: "Monitoring (Auditory)", value: "auditory_monitoring" },
+          { label: "Amplification", value: "amplification" },
+          { label: "Medical referral (Auditory)", value: "auditory_medical_referral" },
+          { label: "Further electrophysiology", value: "electrophysiology" },
+          { label: "Auditory processing assessment", value: "auditory_processing" },
+
+          // Hyperacusis
+          { label: "Hyperacusis rehabilitation", value: "hyperacusis_rehab" },
+          { label: "Monitoring (Hyperacusis)", value: "hyperacusis_monitoring" },
+          { label: "Medical referral (Hyperacusis)", value: "hyperacusis_medical_referral" },
+
+          // Tinnitus
+          { label: "Tinnitus rehabilitation", value: "tinnitus_rehab" },
+          { label: "Monitoring (Tinnitus)", value: "tinnitus_monitoring" },
+          { label: "Medical referral (Tinnitus)", value: "tinnitus_medical_referral" },
+
+          // Vestibular
+          { label: "Further vestibular assessment", value: "vestibular_assessment" },
+          { label: "Vestibular rehabilitation therapy", value: "vestibular_rehab" },
+          { label: "Monitoring (Vestibular)", value: "vestibular_monitoring" },
+          { label: "Medical referral (Vestibular)", value: "vestibular_medical_referral" }
+        ]
+      },
+      {
         name: "plan_list",
         label: "Intervention Plan",
         type: "textarea"
@@ -1283,6 +1421,7 @@ const OBJECTIVE_SCHEMA = {
     onChange={onChange}
     submitted={submitted}
     onAction={handleAction}
+    assessmentRegistry={AUDIOLOGY_ASSESSMENT_REGISTRY}
   >
 
     {/* {activeTab === "subjective" && (
