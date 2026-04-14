@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import PsychologyPatients from "../components/PsychologyPatients";
+import { default as PsychologyPatients } from "../../Patients"
 
 /** Same Optometry-style flow: one list → pick patient → cards (initial / follow-up / …). */
 export default function PsychologyDepartmentPage({ patients, department }) {
@@ -11,7 +11,7 @@ export default function PsychologyDepartmentPage({ patients, department }) {
 
   return (
     <PsychologyPatients
-      Patients={list}
+      Department='psychology'
       onBack={() => history.goBack()}
     />
   );

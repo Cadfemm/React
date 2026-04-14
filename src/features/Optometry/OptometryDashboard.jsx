@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { default as OptometryPatients} from "../Patients"
 import DepartmentDashboard from "../common/DepartmentDashboard";
-import OptometryPatients from "./OptometryPatients";
 import {
   FaUserInjured, FaCalendarCheck, FaCalendarTimes, FaClock,
   FaStethoscope, FaShareSquare, FaFileInvoiceDollar, FaExclamationTriangle,
@@ -13,7 +13,7 @@ export default function OptometryDashboard({ patients = [] }) {
   const [showPatients, setShowPatients] = useState(false);
 
   if (showPatients) {
-    return <OptometryPatients Patients={patients} onBack={() => setShowPatients(false)} />;
+    return <OptometryPatients Department='optometry' onBack={() => setShowPatients(false)} />;
   }
 
   return (

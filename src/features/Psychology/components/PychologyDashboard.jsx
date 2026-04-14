@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Patients from "./PsychologyPatients.jsx";
+import { default as PsychologyPatients } from "../../Patients.jsx"
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -953,8 +953,8 @@ const [showPatients, setShowPatients] = useState(false);
   return (
     <>
      {showPatients ? (
-      <Patients
-        Patients={psychologyPatients}
+      <PsychologyPatients
+        Department='psychology'
         onBack={() => setShowPatients(false)}
       />
     ) : (
