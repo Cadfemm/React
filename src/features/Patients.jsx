@@ -5,9 +5,9 @@ import api from "../shared/api/apiClient"
 import { API_URL } from "../platform/config/api.config";
 
 // Assessment
-// import PsychologyAssessment from "./PsychologyAssessment";
-// import PsychologyFollowUpAssessment from "./PsychologyFollowupAssessment";
 import OptometryAssessment from "./Optometry/components/OptometryAssessment";
+import PsychologyAssessment from "./Psychology/components/PsychologyAssessment";
+import PsychologyFollowUpAssessment from "./Psychology/components/PsychologyFollowupAssessment";
 
 /* ── Status palette ─────────────────────────────────────────────────────── */
 const STATUS = {
@@ -100,11 +100,38 @@ export default function Patients({ Department, onBack, loading = false }) {
   /* ── Assessment views ── */
   if (selectedPatient && assessmentView === "initial") {
     const saved = submittedAssessments[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
+    if (Department === 'optometry') {
+      return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
+    } else if (Department === 'psychology') {
+      return (
+        <PsychologyAssessment
+          patient={selectedPatient}
+          mode="initial" 
+          savedValues={saved} 
+          readOnly={!!saved} 
+          onSubmit={handleInitialSubmit} 
+          onBack={handleBackToCards}
+        />
+      );
+    }
+    
   }
   if (selectedPatient && assessmentView === "followup") {
     const saved = submittedFollowups[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+    if (Department === 'optometry') {
+      return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+    } else if (Department === 'psychology') {
+      return (
+        <PsychologyFollowUpAssessment
+          patient={selectedPatient}
+          mode="initial" 
+          savedValues={saved} 
+          readOnly={!!saved} 
+          onSubmit={handleInitialSubmit} 
+          onBack={handleBackToCards}
+        />
+      );
+    }
   }
   if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
     const card = OPTION_CARDS.find(c => c.id === assessmentView);
