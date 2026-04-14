@@ -2458,7 +2458,15 @@ case "grid-table-advanced": {
         />
       );
 
-
+    case "datetime-local":
+      return (
+        <input
+          type="datetime-local"
+          style={styles.input}
+          value={value || ""}
+          onChange={(e) => onChange(field.name, e.target.value)}
+        />
+      );
 
     case "single-select":
       return (
