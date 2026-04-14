@@ -644,46 +644,6 @@ useEffect(() => {
   );
 }
 
-<ICDInfinite />;
-<DashboardTab />;
-
-/* ---------------- ICF Tab: parent ICF -> child ICF -> ranges ---------------- */
-<PablotList />;
-<ICFTab />;
-
-/* ---------------- ICHI Tab: multi-select, modalities, note ---------------- */
-<ICHITab />;
-
-/* ---------------- Assessment & Encounter (SOAP) ---------------- */
-<AssessmentEncounterTab />;
-
-<VitalsTab />;
-
-<NewAssessmentTab />;
-
-/* ---------------- Task Performance Simulation (TPS) ---------------- */
-<TaskPerformanceSimulationTab />;
-
-/* ---------------- RAP • Case & RTW ---------------- */
-<RAPTab />;
-
-/* ---------------- Documents ---------------- */
-<DocumentsTab />;
-
-/* ---------------- Audit Trail ---------------- */
-/* ---------------- Audit Trail (STATIC, always show fixed entries) ---------------- */
-
-<AuditTrailTab />;
-
-<AssessmentsPanel />;
-
-<GasGoalsTab />;
-
-<BookAppointmentTab />;
-<InvestigationsChecklist />;
-
-<RowCard />;
-
 export function Field({ label, children }) {
   return (
     <label style={sx.field}>
@@ -764,22 +724,7 @@ export function MainContent({
       return <MedicalAssistantPatientspage patients={patients} department="Medical Assistant" />;
 
     default:
-      return (
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "60vh",
-          gap: 12,
-          color: "#6c757d",
-          fontFamily: "Inter, Roboto, sans-serif",
-        }}>
-          <div style={{ fontSize: 48 }}>🏥</div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: "#212529" }}>Welcome to RMS</div>
-          <div style={{ fontSize: 14 }}>Select a department from the sidebar to get started</div>
-        </div>
-      );
+         return <PatientRegister addPatient={addPatient} />;
   }
 }
 

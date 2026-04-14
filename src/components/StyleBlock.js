@@ -6,7 +6,7 @@ function StyleBlock() {
       :root { --bg:#f6fbff; --ink:#000332; --ink2:#5a6b85; --stroke:#e6eef7; --focus:#2563eb; }
       * { box-sizing:border-box; }
       body { margin:0; background:var(--bg); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-      .page { display:grid; grid-template-columns:300px 1fr; min-height:100vh;background-color:#F1F4F4 !important; }
+      .page { display:grid; grid-template-columns:260px 1fr; min-height:100vh;background-color:#F1F4F4 !important; }
       .rail { background:#fff; border-right:1px solid #dee2e6; color:#212529; gap:0;
                position:sticky; top:0; padding-top:45px; height:100vh; display:flex; flex-direction:column; overflow:visible; }
       .tabs { display:flex; flex-direction:column; padding:4px 0; }

@@ -24,7 +24,8 @@ body{
  
 .main {
   flex: 1;
-  overflow-x: hidden; /* Prevent main from scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -156,10 +157,16 @@ button {
 }
  
  
-button:hover {
-  background: #0f172a;
- 
-  color:#fff
+/* Dashboard action buttons — override global button:hover */
+.dash-btn-outline:hover {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+.dash-btn-outline {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  transition: background 0.15s, color 0.15s;
 }
  
 /* Primary */
