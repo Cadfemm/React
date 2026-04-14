@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { createWorker } from "tesseract.js";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+import { TinnitusAdvancedForm,TinnitusAdvancedFormObj } from "../tinnitusassessment";
+import { HyperacusisAdvancedForm, HyperacusisAdvancedFormObj } from "../hyperacusisassessment";
+import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassessment";
+import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
 
 /* ===================== OPTIONS ===================== */
 
@@ -688,7 +692,11 @@ export default function AudiologyDepartmentAdultPage({ patient, onSubmit, onBack
     tinnitus_form: TinnitusAdvancedAdapter,
     loudness_form: HyperacusisAdvancedAdapter,
     hearing_form: AuditoryAdvancedAdapter,
-    vestibular_form: VestibularAdvancedAdapter
+    vestibular_form: VestibularAdvancedAdapter,
+    tinnitus_form_obj: TinnitusAdvancedAdapterObj,
+    loudness_form_obj: HyperacusisAdvancedAdapterObj,
+    hearing_form_obj: AuditoryAdvancedAdapterObj,
+    vestibular_form_obj: VestibularAdvancedAdapterObj
   };
 function TinnitusAdvancedAdapter({ onChange }) {
   return (
@@ -721,245 +729,34 @@ function VestibularAdvancedAdapter({ onChange }) {
     />
   );
 }
-
-function TinnitusAdvancedForm({ onBack }) {
-  const [values, setValues] = useState({});
-
-  const schema = {
-    title: "Additional Tinnitus Profile",
-    actions: [{ type: "back", label: "Back" }],
-    sections: [
-      {
-        title: "VAS & Tinnitus Details",
-        fields: [
-          {
-            name: "tinnitus_vas_loudness",
-            label: "Loudness (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "tinnitus_vas_annoyance",
-            label: "Annoyance (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "tinnitus_vas_awareness",
-            label: "Awareness (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "tinnitus_handicap",
-            label: "Tinnitus Handicap Inventory (THI)",
-            type: "textarea"
-          },
-          {
-            name: "tinnitus_functional",
-            label: "Tinnitus Functional Index (TFI)",
-            type: "textarea"
-          },
-          {
-            name: "tinnitus_lifestyle",
-            label: "Lifestyle & Functional Impact (tinnitus)",
-            type: "textarea"
-          }
-        ]
-      }
-    ]
-  };
-
+function TinnitusAdvancedAdapterObj({ onChange }) {
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={values}
-      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
-      onAction={(type) => type === "back" && onBack()}
+    <TinnitusAdvancedFormObj
+      onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
 }
-function HyperacusisAdvancedForm({ onBack }) {
-  const [values, setValues] = useState({});
 
-  const schema = {
-    title: "Additional Hyperacusis Profile",
-    actions: [{ type: "back", label: "Back" }],
-    sections: [
-      {
-        title: "Hyperacusis Details",
-        fields: [
-          // --- VAS ---
-          {
-            name: "hyperacusis_loudness",
-            label: "Loudness Discomfort (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "hyperacusis_annoyance",
-            label: "Annoyance (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-
-          // --- Questionnaires ---
-          {
-            name: "hq_completed",
-            label: "Hyperacusis Questionnaire",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            name: "khalfa_completed",
-            label: "Modified Khalfa Questionnaire",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-          {
-            name: "hyperacusis_impact",
-            label: "Daily Life Impact",
-            type: "textarea"
-          }
-        ]
-      }
-    ]
-  };
-
+function HyperacusisAdvancedAdapterObj({ onChange }) {
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={values}
-      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
-      onAction={(type) => type === "back" && onBack()}
+    <HyperacusisAdvancedFormObj
+      onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
 }
-function AuditoryAdvancedForm({ onBack }) {
-  const [values, setValues] = useState({});
 
-  const schema = {
-    title: "Additional Auditory Profile",
-    actions: [{ type: "back", label: "Back" }],
-    sections: [
-      {
-        title: "Auditory Details",
-        fields: [
-          {
-            name: "auditory_emotional",
-            label: "Analogue Scale : Emotional (0-10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "auditory_social",
-            label: "Analogue Scale : Social/ situational (0-10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "auditory_handicap",
-            label: "Hearing handicap inventory for adults (HHIA)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "auditory_improvement",
-            label: "Client Oriented Scale of Improvement (COSI)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-        ]
-      }
-    ]
-  };
-
+function AuditoryAdvancedAdapterObj({ onChange }) {
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={values}
-      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
-      onAction={(type) => type === "back" && onBack()}
+    <AuditoryAdvancedFormObj
+      onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
 }
-function VestibularAdvancedForm({ onBack }) {
-  const [values, setValues] = useState({});
 
-  const schema = {
-    title: "Additional Vestibular Profile",
-    actions: [{ type: "back", label: "Back" }],
-    sections: [
-        {
-        title: "Vestibular Details",
-        fields: [
-          {
-            name: "dhi_score",
-            label: "Dizziness Handicap Inventory (DHI)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "vvas_score",
-            label: "Visual Vertigo Analogue Score (VVAS)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "vhq_score",
-            label: "Vertigo Handicap Questionnaire (VHQ)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-          {
-            name: "mvvss_score",
-            label: "Malay Version Vertigo Symptom Scale (MVVSS)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1
-          },
-        ]
-      }
-    ]
-  };
-
+function VestibularAdvancedAdapterObj({ onChange }) {
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={values}
-      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
-      onAction={(type) => type === "back" && onBack()}
+    <VestibularAdvancedFormObj
+      onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
 }
@@ -1421,6 +1218,22 @@ const AUDIO_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const OBJECTIVE_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
+             {
+      title: "",
+      fields: [
+        {
+          name: "hearing_assessments_launcher_obj",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Auditory", value: "hearing_form_obj" },
+            { label: "Tinnitus", value: "tinnitus_form_obj" },
+            { label: "Hyperacusis", value: "loudness_form_obj" },
+            { label: "Vestibular", value: "vestibular_form_obj" },
+          ]
+        }
+      ]
+    },
     /* ===================== OTOSCOPIC EXAMINATION ===================== */
     {
       title: "Otoscopic Examination",
