@@ -32,7 +32,7 @@ const IMPAIRED_LOCATION = [
 
 /* ===================== COMPONENT ===================== */
 
-export default function AudiologyDepartmentAdultPage({ patient, onSubmit, onBack }) {
+export default function AudiologyDepartmentAdultPage({ patient, mode, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
@@ -701,6 +701,7 @@ export default function AudiologyDepartmentAdultPage({ patient, onSubmit, onBack
 function TinnitusAdvancedAdapter({ onChange }) {
   return (
     <TinnitusAdvancedForm
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher", null)}
     />
   );
@@ -709,6 +710,7 @@ function TinnitusAdvancedAdapter({ onChange }) {
 function HyperacusisAdvancedAdapter({ onChange }) {
   return (
     <HyperacusisAdvancedForm
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher", null)}
     />
   );
@@ -717,6 +719,7 @@ function HyperacusisAdvancedAdapter({ onChange }) {
 function AuditoryAdvancedAdapter({ onChange }) {
   return (
     <AuditoryAdvancedForm
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher", null)}
     />
   );
@@ -725,6 +728,7 @@ function AuditoryAdvancedAdapter({ onChange }) {
 function VestibularAdvancedAdapter({ onChange }) {
   return (
     <VestibularAdvancedForm
+    mode={mode}
       onBack={() => onChange("vestibular_assessments_launcher", null)}
     />
   );
@@ -732,6 +736,7 @@ function VestibularAdvancedAdapter({ onChange }) {
 function TinnitusAdvancedAdapterObj({ onChange }) {
   return (
     <TinnitusAdvancedFormObj
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
@@ -740,6 +745,7 @@ function TinnitusAdvancedAdapterObj({ onChange }) {
 function HyperacusisAdvancedAdapterObj({ onChange }) {
   return (
     <HyperacusisAdvancedFormObj
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
@@ -748,6 +754,7 @@ function HyperacusisAdvancedAdapterObj({ onChange }) {
 function AuditoryAdvancedAdapterObj({ onChange }) {
   return (
     <AuditoryAdvancedFormObj
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
@@ -756,6 +763,7 @@ function AuditoryAdvancedAdapterObj({ onChange }) {
 function VestibularAdvancedAdapterObj({ onChange }) {
   return (
     <VestibularAdvancedFormObj
+    mode={mode}
       onBack={() => onChange("hearing_assessments_launcher_obj", null)}
     />
   );
@@ -1567,35 +1575,6 @@ const OBJECTIVE_SCHEMA = {
         name: "plan_target_date_long_term",
         label: "Target Date (Long Term)",
         type: "date"
-      },
-      {
-        name: "intervention_plan",
-        label: "Intervention",
-        type: "checkbox-group",
-        options: [
-          // Auditory
-          { label: "Monitoring (Auditory)", value: "auditory_monitoring" },
-          { label: "Amplification", value: "amplification" },
-          { label: "Medical referral (Auditory)", value: "auditory_medical_referral" },
-          { label: "Further electrophysiology", value: "electrophysiology" },
-          { label: "Auditory processing assessment", value: "auditory_processing" },
-
-          // Hyperacusis
-          { label: "Hyperacusis rehabilitation", value: "hyperacusis_rehab" },
-          { label: "Monitoring (Hyperacusis)", value: "hyperacusis_monitoring" },
-          { label: "Medical referral (Hyperacusis)", value: "hyperacusis_medical_referral" },
-
-          // Tinnitus
-          { label: "Tinnitus rehabilitation", value: "tinnitus_rehab" },
-          { label: "Monitoring (Tinnitus)", value: "tinnitus_monitoring" },
-          { label: "Medical referral (Tinnitus)", value: "tinnitus_medical_referral" },
-
-          // Vestibular
-          { label: "Further vestibular assessment", value: "vestibular_assessment" },
-          { label: "Vestibular rehabilitation therapy", value: "vestibular_rehab" },
-          { label: "Monitoring (Vestibular)", value: "vestibular_monitoring" },
-          { label: "Medical referral (Vestibular)", value: "vestibular_medical_referral" }
-        ]
       },
       {
         name: "plan_list",
