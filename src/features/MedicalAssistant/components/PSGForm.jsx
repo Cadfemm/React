@@ -210,14 +210,6 @@ export default function PSGForm({ patient, onBack }) {
     values.sb_gender
   ]);
 
-  // 🔁 Auto-fill High/Low risk
-  // useEffect(() => {
-  //   if (values.osa_result === "High Risk of OSA") {
-  //     setValues(v => ({ ...v, high_risk_osa: "yes", low_risk_osa: "no" }));
-  //   } else if (values.osa_result === "Low Risk of OSA") {
-  //     setValues(v => ({ ...v, high_risk_osa: "no", low_risk_osa: "yes" }));
-  //   }
-  // }, [values.osa_result]);
 
   // 🧾 FORM SCHEMA
   const PSG_SCHEMA = {
@@ -279,13 +271,15 @@ export default function PSGForm({ patient, onBack }) {
           },
 
 
-          {
+       
+         {
             type: "button",
             action: "start-stop-bang",
-            label: values.show_stop_bang
-              ? { en: "Stop Band Questionnaire" }
-              : { en: "Stop Band Questionnaire" }
+            label: {
+            en: "Stop Band Questionnaire"
           },
+  
+},
 
           
           ...(values.show_stop_bang
@@ -482,13 +476,7 @@ export default function PSGForm({ patient, onBack }) {
             type: "attach-file",
             accept: "image/*,.pdf,video/*"
           },
-          // {
-          //   name: "emr_technical_report",
-          //   label: { en: "EMR Technical Report By", ms: "Laporan Teknikal EMR Oleh" },
-          //   type: "radio",
-          //   options: EMR_REPORT_OPTIONS,
-          //   labelAbove: true
-          // },
+       
           {
             name: "final_report",
             label: { en: "Final Report", ms: "Laporan Akhir" },
@@ -543,4 +531,7 @@ const doctorsReportBtn = {
   cursor: "pointer",
   marginTop: 8
 };
+
+
+
 

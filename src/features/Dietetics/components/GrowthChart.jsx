@@ -155,14 +155,7 @@ export default function GrowthChartAssessment({ patient, values = {}, onChange }
           </div>
         </div>
       </div>
-{/* 
-      <div style={styles.graphCard}>
-        <div style={styles.graphHeader}>WHO Child Growth Standards</div>
-        <button type="button" onClick={() => setShowReferenceImages(true)} style={styles.referenceButton}>
-          📊 Reference Images
-        </button>
-        <div style={styles.caption}>Source: World Health Organization – Child Growth Standards</div>
-      </div> */}
+
            <div style={styles.graphCard}>
         <div style={styles.graphHeader}>
           WHO Child Growth Standards
@@ -323,11 +316,16 @@ const styles = {
   container: { maxWidth: 1200, margin: "0 auto", padding: 24, fontFamily: "Inter, Arial, sans-serif", background: "#f8fafc" },
   header: { fontSize: 24, fontWeight: 700, color: "#1e293b", marginBottom: 24, textAlign: "center" },
   inputCard: { background: "#fff", borderRadius: 16, padding: 24, marginBottom: 24, border: "1px solid #e2e8f0", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" },
-  grid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 },
+  // grid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 },
+  grid: {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 20
+},
   field: { display: "flex", flexDirection: "column" },
   label: { fontSize: 14, fontWeight: 600, color: "#475569", marginBottom: 8 },
   input: { padding: "12px 16px", borderRadius: 10, border: "1px solid #d1d5db", fontSize: 15, background: "#fff", transition: "border-color 0.2s ease" },
-  graphCard: { background: "#fff", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", textAlign: "center" },
+  graphCard: { background: "#fff", borderRadius: 16, padding: 24, border: "1px solid #e2e8f0", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", textAlign: "left" },
   graphHeader: { fontSize: 18, fontWeight: 600, marginBottom: 16, color: "#1e293b" },
   referenceButton: { padding: "12px 24px", borderRadius: 12, border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer", fontWeight: 600, fontSize: 15, boxShadow: "0 4px 12px rgba(59,130,246,0.3)" },
   caption: { marginTop: 12, fontSize: 13, color: "#64748b" },
@@ -335,9 +333,9 @@ const styles = {
   modalCard: { width: "95vw", maxWidth: 1400, maxHeight: "90vh", background: "#fff", borderRadius: 16, overflow: "hidden", boxShadow: "0 25px 50px rgba(0,0,0,0.25)" },
   modalHeader: { padding: "24px 32px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" },
   modalTitle: { fontSize: 20, fontWeight: 700, color: "#1e293b" },
-  closeButton: { padding: "10px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontWeight: 600, fontSize: 16 },
+  closeButton: { padding: "10px 14px", borderRadius: 10, border: "1px solid #e2e8f0", background: "#4d4b4a", cursor: "pointer", fontWeight: 600, fontSize: 16 },
   modalContent: { padding: 32, maxHeight: "calc(90vh - 100px)", overflowY: "auto" },
-  imageSection: { display: "flex", gap: 32, marginBottom: 40, paddingBottom: 24, borderBottom: "1px solid #f1f5f9" },
+  imageSection: { display: "flex", gap: 32, marginBottom: 40, paddingBottom: 24, borderBottom: "1px solid #f9f5f1" },
   leftPanel: { flex: 3, minWidth: 0 },
   rightPanel: { flex: 1, minWidth: 250 },
   imageTitle: { fontSize: 16, fontWeight: 600, color: "#1e293b", marginBottom: 16 },

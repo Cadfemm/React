@@ -960,14 +960,19 @@ const [values, setValues] = useState({
 /* ================= STYLES ================= */
 
 const tabContainer = {
+  // display: "flex",
+  // gap: 32,
+  // borderBottom: "1px solid #e5e7eb",
+  // marginLeft: 50,
+  // paddingBottom: 6,
+  // alignItems: "center",
+  // backgroundColor: "#ffffff",
+  // boxShadow: "0 1px 0 rgba(0, 0, 0, 0.03)"
   display: "flex",
-  gap: 32,
-  borderBottom: "1px solid #e5e7eb",
-  marginLeft: 50,
-  paddingBottom: 6,
-  alignItems: "center",
-  backgroundColor: "#ffffff",
-  boxShadow: "0 1px 0 rgba(0, 0, 0, 0.03)"
+  gap: 20,
+  justifyContent: "center",
+  borderBottom: "1px solid #cccccc",
+  marginBottom: 12
 };
 
 const tabItem = {
