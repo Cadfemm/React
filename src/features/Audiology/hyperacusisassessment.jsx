@@ -148,15 +148,19 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
           // =========================
           { type: "subheading", label: "Case History (Hyperacusis)" },
 
-          { name: "onset", label: "Onset", type: "input" },
+          { name: "onset", label: "Onset of Hyperacusis", type: "input" },
           { name: "duration", label: "Duration", type: "input" },
-          { name: "progression", label: "Progression", type: "input" },
+          { name: "progression", label: "Progression of symptoms", type: "input" },
 
           {
             name: "ears",
             label: "Ears affected",
             type: "radio",
-            options: ["Right", "Left", "Bilateral"]
+            options: ["Right", "Left", "Bilateral"],
+            showIf: {
+              field: "mode",
+              equals: "followup"
+            }
           },
 
           {
@@ -172,30 +176,39 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
               "Other"
             ]
           },
-
-          { name: "triggers", label: "Triggering sounds", type: "input" },
-          { name: "situations", label: "Situations", type: "input" },
-          { name: "reaction", label: "Reaction to sound", type: "input" },
-          { name: "impact", label: "Daily impact", type: "input" },
+          {
+            name: "exposure",
+            label: "Noise exposure history",
+            type: "radio",
+            options: [
+              "Occupational",
+              "Recreational",
+              "None",
+            ]
+          },
+          { name: "triggers", label: "Type of sounds that trigger discomfort (e.g. traffic, utensils, voices, music, machinery)", type: "input" },
+          { name: "situations", label: "Situations where sound intolerance is most noticeable", type: "input" },
+          { name: "reaction", label: "Typical reaction to sound exposure (e.g. pain, discomfort, anxiety, avoidance)", type: "input" },
+          { name: "impact", label: "Daily impact (work, sleep, social interaction)", type: "input" },
 
           // =========================
           // TOGGLES
           // =========================
           { type: "subheading", label: "Subjective Rating Scales" },
 
-          { name: "enable_vas", label: "VAS", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_hq", label: "HQ", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_khalfa", label: "Khalfa", type: "radio", options: ["Yes", "No"] },
+          { name: "enable_vas", label: "Visual Analog Scale (VAS)", type: "radio", options: ["Yes", "No"] },
+          { name: "enable_hq", label: "Hyperacusis Questionnaire (HQ)", type: "radio", options: ["Yes", "No"] },
+          { name: "enable_khalfa", label: "Modified Khalfa Hyperacusis Questionnaire ", type: "radio", options: ["Yes", "No"] },
 
           // =========================
           // VAS
           // =========================
-          { type: "subheading", label: "VAS", showIf: { field: "enable_vas", equals: "Yes" } },
+          { type: "subheading", label: "Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
 
-          { name: "vas_loudness", label: "Loudness", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_loudness", label: "Visual Analog Scale (VAS) — Loudness Discomfort", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
           { name: "vas_loudness_severity", label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
 
-          { name: "vas_annoyance", label: "Annoyance", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_annoyance", label: "Visual Analog Scale (VAS) — Annoyance", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
           { name: "vas_annoyance_severity", label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
 
           // =========================
@@ -246,13 +259,13 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
           // =========================
           // FUNCTIONAL IMPACT
           // =========================
-          { type: "subheading", label: "Functional Impact" },
+          { type: "subheading", label: "Functional and Daily Life Impact for hyperacusis" },
 
           { name: "work", label: "Work / Study", type: "input" },
           { name: "communication", label: "Communication", type: "input" },
           { name: "social", label: "Family / Social", type: "input" },
-          { name: "rest", label: "Rest / Relaxation", type: "input" },
-          { name: "noise", label: "Noise tolerance", type: "input" },
+          { name: "rest", label: "Relaxation / Rest", type: "input" },
+          { name: "noise", label: "Outdoor / Public noise tolerance", type: "input" },
 
           // =========================
           // COUNSELING
@@ -263,11 +276,11 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
             showIf: { field: "mode", equals: "followup" }
           },
 
-          { name: "understanding", label: "Understanding", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "goals", label: "Goals", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "motivation", label: "Motivation", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "education", label: "Education", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "next_steps", label: "Next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
+          { name: "understanding", label: "Patient’s understanding of tinnitus", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "goals", label: "Expectations / goals", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "motivation", label: "Motivation for therapy", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "education", label: "Education & counseling provided", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "next_steps", label: "Recommended next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
         ]
       }
     ]
@@ -306,12 +319,12 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
             fields: [
               {
                 name: `ldl_r_${freq}`,
-                label: "Right (dB HL)",
+                label: "Right Ear (dB HL)",
                 type: "input"
               },
               {
                 name: `ldl_l_${freq}`,
-                label: "Left (dB HL)",
+                label: "Left Ear (dB HL)",
                 type: "input"
               }
             ]

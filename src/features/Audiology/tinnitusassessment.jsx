@@ -106,14 +106,31 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
     const total =
       scores.reduce((a, b) => a + b, 0) / scores.length;
 
+    let severityLevel = "";
     let interpretation = "";
-    if (total <= 17) interpretation = "Negligible";
-    else if (total <= 31) interpretation = "Mild";
-    else if (total <= 53) interpretation = "Moderate";
-    else if (total <= 72) interpretation = "Severe";
-    else interpretation = "Very Severe";
 
-    return { score: total.toFixed(1), interpretation };
+    if (total <= 17) {
+      severityLevel = "Negligible";
+      interpretation = "No or minimal tinnitus problem";
+    } else if (total <= 31) {
+      severityLevel = "Mild";
+      interpretation = "Noticeable but not significantly bothersome";
+    } else if (total <= 53) {
+      severityLevel = "Moderate";
+      interpretation = "Problematic; interferes with some activities";
+    } else if (total <= 72) {
+      severityLevel = "Severe";
+      interpretation = "Substantial negative impact";
+    } else {
+      severityLevel = "Very Severe";
+      interpretation = "Extremely bothersome, affects daily life";
+    }
+
+    return {
+      score: total.toFixed(1),
+      severityLevel,
+      interpretation
+    };
   };
 
   const computeVAS = (v) => {
@@ -159,6 +176,7 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
 
         // ✅ TFI
         tfi_score: tfi.score,
+        tfi_severity_level: tfi.severityLevel,
         tfi_interpretation: tfi.interpretation,
 
         // ✅ VAS
@@ -187,7 +205,7 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           // ══════════════════════════════════════════════════════════
           { type: "subheading", label: "Case History (Tinnitus)" },
 
-          { name: "onset", label: "Onset", type: "input" },
+          { name: "onset", label: "Onset of Tinnitus", type: "input" },
           { name: "duration", label: "Duration", type: "input" },
 
           {
@@ -270,7 +288,7 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           // ══════════════════════════════════════════════════════════
           // VAS SECTION
           // ══════════════════════════════════════════════════════════
-          { type: "subheading", label: "VAS", showIf: { field: "enable_vas", equals: "Yes" } },
+          { type: "subheading", label: "Tinnitus Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
 
           {
             type: "info-text",
@@ -278,13 +296,13 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
             showIf: { field: "enable_vas", equals: "Yes" }
           },
 
-          { name: "vas_loudness", label: "Loudness", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_loudness", label: "Tinnitus Loudness - How loud is your tinnitus most of the time?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
           { name: "vas_loudness_severity", label: "Loudness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
 
-          { name: "vas_annoyance", label: "Annoyance", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_annoyance", label: "Tinnitus Annoyance - How annoying or bothersome is your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
           { name: "vas_annoyance_severity", label: "Annoyance Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
 
-          { name: "vas_awareness", label: "Awareness", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_awareness", label: "Tinnitus Awareness - How much of the time are you aware of your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
           { name: "vas_awareness_severity", label: "Awareness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
 
           // ══════════════════════════════════════════════════════════
@@ -328,7 +346,9 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           })),
 
           { name: "tfi_score", label: "TFI Score", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+          { name: "tfi_severity_level", label: "Severity Level", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },          
           { name: "tfi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+
 
           // ══════════════════════════════════════════════════════════
           // LIFESTYLE & FUNCTIONAL IMPACT
@@ -397,7 +417,7 @@ export function TinnitusAdvancedFormObj({ onBack }) {
 
     sections: [
       {
-        title: "Tinnitus Psychoacoustic",
+        title: "Tinnitus Psychoacoustic Measurements",
         fields: [
           {
             type: "subheading",
@@ -406,8 +426,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           {
             type: "row",
             fields: [
-              { name: "pitch_r", label: "Right", type: "input" },
-              { name: "pitch_l", label: "Left", type: "input" }
+              { name: "pitch_r", label: "Right Ear", type: "input" },
+              { name: "pitch_l", label: "Left Ear", type: "input" }
             ]
           },
 
@@ -418,8 +438,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           {
             type: "row",
             fields: [
-              { name: "loudness_r", label: "Right", type: "input" },
-              { name: "loudness_l", label: "Left", type: "input" }
+              { name: "loudness_r", label: "Right Ear", type: "input" },
+              { name: "loudness_l", label: "Left Ear", type: "input" }
             ]
           },
 
@@ -430,8 +450,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           {
             type: "row",
             fields: [
-              { name: "mml_r", label: "Right", type: "input" },
-              { name: "mml_l", label: "Left", type: "input" }
+              { name: "mml_r", label: "Right Ear", type: "input" },
+              { name: "mml_l", label: "Left Ear", type: "input" }
             ]
           },
 
@@ -442,8 +462,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           {
             type: "row",
             fields: [
-              { name: "ri_r", label: "Right", type: "input" },
-              { name: "ri_l", label: "Left", type: "input" }
+              { name: "ri_r", label: "Right Ear", type: "input" },
+              { name: "ri_l", label: "Left Ear", type: "input" }
             ]
           },
 
@@ -454,8 +474,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           {
             type: "row",
             fields: [
-              { name: "ldl_r", label: "Right", type: "input" },
-              { name: "ldl_l", label: "Left", type: "input" }
+              { name: "ldl_r", label: "Right Ear", type: "input" },
+              { name: "ldl_l", label: "Left Ear", type: "input" }
             ]
           }
         ]

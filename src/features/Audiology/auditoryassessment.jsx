@@ -110,7 +110,7 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
           // =========================
           // SUBJECTIVE SCALES
           // =========================
-          { type: "subheading", label: "Subjective Rating Scales" },
+          { type: "subheading", label: "Subjective Rating Scales (Hearing Loss)" },
 
           { name: "emotional_vas", label: "Emotional (0–10)", type: "scale-slider", min: 0, max: 10 },
           { name: "social_vas", label: "Social / Situational (0–10)", type: "scale-slider", min: 0, max: 10 },
@@ -146,51 +146,106 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
           // =========================
           // COSI - PRE
           // =========================
-          { type: "subheading", label: "COSI – Pre Intervention" },
+          { type: "subheading", label: "Client oriented scale of improvement (COSI)" },
+          {
+            "type": "checkbox-group",
+            "name": "hearing_situations",
+            "label": "Step 1: Pre-Intervention — Identify Listening Goals. Choose 5 goals",
+            "options": [
+              { "label": "Conversation with 1 or 2 in quiet", "value": "conversation_1_2_quiet" },
+              { "label": "Conversation with 1 or 2 in noise", "value": "conversation_1_2_noise" },
+              { "label": "Conversation with group in quiet", "value": "conversation_group_quiet" },
+              { "label": "Conversation with group in noise", "value": "conversation_group_noise" },
+              { "label": "Television/Radio @ normal volume", "value": "tv_radio_normal_volume" },
+              { "label": "Familiar speaker on phone", "value": "familiar_speaker_phone" },
+              { "label": "Unfamiliar speaker on phone", "value": "unfamiliar_speaker_phone" },
+              { "label": "Hearing phone ring from another room", "value": "phone_ring_other_room" },
+              { "label": "Hear front door bell or knock", "value": "door_bell_knock" },
+              { "label": "Hear traffic", "value": "hear_traffic" },
+              { "label": "Increased social contact", "value": "increased_social_contact" },
+              { "label": "Feel embarrassed or stupid", "value": "feel_embarrassed_stupid" },
+              { "label": "Feeling left out", "value": "feeling_left_out" },
+              { "label": "Feeling upset or angry", "value": "feeling_upset_angry" },
+              { "label": "Church or meeting", "value": "church_meeting" },
+              { "label": "Other", "value": "other" }
+            ]
+          },
+          { type: "info-text", label: "In which specific situations do you most want to hear better?" },
 
-          ...Array.from({ length: 5 }).map((_, i) => ([
-            {
-              name: `cosi_goal_${i + 1}`,
-              label: `Goal ${i + 1}`,
-              type: "input"
-            },
-            {
-              name: `cosi_priority_${i + 1}`,
-              label: "Priority (1–5)",
-              type: "radio",
-              options: ["1","2","3","4","5"]
-            }
-          ])).flat(),
+          {
+            type: "dynamic-section",
+            name: "cosi_goals",
+            fields: [
+              {
+                name: "goal",
+                label: "Goal",
+                type: "input"
+              },
+              {
+                name: "priority",
+                label: "Priority (1–5)",
+                type: "radio",
+                options: ["1", "2", "3", "4", "5"]
+              }
+            ]
+          },
 
           // =========================
           // COSI - CHANGE
           // =========================
-          { type: "subheading", label: "COSI – Degree of Change" },
+         { type: "info-text", label: "Step-2: Post-Intervention — Degree of Change" ,showIf: { field: "mode", equals: "followup" }},
 
-          ...Array.from({ length: 5 }).map((_, i) => ({
-            name: `cosi_change_${i + 1}`,
-            label: `Goal ${i + 1}`,
-            type: "radio",
-            options: ["Much better", "Better", "Slightly better", "No change", "Worse"]
-          })),
-
-          // =========================
-          // COSI - FINAL
-          // =========================
-          { type: "subheading", label: "COSI – Final Ability" },
-
-          ...Array.from({ length: 5 }).map((_, i) => ({
-            name: `cosi_final_${i + 1}`,
-            label: `Goal ${i + 1}`,
-            type: "radio",
-            options: [
-              "Hardly ever",
-              "Occasionally",
-              "Half the time",
-              "Most of the time",
-              "Almost always"
+          {
+            type: "dynamic-section",
+            name: "cosi_change",
+            showIf: { field: "mode", equals: "followup" },
+            fields: [
+              {
+                name: "goal",
+                label: "Goal",
+                type: "input"
+              },
+              {
+                name: "change",
+                label: "Degree of Change",
+                type: "radio",
+                options: [
+                  "Much better",
+                  "Better",
+                  "Slightly better",
+                  "No change",
+                  "Worse"
+                ]
+              }
             ]
-          })),
+          },
+
+          { type: "info-text", label: "Step 3: Post-Intervention — Final Ability Rating",showIf: { field: "mode", equals: "followup" } },
+
+          {
+            type: "dynamic-section",
+            name: "cosi_final",
+            showIf: { field: "mode", equals: "followup" },
+            fields: [
+              {
+                name: "goal",
+                label: "Goal",
+                type: "input"
+              },
+              {
+                name: "final",
+                label: "Final Ability Rating",
+                type: "radio",
+                options: [
+                  "Hardly ever",
+                  "Occasionally",
+                  "Half the time",
+                  "Most of the time",
+                  "Almost always"
+                ]
+              }
+            ]
+          },
 
           // =========================
           // COUNSELING
@@ -201,10 +256,10 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
             showIf: { field: "mode", equals: "followup" }
           },
 
-          { name: "understanding", label: "Understanding", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "goals", label: "Goals", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "education", label: "Education", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "next_steps", label: "Next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
+          { name: "understanding", label: "Patient’s understanding of hearing loss", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "goals", label: "Expectations / goals", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "education", label: "Education provided", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "next_steps", label: "Recommended next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
         ]
       }
     ]
@@ -246,7 +301,7 @@ export function AuditoryAdvancedFormObj({ onBack }) {
       // ACOUSTIC REFLEX
       // =========================
       {
-        title: "Acoustic Reflex",
+        title: "Acoustic Reflex - Frequency (Hz)",
         fields: FREQUENCIES.flatMap(freq => [
           {
             type: "subheading",
@@ -254,32 +309,32 @@ export function AuditoryAdvancedFormObj({ onBack }) {
           },
           {
             name: `ipsi_r_${freq}`,
-            label: "Ipsilateral Right",
+            label: "Ipsilateral (Right Ear, dB HL)",
             type: "radio",
             options: reflexOptions
           },
           {
             name: `ipsi_l_${freq}`,
-            label: "Ipsilateral Left",
+            label: "Ipsilateral (Left Ear, dB HL)",
             type: "radio",
             options: reflexOptions
           },
           {
             name: `contra_r_${freq}`,
-            label: "Contralateral Right Stim",
+            label: "Contralateral (Right Ear Stim)",
             type: "radio",
             options: reflexOptions
           },
           {
             name: `contra_l_${freq}`,
-            label: "Contralateral Left Stim",
+            label: "Contralateral (Left Ear Stim)",
             type: "radio",
             options: reflexOptions
           },
           {
             name: `reflex_impression_${freq}`,
             label: "Impression",
-            type: "textarea"
+            type: "input"
           }
         ])
       },
@@ -292,7 +347,7 @@ export function AuditoryAdvancedFormObj({ onBack }) {
         fields: [
           {
             name: "etf_right",
-            label: "Right Ear",
+            label: "Right Ear Peak Pressure (daPa)",
             type: "radio",
             options: [
               { label: "Normal", value: 0 },
@@ -302,7 +357,7 @@ export function AuditoryAdvancedFormObj({ onBack }) {
           },
           {
             name: "etf_left",
-            label: "Left Ear",
+            label: "Left Ear Peak Pressure (daPa)",
             type: "radio",
             options: [
               { label: "Normal", value: 0 },
@@ -317,46 +372,142 @@ export function AuditoryAdvancedFormObj({ onBack }) {
       // SPEECH
       // =========================
       {
-        title: "Speech Test",
-        fields: [
-          { name: "srt_r", label: "SRT Right", type: "input" },
-          { name: "srt_l", label: "SRT Left", type: "input" },
-          { name: "wrs_r", label: "WRS Right", type: "input" },
-          { name: "wrs_l", label: "WRS Left", type: "input" },
-          { name: "speech_remark", label: "Remarks", type: "textarea" }
-        ]
-      },
+      title: "Speech Test",
+      fields: [
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "srt_r",
+              label: "Speech Reception Threshold (SRT) Right Ear",
+              type: "input"
+            },
+            {
+              name: "srt_l",
+              label: "Speech Reception Threshold (SRT) Left Ear",
+              type: "input"
+            }
+          ]
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "wrs_r",
+              label: "Word Recognition Score (WRS) Right Ear",
+              type: "input"
+            },
+            {
+              name: "wrs_l",
+              label: "Word Recognition Score (WRS) Left Ear",
+              type: "input"
+            }
+          ]
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "lct_r",
+              label: "Listening comprehension task Right Ear",
+              type: "input"
+            },
+            {
+              name: "lct_l",
+              label: "Listening comprehension task Left Ear",
+              type: "input"
+            }
+          ]
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "apt_r",
+              label: "Auditory processing task Right Ear",
+              type: "input"
+            },
+            {
+              name: "apt_l",
+              label: "Auditory processing task Left Ear",
+              type: "input"
+            }
+          ]
+        }, 
+        {
+              name: "remarks",
+              label: "Remarks",
+              type: "input"
+            }      
+      ]
+    },
 
       // =========================
       // ASSR
       // =========================
       {
-        title: "ASSR",
-        fields: FREQUENCIES.flatMap(freq => [
+      title: "Auditory Steady-State Response",
+      fields: [
+        ...FREQUENCIES.flatMap(freq => [
           {
-            name: `assr_r_${freq}`,
-            label: `${freq} Hz Right`,
-            type: "select",
-            options: thresholdOptions
-          },
-          {
-            name: `assr_l_${freq}`,
-            label: `${freq} Hz Left`,
-            type: "select",
-            options: thresholdOptions
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: `assr_r_${freq}`,
+                label: `${freq} Right Ear Threshold (dB nHL)`,
+                type: "radio",
+                options: thresholdOptions
+              },
+              {
+                name: `assr_l_${freq}`,
+                label: `${freq} Left Ear Threshold (dB nHL)`,
+                type: "radio",
+                options: thresholdOptions
+              }
+            ]
           }
-        ])
-      },
+        ]),
+        {
+          name: "assr_imp",
+          label: "Impression",
+          type: "input"
+        }
+      ]
+    },
+      
 
       // =========================
       // ABR
       // =========================
       {
-        title: "ABR",
+        title: "Auditory Brainstem Response",
         fields: [
-          { name: "abr_r", label: "Right Ear", type: "textarea" },
-          { name: "abr_l", label: "Left Ear", type: "textarea" },
-          { name: "abr_impression", label: "Impression", type: "textarea" }
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "abr_r",
+                label: "Right Ear",
+                type: "input"
+              },
+              {
+                name: "abr_l",
+                label: "Left Ear",
+                type: "input"
+              }
+            ]
+          },
+          {
+            name: "abr_impression",
+            label: "Impression",
+            type: "input"
+          }
         ]
       },
 
@@ -364,11 +515,29 @@ export function AuditoryAdvancedFormObj({ onBack }) {
       // ELECTROPHYSIOLOGY
       // =========================
       {
-        title: "Electrophysiology",
+        title: "Electrophysiology For Hearing ",
         fields: [
-          { name: "ep_r", label: "Right Ear", type: "textarea" },
-          { name: "ep_l", label: "Left Ear", type: "textarea" },
-          { name: "ep_impression", label: "Impression", type: "textarea" }
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "ep_r",
+                label: "Right Ear",
+                type: "input"
+              },
+              {
+                name: "ep_l",
+                label: "Left Ear",
+                type: "input"
+              }
+            ]
+          },
+          {
+            name: "ep_impression",
+            label: "Impression",
+            type: "input"
+          }
         ]
       },
 

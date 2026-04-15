@@ -22,9 +22,9 @@ const THREE_D_SCHEMA = {
           label: "Category of Service",
           type: "single-select",
           options: [
-            { label: "PNO 3D PRINTING ITEM", value: "item" },
-            { label: "PNO 3D PRINTING SERVICE", value: "service" },
-            { label: "PNO 3D PRINTING GROUP SESSIONS", value: "group" }
+            { label: "PNO 3D Printing Item", value: "item" },
+            { label: "PNO 3D Printing Service", value: "service" },
+            { label: "PNO 3D Printing Group Sessions", value: "group" }
           ]
         },
 
@@ -45,7 +45,7 @@ const THREE_D_SCHEMA = {
         /* ---------- SERVICE MULTI SELECT ---------- */
         {
           name: "service_items",
-          label: "Items (Multi Select)",
+          label: "Items",
           type: "checkbox-group",
           options: [
             { label: "3D Scan", value: "scan" },
@@ -68,7 +68,7 @@ const THREE_D_SCHEMA = {
         /* ---------- GROUP SESSION ---------- */
         {
           name: "group_items",
-          label: "Group Sessions (Multi Select)",
+          label: "Group Sessions",
           type: "checkbox-group",
           options: [
             { label: "3D Scanning Application Training", value: "scan_training" },
