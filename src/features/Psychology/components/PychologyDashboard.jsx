@@ -623,15 +623,10 @@ function AppointmentCard() {
 }
 
 export default function PsychologyDashboard({
-  patients = [],
   onSelectPatient,
   onOpenPatients,
   onOpenFollowUps
 }) {
-  const psychologyPatients = patients.filter(
-    (p) => Array.isArray(p.departments) && p.departments.includes("Psychology")
-  );
-
   const cards = [
     {
       title: "My Appointments",

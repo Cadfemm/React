@@ -694,9 +694,9 @@ export function MainContent({
      case "Work & Vocational Rehab":
       return <WandRDepartmentPage patients={patients} department="Work & Vocational Rehab" />;
     case "Psychology":
-      return <PsychologyDashboard patients={patients} />;
+      return <PsychologyDashboard/>;
     case "Optometry":
-      return <OptometryDashboard patients={patients} />;
+      return <OptometryDashboard/>;
      case "Prosthetics & Orthotics":
       return <ProstheticsAndOrthoticsDashboard patients={patients} />;
     case "Speech & Language Therapy":

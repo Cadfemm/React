@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { MdVisibility } from "react-icons/md";
 
-export default function OptometryDashboard({ patients = [] }) {
+export default function OptometryDashboard() {
   const [showPatients, setShowPatients] = useState(false);
 
   if (showPatients) {
