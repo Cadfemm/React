@@ -64,6 +64,7 @@ const OPTION_CARDS = [
 ];
 
 export default function Patients({ Department, onBack, loading = false }) {
+  const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient,      setSelectedPatient]      = useState(null);
   const [assessmentView,       setAssessmentView]       = useState(null);
   const [submittedAssessments, setSubmittedAssessments] = useState({});
@@ -81,9 +82,9 @@ export default function Patients({ Department, onBack, loading = false }) {
     const fetchPatients = async () => {
       try{
         const res = await api.get(
-          API_URL.PATIENT
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=${Department}`:'')
         )
-        setPatients(res.data);
+        setPatients(res.data.results);
       } catch(e){
         setPatients([]);
       }
