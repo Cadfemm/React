@@ -1,17 +1,17 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
 
-// Create context to pass patient to assessment components
 const PatientContext = createContext(null);
 
-
+/* ---------------- PATIENT CARD ---------------- */
 function PatientCard({ patient }) {
   if (!patient) return null;
 
   return (
     <div style={section}>
       <div style={patientGrid}>
+               
         <div><b>Name:</b> {patient.name}</div>
         <div><b>IC:</b> {patient.id}</div>
         <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
@@ -23,42 +23,48 @@ function PatientCard({ patient }) {
         <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
         <div><b>Date of Encounter/Visit:</b></div>
         <div><b>Visit Type:</b></div>
-        <div><b>Session Type:</b></div>
-        <div><b>Attendance Status:</b></div>
-        <div><b>Others Present:</b></div>
+
       </div>
     </div>
   );
 }
 
-/* ===================== OPTIONS ===================== */
+/* ---------------- MAIN COMPONENT ---------------- */
 
 const YES_NO = [
   { label: "Yes", value: "yes" },
   { label: "No", value: "no" }
 ];
 
-/* ===================== COMPONENT ===================== */
 
-export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack }) {
+export default function PsychologyFollowUpAssessment({
+  patient,
+  onSubmit,
+  onBack
+}) {
   const [values, setValues] = useState({});
+  
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
-
-  /* ---------------- STORAGE ---------------- */
+ 
+  
+ 
   const storageKey = patient
     ? `psychology_follow_up_assessment_draft_${patient.id}`
     : null;
 
+  /* LOAD DRAFT */
   useEffect(() => {
     if (!storageKey) return;
     const saved = localStorage.getItem(storageKey);
     if (saved) {
-      setValues(JSON.parse(saved).values || {});
+      const parsed = JSON.parse(saved);
+      setValues(parsed.values || {});
     }
   }, [storageKey]);
 
-  useEffect(() => {
+  /* AUTO POPULATE */
+ useEffect(() => {
     if (!patient) return;
 
     setValues(v => ({
@@ -106,7 +112,78 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
     alert("Psychology assessment submitted");
   };
 
-  /* ===================== SCHEMAS ===================== */
+ 
+
+  /* ---------------- SIMPLE SCHEMA (OTHER TABS) ---------------- */
+  const EMPTY_SCHEMA = {
+    actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+    sections: [{ fields: [] }]
+  };
+
+const SESSION_SCHEMA = {
+    sections: [
+      {
+        fields: [
+
+
+          {
+            name: "session_type",
+            label: "Session Type",
+            type: "radio",
+            options: [
+              { label: "Individual", value: "individual" },
+              { label: "Family", value: "family" },
+              { label: "Couple", value: "couple" }
+            ]
+          },
+
+          {
+            name: "attendance_status",
+            label: "Attendance Status",
+            type: "radio",
+            options: [
+              { label: "Present", value: "present" },
+              { label: "No Show", value: "no_show" },
+              { label: "Cancelled", value: "cancelled" }
+            ]
+          },
+
+        {
+  name: "attender_present",
+  label: "Attender Present",
+  type: "radio",
+  options: [
+    { label: "Yes", value: "yes" },
+    { label: "No", value: "no" }
+  ]
+},
+{
+  name: "attender_name", // ✅ unique
+  label: "Specific Name",
+  type: "input",
+  showIf: {
+    field: "attender_present",
+    equals: "yes"
+  }
+},
+{
+  name: "attender_relationship", // ✅ unique
+  label: "Relationship",
+  type: "input",
+  showIf: {
+    field: "attender_present",
+    equals: "yes"
+  }
+},
+        ]
+      }
+    ]
+  };
+
 
   const SUBJECTIVE_SCHEMA = {
     actions: [
@@ -117,16 +194,33 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
     sections: [
       {
         fields: [
+      
           {
-            name: "chief_complaint_status",
-            label: "Chief Complaint Status",
-            type: "radio",
-            options: [
-              { label: "No Change", value: "no_change"},
-              { label: "Modified", value: "modified"},
-              { label: "New Complaint", value: "new_complaint"}
-            ]
-          },
+  name: "chief_complaint_status",
+  label: "Chief Complaint Status",
+  type: "radio",
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Modified", value: "modified" }
+  ]
+},
+
+/* ✅ READ-ONLY FIELD (NO CHANGE) */
+{
+  name: "chief_complaint_readonly",
+  label: "Chief Complaint",
+  type: "input",
+  placeholder: "No previous complaint available",
+  disabled: true,
+  showIf: {
+    field: "chief_complaint_status",
+    equals: "no_change"
+  }
+},
+
+        
+
+
           {
             name: "chief_complaint",
             label: "Chief Complaint",
@@ -137,33 +231,158 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
               oneOf: ["modified", "new_complaint"]
             }
           },
-          {
-            name: "new_symptoms",
-            label: "New Symptoms",
-            type: "single-select",
-            options: [
-              {label: "None", value: "none"},
-              {label: "Present", value: "present"}
-            ]
-          },
-          {
-            name: "symptoms_category",
-            label: "Symptoms Category",
-            type: "checkbox-group",
-            options: [
-              {label: "Mood", value: "mood"},
-              {label: "Sleep", value: "sleep"},
-              {label: "Appetite", value: "appetite"},
-              {label: "Anxiety", value: "anxiety"},
-              {label: "Psychosis", value: "psychosis"},
-              {label: "Pain", value: "pain"},
-              {label: "Others", value: "others"}
-            ],
-            showIf: {
-              field: "new_symptoms",
-              equals: "present"
-            }
-          },
+          
+{
+  name: "progress_since_last_session",
+  label: "Progress since last session",
+  type: "input",
+  placeholder: "Enter progress details..."
+},
+          
+          
+
+// MAIN RADIO
+{
+  name: "new_symptoms",
+  label: "New Symptoms / Issues",
+  type: "radio",
+  options: [
+    { label: "None", value: "none" },
+    { label: "Present", value: "present" }
+  ]
+},
+
+// CATEGORY
+{
+  name: "symptoms_category",
+  label: "Symptoms Category",
+  type: "checkbox-group",
+  options: [
+    { label: "Mood", value: "mood" },
+    { label: "Sleep", value: "sleep" },
+    { label: "Appetite", value: "appetite" },
+    { label: "Anxiety", value: "anxiety" },
+    { label: "Psychosis", value: "psychosis" },
+    { label: "Pain", value: "pain" },
+    { label: "Others", value: "others" }
+  ],
+  showIf: {
+    field: "new_symptoms",
+    equals: "present"
+  }
+},
+
+// ---------- MOOD ----------
+{
+  name: "mood_description",
+  label: "Mood - Description",
+  type: "input",
+  showIf: {
+    field: "symptoms_category",
+    includes: "mood"
+  }
+},
+{
+  name: "mood_onset",
+  label: "Mood - Onset",
+  type: "date",
+  showIf: {
+    field: "symptoms_category",
+    includes: "mood"
+  }
+},
+{
+  name: "mood_severity",
+  label: "Mood - Severity",
+  type: "radio",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" }
+  ],
+  showIf: {
+    field: "symptoms_category",
+    includes: "mood"
+  }
+},
+
+// ---------- SLEEP ----------
+{
+  name: "sleep_description",
+  label: "Sleep - Description",
+  type: "input",
+  showIf: {
+    field: "symptoms_category",
+    includes: "sleep"
+  }
+},
+{
+  name: "sleep_onset",
+  label: "Sleep - Onset",
+  type: "date",
+  showIf: {
+    field: "symptoms_category",
+    includes: "sleep"
+  }
+},
+{
+  name: "sleep_severity",
+  label: "Sleep - Severity",
+  type: "radio",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" }
+  ],
+  showIf: {
+    field: "symptoms_category",
+    includes: "sleep"
+  }
+},
+
+// ---------- OTHERS ----------
+{
+  name: "other_symptom_name",
+  label: "Other Symptom",
+  type: "input",
+  placeholder: "Enter symptom name",
+  showIf: {
+    field: "symptoms_category",
+    includes: "others"
+  }
+},
+{
+  name: "others_description",
+  label: "Others - Description",
+  type: "input",
+  showIf: {
+    field: "symptoms_category",
+    includes: "others"
+  }
+},
+{
+  name: "others_onset",
+  label: "Others - Onset",
+  type: "date",
+  showIf: {
+    field: "symptoms_category",
+    includes: "others"
+  }
+},
+{
+  name: "others_severity",
+  label: "Others - Severity",
+  type: "radio",
+  options: [
+    { label: "Mild", value: "mild" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Severe", value: "severe" }
+  ],
+  showIf: {
+    field: "symptoms_category",
+    includes: "others"
+  }
+},
           {
             name: "description",
             label: "Description",
@@ -196,115 +415,314 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
               equals: "present"
             }
           },
-          {type: "subheading", label: "Medication Adherence"},
-          {
-            name: "fully_adherent",
-            label: "Fully Adherent",
-            type: "textarea"
-          },
-          {
-            name: "partially_adherent",
-            label: "Partially Adherent",
-            type: "radio",
-            options: [
-              {label: "Irregular", value: "irregular"},
-              {label: "Missed Doses", value: "missed_doses"}
-            ]
-          },
-          {
-            name: "adherent_checkbox",
-            type: "checkbox-group",
-            options: [
-              {label: "Non-Adherent", value: "non_adherent"}
-            ]
-          },
-          {
-            name: "reason",
-            label: "Reason",
-            type: "single-select",
-            options: [
-              {label: "Forgot", value: "forgot"},
-              {label: "Side Effects", value: "side_effects"},
-              {label: "Cost Issues", value: "cost_issues"},
-              {label: "Lack of Insight", value: "insight_lack"},
-              {label: "Intentional Discontinuation", value: "intentional_discontinuation"},
-              {label: "Access Issues", value: "access_issues"},
-              {label: "Other", value: "other"}
-            ],
-            showIf: {
-              field: "adherent_checkbox",
-              equals: "non_adherent"
-            }
-          },
+          
+
+
+// MAIN RADIO
+{
+  name: "medication_adherence",
+  label: "Medication Adherence",
+  type: "radio",
+  options: [
+    { label: "Fully Adherent", value: "fully_adherent" },
+    { label: "Partially Adherent", value: "partially_adherent" },
+    { label: "Non-Adherent", value: "non_adherent" },
+    { label: "Not Applicable", value: "not_applicable" }
+  ]
+},
+
+// FULLY ADHERENT INPUT
+{
+  name: "fully_adherent_input",
+  label: "Details",
+  type: "input",
+  showIf: {
+    field: "medication_adherence",
+    equals: "fully_adherent"
+  }
+},
+
+// PARTIALLY ADHERENT RADIO
+{
+  name: "partial_reason",
+  label: "Partially Adherent Type",
+  type: "radio",
+  options: [
+    { label: "Irregular", value: "irregular" },
+    { label: "Missed Doses", value: "missed_doses" }
+  ],
+  showIf: {
+    field: "medication_adherence",
+    equals: "partially_adherent"
+  }
+},
+
+
+{
+  name: "non_adherent_reason",
+  label: "Reason",
+  
+  type: "radio",
+  options: [
+    { label: "Forgot", value: "forgot" },
+    { label: "Side effects", value: "side_effects" },
+    { label: "Cost issues", value: "cost_issues" },
+    { label: "Lack of insight", value: "lack_of_insight" },
+    { label: "Intentional discontinuation", value: "intentional_discontinuation" },
+    { label: "Access issues", value: "access_issues" },
+    { label: "Other", value: "other" }
+  ],
+  showIf: {
+    field: "medication_adherence",
+    equals: "non_adherent"
+  }
+},
+
+// OTHER INPUT (THIS IS WHAT YOU NEEDED)
+{
+  name: "non_adherent_other",
+  label: "Please specify",
+  type: "input",
+  placeholder: "Enter reason...",
+  showIf: {
+    field: "non_adherent_reason",
+    equals: "other"
+  }
+},
+
+
           {
             name: "description",
             label: "Description",
-            type: "textarea",
+            type: "input",
             showIf: {
               field: "reason",
               equals: "other"
             }
           },
-          {
-            name: "substance_use",
-            label: "Substance Use Update",
-            type: "single-select",
-            options: [
-              {label: "No Use", value: "no_use"},
-              {label: "No Change", value: "no_change"},
-              {label: "Increased", value: "increased"},
-              {label: "Reduced", value: "reduced"},
-              {label: "Relapsed", value: "relapsed"},
-              {label: "Abstinent", value: "abstinent"}
-            ]
-          },
-          {
-            name: "substance_type",
-            label: "Substance Type",
-            type: "multi-select-dropdown",
-            options: [
-              {label: "Alcohol", value: "alcohol"},
-              {label: "Tobacco", value: "tobacco"},
-              {label: "Cannabis", value: "cannabis"},
-              {label: "Opioids", value: "opioids"}
-            ],
-            showIf: {
-              field: "substance_use",
-              oneOf: ["increased", "relapsed"]
-            }
-          },
-          {
-            name: "frequency",
-            label: "Frequency",
-            type: "radio",
-            options: [
-              {label: "Daily", value: "daily"},
-              {label: "Weekly", value: "weekly"},
-              {label: "Occasional", value: "occasional"}
-            ],
-            showIf: {
-              field: "substance_use",
-              oneOf: ["increased", "relapsed"]
-            }
-          },
-          {
-            name: "quality",
-            label: "Quality",
-            type: "textarea",
-            showIf: {
-              field: "substance_use",
-              oneOf: ["increased", "relapsed"]
-            }
-          },
-          {
-            name: "last_use",
-            label: "Last Use",
-            type: "date",
-            showIf: {
-              field: "substance_use",
-              oneOf: ["increased", "relapsed"]
-            }
-          }
+          
+          /* ---------------- SUBSTANCE USE UPDATE ---------------- */
+
+{
+  name: "substance_use",
+  label: "Substance Use Update",
+  type: "radio",
+  options: [
+    { label: "No Use", value: "no_use" },
+    { label: "No Change", value: "no_change" },
+    { label: "Increased", value: "increased" },
+    { label: "Reduced", value: "reduced" },
+    { label: "Relapsed", value: "relapsed" },
+    { label: "Abstinent", value: "abstinent" }
+  ]
+},
+
+/* ✅ SHOW DETAILS ONLY WHEN RELEVANT */
+{
+  name: "substance_type",
+  label: "Substance Type",
+  type: "checkbox-group",
+  options: [
+    { label: "Alcohol", value: "alcohol" },
+    { label: "Tobacco", value: "tobacco" },
+    { label: "Cannabis", value: "cannabis" },
+    { label: "Opioids", value: "opioids" },
+    { label: "Others", value: "others" }
+  ],
+  showIf: {
+    field: "substance_use",
+    oneOf: ["increased", "relapsed"]
+  }
+},
+
+/* ---------------- ALCOHOL ---------------- */
+{
+  name: "alcohol_frequency",
+  label: "Alcohol - Frequency",
+  type: "radio",
+  options: [
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Occasional", value: "occasional" }
+  ],
+  showIf: {
+    field: "substance_type",
+    includes: "alcohol"
+  }
+},
+{
+  name: "alcohol_quantity",
+  label: "Alcohol - Quantity",
+  type: "input",
+  placeholder: "e.g. 2 drinks/day",
+  showIf: {
+    field: "substance_type",
+    includes: "alcohol"
+  }
+},
+{
+  name: "alcohol_last_use",
+  label: "Alcohol - Last Use",
+  type: "date",
+  showIf: {
+    field: "substance_type",
+    includes: "alcohol"
+  }
+},
+
+/* ---------------- TOBACCO ---------------- */
+{
+  name: "tobacco_frequency",
+  label: "Tobacco - Frequency",
+  type: "radio",
+  options: [
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Occasional", value: "occasional" }
+  ],
+  showIf: {
+    field: "substance_type",
+    includes: "tobacco"
+  }
+},
+{
+  name: "tobacco_quantity",
+  label: "Tobacco - Quantity",
+  type: "input",
+  placeholder: "e.g. 5 cigarettes/day",
+  showIf: {
+    field: "substance_type",
+    includes: "tobacco"
+  }
+},
+{
+  name: "tobacco_last_use",
+  label: "Tobacco - Last Use",
+  type: "date",
+  showIf: {
+    field: "substance_type",
+    includes: "tobacco"
+  }
+},
+
+/* ---------------- CANNABIS ---------------- */
+{
+  name: "cannabis_frequency",
+  label: "Cannabis - Frequency",
+  type: "radio",
+  options: [
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Occasional", value: "occasional" }
+  ],
+  showIf: {
+    field: "substance_type",
+    includes: "cannabis"
+  }
+},
+{
+  name: "cannabis_quantity",
+  label: "Cannabis - Quantity",
+  type: "input",
+  placeholder: "e.g. 5 cigarettes/day",
+  showIf: {
+    field: "substance_type",
+    includes: "cannabis"
+  }
+},
+{
+  name: "cannabis_last_use",
+  label: "Cannabis - Last Use",
+  type: "date",
+  showIf: {
+    field: "substance_type",
+    includes: "cannabis"
+  }
+},
+
+/* ---------------- OPIOIDS ---------------- */
+{
+  name: "opioids_frequency",
+  label: "Opioids - Frequency",
+  type: "radio",
+  options: [
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Occasional", value: "occasional" }
+  ],
+  showIf: {
+    field: "substance_type",
+    includes: "opioids"
+  }
+},
+{
+  name: "opioids_quantity",
+  label: "Opioids - Quantity",
+  type: "input",
+  placeholder: "e.g. 5 cigarettes/day",
+  showIf: {
+    field: "substance_type",
+    includes: "opioids"
+  }
+},
+
+{
+  name: "opioids_last_use",
+  label: "Opioids - Last Use",
+  type: "date",
+  showIf: {
+    field: "substance_type",
+    includes: "opioids"
+  }
+},
+
+/* ---------------- OTHERS ---------------- */
+
+{
+  name: "others_frequency",
+  label: "Others - Frequency",
+  type: "radio",
+  layout: "vertical",
+  options: [
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Occasional", value: "occasional" },
+    { label: "Other", value: "other" }
+  ],
+  showIf: {
+    field: "substance_type",
+    includes: "others" // 👈 changed
+  }
+},
+{
+  name: "others_frequency_other",
+  label: "Please specify",
+  type: "input",
+  placeholder: "Enter frequency",
+  showIf: {
+    field: "others_frequency",
+    equals: "other"
+  }
+},
+{
+  name: "others_quantity",
+  label: "Others - Quantity",
+  type: "input",
+  placeholder: "e.g. amount/day",
+  showIf: {
+    field: "substance_type",
+    includes: "others"
+  }
+},
+{
+  name: "others_last_use",
+  label: "Others - Last Use",
+  type: "date",
+  showIf: {
+    field: "substance_type",
+    includes: "others"
+  }
+}
         ]
       }
     ]
@@ -320,124 +738,113 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Symptom Tracking" },
-          {
-            name: "mood",
-            label: "Mood",
-            type: "checkbox-group",
-            options: []
-          },
-          {
-            name: "thought_content",
-            label: "Thought Content",
-            type: "checkbox-group",
-            options: []
-          },
-          {
-            name: "perceptual_disturbances",
-            type: "checkbox-group",
-            options: [
-              {label: "Perceptual Disturbances", value: "perceptual_disturbances"}
-            ]
-          },
-          {
-            name: "appearance_behaviour",
-            label: "Appearance & Behaviour",
-            type: "single-select",
-            options: [
-              {label: "No Change", value: "no_change"},
-              {label: "Changed", value: "changed"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
-            type: "textarea",
-            showIf: {
-              field: "appearance_behaviour",
-              equals: "changed"
-            }
-          },
-          {
-            name: "speech",
-            label: "Speech",
-            type: "single-select",
-            options: [
-              {label: "No Change", value: "no_change"},
-              {label: "Changed", value: "changed"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
-            type: "textarea",
-            showIf: {
-              field: "speech",
-              equals: "changed"
-            }
-          },
-          {
-            name: "mood_affect",
-            label: "Mood & Affect",
-            type: "single-select",
-            options: [
-              {label: "No Change", value: "no_change"},
-              {label: "Changed", value: "changed"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
-            type: "textarea",
-            showIf: {
-              field: "mood_affect",
-              equals: "changed"
-            }
-          },
-          {
-            name: "thought_process",
-            label: "Thought Process",
-            type: "single-select",
-            options: [
-              {label: "No Change", value: "no_change"},
-              {label: "Changed", value: "changed"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
-            type: "textarea",
-            showIf: {
-              field: "thought_process",
-              equals: "changed"
-            }
-          },
-          {
-            name: "cognition",
-            label: "Cognition",
-            type: "single-select",
-            options: [
-              {label: "No Change", value: "no_change"},
-              {label: "Changed", value: "changed"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
-            type: "textarea",
-            showIf: {
-              field: "cognition",
-              equals: "changed"
-            }
-          },
+          { type: "subheading", label: "Client’s Condition " },
+         
+          
+              {
+  name: "mood_affect",
+  label: "Mood & Affect",
+  type: "radio",
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Notable Change ", value: "Notable_Change " }
+    
+  ]
+},
+{
+  name: "mood_affect_details",
+  label: "Specify Details",
+  type: "input",
+  placeholder: "Enter details",
+  showIf: {
+    field: "mood_affect",
+    equals: "Notable_Change " // 👈 trigger here
+  }
+},
+
+         
+         {
+  name: "thought_process",
+  label: "Thought Process",
+  type: "radio", // or keep single-select if you want
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Notable Change ", value: "Notable_Change " },
+    
+  ]
+},
+{
+  name: "thought_process_details",
+  label: "Specify Details",
+  type: "input",
+  showIf: {
+    field: "thought_process",
+    equals: "Notable_Change "
+  }
+},
+{
+  name: "behavior_functioning",
+  label: "Behavior / Functioning",
+  type: "radio",
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Notable Change", value: "Notable_Change" },
+    
+  ]
+},
+{
+  name: "behavior_functioning_details",
+  label: " Specify Details",
+  type: "input",
+  showIf: {
+    field: "behavior_functioning",
+    equals: "Notable_Change",
+  }
+},{
+  name: "medical_condition",
+  label: "Medical Condition",
+  type: "radio",
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Notable Change ", value: "Notable_Change " }
+  ]
+},
+{
+  name: "medical_condition_details",
+  label: " Specify Details",
+  type: "input",
+  showIf: {
+    field: "medical_condition",
+    equals: "Notable_Change "
+  }
+},
+{
+  name: "substance_use",
+  label: "Substance Use",
+  type: "radio",
+  options: [
+    { label: "No Change", value: "no_change" },
+    { label: "Notable Change ", value: "Notable_Change " },
+    
+  ]
+},
+{
+  name: "substance_use_details",
+  label: " Specify Details",
+  type: "input",
+  showIf: {
+    field: "substance_use",
+    equals: "Notable_Change "
+  }
+},
           {type:"subheading", label: "Risk Assessment"},
          {
             name: "risk_assessment",
             label: "Risk Status",
-            type: "single-select",
+            type: "radio",
             options: [
               { label: "No risk", value: "no_risk" },
-              { label: "Suicidal ideation", value: "suicidal_ideation" },
+              { label: "Suicidal Ideation", value: "Suicidal Ideation" },
               { label: "Homicidal ideation", value: "homicidal_ideation" },
               { label: "Self-harm risk", value: "self_harm_risk" },
               { label: "Risk to others", value: "risk_to_others" }
@@ -455,27 +862,11 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
             ],
             showIf: {
               field: "risk_assessment",
-              oneOf: ["suicidal_ideation", "homicidal_ideation", "self_harm_risk", "risk_to_others"]
+              oneOf: ["Suicidal Ideation","self_harm_risk", "risk_to_others"]
             }
-          },
-          {
-            name: "protective_factors",
-            label: "Protective Factors",
-            type: "textarea",
-            showIf: {
-              field: "risk_assessment",
-              oneOf: ["suicidal_ideation", "homicidal_ideation", "self_harm_risk", "risk_to_others"]
-            }
-          },
-          {
-            name: "immediate_action",
-            label: "Immediate Action Taken",
-            type: "textarea",
-            showIf: {
-              field: "risk_assessment",
-              oneOf: ["suicidal_ideation", "homicidal_ideation", "self_harm_risk", "risk_to_others"]
-            }
-          },
+          }
+          
+         
         ]
       }
     ]
@@ -486,13 +877,19 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Clinical Summary"},
+            // { type: "subheading", label: "Clinical Impression"},
+          {
+            name: "clinicalImpression",
+            label: "Clinical Impression",
+            type: "textarea"
+          },
+          // { type: "subheading", label: "Clinical Summary"},
           {
             name: "clinical_progress_summary",
             label: "Clinical Progress Summary",
             type: "textarea"
           },
-          { type: "subheading", label: "Diagnosis"},
+          // { type: "subheading", label: "Diagnosis"},
           {
             name: "severity",
             label: "Severity",
@@ -503,194 +900,147 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
               { label: "Severe", value: "severe" }
             ]
           },
-          { type: "subheading", label: "Goal Progress"},
-          {
-            name: "goal_1",
-            label: "Goal 1",
-            type: "textarea"
-          },
-          {
-            name: "goal_2",
-            label: "Goal 2",
-            type: "textarea"
-          },
-          {
-            name: "goal_3",
-            label: "Goal 3",
-            type: "textarea"
-          },
-          { type: "subheading", label: "Functional Outcome Tracking"},
-          {
-            name: "social_functioning",
-            label: "Social Functioning",
-            type: "radio",
-            options: [
-              {label: "Improved", value: "improved"},
-              {label: "Same", value: "same"},
-              {label: "Declined", value: "declined"}
-            ]
-          },
-          {
-            name: "occupational_functioning",
-            label: "Occupational Functioning",
-            type: "radio",
-            options: [
-              {label: "Improved", value: "improved"},
-              {label: "Same", value: "same"},
-              {label: "Declined", value: "declined"}
-            ]
-          },
-          {
-            name: "adl_routine",
-            label: "ADL / Routine",
-            type: "radio",
-            options: [
-              {label: "Improved", value: "improved"},
-              {label: "Same", value: "same"},
-              {label: "Declined", value: "declined"}
-            ]
-          }
+          
         ]
       }
     ]
   };
 
+  /* ---------------- PLAN SCHEMA WITH GOALS ---------------- */
   const PLAN_SCHEMA = {
-    actions: SUBJECTIVE_SCHEMA.actions,
+    actions: EMPTY_SCHEMA.actions,
     sections: [
       {
         fields: [
-          {
-            type: "subheading", label: "Treatment Plan"
-          },
+          { type: "subheading", label: "Therapeutic Interventions" },
+
           {
             name: "continue_same_plan",
             label: "Continue Same Plan",
             type: "radio",
             options: [
-              {label: "Yes", value: "yes"},
-              {label: "No", value: "no"}
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
             ]
           },
           {
-            name: "modify_plan",
-            label: "Modify Plan",
-            type: "checkbox-group",
-            options: [
-              {label: "Yes", value: "yes"}
-            ]
-          },
-          {
-            name: "details",
-            label: "Details",
+            name: "plan_changes",
+            label: "Specify changes",
             type: "textarea",
             showIf: {
-              field: "modify_plan",
-              equals: "yes"
+              field: "continue_same_plan",
+              equals: "no"
             }
           },
+
           {
-            name: "care_plan_update",
-            label: "Care Plan Update",
+            name: "interventions_delivered",
+            label: "Therapeutic Interventions Delivered in Session",
             type: "textarea"
           },
+
           {
-            type: "subheading", label: "Risk Management Plan (if applicable)"
+            name: "client_response",
+            label: "Client’s Response / Progress Toward Goals",
+            type: "textarea"
           },
+
+          {
+            name: "plan_additional_info",
+            label: "Plan / Additional Information (Between sessions)",
+            type: "textarea"
+          },
+
+          { type: "subheading", label: "Risk Management Plan" },
+
           {
             name: "safety_plan_initiated",
             label: "Safety Plan Initiated",
             type: "radio",
             options: [
-              {label: "Yes", value: "yes"},
-              {label: "No", value: "no"}
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
             ]
           },
+
           {
             name: "family_involvement",
             label: "Family Involvement",
             type: "radio",
             options: [
-              {label: "Yes", value: "yes"},
-              {label: "No", value: "no"}
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
             ]
           },
-          {
-            name: "emergency_referral",
-            label: "Emergency Referral",
-            type: "radio",
-            options: [
-              {label: "Yes", value: "yes"},
-              {label: "No", value: "no"}
-            ]
-          },
-          { type: "subheading", label: "Referrals"},
+
           {
             name: "psychiatric_referral",
             label: "Psychiatric Referral",
             type: "radio",
             options: [
-              {label: "Yes", value: "yes"},
-              {label: "No", value: "no"}
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
             ]
           },
+
           {
-            name: "other_referral",
-            label: "Other Referral",
-            type: "textarea"
+            name: "psychiatric_referral_specify",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "psychiatric_referral",
+              equals: "yes"
+            }
           },
-          { type: "subheading", label: "Follow-Up"},
+
+          { type: "subheading", label: "Follow-up" },
+
           {
-            name: "next_visit_date",
-            label: "Next Visit Date",
+            name: "follow_up_visit_scheduled",
+            label: "Follow-up Visit Scheduled",
             type: "date"
           },
+
           {
-            name: "frequency",
-            label: "Frequency",
-            type: "single-select",
-            options: []
-          },
-          {
-            name: "mode",
-            label: "Mode",
-            type: "radio",
-            options: [
-              { label: "In-Person", value: "in_person" },
-              { label: "Tele", value: "tele" }
-            ]
+            name: "follow_up_specify",
+            label: "Specify",
+            type: "textarea"
           }
         ]
       }
     ]
   };
 
-  const schemaMap = {
-    subjective: SUBJECTIVE_SCHEMA,
-    objective: OBJECTIVE_SCHEMA,
-    assessment: ASSESSMENT_SCHEMA,
-    plan: PLAN_SCHEMA
-  };
+ const schemaMap = {
+  subjective: SUBJECTIVE_SCHEMA,
+  objective: OBJECTIVE_SCHEMA,
+  assessment: ASSESSMENT_SCHEMA,
+  plan: PLAN_SCHEMA
+};
 
-  /* ===================== PATIENT INFO ===================== */
- 
+return (
+  <PatientContext.Provider value={patient}>
+    <div style={mainContent}>
 
-  /* ===================== RENDER ===================== */
-
-  return (
-    <PatientContext.Provider value={patient}>
-      <div style={mainContent}>
-        {/* ===== PATIENT INFORMATION CARD ===== */}
+      {/* PATIENT INFO */}
+      <CommonFormBuilder
+        schema={{ sections: [] }}
+        values={{}}
+        onChange={() => {}}
+      >
+        <PatientCard patient={patient} />
+      </CommonFormBuilder>
+{/* ✅ SESSION DETAILS ABOVE TABS */}
         <CommonFormBuilder
-          schema={PSYCHOLOGY_CONTAINER_SCHEMA}
-          values={{}}
-          onChange={() => {}}
-        >
-          <PatientCard patient={patient} />
-        </CommonFormBuilder>
+          schema={SESSION_SCHEMA}
+          values={values}
+          onChange={onChange}
+        />
 
-        {/* ===== TABS ===== */}
-        <div style={tabBar}>
+
+
+      {/* TABS */}
+         <div style={tabBar}>
           {["subjective", "objective", "assessment", "plan"].map(tab => (
             <div
               key={tab}
@@ -702,29 +1052,33 @@ export default function PsychologyFollowUpAssessment({ patient, onSubmit, onBack
           ))}
         </div>
 
-        {/* ===== TAB CONTENT ===== */}
-        <CommonFormBuilder
-          schema={schemaMap[activeTab]}
-          values={values}
-          onChange={onChange}
-          submitted={submitted}
-          onAction={handleAction}
-        >
-          {/* Submit button */}
-          <div style={submitRow}>
-            <button style={submitBtn} onClick={handleSubmit}>
-              Submit 
-            </button>
-          </div>
-        </CommonFormBuilder>
-      </div>
-    </PatientContext.Provider>
-  );
-}
+      {/* FORM */}
+      <CommonFormBuilder
+        schema={schemaMap[activeTab]}
+        values={values}
+        onChange={onChange}
+        submitted={submitted}
+        onAction={handleAction}
+      >
 
-/* ===================== STYLES ===================== */
+       
 
-const mainContent = { margin: "0 auto", width: "100%" };
+        {/* SUBMIT */}
+        <div style={submitRow}>
+          <button style={submitBtn} onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
+
+      </CommonFormBuilder>
+
+    </div>
+  </PatientContext.Provider>
+);
+};
+/* ---------------- STYLES ---------------- */
+
+const mainContent = { width: "100%" };
 
 const tabBar = {
   display: "flex",
@@ -763,13 +1117,11 @@ const submitBtn = {
   fontWeight: 700
 };
 
-const section = {
-  marginBottom: 24
-};
+
+const section = { marginBottom: 24 };
 
 const patientGrid = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12,
-  fontSize: 14
+  gap: 12
 };

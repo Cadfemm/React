@@ -9,6 +9,7 @@ export default function PatientCard({ patient }) {
                 <div><b>Name:</b> {patient.name}</div>
                 <div><b>IC:</b> {patient.id}</div>
                 <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
+                {/* <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div> */}
                 <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
                 <div><b>ICD:</b> {patient.icd}</div>
                 <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
@@ -26,6 +27,10 @@ export default function PatientCard({ patient }) {
                 <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
                 <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
                 <div><b>PP/OB:</b> {patient.pp_ob || "-"}</div>
+                
+
+<div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
 
                 {/* Display all items of patient if its not empty */}
                 {/* {Object.entries(patient).map(([key, item]) => {

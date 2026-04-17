@@ -120,13 +120,13 @@ export default function EvokePotentialForm({ patient, onBack }) {
         fields: [
           {
             name: "date_of_appointment",
-            label: { en: "Date Of Appointment", ms: "Tarikh Temujanji" },
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
             type: "date",
             placeholder: { en: "Select Date", ms: "Pilih Tarikh" }
           },
           {
             name: "type_of_study",
-            label: { en: "Type Of Study", ms: "Jenis Kajian" },
+            label: { en: "Type of Study", ms: "Jenis Kajian" },
             type: "radio",
             options: TYPE_OF_STUDY_OPTIONS,
             labelAbove: true
@@ -167,13 +167,13 @@ export default function EvokePotentialForm({ patient, onBack }) {
             type: "radio",
             options: IMPEDANCE_OPTIONS
           },
-          {
-            name: "emr_technical_report",
-            label: { en: "Emr Technical Report By", ms: "Laporan Teknikal Emr Oleh" },
-            type: "radio",
-            options: EMR_REPORT_OPTIONS,
-            labelAbove: true
-          },
+          // {
+          //   name: "emr_technical_report",
+          //   label: { en: "Emr Technical Report By", ms: "Laporan Teknikal Emr Oleh" },
+          //   type: "radio",
+          //   options: EMR_REPORT_OPTIONS,
+          //   labelAbove: true
+          // },
           {
             name: "final_report",
             label: { en: "Final Report", ms: "Laporan Akhir" },

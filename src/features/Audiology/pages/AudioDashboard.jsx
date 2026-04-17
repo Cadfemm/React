@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import AudiologyDepartmentAdultPage from "../components/AudiologyAdultIA";
-import AudiologyDepartmentPediatricPage from "../components/AudiologyPediatricIA";
-
+import AudiologyPatients from "../AudiologyPatients";
 
 export default function AudiologyDepartmentPage({ patients = [], department, initialView = "dashboard", onBack }) {
   const [view, setView] = useState(initialView); // dashboard | patients | details
@@ -16,25 +14,17 @@ export default function AudiologyDepartmentPage({ patients = [], department, ini
     p => p.departments?.includes(department)
   );
 
-  /* ================= PATIENT DETAILS ================= */
-if (view === "details" && selectedPatient) {
-  const age = selectedPatient.age; // or calculate from DOB if needed
-
-  return age > 20 ? (
-    <AudiologyDepartmentAdultPage
-      patient={selectedPatient}
-      department={department}
-      onBack={() => setView("patients")}
-    />
-  ) : (
-    <AudiologyDepartmentPediatricPage
-      patient={selectedPatient}
-      department={department}
-      onBack={() => setView("patients")}
-    />
-  );
-}
-
+  /* ================= SHOW AUDIOLOGY PATIENTS COMPONENT ================= */
+  if (view === "patients" && selectedPatient) {
+    return (
+      <AudiologyPatients
+        Patients={[selectedPatient]}
+        onBack={() => {
+          setSelectedPatient(null);
+        }}
+      />
+    );
+  }
 
   /* ================= PATIENT LIST ================= */
   if (view === "patients") {
@@ -51,14 +41,12 @@ if (view === "details" && selectedPatient) {
               style={patientRow}
               onClick={() => {
                 setSelectedPatient(p);
-                setView("details");
               }}
             >
-<div style={{ fontWeight: 600 }}>
-  {p.name} <span style={{ fontSize: 12, color: "#6b7280" }}>({p.age} yrs)</span>
-</div>
-<div style={muted}>ICD: {p.icd}</div>
-
+              <div style={{ fontWeight: 600 }}>
+                {p.name} <span style={{ fontSize: 12, color: "#6b7280" }}>({p.age} yrs)</span>
+              </div>
+              <div style={muted}>ICD: {p.icd}</div>
             </div>
           ))
         )}
