@@ -1,4 +1,5 @@
 import "./App.css";
+import "./styles/design-system.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Login from "./pages/Signin"; // Assuming useLocation is used in the Login component

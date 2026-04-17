@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import CommonFormBuilder from "./CommonFormBuilder";
+import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
  const ProstheticsInitialAssessmentSchema = {
   title: "Prosthetics Initial Assessment",

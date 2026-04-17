@@ -12,7 +12,7 @@ export default function DoctorsDepartmentPage({ patients, department, updatePati
   const [activeTab, setActiveTab] = useState("dashboard");
 const [patientSubTab, setPatientSubTab] = useState("new");
 
-  const list = patients.filter(p => p.departments.includes(department));
+  const list = patients.filter(p => Array.isArray(p.departments) && p.departments.includes(department));
 
   // OLD final-submission key (not used anymore)
   function isFollowupPatient(p) {

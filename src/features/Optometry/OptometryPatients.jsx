@@ -1,7 +1,10 @@
-import { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
+import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
 import EmptyState from "../../shared/ui/EmptyState";
+import api from "../../shared/api/apiClient";
+import { API_URL } from "../../platform/config/api.config";
 
 /* ── Status palette ─────────────────────────────────────────────────────── */
 const STATUS = {
@@ -31,25 +34,62 @@ function StatusPill({ status }) {
 
 /* ── Option cards ───────────────────────────────────────────────────────── */
 const OPTION_CARDS = [
-  { id: "initial",  title: "Initial Assessment",    desc: "Full SOAP assessment for new patient",  icon: "📋", accent: "#1D4ED8" },
-  { id: "followup", title: "Follow-up Visit",        desc: "Follow-up visit documentation",          icon: "🔄", accent: "#059669" },
-  { id: "progress", title: "Progress Intervention",  desc: "Track progress and interventions",       icon: "📈", accent: "#7C3AED" },
-  { id: "group",    title: "Group Intervention",     desc: "Group session documentation",            icon: "👥", accent: "#DC2626" },
+  {
+    id: "initial",  title: "Initial Assessment",
+    desc: "Comprehensive SOAP assessment for new patient visit",
+    icon: "📋", accent: "#1D4ED8",
+    tag: "New Patient", tagColor: "#dbeafe", tagText: "#1d4ed8",
+  },
+  {
+    id: "followup", title: "Follow-up Visit",
+    desc: "Review progress, update findings and adjust treatment plan",
+    icon: "🔄", accent: "#059669",
+    tag: "Returning", tagColor: "#d1fae5", tagText: "#065f46",
+  },
+  {
+    id: "progress", title: "Progress Intervention",
+    desc: "Document clinical interventions and track patient outcomes",
+    icon: "📈", accent: "#7C3AED",
+    tag: "Ongoing Care", tagColor: "#ede9fe", tagText: "#5b21b6",
+  },
+  {
+    id: "group",    title: "Group Intervention",
+    desc: "Record group therapy session and multi-patient documentation",
+    icon: "👥", accent: "#DC2626",
+    tag: "Group Session", tagColor: "#fee2e2", tagText: "#991b1b",
+  },
 ];
 
-export default function OptometryPatients({ Patients, onBack, loading = false }) {
+export default function OptometryPatients({ onBack, loading = false }) {
+  const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient,      setSelectedPatient]      = useState(null);
   const [assessmentView,       setAssessmentView]       = useState(null);
+  const [followupStage,        setFollowupStage]        = useState("dashboard"); // "dashboard" | "soap"
   const [submittedAssessments, setSubmittedAssessments] = useState({});
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
 
-  const patients = Patients || [];
+  const [patients, setPatients] = useState([]);
 
-  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
-  const handleBackToCards    = useCallback(() => setAssessmentView(null), []);
+  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); setFollowupStage("dashboard"); }, []);
+  const handleBackToCards    = useCallback(() => { setAssessmentView(null); setFollowupStage("dashboard"); }, []);
   const handleInitialSubmit  = useCallback((v) => setSubmittedAssessments(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
   const handleFollowupSubmit = useCallback((v) => setSubmittedFollowups(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
+
+  /* Fetch patients department wise */
+  React.useEffect(() => {
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=Optometry`:'')
+        )
+        setPatients(res.data.results);
+      } catch(e){
+        setPatients([]);
+      }
+    }
+    fetchPatients();
+  }, [])
 
   /* hooks must be before early returns */
   const filtered = useMemo(() => patients.filter(p => {
@@ -63,8 +103,19 @@ export default function OptometryPatients({ Patients, onBack, loading = false })
     return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
   }
   if (selectedPatient && assessmentView === "followup") {
+    // Stage 1: show follow-up dashboard with previous visit summary
+    if (followupStage === "dashboard") {
+      return (
+        <OptometryFollowUpDashboard
+          patient={selectedPatient}
+          onBack={handleBackToCards}
+          onStartSOAP={() => setFollowupStage("soap")}
+        />
+      );
+    }
+    // Stage 2: SOAP form
     const saved = submittedFollowups[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={() => setFollowupStage("dashboard")} />;
   }
   if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
     const card = OPTION_CARDS.find(c => c.id === assessmentView);
@@ -78,23 +129,61 @@ export default function OptometryPatients({ Patients, onBack, loading = false })
 
   /* ── Assessment type selection ── */
   if (selectedPatient) {
+    const initials = ((selectedPatient.name || selectedPatient.email || "P")
+      .split(" ").map(w => w[0]).join("").slice(0, 2)).toUpperCase();
     return (
       <div style={S.selectionPage}>
-        <div style={S.selectionHeaderRow}>
-          <div style={S.headerTitleRow}>
-            <button style={S.headerBackBtn} onClick={handleBackToPatients}>&lt;</button>
+
+        {/* ── Top bar ── */}
+        <div style={S.patientBanner}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <button style={S.headerBackBtn} onClick={handleBackToPatients}>← Back</button>
+            <div style={S.patientAvatar}>{initials}</div>
             <div>
-              <h1 style={S.pageTitle}>{selectedPatient.name || selectedPatient.email}</h1>
+              <div style={S.patientName}>{selectedPatient.name || selectedPatient.email}</div>
+              <div style={S.patientMeta}>
+                {[
+                  selectedPatient.mrn && `MRN: ${selectedPatient.mrn}`,
+                  selectedPatient.age && `${selectedPatient.age} yrs`,
+                  selectedPatient.gender,
+                  selectedPatient.icd && `ICD: ${selectedPatient.icd}`,
+                ].filter(Boolean).join("  ·  ")}
+              </div>
             </div>
           </div>
+          <div style={S.patientBannerRight}>
+            <div style={S.bannerStat}>
+              <div style={S.bannerStatVal}>3</div>
+              <div style={S.bannerStatLabel}>Previous Visits</div>
+            </div>
+            <div style={S.bannerDivider} />
+            <div style={S.bannerStat}>
+              <div style={S.bannerStatVal}>Apr 2026</div>
+              <div style={S.bannerStatLabel}>Last Visit</div>
+            </div>
+            <div style={S.bannerDivider} />
+            <div style={S.bannerStat}>
+              <div style={{ ...S.bannerStatVal, color: "#10b981" }}>Active</div>
+              <div style={S.bannerStatLabel}>Status</div>
+            </div>
+
+          </div>
         </div>
-        <div style={S.selectionIntro}>
+
+        {/* ── Body ── */}
+        <div style={S.selectionBody}>
+          <div style={S.selectionHeading}>Select Assessment Type</div>
+          <div style={S.selectionSubheading}>
+            Choose the appropriate assessment for this patient visit
+          </div>
+
+          <div style={S.cardsGrid}>
+            {OPTION_CARDS.map(card => (
+              <AssessmentCard key={card.id} card={card} onClick={() => setAssessmentView(card.id)} />
+            ))}
+          </div>
         </div>
-        <div style={S.cardsGrid}>
-          {OPTION_CARDS.map(card => (
-            <AssessmentCard key={card.id} card={card} onClick={() => setAssessmentView(card.id)} />
-          ))}
-        </div>
+
       </div>
     );
   }
@@ -155,7 +244,7 @@ export default function OptometryPatients({ Patients, onBack, loading = false })
               key={p.id}
               patient={p}
               idx={idx}
-              onStart={() => setSelectedPatient(p)}
+              onStart={() => { setSelectedPatient(p); setAssessmentView("initial"); }}
             />
           ))
         )}
@@ -244,18 +333,46 @@ function AssessmentCard({ card, onClick }) {
     <div
       style={{
         ...S.card,
-        boxShadow: hovered ? "0 8px 24px rgba(0,0,0,0.1)" : "0 1px 4px rgba(0,0,0,0.06)",
-        transform: hovered ? "translateY(-3px)" : "none",
-        borderTopColor: card.accent,
+        boxShadow: hovered ? `0 16px 40px ${card.accent}25` : "0 2px 8px rgba(0,0,0,0.06)",
+        transform: hovered ? "translateY(-4px)" : "none",
+        borderTop: `3px solid ${card.accent}`,
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onClick}
     >
-      <div style={{ fontSize: 30, marginBottom: 12 }}>{card.icon}</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>{card.title}</div>
-      <div style={{ fontSize: 13, color: "#64748B", flex: 1, lineHeight: 1.55 }}>{card.desc}</div>
-      <div style={{ marginTop: 16, fontSize: 13, fontWeight: 600, color: card.accent }}>Open →</div>
+      {/* Header row */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+        <div style={{ ...S.cardIconWrap, background: card.accent + "12", color: card.accent }}>
+          <span style={{ fontSize: 22 }}>{card.icon}</span>
+        </div>
+        <span style={{ ...S.cardTag, background: card.tagColor, color: card.tagText }}>
+          {card.tag}
+        </span>
+      </div>
+
+      {/* Title */}
+      <div style={{ fontSize: 17, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>{card.title}</div>
+
+      {/* Description */}
+      <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.65, flex: 1 }}>{card.desc}</div>
+
+      {/* Footer */}
+      <div style={{
+        marginTop: 20, paddingTop: 14,
+        borderTop: "1px solid #f3f4f6",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: card.accent }}>Open Assessment</span>
+        <div style={{
+          width: 30, height: 30, borderRadius: "50%",
+          background: card.accent, display: "flex",
+          alignItems: "center", justifyContent: "center",
+          color: "#fff", fontSize: 16, fontWeight: 700,
+          transition: "transform .2s",
+          transform: hovered ? "scale(1.1)" : "scale(1)",
+        }}>›</div>
+      </div>
     </div>
   );
 }
@@ -372,49 +489,77 @@ const S = {
   selectionPage: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
     width: "100%",
-    minHeight: "calc(100vh - 80px)",
-    background: "#F2F6FB",
-    padding: "32px 28px 40px",
+    minHeight: "calc(100vh - 56px)",
+    background: "#f5f7fa",
   },
-  selectionHeaderRow: {
+  patientBanner: {
     display: "flex",
-    justifyContent: "flex-start",
-    width: "100%",
-    maxWidth: 1040,
-    marginBottom: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#fff",
+    borderBottom: "1px solid #e5e7eb",
+    padding: "16px 28px",
+    flexWrap: "wrap",
+    gap: 16,
+    boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
   },
-  selectionIntro: {
-    maxWidth: 760,
-    width: "100%",
-    textAlign: "center",
-    marginBottom: 24,
+  patientAvatar: {
+    width: 44, height: 44, borderRadius: 10,
+    background: "linear-gradient(135deg, #1d4ed8, #3b82f6)",
+    color: "#fff", fontSize: 15, fontWeight: 800,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    flexShrink: 0, letterSpacing: "0.5px",
   },
-  selectionText: {
-    margin: 0,
-    fontSize: 14,
-    color: "#556987",
-    lineHeight: 1.7,
+  patientName: { fontSize: 17, fontWeight: 700, color: "#0f172a" },
+  patientMeta: { fontSize: 12, color: "#6b7280", marginTop: 3 },
+  patientBannerRight: { display: "flex", alignItems: "center", gap: 24 },
+  bannerStat: { textAlign: "center" },
+  bannerStatVal: { fontSize: 15, fontWeight: 700, color: "#111827" },
+  bannerStatLabel: { fontSize: 11, color: "#9ca3af", marginTop: 2 },
+  bannerDivider: { width: 1, height: 30, background: "#e5e7eb" },
+  selectionBody: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "40px 28px",
   },
-  cardsGrid:  {
+  selectionHeading: {
+    fontSize: 22, fontWeight: 700, color: "#0f172a",
+    marginBottom: 6, textAlign: "center",
+  },
+  selectionSubheading: {
+    fontSize: 14, color: "#6b7280",
+    marginBottom: 32, textAlign: "center",
+  },
+  cardsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(280px, 1fr))",
-    gap: 20,
-    justifyContent: "center",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: 18,
     width: "100%",
-    maxWidth: 720,
-    margin: "0 auto",
+    maxWidth: 860,
   },
-  card:       {
-    background: "#fff", border: "1px solid #E9ECEF",
-    borderRadius: 22,
-    padding: "24px 22px",
+  card: {
+    background: "#fff",
+    border: "1px solid #e9ecef",
+    borderRadius: 14,
+    padding: "22px 22px 18px",
     cursor: "pointer",
     transition: "box-shadow .2s, transform .2s",
-    display: "flex", flexDirection: "column", minHeight: 210,
-    width: "100%",
-    maxWidth: 320,
+    display: "flex", flexDirection: "column",
+    minHeight: 200,
+  },
+  cardTag: {
+    display: "inline-block",
+    padding: "3px 10px",
+    borderRadius: 20,
+    fontSize: 11,
+    fontWeight: 600,
+  },
+  cardIconWrap: {
+    width: 46, height: 46, borderRadius: 12,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    flexShrink: 0,
   },
 };

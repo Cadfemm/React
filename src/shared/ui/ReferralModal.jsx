@@ -1,17 +1,24 @@
-import { memo, useState, useCallback } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import ReactDOM from "react-dom";
 
 /* ── keyframe injected once ─────────────────────────────────────────────── */
 if (typeof document !== "undefined" && !document.getElementById("__ref_kf__")) {
-  const s = document.createElement("style");
-  s.id = "__ref_kf__";
-  s.textContent = `
-    @keyframes ref_bg   { from{opacity:0} to{opacity:1} }
-    @keyframes ref_card { from{opacity:0;transform:translateY(14px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
-    .__ref_dept:hover   { border-color: var(--bs-primary) !important; background: #EFF6FF !important; }
-    .__ref_dept.selected { border-color: var(--bs-primary) !important; background: #EFF6FF !important; }
-    .__ref_submit:hover { opacity:.9 !important; }
+  const styleTag = document.createElement("style");
+  styleTag.id = "__ref_kf__";
+  styleTag.textContent = `
+    @keyframes ref_bg { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ref_card { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .__ref_dept:hover { border-color: var(--bs-primary) !important; background: #eff6ff !important; }
+    .__ref_dept.selected { border-color: var(--bs-primary) !important; background: #eff6ff !important; }
+    .__ref_submit:hover:not(:disabled) { opacity: .92 !important; }
+    @media (max-width: 640px) {
+      .__ref_card { width: min(96vw, 560px) !important; max-height: 94vh !important; }
+      .__ref_urgency { flex-direction: column; }
+      .__ref_grid { grid-template-columns: 1fr !important; }
+      .__ref_actions { flex-direction: column-reverse; }
+    }
   `;
-  document.head.appendChild(s);
+  document.head.appendChild(styleTag);
 }
 
 const DEPARTMENTS = [
@@ -23,10 +30,10 @@ const DEPARTMENTS = [
   { id: "dietetics",        label: "Dietetics",              icon: "🥗" },
   { id: "prosthetics",      label: "Prosthetics & Orthotics",icon: "🦾" },
   { id: "nursing",          label: "Nursing",                icon: "💉" },
-  { id: "medical",          label: "Medical Officer",        icon: "🩺" },
-  { id: "social",           label: "Social Work",            icon: "🤝" },
-  { id: "pharmacy",         label: "Pharmacy",               icon: "💊" },
-  { id: "radiology",        label: "Radiology",              icon: "🔬" },
+  { id: "medical",          label: "Medical Assistant",        icon: "🩺" },
+  // { id: "social",           label: "Social Work",            icon: "🤝" },
+  // { id: "pharmacy",         label: "Pharmacy",               icon: "💊" },
+  // { id: "radiology",        label: "Radiology",              icon: "🔬" },
 ];
 
 /**
