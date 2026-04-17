@@ -1,6 +1,8 @@
+import api from "../../shared/api/apiClient";
 import React, { useState, useMemo } from "react";
 import EmptyState from "../../shared/ui/EmptyState";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
+import { API_URL } from "../../platform/config/api.config";
 
 /* ── Assessment type cards ─────────────────────────────── */
 const ASSESSMENT_CARDS = [
@@ -89,15 +91,33 @@ function PatientRow({ patient: p, idx, onStart }) {
  *   AssessmentComponent - the department's assessment component (receives { patient, mode, onBack })
  *   loading         - optional bool
  */
-export default function DepartmentPatients({ patients = [], department, onBack, AssessmentComponent, loading = false }) {
+export default function DepartmentPatients({ department, onBack, AssessmentComponent, loading = false }) {
+  const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [assessmentView, setAssessmentView] = useState(null);
   const [search, setSearch] = useState("");
+  const [patients, setPatients] = useState([])
+  
 
   const deptPatients = useMemo(() =>
     patients.filter(p => !department || (Array.isArray(p.departments) ? p.departments.includes(department) : true)),
     [patients, department]
   );
+
+  /* Fetch patients department wise */
+  React.useEffect(() => {
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=${encodeURIComponent(department)}`:'')
+        )
+        setPatients(res.data.results);
+      } catch(e){
+        setPatients([]);
+      }
+    }
+    fetchPatients();
+  }, [])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();

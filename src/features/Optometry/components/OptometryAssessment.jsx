@@ -225,16 +225,16 @@ export default function OptometryAssessment({
   useEffect(() => {
     setFormsLoading(true);
     setFormsError(false);
-    api.get(API_URL.FORM + "optometry/")
-      .then(res => setForms(res.data))
+    api.get(API_URL.FORM + "department/optometry/")
+      .then(res => setForms(res.data.results))
       .catch(() => setFormsError(true))
       .finally(() => setFormsLoading(false));
   }, []);
 
   useEffect(() => {
-    api.get(API_URL.FORM + "optometry/subjective")
+    api.get(API_URL.FORM + "department/optometry/?assessment=subjective")
       .then(res => {
-        res.data.forEach(form => {
+        res.data.results.forEach(form => {
           if (form.name === "Brain Injury Vision Symptoms Survey (BIVSS)")             SUB_SCHEMA.BRAIN_VISION    = form.body;
           else if (form.name === "Visual Function Questionnaire")                      SUB_SCHEMA.VISUAL_FUNCTION = form.body;
           else if (form.name === "Binocular Vision Dysfunction Questionnaire (BVDQ)")  SUB_SCHEMA.BVDQ            = form.body;
@@ -245,9 +245,9 @@ export default function OptometryAssessment({
   }, []);
 
   useEffect(() => {
-    api.get(API_URL.FORM + "optometry/objective")
+    api.get(API_URL.FORM + "department/optometry/?assessment=objective")
       .then(res => {
-        res.data.forEach(form => {
+        res.data.results.forEach(form => {
           if (form.name === "Binocular Vision")               OBJ_SCHEMA.BINOCULAR_VISION      = form.body;
           else if (form.name === "Refraction Assessment")     OBJ_SCHEMA.REFRACTION             = form.body;
           else if (form.name === "Special Diagnostic")        OBJ_SCHEMA.SPECIAL_DIAGNOSTIC     = form.body;
@@ -290,8 +290,8 @@ export default function OptometryAssessment({
   const handleConfirmedSubmit = useCallback(async () => {
     setShowConfirm(false);
     try {
-      const res = await api.post(API_URL.FORM + "optometry/", {
-        form_id: 1, visit_type: "IN",
+      const res = await api.post(API_URL.FORM + forms[0].id + "/assessment/", {
+        patient: patient.id, visit_type: "IN",
         data: values || {}, score: values?.score || {}, total_score: values?.total_score || 0,
       });
       setToast({ message: res.data.message || "Assessment submitted successfully", variant: "success" });
@@ -329,8 +329,8 @@ export default function OptometryAssessment({
   const retryForms = useCallback(() => {
     setFormsError(false);
     setFormsLoading(true);
-    api.get(API_URL.FORM + "optometry/")
-      .then(res => setForms(res.data))
+    api.get(API_URL.FORM + "department/optometry/")
+      .then(res => setForms(res.data.results))
       .catch(() => setFormsError(true))
       .finally(() => setFormsLoading(false));
   }, []);

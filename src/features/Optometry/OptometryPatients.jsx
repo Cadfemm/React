@@ -3,6 +3,8 @@ import OptometryAssessment from "./components/OptometryAssessment";
 import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
 import EmptyState from "../../shared/ui/EmptyState";
+import api from "../../shared/api/apiClient";
+import { API_URL } from "../../platform/config/api.config";
 
 /* ── Status palette ─────────────────────────────────────────────────────── */
 const STATUS = {
@@ -58,7 +60,8 @@ const OPTION_CARDS = [
   },
 ];
 
-export default function OptometryPatients({ Patients, onBack, loading = false }) {
+export default function OptometryPatients({ onBack, loading = false }) {
+  const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient,      setSelectedPatient]      = useState(null);
   const [assessmentView,       setAssessmentView]       = useState(null);
   const [followupStage,        setFollowupStage]        = useState("dashboard"); // "dashboard" | "soap"
@@ -66,12 +69,27 @@ export default function OptometryPatients({ Patients, onBack, loading = false })
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
 
-  const patients = Patients || [];
+  const [patients, setPatients] = useState([]);
 
   const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); setFollowupStage("dashboard"); }, []);
   const handleBackToCards    = useCallback(() => { setAssessmentView(null); setFollowupStage("dashboard"); }, []);
   const handleInitialSubmit  = useCallback((v) => setSubmittedAssessments(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
   const handleFollowupSubmit = useCallback((v) => setSubmittedFollowups(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
+
+  /* Fetch patients department wise */
+  React.useEffect(() => {
+    const fetchPatients = async () => {
+      try{
+        const res = await api.get(
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=Optometry`:'')
+        )
+        setPatients(res.data.results);
+      } catch(e){
+        setPatients([]);
+      }
+    }
+    fetchPatients();
+  }, [])
 
   /* hooks must be before early returns */
   const filtered = useMemo(() => patients.filter(p => {
