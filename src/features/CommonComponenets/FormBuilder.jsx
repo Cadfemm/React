@@ -1140,7 +1140,8 @@ function renderField(
           onChange={onChange}
           readOnly={readOnly}
         />
-      );
+      );  
+
     case "milestone-grid":
       return (
         <div>
@@ -2219,7 +2220,25 @@ case "grid-table-advanced": {
                 </select>
               );
             }
-
+if (typeof col === "object" && col.type === "radio") {
+  return (
+    <div key={fieldKey} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      {(col.options || []).map((opt) => (
+        <label key={opt.value} style={{ margin: "0 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <input
+            type="radio"
+            name={fieldKey}
+            value={opt.value}
+            checked={values[fieldKey] === opt.value}
+            onChange={() => onChange(fieldKey, opt.value)}
+            style={{ marginBottom: 2 }}
+          />
+          <span style={{ fontSize: 10, lineHeight: 1 }}>{opt.label}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
             // Handle file-upload-modal type
             if (typeof col === "object" && col.type === "file-upload-modal") {
               return (

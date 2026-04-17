@@ -15,7 +15,7 @@ export default function ProgramTabsWithContent({ patient }) {
     { key: "msk", label: "Musculoskeletal" },
     { key: "sci", label: "Spinal Cord Injury" },
     { key: "amputee", label: "Amputee" },
-    { key: "cardio", label: "Cardiorespiratory" },
+    // { key: "cardio", label: "Cardiorespiratory" },
   ];
 
   const [activeTab, setActiveTab] = useState("sci");

@@ -691,7 +691,7 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
           label: "Mark Wound Location on Body Diagram",
           type: "wound-location-marker",
           views: [
-            { key: "body", label: "Body (Front/Back)", src: "/body_high.png" },
+            { key: "body", label: "Body (Front/Back)", src: "/amputation.png" },
             { key: "hands", label: "Hands", src: "/hands_high.png" },
             { key: "feet", label: "Feet", src: "/feet_high.png" },
           ],
@@ -1201,6 +1201,15 @@ const PROSTHETICS_PLAN_SCHEMA = {
           showIf: {
             field: "intervention",
             equals: "yes"
+        }
+        },
+        {
+          name: "plan_others",
+          label: "Specify",
+          type: "textarea",
+          showIf: {
+            field: "intervention",
+            equals: "no"
         }
         }
       ])
