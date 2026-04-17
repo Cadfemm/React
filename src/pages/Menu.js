@@ -47,15 +47,17 @@ import { sx } from "../components/RowCard";
 import InvestigationsChecklist from "../components/InvestigationsChecklist";
 import BookAppointmentTab from "../components/BookAppointmentTab";
 import GasGoalsTab from "../components/GasGoalsTab";
-import PsychologyDashboard from "../features/Psychology/components/PychologyDashboard";
+import PsychologyPatients from "../features/Psychology/components/PsychologyPatients";
+import SpeechPatients from "../features/SpeechandLanguage/SpeechandlanguagePatients";
 import GlobalVitalsOverlay from "../components/GlobalVitalsOverlay";
 import SpeechAndLanguage from "../features/SpeechandLanguage/SpeechandlanguageDashboard"
-import OptometryDashboard from "../features/Optometry/OptometryDashboard";
-import ProstheticsAndOrthoticsDashboard from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsDashboard";
+import OptometryPatients from "../features/Optometry/OptometryPatients";
+import ProstheticsPatients from "../features/Prosthetics & Orthotics/ProstheticsAndOrthoticsPatients";
 import NursingDepartmentPage from "../features/Nursing/pages/NursingPatientspage";
 import OtDepartmentPage from "../features/OT/pages/Patientspage";
 import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
+import GenericDepartmentDashboard from "../features/common/GenericDepartmentDashboard";
 import api from "../shared/api/apiClient"
 import { API_URL } from "../platform/config/api.config";
 
@@ -340,6 +342,7 @@ useEffect(() => {
 
 
           <MainContent
+            key={tab}
             tab={tab}
             addPatient={addPatient}
             patients={patients}
@@ -688,43 +691,43 @@ export function MainContent({
       return <PatientRegister addPatient={addPatient} />;
 
     case "Physiotherapy":
-      return <DepartmentPage patients={patients} department="Physio Therapy" />;
-     case "Occupational Therapy":
-      return <OtDepartmentPage patients={patients} department="Occupational Therapy" />;
-     case "Work & Vocational Rehab":
-      return <WandRDepartmentPage patients={patients} department="Work & Vocational Rehab" />;
+      return <GenericDepartmentDashboard departmentName="Physiotherapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
+    case "Occupational Therapy":
+      return <GenericDepartmentDashboard departmentName="Occupational Therapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
+    case "Work & Vocational Rehab":
+      return <GenericDepartmentDashboard departmentName="Work & Vocational Rehab Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
     case "Psychology":
-      return <PsychologyDashboard patients={patients} />;
+      return <GenericDepartmentDashboard departmentName="Psychology Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
     case "Optometry":
-      return <OptometryDashboard patients={patients} />;
-     case "Prosthetics & Orthotics":
-      return <ProstheticsAndOrthoticsDashboard patients={patients} />;
+      return <GenericDepartmentDashboard departmentName="Optometry Department" patients={patients} PatientsComponent={OptometryPatients} updatePatientInMainList={updatePatientInMainList} />;
+
+    case "Prosthetics & Orthotics":
+      return <GenericDepartmentDashboard departmentName="Prosthetics & Orthotics Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
     case "Speech & Language Therapy":
-      return <SpeechAndLanguage patients={patients} />;
+      return <GenericDepartmentDashboard departmentName="Speech & Language Therapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Dietetics":
-      return <DietDepartmentPage patients={patients} department="Dietetics" />;
+      return <GenericDepartmentDashboard departmentName="Dietetics Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Audiology":
-      return <AudiologyDepartmentPage patients={patients} department="Audiology" />;
-
+      return <GenericDepartmentDashboard departmentName="Audiology Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Doctor":
-      return <DoctorsDepartmentPage
-        patients={patients}
-        department="Doctor"
-        updatePatientInMainList={updatePatientInMainList}
-      />
-        ;
+      return <GenericDepartmentDashboard departmentName="Doctor Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Nursing":
-      return <NursingDepartmentPage patients={patients} department="Nursing" />;
+      return <GenericDepartmentDashboard departmentName="Nursing Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Medical Assistant":
-      return <MedicalAssistantPatientspage patients={patients} department="Medical Assistant" />;
+      return <GenericDepartmentDashboard departmentName="Medical Assistant Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     default:
-         return <PatientRegister addPatient={addPatient} />;
+      return <PatientRegister addPatient={addPatient} />;
   }
 }
 

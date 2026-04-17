@@ -3,8 +3,8 @@ import AudiologyDepartmentAdultPage from "../components/AudiologyAdultIA";
 import AudiologyDepartmentPediatricPage from "../components/AudiologyPediatricIA";
 
 
-export default function AudiologyDepartmentPage({ patients = [], department }) {
-  const [view, setView] = useState("dashboard"); // dashboard | patients | details
+export default function AudiologyDepartmentPage({ patients = [], department, initialView = "dashboard", onBack }) {
+  const [view, setView] = useState(initialView); // dashboard | patients | details
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   /* ================= SAFETY GUARD ================= */
@@ -280,3 +280,5 @@ const queueBox = { background: "#f9fafb", padding: 12, borderRadius: 8 };
 const queueCount = { fontWeight: 600 };
 const queueList = { paddingLeft: 18, fontSize: 14 };
 const taskList = { paddingLeft: 18, fontSize: 14 };
+
+
