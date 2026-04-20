@@ -1,0 +1,671 @@
+import { useState } from "react";
+import CommonFormBuilder from "../CommonComponenets/FormBuilder";
+
+/* ================= CONSTANTS ================= */
+
+const YES_NO_OPTIONS = [
+  { label: "Yes", value: "YES" },
+  { label: "No", value: "NO" }
+];
+
+const ONSET_OPTIONS = ["Gradual", "Sudden"];
+const PROGRESSION_OPTIONS = ["Better", "Worse", "No change"];
+
+const MISUSE_OPTIONS = [
+  { label: "Screaming", value: "screaming" },
+  { label: "Shouting", value: "shouting" },
+  { label: "Excessive throat clearing", value: "throat_clearing" }
+];
+
+const DEMAND_OPTIONS = ["Low", "Moderate", "High", "Elite Voice User"];
+const HOURS_OPTIONS = ["<1", "1-3", "3-5", ">5"];
+
+const WATER_OPTIONS = ["<0.5L", "0.5-1.0L", "1-1.5L", "1.5-2.0L", ">2.0L"];
+
+const HYDRATION_OPTIONS = [
+  { label: "Sips frequently", value: "sips" },
+  { label: "Long gaps without drinking", value: "gaps" }
+];
+
+const ALCOHOL_OPTIONS = ["Never", "Occasionally", "Daily"];
+const CAFFEINE_OPTIONS = ["None", "1-2 cups/day", ">2 cups/day"];
+const FREQUENCY_OPTIONS = ["Rare", "Regular"];
+
+/* ================= COMPONENT ================= */
+
+// export default function ThacheostomyAssessment(mode = "objective") {
+export default function ThacheostomyAssessment({ mode = "objective" }) {
+
+  const [values, setValues] = useState({});
+
+  const handleChange = (name, value) => {
+    setValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  /* ================= SCHEMA ================= */
+
+  const SCHEMA_TRACHEOSTOMY = {
+    sections: [
+      {
+        title: "ThacheostomyAssessment",
+        fields: [
+
+          /* ===== MEDICAL HISTORY ===== */
+        {
+  type: "subheading",
+  label: "Suction needs (airway clearance function)"
+},
+
+{
+  name: "suction_frequency",
+  label: "Frequency (every ___ hours)",
+  type: "textarea"
+},
+
+{
+  name: "secretion_amount",
+  label: "Secretion amount",
+  type: "radio",
+  options: ["Small", "Moderate", "Large"]
+},
+
+{
+  name: "secretion_colour",
+  label: "Colour",
+  type: "radio",
+  options: ["Whitish", "Yellowish", "Greenish", "Blood-tinged"]
+},
+
+{
+  name: "secretion_consistency",
+  label: "Consistency",
+  type: "radio",
+  options: ["Thick", "Loose"]
+},
+
+/* ===== TRACHEOSTOMY ===== */
+
+{
+  type: "subheading",
+  label: "Tracheostomy Status"
+},
+{
+  name: "trach_date",
+  label: "Date of tracheostomy insertion",
+  type: "date"
+},
+{
+  name: "trach_indication",
+  label: "Indication for tracheostomy",
+  type: "textarea"
+},
+{
+  type: "subheading",
+  label: "Tracheostomy tube"
+},
+
+/* ===== SIZE ===== */
+{
+  name: "trach_size",
+  label: "Size (mm)",
+  type: "radio",
+  options: ["5.0", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"]
+},
+
+/* ===== TYPE ===== */
+{
+  name: "trach_type",
+  label: "Type",
+  type: "radio",
+  options: ["Fenestrated", "Non-fenestrated"]
+},
+
+/* ===== LUMEN ===== */
+{
+  name: "trach_lumen",
+  label: "Lumen",
+  type: "radio",
+  options: ["Single-lumen", "Double-lumen"]
+},
+
+/* ===== BRAND ===== */
+{
+  name: "trach_brand",
+  label: "Brand",
+  type: "radio",
+  options: ["Portex", "Rusch", "Shiley", "Other"]
+},
+
+{
+  name: "trach_brand_other",
+  label: "Other (specify)",
+  type: "textarea",
+  showIf: { field: "trach_brand", equals: "Other" }
+},
+
+/* ===== CUFF ===== */
+{
+  name: "cuff_status",
+  label: "Cuff status",
+  type: "radio",
+  options: ["Inflated", "Deflated", "Cuffless"]
+},
+
+/* ===== INNER CANNULA ===== */
+{
+  name: "inner_cannula",
+  label: "Inner cannula",
+  type: "radio",
+  options: ["Present", "Absent"]
+},
+
+{
+  name: "inner_cannula_type",
+  label: "If present",
+  type: "radio",
+  options: ["Fenestrated", "Non-fenestrated"],
+  showIf: { field: "inner_cannula", equals: "Present" }
+},
+
+/* ===== VENTILATION ===== */
+{
+  name: "ventilation",
+  label: "Ventilation",
+  type: "radio",
+  options: [
+    "Room air",
+    "O2 via trache mask",
+    "O2 via Swedish nose",
+    "N/A"
+  ]
+},
+
+/* ===== FLOW RATE ===== */
+{
+  name: "flow_rate",
+  label: "Flow rate (L of O2)",
+  type: "input"
+},
+
+/* ===== HUMIDIFICATION ===== */
+{
+  name: "humidification",
+  label: "Humidification method",
+  type: "radio",
+  options: ["HME", "Nebuliser", "Heated humidifier", "None"]
+},
+        ]
+      }
+    ]
+  };
+const SCHEMA_PLAN_TRACHEOSTOMY = {
+  form_name: "Tracheostomy Weaning Recommendations",
+  sections: [
+    
+    {
+      title: "Tracheostomy weaning recommendations",
+      fields: [
+        
+        {
+          name: "capping_duration",
+          label: "Suggested capping duration (hours)",
+          type: "input"
+        },
+        {
+          name: "frequency",
+          label: "Frequency (times/day)",
+          type: "input"
+        },
+        {
+          name: "flow_rate",
+          label: "Flow rate (L of O2)",
+          type: "input"
+        },
+        {
+          name: "monitoring",
+          label: "Monitoring parameters",
+          type: "radio",
+          options: ["SpO2", "Respiratory Rate", "Work of Breathing"]
+        },
+                  { type: "subheading", label: "Oral Care" },
+          {
+          name: "oral_care_method",
+          label: "Method",
+          type: "radio",
+          options: ["Brush teeth", "Gauze stick", "Gargle"]
+        },
+{
+  name: "oral_care_frequency",
+  label: "Frequency",
+  type: "checkbox-group",
+  options: [
+    { label: "3–4 times/day", value: "3_4_day" },
+    { label: "Before & after meals", value: "before_after_meals" },
+    { label: "Before & after oral trials", value: "before_after_trials" }
+  ]
+},
+                          { type: "subheading", label: "Therapy" },
+{
+      name: "therapy",
+      type: "checkbox-group",
+      options: [
+        {
+          label: "KTC.AM.ZZ Observation of breathing functions",
+          value: "breathing_observation"
+        },
+        {
+          label: "KBC.DA.AD Voice facilitation intervention",
+          value: "voice_facilitation"
+        },
+        {
+          label: "KTC.AA.ZZ Assessment of swallowing",
+          value: "swallowing_assessment"
+        },
+        {
+          label: "KTC.PH.ZZ Training about swallowing / airway clearance",
+          value: "swallowing_training"
+        },
+        {
+          label: "KTC.PN.ZZ Advising about swallowing / airway management",
+          value: "airway_advising"
+        }
+      ]
+    },
+        {
+          name: "exercises",
+          label: "Exercises",
+          type: "textarea",
+          placeholder: "Enter breathing, swallowing, and voice exercises"
+        },
+        {
+  name: "other_management",
+  label: "Other management",
+  type: "radio",
+  options: [
+    { label: "Referral for medical management", value: "referral" },
+    { label: "Further Assessment", value: "further" }
+  ]
+},
+
+{
+  name: "further_assessment",
+  label: "Further Assessment",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "KTC.AE.AD Video endoscopic evaluation of swallowing",
+      value: "fees"
+    },
+    {
+      label: "KBC.DA.AD Voice facilitation intervention",
+      value: "advanced_voice"
+    }
+  ],
+  showIf: {
+    field: "other_management",
+    equals: "further"
+  }
+},
+
+
+      ]
+    },
+
+    
+  ]
+};
+
+
+const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
+  section_name: "Tracheostomy Weaning Evaluation - Objective",
+  fields: [
+              { type: "subheading", label: "Objective Tracheostomy" },
+
+    
+        
+      {
+  name: "respiration_assessment",
+  label: "Respiration Assessment",
+  type: "checkbox-group",
+  direction: "column", // optional: shows one below another
+  options: [
+    {
+      label: "JTB.AA.ZZ Assessment of respiration function",
+      value: "respiration_function"
+    },
+    {
+      label: "JTB.DE.AC Artificial ventilation",
+      value: "artificial_ventilation"
+    },
+    {
+      label: "JU1.AA.ZZ Assessment of voice and speech functions, unspecified",
+      value: "voice_speech_assessment"
+    }
+  ]
+},
+             { type: "subheading", label: "Pre-evaluation vitals" },
+
+      {
+      name: "spo2",
+      label: "SpO2 (%)",
+      type: "input",
+      placeholder: "Enter SpO2"
+    },
+    {
+      name: "respiratory_rate",
+      label: "RR (breaths/min)",
+      type: "input",
+      placeholder: "Enter respiratory rate"
+    },
+    {
+      name: "heart_rate",
+      label: "HR (bpm)",
+      type: "input",
+      placeholder: "Enter heart rate"
+    },
+    {
+      name: "secretion_amount",
+      label: "Secretion amount",
+      type: "radio",
+      options: [
+        { label: "Small", value: "small" },
+        { label: "Moderate", value: "moderate" },
+        { label: "Large", value: "large" }
+      ]
+    },
+                 { type: "subheading", label: "Pre-evaluation suction" },
+
+    {
+      name: "secretion_colour",
+      label: "Colour",
+      type: "radio",
+      options: [
+        { label: "Whitish", value: "whitish" },
+        { label: "Yellowish", value: "yellowish" },
+        { label: "Greenish", value: "greenish" },
+        { label: "Blood-tinged", value: "blood_tinged" }
+      ]
+    },
+    {
+      name: "secretion_consistency",
+      label: "Consistency",
+      type: "radio",
+      options: [
+        { label: "Thick", value: "thick" },
+        { label: "Loose", value: "loose" }
+      ]
+    },
+    {
+      name: "secretion_consistency",
+      label: "Secretion amount",
+      type: "radio",
+      options: [
+        { label: "Small", value: "small" },
+        { label: "Moderate", value: "moderate" },
+         { label: "Large", value: "large" },
+
+      ]
+    },
+ 
+   {
+  name: "tracheostomy_trials",
+  label: "Trials / Clinical Observations",
+  type: "checkbox-group",
+  options: [
+    { label: "Cuff deflation trial", value: "cuff_deflation" },
+    { label: "Digital Occlusion trial", value: "digital_occlusion" },
+    { label: "Speaking valve trial", value: "speaking_valve" },
+    { label: "Capping trial", value: "capping" },
+    { label: "Clinical Observations", value: "clinical_observations" },
+    { label: "Modified Evan's Blue Dye Test", value: "blue_dye_test" }
+  ]
+},
+// ===== CHECKBOX =====
+{
+  name: "cuff_deflation_details",
+  label: "Cuff deflation trial",
+  type: "group",
+  showIf: {
+    field: "tracheostomy_trials",
+    includes: "cuff_deflation"
+  },
+  fields: [
+    {
+      type: "row",
+      fields: [
+        { type: "label", label: "Deflation:", style: { width: "40%" } },
+        {
+          name: "deflation",
+          type: "radio",
+          direction: "row",
+          options: ["Partial", "Complete"]
+        }
+      ]
+    },
+    {
+      type: "row",
+      fields: [
+        { type: "label", label: "Tolerated:", style: { width: "40%" } },
+        {
+          name: "tolerated",
+          type: "radio",
+          direction: "row",
+          options: ["Yes", "No"]
+        }
+      ]
+    },
+    {
+      type: "row",
+      fields: [
+        { type: "label", label: "SpO2:", style: { width: "40%" } },
+        { name: "spo2", type: "input", placeholder: "%" }
+      ]
+    },
+    {
+      type: "row",
+      fields: [
+        { type: "label", label: "RR:", style: { width: "40%" } },
+        { name: "rr", type: "input", placeholder: "bpm" }
+      ]
+    },
+    {
+      type: "row",
+      fields: [
+        { type: "label", label: "HR:", style: { width: "40%" } },
+        { name: "hr", type: "input", placeholder: "beats/min" }
+      ]
+    }
+  ]
+}
+  ]
+};
+
+const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
+  form_name: "Tracheostomy Management",
+  sections: [
+    {
+      section_name: "Tracheostomy",
+      fields: [
+
+        // ===== SUBHEADING =====
+        { type: "subheading", label: "TRACHEOSTOMY ASSESSMENT" },
+
+        // ===== WEANING STATUS =====
+        {
+          name: "weaning_status",
+          label: "Weaning Status",
+          type: "radio",
+          direction: "column",
+          options: [
+            {
+              label: "No difficulties observed during tracheostomy weaning. Suitable to proceed with weaning programme",
+              value: "no_difficulty"
+            },
+            {
+              label: "Poor tolerance to tracheostomy capping; requires full dependence (ICD-10: Z93.0)",
+              value: "poor_tolerance"
+            }
+          ]
+        },
+
+        // ===== SYMPTOMS =====
+        {
+          name: "symptoms",
+          label: "Patient also exhibits",
+          type: "checkbox-group",
+          options: [
+            { label: "Dysphonia (ICD-10: R49.0)", value: "dysphonia" },
+            { label: "Dysphagia (ICD-10: R13)", value: "dysphagia" }
+          ]
+        },
+
+        // ===== REMARKS =====
+        {
+          name: "remarks",
+          type: "textarea",
+          label: "Remarks",
+          placeholder: "Enter remarks..."
+        },
+
+        // ===== CLINICAL INTERPRETATION =====
+        {
+          name: "clinical_interpretation",
+          label: "Clinical Interpretation",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Reduced physiological tolerance (desaturation, respiratory distress, ↑ work of breathing)",
+              value: "physio_reduced"
+            },
+            {
+              label: "Reduced tolerance to upper airway airflow (stridor, backpressure, noisy breathing)",
+              value: "airway_reduced"
+            },
+            {
+              label: "Inadequate secretion management / airway clearance",
+              value: "secretion_issue"
+            },
+            {
+              label: "Reduced phonation or voice quality during occlusion",
+              value: "phonation_issue"
+            },
+            {
+              label: "Behavioural / psychological factors limiting trial",
+              value: "behavioral"
+            },
+            {
+              label: "Other",
+              value: "other",
+              hasTextInput: true
+            }
+          ]
+        },
+
+        // ===== WEANING DECISION =====
+        {
+          name: "weaning_candidate",
+          label: "Candidate for tracheostomy weaning",
+          type: "radio",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" },
+            { label: "Requires further evaluation (FEES/VFSS)", value: "further_eval" }
+          ]
+        },
+                  { type: "subheading", label: "Tolerance level [based on monitoring]:" },
+                  {
+              name: "cuff_deflation",
+              label: "Cuff deflation",
+              type: "radio",
+              options: [
+                { label: "Tolerated", value: "tolerated" },
+                { label: "Not tolerated", value: "not_tolerated" },
+                { label: "N/A", value: "na" }
+              ]
+            },
+            {
+              name: "speaking_valve",
+              label: "Speaking valve",
+              type: "radio",
+              options: [
+                { label: "Tolerated", value: "tolerated" },
+                { label: "Not tolerated", value: "not_tolerated" },
+                { label: "N/A", value: "na" }
+              ]
+            },
+            {
+              name: "digital_occlusion",
+              label: "Digital occlusion",
+              type: "radio",
+              options: [
+                { label: "Tolerated", value: "tolerated" },
+                { label: "Not tolerated", value: "not_tolerated" },
+                { label: "N/A", value: "na" }
+              ]
+            },
+                  {
+              name: "tolerance_capping",
+              label: "Capping trial",
+              type: "radio",
+              options: [
+                { label: "Tolerated", value: "tolerated" },
+                { label: "Not tolerated", value: "not_tolerated" },
+                { label: "N/A", value: "na" }
+              ]
+            },
+
+        // ===== TOLERANCE =====
+        
+
+      ]
+    }
+  ]
+};
+
+const tracheostomySchemas = {
+  subjective: SCHEMA_TRACHEOSTOMY,
+  objective: SCHEMA_OBJECTIVE_TRACHEOSTOMY,
+  assessment: SCHEMA_ASSESSMENT_TRACHEOSTOMY,
+  plan: SCHEMA_PLAN_TRACHEOSTOMY
+};
+
+
+  /* ================= UI ================= */
+
+  return (
+    // <div>
+    //   <h2>Thacheostomy Assessment</h2>
+
+    //   <CommonFormBuilder
+    //     schema={SCHEMA_TRACHEOSTOMY}
+    //     values={values}
+    //     onChange={handleChange}
+    //   />
+    //    <CommonFormBuilder
+    //     schema={SCHEMA_PLAN_TRACHEOSTOMY}
+    //     values={values}
+    //     onChange={handleChange}
+    //   />
+    //   <CommonFormBuilder
+    //     schema={SCHEMA_ASSESSMENT_TRACHEOSTOMY}
+    //     values={values}
+    //     onChange={handleChange}
+    //   />
+    //   <CommonFormBuilder
+    //     schema={SCHEMA_OBJECTIVE_TRACHEOSTOMY}
+    //     values={values}
+    //     onChange={handleChange}
+    //   />
+    // </div>
+    <div style={{ padding: 20 }}>
+      <CommonFormBuilder
+        schema={tracheostomySchemas[mode] ?? { sections: [] }}
+        values={values}
+        onChange={handleChange}
+      />
+    </div>
+  );
+}
