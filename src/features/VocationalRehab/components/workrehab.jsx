@@ -975,7 +975,7 @@ const PLAN_SCHEMA = {
             </button>
           ) : (
             <button style={submitBtn} onClick={handleSubmit}>
-              Submit Neuro Assessment
+              Submit Assessment
             </button>
           )}
         </div>
