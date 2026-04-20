@@ -1,10 +1,19 @@
 // src/features/Diet/pages/DietDepartmentPage.jsx
 import React, { useState } from "react";
 import InitialAssessmentForm from "../components/DietInitialAssessmentForm";
+import DietFollowupAssessmentForm from "../components/DietFollowupAssessmentForm";
+import DietProgressAssessmentForm from "../components/DietProgressAssessmentForm";
 import PatientDetails from "../components/PatientDetails";
 import DietDashboard from "../components/DietDashboard";
 import ExaminationAssessmentForm from "../components/ExistingPatientPage";
 import PatientReports from "../../PatientReports"
+
+const OPTION_CARDS = [
+  { id: "initial", title: "Initial Assessment", description: "Full SOAP assessment for new patient", icon: "📋", color: "#2563EB" },
+  { id: "followup", title: "Follow-up Visit", description: "Follow-up visit documentation", icon: "🔄", color: "#059669" },
+  { id: "progress", title: "Progress Intervention", description: "Track progress and interventions", icon: "📈", color: "#7C3AED" },
+  { id: "group", title: "Group Intervention", description: "Group session documentation", icon: "👥", color: "#EA580C" }
+];
 
 export default function DietDepartmentPage({ patients, department }) {
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -69,32 +78,235 @@ export default function DietDepartmentPage({ patients, department }) {
   // STEP 2: details
   function handleOpenPatient(p) {
     setSelectedPatient(p);
-    const followup = isFollowupPatient(p);
-    setShowDetails(followup);
+    setShowDetails("cards");
   }
 
-  if (selectedPatient && showDetails) {
+  if (selectedPatient && showDetails === "cards") {
     return (
-      <PatientDetails
-        patient={selectedPatient}
-        department={department}
-        onBack={() => {
-          setSelectedPatient(null);
-          setShowDetails(false);
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          width: "100%",
+          minHeight: "calc(100vh - 80px)",
+          background: "#F2F6FB",
+          padding: "32px 28px 40px"
         }}
-      />
+      >
+        {/* HEADER */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            width: "100%",
+            maxWidth: 1040,
+            marginBottom: 18
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              width: "100%"
+            }}
+          >
+            {/* ROUND BACK BUTTON */}
+            <button
+              onClick={() => {
+                setSelectedPatient(null);
+                setShowDetails(false);
+                setActiveTab("dashboard");
+              }}
+              style={{
+                background: "#fff",
+                border: "1px solid #D1D5DB",
+                color: "#0F172A",
+                borderRadius: "999px",
+                width: 42,
+                height: 42,
+                fontSize: 20,
+                fontWeight: 700,
+                cursor: "pointer",
+                boxShadow: "0 4px 10px rgba(15,23,42,0.06)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0
+              }}
+            >
+              {"<"}
+            </button>
+
+            {/* PATIENT NAME */}
+            <h1
+              style={{
+                margin: 0,
+                fontSize: 22,
+                fontWeight: 800,
+                color: "#0F172A"
+              }}
+            >
+              {selectedPatient.name}
+            </h1>
+          </div>
+        </div>
+
+        {/* CARDS */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(280px, 1fr))",
+            gap: 20,
+            justifyContent: "center",
+            width: "100%",
+            maxWidth: 720,
+            margin: "30px auto 0"
+          }}
+        >
+          {OPTION_CARDS.map(card => (
+            <div
+              key={card.id}
+              onClick={() => setShowDetails(card.id)}
+              style={{
+                background: "#fff",
+                border: "1px solid #E9ECEF",
+                borderTop: `2px solid ${card.color}`,
+                borderRadius: 22,
+                padding: "24px 22px",
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 210,
+                width: "100%",
+                maxWidth: 320,
+                boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
+              }}
+            >
+              <div style={{ fontSize: 30, marginBottom: 12 }}>
+                {card.icon}
+              </div>
+
+              <div
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: "#0F172A",
+                  marginBottom: 6
+                }}
+              >
+                {card.title}
+              </div>
+
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "#64748B",
+                  flex: 1,
+                  lineHeight: 1.55
+                }}
+              >
+                {card.description}
+              </div>
+
+              <div
+                style={{
+                  marginTop: 16,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: card.color
+                }}
+              >
+                Open →
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 
-  // STEP 1: Initial Diet Assessment
-  if (selectedPatient && !showDetails) {
+    // STEP 1: Initial Diet Assessment
+  if (selectedPatient && showDetails === "initial") {
     return (
       <InitialAssessmentForm
         patient={selectedPatient}
         department={department}
-        onSubmit={() => setShowDetails(true)}
-        onBack={() => setSelectedPatient(null)}
+        onSubmit={() => setShowDetails("cards")}
+        onBack={() => setShowDetails("cards")}
       />
+    );
+  }
+
+  if (selectedPatient && showDetails === "followup") {
+    return (
+      <DietFollowupAssessmentForm
+        patient={selectedPatient}
+        department={department}
+        onBack={() => setShowDetails("cards")}
+      />
+    );
+  }
+
+  if (selectedPatient && showDetails === "progress") {
+    return (
+      <DietProgressAssessmentForm
+        patient={selectedPatient}
+        department={department}
+        onBack={() => setShowDetails("cards")}
+      />
+    );
+  }
+
+  if (selectedPatient && showDetails === "group") {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#F8FAFC",
+          padding: 40,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            padding: "50px 60px",
+            borderRadius: 20,
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+            textAlign: "center",
+            maxWidth: 500
+          }}
+        >
+          <div style={{ fontSize: 50 }}>👥</div>
+
+          <h2 style={{ marginTop: 15 }}>Group Intervention</h2>
+
+          <p style={{ color: "#64748B", marginTop: 10 }}>
+            This module is coming soon.
+          </p>
+
+          <button
+            onClick={() => setShowDetails("cards")}
+            style={{
+              marginTop: 25,
+              padding: "12px 24px",
+              borderRadius: 10,
+              border: "none",
+              background: "#2563EB",
+              color: "#fff",
+              cursor: "pointer",
+              fontWeight: 600
+            }}
+          >
+            ← Back to Options
+          </button>
+        </div>
+      </div>
     );
   }
 

@@ -32,7 +32,7 @@ const ET_OPTIONS = {
   ]
 }
 
-export default function InitialAssessmentForm({ patient, onSubmit, onBack }) {
+export default function DietFollowupAssessmentForm({ patient, onSubmit, onBack }) {
   const DietGrowthChartAssessment = (props) => (
     <GrowthChartAssessment {...props} patient={patient} />
   );
@@ -625,68 +625,126 @@ const submitAndSave = () => {
     { type: "save", label: "Save" }
   ];
 
-  const DIET_SUBJECTIVE_SCHEMA = {
+    const DIET_SUBJECTIVE_SCHEMA = {
     actions: DIET_ACTIONS,
-            sections: [
-              {
-                fields: [
-          { type: "subheading", label: "Nutrition Assessment" },
-          { name: "chief_complaint", label: "Chief Complaint", type: "textarea" },
-          { name: "medical_history", label: "History of Presenting Illness (HPI)", type: "textarea" },
-          { type: "subheading", label: "Initial Evaluation - Screening" },
-          { name: "oral_intake", label: "Oral Intake", type: "radio", options: [{ label: "Normal", value: "Yes" }, { label: "Impaired", value: "No" }] },
-          { name: "tube_type", label: "NG / PEG / Others", type: "input", showIf: { field: "oral_intake", equals: "No" } },
-          { name: "swallowing_issue", label: "Swallowing", type: "radio", options: [{ label: "Normal", value: "No" }, { label: "Impaired", value: "Yes" }] },
-          { name: "chewing_issue", label: "Chewing", type: "radio", options: [{ label: "Normal", value: "No" }, { label: "Impaired", value: "Yes" }] },
-          { name: "dentition_issue", label: "Dentition", type: "radio", options: [{ label: "Normal", value: "No" }, { label: "Impaired", value: "Yes" }] },
-          { name: "appetite", label: "Appetite", type: "radio", options: [{ label: "Good", value: "Good" }, { label: "Poor", value: "Poor" }] },
-          { name: "nausea", label: "Nausea", type: "radio", options: [{ label: "Yes", value: "Yes" }, { label: "No", value: "No" }] },
-          { name: "vomiting", label: "Vomiting", type: "radio", options: [{ label: "Yes", value: "Yes" }, { label: "No", value: "No" }] },
-          { type: "subheading", label: "Bowel Status" },
-          { type: "row", fields: [
-            { name: "bo", label: "Bowel Control", type: "radio", options: [{ label: "Continent", value: "CONTINENT" }, { label: "Incontinent", value: "INCONTINENT" }], readOnly: true },
-            { name: "bo_details", label: "Bowel Pattern", type: "single-select", options: [{ label: "Normal", value: "NORMAL" }, { label: "Constipation", value: "CONSTIPATION" }, { label: "Diarrhea", value: "DIARRHEA" }, { label: "Others", value: "OTHERS" }] }
-          ]},
-          { name: "bo_pattern_details", label: "Details", type: "textarea", showIf: { field: "bo_details", oneOf: ["CONSTIPATION", "DIARRHEA", "OTHERS"] } },
-          { type: "subheading", label: "Bladder Status" },
-          { type: "row", fields: [
-            { name: "pu", label: "Bladder Control", type: "radio", options: [{ label: "Continent", value: "CONTINENT" }, { label: "Incontinent", value: "INCONTINENT" }], readOnly: true },
-            { name: "voiding_method", label: "Voiding Method", type: "single-select", options: [{ label: "Spontaneous", value: "Spontaneous" }, { label: "Condom catheter", value: "Condom" }, { label: "CIC", value: "CIC" }, { label: "CBD", value: "CBD" }, { label: "Other", value: "Other" }] }
-          ]},
-          { name: "voiding_method_other", label: "Specify other", type: "input", showIf: { field: "voiding_method", equals: "Other" } },
-          { name: "sleep", label: "Sleeping Pattern", type: "single-select", options: [{ label: "Good", value: "Good" }, { label: "Difficulty in sleeping due to Pain", value: "PAIN" }, { label: "Difficulty in sleeping due to other reason", value: "OTHER" }, { label: "Difficulty in sleeping", value: "NOREASON" }] },
-          { name: "sleep_difficulty_reason", label: "Reason", type: "textarea", showIf: { field: "sleep", oneOf: ["OTHER"] } },
-          { name: "hypoglycemic_episode", label: "Hypoglycemic Episode", type: "single-select", options: [{ label: "Never", value: "Never" }, { label: "Occasional", value: "Occasional" }, { label: "Frequent", value: "Frequent" }, { label: "Unknown", value: "UNKNOWN" }, { label: "Not Relevant", value: "NOT_RELEVANT" }] },
-          { name: "other_complaints", label: "Other Nutrition-Related Complaints", type: "textarea" },
-          { type: "subheading", label: "Food / Nutrition Related History" },
-          { name: "medications", label: "List of Medication", type: "textarea", readOnly: true },
-          { name: "feeding_type", label: "Feeding Type", type: "radio", options: [{ label: "Oral Feeding", value: "oral" }, { label: "Enteral Feeding", value: "enteral" }, { label: "Mixed Feeding", value: "mixed" }] },
-          { type: "row", fields: [
-            { name: "diet_breakfast", label: "Breakfast", type: "textarea" },
-            { name: "diet_morning_tea", label: "Morning Tea", type: "textarea" },
-            { name: "diet_lunch", label: "Lunch", type: "textarea" },
-            { name: "diet_afternoon_tea", label: "Afternoon Tea", type: "textarea" },
-            { name: "diet_supper", label: "Dinner", type: "textarea" },
-            { name: "diet_dinner", label: "Supper", type: "textarea" }
-          ], showIf: { field: "feeding_type", equals: "oral" }},
-          { name: "enteral_feeding_table", label: "Enteral Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "enteral" } },
-          { name: "enteral_feeding_details", label: "Enteral Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "enteral" } },
-          { name: "mixed_feeding_table", label: "Mixed Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "mixed" } },
-          { name: "mixed_feeding_details", label: "Mixed Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "mixed" } },
-          { name: "iddsi_level", label: "IDDSI Level", type: "input", readOnly: true, showIf: { field: "feeding_type", equals: "mixed" } },
-          { name: "fluid_intake_details", label: "Fluid Intake", type: "input", showIf: { field: "feeding_type", oneOf: ["oral", "enteral", "mixed"] } },
-          {
-            name: "ffq_assessment",
+    sections: [
+        {
+        fields: [
+            {
+            name: "current_nutrition_intake",
+            label: "Current Nutrition Intake",
+            type: "radio",
+            options: [
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" }
+            ]
+            },
+            {
+            name: "current_nutrition_intake_remarks",
+            label: "Remarks",
+            type: "textarea"
+            },
+
+            { type: "subheading", label: "Texture Modification @ IDDSI LEVEL" },
+
+            {
+            name: "iddsi_food_level",
+            label: "Food",
+            type: "radio",
+            options: [
+                { label: "7 Regular", value: "7" },
+                { label: "6 Easy To Chew", value: "6" },
+                { label: "5 Soft & Bite-Sized", value: "5" },
+                { label: "4 Pureed", value: "4" },
+                { label: "3 Liquidised", value: "3" }
+            ]
+            },
+
+            {
+            name: "iddsi_drink_level",
+            label: "Drink",
+            type: "radio",
+            options: [
+                { label: "0 Thin", value: "0" },
+                { label: "1 Slightly Thick", value: "1" },
+                { label: "2 Mildly Thick", value: "2" },
+                { label: "3 Moderately Thick", value: "3" },
+                { label: "4 Extremely Thick", value: "4" }
+            ]
+            },
+
+            {
+            name: "intake_vs_requirement",
+            label: "Intake vs Requirement",
+            type: "radio",
+           options: [
+                { label: "Adequate", value: "adequate" },
+                { label: "Inadequate", value: "inadequate" },
+                { label: "Excessive", value: "excessive" },
+                { label: "Not Relevant", value: "not_relevant" }
+                ]
+            },
+            {
+            name: "intake_vs_requirement_remarks",
+            label: "Remarks",
+            type: "input"
+            },
+
+            {
+            name: "bowel_pattern",
+            label: "Bowel Pattern",
+            type: "radio",
+            options: [
+                { label: "Normal", value: "normal" },
+                { label: "Constipation", value: "constipation" },
+                { label: "Diarrhea", value: "diarrhea" },
+                { label: "Others", value: "others" }
+            ]
+            },
+
+            {
+            name: "recent_hypoglycemic_episodes",
+            label: "Recent Hypoglycemic Episodes",
+            type: "radio",
+            options: [
+                { label: "Never", value: "never" },
+                { label: "Occasional", value: "occasional" },
+                { label: "Frequent", value: "frequent" },
+                { label: "Unknown", value: "unknown" },
+                { label: "Not Relevant", value: "not_relevant" }
+            ]
+            },
+            {
+            name: "recent_hypoglycemic_remarks",
+            label: "Remarks",
+            type: "input"
+            },
+
+            {
+            name: "other_nutrition_related_complaints",
+            label: "Other Nutritional-Related Complaints",
+            type: "textarea"
+            },
+
+            {
+            name: "ons_regime",
+            label: "Oral Nutrition Supplement Regime",
+            type: "textarea"
+            },
+
+            {
+            name: "ffq_followup",
             label: "Food Frequency Questionnaire (FFQ)",
             type: "assessment-launcher",
-            autoOpen: true,
-            options: [{ label: "Food Frequency Questionnaire (FFQ)", value: "FFQ" }],
-          },
-          { name: "ons_regime", label: "Oral Nutrition Supplement Regime", type: "textarea" }
+            options: [
+                { label: "Open FFQ", value: "FFQ" }
+            ]
+            }
+
         ]
-      }
+        }
     ]
-  };
+    };
 
   const DIET_OBJECTIVE_SCHEMA = {
     actions: DIET_ACTIONS,
@@ -776,6 +834,26 @@ const submitAndSave = () => {
           { type: "subheading", label: "Diet Type" },
           { name: "meal_plan_mod_feeding_type", label: "Feeding Type", type: "radio", options: [{ label: "Oral Feeding", value: "oral" }, { label: "Enteral Feeding", value: "enteral" }, { label: "Mixed Feeding", value: "mixed" }] },
           { name: "meal_plan_mod_oral", label: "Meal Plan", type: "multi-select-dropdown", options: DIET_MEAL_PLAN_OPTIONS, showIf: { field: "meal_plan_mod_feeding_type", equals: "oral" } },
+          {
+            name: "monitor_plan_mod_oral",
+            label: "Monitoring Parameter",
+            type: "multi-select-dropdown",
+            options: [
+                { label: "Weight", value: "WEIGHT" },
+                { label: "Intake %", value: "INTAKE_PERCENT" },
+                { label: "Bowel Pattern", value: "BOWEL_PATTERN" },
+                { label: "Muscle Loss", value: "MUSCLE_LOSS" },
+                { label: "Appetite", value: "APPETITE" },
+                { label: "GM", value: "GM" },
+                { label: "BP", value: "BP" },
+                { label: "Sleep", value: "SLEEP" },
+                { label: "Others", value: "OTHERS" }
+            ],
+            showIf: {
+                field: "meal_plan_mod_feeding_type",
+                equals: "oral"
+            }
+            },
           { name: "meal_plan_mod_oral_others", label: "Others – Please specify", type: "input", showIf: { field: "meal_plan_mod_oral", includes: "Others" } },
           { name: "plan_oral_fluid_intake", label: "Fluid Intake", type: "input", showIf: { field: "meal_plan_mod_feeding_type", equals: "oral" } },
           { name: "plan_enteral_feeding_table", label: "Enteral Feeding", type: "enteral-feeding-table", showIf: { field: "meal_plan_mod_feeding_type", equals: "enteral" } },
@@ -1027,8 +1105,7 @@ const submitAndSave = () => {
           values={{}}
           onChange={() => {}}
         >
-        <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
-
+          <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
           {/* <label>Allergic History</label>
           <input
             type="text"
