@@ -926,14 +926,24 @@ function AssessmentLauncher({
   const defaultValue = field.options?.[0]?.value || null;
   const active = values[activeKey] || (field.autoOpen ? defaultValue : null);
   let component = active ? assessmentRegistry?.[active] : null;
-  // Handle both direct component export and default export
   const ActiveComponent = component?.default || component;
+
+  // Filter options by region if filterByRegionField is set
+  const selectedRegions = field.filterByRegionField
+    ? (values[field.filterByRegionField] || [])
+    : null;
+
+  const visibleOptions = (field.options || []).filter(opt => {
+    if (!selectedRegions) return true;               // no filter — show all
+    if (!opt.regions || opt.regions.length === 0) return true; // regions:[] = all
+    return opt.regions.some(r => selectedRegions.includes(r));
+  });
 
   return (
     <div>
       {!field.autoOpen && (
         <div style={styles.inlineGroup}>
-          {field.options.map(opt => (
+          {visibleOptions.map(opt => (
             <button
               key={opt.value}
               style={{
