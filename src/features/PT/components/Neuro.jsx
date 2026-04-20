@@ -16,11 +16,18 @@ import ScarAssessmentForm from "../../OT/components/vas";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 
+import MotorAssessmentScaleForm from "./MotorAssessmentScaleForm";
+import SensationTestForm from "./SensationTestForm";
+import ProprioceptionForm from "./ProprioceptionForm";
+
 export const NEURO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
   mmt: MMTForm,
   tug: TUG,
   mas: MASForm,
+  motor_mas: MotorAssessmentScaleForm,
+  sensation: SensationTestForm,
+  proprioception: ProprioceptionForm,
   sara: SARAForm,
   bbs: BergBalanceScale,
   vas: ScarAssessmentForm,

@@ -1,10 +1,38 @@
-import MMTForm from "./MMTForm";
-import ROMForm from "./ROMForm";
-import { useState, useEffect } from "react";
+import MMTForm, { buildMmtAccordionFields } from "./MMTForm";
+import ROMForm, { buildROMSchema } from "./ROMForm";
+import { useState, useEffect, useMemo } from "react";
+import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PainAssessmentForm from "./PainForm";
 import StumpAssessmentForm from "./StumpForm"
-import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
+
+/* ROM wrapper — shows only UL or LL sections based on amp_region */
+function AmpROMForm({ values, onChange }) {
+  const region = values?.amp_region;
+  const mapped = [];
+  if (region === "upper_limb" || region === "both") mapped.push("upper_limb");
+  if (region === "lower_limb" || region === "both") mapped.push("lower_limb");
+  const schema = useMemo(() => buildROMSchema(mapped), [region]);
+  return <CommonFormBuilder schema={schema} values={values} onChange={onChange} layout="nested" />;
+}
+
+/* MMT wrapper — accordion structure matching MSK MMT, filtered by amp_region */
+function AmpMMTForm({ values, onChange }) {
+  const region = values?.amp_region;
+  const ulSections = ["Shoulder", "Elbow", "Wrist"];
+  const llSections = ["Hip", "Knee", "Ankle"];
+  let filter = null;
+  if (region === "upper_limb") filter = ulSections;
+  else if (region === "lower_limb") filter = llSections;
+  else if (region === "both") filter = [...ulSections, ...llSections];
+
+  const schema = useMemo(
+    () => ({ title: "Manual Muscle Testing (MMT)", fields: buildMmtAccordionFields(filter) }),
+    [region]
+  );
+  return <CommonFormBuilder schema={schema} values={values} onChange={onChange} layout="nested" />;
+}
+
 
 
 const AMPUTEE_CONTAINER_SCHEMA = {
@@ -123,192 +151,278 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   ]
 };
 
+const AMPUTATION_INFO_SCHEMA = {
+  sections: [
+    {
+      fields: [
+        { type: "subheading", label: "Amputation Information" },
+        {
+          name: "amp_side",
+          label: "Amputation Side",
+          type: "radio",
+          options: [
+            { label: "Left",      value: "left"      },
+            { label: "Right",     value: "right"     },
+            { label: "Bilateral", value: "bilateral" }
+          ]
+        },
+        {
+          name: "amp_region",
+          label: "Amputation Region",
+          type: "radio",
+          options: [
+            { label: "Lower Limb",   value: "lower_limb"  },
+            { label: "Upper Limb",   value: "upper_limb"  },
+            { label: "Both (LL+UL)", value: "both"        }
+          ]
+        },
+        /* ── Lower Limb Levels ── */
+        {
+          name: "amp_level_lower",
+          label: "Amputation Level — Lower Limb",
+          type: "checkbox-group",
+          showIf: { or: [
+            { field: "amp_region", equals: "lower_limb" },
+            { field: "amp_region", equals: "both" }
+          ]},
+          options: [
+            { label: "Partial Foot",           value: "partial_foot"          },
+            { label: "Ankle Disarticulation",  value: "ankle_disarticulation" },
+            { label: "Transtibial (BK)",        value: "transtibial"           },
+            { label: "Knee Disarticulation",   value: "knee_disarticulation"  },
+            { label: "Transfemoral (AK)",       value: "transfemoral"          },
+            { label: "Hip Disarticulation",    value: "hip_disarticulation"   },
+            { label: "Hemipelvectomy",         value: "hemipelvectomy"        },
+            { label: "Bilateral Transtibial",  value: "bilateral_transtibial" },
+            { label: "Bilateral Transfemoral", value: "bilateral_transfemoral"}
+          ]
+        },
+        /* ── Upper Limb Levels ── */
+        {
+          name: "amp_level_upper",
+          label: "Amputation Level — Upper Limb",
+          type: "checkbox-group",
+          showIf: { or: [
+            { field: "amp_region", equals: "upper_limb" },
+            { field: "amp_region", equals: "both" }
+          ]},
+          options: [
+            { label: "Partial Hand",           value: "partial_hand"          },
+            { label: "Wrist Disarticulation",  value: "wrist_disarticulation" },
+            { label: "Transradial (BE)",        value: "transradial"           },
+            { label: "Elbow Disarticulation",  value: "elbow_disarticulation" },
+            { label: "Transhumeral (AE)",       value: "transhumeral"          },
+            { label: "Shoulder Disarticulation",value: "shoulder_disarticulation"},
+            { label: "Forequarter",            value: "forequarter"           },
+            { label: "Bilateral Transradial",  value: "bilateral_transradial" },
+            { label: "Quadruple Amputation",   value: "quadruple_amputation"  }
+          ]
+        },
+        /* ── Reason for Amputation ── */
+        {
+          name: "amp_reason",
+          label: "Reason for Amputation",
+          type: "checkbox-group",
+          options: [
+            { label: "Diabetes Mellitus",              value: "diabetes_mellitus"       },
+            { label: "Traumatic Injury",               value: "traumatic_injury"        },
+            { label: "Cancer",                         value: "cancer"                  },
+            { label: "Necrotizing Fasciitis (Non-DM)", value: "necrotizing_fasciitis"   },
+            { label: "Peripheral Vascular Disease",    value: "peripheral_vascular"     },
+            { label: "Vascular Injury",                value: "vascular_injury"         },
+            { label: "Tumour (Benign)",                value: "tumour_benign"           },
+            { label: "Aneurysm",                       value: "aneurysm"                },
+            { label: "Infection",                      value: "infection"               },
+            { label: "Other",                          value: "other"                   }
+          ]
+        },
+        {
+          name: "amp_reason_other",
+          label: "Other (specify)",
+          type: "input",
+          showIf: { field: "amp_reason", includes: "other" }
+        }
+      ]
+    }
+  ]
+};
+
 const SUBJECTIVE_SCHEMA = {
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "save", label: "Save" }
-    ],
-    fields: [
-      {
-        name: "amuptation_level",
-        label: "Level of amputation",
-        type: "checkbox-group",
-        options: [
-            { label: "Partial Foot", value: "partial_foot" },
-            { label: "Ankle Disarticulation", value:"ankle_disarticulation" },
-            { label: "Transtibial", value: "transtibial" },
-            { label: "Knee Disarticulation", value: "knee_disarticulation" },
-            { label: "Transfemoral", value: "transfemoral" },
-            { label: "Hip Disarticulation", value: "hip_disarticulation" },
-            { label: "Hemipelvectomy", value: "hemipelvectomy" },
-            { label: "Partial Hand", value: "partial_hand" },
-            { label: "Wrist Disarticulation", value: "wrist_disarticulation" },
-            { label: "Transradial", value: "transradial" },
-            { label: "Elbow Disarticulation", value: "elbow_disarticulation" },
-            { label: "Transhumeral", value: "transhumeral" },
-            { label: "Shoulder Disarticulation", value:"shoulder_disarticulation" },
-            { label: "Forequater", value:"forequater"},
-            { label: "Bilateral Transtibial", value:"bilateral_transtibial"},
-            { label: "Bilateral Transfemoral", value: "bilateral_transfemoral" },
-            { label: "Bilateral Lower Limb", value: "bilateral_lower_limb" },
-            { label: "Bilateral Upper Limb", value: "bilateral_upper_limb" },
-            { label: "Quadruple", value:"quadruple"}
-        ]
-      },
-      {
-        name: "involved_side",
-        label: "Involved side",
-        type: "radio",
-        options: [
-          { label: "Left", value: "left" },
-          { label: "Right", value: "right" },
-          { label: "Bilateral", value: "bilateral" }
-        ]
-      },
-      {
-        name: "amputation_reason",
-        label: "Reason for amputation",
-        labelAbove:"true",
-        type: "radio",
-        options: [
-          { label: "Diabetes Mellitus", value: "diabetes_mellitus" },
-          { label: "Traumatic Injury", value: "traumatic_injury" },
-          { label: "Cancer", value: "cancer" },
-          { label: "Necrotizing Fasciitis (Non-DM)", value: "necrotizing_fasciitis" },
-          { label: "Vascular Disease", value: "vascular_disease" },
-          { label: "Vascular Injury", value: "vascular_injury" },
-          { label: "Tumour (Benign)", value: "tumour" },
-          { label: "Aneurysm", value: "aneurysm" },
-          { label: "Infection", value :"infection" }
-        ]
-      },
-      {
-        name: "assessment_date",
-        label: "Date of Assessment",
-        type: "date"
-      },
-      {
-        name: "therapist",
-        label: "Therapist",
-        type: "textarea"
-      },
-      {
-        name: "current_history",
-        label: "Current History",
-        type: "textarea"
-      },
-      {
-        name: "comorbids",
-        label: "Comorbids",
-        type: "textarea"
-      },
-      {
-        label: "Social History",
-        type: "subheading"
-      },
-      {
-        name: "home_environment",
-        label: "Home Environment/access",
-        type: "textarea"
-      },
-      {
-        name: "lifestyle",
-        label: "Lifestyle/Hobbies",
-        type: "textarea"
-      },
-      {
-        label: "Employment Status",
-        type: "subheading"
-      },
-      {
-        name: "employment_status",
-        label: "",
-        type: "radio",
-        labelAbove: "true",
-        options: [
-          { label: "Employed", value: "employed" },
-          { label: "Unemployed", value: "unemployed" },
-          { label: "Self Employed", value: "self_employed" }
-        ]
-      },
-      {
-        name: "job_comment",
-        label: "Job",
-        type: "textarea"
-      },
-      {
-        name: "hypoglycemic_awarness",
-        label: "Hypoglycemic Awarness",
-        type: "radio",
-        options: [
-          { label: "Yes", value:"yes" },
-          { label: "No", value: "no"}
-        ]
-      },
-      {
-        name: "frequency",
-        label: "Frequency",
-        type: "input",
-        showIf: {
-          field: "hypoglycemic_awarness",
-          equals: "yes"
+  actions: [
+    { type: "back",  label: "Back"  },
+    { type: "clear", label: "Clear" },
+    { type: "save",  label: "Save"  }
+  ],
+  sections: [
+    {
+      fields: [
+
+        /* ── Chief Complaints ── */
+        {
+          name: "amp_chief_complaints",
+          label: "Chief Complaints",
+          type: "textarea"
+        },
+
+        /* ── Hypoglycaemic Awareness [only if Diabetes Mellitus selected] ── */
+        {
+          type: "subheading",
+          label: "Hypoglycaemic Awareness",
+          showIf: { field: "amp_reason", includes: "diabetes_mellitus" }
+        },
+        {
+          type: "row",
+          showIf: { field: "amp_reason", includes: "diabetes_mellitus" },
+          fields: [
+            { name: "hypo_frequency",        label: "Frequency",        type: "input" },
+            { name: "hypo_last_episode",      label: "Last Episode",     type: "input" }
+          ]
+        },
+        {
+          type: "row",
+          showIf: { field: "amp_reason", includes: "diabetes_mellitus" },
+          fields: [
+            { name: "hypo_common_symptoms",   label: "Common Symptoms",  type: "input" },
+            { name: "hypo_time_of_day",       label: "Time of Day",      type: "input" }
+          ]
+        },
+
+        /* ── Pain Assessment ── */
+        { type: "subheading", label: "Pain Assessment" },
+
+        {
+          name: "amp_stump_pain",
+          label: "Stump Pain",
+          type: "radio",
+          options: [
+            { label: "None",               value: "none"               },
+            { label: "Localised",          value: "localised"          },
+            { label: "Significant Diffuse",value: "significant_diffuse"}
+          ]
+        },
+        {
+          name: "amp_stump_nrs",
+          label: "NRS Score (0 = no pain · 10 = worst)",
+          type: "scale-slider",
+          min: 0, max: 10, showValue: true,
+          showIf: { or: [
+            { field: "amp_stump_pain", equals: "localised"           },
+            { field: "amp_stump_pain", equals: "significant_diffuse" }
+          ]},
+          ranges: [
+            { min: 0, max: 3,  label: "Mild",     color: "#22c55e" },
+            { min: 3, max: 7,  label: "Moderate", color: "#facc15" },
+            { min: 7, max: 10, label: "Severe",   color: "#ef4444" }
+          ]
+        },
+        {
+          name: "amp_stump_location",
+          label: "Location on stump",
+          type: "input",
+          showIf: { or: [
+            { field: "amp_stump_pain", equals: "localised"           },
+            { field: "amp_stump_pain", equals: "significant_diffuse" }
+          ]}
+        },
+
+        /* ── Phantom Limb Sensation ── */
+        {
+          name: "amp_pls",
+          label: "Phantom Limb Sensation (PLS)",
+          type: "radio",
+          options: [
+            { label: "Present", value: "present" },
+            { label: "Absent",  value: "absent"  }
+          ]
+        },
+        {
+          name: "amp_pls_describe",
+          label: "Describe Sensation",
+          type: "input",
+          showIf: { field: "amp_pls", equals: "present" }
+        },
+
+        /* ── Phantom Limb Pain ── */
+        {
+          name: "amp_plp",
+          label: "Phantom Limb Pain (PLP)",
+          type: "checkbox-group",
+          options: [
+            { label: "Dull",       value: "dull"       },
+            { label: "Throbbing",  value: "throbbing"  },
+            { label: "Knifelike",  value: "knifelike"  },
+            { label: "Burning",    value: "burning"    },
+            { label: "Squeezing",  value: "squeezing"  },
+            { label: "Shooting",   value: "shooting"   },
+            { label: "Prickling",  value: "prickling"  },
+            { label: "Tingling",   value: "tingling"   },
+            { label: "Cramp-like", value: "cramp_like" },
+            { label: "Sawing",     value: "sawing"     },
+            { label: "Pressing",   value: "pressing"   },
+            { label: "Sticking",   value: "sticking"   }
+          ]
+        },
+        {
+          name: "amp_plp_nrs",
+          label: "NRS Score (0–10)",
+          type: "scale-slider",
+          min: 0, max: 10, showValue: true,
+          ranges: [
+            { min: 0, max: 3,  label: "Mild",     color: "#22c55e" },
+            { min: 3, max: 7,  label: "Moderate", color: "#facc15" },
+            { min: 7, max: 10, label: "Severe",   color: "#ef4444" }
+          ]
+        },
+        {
+          type: "row",
+          fields: [
+            { name: "amp_plp_frequency", label: "Frequency", type: "input" },
+            { name: "amp_plp_area",      label: "Area",      type: "input" }
+          ]
+        },
+
+        /* ── History of Previous Falls ── */
+        { type: "subheading", label: "History of Previous Falls" },
+
+        {
+          name: "amp_fall_6months",
+          label: "Fall in last 6 months",
+          type: "radio",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No",  value: "no"  }
+          ]
+        },
+        {
+          name: "amp_fall_activity",
+          label: "Activity at time of fall",
+          type: "input",
+          showIf: { field: "amp_fall_6months", equals: "yes" }
+        },
+        {
+          name: "amp_get_up_ability",
+          label: "Ability to get up from floor",
+          type: "radio",
+          options: [
+            { label: "With Help",    value: "with_help"    },
+            { label: "Without Help", value: "without_help" },
+            { label: "Unable",       value: "unable"       }
+          ]
         }
-      },
-      {
-        name: "last_episode",
-        label: "Last episode",
-        type: "input",
-        showIf: {
-          field: "hypoglycemic_awarness",
-          equals: "yes"
-        }
-      },
-      {
-        name: "common_symptoms",
-        label: "Common symptoms",
-        type: "input",
-        showIf: {
-          field: "hypoglycemic_awarness",
-          equals: "yes"
-        }
-      },
-      {
-        label: "History of previous fall",
-        type: "subheading"
-      },
-      {
-        name: "last_6_months_incident",
-        label: "Any incident of fall in last 6 months",
-        type: "radio",
-        labelAbove: "true",
-        options: [
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no"}
-        ]
-      },
-      {
-        name: "fall_time_activity",
-        label: "Activity at the time of fall",
-        type: "textarea"
-      },
-      {
-        name: "get_up_ability_from_floor",
-        label: "Ability to get up from the floor",
-        labelAbove: "true",
-        type: "radio",
-        options: [
-          { label: "With help", value: "with_help" },
-          { label: "Without help", value: "without_help"}
-        ]
-      }
-    ]
-}
+
+      ]
+    }
+  ]
+};
+
 
 const AMPUTEE_SCALE = [
-  { label: "Complete independent", value: "complete_independent" },
-  { label: "Moderate assistance", value: "moderate_assistance" },
-  { label: "Maximal assistance", value: "maximal_assistance" },
+  { label: "Independent",  value: "independent"  },
+  { label: "Supervision",  value: "supervision"  },
+  { label: "Min Assist",   value: "min_assist"   },
+  { label: "Mod Assist",   value: "mod_assist"   },
+  { label: "Max Assist",   value: "max_assist"   },
+  { label: "Total Dep.",   value: "total_dep"    },
 ];
 
 const OBJECTIVE_SCHEMA = {
@@ -317,105 +431,256 @@ const OBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
+
+        /* ── Baseline Vitals ── */
+        { type: "subheading", label: "Baseline Vitals" },
         {
-          label: "Current functional mobility and transfer",
-          type: "subheading"
+          type: "row",
+          fields: [
+            { name: "obj_bp",    label: "BP (mmHg)",          type: "input", placeholder: "e.g. 120/80" },
+            { name: "obj_hr",    label: "HR (bpm)",            type: "input", placeholder: "bpm"         },
+            { name: "obj_spo2",  label: "SpO₂ (%)",           type: "input", placeholder: "%"            }
+          ]
         },
         {
-          name: "assistive_devices",
-          label: "Assistive devices",
+          type: "row",
+          fields: [
+            { name: "obj_rr",   label: "RR (breaths/min)",    type: "input", placeholder: "/min"         },
+            { name: "obj_temp", label: "Temp / BGL",          type: "input", placeholder: "°C / mmol/L"  }
+          ]
+        },
+
+        /* ── Sensory ── */
+        { type: "subheading", label: "Sensory" },
+        {
+          type: "row",
+          fields: [
+            { name: "obj_vision",  label: "Vision",  type: "input" },
+            { name: "obj_hearing", label: "Hearing", type: "input" }
+          ]
+        },
+
+        /* ── Stump Assessment ── */
+        { type: "subheading", label: "Stump Assessment" },
+        {
+          name: "stump_shape",
+          label: "Stump Shape",
           type: "radio",
-          labelAbove: "true",
           options: [
-            { label: "Wheelchair", value: "wheelchair" },
-            { label: "Frame", value: "frame" },
-            { label: "Crutches", value: "crutches" },
-            { label: "Cane", value: "cane" },
-            { label: "None", value: "none"}
+            { label: "Cylindrical",  value: "cylindrical"  },
+            { label: "Conical",      value: "conical"      },
+            { label: "Club-shaped",  value: "club_shaped"  },
+            { label: "Bulbous",      value: "bulbous"      },
+            { label: "Others",       value: "others"       }
           ]
         },
         {
-          name: "mobility",
-          label: "Mobility",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
+          name: "stump_shape_other",
+          label: "Others (specify)",
+          type: "input",
+          showIf: { field: "stump_shape", equals: "others" }
         },
         {
-          name: "Bed_mobility",
-          label: "Bed Mobility",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
-        },
-        {
-          name: "toilet_transfer",
-          label: "Toilet transfer",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
-        },
-        {
-          name: "sit_to_stand",
-          label: "Sit-to-stand",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
-        },
-        {
-          name: "standing",
-          label: "Standing",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
-        },
-        {
-          name: "stairs",
-          label: "Stairs",
-          type: "radio-matrix",
-          options: AMPUTEE_SCALE,
-        },
-        {
-          label: "Sensory",
-          type: "subheading"
-        },
-        {
-          name: "vision",
-          label: "Vision",
-          type: "textarea"
-        },
-        {
-          name: "hearing",
-          label: "Hearing",
-          type: "textarea"
-        },
-        {
-          type: "subheading",
-          label: "Scales / Outcome Measures"
-        },
-        {
-          name: "Spinal_scales",
-          type: "assessment-launcher",
+          name: "stump_length",
+          label: "Length",
+          type: "radio",
           options: [
-            { label: "Pain Assessment ", value: "pain" },
-            { label: "Stump Assessment", value: "stump" },
-            { label: "Range of Motion (ROM)", value: "rom" },
-            { label: "Manual Muscle Test (MMT)", value: "mmt" },
+            { label: "Short",  value: "short"  },
+            { label: "Medium", value: "medium" },
+            { label: "Long",   value: "long"   }
           ]
         },
+        {
+          name: "stump_scar",
+          label: "Scar",
+          type: "radio",
+          options: [
+            { label: "Well Healed", value: "well_healed" },
+            { label: "Unhealed",    value: "unhealed"    }
+          ]
+        },
+        {
+          name: "stump_skin",
+          label: "Skin",
+          type: "radio",
+          options: [
+            { label: "Undamaged",    value: "undamaged"    },
+            { label: "Deep Wrinkle", value: "deep_wrinkle" },
+            { label: "Macerated",    value: "macerated"    },
+            { label: "Blistered",    value: "blistered"    }
+          ]
+        },
+        {
+          name: "stump_solidity",
+          label: "Solidity",
+          type: "radio",
+          options: [
+            { label: "Soft",     value: "soft"     },
+            { label: "Edematous",value: "edematous"},
+            { label: "Firm",     value: "firm"     }
+          ]
+        },
+        {
+          name: "stump_end",
+          label: "End of Stump",
+          type: "radio",
+          options: [
+            { label: "Rounded",         value: "rounded"         },
+            { label: "Bony Prominent",  value: "bony_prominent"  },
+            { label: "Adherent Scar",   value: "adherent_scar"   }
+          ]
+        },
+        {
+          name: "stump_sensitivity",
+          label: "Sensitivity",
+          type: "radio",
+          options: [
+            { label: "Normal",        value: "normal"        },
+            { label: "Hypersensitive",value: "hypersensitive"},
+            { label: "Reduced",       value: "reduced"       }
+          ]
+        },
+        {
+          name: "stump_sensation",
+          label: "Sensation",
+          type: "radio",
+          options: [
+            { label: "Intact",   value: "intact"   },
+            { label: "Impaired", value: "impaired" }
+          ]
+        },
+        {
+          name: "stump_oedema",
+          label: "Oedema",
+          type: "radio",
+          options: [
+            { label: "None",     value: "none"     },
+            { label: "Mild",     value: "mild"     },
+            { label: "Moderate", value: "moderate" },
+            { label: "Severe",   value: "severe"   }
+          ]
+        },
+        {
+          name: "stump_skin_integrity",
+          label: "Skin Integrity",
+          type: "radio",
+          options: [
+            { label: "Intact",      value: "intact"      },
+            { label: "Open wound",  value: "open_wound"  },
+            { label: "Blister",     value: "blister"     }
+          ]
+        },
+
+        /* ── Condition of Intact Limb ── */
         {
           name: "intact_limb_condition",
-          label: "Condition of intact limb",
+          label: "Condition of Intact Limb",
           type: "checkbox-group",
           options: [
-            { label: "History of fracture", value: "fracture_history" },
-            { label: "Hallux valgus", value: "hallux_valgus" },
-            { label: "Calluses", value: "calluses" },
-            { label: "Lower limb oedema", value: "lower_limb_oedema" },
-            { label: "Hammer toe deformity", value: "hammer_toe_deformity" },
-            { label: "Dry cracked foot", value: "dry_cracked_foot" },
-            { label: "Thickened toenail", value: "thickened_toenail" },
-            { label: "Claw toe deformity", value: "claw_toe_deformity" },
-            { label: "Charcot foot", value: "charcot_foot" },
-            { label: "Flat foot", value: "flat_foot" },
-            { label: "Varicose vein", value: "varicose_vein" }
+            { label: "Calluses",              value: "calluses"              },
+            { label: "Dry / Cracked Foot",    value: "dry_cracked_foot"      },
+            { label: "Charcot Foot",          value: "charcot_foot"          },
+            { label: "History of Fracture",   value: "fracture_history"      },
+            { label: "Lower Limb Oedema",     value: "lower_limb_oedema"     },
+            { label: "Thickened Toenail",     value: "thickened_toenail"     },
+            { label: "Flat Foot",             value: "flat_foot"             },
+            { label: "Hallux Valgus",         value: "hallux_valgus"         },
+            { label: "Hammer Toe Deformity",  value: "hammer_toe_deformity"  },
+            { label: "Claw Toe Deformity",    value: "claw_toe_deformity"    },
+            { label: "Varicose Vein",         value: "varicose_vein"         },
+            { label: "No abnormality",        value: "no_abnormality"        }
+          ]
+        },
+
+        /* ── Current Functional Mobility & Transfer ── */
+        { type: "subheading", label: "Current Functional Mobility & Transfer" },
+        {
+          name: "assistive_device",
+          label: "Assistive Device",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            { label: "Wheelchair", value: "wheelchair" },
+            { label: "Frame",      value: "frame"      },
+            { label: "Crutches",   value: "crutches"   },
+            { label: "Cane",       value: "cane"       },
+            { label: "Prosthesis", value: "prosthesis" },
+            { label: "None",       value: "none"       }
+          ]
+        },
+        /* Matrix rows matching the image */
+        { type: "subheading", label: "Function" },
+        { name: "func_mobility",             label: "Mobility",              type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_bed_mobility",         label: "Bed Mobility",          type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_toilet_transfer",      label: "Toilet Transfer",       type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_sit_to_stand",         label: "Sit-to-Stand",          type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_standing_balance",     label: "Standing Balance",      type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_stairs",               label: "Stairs",                type: "radio-matrix", options: AMPUTEE_SCALE },
+        { name: "func_community_ambulation", label: "Community Ambulation",  type: "radio-matrix", options: AMPUTEE_SCALE },
+
+        /* ── Scales ── */
+        { type: "subheading", label: "Scales" },
+        {
+          name: "amp_scales",
+          type: "assessment-launcher",
+          options: [
+            { label: "ROM",  value: "rom",  regions: [] },
+            { label: "MMT",  value: "mmt",  regions: [] }
+          ],
+          filterByRegionField: "amp_region"
+        },
+
+        /* ── Lower Limb Outcome Measures ── */
+        { type: "subheading", label: "Lower Limb Outcome Measures",
+          showIf: { or: [
+            { field: "amp_region", equals: "lower_limb" },
+            { field: "amp_region", equals: "both" }
+          ]}
+        },
+        {
+          name: "amp_ll_outcomes",
+          type: "assessment-launcher",
+          showIf: { or: [
+            { field: "amp_region", equals: "lower_limb" },
+            { field: "amp_region", equals: "both" }
+          ]},
+          options: [
+            { label: "AMP with Prosthesis (AMPPro)",          value: "amp_pro"   },
+            { label: "AMP without Prosthesis (AMPnoPro)",     value: "amp_nopro" },
+            { label: "5× Sit-to-Stand Test (5xSTS)",          value: "5xsts"     },
+            { label: "6-Minute Walk Test (6MWT)",             value: "sixmwt"    },
+            { label: "Functional Gait Assessment (FGA)",      value: "fga"       },
+            { label: "Locomotor Capabilities Index-5 (LCI-5)",value: "lci5"      },
+            { label: "TAPES",                                 value: "tapes"     },
+            { label: "Timed Up and Go (TUG)",                 value: "tug"       },
+            { label: "L-Test",                                value: "ltest"     },
+            { label: "Berg Balance Scale (BBS)",              value: "bbs"       }
+          ]
+        },
+
+        /* ── Upper Limb Outcome Measures ── */
+        { type: "subheading", label: "Upper Limb Outcome Measures",
+          showIf: { or: [
+            { field: "amp_region", equals: "upper_limb" },
+            { field: "amp_region", equals: "both" }
+          ]}
+        },
+        {
+          name: "amp_ul_outcomes",
+          type: "assessment-launcher",
+          showIf: { or: [
+            { field: "amp_region", equals: "upper_limb" },
+            { field: "amp_region", equals: "both" }
+          ]},
+          options: [
+            { label: "DASH (Disabilities of Arm, Shoulder & Hand)", value: "dash"          },
+            { label: "OPUS (Orthotics & Prosthetics Functional Outcome)", value: "opus"    },
+            { label: "Grip Strength (Dynamometer)",                  value: "grip"         },
+            { label: "9-Hole Peg Test",                              value: "nine_hole_peg"},
+            { label: "Box & Block Test",                             value: "box_block"    }
           ]
         }
+
       ]
     }
   ]
@@ -427,51 +692,27 @@ const ASSESSMENT_SCHEMA = {
   sections: [
     {
       fields: [
-        { type: "subheading", label: "Outcome Measures" },
         {
-          type: "grid-table-flat",
-          name: "balance_table",
-          headers: ["Score", "K_Level"],
-          rows: [
-            { key: "amputee_mobility_predictor_p", label: "AMPPro", info: "Amputee Mobility Predictor (AMP) with Prosthesis (AMPPro)" },
-            { key: "amputee_mobility_predictor_np", label: "AMPnoPro", info: "Amputee Mobility Predictor (AMP) without Prosthesis (AMPnoPro)"},
-            { key: "five_time_sit_stand", label: "5xSTS", isFullRow: "true", info: "5 Time Sit-to-stand Test (5xSTS)" },
-            { key: "six_min_walk_test", label: "6MWT", isFullRow: "true", info: "6 Minutes Walk Test (6MWT)"},
-            { key: "functional_gait_assessment", label: "FGA", isFullRow: "true", info: "Functional Gait Assessment"},
-            { key: "locomotor_capabilities_index_5", label: "LCI-5", isFullRow: "true", info: "Locomotor Capabilities Index-5"},
-            { key: "tapes", label: "TAPES", isFullRow: "true", info: "Trinity Amputation and Prosthesis Experience Scales (TAPES)"},
-            { key: "tug", label: "TUG", isFullRow: "true", info: "Time Up and Go (TUG)"},
-            { key: "l_test", label: "L-Test", isFullRow: "true", info: "L-Test"},
-            { key: "berg_balance_scale", label: "BBS", info: "Berg Balance Scale (BBS)"}
-          ]
-        },
-        {
-          name: "assistive_devices",
-          label: "Assistive devices",
-          type: "radio",
-          labelAbove: "true",
-          options: [
-            { label: "Wheelchair", value: "wheelchair" },
-            { label: "Frame", value: "frame" },
-            { label: "Crutches", value: "crutches" },
-            { label: "Cane", value: "cane" },
-            { label: "None", value: "none"}
-          ]
-        },
-        {
-          name: "problem_listing",
-          label: "Problem Listing",
+          name: "amp_problem_list",
+          label: "Problem list",
           type: "textarea"
         },
         {
-          name: "clinical_impression",
+          name: "amp_clinical_impression",
           label: "Clinical Impression",
           type: "textarea"
         },
         {
-          name: "rehab_potential",
-          label: "Rehab Potential",
-          type: "textarea"
+          name: "amp_rehab_prognosis",
+          label: "Rehab Prognosis",
+          type: "radio",
+          options: [
+            { label: "Excellent", value: "excellent" },
+            { label: "Good",      value: "good"      },
+            { label: "Fair",      value: "fair"      },
+            { label: "Guarded",   value: "guarded"   },
+            { label: "Poor",      value: "poor"      }
+          ]
         }
       ]
     }
@@ -483,42 +724,87 @@ const PLAN_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
-      fields:  [
-          {
-            type: "textarea",
-            name: "rehabilitation_plan",
-            label: "Plan of rehabilitation/treament"
-          },
-          {
-            type: "textarea",
-            name: "short_term_goals",
-            label: "Short Term Goals"
-          },   
-          {
-            type: "textarea",
-            name: "long_term_goals",
-            label: "Long Term Goals"
-          },      
-          { 
-            name: "referrals", 
-            label: "Referrals", 
-            type: "checkbox-group",
-            options: [
-              { label: "Cyberdyne", value: "cyverdyne" },
-              { label: "Advance Robotic", value: "advance_robotic" },
-              { label: "Metamotus Galileo", value: "metamotus_galileo" },
-              { label: "Hydrotherapy", value: "hydrotherapy" },
-              { label: "MSD ", value: "msd" },
-              { label: "Neuro ", value: "neuro" },
-              { label: "SCI ", value: "sci" },
-              { label: "GYM", value: "gym" },
-              { label: "Vocational", value: "vocational" },
-              { label: "Nursing", value: "nursing" },
-              { label: "TDCS", value: "tdcs" },
-              { label: "RTMS", value: "rtms" },
-              { label: "Gait Analysis", value: "gait_analysis" },
-            ]
-          }
+      fields: [
+
+        /* ── Short Term Goals ── */
+        { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+        {
+          type: "dynamic-goals",
+          name: "amp_short_term_goals"
+        },
+
+        /* ── Long Term Goals ── */
+        { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+        {
+          type: "dynamic-goals",
+          name: "amp_long_term_goals"
+        },
+
+        /* ── Intervention ── */
+        { type: "subheading", label: "Intervention" },
+        {
+          name: "amp_intervention",
+          label: "Intervention",
+          type: "input"
+        },
+
+        /* ── Referrals ── */
+        { type: "subheading", label: "Referrals" },
+        {
+          name: "amp_referrals",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            { label: "Cyberdyne",           value: "cyberdyne"        },
+            { label: "Hydrotherapy",        value: "hydrotherapy"     },
+            { label: "SCI",                 value: "sci"              },
+            { label: "Nursing",             value: "nursing"          },
+            { label: "Gait Analysis",       value: "gait_analysis"    },
+            { label: "Advanced Robotic",    value: "advanced_robotic" },
+            { label: "MSD",                 value: "msd"              },
+            { label: "Gym",                 value: "gym"              },
+            { label: "tDCS",                value: "tdcs"             },
+            { label: "rTMS",                value: "rtms"             },
+            { label: "Metamotus Galileo",   value: "metamotus_galileo"},
+            { label: "Neuro",               value: "neuro"            },
+            { label: "Vocational",          value: "vocational"       },
+            { label: "Prosthetics / O&P",   value: "prosthetics_op"   },
+            { label: "Psychology",          value: "psychology"       }
+          ]
+        },
+
+        /* ── Assistive Device Prescribed ── */
+        {
+          name: "amp_assistive_device_prescribed",
+          label: "Assistive Device Prescribed",
+          type: "radio",
+          labelAbove: true,
+          options: [
+            { label: "Wheelchair", value: "wheelchair" },
+            { label: "Frame",      value: "frame"      },
+            { label: "Crutches",   value: "crutches"   },
+            { label: "Cane",       value: "cane"       },
+            { label: "Prosthesis", value: "prosthesis" },
+            { label: "None",       value: "none"       }
+          ]
+        },
+        {
+          name: "amp_prosthesis_type",
+          label: "Prosthesis type / components",
+          type: "input",
+          showIf: { field: "amp_assistive_device_prescribed", equals: "prosthesis" }
+        },
+
+        /* ── Next Review / Follow-up ── */
+        { type: "subheading", label: "Next Review / Follow-up" },
+        {
+          type: "row",
+          fields: [
+            { name: "amp_next_appointment", label: "Next Appointment Date",  type: "date"  },
+            { name: "amp_session_frequency",label: "Frequency of Sessions",  type: "input" }
+          ]
+        }
+
       ]
     }
   ]
@@ -532,9 +818,9 @@ const schemaMap = {
 };
 
 const AMPUTEE_ASSESSMENT_REGISTRY = {
-  rom: ROMForm,
-  mmt: MMTForm,
-  pain: PainAssessmentForm,
+  rom:   AmpROMForm,
+  mmt:   AmpMMTForm,
+  pain:  PainAssessmentForm,
   stump: StumpAssessmentForm
 };
 
@@ -789,6 +1075,14 @@ export default function Amputee({patient, onSubmit, onBack}) {
               values={values}
               onChange={onChange}
             />
+
+      {/* ===== AMPUTATION INFORMATION ===== */}
+      <CommonFormBuilder
+        schema={AMPUTATION_INFO_SCHEMA}
+        values={values}
+        onChange={onChange}
+      />
+
       {/* ===== TABS ===== */}
       <div style={tabBar}>
         {["subjective", "objective", "assessment", "plan"].map(tab => (
