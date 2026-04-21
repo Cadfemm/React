@@ -54,7 +54,7 @@ const AMBULATORY_OPTIONS = [
   { label: "Others", value: "others" }
 ];
 
-export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, onBack }) {
+export default function WorkRehab({ patient, onUpdatePatient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
@@ -68,7 +68,7 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
-    ? `neuro_assessment_draft_${patient.id}`
+    ? `work_assessment_draft_${patient.id}`
     : null;
 
   useEffect(() => {
@@ -130,14 +130,14 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Neuro draft saved");
+      alert("draft saved");
     }
   };
 
   const handleSubmit = () => {
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Neuro assessment submitted");
+    alert("assessment submitted");
   };
 
   const today = new Date();
@@ -511,7 +511,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   ]
 };
 
-  const NEURO_CONTAINER_SCHEMA = {
+  const WORK_CONTAINER_SCHEMA = {
     title: "Patient Information",
     sections: []
   };
@@ -524,7 +524,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
       fields: [
 
         {
-          name: "neuro_scales",
+          name: "work_scales",
           type: "assessment-launcher",
           options: [
             { label: "WORQ", value: "Part2MainSection" },
@@ -757,7 +757,7 @@ const PLAN_SCHEMA = {
 
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
 
-  function VocationalRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
+  function WorkRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
     if (!patient) return null;
 
     return (
@@ -871,11 +871,11 @@ const PLAN_SCHEMA = {
 
       {/* ===== PATIENT INFORMATION CARD ===== */}
       <CommonFormBuilder
-        schema={NEURO_CONTAINER_SCHEMA}
+        schema={WORK_CONTAINER_SCHEMA}
         values={{}}
         onChange={() => { }}
       >
-        <VocationalRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
+        <WorkRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
       </CommonFormBuilder>
 
       {/* ===== NEW ENVIRONMENT CARD ===== */}

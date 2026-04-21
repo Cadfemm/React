@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-import ROMForm from "../../OT/components/RomForm";
-import FIMAssessment from "../../OT/components/Fim";
-import IADLAssessment from "../../OT/components/IADL";
-import SCIMaleSexualFunctionAssessment from "../../OT/components/SciMaleSexualAssessment";
-import SCIFemaleSexualFunctionAssessment from "../../OT/components/SciFeMaleSexualAssessment";
-import MoCAAssessment from "../../OT/components/MocA";
-import MMTForm from "../../PT/components/MMTForm";
-import masForm from "../../PT/components/MASForm";
-import CUEQAssessment from "../../OT/components/CUEQ";
-import StrengthTest from "../../OT/components/Strengthtest";
+import Part2MainSection from "../components/worq";
+import WorkHardeningModalities from "../components/workhardeningmodalities";
+import WorkHardeningScreening from "../components/workhardeningscreening";
+import ReadinessReturnToWorkScale from "../components/returntowork";
+import FunctionalCapacityEvaluation from "../components/functioncapacityevaluation";
+import BeckerWorkAdjustmentProfile from "../components/beckerwork";
 
 export const VOCATIONAL_REHAB_REGISTRY = {
-  rom: ROMForm,
-  mmt: MMTForm,
-  mas: masForm,
-  FIM: FIMAssessment,
-  moca: MoCAAssessment,
-  scifemale: SCIFemaleSexualFunctionAssessment,
-  scimale: SCIMaleSexualFunctionAssessment,
-  iadl:IADLAssessment,
-  cueq: CUEQAssessment,
-  strength: StrengthTest
+  Part2MainSection,
+  WorkHardeningModalities,
+  WorkHardeningScreening,
+  ReadinessReturnToWorkScale,
+  FunctionalCapacityEvaluation,
+  BeckerWorkAdjustmentProfile
 };
 
 /* ===================== OPTIONS ===================== */
@@ -76,7 +68,7 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
-    ? `neuro_assessment_draft_${patient.id}`
+    ? `work_assessment_draft_${patient.id}`
     : null;
 
   useEffect(() => {
@@ -138,14 +130,14 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Neuro draft saved");
+      alert("draft saved");
     }
   };
 
   const handleSubmit = () => {
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Neuro assessment submitted");
+    alert("assessment submitted");
   };
 
   const today = new Date();
@@ -171,159 +163,89 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
   };
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Subjective",
-
+  title: "",
   sections: [
     {
       fields: [
-
         {
-          type: "textarea",
-          name: "chief_complaint",
-          label: "Chief Complaint"
-        },
-
-        {
-          type: "textarea",
-          name: "history_present_illness",
-          label: "History of Present Illness"
-        },
-
-        {
-          type: "textarea",
-          name: "work_history",
-          label: "Work History"
-        },
-
-        {
+          name: "driving_license",
+          label: "Driving License",
           type: "radio",
-          name: "work_status",
-          label: "Work Status",
+          labelAbove: true,
           options: [
-            { label: "Employed", value: "employed" },
-            { label: "Unemployed", value: "unemployed" }
+            { label: "Did not posses any", value: "none" },
+            { label: "D, DA (Motorcar below 3500 kg)", value: "d_da" },
+            {
+              label: "B, B1, B2 (Motocycle 500 cc, below 500 cc, below 250 cc)",
+              value: "b_b1_b2"
+            },
+            {
+              label: "A, A1 (Invalid Carriage Motocycle, Motorcar)",
+              value: "a_a1"
+            },
+            {
+              label: "E, F, G, H, I (Heavy Motorcar, Tractor, Machinery)",
+              value: "e_f_g_h_i"
+            },
+            {
+              label: "PSV, GDL (Vocational Driving License)",
+              value: "psv_gdl"
+            }
           ]
         },
 
         {
-          type: "radio",
-          name: "rtw_status",
-          label: "Return to Work (RTW) Status",
+          name: "client_interest",
+          label: "Client Interest",
+          type: "checkbox-group",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "Others", value: "others" }
+            { label: "Sewing", value: "sewing" },
+            { label: "Bakery", value: "bakery" },
+            { label: "Urban farming", value: "urban_farming" },
+            { label: "Design", value: "design" },
+            { label: "Hands On", value: "hands_on" },
+            { label: "Electrical", value: "electrical" },
+            { label: "Electronics", value: "electronics" },
+            { label: "Office Administration", value: "office_admin" },
+            { label: "Short Course", value: "short_course" },
+            { label: "Entrepreneurship", value: "entrepreneurship" },
+            { label: "Barista", value: "barista" },
+            { label: "Hairstyling", value: "hairstyling" },
+            { label: "Culinary", value: "culinary" },
+            { label: "Automotive", value: "automotive" },
+            { label: "Innovart", value: "innovart" },
+            { label: "Florist", value: "florist" }
           ]
         },
 
         {
-          type: "input",
-          name: "rtw_status_other",
-          label: "Specify RTW Status",
-          showIf: {
-            field: "rtw_status",
-            equals: "others"
-          }
-        },
-
-        {
-          type: "radio",
-          name: "keen_to_rtw",
-          label: "If No, Keen to RTW",
-          showIf: {
-            field: "rtw_status",
-            equals: "no"
-          },
+          name: "environment_limitation",
+          label: "Environment and Limitation",
+          type: "checkbox-group",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "NIL", value: "nil" }
-          ]
-        },
-
-        {
-          type: "textarea",
-          name: "client_expectations",
-          label: "Client Expectations"
-        },
-
-        {
-          type: "textarea",
-          name: "driving_history",
-          label: "Driving History"
-        },
-
-     {
-  type: "radio",
-  name: "driving_license_type",
-  label: "Driving License Type",
-  labelAbove: true,
-  options: [
-    { label: "None", value: "none" },
-    { label: "B2 – Motor Car", value: "b2" },
-    { label: "D – Heavy Motor Vehicle", value: "d" },
-    { label: "E – Heavy Trailer Vehicle", value: "e" },
-    { label: "GDL – Goods Driving License", value: "gdl" },
-    { label: "PSV – Public Service Vehicle", value: "psv" },
-    { label: "Others", value: "others" }
-  ]
-},
-
-{
-  type: "input",
-  name: "license_other",
-  label: "Other License Type",
-  showIf: {
-    field: "driving_license_type",
-    equals: "others"
-  }
-},
-
-        {
-          type: "radio",
-          name: "license_status",
-          label: "License Status",
-          options: [
-            { label: "Active", value: "active" },
-            { label: "Not active", value: "not_active" }
-          ]
-        },
-
-        {
-          type: "radio",
-          name: "return_to_drive_post_injury",
-          label: "Have You Returned to Drive Post Injury",
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
-          ]
-        },
-
-        {
-          type: "textarea",
-          name: "riding_details",
-          label: "If Yes – Riding Duration, Distance, Modification",
-          showIf: {
-            field: "return_to_drive_post_injury",
-            equals: "yes"
-          }
-        },
-
-        {
-          type: "radio",
-          name: "keen_to_rtd",
-          label: "If No, Keen to Return to Driving (RTD)",
-          showIf: {
-            field: "return_to_drive_post_injury",
-            equals: "no"
-          },
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "NIL", value: "nil" }
+            { label: "Standing", value: "standing" },
+            { label: "Walking", value: "walking" },
+            { label: "Sitting", value: "sitting" },
+            { label: "Stretching", value: "stretching" },
+            { label: "Squatting or Crouching", value: "squatting_crouching" },
+            { label: "Twisting body or neck", value: "twisting_body_neck" },
+            {
+              label: "Lifting and carrying weight",
+              value: "lifting_carrying_weight"
+            },
+            { label: "Repetitive movement", value: "repetitive_movement" },
+            { label: "Driving", value: "driving" },
+            { label: "Using hand equipment", value: "using_hand_equipment" },
+            { label: "Stooping", value: "stooping" },
+            {
+              label: "Memory of concentration activity",
+              value: "memory_concentration"
+            },
+            { label: "Visual Impaired", value: "visual_impaired" },
+            { label: "Hearing Impaired", value: "hearing_impaired" },
+            { label: "Speech Impaired", value: "speech_impaired" }
           ]
         }
-
       ]
     }
   ]
@@ -335,16 +257,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [
@@ -441,7 +353,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   ]
 };
 
-  const NEURO_CONTAINER_SCHEMA = {
+  const VOCATIONAL_CONTAINER_SCHEMA = {
     title: "Patient Information",
     sections: []
   };
@@ -454,125 +366,40 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
       fields: [
 
         {
-          type: "subheading",
-          label: "Physical Status"
-        },
-
-        {
-          type: "radio",
-          name: "dominant_hand",
-          label: "Dominant",
-          options: [
-            { label: "Right", value: "right" },
-            { label: "Left", value: "left" }
-          ]
-        },
-
-        {
-          type: "subheading",
-          label: "Standardized Outcome Measures"
-        },
-
- {
-          name: "neuro_scales",
+          name: "vocational_scales",
           type: "assessment-launcher",
           options: [
-            { label: "Range of Motion (ROM)", value: "rom" },
-            { label: "Manual Muscle Test (MMT)", value: "mmt" },
-            { label: "Muscle Tone (MAS)", value: "mas" },
-            { label: "Functional Independence Measure (FIM)", value: "FIM" },
-            { label: "Montreal Cognitive Assessment (MoCA)", value: "moca" },
-            { label: "International Spinal Cord Injury Female Sexual and Reproductive Function", value: "scifemale" },
-            { label: "International Spinal Cord Injury Male Sexual Function", value: "scimale" },
-            { label: "Lawton Instrumental Activities of Daily Living Scale (IADL)", value: "iadl" },
-             {
-              label: "Capabilities of Upper Extremity Questionnaire (CUE-Q)",
-              value: "cueq"
-            }
+            // { label: "WORQ", value: "Part2MainSection" },
+            // { label: "WORK HARDENING MODALITIES", value: "WorkHardeningModalities" },
+            // { label: "WORK HARDENING SCREENING TEMPLATE", value: "WorkHardeningScreening" },
+            // { label: "READINESS FOR RETURN-TO-WORK SCALE", value: "ReadinessReturnToWorkScale" },
+            // { label: "FUNCTIONAL CAPACITY EVALUATION", value: "FunctionalCapacityEvaluation" },
+             { label: "BECKER WORK ADJUSTMENT PROFILE", value: "BeckerWorkAdjustmentProfile" },
           ]
         },
-        {
-          type: "subheading",
-          label: "Additional Observation / Tests"
-        },
-
-        {
-          type: "checkbox-group",
-          name: "additional_tests",
-          label: "Tests",
-          options: [
-
-            {
-              label: "Sensation Testing",
-              value: "sensation_testing"
-            },
-
-            {
-              label: "Pain Scale",
-              value: "pain_scale"
-            },
-
-            {
-              label: "Fine Motor and Dexterity Assessment",
-              value: "fine_motor"
-            }
-
-          ]
-        }
-
       ]
     }
   ]
 }
 
 const ASSESSMENT_SCHEMA = {
-  title: "ASSESSMENT",
-
-  sections: [
-    {
-      fields: [
-
-        /* ================= PROBLEM LIST ================= */
-        {
-          type: "subheading",
-          label: "Problem List"
-        },
-        {
+  actions: SUBJECTIVE_SCHEMA.actions,
+  fields: [
+      {
+        name: "hydro_clinical_impression",
+        label: "Clinical Impression",
+        type: "textarea"
+      },
+      {
           type: "textarea",
           name: "problem_list",
-          placeholder: "Enter problem list...",
+          label: "Problem List"
         },
 
-        /* ================= CLINICAL IMPRESSION ================= */
-        {
-          type: "subheading",
-          label: "Clinical Impression"
-        },
-
-        {
-          type: "textarea",
-          name: "functional_limitations",
-          label: "Functional limitations",
-          placeholder: "e.g. gait impairment, unsafe transfers"
-        },
-
-        {
-          type: "textarea",
-          name: "underlying_cause",
-          label: "Underlying cause",
-          placeholder: "e.g. CVA, fracture, neuropathy, TBI"
-        },
-
-        /* ================= REHAB PROGNOSIS ================= */
-        {
-          type: "subheading",
-          label: "Rehab Prognosis"
-        },
-
-        {
+       {
           type: "radio",
-          name: "rehab_prognosis",
-          label: "Select prognosis",
+          name: "vocational_potential",
+          label: "Potential",
           options: [
             { label: "Excellent", value: "excellent" },
             { label: "Good", value: "good" },
@@ -580,156 +407,38 @@ const ASSESSMENT_SCHEMA = {
             { label: "Poor", value: "poor" }
           ]
         },
-
-        {
-          type: "info-text",
-          text: "Based on cognition, motivation, severity, comorbidities"
-        }
-
-      ]
-    }
   ]
 };
 
+
 const PLAN_SCHEMA = {
   title: "",
-  
+
   sections: [
     {
       fields: [
-        { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
+
+     { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
         { type: "dynamic-goals", name: "short_term_goals" },
         
         { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
         { type: "dynamic-goals", name: "long_term_goals" },
-
-        {
-          label: "Therapeutic Exercises",
-          type: "checkbox-group",
-          name: "therapeutic_exercises",
-          options: [
-            { label: "Functional ROM Exercise", value: "rom" },
-            { label: "Functional Strengthening Exercise", value: "strength" },
-            { label: "Muscle Tone Management", value: "tone" },
-            { label: "Fine Motor & Dexterity Training", value: "fine_motor" },
-            { label: "Bobath/NDT Therapy", value: "ndt" },
-            { label: "Trunk & Core Control Training", value: "core" },
-            { label: "Lower Limb Activity Training", value: "lower_limb" },
-            { label: "Endurance / Cardiovascular Training", value: "cardio" },
-            { label: "Others", value: "others" }
-          ]
-        },
-
-        /* OPTIONAL DETAIL FOR NDT */
-        {
-          type: "checkbox-group",
-          name: "ndt_focus",
-          label: "NDT Focus Area",
-          options: [
-            { label: "Trunk & Pelvis", value: "trunk" },
-            { label: "Lower Limb", value: "lower" },
-            { label: "Upper Limb & Hand", value: "upper" },
-            { label: "Neck", value: "neck" }
-          ],
-          showIf: { field: "therapeutic_exercises", includes: "ndt" }
-        },
-
-        /* OTHER TEXT */
+        
         {
           type: "textarea",
-          name: "therapeutic_other",
-          label: "Other Exercises",
-          showIf: { field: "therapeutic_exercises", includes: "others" }
+          name: "vocational_intervention",
+          label: "Intervention",
         },
-
-    
         {
-          label: "ADL Training",
           type: "checkbox-group",
-          name: "adl_training",
-          options: [
-            { label: "Eating / Feeding", value: "eating" },
-            { label: "Bathing / Showering", value: "bathing" },
-            { label: "Dressing", value: "dressing" },
-            { label: "Grooming", value: "grooming" },
-            { label: "Toileting", value: "toileting" },
-            { label: "Sphincter Control", value: "sphincter" },
-            { label: "Bed Mobility", value: "bed" },
-            { label: "Transfers (Bed)", value: "transfer_bed" },
-            { label: "Transfers (Toilet)", value: "transfer_toilet" },
-            { label: "Advanced Transfer (Car)", value: "car" },
-            { label: "Advanced Transfer (Ground)", value: "ground" },
-            { label: "Locomotion / Mobility", value: "mobility" },
-            { label: "Stair Management", value: "stairs" }
-          ]
-        },
-
-    
-        {
-          label: "IADL Training",
-          type: "checkbox-group",
-          name: "iadl_training",
-          options: [
-            { label: "Telephone Use", value: "phone" },
-            { label: "Shopping", value: "shopping" },
-            { label: "Food Preparation", value: "cooking" },
-            { label: "Housekeeping", value: "housekeeping" },
-            { label: "Laundry", value: "laundry" },
-            { label: "Transportation", value: "transport" },
-            { label: "Medication Management", value: "medication" },
-            { label: "Financial Management", value: "finance" }
-          ]
-        },
-
-    
-        {
-          type: "radio",
-          label: "Driving Rehabilitation",
-          name: "driving",
-          options: [
-            { label: "Off-road Driving", value: "offroad" },
-            { label: "On-road Driving", value: "onroad" }
-          ]
-        },
-
-  
-        {
-          type: "radio",
-          label: "Riding Rehabilitation",
-          name: "riding",
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
-          ]
-        },
-
-        /* ================= ASSISTIVE DEVICES ================= */
-    
-        {
-            label: "Assistive & Adaptive Devices",
-            type: "checkbox-group",
-          name: "assistive_devices",
+          name: "vocational_plan",
+          label: "Plan",
           options: [
             { label: "Splint", value: "splint" },
-            { label: "Pressure Garment", value: "pressure" },
-            { label: "Tubigrip", value: "tubigrip" },
-            { label: "Adaptive Nail Clipper", value: "clipper" },
-            { label: "Lightweight Wheelchair", value: "lw_wc" },
-            { label: "Ultralight Wheelchair", value: "ul_wc" },
-            { label: "Motorised Wheelchair", value: "motor_wc" },
-            { label: "Commode Chair", value: "commode" },
-            { label: "Cushion (Air/Foam/Gel)", value: "cushion" },
-            { label: "Palmar Pocket", value: "palmar" },
-            { label: "Transfer Board", value: "board" },
-            { label: "Others", value: "others" }
+            { label: "Mobility aid", value: "mobility_aid" },
+            { label: "Home modification", value: "home_modification" },
+            { label: "Nil", value: "nil" }
           ]
-        },
-
-        {
-          type: "textarea",
-          name: "assistive_other",
-          label: "Other Devices",
-          showIf: { field: "assistive_devices", includes: "others" }
         }
 
       ]
@@ -878,7 +587,7 @@ const PLAN_SCHEMA = {
 
       {/* ===== PATIENT INFORMATION CARD ===== */}
       <CommonFormBuilder
-        schema={NEURO_CONTAINER_SCHEMA}
+        schema={VOCATIONAL_CONTAINER_SCHEMA}
         values={{}}
         onChange={() => { }}
       >
@@ -914,82 +623,7 @@ const PLAN_SCHEMA = {
         onAction={handleAction}
         assessmentRegistry={VOCATIONAL_REHAB_REGISTRY}
       >
-
-        {/* 🔹 ADD MATRIX ONLY IN PLAN TAB */}
-        {activeTab === "plan" &&
-          Array.isArray(values.treatment_plan) &&
-          values.treatment_plan.length > 0 && (
-
-            <div style={{ marginTop: 20 }}>
-              <h3>Treatment Plan Schedule</h3>
-
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ background: "#f1f5f9" }}>
-                    <th style={th}>Treatment</th>
-                    <th style={th}>Frequency</th>
-                    <th style={th}>Duration</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {values.treatment_plan.map(plan => (
-                    <tr key={plan}>
-                      <td style={td}>
-                        <b>{TREATMENT_PLAN_LABEL_MAP[plan] || plan}</b>
-                      </td>
-
-
-                      <td style={td}>
-                        <input
-                          type="text"
-                          placeholder="e.g. 5 days/week"
-                          value={values[`freq_${plan}`] || ""}
-                          onChange={e =>
-                            onChange(`freq_${plan}`, e.target.value)
-                          }
-                        />
-                      </td>
-
-                      <td style={td}>
-                        <input
-                          type="text"
-                          placeholder="e.g. 30 mins / 6 weeks"
-                          value={values[`dur_${plan}`] || ""}
-                          onChange={e =>
-                            onChange(`dur_${plan}`, e.target.value)
-                          }
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-        <div style={submitRow}>
-          {activeTab !== "plan" ? (
-            <button
-              style={submitBtn}
-              onClick={() => {
-                const idx = tabOrder.indexOf(activeTab);
-                const next = tabOrder[Math.min(tabOrder.length - 1, idx + 1)];
-                setActiveTab(next);
-              }}
-            >
-              Next
-            </button>
-          ) : (
-            <button style={submitBtn} onClick={handleSubmit}>
-              Submit Neuro Assessment
-            </button>
-          )}
-        </div>
-
       </CommonFormBuilder>
-
-
     </div>
   );
 }

@@ -468,10 +468,10 @@ const submitAndSave = () => {
     const existing = JSON.parse(localStorage.getItem(key) || "[]");
 
     const initialReport = {
-      reportId: "diet_initial_" + Date.now(),
+      reportId: "diet_progress_" + Date.now(),
       patientId: patient.id,
       createdBy: "Dietitian",
-      type: "diet_initial",
+      type: "diet_progress",
       timestamp: new Date().toISOString(),
 
       // snapshot of patient info
@@ -498,7 +498,7 @@ const submitAndSave = () => {
   /* ----------------------------------------
      HANDLE ACTION (Back, Clear, Save) - Psychology style
   -----------------------------------------*/
-  const storageKey = patient ? `diet_initial_draft_${patient.id}` : null;
+  const storageKey = patient ? `diet_progress_draft_${patient.id}` : null;
 
   useEffect(() => {
     if (!storageKey) return;

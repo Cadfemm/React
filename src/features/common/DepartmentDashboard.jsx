@@ -385,6 +385,7 @@ export default function DepartmentDashboard({
   recordingsCount = 0,
   onViewAllPatients,
   onNewAppointment,
+  onPOCardClick,        // P&O only: called with card title ("Wheelchair" | "3D")
 }) {
   const today = new Date().toLocaleDateString("en-GB", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -421,6 +422,56 @@ export default function DepartmentDashboard({
       <div className="grid grid-cols-4 gap-3">
         {kpiCards.map((c, i) => <KpiCard key={i} {...c} />)}
       </div>
+
+      {/* ── P&O exclusive: Wheelchair & 3D quick-access cards ── */}
+      {onPOCardClick && (
+        <div>
+          <div className="text-[12px] font-bold uppercase tracking-wider text-gray-500 mb-3">
+            Exclusive Services
+          </div>
+          <div className="grid grid-cols-2 gap-4" style={{ maxWidth: 560 }}>
+            {[
+              { title: "Wheelchair",  icon: "🦽", color: "#0EA5E9", desc: "Wheelchair service, repair & training" },
+              { title: "3D",          icon: "🧊", color: "#8B5CF6", desc: "3D scanning, printing & customisation" },
+            ].map(card => (
+              <div
+                key={card.title}
+                onClick={() => onPOCardClick(card.title)}
+                className="bg-white rounded-xl shadow-card"
+                style={{
+                  borderLeft: `4px solid ${card.color}`,
+                  padding: "18px 20px",
+                  cursor: "pointer",
+                  transition: "box-shadow .2s, transform .2s",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 24px ${card.color}30`; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = ""; e.currentTarget.style.transform = "none"; }}
+              >
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                  background: card.color + "15",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 24,
+                }}>
+                  {card.icon}
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#0f172a" }}>{card.title} Assessment</div>
+                  <div style={{ fontSize: 12, color: "#6b7280", marginTop: 3 }}>{card.desc}</div>
+                </div>
+                <div style={{
+                  marginLeft: "auto", width: 28, height: 28, borderRadius: "50%",
+                  background: card.color, display: "flex", alignItems: "center",
+                  justifyContent: "center", color: "#fff", fontSize: 16, fontWeight: 700, flexShrink: 0,
+                }}>›</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Appointments + Pending ── */}
       <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 300px" }}>

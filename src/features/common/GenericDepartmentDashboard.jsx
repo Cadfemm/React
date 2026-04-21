@@ -13,10 +13,11 @@ import NursingPatientDetails    from "../Nursing/components/PatientDetails";
 import PTPatientDetails         from "../PT/components/PatientDetails";
 import OTPatientDetails         from "../OT/components/PatientDetails";
 import AudiologyAdultIA         from "../Audiology/components/AudiologyAdultIA";
-import DietAssessment           from "../Dietetics/components/DietInitialAssessmentForm";
+import DietAssessment           from "../Dietetics/pages/DietPatientspage";
 import PsychologyAssessment     from "../Psychology/components/PsychologyAssessment";
 import SpeechAssessment         from "../SpeechandLanguage/SpeechAssessment";
-import ProstheticsAssessment    from "../Prosthetics & Orthotics/ProstheticsAssigment";
+import ProstheticsAssessment    from "../Prosthetics & Orthotics/ProstheticsAndOrthoticsAssessments";
+import ProstheticsAndOrthoticsPatients from "../Prosthetics & Orthotics/ProstheticsAndOrthoticsPatients";
 import VocationalAssessment     from "../VocationalRehab/components/PatientDetails";
 import MedicalAssistantDetails  from "../MedicalAssistant/components/PatientDetails";
 import { DoctorsInitialAssessmentForm as DoctorsAssessment } from "../Doctors/components/DoctorsInitialAssessment";
@@ -35,6 +36,8 @@ const ASSESSMENT_MAP = {
   "Doctor":                   DoctorsAssessment,
 };
 
+/* ── P&O specific card → assessment map ────────────────── */
+
 export default function GenericDepartmentDashboard({
   departmentName,
   patients = [],
@@ -42,8 +45,20 @@ export default function GenericDepartmentDashboard({
   updatePatientInMainList,
 }) {
   const [showPatients, setShowPatients] = useState(false);
+  const [poSelectedCard, setPoSelectedCard] = useState(null); // tracks which P&O card was clicked
   const dept = departmentName.replace(" Department", "");
   const AssessmentComponent = ASSESSMENT_MAP[dept] || null;
+  const isPO = dept === "Prosthetics & Orthotics";
+
+  /* ── P&O: render the correct patients page based on selected card ── */
+  if (isPO && showPatients) {
+    return (
+      <ProstheticsAndOrthoticsPatients
+        selectedCard={poSelectedCard || "My Appointments"}
+        onBack={() => { setShowPatients(false); setPoSelectedCard(null); }}
+      />
+    );
+  }
 
   if (showPatients) {
     // Optometry (and any dept with PatientsComponent override) uses its own page
@@ -71,10 +86,21 @@ export default function GenericDepartmentDashboard({
     );
   }
 
+  /* ── P&O dashboard: intercept card clicks for Wheelchair & 3D ── */
+  const handlePOCardClick = (cardTitle) => {
+    setPoSelectedCard(cardTitle);
+    setShowPatients(true);
+  };
+
   return (
     <DepartmentDashboard
       departmentName={departmentName}
-      onViewAllPatients={() => setShowPatients(true)}
+      onViewAllPatients={() => {
+        if (isPO) { setPoSelectedCard("My Appointments"); }
+        setShowPatients(true);
+      }}
+      /* Pass P&O card click handler so dashboard can wire up Wheelchair / 3D cards */
+      onPOCardClick={isPO ? handlePOCardClick : undefined}
       kpiCards={[
         { label: "Today's Patients",    value: "20", sub: "10 new · 10 follow-up", icon: <FaUserInjured size={16} />,         accent: "#2563eb", trend: "up",   trendVal: "+2", onClick: () => setShowPatients(true) },
         { label: "Appointments Booked", value: "24", sub: "4 slots remaining",     icon: <FaCalendarCheck size={16} />,       accent: "#10b981", trend: "up",   trendVal: "+3" },
