@@ -469,16 +469,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
     {
       fields: [
         {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
-        {
           type: "row",
           fields: [
             {
@@ -722,14 +712,14 @@ const OBJECTIVE_SCHEMA = {
 
         { type: "subheading", label: "Clinical Observations / Tests" },
         {
-          type: "checkbox-group",
+          type: "assessment-launcher",
           name: "clinical_tests",
-          label: "Clinical Tests",
+          label: "",
           options: [
-            { label: "Strength Testing", value: "StrengthTesting" },
-            { label: "Sensory Testing", value: "SensoryTesting" },
-            { label: "Balance Testing", value: "BalanceTesting" },
-            { label: "Fine Motor / Dexterity Testing", value: "FineMotorTesting" }
+            { label: "Strength Testing",              value: "strength_testing"  },
+            { label: "Sensory Testing",               value: "sensory_testing"   },
+            { label: "Balance Testing",               value: "balance_testing"   },
+            { label: "Fine Motor / Dexterity Testing",value: "fine_motor_testing"},
           ]
         }
       ]

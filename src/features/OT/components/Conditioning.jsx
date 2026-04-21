@@ -22,6 +22,13 @@ import COGBATAssessment from "./Cogbat";
 import COTNABAssessment from "./Cotnab";
 import PatientCard from "../../../shared/cards/PatientCard";
 
+const ADL_OPTS = [
+  { label: "Independent", value: "independent" },
+  { label: "Supervision", value: "supervision" },
+  { label: "Assistance",  value: "assistance"  },
+  { label: "Dependent",   value: "dependent"   },
+];
+
 export const NEURO_ASSESSMENT_REGISTRY = {
   dlocta: DLOTCAFullAssessment,
   slums: DLOTCAForm,
@@ -269,48 +276,24 @@ const SUBJECTIVE_SCHEMA = {
         { type: "input", name: "client_goals", label: "Client Goals" },
 
         { type: "subheading", label: "Prior Level of Function – ADL" },
-        {
-          type: "scale-table",
-          name: "plof_adl",
-          columns: [
-            { label: "Independent", value: "Independent", required: true },
-            { label: "Supervision", value: "Supervision", required: true },
-            { label: "Assistance", value: "Assistance", required: true },
-            { label: "Dependent", value: "Dependent", required: true }
-          ],
-          rows: [
-            "Feeding",
-            "Grooming",
-            "Upper Body Dressing",
-            "Lower Body Dressing",
-            "Bathing",
-            "Toileting",
-            "Transfers",
-            "Functional Mobility"
-          ]
-        },
+        { type: "radio-matrix", name: "plof_adl_feeding",          label: "Feeding",            options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_grooming",         label: "Grooming",           options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_upper_dressing",   label: "Upper Body Dressing",options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_lower_dressing",   label: "Lower Body Dressing",options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_bathing",          label: "Bathing",            options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_toileting",        label: "Toileting",          options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_transfers",        label: "Transfers",          options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_adl_mobility",         label: "Functional Mobility",options: ADL_OPTS },
 
         { type: "subheading", label: "Prior Level of Function – IADL" },
-        {
-          type: "scale-table",
-          name: "plof_iadl",
-          columns: [
-            { label: "Independent", value: "Independent", required: true },
-            { label: "Supervision", value: "Supervision", required: true },
-            { label: "Assistance", value: "Assistance", required: true },
-            { label: "Dependent", value: "Dependent", required: true }
-          ],
-          rows: [
-            "Meal Preparation",
-            "Housekeeping",
-            "Laundry",
-            "Shopping",
-            "Medication Management",
-            "Financial Management",
-            "Community Mobility",
-            "Driving"
-          ]
-        },
+        { type: "radio-matrix", name: "plof_iadl_meal_prep",       label: "Meal Preparation",      options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_housekeeping",    label: "Housekeeping",          options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_laundry",         label: "Laundry",               options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_shopping",        label: "Shopping",              options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_medication",      label: "Medication Management", options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_financial",       label: "Financial Management",  options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_community",       label: "Community Mobility",    options: ADL_OPTS },
+        { type: "radio-matrix", name: "plof_iadl_driving",         label: "Driving",               options: ADL_OPTS },
 
         { type: "subheading", label: "Social & Environmental Context" },
         {
@@ -590,16 +573,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [

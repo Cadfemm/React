@@ -7,15 +7,16 @@ import Musculoskeletal from "./Musculoskeletal";
 import Conditioning from "./Conditioning";
 import Cardiorespiratory from "./Cardiorespiratory";
 import Amputee from "./Amputee";
+import DrivingRehab from "./DrivingRehab";
 
 export default function ProgramTabsWithContent({ patient }) {
   const tabs = [
-    { key: "conditioning", label: "Cognitive" },
-    { key: "neuro", label: "Neurology" },
-    { key: "msk", label: "Musculoskeletal" },
-    { key: "sci", label: "Spinal Cord Injury" },
-    { key: "amputee", label: "Amputee" },
-    // { key: "cardio", label: "Cardiorespiratory" },
+    { key: "conditioning",   label: "Cognitive"          },
+    { key: "neuro",          label: "Neurology"          },
+    { key: "msk",            label: "Musculoskeletal"    },
+    { key: "sci",            label: "Spinal Cord Injury" },
+    { key: "amputee",        label: "Amputee"            },
+    { key: "driving_rehab",  label: "Driving Rehab"      },
   ];
 
   const [activeTab, setActiveTab] = useState("sci");
@@ -42,6 +43,9 @@ export default function ProgramTabsWithContent({ patient }) {
 
       case "amputee":
         return <Amputee patient={patient}/>;
+
+      case "driving_rehab":
+        return <DrivingRehab patient={patient} />;
 
       default:
         return null;

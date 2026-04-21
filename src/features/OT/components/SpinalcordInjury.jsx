@@ -10,6 +10,7 @@ import MMTForm from "../../PT/components/MMTForm";
 import masForm from "../../PT/components/MASForm";
 import CUEQAssessment from "./CUEQ";
 import StrengthTest from "./Strengthtest";
+import SCIMForm from "../../PT/components/SCIMForm";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 
@@ -23,6 +24,7 @@ export const NEURO_ASSESSMENT_REGISTRY = {
   scimale: SCIMaleSexualFunctionAssessment,
   iadl:IADLAssessment,
   cueq: CUEQAssessment,
+  scim: SCIMForm,
   strength: StrengthTest
 };
 
@@ -285,16 +287,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
     {
       fields: [
         {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
-        {
           type: "row",
           fields: [
             {
@@ -512,10 +504,8 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
             { label: "International Spinal Cord Injury Female Sexual and Reproductive Function", value: "scifemale" },
             { label: "International Spinal Cord Injury Male Sexual Function", value: "scimale" },
             { label: "Lawton Instrumental Activities of Daily Living Scale (IADL)", value: "iadl" },
-             {
-              label: "Capabilities of Upper Extremity Questionnaire (CUE-Q)",
-              value: "cueq"
-            }
+            { label: "Capabilities of Upper Extremity Questionnaire (CUE-Q)", value: "cueq" },
+            { label: "SCIM – Spinal Cord Independence Measure", value: "scim" }
           ]
         },
         {

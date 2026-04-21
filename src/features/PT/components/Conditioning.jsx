@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import SixMWTForm from "./SixMWTForm";
 import MMTForm from "./MMTForm";
+import YBalanceTestForm from "./YBalanceTestForm";
+import LegPressForm from "./LegPressForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 export const CONDITIONING_ASSESSMENT_REGISTRY = {
   sixmwt: SixMWTForm,
-  mmt: MMTForm
+  mmt: MMTForm,
+  y_balance: YBalanceTestForm,
+  fac: LegPressForm,
 };
 
 export default function Conditioning({ patient, onSubmit, onBack }) {
@@ -227,16 +231,6 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
     sections: [
       {
         fields: [
-          {
-            name: "consent_risks_benefits",
-            type: "checkbox-group",
-            options: [{ label: "Risks/benefits explained", value: "yes" }]
-          },
-          {
-            name: "consent_verbalized",
-            type: "checkbox-group",
-            options: [{ label: "Patient verbalized understanding", value: "yes" }]
-          },
           {
             type: "row",
             fields: [

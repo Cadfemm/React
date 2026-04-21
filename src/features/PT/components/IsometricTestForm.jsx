@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-/* ── Norms table ── */
+/* ── Norms (values are already %BW, e.g. 15 means 15%BW) ── */
 const NORMS = {
   "Shoulder Flexors":            { men: 15,   women: 15   },
   "Shoulder Adductors":          { men: 21,   women: 21   },
@@ -23,52 +23,71 @@ const NORMS = {
 
 const MUSCLE_OPTIONS = Object.keys(NORMS);
 
+/* ICF grade from % of Norm */
 function icfGrade(pct) {
-  if (pct === null) return "—";
-  if (pct >= 95) return "0  (≥95%)";
-  if (pct >= 75) return "1  (75–94%)";
-  if (pct >= 50) return "2  (50–74%)";
-  if (pct >= 25) return "3  (25–49%)";
-  return "4  (<25%)";
+  if (pct === null) return null;
+  if (pct >= 95) return { grade: "0", range: "≥ 95%",    bg: "#dcfce7", text: "#166534" };
+  if (pct >= 75) return { grade: "1", range: "75–94%",   bg: "#fef9c3", text: "#854d0e" };
+  if (pct >= 50) return { grade: "2", range: "50–74%",   bg: "#fed7aa", text: "#9a3412" };
+  if (pct >= 25) return { grade: "3", range: "25–49%",   bg: "#fecaca", text: "#991b1b" };
+  return              { grade: "4", range: "< 25%",    bg: "#f87171", text: "#fff"    };
 }
 
-function icfColor(pct) {
-  if (pct === null) return "transparent";
-  if (pct >= 95) return "#dcfce7";
-  if (pct >= 75) return "#fef9c3";
-  if (pct >= 50) return "#fed7aa";
-  if (pct >= 25) return "#fecaca";
-  return "#f87171";
-}
+/* ── Single R or L row ── */
+function IsometricRow({ side, rowKey, mirrorKey, gender, values, onChange }) {
+  const mm  = parseFloat(values[`${rowKey}_mm`]) || null;
+  const bw  = parseFloat(values[`${rowKey}_bw`]) || null;
+  const mg  = values[`${rowKey}_mg`] || "";
 
-/* ── One R or L row ── */
-function IsometricRow({ side, rowKey, gender, values, onChange }) {
-  const mm   = parseFloat(values[`${rowKey}_mm`]) || null;
-  const bw   = parseFloat(values[`${rowKey}_bw`]) || null;
-  const mg   = values[`${rowKey}_mg`] || "";
+  /* %BW = (Muscle Meter / Body Weight) × 100 */
+  const pctBW = (mm !== null && bw > 0)
+    ? parseFloat(((mm / bw) * 100).toFixed(1))
+    : null;
 
-  const pctBW     = (mm !== null && bw > 0) ? parseFloat(((mm / bw) * 100).toFixed(1)) : null;
-  const norm      = mg && NORMS[mg] ? (gender === "female" ? NORMS[mg].women : NORMS[mg].men) : null;
-  const pctOfNorm = (pctBW !== null && norm) ? parseFloat(((pctBW / norm) * 100).toFixed(1)) : null;
+  /* Norm is already in %BW units */
+  const norm = mg && NORMS[mg]
+    ? (gender === "female" ? NORMS[mg].women : NORMS[mg].men)
+    : null;
+
+  /* % of Norm = (%BW / Norm) × 100  — both sides are %BW so this is correct */
+  const pctOfNorm = (pctBW !== null && norm)
+    ? parseFloat(((pctBW / norm) * 100).toFixed(1))
+    : null;
+
+  const icf = icfGrade(pctOfNorm);
+
+  /* When BW changes, mirror to the other side */
+  const handleBW = (val) => {
+    onChange(`${rowKey}_bw`, val);
+    onChange(`${mirrorKey}_bw`, val);
+  };
 
   return (
     <tr>
-      <td style={{ ...td, fontWeight: 700, textAlign: "center", background: "#f8fafc" }}>{side}</td>
+      <td style={{ ...td, fontWeight: 700, textAlign: "center", background: "#f8fafc", width: 40 }}>{side}</td>
+
+      {/* Muscle Meter */}
       <td style={td}>
         <input type="number" min="0" step="0.1" style={inp}
           value={values[`${rowKey}_mm`] || ""}
           onChange={e => onChange(`${rowKey}_mm`, e.target.value)}
           placeholder="kg" />
       </td>
+
+      {/* BW — shared between R and L */}
       <td style={td}>
         <input type="number" min="0" step="0.1" style={inp}
           value={values[`${rowKey}_bw`] || ""}
-          onChange={e => onChange(`${rowKey}_bw`, e.target.value)}
+          onChange={e => handleBW(e.target.value)}
           placeholder="kg" />
       </td>
-      <td style={{ ...td, fontWeight: 600, color: "#0369a1" }}>
+
+      {/* %BW — auto */}
+      <td style={{ ...td, fontWeight: 600, color: "#0369a1", textAlign: "center" }}>
         {pctBW !== null ? `${pctBW}%` : "—"}
       </td>
+
+      {/* Muscle Group dropdown */}
       <td style={td}>
         <select style={{ ...inp, minWidth: 210 }}
           value={mg}
@@ -77,14 +96,28 @@ function IsometricRow({ side, rowKey, gender, values, onChange }) {
           {MUSCLE_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
       </td>
+
+      {/* Norm (%BW) — auto from gender + muscle group */}
       <td style={{ ...td, color: "#0369a1", fontWeight: 600, textAlign: "center" }}>
         {norm !== null ? `${norm}%` : "—"}
       </td>
+
+      {/* % of Norm — auto */}
       <td style={{ ...td, fontWeight: 600, textAlign: "center" }}>
         {pctOfNorm !== null ? `${pctOfNorm}%` : "—"}
       </td>
-      <td style={{ ...td, background: icfColor(pctOfNorm), fontWeight: 700, textAlign: "center" }}>
-        {icfGrade(pctOfNorm)}
+
+      {/* ICF — inline badge */}
+      <td style={{ ...td, textAlign: "center" }}>
+        {icf ? (
+          <span style={{
+            display: "inline-block", padding: "3px 10px",
+            background: icf.bg, color: icf.text,
+            borderRadius: 6, fontWeight: 700, fontSize: 12
+          }}>
+            {icf.grade} &nbsp;<span style={{ fontWeight: 400 }}>({icf.range})</span>
+          </span>
+        ) : "—"}
       </td>
     </tr>
   );
@@ -116,15 +149,17 @@ export default function IsometricTestForm({ values, onChange }) {
         Isometric Strength Test
       </div>
       <div style={{ fontSize: 12, color: "#64748b", marginBottom: 16 }}>
-        Gender (from patient record): <strong style={{ color: "#0f172a", textTransform: "capitalize" }}>{gender}</strong>
+        Gender (from patient record):&nbsp;
+        <strong style={{ color: "#0f172a", textTransform: "capitalize" }}>{gender}</strong>
+        &nbsp;·&nbsp;
+        <span style={{ color: "#475569" }}>%BW = Muscle Meter ÷ Body Weight × 100 &nbsp;|&nbsp; % of Norm = %BW ÷ Norm × 100</span>
       </div>
 
-      {/* ── Table ── */}
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
           <thead>
             <tr style={{ background: "#1e3a5f", color: "#fff" }}>
-              {["Side", "Muscle Meter (kg)", "BW (kg)", "%BW", "Muscle Group", "Norm (%BW)", "% of Norm", "ICF"].map(h => (
+              {["Side","Muscle Meter (kg)","BW (kg)","%BW","Muscle Group","Norm (%BW)","% of Norm","ICF"].map(h => (
                 <th key={h} style={th}>{h}</th>
               ))}
             </tr>
@@ -132,8 +167,14 @@ export default function IsometricTestForm({ values, onChange }) {
           <tbody>
             {groups.map((g, idx) => (
               <React.Fragment key={g.id}>
-                <IsometricRow side="R" rowKey={`iso_g${g.id}_r`} gender={gender} values={values} onChange={onChange} />
-                <IsometricRow side="L" rowKey={`iso_g${g.id}_l`} gender={gender} values={values} onChange={onChange} />
+                <IsometricRow
+                  side="R" rowKey={`iso_g${g.id}_r`} mirrorKey={`iso_g${g.id}_l`}
+                  gender={gender} values={values} onChange={onChange}
+                />
+                <IsometricRow
+                  side="L" rowKey={`iso_g${g.id}_l`} mirrorKey={`iso_g${g.id}_r`}
+                  gender={gender} values={values} onChange={onChange}
+                />
                 {groups.length > 1 && (
                   <tr>
                     <td colSpan={8} style={{ padding: "2px 8px", background: "#fef2f2" }}>
@@ -159,27 +200,6 @@ export default function IsometricTestForm({ values, onChange }) {
       }}>
         + Add Muscle Group
       </button>
-
-      {/* ── ICF Legend ── */}
-      <div style={{ marginTop: 24, background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 8, padding: 16, maxWidth: 340 }}>
-        <div style={{ fontWeight: 700, fontSize: 13, color: "#0f172a", marginBottom: 10 }}>ICF Interpretation (% of Norms)</div>
-        <table style={{ borderCollapse: "collapse", fontSize: 13, width: "100%" }}>
-          <thead>
-            <tr style={{ background: "#bfdbfe" }}>
-              <th style={{ ...th, color: "#1e3a5f", width: 60 }}>ICF</th>
-              <th style={{ ...th, color: "#1e3a5f" }}>% of Norms</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[["0","≥ 95%","#dcfce7"],["1","75 – 94%","#fef9c3"],["2","50 – 74%","#fed7aa"],["3","25 – 49%","#fecaca"],["4","< 25%","#f87171"]].map(([i,r,bg]) => (
-              <tr key={i} style={{ background: bg }}>
-                <td style={{ ...td, textAlign: "center", fontWeight: 700 }}>{i}</td>
-                <td style={td}>{r}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
