@@ -429,7 +429,21 @@ const onChange = (name, value) => {
 
     return (
       <div style={{ marginBottom: 12 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+        {/* Assessment type banner */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          background: "#E0F2FE", border: "1px solid #BAE6FD",
+          borderRadius: 999, padding: "5px 14px", marginBottom: 14,
+          fontSize: 13, fontWeight: 600, color: "#0369A1"
+        }}>
+          🦽 Wheelchair Assessment
+        </div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12,
+          fontSize: 14
+        }}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
           <div><b>DOB:</b> {patient?.dob}</div>
@@ -438,7 +452,7 @@ const onChange = (name, value) => {
           <div><b>Date of Assessment:</b> {patient?.date_of_assessment}</div>
           <div><b>Scheme:</b> {patient?.scheme}</div>
           <div><b>Weight:</b> {patient?.weight}</div>
-          <div><b>Diagnosis:</b> {patient?.diagnosis_history}</div>
+          <div><b>Diagnosis:</b> {patient?.diagnosis_history || "-"}</div>
         </div>
       </div>
     );
@@ -446,7 +460,32 @@ const onChange = (name, value) => {
 
   /* ================= UI ================= */
   return (
-    <div>
+    <div style={{ padding: 24, background: "#F8FAFC", minHeight: "100vh" }}>
+      {/* Page header with back button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#E0F2FE", display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: 22
+          }}>🦽</div>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0F172A" }}>Wheelchair Assessment</div>
+            <div style={{ fontSize: 13, color: "#64748B" }}>Prosthetics &amp; Orthotics Department</div>
+          </div>
+        </div>
+        <button
+          onClick={onBack}
+          style={{
+            background: "transparent", border: "1px solid #CBD5E1",
+            padding: "8px 14px", borderRadius: 10, fontSize: 14,
+            fontWeight: 600, cursor: "pointer", color: "#2563EB"
+          }}
+        >
+          ← Back to Patients
+        </button>
+      </div>
+
       <CommonFormBuilder
         schema={CONTAINER_SCHEMA}
         values={values}

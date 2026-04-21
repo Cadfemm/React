@@ -8,7 +8,7 @@ const CONTAINER_SCHEMA = {
 };
 
 /* ================= COMPONENT ================= */
-export default function WheelchairAssessment({ patient, onBack }) {
+export default function ThreeDAssessment({ patient, onBack }) {
   const [values, setValues] = useState({});
 
   /* =========================================================
@@ -496,8 +496,32 @@ export default function WheelchairAssessment({ patient, onBack }) {
     if (!patient) return <div>No Patient Data</div>;
 
     return (
-      <div style={{ padding: 10 }}>
-        <b>Name:</b> {patient.name}
+      <div style={{ marginBottom: 12 }}>
+        {/* Assessment type banner */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          background: "#F3E8FF", border: "1px solid #DDD6FE",
+          borderRadius: 999, padding: "5px 14px", marginBottom: 14,
+          fontSize: 13, fontWeight: 600, color: "#7C3AED"
+        }}>
+          🧊 3D Assessment
+        </div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12,
+          fontSize: 14
+        }}>
+          <div><b>Name:</b> {patient.name}</div>
+          <div><b>IC:</b> {patient.id}</div>
+          <div><b>DOB:</b> {patient?.dob}</div>
+          <div><b>Age / Gender:</b> {patient?.age} / {patient?.sex}</div>
+          <div><b>ICD:</b> {patient?.icd}</div>
+          <div><b>Date of Assessment:</b> {patient?.date_of_assessment}</div>
+          <div><b>Scheme:</b> {patient?.scheme}</div>
+          <div><b>Weight:</b> {patient?.weight}</div>
+          <div><b>Diagnosis:</b> {patient?.diagnosis_history || "-"}</div>
+        </div>
       </div>
     );
   }
@@ -506,7 +530,32 @@ export default function WheelchairAssessment({ patient, onBack }) {
      UI
   ========================================================= */
   return (
-    <div>
+    <div style={{ padding: 24, background: "#F8FAFC", minHeight: "100vh" }}>
+      {/* Page header with back button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#F3E8FF", display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: 22
+          }}>🧊</div>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0F172A" }}>3D Assessment</div>
+            <div style={{ fontSize: 13, color: "#64748B" }}>Prosthetics &amp; Orthotics Department</div>
+          </div>
+        </div>
+        <button
+          onClick={onBack}
+          style={{
+            background: "transparent", border: "1px solid #CBD5E1",
+            padding: "8px 14px", borderRadius: 10, fontSize: 14,
+            fontWeight: 600, cursor: "pointer", color: "#8B5CF6"
+          }}
+        >
+          ← Back to Patients
+        </button>
+      </div>
+
       <CommonFormBuilder
         schema={CONTAINER_SCHEMA}
         values={values}
@@ -521,10 +570,8 @@ export default function WheelchairAssessment({ patient, onBack }) {
         onChange={onChange}
         onAction={(type) => {
           if (type === "back") onBack?.();
-
           if (type === "save") {
             console.log(values);
-
             alert("Saved Successfully");
           }
         }}

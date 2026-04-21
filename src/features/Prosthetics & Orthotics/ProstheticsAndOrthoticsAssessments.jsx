@@ -1688,7 +1688,7 @@ export default function OrthoticsAssessment({ patient, onSubmit, onBack }) {
   }
 
   return (
-    <div style={{ margin: "0 auto" }}>
+    <div>
       <CommonFormBuilder
         schema={ORTHOTICS_CONTAINER_SCHEMA}
         values={values}
