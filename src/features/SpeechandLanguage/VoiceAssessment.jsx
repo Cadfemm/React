@@ -1097,19 +1097,19 @@ const SCHEMA_OBJECTIVE = {
           type: "checkbox-group",
           options: [
             {
-              label: "Dysphonia (ICD-10: R49.0)",
+              label: "Dysphonia",
               value: "dysphonia"
             },
             {
-              label: "Aphonia (ICD-10: R49.1)",
+              label: "Aphonia ",
               value: "aphonia"
             },
             {
-              label: "Hypernasality / Hyponasality (ICD-10: R49.2)",
+              label: "Hypernasality / Hyponasality",
               value: "resonance_disorder"
             },
             {
-              label: "Other voice disturbances (ICD-10: R49.8)",
+              label: "Other voice disturbances",
               value: "other_voice_disorder"
             }
           ]
@@ -1249,6 +1249,7 @@ const FORM_SCHEMAS = {
           <CommonFormBuilder
   schema={FORM_SCHEMAS[mode] ?? { sections: [] }}
   values={values}
+  layout="nested"
   onChange={handleChange}
 />
         </div>

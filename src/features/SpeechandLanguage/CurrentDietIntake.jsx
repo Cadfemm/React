@@ -846,6 +846,7 @@ const SCHEMA_MAP = {
     <CommonFormBuilder
       schema={SCHEMA_MAP[mode]}
       values={values}
+      layout="nested"
       onChange={handleChange}
     />
   </div>

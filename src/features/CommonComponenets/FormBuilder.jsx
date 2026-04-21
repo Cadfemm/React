@@ -935,6 +935,11 @@ function AssessmentLauncher({
     : null;
 
   const visibleOptions = (field.options || []).filter(opt => {
+    // per-option condition: { field, equals }
+    if (opt.visibleIf) {
+      const depVal = values[opt.visibleIf.field];
+      if ("equals" in opt.visibleIf) return depVal === opt.visibleIf.equals;
+    }
     if (!selectedRegions) return true;               // no filter — show all
     if (!opt.regions || opt.regions.length === 0) return true; // regions:[] = all
     return opt.regions.some(r => selectedRegions.includes(r));

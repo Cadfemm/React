@@ -325,13 +325,13 @@ const SCHEMA_ASSESSMENT = {
     label: "The patient presents with",
     type: "checkbox-group",
     options: [
-      { label: "Aphasia (ICD-10: R47.0)", value: "aphasia" },
-      { label: "Dysarthria (ICD-10: R47.1)", value: "dysarthria" },
-      { label: "Apraxia of Speech (ICD-10: R48.2)", value: "apraxia" },
-      { label: "Cognitive-Communication Disorder (ICD-10: R41.841)", value: "cognitive_comm" },
-      { label: "Other and unspecified speech disturbances (ICD-10: R47.8)", value: "other_speech" },
-      { label: "Stuttering / stammering (ICD-10: F98.5)", value: "stuttering" },
-      { label: "Cluttering (ICD-10: F98.6)", value: "cluttering" },
+      { label: "Aphasia", value: "aphasia" },
+      { label: "Dysarthria", value: "dysarthria" },
+      { label: "Apraxia of Speech", value: "apraxia" },
+      { label: "Cognitive-Communication Disorder ", value: "cognitive_comm" },
+      { label: "Other and unspecified speech disturbances ", value: "other_speech" },
+      { label: "Stuttering / stammering ", value: "stuttering" },
+      { label: "Cluttering ", value: "cluttering" },
 
 
     ]
@@ -781,6 +781,7 @@ const SCHEMA_MAP = {
           <CommonFormBuilder
   schema={SCHEMA_MAP[mode] ?? { sections: [] }}
   values={values}
+  layout="nested"
   onChange={handleChange}
 />
         </div>
