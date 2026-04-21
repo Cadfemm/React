@@ -3,6 +3,12 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import ROMForm from "./ROMForm";
 import MMTForm from "./MMTForm";
 import SixMWTForm from "./SixMWTForm"
+import SitToStandForm from "./SitToStandForm";
+import RPEForm from "./RPEForm";
+import ChestExpansionForm from "./ChestExpansionForm";
+import PeakFlowForm from "./PeakFlowForm";
+import PeakCoughForm from "./PeakCoughForm";
+import IncentiveSpirometryForm from "./IncentiveSpirometryForm";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 const YES_NO_OPTIONS = [
@@ -16,16 +22,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [
@@ -135,7 +131,13 @@ const CARDIO_CONTAINER_SCHEMA = {
 const CARDIO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
   mmt: MMTForm,
-  sixmwt: SixMWTForm
+  sixmwt: SixMWTForm,
+  sit_stand_30s: SitToStandForm,
+  rpe: RPEForm,
+  chest_expansion: ChestExpansionForm,
+  peak_flow_meter: PeakFlowForm,
+  peak_cough_meter: PeakCoughForm,
+  incentive_spirometry: IncentiveSpirometryForm,
 };
 
 export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
@@ -160,7 +162,10 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
       ...v,
       pmh_from_registration: patient.medical_history || "No data available",
       referred_by: patient.case_manager || "",
-      referral_reasons: patient.diagnosis_history || patient.icd || ""
+      referral_reasons: patient.diagnosis_history || patient.icd || "",
+      sts_age:    patient.age    || "",
+      sts_gender: patient.sex?.toLowerCase().includes("f") ? "female" : "male",
+      iso_gender: patient.sex?.toLowerCase().includes("f") ? "female" : "male",
     }));
   }, [patient]);
 

@@ -164,6 +164,7 @@ function evaluateShowIf(showIf, values) {
   }
   if ("includes" in showIf) return Array.isArray(depVal) && depVal.includes(showIf.includes);
   if ("exists" in showIf) return !!depVal;
+  if ("notEmpty" in showIf) return Array.isArray(depVal) ? depVal.length > 0 : !!depVal;
   return true;
 }
 
@@ -2011,22 +2012,46 @@ case "grid-table-advanced": {
             {children.map((c, idx) => {
               if (c?.showIf && !evaluateShowIf(c.showIf, values)) return null;
               const childValue = c?.name ? values?.[c.name] : undefined;
+
+              /* Auto-render matrix column header before first radio-matrix child */
+              const isFirstMatrix = c?.type === "radio-matrix" &&
+                !children.slice(0, idx).some(prev => prev?.type === "radio-matrix");
+              const matrixHeader = isFirstMatrix ? (() => {
+                const optCount = c.options?.length || 4;
+                const qColW = 200;
+                const headerStyle = {
+                  ...styles.matrixHeader,
+                  marginBottom: 12,
+                  gridTemplateColumns: `${qColW}px repeat(${optCount}, 1fr)`
+                };
+                return (
+                  <div key={`acc-header-${idx}`} style={headerStyle}>
+                    <div style={styles.matrixLabel}>{c.matrixHeaderLabel || "Scale"}</div>
+                    <div style={styles.matrixOptions}>
+                      {c.options?.map(opt => (
+                        <div key={opt.value} style={styles.matrixHeaderCell}>{opt.label}</div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })() : null;
+
               return (
-                <div
-                  key={c?.name || c?.label || idx}
-                  style={{ marginBottom: c?.compact ? 4 : 10 }}
-                >
-                  {renderField(
-                    c,
-                    childValue,
-                    values,
-                    onChange,
-                    onAction,
-                    assessmentRegistry,
-                    formReadOnly,
-                    languageConfig
-                  )}
-                </div>
+                <React.Fragment key={c?.name || c?.label || idx}>
+                  {matrixHeader}
+                  <div style={{ marginBottom: c?.compact ? 4 : 10 }}>
+                    {/* Render outer label for field types that don't self-label */}
+                    {c?.label && !["subheading","radio-matrix","checkbox-group","button",
+                      "optional-section-toggle","score-box","accordion","custom","row",
+                      "grid-header","grid-row","scale-slider","dynamic-goals","dynamic-section",
+                      "dynamic-simple-goals","assessment-launcher","refraction-12col"].includes(c?.type) && (
+                      <label style={{ display: "block", fontWeight: 600, marginBottom: 6, fontSize: 14, color: "#0f172a" }}>
+                        {c.label}
+                      </label>
+                    )}
+                    {renderField(c, childValue, values, onChange, onAction, assessmentRegistry, formReadOnly, languageConfig)}
+                  </div>
+                </React.Fragment>
               );
             })}
           </div>

@@ -19,6 +19,7 @@ import PurduePegboardTest from "./ppt";
 import ScarAssessmentForm from "./vas";
 import DASHAssessment from "./Dash";
 import PatientCard from "../../../shared/cards/PatientCard";
+import GripStrengthForm, { GripOnlyForm, PinchOnlyForm } from "../../PT/components/GripStrengthForm";
 
 export const NEURO_ASSESSMENT_REGISTRY = {
   rom: ROMForm,
@@ -32,7 +33,9 @@ vas:ScarAssessmentForm,
   ppt: PurduePegboardTest,
   tug: TUG,
   six_mwt: SixMWTForm,
-  sixmwt: SixMWTForm
+  sixmwt: SixMWTForm,
+  grip_strength:  GripOnlyForm,
+  pinch_strength: PinchOnlyForm,
 };
 
 /* ===================== OPTIONS ===================== */
@@ -306,11 +309,6 @@ const SUBJECTIVE_SCHEMA = {
           label: "History of Present Illness"
         },
 
-        {
-          type: "textarea",
-          name: "medical_surgical_history",
-          label: "Medical / Surgical History"
-        },
 
         {
           type: "textarea",
@@ -388,16 +386,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [

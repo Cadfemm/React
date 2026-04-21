@@ -22,16 +22,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
     {
       fields: [
         {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
-        {
           name: "consent_obtained",
           type: "checkbox-group",
           options: [{ label: "Consent obtained", value: "yes" }]

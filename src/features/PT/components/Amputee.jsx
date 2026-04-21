@@ -1,10 +1,19 @@
+import React, { useState, useEffect, useMemo } from "react";
 import MMTForm, { buildMmtAccordionFields } from "./MMTForm";
 import ROMForm, { buildROMSchema } from "./ROMForm";
-import { useState, useEffect, useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PainAssessmentForm from "./PainForm";
-import StumpAssessmentForm from "./StumpForm"
+import StumpAssessmentForm from "./StumpForm";
+import BergBalanceScale from "./BBS";
+import TUG from "./TUGForm";
+import SixMWTForm from "./SixMWTForm";
+import DASHAssessment from "../../OT/components/Dash";
+import BoxBlockTest from "../../OT/components/BoxBlockTest";
+import FGAForm from "./FGAForm";
+import GripStrengthForm from "./GripStrengthForm";
+import TAPESForm from "./TAPESForm";
 import PatientCard from "../../../shared/cards/PatientCard";
+
 
 /* ROM wrapper — shows only UL or LL sections based on amp_region */
 function AmpROMForm({ values, onChange }) {
@@ -45,16 +54,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [
@@ -818,10 +817,20 @@ const schemaMap = {
 };
 
 const AMPUTEE_ASSESSMENT_REGISTRY = {
-  rom:   AmpROMForm,
-  mmt:   AmpMMTForm,
-  pain:  PainAssessmentForm,
-  stump: StumpAssessmentForm
+  rom:       AmpROMForm,
+  mmt:       AmpMMTForm,
+  pain:      PainAssessmentForm,
+  stump:     StumpAssessmentForm,
+  /* Lower Limb */
+  sixmwt:    SixMWTForm,
+  tug:       TUG,
+  bbs:       BergBalanceScale,
+  /* Upper Limb */
+  dash:      DASHAssessment,
+  grip:      GripStrengthForm,
+  box_block: BoxBlockTest,
+  fga:       FGAForm,
+  tapes:     TAPESForm,
 };
 
 
