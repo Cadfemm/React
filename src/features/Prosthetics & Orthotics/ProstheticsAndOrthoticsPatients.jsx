@@ -3,8 +3,18 @@ import React, { useState, useEffect, useMemo } from "react";
 import api from "../../shared/api/apiClient";
 import { API_URL } from "../../platform/config/api.config";
 import OrthoticsAssessment from "./ProstheticsAndOrthoticsAssessments";
+import OrthoticsFollowUp   from "./ProstheticsAndOrthoticsFollowUp";
 import WheelchairAssessment from "./WheelchairAssessment";
 import ThreeDAssessment from "./ThreeDAssessment";
+
+const ASSESSMENT_CARDS = [
+  { id: "initial",  title: "Initial Assessment",    desc: "Comprehensive assessment for new patient visit",   icon: "📋", accent: "#1D4ED8", tag: "New Patient",   tagBg: "#dbeafe", tagColor: "#1d4ed8" },
+  { id: "followup", title: "Follow-up Visit",        desc: "Review progress and adjust treatment plan",        icon: "🔄", accent: "#059669", tag: "Returning",     tagBg: "#d1fae5", tagColor: "#065f46" },
+  { id: "progress", title: "Progress Intervention",  desc: "Document interventions and track outcomes",        icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",  tagBg: "#ede9fe", tagColor: "#5b21b6" },
+  { id: "group",    title: "Group Intervention",     desc: "Record group session and multi-patient notes",     icon: "👥", accent: "#DC2626", tag: "Group Session", tagBg: "#fee2e2", tagColor: "#991b1b" },
+];
+
+const AVATAR_COLORS = ["#DBEAFE", "#D1FAE5", "#FEF3C7", "#FCE7F3", "#EDE9FE", "#FFEDD5"];
 
 const CARD_META = {
   "Wheelchair":      { icon: "🦽", label: "Wheelchair Assessment", color: "#0EA5E9" },
@@ -14,12 +24,64 @@ const CARD_META = {
 
 const DEPARTMENT = "Prosthetics & Orthotics";
 
+/* ── Assessment type card ── */
+function AssessmentTypeCard({ card, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "#fff",
+        borderRadius: 14,
+        border: "1px solid #E9ECEF",
+        borderTop: `3px solid ${card.accent}`,
+        padding: "22px 22px 18px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 190,
+        transition: "box-shadow .2s, transform .2s",
+        boxShadow: hovered ? `0 12px 32px ${card.accent}22` : "0 2px 8px rgba(0,0,0,0.06)",
+        transform: hovered ? "translateY(-3px)" : "none"
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: 10,
+          background: card.accent + "12",
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20
+        }}>{card.icon}</div>
+        <span style={{
+          background: card.tagBg, color: card.tagColor,
+          borderRadius: 999, padding: "3px 10px", fontSize: 11, fontWeight: 700
+        }}>{card.tag}</span>
+      </div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 8 }}>{card.title}</div>
+      <div style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.6, flex: 1 }}>{card.desc}</div>
+      <div style={{
+        marginTop: 18, paddingTop: 14, borderTop: "1px solid #F3F4F6",
+        display: "flex", justifyContent: "space-between", alignItems: "center"
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: card.accent }}>Open Assessment</span>
+        <div style={{
+          width: 28, height: 28, borderRadius: "50%", background: card.accent,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: "#fff", fontSize: 16, fontWeight: 700
+        }}>›</div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProstheticsAndOrthoticsPatients({ selectedCard, onBack }) {
-  const [tab, setTab]                     = useState("new");
+  const [tab, setTab]                         = useState("new");
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const [patients, setPatients]           = useState([]);
-  const [loading, setLoading]             = useState(true);
-  const [search, setSearch]               = useState("");
+  const [assessmentMode, setAssessmentMode]   = useState(null); // initial | followup | progress | group
+  const [patients, setPatients]               = useState([]);
+  const [loading, setLoading]                 = useState(true);
+  const [search, setSearch]                   = useState("");
 
   const userRole = localStorage.getItem("userRole") || "";
 
@@ -61,32 +123,116 @@ export default function ProstheticsAndOrthoticsPatients({ selectedCard, onBack }
 
   const meta = CARD_META[selectedCard] || { icon: "📋", label: "Assessment", color: "#2563EB" };
 
-  /* ---------------- RENDER ASSESSMENT ---------------- */
-  if (selectedPatient) {
+  /* ── Step 3: Assessment form ── */
+  if (selectedPatient && assessmentMode) {
     if (selectedCard === "Wheelchair") {
-      return (
-        <WheelchairAssessment
-          patient={selectedPatient}
-          onBack={() => setSelectedPatient(null)}
-        />
-      );
+      return <WheelchairAssessment patient={selectedPatient} onBack={() => setAssessmentMode(null)} />;
     }
     if (selectedCard === "3D") {
+      return <ThreeDAssessment patient={selectedPatient} onBack={() => setAssessmentMode(null)} />;
+    }
+    // Follow-up → dedicated follow-up form
+    if (assessmentMode === "followup") {
       return (
-        <ThreeDAssessment
+        <OrthoticsFollowUp
           patient={selectedPatient}
-          onBack={() => setSelectedPatient(null)}
+          onBack={() => setAssessmentMode(null)}
+          onSubmit={() => setAssessmentMode(null)}
         />
       );
     }
+    // Initial / Progress / Group → main assessment form with mode passed
     return (
-      <div style={{ width: "100%", padding: 0 }}>
-        <OrthoticsAssessment
-          patient={selectedPatient}
-          onBack={() => setSelectedPatient(null)}
-        />
+      <OrthoticsAssessment
+        patient={selectedPatient}
+        mode={assessmentMode}
+        onBack={() => setAssessmentMode(null)}
+      />
+    );
+  }
+
+  /* ── Step 2: Assessment type selection (My Appointments only) ── */
+  if (selectedPatient && selectedCard === "My Appointments") {
+    const initials = (selectedPatient.name || selectedPatient.email || "P")
+      .split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    const avatarBg = AVATAR_COLORS[initials.charCodeAt(0) % AVATAR_COLORS.length];
+
+    return (
+      <div style={{ minHeight: "100vh", background: "#F5F7FA" }}>
+        {/* Patient banner */}
+        <div style={{
+          background: "#fff", borderBottom: "1px solid #E5E7EB",
+          padding: "16px 28px", display: "flex", justifyContent: "space-between",
+          alignItems: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.05)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <button
+              onClick={() => setSelectedPatient(null)}
+              style={{
+                padding: "7px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600,
+                cursor: "pointer", background: "#fff", border: "1px solid #CBD5E1", color: "#374151"
+              }}
+            >← Back</button>
+            <div style={{
+              width: 44, height: 44, borderRadius: 10, background: avatarBg,
+              color: "#1E40AF", fontSize: 15, fontWeight: 800,
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>{initials}</div>
+            <div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: "#0F172A" }}>
+                {selectedPatient.name || selectedPatient.email}
+              </div>
+              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3 }}>
+                {[
+                  selectedPatient.mrn  && `MRN: ${selectedPatient.mrn}`,
+                  selectedPatient.age  && `${selectedPatient.age} yrs`,
+                  selectedPatient.gender,
+                  selectedPatient.icd  && `ICD: ${selectedPatient.icd}`
+                ].filter(Boolean).join("  ·  ")}
+              </div>
+            </div>
+          </div>
+          <div style={{
+            fontSize: 12, fontWeight: 600, color: "#64748B",
+            background: "#F1F5F9", padding: "4px 12px", borderRadius: 999
+          }}>
+            Prosthetics &amp; Orthotics
+          </div>
+        </div>
+
+        {/* Card grid */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 28px" }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", marginBottom: 6 }}>
+            Select Assessment Type
+          </div>
+          <div style={{ fontSize: 14, color: "#6B7280", marginBottom: 36 }}>
+            Choose the appropriate assessment for this patient visit
+          </div>
+          <div style={{
+            display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
+            gap: 20, width: "100%", maxWidth: 860
+          }}>
+            {ASSESSMENT_CARDS.map(card => (
+              <AssessmentTypeCard
+                key={card.id}
+                card={card}
+                onClick={() => setAssessmentMode(card.id)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     );
+  }
+
+  /* ── Step 1 (Wheelchair / 3D): go straight to assessment on patient click ── */
+  if (selectedPatient) {
+    if (selectedCard === "Wheelchair") {
+      return <WheelchairAssessment patient={selectedPatient} onBack={() => setSelectedPatient(null)} />;
+    }
+    if (selectedCard === "3D") {
+      return <ThreeDAssessment patient={selectedPatient} onBack={() => setSelectedPatient(null)} />;
+    }
   }
 
   return (

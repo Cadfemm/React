@@ -43,9 +43,8 @@ export default function PsychologyPatients({ Patients, onBack }) {
     return (
       <PsychologyAssessment
         patient={selectedPatient}
-        onSubmit={(values) => {
-          console.log("Psychology initial assessment submitted:", values);
-        }}
+        mode="initial"
+        onSubmit={(values) => { console.log("Psychology initial assessment submitted:", values); }}
         onBack={() => setAssessmentView(null)}
       />
     );
@@ -55,9 +54,17 @@ export default function PsychologyPatients({ Patients, onBack }) {
     return (
       <PsychologyFollowUpAssessment
         patient={selectedPatient}
-        onSubmit={(values) => {
-          console.log("Psychology follow-up submitted:", values);
-        }}
+        onSubmit={(values) => { console.log("Psychology follow-up submitted:", values); }}
+        onBack={() => setAssessmentView(null)}
+      />
+    );
+  }
+
+  if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
+    return (
+      <PsychologyAssessment
+        patient={selectedPatient}
+        mode={assessmentView}
         onBack={() => setAssessmentView(null)}
       />
     );
@@ -94,7 +101,8 @@ export default function PsychologyPatients({ Patients, onBack }) {
                   e.preventDefault();
                   if (card.id === "initial") setAssessmentView("initial");
                   else if (card.id === "followup") setAssessmentView("followup");
-                  else alert(`${card.title} – Coming soon`);
+                  else if (card.id === "progress") setAssessmentView("progress");
+                  else if (card.id === "group") setAssessmentView("group");
                 }
               }}
               style={{
@@ -114,8 +122,10 @@ export default function PsychologyPatients({ Patients, onBack }) {
                   setAssessmentView("initial");
                 } else if (card.id === "followup") {
                   setAssessmentView("followup");
-                } else {
-                  alert(`${card.title} – Coming soon`);
+                } else if (card.id === "progress") {
+                  setAssessmentView("progress");
+                } else if (card.id === "group") {
+                  setAssessmentView("group");
                 }
               }}
             >
