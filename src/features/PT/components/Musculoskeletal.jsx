@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import MMTForm from "./MMTForm";
 import ROMForm from "./ROMForm";
+import BRATForm from "./BRATForm";
+import LEFSForm from "./LEFS";
+import IsometricTestForm from "./IsometricTestForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
+import generalImg from "../../../assets/General.png";
+import upperLimbImg from "../../../assets/Upper Limb.png";
+import lowerLimbImg from "../../../assets/LowerLimb.png";
 
 
 const YES_NO_OPTIONS = [
@@ -10,9 +16,33 @@ const YES_NO_OPTIONS = [
   { label: "No", value: "no" }
 ];
 
+// Maps msk_primary_region values to the region keys ROMForm understands,
+// applying the section visibility rules for Musculoskeletal.
+function MSKROMForm({ values, onChange }) {
+  const primaryRegion = values?.msk_primary_region || [];
+
+  // Build the region array ROMForm expects:
+  // Cervical + Thoracolumbar = "spine" (show for all)
+  // Shoulder/Elbow/Wrist     = "upper_limb" (Upper Limb | General)
+  // Hip/Knee/Ankle           = "lower_limb" (Lower Limb | General)
+  const mappedRegion = ["spine"]; // cervical + thoracolumbar always
+  if (primaryRegion.includes("upper_limb") || primaryRegion.includes("spine_general")) {
+    mappedRegion.push("upper_limb");
+  }
+  if (primaryRegion.includes("lower_limb") || primaryRegion.includes("spine_general")) {
+    mappedRegion.push("lower_limb");
+  }
+
+  const mappedValues = { ...values, region: mappedRegion };
+  return <ROMForm values={mappedValues} onChange={onChange} />;
+}
+
 const MUSCULOSKELETAL_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
-  rom: ROMForm,
+  rom: MSKROMForm,
+  brat: BRATForm,
+  lefs: LEFSForm,
+  isometric: IsometricTestForm,
 }
 
 const MSK_CONTAINER_SCHEMA = {
@@ -25,16 +55,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [
@@ -144,249 +164,185 @@ const SUBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
+        /* ── Chief Complaint ── */
         {
           name: "msk_chief_complaint",
           label: "Chief Complaint",
-          type: "checkbox-group",
-          options: [
-            { label: "Pain", value: "pain" },
-            { label: "Stiffness", value: "stiffness" },
-            { label: "Weakness", value: "weakness" },
-            { label: "Instability", value: "instability" },
-            { label: "Numbness / Tingling", value: "numbness_tingling" },
-            { label: "Swelling", value: "swelling" },
-            { label: "Functional difficulty", value: "functional_difficulty" }
-          ]
-        },
-        {
-          name: "msk_body_region",
-          label: "Body Region",
-          type: "checkbox-group",
-          options: [
-            { label: "Cervical", value: "cervical" },
-            { label: "Thoracic", value: "thoracic" },
-            { label: "Lumbar", value: "lumbar" },
-            { label: "Shoulder", value: "shoulder" },
-            { label: "Elbow", value: "elbow" },
-            { label: "Wrist", value: "wrist" },
-            { label: "Hip", value: "hip" },
-            { label: "Knee", value: "knee" },
-            { label: "Ankle", value: "ankle" },
-            { label: "Other", value: "other" }
-          ]
-        },
-        {
-          name: "msk_body_region_other",
-          label: "Body Region – Other (specify)",
-          type: "input",
-          showIf: { field: "msk_body_region", includes: "other" }
-        },
-        {
-          name: "msk_side",
-          label: "Side",
-          type: "radio",
-          options: [
-            { label: "Right", value: "right" },
-            { label: "Left", value: "left" },
-            { label: "Bilateral", value: "bilateral" }
-          ]
-        },
-        {
-          name: "msk_pain_nrs",
-          label: "Pain Scale (NRS)",
-          type: "scale-slider",
-          min: 0,
-          max: 10,
-          showValue: true
-          ,
-          ranges: [
-            {
-              min: 0,
-              max: 1,
-              label: "Mild",
-              color: "#22c55e"
-            },
-            {
-              min: 1,
-              max: 5,
-              label: "Moderate",
-              color: "#facc15"
-            },
-            {
-              min: 5,
-              max: 10,
-              label: "Severe",
-              color: "#ef4444"
-            }
-          ]
-        },
-        {
-          name: "msk_pain_type",
-          label: "Pain Type",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Sharp", value: "sharp" },
-            { label: "Dull", value: "dull" },
-            { label: "Radiating", value: "radiating" },
-            { label: "Burning", value: "burning" },
-            { label: "Aching", value: "aching" },
-            { label: "Intermittent", value: "intermittent" },
-            { label: "Constant", value: "constant" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "msk_duration",
-              label: "Duration",
-              type: "input"
-            },
-            {
-              name: "msk_aggravating_factors",
-              label: "Aggravating Factors",
-              type: "input"
-            },
-            {
-              name: "msk_relieving_factors",
-              label: "Relieving Factors",
-              type: "input"
-            }
-          ]
-        },
-        {
-          name: "msk_free_text",
-          label: "Free text",
           type: "textarea"
         },
-        { type: "subheading", label: "History of Present Illness" },
+
+        /* ── History of Presenting Illness ── */
         {
-          name: "msk_hpi_location",
-          label: "Location",
-          type: "input"
+          name: "msk_hpi",
+          label: "History of Presenting Illness",
+          type: "textarea"
         },
+
+        /* ── Primary Region ── */
         {
-          name: "msk_hpi_onset",
-          label: "Onset",
-          type: "radio",
-          options: [
-            { label: "Acute", value: "acute" },
-            { label: "Subacute", value: "subacute" },
-            { label: "Chronic", value: "chronic" }
-          ]
-        },
-        {
-          name: "msk_mechanism_of_injury",
-          label: "Mechanism of injury",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Trauma", value: "trauma" },
-            { label: "Overuse", value: "overuse" },
-            { label: "Postural", value: "postural" },
-            { label: "Unknown", value: "unknown" }
-          ]
-        },
-        {
-          name: "msk_mechanism_free_text",
-          label: "Mechanism of injury – Free text",
-          type: "input"
-        },
-        {
-          name: "msk_stage",
-          label: "Stage",
-          type: "radio",
-          options: [
-            { label: "Acute", value: "acute" },
-            { label: "Subacute", value: "subacute" },
-            { label: "Chronic", value: "chronic" }
-          ]
-        },
-        {
-          name: "msk_progression",
-          label: "Progression",
-          type: "radio",
-          options: [
-            { label: "Improving", value: "improving" },
-            { label: "Static", value: "static" },
-            { label: "Worsening", value: "worsening" }
-          ]
-        },
-        {
-          name: "msk_red_flags",
-          label: "Red Flag Screening (Mandatory)",
+          name: "msk_primary_region",
+          label: "Primary Region",
           type: "checkbox-group",
           options: [
-            { label: "Fever", value: "fever" },
-            { label: "Unexplained weight loss", value: "weight_loss" },
-            { label: "Night pain (non-mechanical)", value: "night_pain" },
-            { label: "Recent trauma", value: "recent_trauma" },
-            { label: "Cancer history", value: "cancer_history" },
-            { label: "Long-term steroid use", value: "steroid_use" },
-            { label: "Incontinence", value: "incontinence" },
-            { label: "Saddle anesthesia", value: "saddle_anesthesia" },
-            { label: "Progressive neurological deficit", value: "neuro_deficit" }
+            { label: "Spine/General", value: "spine_general" },
+            { label: "Upper Limb",    value: "upper_limb"    },
+            { label: "Lower Limb",    value: "lower_limb"    }
           ]
         },
+
+        /* ── Body Chart ── */
         {
-          name: "msk_functional_limitations_present",
-          label: "Functional Limitations present?",
+          name: "_body_chart",
+          type: "custom",
+          render: ({ values }) => {
+            const regions = values.msk_primary_region || [];
+            if (!regions.length) return null;
+            const charts = [
+              { value: "spine_general", label: "Spine/General", src: generalImg },
+              { value: "upper_limb",    label: "Upper Limb",    src: upperLimbImg },
+              { value: "lower_limb",    label: "Lower Limb",    src: lowerLimbImg }
+            ].filter(c => regions.includes(c.value));
+            return (
+              <div style={{ margin: "12px 0" }}>
+                <div style={{ fontWeight: 600, fontSize: 13, color: "#475569", marginBottom: 10 }}>Body Chart</div>
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  {charts.map(c => (
+                    <div key={c.value} style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 12, color: "#64748b", marginBottom: 4 }}>{c.label}</div>
+                      <img src={c.src} alt={c.label} style={{ maxHeight: 260, borderRadius: 8, border: "1px solid #e2e8f0", objectFit: "contain" }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+        },
+
+        /* ── Functional Limitation ── */
+        {
+          name: "msk_functional_limitation",
+          label: "Functional Limitation",
           type: "radio",
           options: YES_NO_OPTIONS
         },
         {
-          name: "msk_difficulty_with",
-          label: "Difficulty with",
-          type: "checkbox-group",
-          showIf: { field: "msk_functional_limitations_present", equals: "yes" },
-          options: [
-            { label: "Sitting", value: "sitting" },
-            { label: "Standing", value: "standing" },
-            { label: "Walking", value: "walking" },
-            { label: "Stairs", value: "stairs" },
-            { label: "Lifting", value: "lifting" },
-            { label: "Dressing", value: "dressing" },
-            { label: "Work duties", value: "work_duties" },
-            { label: "Sleep disturbance", value: "sleep_disturbance" }
-          ]
-        },
-        {
-          name: "msk_difficulty_describe",
-          label: "Describe functional limitations",
+          name: "msk_functional_limitation_specify",
+          label: "Specify",
           type: "input",
-          showIf: { field: "msk_functional_limitations_present", equals: "yes" }
+          showIf: { field: "msk_functional_limitation", equals: "yes" }
         },
+
+        /* ── Sleep Issue ── */
         {
-          name: "msk_functional_severity",
-          label: "Functional Limitation Severity",
+          name: "msk_sleep_issue",
+          label: "Sleep Issue",
           type: "radio",
-          showIf: { field: "msk_functional_limitations_present", equals: "yes" },
-          options: [
-            { label: "Mild", value: "mild" },
-            { label: "Moderate", value: "moderate" },
-            { label: "Severe", value: "severe" }
-          ]
+          options: YES_NO_OPTIONS
         },
         {
-          name: "msk_patient_goals",
-          label: "Patient Goals",
+          name: "msk_sleep_issue_specify",
+          label: "Specify",
+          type: "input",
+          showIf: { field: "msk_sleep_issue", equals: "yes" }
+        },
+
+        /* ── Smoking / Alcohol ── */
+        {
+          name: "msk_smoking_alcohol",
+          label: "Smoking/Alcohol",
+          type: "radio",
+          options: YES_NO_OPTIONS
+        },
+        {
+          name: "msk_smoking_alcohol_specify",
+          label: "Specify",
+          type: "input",
+          showIf: { field: "msk_smoking_alcohol", equals: "yes" }
+        },
+
+        /* ── Spine/General conditional set ── */
+        {
+          name: "msk_cough_sneezing",
+          label: "Cough/Sneezing",
+          type: "radio",
+          options: YES_NO_OPTIONS,
+          showIf: { field: "msk_primary_region", includes: "spine_general" }
+        },
+        {
+          name: "msk_cough_sneezing_specify",
+          label: "Specify",
+          type: "input",
+          showIf: { field: "msk_cough_sneezing", equals: "yes", and: { field: "msk_primary_region", includes: "spine_general" } }
+        },
+        {
+          name: "msk_incontinence",
+          label: "Incontinence",
+          type: "radio",
+          options: YES_NO_OPTIONS,
+          showIf: { field: "msk_primary_region", includes: "spine_general" }
+        },
+        {
+          name: "msk_incontinence_specify",
+          label: "Specify",
+          type: "input",
+          showIf: { field: "msk_incontinence", equals: "yes", and: { field: "msk_primary_region", includes: "spine_general" } }
+        },
+        {
+          name: "msk_headache_vertigo",
+          label: "Headache/Vertigo",
+          type: "radio",
+          options: YES_NO_OPTIONS,
+          showIf: { field: "msk_primary_region", includes: "spine_general" }
+        },
+        {
+          name: "msk_headache_vertigo_specify",
+          label: "Specify",
+          type: "input",
+          showIf: { field: "msk_headache_vertigo", equals: "yes", and: { field: "msk_primary_region", includes: "spine_general" } }
+        },
+
+        /* ── Upper / Lower Limb conditional set ── */
+        {
+          name: "msk_dominant",
+          label: "Dominant",
+          type: "radio",
+          options: [
+            { label: "Left",  value: "left"  },
+            { label: "Right", value: "right" }
+          ],
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "upper_limb" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]}
+        },
+
+        /* ── Nature of Work ── */
+        {
+          name: "msk_nature_of_work",
+          label: "Nature of Work",
+          type: "textarea"
+        },
+
+        /* ── Client Goals ── */
+        {
+          name: "msk_client_goals",
+          label: "Client Goals",
           type: "checkbox-group",
           options: [
-            { label: "Pain reduction", value: "pain_reduction" },
-            { label: "Return to work", value: "return_to_work" },
-            { label: "Improve ROM", value: "improve_rom" },
-            { label: "Improve strength", value: "improve_strength" },
-            { label: "Improve function", value: "improve_function" },
-            { label: "Return to sport", value: "return_to_sport" },
-            { label: "Others", value: "others" }
+            { label: "Pain reduction",    value: "pain_reduction"    },
+            { label: "Return to work",    value: "return_to_work"    },
+            { label: "Improve ROM",       value: "improve_rom"       },
+            { label: "Improve strength",  value: "improve_strength"  },
+            { label: "Improve function",  value: "improve_function"  },
+            { label: "Return to sport",   value: "return_to_sport"   },
+            { label: "Others",            value: "others"            }
           ]
         },
         {
-          name: "msk_patient_goals_other",
-          label: "Patient Goals – Others (specify)",
+          name: "msk_client_goals_other",
+          label: "Specify",
           type: "input",
-          showIf: { field: "msk_patient_goals", includes: "others" }
+          showIf: { field: "msk_client_goals", includes: "others" }
         }
       ]
     }
@@ -410,418 +366,250 @@ const OBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
-        { type: "subheading", label: "Vital Signs" },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "obj_body_temp",
-              label: "Body Temperature (°C)",
-              type: "input",
-              placeholder: "°C"
-            },
-            {
-              name: "obj_heart_rate",
-              label: "Heart Rate (/min)",
-              type: "input",
-              placeholder: "/min"
-            },
-            {
-              name: "obj_resp_rate",
-              label: "Respiratory Rate (/min)",
-              type: "input",
-              placeholder: "/min"
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "obj_bp",
-              label: "Blood Pressure (mmHg)",
-              type: "input",
-              placeholder: "e.g. 120/80"
-            },
-            {
-              name: "obj_spo2",
-              label: "Oxygen Saturation (SpO₂) (%)",
-              type: "input",
-              placeholder: "%"
-            }
-          ]
-        },
 
-        { type: "subheading", label: "General Observation" },
+        /* ══════════════════════════════════════════
+           STANDARD ALIGNMENT
+           Shown for ALL regions EXCEPT Upper Limb
+        ══════════════════════════════════════════ */
         {
-          name: "msk_gait_pattern",
-          label: "Gait Pattern",
+          type: "subheading", label: "Standard Alignment",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]}
+        },
+        {
+          name: "obj_postural_type",
+          label: "Postural Type",
           type: "radio",
-          labelAbove: true,
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Normal", value: "normal" },
-            { label: "Antalgic", value: "antalgic" },
-            { label: "Hemiplegic", value: "hemiplegic" },
-            { label: "Spastic (scissoring)", value: "spastic_scissoring" },
-            { label: "Ataxic", value: "ataxic" },
-            { label: "Parkinsonian", value: "parkinsonian" },
-            { label: "Steppage (high-stepping)", value: "steppage" },
-            { label: "Trendelenburg", value: "trendelenburg" },
-            { label: "Circumduction", value: "circumduction" },
-            { label: "Crouch gait", value: "crouch_gait" },
-            { label: "Others", value: "others" }
+            { label: "Normal",        value: "normal"        },
+            { label: "Flat back",     value: "flat_back"     },
+            { label: "Swayback",      value: "swayback"      },
+            { label: "Lordotic",      value: "lordotic"      },
+            { label: "Ext neck",      value: "ext_neck"      },
+            { label: "Forward head",  value: "forward_head"  },
+            { label: "Scoliosis",     value: "scoliosis"     },
+            { label: "Kyphotic",      value: "kyphotic"      }
           ]
         },
         {
-          name: "msk_gait_other",
-          label: "Gait Pattern – Other",
-          type: "input",
-          showIf: { field: "msk_gait_pattern", equals: "others" }
-        },
-        {
-          name: "msk_weight_shifting",
-          label: "Weight Shifting",
-          type: "radio",
-          options: [
-            { label: "Symmetrical", value: "symmetrical" },
-            { label: "Reduced", value: "reduced" },
-            { label: "Absent", value: "absent" }
-          ]
-        },
-        {
-          name: "msk_weight_reduced_side",
-          label: "Specify Reduced",
-          type: "radio",
-          options: [
-            { label: "Left", value: "left" },
-            { label: "Right", value: "right" },
-            { label: "Bilateral", value: "bilateral" }
-          ],
-          showIf: { field: "msk_weight_shifting", equals: "reduced" }
-        },
-        {
-          name: "msk_weight_absent_side",
-          label: "Specify Absent",
-          type: "radio",
-          options: [
-            { label: "Left", value: "left" },
-            { label: "Right", value: "right" },
-            { label: "Bilateral", value: "bilateral" }
-          ],
-          showIf: { field: "msk_weight_shifting", equals: "absent" }
-        },
-        {
-          name: "msk_foot_clearance",
-          label: "Foot Clearance",
-          type: "radio",
-          options: [
-            { label: "Adequate", value: "adequate" },
-            { label: "Reduced", value: "reduced" },
-            { label: "Dragging", value: "dragging" }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "msk_stance_phase_left",
-              label: "Stance Phase Left",
-              type: "single-select",
-              options: [
-                { label: "Normal", value: "normal" },
-                { label: "Prolonged", value: "prolonged" },
-                { label: "Reduced", value: "reduced" },
-                { label: "Instability noted", value: "instability" }
-              ]
-            },
-            {
-              name: "msk_stance_phase_right",
-              label: "Stance Phase Right",
-              type: "single-select",
-              options: [
-                { label: "Normal", value: "normal" },
-                { label: "Prolonged", value: "prolonged" },
-                { label: "Reduced", value: "reduced" },
-                { label: "Instability noted", value: "instability" }
-              ]
-            }
-          ]
-        },
-        {
-          name: "msk_swing_phase",
-          label: "Swing Phase (Foot–Ground Clearance)",
-          type: "radio",
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Reduced", value: "reduced" }
-          ]
-        },
-        {
-          name: "msk_assistive_device",
-          label: "Assistive device",
-          type: "radio",
-          options: [
-            { label: "None", value: "none" },
-            { label: "Cane", value: "cane" },
-            { label: "Walker", value: "walker" },
-            { label: "Crutches", value: "crutches" }
-          ]
-        },
-        {
-          name: "msk_distress",
-          label: "Distress",
-          type: "radio",
-          options: [
-            { label: "None", value: "none" },
-            { label: "Mild", value: "mild" },
-            { label: "Moderate", value: "moderate" },
-            { label: "Severe", value: "severe" }
-          ]
-        },
-        {
-          name: "msk_postural_type",
-          label: "Global Postural Type",
-          type: "checkbox-group",
-          options: [
-            { label: "Normal alignment", value: "normal" },
-            { label: "Flat back", value: "flat_back" },
-            { label: "Sway back", value: "sway_back" },
-            { label: "Increased lordosis", value: "lordosis" },
-            { label: "Increased kyphosis", value: "kyphosis" },
-            { label: "Forward head posture", value: "forward_head" },
-            { label: "Extended neck posture", value: "extended_neck" },
-            { label: "Scoliosis", value: "scoliosis" },
-            { label: "Combined pattern", value: "combined" }
-          ]
-        },
-        {
-          name: "msk_side_of_deviation",
-          label: "Side of deviation (if applicable)",
-          type: "radio",
-          options: [
-            { label: "Right", value: "right" },
-            { label: "Left", value: "left" }
-          ]
-        },
-        {
-          name: "msk_deviation_comments",
-          label: "Deviation – Comments",
-          type: "input",
-          showIf: {
-            field: "msk_side_of_deviation",
-            oneOf: ["right", "left"]
-          }
-        },
-
-        { type: "subheading", label: "Scapular Position (Upper Quadrant) – Right Scapula" },
-        {
-          name: "msk_scapula_right_position",
-          label: "Right Scapula Position",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Elevated", value: "elevated" },
-            { label: "Depressed", value: "depressed" },
-            { label: "Anterior tilt", value: "anterior_tilt" },
-            { label: "Winging", value: "winging" },
-            { label: "Abducted", value: "abducted" },
-            { label: "Protracted", value: "protracted" },
-            { label: "Retracted", value: "retracted" }
-          ]
-        },
-        {
-          name: "msk_scapula_right_symmetry",
-          label: "Right Scapula Symmetry",
-          type: "radio",
-          options: [
-            { label: "Symmetrical", value: "symmetrical" },
-            { label: "Asymmetrical", value: "asymmetrical" }
-          ]
-        },
-
-        { type: "subheading", label: "Scapular Position (Upper Quadrant) – Left Scapula" },
-        {
-          name: "msk_scapula_left_position",
-          label: "Left Scapula Position",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Elevated", value: "elevated" },
-            { label: "Depressed", value: "depressed" },
-            { label: "Anterior tilt", value: "anterior_tilt" },
-            { label: "Winging", value: "winging" },
-            { label: "Abducted", value: "abducted" },
-            { label: "Protracted", value: "protracted" },
-            { label: "Retracted", value: "retracted" }
-          ]
-        },
-        {
-          name: "msk_scapula_left_symmetry",
-          label: "Left Scapula Symmetry",
-          type: "radio",
-          options: [
-            { label: "Symmetrical", value: "symmetrical" },
-            { label: "Asymmetrical", value: "asymmetrical" }
-          ]
-        },
-
-        { type: "subheading", label: "Pelvic Alignment" },
-        {
-          name: "msk_pelvic_iliac_crest",
+          name: "obj_iliac_crest",
           label: "Iliac Crest Level",
           type: "radio",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Symmetrical", value: "symmetrical" },
-            { label: "Right higher", value: "right_higher" },
-            { label: "Left higher", value: "left_higher" }
+            { label: "Symmetrical",   value: "symmetrical"  },
+            { label: "Right higher",  value: "right_higher" },
+            { label: "Left higher",   value: "left_higher"  }
           ]
         },
         {
-          name: "msk_pelvic_tilt",
-          label: "Pelvic Tilt (Sagittal Plane)",
+          name: "obj_pelvic_tilt",
+          label: "Pelvic Tilt",
           type: "radio",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Anterior tilt", value: "anterior_tilt" },
-            { label: "Posterior tilt", value: "posterior_tilt" }
+            { label: "Normal",          value: "normal"          },
+            { label: "Posterior",       value: "posterior"       },
+            { label: "Anterior",        value: "anterior"        },
+            { label: "Lateral tilt",    value: "lateral_tilt"    },
+            { label: "Rotation Left",   value: "rotation_left"   },
+            { label: "Rotation Right",  value: "rotation_right"  }
           ]
         },
         {
-          name: "msk_pelvic_position",
-          label: "Pelvic Position (Frontal / Transverse Plane)",
+          name: "obj_hip",
+          label: "Hip",
           type: "radio",
-          labelAbove: true,
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Lateral tilt – Right", value: "lateral_right" },
-            { label: "Lateral tilt – Left", value: "lateral_left" },
-            { label: "Rotation – Right", value: "rotation_right" },
-            { label: "Rotation – Left", value: "rotation_left" }
-          ]
-        },
-
-        { type: "subheading", label: "Hip Alignment" },
-        {
-          name: "msk_hip_alignment_right",
-          label: "Hip Alignment: Right",
-          type: "radio",
-          options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Flexed", value: "flexed" },
-            { label: "Extended", value: "extended" },
-            { label: "Medial rotation", value: "medial_rotation" },
-            { label: "Lateral rotation", value: "lateral_rotation" }
+            { label: "Flexed",            value: "flexed"           },
+            { label: "Extended",          value: "extended"         },
+            { label: "Medial Rotation",   value: "medial_rotation"  },
+            { label: "Lateral Rotation",  value: "lateral_rotation" }
           ]
         },
         {
-          name: "msk_hip_alignment_left",
-          label: "Hip Alignment: Left",
+          name: "obj_knees",
+          label: "Knees",
           type: "radio",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Flexed", value: "flexed" },
-            { label: "Extended", value: "extended" },
-            { label: "Medial rotation", value: "medial_rotation" },
-            { label: "Lateral rotation", value: "lateral_rotation" }
-          ]
-        },
-
-        { type: "subheading", label: "Knee Alignment" },
-        {
-          name: "msk_knee_alignment_left",
-          label: "Knee Alignment: Left",
-          type: "radio",
-          options: [
-            { label: "Neutral", value: "neutral" },
             { label: "Hyperextended", value: "hyperextended" },
-            { label: "Flexed", value: "flexed" },
-            { label: "Valgus", value: "valgus" },
-            { label: "Varum", value: "varum" }
+            { label: "Flexed",        value: "flexed"        },
+            { label: "Valgus",        value: "valgus"        },
+            { label: "Varum",         value: "varum"         }
           ]
         },
         {
-          name: "msk_knee_alignment_right",
-          label: "Knee Alignment: Right",
+          name: "obj_tibia",
+          label: "Tibia",
           type: "radio",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
           options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Hyperextended", value: "hyperextended" },
-            { label: "Flexed", value: "flexed" },
-            { label: "Valgus", value: "valgus" },
-            { label: "Varum", value: "varum" }
+            { label: "Torsion Left",  value: "torsion_left"  },
+            { label: "Torsion Right", value: "torsion_right" }
+          ]
+        },
+        {
+          name: "obj_foot",
+          label: "Foot",
+          type: "radio",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "spine_general" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]},
+          options: [
+            { label: "Pronated",  value: "pronated"  },
+            { label: "Supinated", value: "supinated" },
+            { label: "Normal",    value: "normal"    }
           ]
         },
 
-        { type: "subheading", label: "Tibial Alignment" },
+        /* ── Scapula [SPINE | GENERAL only] ── */
         {
-          name: "msk_tibia_right",
-          label: "Right Tibia",
+          name: "obj_scapula_spine",
+          label: "Scapula",
           type: "radio",
+          showIf: { field: "msk_primary_region", includes: "spine_general" },
           options: [
-            { label: "Normal", value: "normal" },
-            { label: "Torsion", value: "torsion" }
-          ]
-        },
-        {
-          name: "msk_tibia_left",
-          label: "Left Tibia",
-          type: "radio",
-          options: [
-            { label: "Normal", value: "normal" },
-            { label: "Torsion", value: "torsion" }
+            { label: "Bil. Elevated",  value: "bil_elevated"  },
+            { label: "Anterior tilt",  value: "anterior_tilt" },
+            { label: "Winging",        value: "winging"       },
+            { label: "Abducted",       value: "abducted"      },
+            { label: "Normal",         value: "normal"        }
           ]
         },
 
-        { type: "subheading", label: "Foot Alignment" },
+        /* ══════════════════════════════════════════
+           UPPER LIMB SIMPLIFIED ALIGNMENT
+           [UPPER LIMB only]
+        ══════════════════════════════════════════ */
         {
-          name: "msk_foot_alignment",
-          label: "Right / Left Foot",
+          type: "subheading", label: "Upper Limb Simplified Alignment",
+          showIf: { field: "msk_primary_region", includes: "upper_limb" }
+        },
+        {
+          name: "obj_ul_postural_type",
+          label: "Postural Type",
           type: "radio",
+          showIf: { field: "msk_primary_region", includes: "upper_limb" },
           options: [
-            { label: "Neutral", value: "neutral" },
-            { label: "Pronated", value: "pronated" },
-            { label: "Supinated", value: "supinated" }
+            { label: "Forward head", value: "forward_head" },
+            { label: "Kyphotic",     value: "kyphotic"     },
+            { label: "Normal",       value: "normal"       }
+          ]
+        },
+        {
+          name: "obj_ul_scapula",
+          label: "Scapula",
+          type: "radio",
+          showIf: { field: "msk_primary_region", includes: "upper_limb" },
+          options: [
+            { label: "Elevated", value: "elevated" },
+            { label: "Normal",   value: "normal"   },
+            { label: "Winging",  value: "winging"  }
+          ]
+        },
+        {
+          name: "obj_ul_shoulder",
+          label: "Shoulder",
+          type: "radio",
+          showIf: { field: "msk_primary_region", includes: "upper_limb" },
+          options: [
+            { label: "Rounded",             value: "rounded"             },
+            { label: "Internally rotated",  value: "internally_rotated"  },
+            { label: "Normal",              value: "normal"              }
           ]
         },
 
+        /* ══════════════════════════════════════════
+           PALPATION FINDINGS
+           [LOWER LIMB | UPPER LIMB only]
+        ══════════════════════════════════════════ */
+        {
+          name: "obj_palpation_findings",
+          label: "Palpation Findings",
+          type: "input",
+          showIf: { or: [
+            { field: "msk_primary_region", includes: "upper_limb" },
+            { field: "msk_primary_region", includes: "lower_limb" }
+          ]}
+        },
+
+        /* ══════════════════════════════════════════
+           SCALES
+        ══════════════════════════════════════════ */
         { type: "subheading", label: "Scales" },
         {
           name: "msk_scales",
-          label: "",
           type: "assessment-launcher",
           options: [
-            { label: "Oswestry Disability Index", value: "oswestry" },
-            { label: "Neck Disability Index (NDI)", value: "ndi" },
-            { label: "Upper Limb Functional Scale (ULFS)", value: "ulfs" },
-            { label: "Brachial Assessment Tool (BRAT)", value: "brat" },
-            { label: "Lower Limb Functional Scale Measures", value: "llfs" },
-            { label: "Range of motion", value: "rom" },
-            { label: "MMT", value: "mmt" },
-            { label: "Isometric Test", value: "isometric" }
-          ]
+            { label: "Oswestry Disability Index",           value: "oswestry",   regions: ["spine_general"] },
+            { label: "Neck Disability Index",               value: "ndi",        regions: ["spine_general"] },
+            { label: "Lower Extremity Functional Scale (LEFS)", value: "lefs",   regions: ["lower_limb"] },
+            { label: "Upper Limb Functional Scale (ULFS)",  value: "ulfs",       regions: ["spine_general", "upper_limb"] },
+            { label: "Brachial Assessment Tool (BRAT)",     value: "brat",       regions: ["spine_general", "upper_limb"] },
+            { label: "ROM",                                 value: "rom",        regions: [] },
+            { label: "MMT",                                 value: "mmt",        regions: [] },
+            { label: "Isometric Test",                      value: "isometric",  regions: [] }
+          ],
+          filterByRegionField: "msk_primary_region"
         },
 
+        /* ══════════════════════════════════════════
+           SPECIAL TESTS
+        ══════════════════════════════════════════ */
         { type: "subheading", label: "Special Tests" },
         {
           name: "msk_special_tests",
-          label: "",
           type: "assessment-launcher",
           options: [
-            { label: "Muscle Length Test", value: "muscle_length" },
-            { label: "Neurodynamic Test", value: "neurodynamic" },
-            { label: "PAIVM", value: "paivm" },
-            { label: "Balance Test", value: "balance_test" },
-            { label: "Special Test", value: "special_test" },
-            { label: "Lower Limb Discrepancy Test", value: "lld_test" }
-          ]
+            { label: "Muscle Length Test",                                        value: "muscle_length",        regions: [] },
+            { label: "Balance Test",                                              value: "balance_test",         regions: [] },
+            { label: "Neurodynamic Test",                                         value: "neurodynamic",         regions: ["spine_general"] },
+            { label: "PAIVM",                                                     value: "paivm",                regions: ["spine_general"] },
+            { label: "Compression / Distraction Test",                            value: "compression",          regions: ["spine_general"] },
+            { label: "Lower Limb Discrepancy Test",                               value: "lld_general",          regions: ["spine_general"] },
+            { label: "Muscle Length Test",                                         value: "ml_lower",             regions: ["lower_limb"] },
+            { label: "Functional Test",                                           value: "func_lower",           regions: ["lower_limb"] },
+            { label: "Lower Limb Discrepancy — True Leg Length",                  value: "true_leg_length",      regions: ["lower_limb"] },
+            { label: "Lower Limb Discrepancy — Apparent Leg Length",              value: "apparent_leg_length",  regions: ["lower_limb"] },
+            { label: "Q-Angle Measurement",                                       value: "q_angle",              regions: ["lower_limb"] },
+            { label: "Instability Test",                                          value: "instability",         regions: ["upper_limb"] },
+            { label: "Special Test",                                              value: "special_upper",        regions: ["upper_limb"] },
+            { label: "Functional Test",                                           value: "func_upper",           regions: ["upper_limb"] }
+          ],
+          filterByRegionField: "msk_primary_region"
         }
+
       ]
     }
   ]
 };
 
 const ASSESSMENT_SCHEMA = {
+
   title: "ASSESSMENT",
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
@@ -839,7 +627,7 @@ const ASSESSMENT_SCHEMA = {
         },
         {
           name: "msk_rehab_potential",
-          label: "Rehabilitation Potential",
+          label: "Rehab Prognosis",
           type: "radio",
           options: [
             { label: "Excellent", value: "excellent" },
@@ -909,7 +697,8 @@ export default function Musculoskeletal({ patient, onSubmit, onBack }) {
     setValues(v => ({
       ...v,
       referred_by: patient.case_manager || "",
-      referral_reasons: patient.diagnosis_history || patient.icd || ""
+      referral_reasons: patient.diagnosis_history || patient.icd || "",
+      iso_gender: patient.sex ? (patient.sex.toLowerCase().includes("f") ? "female" : "male") : "male"
     }));
   }, [patient]);
 

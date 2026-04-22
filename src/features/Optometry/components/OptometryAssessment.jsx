@@ -225,14 +225,14 @@ export default function OptometryAssessment({
   useEffect(() => {
     setFormsLoading(true);
     setFormsError(false);
-    api.get(API_URL.FORM + "optometry/")
+    api.get(API_URL.FORM + "department/optometry/")
       .then(res => setForms(res.data.results))
       .catch(() => setFormsError(true))
       .finally(() => setFormsLoading(false));
   }, []);
 
   useEffect(() => {
-    api.get(API_URL.FORM + "optometry/?assessment=subjective")
+    api.get(API_URL.FORM + "department/optometry/?assessment=subjective")
       .then(res => {
         res.data.results.forEach(form => {
           if (form.name === "Brain Injury Vision Symptoms Survey (BIVSS)")             SUB_SCHEMA.BRAIN_VISION    = form.body;
@@ -245,7 +245,7 @@ export default function OptometryAssessment({
   }, []);
 
   useEffect(() => {
-    api.get(API_URL.FORM + "optometry/?assessment=objective")
+    api.get(API_URL.FORM + "department/optometry/?assessment=objective")
       .then(res => {
         res.data.results.forEach(form => {
           if (form.name === "Binocular Vision")               OBJ_SCHEMA.BINOCULAR_VISION      = form.body;
@@ -290,8 +290,8 @@ export default function OptometryAssessment({
   const handleConfirmedSubmit = useCallback(async () => {
     setShowConfirm(false);
     try {
-      const res = await api.post(API_URL.FORM + "optometry/", {
-        user: patient.id, visit_type: "IN",
+      const res = await api.post(API_URL.FORM + forms[0].id + "/assessment/", {
+        patient: patient.id, visit_type: "IN",
         data: values || {}, score: values?.score || {}, total_score: values?.total_score || 0,
       });
       setToast({ message: res.data.message || "Assessment submitted successfully", variant: "success" });
@@ -329,7 +329,7 @@ export default function OptometryAssessment({
   const retryForms = useCallback(() => {
     setFormsError(false);
     setFormsLoading(true);
-    api.get(API_URL.FORM + "optometry/")
+    api.get(API_URL.FORM + "department/optometry/")
       .then(res => setForms(res.data.results))
       .catch(() => setFormsError(true))
       .finally(() => setFormsLoading(false));

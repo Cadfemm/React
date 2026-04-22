@@ -37,7 +37,7 @@ const MMT_INFO = {
 const mmt = (name, label) => ({ type: "radio-matrix", name, label, options: MMT_OPTIONS, info: MMT_INFO, showInfoInRow: false });
 
 /** Split fields into groups by `subheading` (same idea as ROM sections). */
-function splitMmtGroupsBySubheading(fields) {
+export function splitMmtGroupsBySubheading(fields) {
   const groups = [];
   let current = null;
   (fields || []).forEach((f) => {
@@ -51,7 +51,7 @@ function splitMmtGroupsBySubheading(fields) {
   return groups;
 }
 
-function buildMmtAccordionFields() {
+export function buildMmtAccordionFields(filterSections) {
   const upperFields = [
     { type: "subheading", label: "Shoulder" },
     mmt("mmt_sh_flex_l", "Shoulder Flexion Left"),
@@ -111,7 +111,7 @@ function buildMmtAccordionFields() {
   const allGroups = [
     ...splitMmtGroupsBySubheading(upperFields),
     ...splitMmtGroupsBySubheading(lowerFields),
-  ];
+  ].filter(g => !filterSections || filterSections.includes(g.label));
 
   return allGroups.map((g, idx) => ({
     type: "accordion",

@@ -67,13 +67,14 @@ export default function Patients({ Department, onBack, loading = false }) {
   const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient,      setSelectedPatient]      = useState(null);
   const [assessmentView,       setAssessmentView]       = useState(null);
+  const [followupStage,        setFollowupStage]        = useState("dashboard"); // "dashboard" | "soap"
   const [submittedAssessments, setSubmittedAssessments] = useState({});
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
   const [patients,             setPatients]             = useState([])
 
-  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
-  const handleBackToCards    = useCallback(() => setAssessmentView(null), []);
+  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); setFollowupStage("dashboard"); }, []);
+  const handleBackToCards    = useCallback(() => { setAssessmentView(null); setFollowupStage("dashboard"); }, []);
   const handleInitialSubmit  = useCallback((v) => setSubmittedAssessments(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
   const handleFollowupSubmit = useCallback((v) => setSubmittedFollowups(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
 
@@ -118,6 +119,17 @@ export default function Patients({ Department, onBack, loading = false }) {
     
   }
   if (selectedPatient && assessmentView === "followup") {
+    // Stage 1: show follow-up dashboard with previous visit summary
+    if (followupStage === "dashboard") {
+      return (
+        <OptometryFollowUpDashboard
+          patient={selectedPatient}
+          onBack={handleBackToCards}
+          onStartSOAP={() => setFollowupStage("soap")}
+        />
+      );
+    }
+    // Stage 2: SOAP form
     const saved = submittedFollowups[selectedPatient.id] ?? null;
     if (Department === 'optometry') {
       return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
@@ -261,7 +273,7 @@ export default function Patients({ Department, onBack, loading = false }) {
               key={p.id}
               patient={p}
               idx={idx}
-              onStart={() => setSelectedPatient(p)}
+              onStart={() => { setSelectedPatient(p); setAssessmentView("initial"); }}
             />
           ))
         )}

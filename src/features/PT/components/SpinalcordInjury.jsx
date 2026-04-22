@@ -25,16 +25,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
     {
       fields: [
         {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
-        {
           type: "row",
           fields: [
             {
@@ -540,50 +530,6 @@ export default function SpinalCordInjury({patient, onSubmit, onBack}) {
         
                 {/* ===== HISTORY ===== */}
                 <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-                  <h3>Patient History</h3>
-        
-                  <div>
-                    <b>Past Medical History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_medical_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_medical_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-        
-                  <div>
-                    <b>Family History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_family_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_family_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-        
-                  <div>
-                    <b>Allergies</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.alerts_and_allergies}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          alerts_and_allergies: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-        
                   <button style={alertBtn}>🚨 Alerts</button>
                 </div>
               </div>

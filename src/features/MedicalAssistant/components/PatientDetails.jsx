@@ -27,10 +27,19 @@ const NEURO_OPTIONS = [
   { key: "eeg", label: "EEG" },
   { key: "psg", label: "PSG" },
   { key: "ncs_emg", label: "NCS, EMG" },
-  { key: "evoke", label: "EVOKE POTENTIAL STUDY" },
+  { key: "evoke", label: "Evoke Potential Study" },
   { key: "est", label: "EST" },
-  { key: "holter", label: "HOLTER" }
+  { key: "holter", label: "Holter" }
 ];
+// const NEURO_OPTIONS = [
+//   { key: "eeg", label: "Electroencephalogram" },
+//   { key: "psg", label: "Polysomnogram" },
+//   { key: "ncs_emg", label: "Nerve conduction studies, Electomyography" },
+//   { key: "evoke", label: "Evoke Potential Study" },
+//   { key: "est", label: "Exercise Stress Test" },
+//   { key: "holter", label: "HOLTER" }
+// ];
+
 
 export default function MedicalAssistantPatientDetails({ patient, onBack }) {
   const [activeTab, setActiveTab] = useState("urgent");

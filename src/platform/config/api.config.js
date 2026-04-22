@@ -1,4 +1,4 @@
-const BASE_API = 'http://100.26.55.35/' + 'api/'
+const BASE_API = 'https://backend.tps-ind.com/' + 'api/'
 
 const API_URL = {
     // Users apis

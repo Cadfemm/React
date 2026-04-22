@@ -164,6 +164,7 @@ function evaluateShowIf(showIf, values) {
   }
   if ("includes" in showIf) return Array.isArray(depVal) && depVal.includes(showIf.includes);
   if ("exists" in showIf) return !!depVal;
+  if ("notEmpty" in showIf) return Array.isArray(depVal) ? depVal.length > 0 : !!depVal;
   return true;
 }
 
@@ -926,14 +927,29 @@ function AssessmentLauncher({
   const defaultValue = field.options?.[0]?.value || null;
   const active = values[activeKey] || (field.autoOpen ? defaultValue : null);
   let component = active ? assessmentRegistry?.[active] : null;
-  // Handle both direct component export and default export
   const ActiveComponent = component?.default || component;
+
+  // Filter options by region if filterByRegionField is set
+  const selectedRegions = field.filterByRegionField
+    ? (values[field.filterByRegionField] || [])
+    : null;
+
+  const visibleOptions = (field.options || []).filter(opt => {
+    // per-option condition: { field, equals }
+    if (opt.visibleIf) {
+      const depVal = values[opt.visibleIf.field];
+      if ("equals" in opt.visibleIf) return depVal === opt.visibleIf.equals;
+    }
+    if (!selectedRegions) return true;               // no filter — show all
+    if (!opt.regions || opt.regions.length === 0) return true; // regions:[] = all
+    return opt.regions.some(r => selectedRegions.includes(r));
+  });
 
   return (
     <div>
       {!field.autoOpen && (
         <div style={styles.inlineGroup}>
-          {field.options.map(opt => (
+          {visibleOptions.map(opt => (
             <button
               key={opt.value}
               style={{
@@ -1140,7 +1156,8 @@ function renderField(
           onChange={onChange}
           readOnly={readOnly}
         />
-      );
+      );  
+
     case "milestone-grid":
       return (
         <div>
@@ -2000,22 +2017,46 @@ case "grid-table-advanced": {
             {children.map((c, idx) => {
               if (c?.showIf && !evaluateShowIf(c.showIf, values)) return null;
               const childValue = c?.name ? values?.[c.name] : undefined;
+
+              /* Auto-render matrix column header before first radio-matrix child */
+              const isFirstMatrix = c?.type === "radio-matrix" &&
+                !children.slice(0, idx).some(prev => prev?.type === "radio-matrix");
+              const matrixHeader = isFirstMatrix ? (() => {
+                const optCount = c.options?.length || 4;
+                const qColW = 200;
+                const headerStyle = {
+                  ...styles.matrixHeader,
+                  marginBottom: 12,
+                  gridTemplateColumns: `${qColW}px repeat(${optCount}, 1fr)`
+                };
+                return (
+                  <div key={`acc-header-${idx}`} style={headerStyle}>
+                    <div style={styles.matrixLabel}>{c.matrixHeaderLabel || "Scale"}</div>
+                    <div style={styles.matrixOptions}>
+                      {c.options?.map(opt => (
+                        <div key={opt.value} style={styles.matrixHeaderCell}>{opt.label}</div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })() : null;
+
               return (
-                <div
-                  key={c?.name || c?.label || idx}
-                  style={{ marginBottom: c?.compact ? 4 : 10 }}
-                >
-                  {renderField(
-                    c,
-                    childValue,
-                    values,
-                    onChange,
-                    onAction,
-                    assessmentRegistry,
-                    formReadOnly,
-                    languageConfig
-                  )}
-                </div>
+                <React.Fragment key={c?.name || c?.label || idx}>
+                  {matrixHeader}
+                  <div style={{ marginBottom: c?.compact ? 4 : 10 }}>
+                    {/* Render outer label for field types that don't self-label */}
+                    {c?.label && !["subheading","radio-matrix","checkbox-group","button",
+                      "optional-section-toggle","score-box","accordion","custom","row",
+                      "grid-header","grid-row","scale-slider","dynamic-goals","dynamic-section",
+                      "dynamic-simple-goals","assessment-launcher","refraction-12col"].includes(c?.type) && (
+                      <label style={{ display: "block", fontWeight: 600, marginBottom: 6, fontSize: 14, color: "#0f172a" }}>
+                        {c.label}
+                      </label>
+                    )}
+                    {renderField(c, childValue, values, onChange, onAction, assessmentRegistry, formReadOnly, languageConfig)}
+                  </div>
+                </React.Fragment>
               );
             })}
           </div>
@@ -2219,7 +2260,25 @@ case "grid-table-advanced": {
                 </select>
               );
             }
-
+if (typeof col === "object" && col.type === "radio") {
+  return (
+    <div key={fieldKey} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      {(col.options || []).map((opt) => (
+        <label key={opt.value} style={{ margin: "0 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <input
+            type="radio"
+            name={fieldKey}
+            value={opt.value}
+            checked={values[fieldKey] === opt.value}
+            onChange={() => onChange(fieldKey, opt.value)}
+            style={{ marginBottom: 2 }}
+          />
+          <span style={{ fontSize: 10, lineHeight: 1 }}>{opt.label}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
             // Handle file-upload-modal type
             if (typeof col === "object" && col.type === "file-upload-modal") {
               return (
@@ -2458,7 +2517,15 @@ case "grid-table-advanced": {
         />
       );
 
-
+    case "datetime-local":
+      return (
+        <input
+          type="datetime-local"
+          style={styles.input}
+          value={value || ""}
+          onChange={(e) => onChange(field.name, e.target.value)}
+        />
+      );
 
     case "single-select":
       return (

@@ -6,14 +6,13 @@ const pad = (n) => n.toString().padStart(2, "0");
 
 const getNow = () => {
   const d = new Date();
+
   return {
-    date: d.toISOString().split("T")[0],
-    hours: pad(d.getHours()),
-    minutes: pad(d.getMinutes()),
-    seconds: pad(d.getSeconds()),
+    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+    time: `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,
+    datetime: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
   };
 };
-
 /* ================= PATIENT INFO ================= */
 const CONTAINER_SCHEMA = {
   title: "Patient Information",
@@ -109,52 +108,22 @@ const rule = ITEM_QTY_RULES[selectedItem] || { min: 1, max: 5 };
             ],
           },
 
-          /* 🔒 LOCK BUTTON */
-          {
-            type: "button",
-            label: isTimeLocked
-              ? "🔒 UnLock Time"
-              : "🔓 Lock Time",
-            action: "toggle-time-lock",
-            showIf: {
-              field: "category",
-              oneOf: ["training", "major", "minor", "modify"],
-            },
-          },
-
+          
           /* ⏱ DATE + TIME */
           {
             type: "row",
-            cols: 4,
+            cols: 1,
             fields: [
               {
                 name: "order_date",
                 label: "Date",
-                type: "date",
-              },
-              {
-                name: "order_time_h",
-                label: "HH",
-                type: "input",
-                readOnly: isTimeLocked,
-              },
-              {
-                name: "order_time_m",
-                label: "MM",
-                type: "input",
-                readOnly: isTimeLocked,
-              },
-              {
-                name: "order_time_s",
-                label: "SS",
-                type: "input",
-                readOnly: isTimeLocked,
-              },
+                type: "datetime-local"
+              }
             ],
             showIf: {
               field: "category",
-              oneOf: ["training", "major", "minor", "modify"],
-            },
+              oneOf: ["training", "major", "minor", "modify"]
+            }
           },
 
             /* ---------- MAJOR ---------- */
@@ -420,33 +389,61 @@ const rule = ITEM_QTY_RULES[selectedItem] || { min: 1, max: 5 };
   };
 
   /* ================= HANDLERS ================= */
-  const onChange = (name, value) => {
-    setValues((v) => {
-      const updated = { ...v, [name]: value };
+const onChange = (name, value) => {
+  setValues((prev) => {
+    const updated = { ...prev, [name]: value };
 
-      if (name === "category") {
-        const now = getNow();
-        updated.order_date = now.date;
-        updated.order_time_h = now.hours;
-        updated.order_time_m = now.minutes;
-        updated.order_time_s = now.seconds;
+    // CATEGORY SWITCH
+    if (name === "category") {
+      const now = getNow();
+      const key = `order_date_${value}`;
 
-        updated.major_items = [];
-        updated.mod_items = [];
-        updated.training_items = [];
+      // load existing category timestamp
+      if (prev[key]) {
+        updated.order_date = prev[key];
+      } else {
+        updated.order_date = now.datetime;
+        updated[key] = now.datetime;
       }
 
-      return updated;
-    });
-  };
+      updated.major_items = [];
+      updated.mod_items = [];
+      updated.training_items = [];
+    }
 
+    // USER CHANGED DATE
+    if (name === "order_date") {
+      const cat = prev.category;
+      const key = `order_date_${cat}`;
+
+      updated.order_date = value;
+      updated[key] = value;
+    }
+
+    return updated;
+  });
+};
   /* ================= PATIENT INFO ================= */
   function PatientInfo() {
     if (!patient) return <div>No Patient Data</div>;
 
     return (
       <div style={{ marginBottom: 12 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+        {/* Assessment type banner */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          background: "#E0F2FE", border: "1px solid #BAE6FD",
+          borderRadius: 999, padding: "5px 14px", marginBottom: 14,
+          fontSize: 13, fontWeight: 600, color: "#0369A1"
+        }}>
+          🦽 Wheelchair Assessment
+        </div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 12,
+          fontSize: 14
+        }}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
           <div><b>DOB:</b> {patient?.dob}</div>
@@ -455,7 +452,7 @@ const rule = ITEM_QTY_RULES[selectedItem] || { min: 1, max: 5 };
           <div><b>Date of Assessment:</b> {patient?.date_of_assessment}</div>
           <div><b>Scheme:</b> {patient?.scheme}</div>
           <div><b>Weight:</b> {patient?.weight}</div>
-          <div><b>Diagnosis:</b> {patient?.diagnosis_history}</div>
+          <div><b>Diagnosis:</b> {patient?.diagnosis_history || "-"}</div>
         </div>
       </div>
     );
@@ -463,7 +460,32 @@ const rule = ITEM_QTY_RULES[selectedItem] || { min: 1, max: 5 };
 
   /* ================= UI ================= */
   return (
-    <div>
+    <div style={{ padding: 24, background: "#F8FAFC", minHeight: "100vh" }}>
+      {/* Page header with back button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#E0F2FE", display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: 22
+          }}>🦽</div>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0F172A" }}>Wheelchair Assessment</div>
+            <div style={{ fontSize: 13, color: "#64748B" }}>Prosthetics &amp; Orthotics Department</div>
+          </div>
+        </div>
+        <button
+          onClick={onBack}
+          style={{
+            background: "transparent", border: "1px solid #CBD5E1",
+            padding: "8px 14px", borderRadius: 10, fontSize: 14,
+            fontWeight: 600, cursor: "pointer", color: "#2563EB"
+          }}
+        >
+          ← Back to Patients
+        </button>
+      </div>
+
       <CommonFormBuilder
         schema={CONTAINER_SCHEMA}
         values={values}

@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-import ROMForm from "../../OT/components/RomForm";
-import FIMAssessment from "../../OT/components/Fim";
-import IADLAssessment from "../../OT/components/IADL";
-import SCIMaleSexualFunctionAssessment from "../../OT/components/SciMaleSexualAssessment";
-import SCIFemaleSexualFunctionAssessment from "../../OT/components/SciFeMaleSexualAssessment";
-import MoCAAssessment from "../../OT/components/MocA";
-import MMTForm from "../../PT/components/MMTForm";
-import masForm from "../../PT/components/MASForm";
-import CUEQAssessment from "../../OT/components/CUEQ";
-import StrengthTest from "../../OT/components/Strengthtest";
+import Part2MainSection from "../components/worq";
+import WorkHardeningModalities from "../components/workhardeningmodalities";
+import WorkHardeningScreening from "../components/workhardeningscreening";
+import ReadinessReturnToWorkScale from "../components/returntowork";
+import FunctionalCapacityEvaluation from "../components/functioncapacityevaluation";
+import BeckerWorkAdjustmentProfile from "../components/beckerwork";
 
-export const VOCATIONAL_REHAB_REGISTRY = {
-  rom: ROMForm,
-  mmt: MMTForm,
-  mas: masForm,
-  FIM: FIMAssessment,
-  moca: MoCAAssessment,
-  scifemale: SCIFemaleSexualFunctionAssessment,
-  scimale: SCIMaleSexualFunctionAssessment,
-  iadl:IADLAssessment,
-  cueq: CUEQAssessment,
-  strength: StrengthTest
+export const WORK_REHAB_REGISTRY = {
+  Part2MainSection,
+  WorkHardeningModalities,
+  WorkHardeningScreening,
+  ReadinessReturnToWorkScale,
+  FunctionalCapacityEvaluation,
+  BeckerWorkAdjustmentProfile
 };
 
 /* ===================== OPTIONS ===================== */
@@ -62,7 +54,7 @@ const AMBULATORY_OPTIONS = [
   { label: "Others", value: "others" }
 ];
 
-export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, onBack }) {
+export default function WorkRehab({ patient, onUpdatePatient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
@@ -76,7 +68,7 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
-    ? `neuro_assessment_draft_${patient.id}`
+    ? `work_assessment_draft_${patient.id}`
     : null;
 
   useEffect(() => {
@@ -138,14 +130,14 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Neuro draft saved");
+      alert("draft saved");
     }
   };
 
   const handleSubmit = () => {
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Neuro assessment submitted");
+    alert("assessment submitted");
   };
 
   const today = new Date();
@@ -171,159 +163,247 @@ export default function VocationalRehab({ patient, onUpdatePatient, onSubmit, on
   };
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Subjective",
-
+  title: "",
   sections: [
     {
       fields: [
-
         {
-          type: "textarea",
-          name: "chief_complaint",
-          label: "Chief Complaint"
+          type: "",
+          label: "Which best describes your current work status, or if currently not working your last work status"
         },
-
-        {
-          type: "textarea",
-          name: "history_present_illness",
-          label: "History of Present Illness"
-        },
-
-        {
-          type: "textarea",
-          name: "work_history",
-          label: "Work History"
-        },
-
         {
           type: "radio",
           name: "work_status",
-          label: "Work Status",
+          label: "",
           options: [
-            { label: "Employed", value: "employed" },
-            { label: "Unemployed", value: "unemployed" }
+            { value: "employed", label: "Employed" },
+            { value: "self_employed", label: "Self-employed" },
+            { value: "non_paid_work", label: "Non-paid work such as volunteer" },
+            { value: "student", label: "Student or in training" },
+            { value: "homemaker", label: "Homemaker" },
+            { value: "retired", label: "Retired" },
+            { value: "not_applicable", label: "Not applicable" }
           ]
         },
 
         {
           type: "radio",
-          name: "rtw_status",
-          label: "Return to Work (RTW) Status",
+          name: "current_status",
+          label: "Which of the following describes your current work status best",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "Others", value: "others" }
+            { value: "working", label: "Working" },
+            { value: "not_working", label: "Not working" }
+          ]
+        },
+        {
+          type: "radio",
+          name: "current_work_type",
+          label: "If currently working, are you",
+          options: [
+            { value: "full_time", label: "Full time" },
+            { value: "part_time", label: "Part time" },
+            { value: "modified_duty", label: "On modified or light duty" }
+          ],
+          showIf: { field: "work_status", equals: "working" }
+        },
+        {
+          type: "radio",
+          name: "not_working_reason",
+          label: "If currently not working, are you",
+          labelAbove: true,
+          options: [
+            { value: "health_reason", label: "Not working due to health reason" },
+            { value: "vocational_rehab", label: "Not working due to ongoing vocational rehabilitation" },
+            { value: "other", label: "Not working due to other reasons" }
+          ],
+          showIf: { field: "work_status", equals: "not_working" }
+        },
+        {
+          type: "input",
+          name: "not_working_other_specify",
+          label: "Please specify:",
+          placeholder: "Enter reason",
+          showIf: { 
+            field: "not_working_reason", 
+            equals: "other" 
+          }
+        },
+        {
+          type: "input",
+          name: "off_work_since",
+          label: "If currently not working, since when have you been off from work",
+          placeholder: "Enter date or duration",
+          showIf: { field: "work_status", equals: "not_working" }
+        },
+
+        {
+          type: "",
+          label: "When thinking about your work or vocational rehabilitation program: Are you currently:"
+        },
+        {
+          type: "radio",
+          name: "vocational_status",
+          label: "",
+          options: [
+            { value: "training", label: "Engaging in vocational training activities such as in acquiring knowledge and skills for a job, including school training" },
+            { value: "employment_prep", label: "Engaging in programs related to preparation for employment such as apprenticeship or internship" },
+            { value: "securing_job", label: "Engaging in activities to secure or maintain your current job" },
+            { value: "looking_for_job", label: "Looking for a (new) job or work" }
+          ]
+        },
+
+        {
+          type: "",
+          label: "What is the highest level of education that you have completed"
+        },
+        {
+          type: "radio",
+          name: "education_level",
+          label: "",
+          options: [
+            { value: "no_formal", label: "No formal schooling" },
+            { value: "less_than_primary", label: "Less than primary school" },
+            { value: "primary", label: "Primary school" },
+            { value: "secondary", label: "Secondary school" },
+            { value: "college", label: "College / university" },
+            { value: "post_graduate", label: "Post-graduate degree" }
           ]
         },
 
         {
           type: "input",
-          name: "rtw_status_other",
-          label: "Specify RTW Status",
-          showIf: {
-            field: "rtw_status",
-            equals: "others"
-          }
+          name: "job_title",
+          label: "What is your current job or profession or if currently not working, what is the last job or profession you worked in (job title)"
+        },
+
+        {
+          type: "input",
+          name: "business_industry",
+          label: "What kind of business, industry or service is (or was) your job in",
+          placeholder: "e.g., cardboard box manufacturing, road maintenance, retail shoe store, secondary school, dairy farm, municipal government"
+        },
+
+        {
+          type: "input",
+          name: "work_type",
+          label: "What kind of work are (or were) you doing",
+          placeholder: "e.g., driving trucks, operating machines, writing letters, answering telephone calls"
         },
 
         {
           type: "radio",
-          name: "keen_to_rtw",
-          label: "If No, Keen to RTW",
-          showIf: {
-            field: "rtw_status",
-            equals: "no"
-          },
+          name: "job_change_planned",
+          label: "If a change of job is planned, what future job are you aiming for",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "NIL", value: "nil" }
+            { value: "yes", label: "Yes" },
+            { value: "not_applicable", label: "Not Applicable" }
           ]
         },
-
         {
-          type: "textarea",
-          name: "client_expectations",
-          label: "Client Expectations"
-        },
-
-        {
-          type: "textarea",
-          name: "driving_history",
-          label: "Driving History"
-        },
-
-     {
-  type: "radio",
-  name: "driving_license_type",
-  label: "Driving License Type",
-  labelAbove: true,
-  options: [
-    { label: "None", value: "none" },
-    { label: "B2 – Motor Car", value: "b2" },
-    { label: "D – Heavy Motor Vehicle", value: "d" },
-    { label: "E – Heavy Trailer Vehicle", value: "e" },
-    { label: "GDL – Goods Driving License", value: "gdl" },
-    { label: "PSV – Public Service Vehicle", value: "psv" },
-    { label: "Others", value: "others" }
-  ]
-},
-
-{
-  type: "input",
-  name: "license_other",
-  label: "Other License Type",
-  showIf: {
-    field: "driving_license_type",
-    equals: "others"
-  }
-},
-
-        {
-          type: "radio",
-          name: "license_status",
-          label: "License Status",
-          options: [
-            { label: "Active", value: "active" },
-            { label: "Not active", value: "not_active" }
-          ]
+          type: "input",
+          name: "future_job",
+          placeholder: "Specify future job",
+          showIf: { field: "job_change_planned", equals: "yes" }
         },
 
         {
           type: "radio",
-          name: "return_to_drive_post_injury",
-          label: "Have You Returned to Drive Post Injury",
+          name: "medical_treatment",
+          label: "Are you in medical or therapeutic treatment (e.g. with physician, therapists, etc.)",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "not_applicable", label: "Not Applicable" }
           ]
+        },
+        {
+          type: "input",
+          name: "medical_treatment_specify",
+          label: "If yes, please specify:",
+          placeholder: "Enter details",
+          showIf: { field: "medical_treatment", equals: "yes" }
+        },
+
+       {
+        type: "radio",
+        name: "current_restrictions",
+        label: "Do you have current restrictions",
+        info: "e.g. lifting limited to 5kg, limited weight bearing on your leg or arm",
+        options: [
+          { value: "yes", label: "Yes" },
+          { value: "no", label: "No" },
+          { value: "not_applicable", label: "Not Applicable" }
+        ]
+      },
+        {
+          type: "input",
+          name: "restrictions_specify",
+          label: "If yes, please specify:",
+          placeholder: "Enter restrictions",
+          showIf: { field: "current_restrictions", equals: "yes" }
         },
 
         {
-          type: "textarea",
-          name: "riding_details",
-          label: "If Yes – Riding Duration, Distance, Modification",
-          showIf: {
-            field: "return_to_drive_post_injury",
-            equals: "yes"
-          }
+          type: "input",
+          name: "vocational_intervention",
+          label: "What kind of work or vocational intervention are you receiving now (list all you know)",
+          placeholder: "e.g. physical training, cognitive training, case management, vocational training, work place adaptation, work evaluation etc."
         },
 
         {
           type: "radio",
-          name: "keen_to_rtd",
-          label: "If No, Keen to Return to Driving (RTD)",
-          showIf: {
-            field: "return_to_drive_post_injury",
-            equals: "no"
-          },
+          name: "family_support",
+          label: "In your current situation, do you get the support you need from your family",
           options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" },
-            { label: "NIL", value: "nil" }
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "not_applicable", label: "Not Applicable" }
           ]
+        },
+        {
+          type: "input",
+          name: "family_support_specify",
+          label: "If yes, please specify what kind of support you get:",
+          placeholder: "Enter details",
+          showIf: { field: "family_support", equals: "yes" }
+        },
+
+        {
+          type: "radio",
+          name: "supervisor_support",
+          label: "If still employed, do you get the support you need from your supervisor or boss",
+          options: [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "not_applicable", label: "Not Applicable" }
+          ]
+        },
+        {
+          type: "input",
+          name: "supervisor_support_specify",
+          label: "If yes, please specify what kind of support you get:",
+          placeholder: "Enter details",
+          showIf: { field: "supervisor_support", equals: "yes" }
+        },
+
+        {
+          type: "radio",
+          name: "government_support",
+          label: "Outside of your current work or vocational rehabilitation program, do you get the support you need from government or private employment agencies to find suitable work, or looking for different work",
+          labelAbove: true,
+          options: [
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+            { value: "not_applicable", label: "Not Applicable" }
+          ]
+        },
+        {
+          type: "input",
+          name: "government_support_specify",
+          label: "If yes, please specify what kind of support you get:",
+          placeholder: "Enter details",
+          showIf: { field: "government_support", equals: "yes" }
         }
-
       ]
     }
   ]
@@ -335,16 +415,6 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          name: "consent_risks_benefits",
-          type: "checkbox-group",
-          options: [{ label: "Risks/benefits explained", value: "yes" }]
-        },
-        {
-          name: "consent_verbalized",
-          type: "checkbox-group",
-          options: [{ label: "Patient verbalized understanding", value: "yes" }]
-        },
         {
           type: "row",
           fields: [
@@ -441,7 +511,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   ]
 };
 
-  const NEURO_CONTAINER_SCHEMA = {
+  const WORK_CONTAINER_SCHEMA = {
     title: "Patient Information",
     sections: []
   };
@@ -454,142 +524,130 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
       fields: [
 
         {
-          type: "subheading",
-          label: "Physical Status"
-        },
-
-        {
-          type: "radio",
-          name: "dominant_hand",
-          label: "Dominant",
-          options: [
-            { label: "Right", value: "right" },
-            { label: "Left", value: "left" }
-          ]
-        },
-
-        {
-          type: "subheading",
-          label: "Standardized Outcome Measures"
-        },
-
- {
-          name: "neuro_scales",
+          name: "work_scales",
           type: "assessment-launcher",
           options: [
-            { label: "Range of Motion (ROM)", value: "rom" },
-            { label: "Manual Muscle Test (MMT)", value: "mmt" },
-            { label: "Muscle Tone (MAS)", value: "mas" },
-            { label: "Functional Independence Measure (FIM)", value: "FIM" },
-            { label: "Montreal Cognitive Assessment (MoCA)", value: "moca" },
-            { label: "International Spinal Cord Injury Female Sexual and Reproductive Function", value: "scifemale" },
-            { label: "International Spinal Cord Injury Male Sexual Function", value: "scimale" },
-            { label: "Lawton Instrumental Activities of Daily Living Scale (IADL)", value: "iadl" },
-             {
-              label: "Capabilities of Upper Extremity Questionnaire (CUE-Q)",
-              value: "cueq"
-            }
+            { label: "WORQ", value: "Part2MainSection" },
+            { label: "WORK HARDENING MODALITIES", value: "WorkHardeningModalities" },
+            { label: "WORK HARDENING SCREENING TEMPLATE", value: "WorkHardeningScreening" },
+            { label: "READINESS FOR RETURN-TO-WORK SCALE", value: "ReadinessReturnToWorkScale" },
+            { label: "FUNCTIONAL CAPACITY EVALUATION", value: "FunctionalCapacityEvaluation" },
+             { label: "BECKER WORK ADJUSTMENT PROFILE", value: "BeckerWorkAdjustmentProfile" },
           ]
         },
-        {
-          type: "subheading",
-          label: "Additional Observation / Tests"
-        },
-
-        {
-          type: "checkbox-group",
-          name: "additional_tests",
-          label: "Tests",
-          options: [
-
-            {
-              label: "Sensation Testing",
-              value: "sensation_testing"
-            },
-
-            {
-              label: "Pain Scale",
-              value: "pain_scale"
-            },
-
-            {
-              label: "Fine Motor and Dexterity Assessment",
-              value: "fine_motor"
-            }
-
-          ]
-        }
-
       ]
     }
   ]
 }
 
 const ASSESSMENT_SCHEMA = {
-  title: "ASSESSMENT",
-
-  sections: [
-    {
-      fields: [
-
-        /* ================= PROBLEM LIST ================= */
+  actions: SUBJECTIVE_SCHEMA.actions,
+  fields: [
+      {
+        name: "hydro_clinical_impression",
+        label: "Clinical Impression",
+        type: "textarea"
+      },
+      {
+      type: "checkbox-group",
+      name: "work_hardening_issues",
+      label: "Problem List",
+      options: [
         {
-          type: "subheading",
-          label: "Problem List"
+          label: "Chronic / recurrent pain issues",
+          value: "chronic_recurrent_pain"
         },
         {
-          type: "textarea",
-          name: "problem_list",
-          placeholder: "Enter problem list...",
+          label: "Limited physical strength",
+          value: "limited_physical_strength"
         },
-
-        /* ================= CLINICAL IMPRESSION ================= */
         {
-          type: "subheading",
-          label: "Clinical Impression"
+          label: "Limited manual material handling ability (lifting, carrying, pushing, pulling)",
+          value: "limited_material_handling"
         },
-
         {
-          type: "textarea",
-          name: "functional_limitations",
-          label: "Functional limitations",
-          placeholder: "e.g. gait impairment, unsafe transfers"
+          label: "Limited endurance",
+          value: "limited_endurance"
         },
-
         {
-          type: "textarea",
-          name: "underlying_cause",
-          label: "Underlying cause",
-          placeholder: "e.g. CVA, fracture, neuropathy, TBI"
+          label: "Limited repetitive tasks performance",
+          value: "limited_repetitive_tasks"
         },
-
-        /* ================= REHAB PROGNOSIS ================= */
         {
-          type: "subheading",
-          label: "Rehab Prognosis"
+          label: "Limited fine motor / dexterity function",
+          value: "limited_fine_motor"
         },
-
         {
-          type: "radio",
-          name: "rehab_prognosis",
-          label: "Select prognosis",
-          options: [
-            { label: "Excellent", value: "excellent" },
-            { label: "Good", value: "good" },
-            { label: "Fair", value: "fair" },
-            { label: "Poor", value: "poor" }
-          ]
+          label: "Postural dysfunction",
+          value: "postural_dysfunction"
         },
-
         {
-          type: "info-text",
-          text: "Based on cognition, motivation, severity, comorbidities"
+          label: "Impaired balance",
+          value: "impaired_balance"
+        },
+        {
+          label: "Walking and gait impairments",
+          value: "walking_gait_impairment"
+        },
+        {
+          label: "Limited cognitive capabilities",
+          value: "limited_cognitive"
+        },
+        {
+          label: "Limited communication ability",
+          value: "limited_communication"
+        },
+        {
+          label: "Psychosocial issues",
+          value: "psychosocial_issues"
+        },
+        {
+          label: "Ergonomics risk factors",
+          value: "ergonomics_risk"
+        },
+        {
+          label: "Rate of perceived exertion (RPE)",
+          value: "rpe"
+        },
+        {
+          label: "Others",
+          value: "others"
         }
+      ]
+    },
+    {
+      type: "textarea",
+      name: "work_hardening_issues_other",
+      label: "Specify",
+      showIf: {
+        field: "work_hardening_issues",
+        includes: "others"
+      }
+    },
 
+    { type: "subheading", label: "Progress Since Last Session" },
+    {
+      type: "grid-table-flat",
+      name: "hydro_progress",
+      headers: ["Baseline", "Progress", "Final"],
+      rows: [
+        { key: "worq", label: "WORQ" },
+        { key: "work_scale", label: "Readiness for Return to Work Scale" },
+      ]
+    },
+    {
+      name: "hydro_prognosis",
+      label: "Prognosis",
+      type: "radio",
+      options: [
+        { label: "Good", value: "good" },
+        { label: "Fair", value: "fair" },
+        { label: "Guarded", value: "guarded" }
       ]
     }
   ]
 };
+
 
 const PLAN_SCHEMA = {
   title: "",
@@ -604,134 +662,69 @@ const PLAN_SCHEMA = {
         { type: "dynamic-goals", name: "long_term_goals" },
 
         {
-          label: "Therapeutic Exercises",
           type: "checkbox-group",
-          name: "therapeutic_exercises",
+          name: "intervention_plan",
+          label: "Intervention Plan",
           options: [
-            { label: "Functional ROM Exercise", value: "rom" },
-            { label: "Functional Strengthening Exercise", value: "strength" },
-            { label: "Muscle Tone Management", value: "tone" },
-            { label: "Fine Motor & Dexterity Training", value: "fine_motor" },
-            { label: "Bobath/NDT Therapy", value: "ndt" },
-            { label: "Trunk & Core Control Training", value: "core" },
-            { label: "Lower Limb Activity Training", value: "lower_limb" },
-            { label: "Endurance / Cardiovascular Training", value: "cardio" },
-            { label: "Others", value: "others" }
+            {
+              label: "Physical Conditioning",
+              value: "physical_conditioning"
+            },
+            {
+              label: "Work Hardening",
+              value: "work_hardening"
+            },
+            {
+              label: "Work Simulation",
+              value: "work_simulation"
+            },
+            {
+              label: "Ergonomics Education",
+              value: "ergonomics_education"
+            },
+            {
+              label: "Job Modifications",
+              value: "job_modifications"
+            },
+            {
+              label: "Workplace Assessments & Adaptations",
+              value: "workplace_assessment_adaptation"
+            },
+            {
+              label: "Functional Capacity Evaluation",
+              value: "functional_capacity_evaluation"
+            },
+            {
+              label: "Vocational Rehabilitation",
+              value: "vocational_rehabilitation"
+            },
+            {
+              label: "Job Coaching",
+              value: "job_coaching"
+            },
+            {
+              label: "Psychosocial Adaptation",
+              value: "psychosocial_adaptation"
+            },
+            {
+              label: "Cognitive Rehabilitation",
+              value: "cognitive_rehabilitation"
+            },
+            {
+              label: "Others",
+              value: "others"
+            }
           ]
         },
-
-        /* OPTIONAL DETAIL FOR NDT */
-        {
-          type: "checkbox-group",
-          name: "ndt_focus",
-          label: "NDT Focus Area",
-          options: [
-            { label: "Trunk & Pelvis", value: "trunk" },
-            { label: "Lower Limb", value: "lower" },
-            { label: "Upper Limb & Hand", value: "upper" },
-            { label: "Neck", value: "neck" }
-          ],
-          showIf: { field: "therapeutic_exercises", includes: "ndt" }
-        },
-
-        /* OTHER TEXT */
         {
           type: "textarea",
-          name: "therapeutic_other",
-          label: "Other Exercises",
-          showIf: { field: "therapeutic_exercises", includes: "others" }
+          name: "intervention_plan_other",
+          label: "Specify",
+          showIf: {
+            field: "intervention_plan",
+            includes: "others"
+          }
         },
-
-    
-        {
-          label: "ADL Training",
-          type: "checkbox-group",
-          name: "adl_training",
-          options: [
-            { label: "Eating / Feeding", value: "eating" },
-            { label: "Bathing / Showering", value: "bathing" },
-            { label: "Dressing", value: "dressing" },
-            { label: "Grooming", value: "grooming" },
-            { label: "Toileting", value: "toileting" },
-            { label: "Sphincter Control", value: "sphincter" },
-            { label: "Bed Mobility", value: "bed" },
-            { label: "Transfers (Bed)", value: "transfer_bed" },
-            { label: "Transfers (Toilet)", value: "transfer_toilet" },
-            { label: "Advanced Transfer (Car)", value: "car" },
-            { label: "Advanced Transfer (Ground)", value: "ground" },
-            { label: "Locomotion / Mobility", value: "mobility" },
-            { label: "Stair Management", value: "stairs" }
-          ]
-        },
-
-    
-        {
-          label: "IADL Training",
-          type: "checkbox-group",
-          name: "iadl_training",
-          options: [
-            { label: "Telephone Use", value: "phone" },
-            { label: "Shopping", value: "shopping" },
-            { label: "Food Preparation", value: "cooking" },
-            { label: "Housekeeping", value: "housekeeping" },
-            { label: "Laundry", value: "laundry" },
-            { label: "Transportation", value: "transport" },
-            { label: "Medication Management", value: "medication" },
-            { label: "Financial Management", value: "finance" }
-          ]
-        },
-
-    
-        {
-          type: "radio",
-          label: "Driving Rehabilitation",
-          name: "driving",
-          options: [
-            { label: "Off-road Driving", value: "offroad" },
-            { label: "On-road Driving", value: "onroad" }
-          ]
-        },
-
-  
-        {
-          type: "radio",
-          label: "Riding Rehabilitation",
-          name: "riding",
-          options: [
-            { label: "Yes", value: "yes" },
-            { label: "No", value: "no" }
-          ]
-        },
-
-        /* ================= ASSISTIVE DEVICES ================= */
-    
-        {
-            label: "Assistive & Adaptive Devices",
-            type: "checkbox-group",
-          name: "assistive_devices",
-          options: [
-            { label: "Splint", value: "splint" },
-            { label: "Pressure Garment", value: "pressure" },
-            { label: "Tubigrip", value: "tubigrip" },
-            { label: "Adaptive Nail Clipper", value: "clipper" },
-            { label: "Lightweight Wheelchair", value: "lw_wc" },
-            { label: "Ultralight Wheelchair", value: "ul_wc" },
-            { label: "Motorised Wheelchair", value: "motor_wc" },
-            { label: "Commode Chair", value: "commode" },
-            { label: "Cushion (Air/Foam/Gel)", value: "cushion" },
-            { label: "Palmar Pocket", value: "palmar" },
-            { label: "Transfer Board", value: "board" },
-            { label: "Others", value: "others" }
-          ]
-        },
-
-        {
-          type: "textarea",
-          name: "assistive_other",
-          label: "Other Devices",
-          showIf: { field: "assistive_devices", includes: "others" }
-        }
-
       ]
     }
   ]
@@ -764,7 +757,7 @@ const PLAN_SCHEMA = {
 
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
 
-  function VocationalRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
+  function WorkRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
     if (!patient) return null;
 
     return (
@@ -878,11 +871,11 @@ const PLAN_SCHEMA = {
 
       {/* ===== PATIENT INFORMATION CARD ===== */}
       <CommonFormBuilder
-        schema={NEURO_CONTAINER_SCHEMA}
+        schema={WORK_CONTAINER_SCHEMA}
         values={{}}
         onChange={() => { }}
       >
-        <VocationalRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
+        <WorkRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
       </CommonFormBuilder>
 
       {/* ===== NEW ENVIRONMENT CARD ===== */}
@@ -912,7 +905,7 @@ const PLAN_SCHEMA = {
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
-        assessmentRegistry={VOCATIONAL_REHAB_REGISTRY}
+        assessmentRegistry={WORK_REHAB_REGISTRY}
       >
 
         {/* 🔹 ADD MATRIX ONLY IN PLAN TAB */}
@@ -982,7 +975,7 @@ const PLAN_SCHEMA = {
             </button>
           ) : (
             <button style={submitBtn} onClick={handleSubmit}>
-              Submit Neuro Assessment
+              Submit Assessment
             </button>
           )}
         </div>
