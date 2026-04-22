@@ -12,6 +12,7 @@ import BoxBlockTest from "../../OT/components/BoxBlockTest";
 import FGAForm from "./FGAForm";
 import GripStrengthForm from "./GripStrengthForm";
 import TAPESForm from "./TAPESForm";
+import { AMPProAssessment, AMPNoProAssessment} from "./AMPpro_nopro";
 import PatientCard from "../../../shared/cards/PatientCard";
 
 
@@ -825,6 +826,8 @@ const AMPUTEE_ASSESSMENT_REGISTRY = {
   sixmwt:    SixMWTForm,
   tug:       TUG,
   bbs:       BergBalanceScale,
+  amp_pro:    AMPProAssessment,
+  amp_nopro:  AMPNoProAssessment,
   /* Upper Limb */
   dash:      DASHAssessment,
   grip:      GripStrengthForm,
