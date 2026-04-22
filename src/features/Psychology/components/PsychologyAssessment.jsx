@@ -175,6 +175,21 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack,mode })
     setValues(v => ({ ...v,  [name]: value }));
   };
 
+  const problemList = (values) => {
+    var text = ''
+    if (values.perceptual_disturbance) {
+      values.perceptual_disturbance.forEach(v => {
+        text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
+      })
+    }
+    if (values.thought_content_patient_reported) {
+      values.thought_content_patient_reported.forEach(v => {
+        text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
+      })
+    }
+    return text
+  }
+
   const computedValues = {
     ...values,
     problem_listings: problemList(values) || ''
