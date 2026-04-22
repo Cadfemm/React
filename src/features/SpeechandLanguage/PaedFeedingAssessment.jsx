@@ -119,11 +119,14 @@ export default function PaedIAFeeding({ patient, onBack, mode = "initial" }) {
 
   const handleAction = (type) => {
     if (type === "back") onBack?.();
+    if (type === "clear") { setValues({}); setSubmitted(false); }
+    if (type === "save") { console.log("Saved:", values); alert("Draft saved"); }
   };
 
   const handleSubmit = () => {
     setSubmitted(true);
     console.log("PAED IA Feeding Assessment", values);
+    alert("Assessment submitted");
   };
 
   const activeTabIdx = tabOrder.indexOf(activeTab);
@@ -191,30 +194,26 @@ export default function PaedIAFeeding({ patient, onBack, mode = "initial" }) {
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
-      />
+      >
+        <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button
+              style={submitBtn}
+              onClick={() => {
+                const next = tabOrder[activeTabIdx + 1];
+                if (next) setActiveTab(next);
+              }}
+            >
+              Next
+            </button>
+          ) : (
+            <button style={submitBtn} onClick={handleSubmit}>
+              Submit Assessment
+            </button>
+          )}
+        </div>
+      </CommonFormBuilder>
 
-      {/* ===== NAVIGATION ===== */}
-      <div style={submitRow}>
-        <button style={backBtn} onClick={() => onBack?.()}>
-          Back
-        </button>
-
-        {activeTab !== "plan" ? (
-          <button
-            style={submitBtn}
-            onClick={() => {
-              const next = tabOrder[activeTabIdx + 1];
-              if (next) setActiveTab(next);
-            }}
-          >
-            Next
-          </button>
-        ) : (
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit Assessment
-          </button>
-        )}
-      </div>
     </div>
   );
 }
@@ -1409,22 +1408,32 @@ const ASSESSMENT_FIELDS = FEEDING_BASE_FIELDS.slice(
 );
 const PLAN_FIELDS = FEEDING_BASE_FIELDS.slice(idxPlan + 1);
 
+const SOAP_ACTIONS = [
+  { type: "back", label: "Back" },
+  { type: "clear", label: "Clear" },
+  { type: "save", label: "Save" }
+];
+
 const baseSchemaMap = {
   subjective: {
-    title: "",
-    sections: [{ title: "Subjective", fields: transformFields(SUBJECTIVE_FIELDS) }]
+    title: "Subjective",
+    actions: SOAP_ACTIONS,
+    sections: [{ title: "", fields: transformFields(SUBJECTIVE_FIELDS) }]
   },
   objective: {
-    title: "",
-    sections: [{ title: "Objective", fields: transformFields(OBJECTIVE_FIELDS) }]
+    title: "Objective",
+    actions: SOAP_ACTIONS,
+    sections: [{ title: "", fields: transformFields(OBJECTIVE_FIELDS) }]
   },
   assessment: {
-    title: "",
-    sections: [{ title: "Assessment", fields: transformFields(ASSESSMENT_FIELDS) }]
+    title: "Assessment",
+    actions: SOAP_ACTIONS,
+    sections: [{ title: "", fields: transformFields(ASSESSMENT_FIELDS) }]
   },
   plan: {
-    title: "",
-    sections: [{ title: "Plan", fields: transformFields(PLAN_FIELDS) }]
+    title: "Plan",
+    actions: SOAP_ACTIONS,
+    sections: [{ title: "", fields: transformFields(PLAN_FIELDS) }]
   }
 };
 
@@ -1451,18 +1460,8 @@ const tabActive = {
 
 const submitRow = {
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginTop: 20
-};
-
-const backBtn = {
-  padding: "12px 22px",
-  background: "#fff",
-  color: "#2563EB",
-  border: "1px solid #2563EB",
-  borderRadius: 8,
-  fontWeight: 600
+  justifyContent: "flex-end",
+  marginTop: 16
 };
 
 const submitBtn = {

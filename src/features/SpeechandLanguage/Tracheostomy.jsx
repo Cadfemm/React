@@ -326,26 +326,6 @@ const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
 
     
         
-      {
-  name: "respiration_assessment",
-  label: "Respiration Assessment",
-  type: "checkbox-group",
-  direction: "column", // optional: shows one below another
-  options: [
-    {
-      label: "JTB.AA.ZZ Assessment of respiration function",
-      value: "respiration_function"
-    },
-    {
-      label: "JTB.DE.AC Artificial ventilation",
-      value: "artificial_ventilation"
-    },
-    {
-      label: "JU1.AA.ZZ Assessment of voice and speech functions, unspecified",
-      value: "voice_speech_assessment"
-    }
-  ]
-},
              { type: "subheading", label: "Pre-evaluation vitals" },
 
       {
@@ -505,7 +485,7 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
               value: "no_difficulty"
             },
             {
-              label: "Poor tolerance to tracheostomy capping; requires full dependence (ICD-10: Z93.0)",
+              label: "Poor tolerance to tracheostomy capping; requires full dependence",
               value: "poor_tolerance"
             }
           ]
@@ -517,8 +497,8 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
           label: "Patient also exhibits",
           type: "checkbox-group",
           options: [
-            { label: "Dysphonia (ICD-10: R49.0)", value: "dysphonia" },
-            { label: "Dysphagia (ICD-10: R13)", value: "dysphagia" }
+            { label: "Dysphonia", value: "dysphonia" },
+            { label: "Dysphagia ", value: "dysphagia" }
           ]
         },
 
@@ -664,6 +644,7 @@ const tracheostomySchemas = {
       <CommonFormBuilder
         schema={tracheostomySchemas[mode] ?? { sections: [] }}
         values={values}
+        layout="nested"
         onChange={handleChange}
       />
     </div>
