@@ -30,37 +30,31 @@ const AssessmentFallback = <ShimmerForm rows={6} />;
 // ── Context ────────────────────────────────────────────────────────────────
 const PatientContext = createContext(null);
 
-const SUB_SCHEMA = {};
-const OBJ_SCHEMA = {};
-
 // ── Adapter factory ────────────────────────────────────────────────────────
-function makeAdapter(Component, prefix, activeKey, getSchema) {
+// Sub-assessment components each have their own internal schema — no schema prop needed.
+function makeAdapter(Component, activeKey) {
   const Adapter = memo(function Adapter({ onChange, layout }) {
     const patient = useContext(PatientContext);
     const handleBack = useCallback(() => { onChange(activeKey, null); }, [onChange]);
-    const schema = getSchema();
-    // Guard: never render with undefined schema — avoids hooks count mismatch
-    if (!schema) return <ShimmerForm rows={4} />;
     return (
       <Suspense fallback={AssessmentFallback}>
-        <Component schema={schema} patient={patient} onBack={handleBack} layout={layout} />
+        <Component patient={patient} onBack={handleBack} layout={layout} />
       </Suspense>
     );
   });
-  Adapter.displayName = `${prefix}Adapter`;
   return Adapter;
 }
 
-const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "binocular_vision",    "optometry_assessments_active", () => OBJ_SCHEMA.BINOCULAR_VISION);
-const RefractionAdapter         = makeAdapter(RefractionAssessment,        "refraction",          "optometry_assessments_active", () => OBJ_SCHEMA.REFRACTION);
-const VisionAdapter             = makeAdapter(VisionAssessment,            "vision",              "optometry_assessments_active", () => OBJ_SCHEMA.VISION_DRIVING);
-const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "ocular_health",       "optometry_assessments_active", () => OBJ_SCHEMA.OCULAR_HEALTH);
-const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "special_diagnostic",  "optometry_assessments_active", () => OBJ_SCHEMA.SPECIAL_DIAGNOSTIC);
-const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "lvqol",               "optometry_assessments_active", () => SUB_SCHEMA.LVQOL);
-const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "brain_vision",        "optometry_assessments_active", () => SUB_SCHEMA.BRAIN_VISION);
-const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,           "visual_function",     "optometry_assessments_active", () => SUB_SCHEMA.VISUAL_FUNCTION);
-const BVDQAdapter               = makeAdapter(BVDAssessment,               "bvdq",                "optometry_assessments_active", () => SUB_SCHEMA.BVDQ);
-const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision",          "low_vision_assessment_active", () => OBJ_SCHEMA.LOW_VISION_ASSESSMENT);
+const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active");
+const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active");
+const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active");
+const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active");
+const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active");
+const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active");
+const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active");
+const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active");
+const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active");
+const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active");
 
 
 export const OPTOMETRY_ASSESSMENT_REGISTRY = {
@@ -202,7 +196,7 @@ export default function OptometryAssessment({
   const [values,       setValues]       = useState(readOnly && savedValues ? savedValues : {});
   const [submitted,    setSubmitted]    = useState(readOnly);
   const [activeTab,    setActiveTab]    = useState("subjective");
-  const [forms,        setForms]        = useState([]);
+  const [forms,        setForms]        = useState([]);  // kept for future API integration
   const [formsLoading, setFormsLoading] = useState(false);
   const [formsError,   setFormsError]   = useState(false);
   const [showConfirm,  setShowConfirm]  = useState(false);
@@ -1895,43 +1889,6 @@ export default function OptometryAssessment({
     assessment: ASSESSMENT_SCHEMA,
     plan: PLAN_SCHEMA
   };
-  
-  // useEffect(() => {
-  //   setFormsLoading(true);
-  //   setFormsError(false);
-  //   api.get(API_URL.FORM + "department/optometry/")
-  //     .then(res => setForms(res.data.results))
-  //     .catch(() => setFormsError(true))
-  //     .finally(() => setFormsLoading(false));
-  // }, []);
-
-  // useEffect(() => {
-  //   api.get(API_URL.FORM + "department/optometry/?assessment=subjective")
-  //     .then(res => {
-  //       res.data.results.forEach(form => {
-  //         if (form.name === "Brain Injury Vision Symptoms Survey (BIVSS)")             SUB_SCHEMA.BRAIN_VISION    = form.body;
-  //         else if (form.name === "Visual Function Questionnaire")                      SUB_SCHEMA.VISUAL_FUNCTION = form.body;
-  //         else if (form.name === "Binocular Vision Dysfunction Questionnaire (BVDQ)")  SUB_SCHEMA.BVDQ            = form.body;
-  //         else if (form.name === "Low Vision Quality of Life Questionnaire (LVQoL)")   SUB_SCHEMA.LVQOL           = form.body;
-  //       });
-  //     })
-  //     .catch(() => {});
-  // }, []);
-
-  // useEffect(() => {
-  //   api.get(API_URL.FORM + "department/optometry/?assessment=objective")
-  //     .then(res => {
-  //       res.data.results.forEach(form => {
-  //         if (form.name === "Binocular Vision")               OBJ_SCHEMA.BINOCULAR_VISION      = form.body;
-  //         else if (form.name === "Refraction Assessment")     OBJ_SCHEMA.REFRACTION             = form.body;
-  //         else if (form.name === "Special Diagnostic")        OBJ_SCHEMA.SPECIAL_DIAGNOSTIC     = form.body;
-  //         else if (form.name === "Vision For Driving")        OBJ_SCHEMA.VISION_DRIVING          = form.body;
-  //         else if (form.name === "Ocular Health / Structure") OBJ_SCHEMA.OCULAR_HEALTH           = form.body;
-  //         else if (form.name === "Low Vision Assessment")     OBJ_SCHEMA.LOW_VISION_ASSESSMENT   = form.body;
-  //       });
-  //     })
-  //     .catch(() => {});
-  // }, []);
 
   useEffect(() => {
     if (!isDirty || readOnly) return;
