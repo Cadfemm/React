@@ -457,10 +457,10 @@ export default function  PediatricPsychologyAssessment({ patient, onSubmit, onBa
           },
 
           /* ===== DEVELOPMENTAL HISTORY SUBHEADING ===== */
-          {
-            type: "subheading",
-            label: "Developmental history   CORE PEDIATRIC COMPONENT"
-          },
+          // {
+          //   type: "subheading",
+          //   label: "Developmental history   CORE PEDIATRIC COMPONENT"
+          // },
 
           /* ===== DEVELOPMENT MILESTONES INLINE ===== */
           {
@@ -1947,9 +1947,9 @@ function DevelopmentMilestones({ age }) {
 
   return (
     <div style={{ paddingLeft: 0 }}>
-      <h3 style={{ marginBottom: 12, color: "#1e293b" }}>
+      {/* <h3 style={{ marginBottom: 12, color: "#1e293b" }}>
         Developmental Milestones ({key.replaceAll("_", " ")})
-      </h3>
+      </h3> */}
 
       {schema.sections.map((section, si) =>
         section.fields.map((field, fi) => {
