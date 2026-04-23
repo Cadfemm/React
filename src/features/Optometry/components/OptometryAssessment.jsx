@@ -203,7 +203,7 @@ export default function OptometryAssessment({
   const [submitted,    setSubmitted]    = useState(readOnly);
   const [activeTab,    setActiveTab]    = useState("subjective");
   const [forms,        setForms]        = useState([]);
-  const [formsLoading, setFormsLoading] = useState(true);
+  const [formsLoading, setFormsLoading] = useState(false);
   const [formsError,   setFormsError]   = useState(false);
   const [showConfirm,  setShowConfirm]  = useState(false);
   const [isDirty,      setIsDirty]      = useState(false);
@@ -2000,7 +2000,6 @@ export default function OptometryAssessment({
     }
   }, [patient]);
 
-  console.log("Rendering OptometryForm with values:", schemaMap[activeTab]);
   // const retryForms = useCallback(() => {
   //   setFormsError(false);
   //   setFormsLoading(true);
