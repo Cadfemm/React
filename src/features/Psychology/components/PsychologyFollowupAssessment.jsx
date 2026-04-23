@@ -1065,11 +1065,7 @@ return (
        
 
         {/* SUBMIT */}
-        <div style={submitRow}>
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
+        
         <div style={submitRow}>
           {activeTab !== "plan" ? (
             <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
