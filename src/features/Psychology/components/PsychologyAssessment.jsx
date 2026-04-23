@@ -175,14 +175,15 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack,mode })
     setValues(v => ({ ...v,  [name]: value }));
   };
 
+
   const problemList = (values) => {
     var text = ''
-    if (values.perceptual_disturbance) {
+    if(values.perceptual_disturbance){
       values.perceptual_disturbance.forEach(v => {
         text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
       })
     }
-    if (values.thought_content_patient_reported) {
+    if(values.thought_content_patient_reported){
       values.thought_content_patient_reported.forEach(v => {
         text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
       })
@@ -786,8 +787,8 @@ export default function PsychologyAssessment({ patient, onSubmit, onBack,mode })
       }
     ]
   };
-const tabOrder = ["subjective", "objective", "assessment", "plan"];
-const activeTabIdx = tabOrder.indexOf(activeTab);
+  const tabOrder = ["subjective", "objective", "assessment", "plan"];
+  const activeTabIdx = tabOrder.indexOf(activeTab);
 
   const schemaMap = {
     subjective: SUBJECTIVE_SCHEMA,
@@ -795,9 +796,9 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
     assessment: ASSESSMENT_SCHEMA,
     plan: PLAN_SCHEMA
   };
- const numAge = Number(patient?.age || 0);
 
-  
+  const numAge = Number(patient?.age || 0);
+
   /* ===================== PATIENT INFO ===================== */
   function PsychologyPatientInfo({ patient }) {
     if (!patient) return null;
@@ -818,7 +819,8 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
       </div>
     );
   }
- if (numAge < 20) {
+
+  if (numAge < 20) {
     return (
       <PediatricPsychologyAssessment
         patient={patient}
@@ -871,17 +873,17 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
               Submit Psychology Assessment
             </button>
           </div> */}
-           <div style={submitRow}>
-          {activeTab !== "plan" ? (
-            <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
-              Next
-            </button>
-          ) : (
-            <button style={submitBtn} onClick={handleSubmit}>
-               Submit Psychology Assessment
-            </button>
-          )}
-        </div>
+          <div style={submitRow}>
+            {activeTab !== "plan" ? (
+              <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
+                Next
+              </button>
+            ) : (
+              <button style={submitBtn} onClick={handleSubmit}>
+                Submit Psychology Assessment
+              </button>
+            )}
+          </div>
         </CommonFormBuilder>
       </div>
     </PatientContext.Provider>
