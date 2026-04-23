@@ -28,7 +28,6 @@ function PatientCard({ patient }) {
     </div>
   );
 }
-
 /* ---------------- MAIN COMPONENT ---------------- */
 
 const YES_NO = [
@@ -1010,6 +1009,8 @@ const SESSION_SCHEMA = {
       }
     ]
   };
+const tabOrder = ["subjective", "objective", "assessment", "plan"];
+const activeTabIdx = tabOrder.indexOf(activeTab);
 
  const schemaMap = {
   subjective: SUBJECTIVE_SCHEMA,
@@ -1064,10 +1065,17 @@ return (
        
 
         {/* SUBMIT */}
+        
         <div style={submitRow}>
-          <button style={submitBtn} onClick={handleSubmit}>
-            Submit
-          </button>
+          {activeTab !== "plan" ? (
+            <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
+              Next
+            </button>
+          ) : (
+            <button style={submitBtn} onClick={handleSubmit}>
+               Submit Psychology Assessment
+            </button>
+          )}
         </div>
 
       </CommonFormBuilder>
