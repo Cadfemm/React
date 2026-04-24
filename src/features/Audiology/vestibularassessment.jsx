@@ -3,6 +3,7 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function VestibularAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   const DHI_QUESTIONS = [
   "Does looking up increase your problem?",
@@ -193,7 +194,8 @@ const MVVSS_OPTIONS = [
 
   const schema = {
     title: "Additional Vestibular Profile",
-    actions: [{ type: "back", label: "Back" }],
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }, { type: "back", label: "Back" }],
 
     sections: [
       {
@@ -338,25 +340,25 @@ const MVVSS_OPTIONS = [
             name: `dhi_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: 0 },
-              { label: "Sometimes (2)", value: 2 },
-              { label: "Always (4)", value: 4 }
-            ],
+            options: scoresVisible
+              ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Always (4)", value: 4 }]
+              : [{ label: "No", value: 0 }, { label: "Sometimes", value: 2 }, { label: "Always", value: 4 }],
             showIf: { field: "enable_dhi", equals: "Yes" }
           })),
 
-          { name: "dhi_physical", label: "Physical", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-          { name: "dhi_emotional", label: "Emotional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-          { name: "dhi_functional", label: "Functional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-          { name: "dhi_total", label: "Total", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-          { name: "dhi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+          ...(scoresVisible ? [
+            { name: "dhi_physical", label: "Physical", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+            { name: "dhi_emotional", label: "Emotional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+            { name: "dhi_functional", label: "Functional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+            { name: "dhi_total", label: "Total", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+            { name: "dhi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
+          ] : []),
 
           // =========================
           // VVAS
           // =========================
           { type: "subheading", label: "Visual Vertigo Analogue Score (VVAS)", showIf: { field: "enable_vvas", equals: "Yes" } },
-
+          { type: "info-text", text: "0 = none, 10 = worst possible", showIf: { field: "enable_vvas", equals: "Yes" } },
           ...VVAS_QUESTIONS.map((q, i) => ({
             name: `vvas_${i + 1}`,
             label: `${i + 1}. ${q}`,
@@ -366,8 +368,10 @@ const MVVSS_OPTIONS = [
             showIf: { field: "enable_vvas", equals: "Yes" }
           })),
 
-          { name: "vvas_score", label: "Score", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
-          { name: "vvas_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
+          ...(scoresVisible ? [
+            { name: "vvas_score", label: "Score", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
+            { name: "vvas_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
+          ] : []),
 
           // =========================
           // VHQ
@@ -378,25 +382,26 @@ const MVVSS_OPTIONS = [
             name: `vhq_${i + 1}`,
             label: `${i + 1}. ${q.text}`,
             type: "radio-matrix",
-            options: [
-              { label: "Never (0)", value: 0 },
-              { label: "Occasionally (1)", value: 1 },
-              { label: "Sometimes (2)", value: 2 },
-              { label: "Often (3)", value: 3 },
-              { label: "Always (4)", value: 4 }
-            ],
+            options: scoresVisible
+              ? [{ label: "Never (0)", value: 0 }, { label: "Occasionally (1)", value: 1 }, { label: "Sometimes (2)", value: 2 }, { label: "Often (3)", value: 3 }, { label: "Always (4)", value: 4 }]
+              : [{ label: "Never", value: 0 }, { label: "Occasionally", value: 1 }, { label: "Sometimes", value: 2 }, { label: "Often", value: 3 }, { label: "Always", value: 4 }],
             showIf: { field: "enable_vhq", equals: "Yes" }
           })),
 
-          { name: "vhq_total", label: "Total", type: "score-box", showIf: { field: "enable_vhq", equals: "Yes" } },
+          ...(scoresVisible ? [{ name: "vhq_total", label: "Total", type: "score-box", showIf: { field: "enable_vhq", equals: "Yes" } }] : []),
           {
             name: "vhq_work",
             label: "26. Are you currently employed?",
             type: "radio",
-            options: [
-              { label: "No (0)", value: 0 },
-              { label: "Yes (1)", value: 1 }
-            ],
+            options: scoresVisible
+              ? [
+                  { label: "No (0)", value: 0 },
+                  { label: "Yes (1)", value: 1 }
+                ]
+              : [
+                  { label: "No", value: 0 },
+                  { label: "Yes", value: 1 }
+                ],
             showIf: { field: "enable_vhq", equals: "Yes" }
           },
 
@@ -432,11 +437,11 @@ const MVVSS_OPTIONS = [
             name: `mvvss_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "radio-matrix",
-            options: MVVSS_OPTIONS,
+            options: scoresVisible ? MVVSS_OPTIONS : MVVSS_OPTIONS.map(o => ({ ...o, label: o.label.replace(/ \(\d+\)/, "") })),
             showIf: { field: "enable_mvvss", equals: "Yes" }
           })),
 
-          { name: "mvvss_total", label: "Total", type: "score-box", showIf: { field: "enable_mvvss", equals: "Yes" } },
+          ...(scoresVisible ? [{ name: "mvvss_total", label: "Total", type: "score-box", showIf: { field: "enable_mvvss", equals: "Yes" } }] : []),
 
           // =========================
           // FUNCTIONAL
@@ -474,7 +479,11 @@ const MVVSS_OPTIONS = [
       values={{ ...values, mode }}
       onChange={handleChange}
       layout="nested"
-      onAction={(type) => type === "back" && onBack()}
+      showScores={scoresVisible}
+      onAction={(type) => {
+        if (type === "toggle-show-scores") setScoresVisible(v => !v);
+        if (type === "back") onBack();
+      }}
     />
   );
 }
