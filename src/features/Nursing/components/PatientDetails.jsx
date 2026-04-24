@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import NursingAssessment from "./NursingAssessment";
+import ShiftAssessment from "./ShiftAssessment";
 import WoundAssessment from "../pages/WoundAssessment";
 import CarerLogBook from "./CarerLogBook";
 import NursingSwallowScreener from "./NursingSwallowScreener";
@@ -45,7 +46,7 @@ export default function PatientDetails({ patient, onBack }) {
         <NursingAssessment patient={patient} onSubmit={(v) => console.log(v)} onBack={onBack} />
       )}
       {activeMainTab === "shift" && (
-        <div style={{ padding: 24, color: "#6b7280" }}>Shift Assessment – Coming soon</div>
+        <ShiftAssessment patient={patient} onSubmit={(v) => console.log(v)} onBack={() => setActiveMainTab("admission")} />
       )}
       {activeMainTab === "wound" && (
         <WoundAssessment patient={patient} onBack={() => setActiveMainTab("admission")} />
