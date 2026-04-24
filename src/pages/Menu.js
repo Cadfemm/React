@@ -716,7 +716,7 @@ export function MainContent({
       return <GenericDepartmentDashboard departmentName="Dietetics Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Audiology":
-      return <GenericDepartmentDashboard departmentName="Audiology Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+      return <GenericDepartmentDashboard departmentName="Audiology Department" patients={patients} PatientsComponent={AudiologyPatients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Doctor":
       return <GenericDepartmentDashboard departmentName="Doctor Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
