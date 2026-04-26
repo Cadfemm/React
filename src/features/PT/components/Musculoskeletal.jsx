@@ -42,10 +42,19 @@ const MUSCULOSKELETAL_ASSESSMENT_REGISTRY = {
     const region = values?.msk_primary_region || [];
     let filterSections = null;
 
-    if (region.length > 0 && !region.includes("spine_general")) {
+    if (region.length > 0) {
       filterSections = [];
-      if (region.includes("upper_limb")) filterSections.push("Shoulder", "Elbow", "Wrist");
-      if (region.includes("lower_limb")) filterSections.push("Hip", "Knee", "Ankle");
+      // General/Spine → show all sections
+      if (region.includes("spine_general")) {
+        filterSections = null; // null = no filter = show all
+      } else {
+        if (region.includes("upper_limb")) {
+          filterSections.push("Shoulder", "Elbow", "Wrist");
+        }
+        if (region.includes("lower_limb")) {
+          filterSections.push("Hip", "Knee", "Ankle");
+        }
+      }
     }
 
     return <MMTForm values={values} onChange={onChange} filterSections={filterSections} />;

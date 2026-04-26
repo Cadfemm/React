@@ -122,19 +122,17 @@ export function buildMmtAccordionFields(filterSections) {
   }));
 }
 
-/* ===================== SCHEMA ===================== */
-
-const MMT_SCHEMA = {
-  title: "Manual Muscle Testing (MMT)",
-  fields: buildMmtAccordionFields(),
-};
-
 /* ===================== COMPONENT ===================== */
 
-export default function MMTForm({ values, onChange }) {
+export default function MMTForm({ values, onChange, filterSections }) {
+  const schema = {
+    title: "Manual Muscle Testing (MMT)",
+    fields: buildMmtAccordionFields(filterSections ?? undefined),
+  };
+
   return (
     <CommonFormBuilder
-      schema={MMT_SCHEMA}
+      schema={schema}
       values={values}
       onChange={onChange}
       layout="nested"
