@@ -1,3 +1,6 @@
+
+
+
 import { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
@@ -142,7 +145,7 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
 {
   name: "trach_brand_other",
   label: "Other (specify)",
-  type: "textarea",
+  type: "input",
   showIf: { field: "trach_brand", equals: "Other" }
 },
 
@@ -247,33 +250,33 @@ const SCHEMA_PLAN_TRACHEOSTOMY = {
     { label: "Before & after oral trials", value: "before_after_trials" }
   ]
 },
-                          { type: "subheading", label: "Therapy" },
-{
-      name: "therapy",
-      type: "checkbox-group",
-      options: [
-        {
-          label: "KTC.AM.ZZ Observation of breathing functions",
-          value: "breathing_observation"
-        },
-        {
-          label: "KBC.DA.AD Voice facilitation intervention",
-          value: "voice_facilitation"
-        },
-        {
-          label: "KTC.AA.ZZ Assessment of swallowing",
-          value: "swallowing_assessment"
-        },
-        {
-          label: "KTC.PH.ZZ Training about swallowing / airway clearance",
-          value: "swallowing_training"
-        },
-        {
-          label: "KTC.PN.ZZ Advising about swallowing / airway management",
-          value: "airway_advising"
-        }
-      ]
-    },
+//                           { type: "subheading", label: "Therapy" },
+// {
+//       name: "therapy",
+//       type: "checkbox-group",
+//       options: [
+//         {
+//           label: "KTC.AM.ZZ Observation of breathing functions",
+//           value: "breathing_observation"
+//         },
+//         {
+//           label: "KBC.DA.AD Voice facilitation intervention",
+//           value: "voice_facilitation"
+//         },
+//         {
+//           label: "KTC.AA.ZZ Assessment of swallowing",
+//           value: "swallowing_assessment"
+//         },
+//         {
+//           label: "KTC.PH.ZZ Training about swallowing / airway clearance",
+//           value: "swallowing_training"
+//         },
+//         {
+//           label: "KTC.PN.ZZ Advising about swallowing / airway management",
+//           value: "airway_advising"
+//         }
+//       ]
+//     },
         {
           name: "exercises",
           label: "Exercises",
@@ -290,25 +293,25 @@ const SCHEMA_PLAN_TRACHEOSTOMY = {
   ]
 },
 
-{
-  name: "further_assessment",
-  label: "Further Assessment",
-  type: "checkbox-group",
-  options: [
-    {
-      label: "KTC.AE.AD Video endoscopic evaluation of swallowing",
-      value: "fees"
-    },
-    {
-      label: "KBC.DA.AD Voice facilitation intervention",
-      value: "advanced_voice"
-    }
-  ],
-  showIf: {
-    field: "other_management",
-    equals: "further"
-  }
-},
+// {
+//   name: "further_assessment",
+//   label: "Further Assessment",
+//   type: "checkbox-group",
+//   options: [
+//     {
+//       label: "KTC.AE.AD Video endoscopic evaluation of swallowing",
+//       value: "fees"
+//     },
+//     {
+//       label: "KBC.DA.AD Voice facilitation intervention",
+//       value: "advanced_voice"
+//     }
+//   ],
+//   showIf: {
+//     field: "other_management",
+//     equals: "further"
+//   }
+// },
 
 
       ]
@@ -320,148 +323,148 @@ const SCHEMA_PLAN_TRACHEOSTOMY = {
 
 
 const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
-  section_name: "Tracheostomy Weaning Evaluation - Objective",
-  fields: [
-              { type: "subheading", label: "Objective Tracheostomy" },
-
-    
-        
-             { type: "subheading", label: "Pre-evaluation vitals" },
-
-      {
-      name: "spo2",
-      label: "SpO2 (%)",
-      type: "input",
-      placeholder: "Enter SpO2"
-    },
+  sections: [
     {
-      name: "respiratory_rate",
-      label: "RR (breaths/min)",
-      type: "input",
-      placeholder: "Enter respiratory rate"
-    },
-    {
-      name: "heart_rate",
-      label: "HR (bpm)",
-      type: "input",
-      placeholder: "Enter heart rate"
-    },
-    {
-      name: "secretion_amount",
-      label: "Secretion amount",
-      type: "radio",
-      options: [
-        { label: "Small", value: "small" },
-        { label: "Moderate", value: "moderate" },
-        { label: "Large", value: "large" }
-      ]
-    },
-                 { type: "subheading", label: "Pre-evaluation suction" },
-
-    {
-      name: "secretion_colour",
-      label: "Colour",
-      type: "radio",
-      options: [
-        { label: "Whitish", value: "whitish" },
-        { label: "Yellowish", value: "yellowish" },
-        { label: "Greenish", value: "greenish" },
-        { label: "Blood-tinged", value: "blood_tinged" }
-      ]
-    },
-    {
-      name: "secretion_consistency",
-      label: "Consistency",
-      type: "radio",
-      options: [
-        { label: "Thick", value: "thick" },
-        { label: "Loose", value: "loose" }
-      ]
-    },
-    {
-      name: "secretion_consistency",
-      label: "Secretion amount",
-      type: "radio",
-      options: [
-        { label: "Small", value: "small" },
-        { label: "Moderate", value: "moderate" },
-         { label: "Large", value: "large" },
-
-      ]
-    },
- 
-   {
-  name: "tracheostomy_trials",
-  label: "Trials / Clinical Observations",
-  type: "checkbox-group",
-  options: [
-    { label: "Cuff deflation trial", value: "cuff_deflation" },
-    { label: "Digital Occlusion trial", value: "digital_occlusion" },
-    { label: "Speaking valve trial", value: "speaking_valve" },
-    { label: "Capping trial", value: "capping" },
-    { label: "Clinical Observations", value: "clinical_observations" },
-    { label: "Modified Evan's Blue Dye Test", value: "blue_dye_test" }
-  ]
-},
-// ===== CHECKBOX =====
-{
-  name: "cuff_deflation_details",
-  label: "Cuff deflation trial",
-  type: "group",
-  showIf: {
-    field: "tracheostomy_trials",
-    includes: "cuff_deflation"
-  },
-  fields: [
-    {
-      type: "row",
+      title: "Tracheostomy Weaning Evaluation",
       fields: [
-        { type: "label", label: "Deflation:", style: { width: "40%" } },
+        { type: "subheading", label: "Pre-evaluation Vitals" },
         {
-          name: "deflation",
-          type: "radio",
-          direction: "row",
-          options: ["Partial", "Complete"]
-        }
-      ]
-    },
-    {
-      type: "row",
-      fields: [
-        { type: "label", label: "Tolerated:", style: { width: "40%" } },
+          type: "row",
+          fields: [
+            { name: "pre_spo2", label: "SpO2 (%)", type: "input", placeholder: "%" },
+            { name: "pre_rr", label: "RR (breaths/min)", type: "input", placeholder: "bpm" },
+            { name: "pre_hr", label: "HR (bpm)", type: "input", placeholder: "bpm" }
+          ]
+        },
+
+        { type: "subheading", label: "Pre-evaluation Suction" },
+        { name: "secretion_colour", label: "Colour", type: "radio", options: [
+          { label: "Whitish", value: "whitish" },
+          { label: "Yellowish", value: "yellowish" },
+          { label: "Greenish", value: "greenish" },
+          { label: "Blood-tinged", value: "blood_tinged" }
+        ]},
+        { name: "secretion_consistency", label: "Consistency", type: "radio", options: [
+          { label: "Thick", value: "thick" },
+          { label: "Loose", value: "loose" }
+        ]},
+        { name: "secretion_amount", label: "Secretion amount", type: "radio", options: [
+          { label: "Small", value: "small" },
+          { label: "Moderate", value: "moderate" },
+          { label: "Large", value: "large" }
+        ]},
+
+        // ===== TRIALS SELECTOR =====
+        { type: "subheading", label: "Trials / Clinical Observations" },
         {
-          name: "tolerated",
-          type: "radio",
-          direction: "row",
-          options: ["Yes", "No"]
-        }
-      ]
-    },
-    {
-      type: "row",
-      fields: [
-        { type: "label", label: "SpO2:", style: { width: "40%" } },
-        { name: "spo2", type: "input", placeholder: "%" }
-      ]
-    },
-    {
-      type: "row",
-      fields: [
-        { type: "label", label: "RR:", style: { width: "40%" } },
-        { name: "rr", type: "input", placeholder: "bpm" }
-      ]
-    },
-    {
-      type: "row",
-      fields: [
-        { type: "label", label: "HR:", style: { width: "40%" } },
-        { name: "hr", type: "input", placeholder: "beats/min" }
+          name: "tracheostomy_trials",
+          label: "Select trials performed",
+          type: "checkbox-group",
+          options: [
+            { label: "Cuff deflation trial", value: "cuff_deflation" },
+            { label: "Digital Occlusion trial", value: "digital_occlusion" },
+            { label: "Speaking valve trial", value: "speaking_valve" },
+            { label: "Capping trial", value: "capping" },
+            { label: "Clinical Observations", value: "clinical_observations" },
+            { label: "Modified Evan's Blue Dye Test", value: "blue_dye_test" }
+          ]
+        },
+
+        // ===== CUFF DEFLATION =====
+        { type: "subheading", label: "Cuff deflation trial  – Respiration functions", showIf: { field: "tracheostomy_trials", includes: "cuff_deflation" } },
+        { name: "cuff_deflation", label: "Deflation", type: "radio", options: [{ label: "Partial", value: "partial" }, { label: "Complete", value: "complete" }], showIf: { field: "tracheostomy_trials", includes: "cuff_deflation" } },
+        { name: "cuff_tolerated", label: "Tolerated", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "cuff_deflation" } },
+        {
+          type: "row",
+          showIf: { field: "tracheostomy_trials", includes: "cuff_deflation" },
+          fields: [
+            { name: "cuff_spo2", label: "SpO2 (%)", type: "input" },
+            { name: "cuff_rr", label: "RR (bpm)", type: "input" },
+            { name: "cuff_hr", label: "HR (breaths/min)", type: "input" }
+          ]
+        },
+
+        // ===== DIGITAL OCCLUSION =====
+        { type: "subheading", label: "Digital Occlusion trial  –  Speaking", showIf: { field: "tracheostomy_trials", includes: "digital_occlusion" } },
+        { name: "dig_duration", label: "Duration tolerated (minutes)", type: "input", showIf: { field: "tracheostomy_trials", includes: "digital_occlusion" } },
+        { name: "dig_voice", label: "Voice quality", type: "radio", options: [{ label: "Clear", value: "clear" }, { label: "Wet", value: "wet" }, { label: "Breathy", value: "breathy" }, { label: "Strained", value: "strained" }, { label: "Absent", value: "absent" }], showIf: { field: "tracheostomy_trials", includes: "digital_occlusion" } },
+        { name: "dig_wob", label: "Work of breathing", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Increased", value: "increased" }], showIf: { field: "tracheostomy_trials", includes: "digital_occlusion" } },
+        {
+          type: "row",
+          showIf: { field: "tracheostomy_trials", includes: "digital_occlusion" },
+          fields: [
+            { name: "dig_spo2", label: "SpO2 (%)", type: "input" },
+            { name: "dig_rr", label: "RR (bpm)", type: "input" },
+            { name: "dig_hr", label: "HR (breaths/min)", type: "input" }
+          ]
+        },
+
+        // ===== SPEAKING VALVE =====
+        { type: "subheading", label: "Speaking valve trial  –  Speaking", showIf: { field: "tracheostomy_trials", includes: "speaking_valve" } },
+        { name: "sv_duration", label: "Duration tolerated (minutes)", type: "input", showIf: { field: "tracheostomy_trials", includes: "speaking_valve" } },
+        { name: "sv_voice", label: "Voice quality", type: "radio", options: [{ label: "Clear", value: "clear" }, { label: "Wet", value: "wet" }, { label: "Breathy", value: "breathy" }, { label: "Strained", value: "strained" }, { label: "Absent", value: "absent" }], showIf: { field: "tracheostomy_trials", includes: "speaking_valve" } },
+        { name: "sv_wob", label: "Work of breathing", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Increased", value: "increased" }], showIf: { field: "tracheostomy_trials", includes: "speaking_valve" } },
+        {
+          type: "row",
+          showIf: { field: "tracheostomy_trials", includes: "speaking_valve" },
+          fields: [
+            { name: "sv_spo2", label: "SpO2 (%)", type: "input" },
+            { name: "sv_rr", label: "RR (bpm)", type: "input" },
+            { name: "sv_hr", label: "HR (breaths/min)", type: "input" }
+          ]
+        },
+
+        // ===== CAPPING =====
+        { type: "subheading", label: "Capping trial  –  Respiration functions", showIf: { field: "tracheostomy_trials", includes: "capping" } },
+        { name: "cap_duration", label: "Duration tolerated (minutes)", type: "input", showIf: { field: "tracheostomy_trials", includes: "capping" } },
+        { name: "cap_voice", label: "Voice quality", type: "radio", options: [{ label: "Clear", value: "clear" }, { label: "Wet", value: "wet" }, { label: "Breathy", value: "breathy" }, { label: "Strained", value: "strained" }, { label: "Absent", value: "absent" }], showIf: { field: "tracheostomy_trials", includes: "capping" } },
+        { name: "cap_wob", label: "Work of breathing", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Increased", value: "increased" }], showIf: { field: "tracheostomy_trials", includes: "capping" } },
+        {
+          type: "row",
+          showIf: { field: "tracheostomy_trials", includes: "capping" },
+          fields: [
+            { name: "cap_spo2", label: "SpO2 (%)", type: "input" },
+            { name: "cap_rr", label: "RR (bpm)", type: "input" },
+            { name: "cap_hr", label: "HR (breaths/min)", type: "input" }
+          ]
+        },
+
+        // ===== CLINICAL OBSERVATIONS =====
+        { type: "subheading", label: "Clinical Observations", showIf: { field: "tracheostomy_trials", includes: "clinical_observations" } },
+        {
+          name: "clinical_obs",
+          label: "Observations (tick all that apply)",
+          type: "checkbox-group",
+          showIf: { field: "tracheostomy_trials", includes: "clinical_observations" },
+          options: [
+            { label: "Stable SpO₂ (≥ 95% on room air)", value: "stable_spo2" },
+            { label: "Stable RR/HR during capping or speaking valve trial", value: "stable_rr_hr" },
+            { label: "Adequate cough reflex and secretion clearance", value: "adequate_cough" },
+            { label: "Phonation achieved with speaking valve", value: "phonation_achieved" },
+            { label: "No significant desaturation (>3% drop) or respiratory distress", value: "no_desaturation" }
+          ]
+        },
+
+        // ===== MODIFIED EVAN'S BLUE DYE TEST =====
+        { type: "subheading", label: "Modified Evan's Blue Dye Test  –  Ingestion functions", showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_cough", label: "Cough", type: "radio", options: [{ label: "Immediate", value: "immediate" }, { label: "Delayed", value: "delayed" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_wet_voice", label: "Wet voice", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_wob", label: "Increased work of breathing", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        {
+          type: "row",
+          showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" },
+          fields: [
+            { name: "blue_spo2_baseline", label: "SPO2 Baseline (%)", type: "input" },
+            { name: "blue_spo2_post", label: "SPO2 Post test (%)", type: "input" }
+          ]
+        },
+        { name: "blue_spo2_drop", label: "Drop in SPO2 (≥ 3%)", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_dye_suction", label: "Presence of blue dye upon suction", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } }
       ]
     }
   ]
-}
-  ]
 };
+
 
 const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
   form_name: "Tracheostomy Management",
@@ -474,22 +477,38 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
         { type: "subheading", label: "TRACHEOSTOMY ASSESSMENT" },
 
         // ===== WEANING STATUS =====
+        // {
+        //   name: "weaning_status",
+        //   label: "Weaning Status",
+        //   type: "radio",
+        //   direction: "column",
+        //   options: [
+        //     {
+        //       label: "No difficulties observed during tracheostomy weaning. Suitable to proceed with weaning programme",
+        //       value: "no_difficulty"
+        //     },
+        //     {
+        //       label: "Poor tolerance to tracheostomy capping; requires full dependence",
+        //       value: "poor_tolerance"
+        //     }
+        //   ]
+        // },
         {
-          name: "weaning_status",
-          label: "Weaning Status",
-          type: "radio",
-          direction: "column",
-          options: [
-            {
-              label: "No difficulties observed during tracheostomy weaning. Suitable to proceed with weaning programme",
-              value: "no_difficulty"
-            },
-            {
-              label: "Poor tolerance to tracheostomy capping; requires full dependence",
-              value: "poor_tolerance"
-            }
-          ]
-        },
+  name: "weaning_status",
+  label: "Weaning Status",
+  type: "radio",
+  labelAbove: true,
+  options: [
+    {
+      label: "No difficulties observed during tracheostomy weaning. Suitable to proceed with weaning programme",
+      value: "no_difficulty"
+    },
+    {
+      label: "Poor tolerance to tracheostomy capping; requires full dependence",
+      value: "poor_tolerance"
+    }
+  ]
+},
 
         // ===== SYMPTOMS =====
         {
@@ -543,6 +562,16 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
             }
           ]
         },
+      {
+  name: "clinical_interpretation_other",
+  label: "Other (specify)",
+  type: "textarea",
+  placeholder: "Enter details",
+  showIf: {
+    field: "clinical_interpretation",
+    includes: "other"   // ✅ important
+  }
+},
 
         // ===== WEANING DECISION =====
         {

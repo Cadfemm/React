@@ -89,6 +89,8 @@ enteral_feeding_details: "",
 mixed_feeding_details: "",
     mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
     iddsi_level: "",
+    iddsi_food: "6",
+    iddsi_drink: "3",
 fluid_intake_details: "",
     ffq: "",
 ons_regime: "",
@@ -533,7 +535,7 @@ const submitAndSave = () => {
           diagnosis_problems: [],
           diet_breakfast: "", diet_morning_tea: "", diet_lunch: "", diet_afternoon_tea: "",
           diet_supper: "", diet_dinner: "", feeding_type: "",
-          enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", fluid_intake_details: "",
+          enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", iddsi_food: "6", iddsi_drink: "3", fluid_intake_details: "",
           ons_regime: "", weight_record_date: "",
           wheelchair_weight: patient?.wheelchair_weight || "30",
           wheelchair_type: patient?.wheelchair_type || "",
@@ -657,6 +659,7 @@ const submitAndSave = () => {
           { name: "sleep", label: "Sleeping Pattern", type: "single-select", options: [{ label: "Good", value: "Good" }, { label: "Difficulty in sleeping due to Pain", value: "PAIN" }, { label: "Difficulty in sleeping due to other reason", value: "OTHER" }, { label: "Difficulty in sleeping", value: "NOREASON" }] },
           { name: "sleep_difficulty_reason", label: "Reason", type: "textarea", showIf: { field: "sleep", oneOf: ["OTHER"] } },
           { name: "hypoglycemic_episode", label: "Hypoglycemic Episode", type: "single-select", options: [{ label: "Never", value: "Never" }, { label: "Occasional", value: "Occasional" }, { label: "Frequent", value: "Frequent" }, { label: "Unknown", value: "UNKNOWN" }, { label: "Not Relevant", value: "NOT_RELEVANT" }] },
+          { name: "hypoglycemic_episode_details", label: "Hypoglycemic Episode Details", type: "textarea", placeholder: "Please specify...", showIf: { field: "hypoglycemic_episode", oneOf: ["Occasional", "Frequent", "UNKNOWN", "NOT_RELEVANT"] } },
           { name: "other_complaints", label: "Other Nutrition-Related Complaints", type: "textarea" },
           { type: "subheading", label: "Food / Nutrition Related History" },
           { name: "medications", label: "List of Medication", type: "textarea", readOnly: true },
@@ -673,7 +676,37 @@ const submitAndSave = () => {
           { name: "enteral_feeding_details", label: "Enteral Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "enteral" } },
           { name: "mixed_feeding_table", label: "Mixed Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "mixed" } },
           { name: "mixed_feeding_details", label: "Mixed Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "mixed" } },
-          { name: "iddsi_level", label: "IDDSI Level", type: "input", readOnly: true, showIf: { field: "feeding_type", equals: "mixed" } },
+
+          { type: "subheading", label: "Texture Modification @ IDDSI Level", showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] } },
+          {
+            name: "iddsi_food",
+            label: "Food",
+            type: "radio",
+            labelAbove: true,
+            showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] },
+            options: [
+              { label: "7 – Regular", value: "7" },
+              { label: "6 – Easy To Chew", value: "6" },
+              { label: "5 – Soft & Bite-Sized", value: "5" },
+              { label: "4 – Pureed", value: "4" },
+              { label: "3 – Liquidised", value: "3" }
+            ]
+          },
+          {
+            name: "iddsi_drink",
+            label: "Drink",
+            type: "radio",
+            labelAbove: true,
+            showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] },
+            options: [
+              { label: "0 – Thin", value: "0" },
+              { label: "1 – Slightly Thick", value: "1" },
+              { label: "2 – Mildly Thick", value: "2" },
+              { label: "3 – Moderately Thick", value: "3" },
+              { label: "4 – Extremely Thick", value: "4" }
+            ]
+          },
+
           { name: "fluid_intake_details", label: "Fluid Intake", type: "input", showIf: { field: "feeding_type", oneOf: ["oral", "enteral", "mixed"] } },
           {
             name: "ffq_assessment",

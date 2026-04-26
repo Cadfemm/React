@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useMemo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 import CurrentDietIntake from "./CurrentDietIntake";
@@ -403,6 +405,82 @@ const OBJECTIVE_SCHEMA = {
             "Scarring"
           ]
         },
+        // {
+        //   type: "subheading",
+        //   label: "Cranial Nerve Examination"
+        // },
+        {
+          name: "cranial_nerve",
+          label: "Cranial Nerve Examination",
+          type: "checkbox-group",
+          options: [
+            { label: "CN V", value: "cn_v" },
+            { label: "CN VII", value: "cn_vii" },
+            { label: "CN IX & X", value: "cn_ix_x" },
+            { label: "CN XII", value: "cn_xii" }
+          ]
+        },
+
+        // CN V
+        {  label: "CN V", showIf: { field: "cranial_nerve", includes: "cn_v" } },
+        { name: "cn5_motor", label: "Motor (Jaw ROM/strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_v" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+        { name: "cn5_sensory", label: "Sensory (Facial sensation)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_v" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+
+        // CN VII
+        { label: "CN VII", showIf: { field: "cranial_nerve", includes: "cn_vii" } },
+        { name: "cn7_motor", label: "Motor (Facial movements)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_vii" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+        { name: "cn7_symmetry", label: "Facial Symmetry", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_vii" }, options: [
+          { label: "Symmetry", value: "symmetry" },
+          { label: "Asymmetrical", value: "asymmetrical" },
+          { label: "Left Facial Droop", value: "left_droop" },
+          { label: "Right Facial Droop", value: "right_droop" }
+        ]},
+        { name: "cn7_sensory", label: "Sensory (Taste - ant 2/3 tongue)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_vii" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+
+        // CN IX & X
+        { label: "CN IX & X", showIf: { field: "cranial_nerve", includes: "cn_ix_x" } },
+        { name: "cn9_10_motor", label: "Motor (SP, Cough)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_ix_x" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+        { name: "cn9_10_sensory", label: "Sensory (Gag)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_ix_x" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Reduced", value: "reduced" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+        { name: "cn9_10_voice", label: "Voice quality", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_ix_x" }, options: [
+          { label: "No Abnormality Detected", value: "nad" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+
+        // CN XII
+        { label: "CN XII", showIf: { field: "cranial_nerve", includes: "cn_xii" } },
+        { name: "cn12_motor", label: "Motor (Tongue ROM/strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_xii" }, options: [
+          { label: "Within Normal Limit", value: "wnl" },
+          { label: "Impaired", value: "impaired" },
+          { label: "Not Tested", value: "not_tested" }
+        ]},
+
+
+
         {
   name: "objectiveLauncher",
   type: "assessment-launcher",
@@ -422,6 +500,8 @@ const OBJECTIVE_SCHEMA = {
     ]
   }
 },
+
+
         
         
       ]

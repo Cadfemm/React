@@ -641,6 +641,148 @@ function InfoTooltip({ info, children, showIcon = true }) {
   );
 }
 
+function ImageModal({ src, alt, onClose }) {
+  if (!src) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+        padding: 20,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          position: "relative",
+          maxWidth: "90%",
+          maxHeight: "90%",
+          backgroundColor: "#fff",
+          borderRadius: 8,
+          padding: 20,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            background: "#ef4444",
+            color: "#fff",
+            border: "none",
+            borderRadius: "50%",
+            width: 32,
+            height: 32,
+            fontSize: 18,
+            fontWeight: "bold",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1,
+          }}
+        >
+          ×
+        </button>
+        <img
+          src={src}
+          alt={alt || "Reference Image"}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "80vh",
+            objectFit: "contain",
+            display: "block",
+          }}
+        />
+        {alt && (
+          <div
+            style={{
+              marginTop: 12,
+              textAlign: "center",
+              fontSize: 14,
+              color: "#6b7280",
+              fontWeight: 500,
+            }}
+          >
+            {alt}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SubheadingWithImage({ field, languageConfig }) {
+  const [showImageModal, setShowImageModal] = React.useState(false);
+
+  return (
+    <>
+      <div style={{
+        ...styles.subheading,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+      }}>
+        {t(
+          field.label,
+          languageConfig?.enabled ? languageConfig.lang : "en"
+        )}
+        {field.info?.type === "image" && (
+          <span
+            onClick={() => setShowImageModal(true)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
+              backgroundColor: "#3b82f6",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: "bold",
+              cursor: "pointer",
+              userSelect: "none",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#2563eb";
+              e.currentTarget.style.transform = "scale(1.1)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#3b82f6";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+            title="Click to view IDDSI reference chart"
+          >
+            ℹ
+          </span>
+        )}
+      </div>
+      {showImageModal && field.info?.type === "image" && (
+        <ImageModal
+          src={field.info.src}
+          alt={field.info.alt}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
+    </>
+  );
+}
+
+
 
 const t = (text, lang) => {
   if (!text) return "";
@@ -2816,6 +2958,12 @@ if (typeof col === "object" && col.type === "radio") {
     return null;
   }
 
+  // If field has image info, use the SubheadingWithImage component
+  if (field.info?.type === "image") {
+    return <SubheadingWithImage field={field} languageConfig={languageConfig} />;
+  }
+
+  // Otherwise, render simple subheading
   return (
     <div style={styles.subheading}>
       {t(
@@ -4438,12 +4586,26 @@ function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
         </div>
       )}
 
-      {/* Number ticks */}
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 2 }}>
-        {Array.from({ length: Math.floor(span / step) + 1 }, (_, i) => min + i * step).map(n => (
-          <span key={n} style={{ fontWeight: Number(value) === n ? 700 : 400, color: activeRange?.color || "#64748b" }}>{n}</span>
-        ))}
-      </div>
+      {/* Number ticks — show boundary ticks from ranges, or evenly spaced (max ~11 ticks) */}
+      {(() => {
+        const MAX_TICKS = 11;
+        // Prefer range boundary values so labels align with colour bands
+        const boundaryTicks = normalised.length > 0
+          ? [...new Set([min, ...normalised.flatMap(r => [r.from, r.to]), max])].sort((a, b) => a - b)
+          : null;
+        // Fall back to evenly spaced ticks when no ranges or too many boundaries
+        const tickInterval = Math.ceil(span / (MAX_TICKS - 1));
+        const evenTicks = Array.from({ length: Math.floor(span / tickInterval) + 1 }, (_, i) => min + i * tickInterval);
+        if (evenTicks[evenTicks.length - 1] !== max) evenTicks.push(max);
+        const ticks = (boundaryTicks && boundaryTicks.length <= MAX_TICKS) ? boundaryTicks : evenTicks;
+        return (
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 2 }}>
+            {ticks.map(n => (
+              <span key={n} style={{ fontWeight: Number(value) === n ? 700 : 400, color: activeRange?.color || "#64748b" }}>{n}</span>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Slider track */}
       <div style={{ position: "relative" }}>

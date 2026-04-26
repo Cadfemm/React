@@ -4,6 +4,8 @@ import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { DIET_ASSESSMENT_REGISTRY } from "./DietAssessmentWrapper";
 import FFQAssessment from "./FFQAssessment";
 import GrowthChartAssessment from "./GrowthChart";
+import dietImage from "../../../assets/diet_image.png";
+
 
 const ET_OPTIONS = {
   "increased_energy_expenditure": [
@@ -89,6 +91,8 @@ enteral_feeding_details: "",
 mixed_feeding_details: "",
     mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
     iddsi_level: "",
+    iddsi_food_level: "6",
+    iddsi_drink_level: "3",
 fluid_intake_details: "",
     ffq: "",
 ons_regime: "",
@@ -533,7 +537,7 @@ const submitAndSave = () => {
           diagnosis_problems: [],
           diet_breakfast: "", diet_morning_tea: "", diet_lunch: "", diet_afternoon_tea: "",
           diet_supper: "", diet_dinner: "", feeding_type: "",
-          enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", fluid_intake_details: "",
+          enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", iddsi_food_level: "6", iddsi_drink_level: "3", fluid_intake_details: "",
           ons_regime: "", weight_record_date: "",
           wheelchair_weight: patient?.wheelchair_weight || "30",
           wheelchair_type: patient?.wheelchair_type || "",
@@ -635,8 +639,11 @@ const submitAndSave = () => {
             label: "Current Nutrition Intake",
             type: "radio",
             options: [
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" }
+                // { label: "Yes", value: "yes" },
+                // { label: "No", value: "no" }
+                 { label: "Oral Feeding", value: "oral" },
+    { label: "Enteral Feeding", value: "enteral" },
+    { label: "Mixed Feeding", value: "mixed" }
             ]
             },
             {
@@ -645,18 +652,27 @@ const submitAndSave = () => {
             type: "textarea"
             },
 
-            { type: "subheading", label: "Texture Modification @ IDDSI LEVEL" },
+            { 
+                type: "subheading", 
+                label: "Texture Modification @ IDDSI Level",
+                info: {
+                    type: "image",
+                    src: dietImage,
+                    alt: "IDDSI Reference Chart"
+                }
+            },
 
             {
             name: "iddsi_food_level",
             label: "Food",
             type: "radio",
+            labelAbove: true,
             options: [
-                { label: "7 Regular", value: "7" },
-                { label: "6 Easy To Chew", value: "6" },
-                { label: "5 Soft & Bite-Sized", value: "5" },
-                { label: "4 Pureed", value: "4" },
-                { label: "3 Liquidised", value: "3" }
+                { label: "7 – Regular", value: "7" },
+                { label: "6 – Easy To Chew", value: "6" },
+                { label: "5 – Soft & Bite-Sized", value: "5" },
+                { label: "4 – Pureed", value: "4" },
+                { label: "3 – Liquidised", value: "3" }
             ]
             },
 
@@ -664,12 +680,13 @@ const submitAndSave = () => {
             name: "iddsi_drink_level",
             label: "Drink",
             type: "radio",
+            labelAbove: true,
             options: [
-                { label: "0 Thin", value: "0" },
-                { label: "1 Slightly Thick", value: "1" },
-                { label: "2 Mildly Thick", value: "2" },
-                { label: "3 Moderately Thick", value: "3" },
-                { label: "4 Extremely Thick", value: "4" }
+                { label: "0 – Thin", value: "0" },
+                { label: "1 – Slightly Thick", value: "1" },
+                { label: "2 – Mildly Thick", value: "2" },
+                { label: "3 – Moderately Thick", value: "3" },
+                { label: "4 – Extremely Thick", value: "4" }
             ]
             },
 
@@ -687,7 +704,13 @@ const submitAndSave = () => {
             {
             name: "intake_vs_requirement_remarks",
             label: "Remarks",
-            type: "input"
+            type: "input",
+            showIf: {
+                or: [
+                    { field: "intake_vs_requirement", equals: "inadequate" },
+                    { field: "intake_vs_requirement", equals: "excessive" }
+                ]
+            }
             },
 
             {
@@ -700,6 +723,12 @@ const submitAndSave = () => {
                 { label: "Diarrhea", value: "diarrhea" },
                 { label: "Others", value: "others" }
             ]
+            },
+            {
+            name: "bowel_pattern_others",
+            label: "Specify Others",
+            type: "input",
+            showIf: { field: "bowel_pattern", equals: "others" }
             },
 
             {
@@ -717,14 +746,21 @@ const submitAndSave = () => {
             {
             name: "recent_hypoglycemic_remarks",
             label: "Remarks",
-            type: "input"
+            type: "input",
+            showIf: {
+                or: [
+                    { field: "recent_hypoglycemic_episodes", equals: "occasional" },
+                    { field: "recent_hypoglycemic_episodes", equals: "frequent" },
+                    { field: "recent_hypoglycemic_episodes", equals: "unknown" }
+                ]
+            }
             },
 
-            {
-            name: "other_nutrition_related_complaints",
-            label: "Other Nutritional-Related Complaints",
-            type: "textarea"
-            },
+            // {
+            // name: "other_nutrition_related_complaints",
+            // label: "Other Nutritional-Related Complaints",
+            // type: "textarea"
+            // },
 
             {
             name: "ons_regime",
@@ -771,7 +807,7 @@ const submitAndSave = () => {
           ]},
           { name: "weight_record_date", label: "Date of Weight/Height Record", type: "input", readOnly: true },
           { name: "weight_change", label: "Weight Changes", type: "radio", options: [{ label: "Yes", value: "Yes" }, { label: "No", value: "No" }] },
-          { name: "previous_weight", label: "Previous Weight (kg)", type: "input", showIf: { field: "weight_change", equals: "Yes" } },
+          { name: "previous_weight", label: "Current Weight (kg)", type: "input", showIf: { field: "weight_change", equals: "Yes" } },
           { type: "row", fields: [
             { name: "wheelchair_weight", label: "Wheelchair Weight", type: "input" },
             { name: "wheelchair_type", label: "Wheelchair Type", type: "single-select", options: [
@@ -782,16 +818,24 @@ const submitAndSave = () => {
             ]}
           ]},
           { name: "anthro_remarks", label: "Remarks", type: "textarea" },
-          { type: "subheading", label: "Vital Signs & Measurements" },
-          { type: "row", fields: [
-            { name: "bp", label: "Blood Pressure", type: "input", readOnly: true },
-            { name: "pulse", label: "Heart Rate", type: "input", readOnly: true },
-            { name: "rr", label: "Respiratory Rate", type: "input", readOnly: true },
-            { name: "temp", label: "Temperature", type: "input", readOnly: true },
-            { name: "spo2", label: "SpO₂", type: "input", readOnly: true },
-            { name: "rbs", label: "Random Blood Sugar", type: "input", readOnly: true },
-            { name: "pain", label: "Pain Score", type: "input", readOnly: true }
-          ]},
+          
+          { 
+            type: "accordion", 
+            name: "vital_signs_accordion",
+            label: "Vital Signs & Measurements",
+            defaultOpen: false,
+            children: [
+              { type: "row", fields: [
+                { name: "bp", label: "Blood Pressure", type: "input", readOnly: true },
+                { name: "pulse", label: "Heart Rate", type: "input", readOnly: true },
+                { name: "rr", label: "Respiratory Rate", type: "input", readOnly: true },
+                { name: "temp", label: "Temperature", type: "input", readOnly: true },
+                { name: "spo2", label: "SpO₂", type: "input", readOnly: true },
+                { name: "rbs", label: "Random Blood Sugar", type: "input", readOnly: true },
+                { name: "pain", label: "Pain Score", type: "input", readOnly: true }
+              ]}
+            ]
+          },
           { name: "diet_prognosis", label: "Diet Prognosis", type: "single-select", options: [
             { label: "Excellent", value: "excellent" },
             { label: "Good", value: "good" },
