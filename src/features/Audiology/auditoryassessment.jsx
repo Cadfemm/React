@@ -3,6 +3,7 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function AuditoryAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   const HHIA_QUESTIONS = [
     "Does a hearing problem cause you to use the phone less often than you would like?",
@@ -101,7 +102,8 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
 
   const schema = {
     title: "Additional Auditory Profile",
-    actions: [{ type: "back", label: "Back" }],
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }, { type: "back", label: "Back" }],
 
     sections: [
       {
@@ -111,7 +113,7 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
           // SUBJECTIVE SCALES
           // =========================
           { type: "subheading", label: "Subjective Rating Scales (Hearing Loss)" },
-
+          { type: "info-text", text: "0 = none, 10 = worst possible"},
           { name: "emotional_vas", label: "Emotional (0–10)", type: "scale-slider", min: 0, max: 10 },
           { name: "social_vas", label: "Social / Situational (0–10)", type: "scale-slider", min: 0, max: 10 },
 
@@ -124,24 +126,22 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
             name: `hhia_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: 0 },
-              { label: "Sometimes (2)", value: 2 },
-              { label: "Yes (4)", value: 4 }
-            ]
+            options: scoresVisible
+              ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Yes (4)", value: 4 }]
+              : [{ label: "No", value: 0 }, { label: "Sometimes", value: 2 }, { label: "Yes", value: 4 }]
           })),
 
           { type: "info-text", text: "Scoring: No=0, Sometimes=2, Yes=4" },
 
-          { name: "hhia_social", label: "Social Score (/48)", type: "score-box" },
-          { name: "hhia_emotional", label: "Emotional Score (/52)", type: "score-box" },
-          { name: "hhia_total", label: "Total Score (/100)", type: "score-box" },
-
-          { name: "hhia_social_percent", label: "Social %", type: "score-box" },
-          { name: "hhia_emotional_percent", label: "Emotional %", type: "score-box" },
-          { name: "hhia_total_percent", label: "Total %", type: "score-box" },
-
-          { name: "hhia_interpretation", label: "Interpretation", type: "score-box" },
+          ...(scoresVisible ? [
+            { name: "hhia_social", label: "Social Score (/48)", type: "score-box" },
+            { name: "hhia_emotional", label: "Emotional Score (/52)", type: "score-box" },
+            { name: "hhia_total", label: "Total Score (/100)", type: "score-box" },
+            { name: "hhia_social_percent", label: "Social %", type: "score-box" },
+            { name: "hhia_emotional_percent", label: "Emotional %", type: "score-box" },
+            { name: "hhia_total_percent", label: "Total %", type: "score-box" },
+            { name: "hhia_interpretation", label: "Interpretation", type: "score-box" },
+          ] : []),
 
           // =========================
           // COSI - PRE
@@ -271,7 +271,11 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
       values={{ ...values, mode }}
       onChange={handleChange}
       layout="nested"
-      onAction={(type) => type === "back" && onBack()}
+      showScores={scoresVisible}
+      onAction={(type) => {
+        if (type === "toggle-show-scores") setScoresVisible(v => !v);
+        if (type === "back") onBack();
+      }}
     />
   );
 }

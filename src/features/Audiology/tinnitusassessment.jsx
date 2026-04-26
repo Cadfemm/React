@@ -3,6 +3,7 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function TinnitusAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
+  const [scoresVisible, setScoresVisible] = useState(true);
 
   const THI_QUESTIONS = [
     "Because of your tinnitus, is it difficult for you to concentrate?",
@@ -193,12 +194,12 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
 
   const schema = {
     title: "Additional Tinnitus Profile",
-    actions: [{ type: "back", label: "Back" }],
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }, { type: "back", label: "Back" }],
 
     sections: [
       {
-        // ✅ SINGLE UNIFIED SECTION - all fields grouped together
-        title: null, // No section title, uses main form title
+        title: null,
         fields: [
           // ══════════════════════════════════════════════════════════
           // CASE HISTORY
@@ -220,10 +221,7 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
             label: "Ears affected",
             type: "radio",
             options: ["Right", "Left", "Bilateral", "In head"],
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
+            showIf: { field: "mode", equals: "followup" }
           },
 
           {
@@ -289,21 +287,16 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           // VAS SECTION
           // ══════════════════════════════════════════════════════════
           { type: "subheading", label: "Tinnitus Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
-
-          {
-            type: "info-text",
-            text: "0 = none, 10 = worst possible",
-            showIf: { field: "enable_vas", equals: "Yes" }
-          },
+          { type: "info-text", text: "0 = none, 10 = worst possible", showIf: { field: "enable_vas", equals: "Yes" } },
 
           { name: "vas_loudness", label: "Tinnitus Loudness - How loud is your tinnitus most of the time?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_loudness_severity", label: "Loudness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
+          ...(scoresVisible ? [{ name: "vas_loudness_severity", label: "Loudness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } }] : []),
 
           { name: "vas_annoyance", label: "Tinnitus Annoyance - How annoying or bothersome is your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_annoyance_severity", label: "Annoyance Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
+          ...(scoresVisible ? [{ name: "vas_annoyance_severity", label: "Annoyance Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } }] : []),
 
           { name: "vas_awareness", label: "Tinnitus Awareness - How much of the time are you aware of your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_awareness_severity", label: "Awareness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
+          ...(scoresVisible ? [{ name: "vas_awareness_severity", label: "Awareness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } }] : []),
 
           // ══════════════════════════════════════════════════════════
           // THI SECTION
@@ -314,22 +307,18 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
             name: `thi_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: "0" },
-              { label: "Sometimes (2)", value: "2" },
-              { label: "Yes (4)", value: "4" }
-            ],
+            options: scoresVisible
+              ? [{ label: "No (0)", value: "0" }, { label: "Sometimes (2)", value: "2" }, { label: "Yes (4)", value: "4" }]
+              : [{ label: "No", value: "0" }, { label: "Sometimes", value: "2" }, { label: "Yes", value: "4" }],
             showIf: { field: "enable_thi", equals: "Yes" }
           })),
 
-          {
-            type: "info-text",
-            text: "Scoring: No = 0, Sometimes = 2, Yes = 4",
-            showIf: { field: "enable_thi", equals: "Yes" }
-          },
+          { type: "info-text", text: "Scoring: No = 0, Sometimes = 2, Yes = 4", showIf: { field: "enable_thi", equals: "Yes" } },
 
-          { name: "thi_score", label: "THI Score", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
-          { name: "thi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
+          ...(scoresVisible ? [
+            { name: "thi_score", label: "THI Score", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
+            { name: "thi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
+          ] : []),
 
           // ══════════════════════════════════════════════════════════
           // TFI SECTION
@@ -345,10 +334,11 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
             showIf: { field: "enable_tfi", equals: "Yes" }
           })),
 
-          { name: "tfi_score", label: "TFI Score", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
-          { name: "tfi_severity_level", label: "Severity Level", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },          
-          { name: "tfi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
-
+          ...(scoresVisible ? [
+            { name: "tfi_score", label: "TFI Score", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+            { name: "tfi_severity_level", label: "Severity Level", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+            { name: "tfi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+          ] : []),
 
           // ══════════════════════════════════════════════════════════
           // LIFESTYLE & FUNCTIONAL IMPACT
@@ -364,34 +354,9 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           // ══════════════════════════════════════════════════════════
           // COUNSELING SUMMARY
           // ══════════════════════════════════════════════════════════
-          {
-            type: "subheading",
-            label: "Counseling Summary",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          },
-
-          {
-            name: "understanding",
-            label: "Client's Understanding Of Tinnitus",
-            type: "input",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          },
-
-          {
-            name: "recommendations",
-            label: "Recommendations",
-            type: "input",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          }
+          { type: "subheading", label: "Counseling Summary", showIf: { field: "mode", equals: "followup" } },
+          { name: "understanding", label: "Client's Understanding Of Tinnitus", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "recommendations", label: "Recommendations", type: "input", showIf: { field: "mode", equals: "followup" } }
         ]
       }
     ]
@@ -403,7 +368,11 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
       values={{ ...values, mode }}
       onChange={handleChange}
       layout="nested"
-      onAction={(type) => type === "back" && onBack()}
+      showScores={scoresVisible}
+      onAction={(type) => {
+        if (type === "toggle-show-scores") setScoresVisible(v => !v);
+        if (type === "back") onBack();
+      }}
     />
   );
 }
