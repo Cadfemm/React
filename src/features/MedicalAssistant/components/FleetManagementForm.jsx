@@ -199,6 +199,12 @@ const PATIENT_FLEET_SCHEMA = {
             type: "radio",
             options: KONDISI_OB_OPTIONS
           },
+          {
+            name: "kondisi_ob_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            showIf: { field: "kondisi_ob", equals: "others" }
+          },
 {
             name: "ambulatory_aid",
             label: { en: "Ambulatory Aid", ms: "Alat Bantu Berjalan" },
@@ -226,12 +232,12 @@ const PATIENT_FLEET_SCHEMA = {
             showIf: { field: "jenis_kes", equals: "others" }
           },
           { type: "subheading", label: { en: "Delivery Information", ms: "Maklumat Penghantaran" } },
-          {
-            name: "kondisi_ob_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            showIf: { field: "kondisi_ob", equals: "others" }
-          },
+          // {
+          //   name: "kondisi_ob_others",
+          //   label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+          //   type: "input",
+          //   showIf: { field: "kondisi_ob", equals: "others" }
+          // },
 
           {
             name: "lokasi_penghantaran",

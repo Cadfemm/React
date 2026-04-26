@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
@@ -64,7 +65,27 @@ export default function CurrentDietIntake({ mode = "objective" }) {
         }
       }
 
-      // 🔥 IDDSI AUTO MAP
+      // clear opposite type's checkboxes + ml inputs when switching Select Type
+      if (name === "consistencyType") {
+        if (value === "fluids") {
+          delete updated.food_iddsi_level;
+          delete updated.liquidised_ml;
+          delete updated.pureed_ml;
+          delete updated.minced_tsp;
+          delete updated.soft_tsp;
+          delete updated.easy_chew_piece;
+          delete updated.regular_piece;
+        } else if (value === "food") {
+          delete updated.fluid_iddsi_level;
+          delete updated.thin_ml;
+          delete updated.slightly_thick_ml;
+          delete updated.mildly_thick_ml;
+          delete updated.moderately_thick_ml;
+          delete updated.extremely_thick_ml;
+        }
+      }
+
+      // 🔥 IDDSI AUTO MAP (subjective)
       if (name === "iddsiLevel") {
         const map = {
           "0": { fluids: "Thin", food: "" },
@@ -77,9 +98,25 @@ export default function CurrentDietIntake({ mode = "objective" }) {
           "7EC": { fluids: "", food: "Regular - Easy to chew" },
           "7": { fluids: "", food: "Regular" }
         };
-
         updated.fluids = map[value]?.fluids || "";
         updated.food = map[value]?.food || "";
+      }
+
+      // 🔥 IDDSI AUTO MAP (plan)
+      if (name === "plan_iddsi_level") {
+        const map = {
+          "0": { plan_fluids: "Thin", plan_food: "" },
+          "1": { plan_fluids: "Slightly Thick", plan_food: "" },
+          "2": { plan_fluids: "Mildly Thick", plan_food: "" },
+          "3": { plan_fluids: "Moderately Thick", plan_food: "Liquidised" },
+          "4": { plan_fluids: "Extremely Thick", plan_food: "Pureed" },
+          "5": { plan_fluids: "", plan_food: "Minced & Moist" },
+          "6": { plan_fluids: "", plan_food: "Soft & Bite-sized" },
+          "7EC": { plan_fluids: "", plan_food: "Regular - Easy to chew" },
+          "7": { plan_fluids: "", plan_food: "Regular" }
+        };
+        updated.plan_fluids = map[value]?.plan_fluids || "";
+        updated.plan_food = map[value]?.plan_food || "";
       }
 
       return updated;
@@ -204,13 +241,13 @@ export default function CurrentDietIntake({ mode = "objective" }) {
 const SCHEMA_Objective = {
   sections: [
     {
-      title: "Consistencies & amount trialled",
+      // title: "Consistencies & amount trialled",
       fields: [
                   { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},
 
        {
   name: "consistencyType",
-  label: "Select Type",
+  label: "Consistencies & amount trialled",
   type: "radio",
   options: [
     { label: "Fluids", value: "fluids" },
@@ -218,43 +255,122 @@ const SCHEMA_Objective = {
   ]
 },
 
-// ===== FLUIDS (checkbox + ml input per level) =====
 {
   name: "fluid_iddsi_level",
-  type: "checkbox-group",
   label: "Fluids: IDDSI Level",
+  type: "checkbox-group",
   options: [
-    { label: "0 - Thin", value: "0" },
-    { label: "1 - Slightly Thick", value: "1" },
-    { label: "2 - Mildly Thick", value: "2" },
-    { label: "3 - Moderately Thick", value: "3" },
-    { label: "4 - Extremely Thick", value: "4" }
+    { label: "0 - Thin", value: "thin" },
+    { label: "1 - Slightly Thick", value: "slightly_thick" },
+    { label: "2 - Mildly Thick", value: "mildly_thick" },
+    { label: "3 - Moderately Thick", value: "moderately_thick" },
+    { label: "4 - Extremely Thick", value: "extremely_thick" }
   ],
   showIf: {
     field: "consistencyType",
     equals: "fluids"
   }
 },
-// ===== FOOD (checkbox + ml input per level) =====
 {
-  name: "food_iddsi_level",
-  type: "checkbox-group",
-  label: "Food: IDDSI Level",
-  options: [
-    { label: "3 - Liquidised", value: "3" },
-    { label: "4 - Pureed", value: "4" },
-    { label: "5 - Minced & Moist", value: "5" },
-    { label: "6 - Soft & Bite-sized", value: "6" },
-    { label: "7EC - Easy to chew", value: "7EC" },
-    { label: "7 - Regular", value: "7" }
-  ],
-  showIf: {
-    field: "consistencyType",
-    equals: "food"
-  }
+  name: "thin_ml",
+  label: "0 - Thin (ml)",
+  type: "input",
+  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "thin" } }
 },
+{
+  name: "slightly_thick_ml",
+  label: "1 - Slightly Thick (ml)",
+  type: "input",
+  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "slightly_thick" } }
+},
+{
+  name: "mildly_thick_ml",
+  label: "2 - Mildly Thick (ml)",
+  type: "input",
+  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "mildly_thick" } }
+},
+{
+  name: "moderately_thick_ml",
+  label: "3 - Moderately Thick (ml)",
+  type: "input",
+  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "moderately_thick" } }
+},
+{
+  name: "extremely_thick_ml",
+  label: "4 - Extremely Thick (ml)",
+  type: "input",
+  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "extremely_thick" } }
+},
+// ===== FOOD (checkbox + ml input per level) =====
 
 // ===== FOOD (simple checkbox selection) =====
+{
+          name: "food_iddsi_level",
+          label: "Food: IDDSI Level",
+          type: "checkbox-group",
+          options: [
+            { label: "3 - Liquidised", value: "liquidised" },
+            { label: "4 - Pureed", value: "pureed" },
+            { label: "5 - Minced & Moist", value: "minced" },
+            { label: "6 - Soft & Bite-sized", value: "soft" },
+            { label: "7EC - Easy to chew", value: "easy_chew" },
+            { label: "7 - Regular", value: "regular" }
+          ],
+          showIf: {
+            field: "consistencyType",
+            equals: "food"
+          }
+        },
+
+        // 🔹 INPUTS (IMPORTANT: MUST BE INSIDE SAME fields ARRAY)
+
+        {
+          name: "liquidised_ml",
+          label: "3 - Liquidised (ml)",
+          type: "input",
+          placeholder: "Enter ml",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "liquidised" } }
+        },
+
+        {
+          name: "pureed_ml",
+          label: "4 - Pureed (ml)",
+          type: "input",
+          placeholder: "Enter ml",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "pureed" } }
+        },
+
+        {
+          name: "minced_tsp",
+          label: "5 - Minced & Moist (tsp)",
+          type: "input",
+          placeholder: "Enter tsp",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "minced" } }
+        },
+
+        {
+          name: "soft_tsp",
+          label: "6 - Soft & Bite-sized (tsp)",
+          type: "input",
+          placeholder: "Enter tsp",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "soft" } }
+        },
+
+        {
+          name: "easy_chew_piece",
+          label: "7EC - Easy to chew (piece)",
+          type: "input",
+          placeholder: "Enter pieces",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "easy_chew" } }
+        },
+
+        {
+          name: "regular_piece",
+          label: "7 - Regular (piece)",
+          type: "input",
+          placeholder: "Enter pieces",
+          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "regular" } }
+        },
 
       ]
     },
@@ -491,22 +607,35 @@ const SCHEMA_ASSESSMENT = {
         label: "Swallowing",
         options: [
           { label: "No swallowing impairment", value: "none" },
-          { label: "Signs and symptoms of dysphagia present (ICD-10: R13)", value: "dysphagia" }
+          { label: "The patient presents with signs and symptoms of dysphagia", value: "dysphagia" }
         ]
       },
-      { type: "subheading", label: "Characteristics"},
+      { type: "subheading", label: "Characteristics", showIf: { field: "swallowing_status", equals: "dysphagia" } },
 
       {
+        name: "characteristics",
         type: "checkbox-group",
-        label: "Characteristics ",
+        label: "Characteristics",
+        showIf: { field: "swallowing_status", equals: "dysphagia" },
         options: [
           { label: "Anterior spillage", value: "anterior_spillage" },
           { label: "Slow/ineffective mastication", value: "mastication" },
           { label: "Oral residue post swallow", value: "residue" },
           { label: "Overt signs of aspiration (coughing, wet voice, increased work of breathing)", value: "overt_aspiration" },
           { label: "Suspected silent aspiration (reduced cough response)", value: "silent_aspiration" },
-          { label: "Other(s)", value: "other", hasTextInput: true }
+          { label: "Other(s)", value: "other" }
         ]
+      },
+      {
+        name: "characteristics_other",
+        label: "Other(s) - please specify",
+        type: "input",
+        placeholder: "Enter details",
+        showIf: {
+          field: "characteristics",
+          includes: "other",
+          and: { field: "swallowing_status", equals: "dysphagia" }
+        }
       },
 
         // ===== FOIS SCALE =====
@@ -692,43 +821,43 @@ const SCHEMA_PLAN = {
     label: "Fluids: Frequency",
     options: ["Every feeding time", "As & when"]
   },
-   {
-    name: "Non-Oral Feeding",
+  {
+    name: "non_oral_feeding",
     type: "radio",
     label: "Non-Oral Feeding",
-    options: ["Continue enteral feeding as per dietition's order", "N/A"]
+    options: [
+      { label: "Continue enteral feeding as per dietitian's order", value: "enteral" },
+      { label: "N/A", value: "na" }
+    ]
   },
   {
-            name: "iddsiLevel",
-            label: "IDDSI Level",
-            type: "radio",
-            options: ["0","1","2","3","4","5","6","7EC","7"],
-            visibleIf: { dietType: "enteral" }
-          },
-          {
-  type: "row",
-  visibleIf: { dietType: "enteral" },
-  fields: [
-    {
-      name: "fluids",
-      label: "Fluids",
-      type: "input",
-      readOnly: true,
-      visibleIf: (data) =>
-        ["0","1","2","3","4"].includes(data.iddsiLevel),
-      style: { flex: 1 }
-    },
-    {
-      name: "food",
-      label: "Food",
-      type: "input",
-      readOnly: true,
-      visibleIf: (data) =>
-        ["3","4","5","6","7EC","7"].includes(data.iddsiLevel),
-      style: { flex: 1 }
-    },
-  ]
-},
+    name: "plan_iddsi_level",
+    label: "IDDSI Level",
+    type: "radio",
+    options: ["0", "1", "2", "3", "4", "5", "6", "7EC", "7"],
+    labelAbove: true,
+    showIf: { field: "non_oral_feeding", equals: "enteral" }
+  },
+  {
+    type: "row",
+    showIf: { field: "non_oral_feeding", equals: "enteral" },
+    fields: [
+      {
+        name: "plan_fluids",
+        label: "Fluids",
+        type: "input",
+        readOnly: true,
+        showIf: { field: "plan_iddsi_level", oneOf: ["0","1","2","3","4"] }
+      },
+      {
+        name: "plan_food",
+        label: "Food",
+        type: "input",
+        readOnly: true,
+        showIf: { field: "plan_iddsi_level", oneOf: ["3","4","5","6","7EC","7"] }
+      }
+    ]
+  },
             { type: "subheading", label: "Safe Swallowing Strategies"},
 
 
@@ -782,25 +911,25 @@ const SCHEMA_PLAN = {
       { label: "Before & after meals/oral trials", value: "before_after_meals" }
     ]
   },
-   {
-  name: "therapy",
-  type: "radio",
-  label: "Therapy",
-  options: [
-    {
-      label: "KTC.PH.ZZ Training about swallowing",
-      value: "ktc_ph_zz_training_swallowing"
-    },
-    {
-      label: "KTC.PM.ZZ Education about swallowing",
-      value: "ktc_pm_zz_education_swallowing"
-    },
-    {
-      label: "KTC.PN.ZZ Advising about swallowing",
-      value: "ktc_pn_zz_advising_swallowing"
-    }
-  ]
-},
+//    {
+//   name: "therapy",
+//   type: "radio",
+//   label: "Therapy",
+//   options: [
+//     {
+//       label: "KTC.PH.ZZ Training about swallowing",
+//       value: "ktc_ph_zz_training_swallowing"
+//     },
+//     {
+//       label: "KTC.PM.ZZ Education about swallowing",
+//       value: "ktc_pm_zz_education_swallowing"
+//     },
+//     {
+//       label: "KTC.PN.ZZ Advising about swallowing",
+//       value: "ktc_pn_zz_advising_swallowing"
+//     }
+//   ]
+// },
 {
   name: "swallow_exercises",
   type: "textarea",
