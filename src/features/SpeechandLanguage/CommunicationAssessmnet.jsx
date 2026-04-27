@@ -67,7 +67,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
           // ===== SPEECH FUNCTIONS — radio: one at a time =====
           {
             name: "speech_functions",
-            label: "Speech Functions",
+            label: "Speech language Assessment",
             type: "radio",
             labelAbove: true,
             options: [
@@ -124,8 +124,8 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Written expression", value: "written_expression" }
             ]
           },
-          { name: "lang_auditory_severity", label: "Auditory comprehension – severity", type: "radio", options: impairmentSeverityOptions, labelAbove: true, showIf: { field: "lang_impairments", includes: "auditory_comprehension" } },
-
+          { name: "lang_auditory_severity", label: "Auditory comprehension – severity", type: "select", options: impairmentSeverityOptions, placeholder: "— Select severity —", showIf: { field: "lang_impairments", includes: "auditory_comprehension" } },
+          
           // ===== SPEECH SECTION =====
           { type: "subheading", label: "Speech", showIf: { field: "speech_functions", equals: "speech" } },
           {
@@ -163,13 +163,13 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             showIf: { field: "speech_functions", equals: "speech" }
           },
 
-          {
-            name: "speech_fda2_graph",
-            label: "Upload FDA-2 graph",
-            type: "attach-file",
-            accept: "image/*,.pdf",
-            showIf: { field: "speech_assessment_tools", includes: "fda2" }
-          },
+          // {
+          //   name: "speech_fda2_graph",
+          //   label: "Upload FDA-2 graph",
+          //   type: "attach-file",
+          //   accept: "image/*,.pdf",
+          //   showIf: { field: "speech_assessment_tools", includes: "fda2" }
+          // },
 
           // Speech impairments
           { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", equals: "speech" } },
@@ -188,12 +188,12 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Other(s)", value: "other" }
             ]
           },
-          { name: "reflexes_severity", label: "Reflexes – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "reflexes" } },
-          { name: "respiratory_severity", label: "Respiratory support – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "respiration" } },
-          { name: "phonatory_severity", label: "Phonatory function – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "phonatory" } },
-          { name: "articulation_severity", label: "Articulation: Lips / Tongue – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "articulation" } },
-          { name: "resonance_severity", label: "Resonance – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "resonance" } },
-          { name: "prosody_severity", label: "Prosody & intelligibility – severity", type: "radio", options: IMPAIRMENT_SCALE_OPTIONS, labelAbove: true, showIf: { field: "speech_impairments", includes: "intelligibility" } },
+          { name: "reflexes_severity",     label: "Reflexes – severity",                  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "reflexes" } },
+          { name: "respiratory_severity",  label: "Respiratory support – severity",        type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "respiration" } },
+          { name: "phonatory_severity",    label: "Phonatory function – severity",         type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "phonatory" } },
+          { name: "articulation_severity", label: "Articulation: Lips / Tongue – severity",type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "articulation" } },
+          { name: "resonance_severity",    label: "Resonance – severity",                  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "resonance" } },
+          { name: "prosody_severity",      label: "Prosody & intelligibility – severity",  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "intelligibility" } },
           { name: "speech_impairments_other", label: "Other(s) – please specify", type: "input", showIf: { field: "speech_impairments", includes: "other" } },
 
           {

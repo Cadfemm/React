@@ -59,7 +59,7 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
           /* ===== MEDICAL HISTORY ===== */
         {
   type: "subheading",
-  label: "Suction needs (airway clearance function)"
+  label: "Suction needs frequenscy (airway clearance function)"
 },
 
 {
@@ -98,6 +98,11 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
 {
   name: "trach_date",
   label: "Date of tracheostomy insertion",
+  type: "date"
+},
+{
+  name: "trach_date",
+  label: "Last tracheostomy change",
   type: "date"
 },
 {
@@ -338,21 +343,25 @@ const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
         },
 
         { type: "subheading", label: "Pre-evaluation Suction" },
+        { name: "pre_suction_performed", label: "Suction Performed", type: "radio", options: [
+          { label: "Yes", value: "yes" },
+          { label: "No", value: "no" }
+        ]},
         { name: "secretion_colour", label: "Colour", type: "radio", options: [
           { label: "Whitish", value: "whitish" },
           { label: "Yellowish", value: "yellowish" },
           { label: "Greenish", value: "greenish" },
           { label: "Blood-tinged", value: "blood_tinged" }
-        ]},
+        ], showIf: { field: "pre_suction_performed", equals: "yes" }},
         { name: "secretion_consistency", label: "Consistency", type: "radio", options: [
           { label: "Thick", value: "thick" },
           { label: "Loose", value: "loose" }
-        ]},
+        ], showIf: { field: "pre_suction_performed", equals: "yes" }},
         { name: "secretion_amount", label: "Secretion amount", type: "radio", options: [
           { label: "Small", value: "small" },
           { label: "Moderate", value: "moderate" },
           { label: "Large", value: "large" }
-        ]},
+        ], showIf: { field: "pre_suction_performed", equals: "yes" }},
 
         // ===== TRIALS SELECTOR =====
         { type: "subheading", label: "Trials / Clinical Observations" },
@@ -447,7 +456,8 @@ const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
 
         // ===== MODIFIED EVAN'S BLUE DYE TEST =====
         { type: "subheading", label: "Modified Evan's Blue Dye Test  –  Ingestion functions", showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
-        { name: "blue_cough", label: "Cough", type: "radio", options: [{ label: "Immediate", value: "immediate" }, { label: "Delayed", value: "delayed" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_cough", label: "Cough", type: "radio", options: [{ label: "Immediate", value: "immediate" }, { label: "Delayed", value: "delayed" },{ label: "None", value: "none" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
+        { name: "blue_cough_none_remarks", label: "Cough – None (specify)", type: "input", showIf: { field: "blue_cough", equals: "none", and: { field: "tracheostomy_trials", includes: "blue_dye_test" } } },
         { name: "blue_wet_voice", label: "Wet voice", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
         { name: "blue_wob", label: "Increased work of breathing", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
         {

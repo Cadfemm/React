@@ -127,7 +127,7 @@ export default function CurrentDietIntake({ mode = "objective" }) {
     sections: [
       {
         fields: [
-                            { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},
+          { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
 
           {
             name: "dietType",
@@ -142,27 +142,27 @@ export default function CurrentDietIntake({ mode = "objective" }) {
             label: "Food consistency",
             type: "radio",
             options: FOOD_CONSISTENCY_OPTIONS,
-            visibleIf: { dietType: "oral" }
+            showIf: { field: "dietType", equals: "oral" }
           },
           {
             name: "fluidConsistency",
             label: "Fluids consistency",
             type: "radio",
             options: FLUID_CONSISTENCY_OPTIONS,
-            visibleIf: { dietType: "oral" }
+            showIf: { field: "dietType", equals: "oral" }
           },
           {
             name: "amount",
             label: "Amount",
             type: "radio",
             options: AMOUNT_OPTIONS,
-            visibleIf: { dietType: "oral" }
+            showIf: { field: "dietType", equals: "oral" }
           },
           {
             name: "frequency",
             label: "Frequency (times/day)",
             type: "textarea",
-            visibleIf: { dietType: "oral" }
+            showIf: { field: "dietType", equals: "oral" }
           },
 
           // ===== ENTERAL =====
@@ -170,69 +170,90 @@ export default function CurrentDietIntake({ mode = "objective" }) {
             name: "type",
             label: "Type",
             type: "radio",
-            options: ["OGT", "NGT", "NJT", "G-tube", "J-tube"],
-            visibleIf: { dietType: "enteral" }
+            options: [
+              { label: "OGT", value: "OGT" },
+              { label: "NGT", value: "NGT" },
+              { label: "NJT", value: "NJT" },
+              { label: "G-tube", value: "G-tube" },
+              { label: "J-tube", value: "J-tube" }
+            ],
+            showIf: { field: "dietType", equals: "enteral" }
           },
           {
             name: "regimen",
             label: "Regimen",
             type: "textarea",
-            visibleIf: { dietType: "enteral" }
+            showIf: { field: "dietType", equals: "enteral" }
           },
           {
             name: "scoops",
             label: "Scoops",
             type: "textarea",
-            visibleIf: { dietType: "enteral" }
+            showIf: { field: "dietType", equals: "enteral" }
           },
           {
             name: "water",
             label: "Water (ml)",
             type: "input",
-            visibleIf: { dietType: "enteral" }
+            showIf: { field: "dietType", equals: "enteral" }
           },
+          // {
+          //   name: "feedingSchedule",
+          //   label: "Feeding schedule",
+          //   type: "radio",
+          //   options: FEEDING_SCHEDULE_OPTIONS,
+          //   showIf: { field: "dietType", equals: "enteral" }
+          // },
           {
-            name: "feedingSchedule",
-            label: "Feeding schedule",
-            type: "radio",
-            options: FEEDING_SCHEDULE_OPTIONS,
-            visibleIf: { dietType: "enteral" }
-          },
-
-          // ===== IDDSI =====
-          {
-            name: "iddsiLevel",
-            label: "IDDSI Level",
-            type: "radio",
-            options: ["0","1","2","3","4","5","6","7EC","7"],
-            visibleIf: { dietType: "enteral" }
-          },
-          {
-  type: "row",
-  visibleIf: { dietType: "enteral" },
-  fields: [
-    {
-      name: "fluids",
-      label: "Fluids",
-      type: "input",
-      readOnly: true,
-      visibleIf: (data) =>
-        ["0","1","2","3","4"].includes(data.iddsiLevel),
-      style: { flex: 1 }
-    },
-    {
-      name: "food",
-      label: "Food",
-      type: "input",
-      readOnly: true,
-      visibleIf: (data) =>
-        ["3","4","5","6","7EC","7"].includes(data.iddsiLevel),
-      style: { flex: 1 }
-    }
-  ]
+  name: "feedingSchedule",
+  label: "Feeding schedule",
+  type: "radio",
+  options: FEEDING_SCHEDULE_OPTIONS,
+  showIf: { field: "dietType", equals: "enteral" }
+},
+{
+  name: "continuous_input",
+  label: "Enter Continuous Feeding Details",
+  type: "input",
+  placeholder: "e.g., 50 ml/hr",
+  showIf: {
+    field: "feedingSchedule",
+    equals: "continuous"
+  }
 },
 
-         
+          // ===== IDDSI (enteral) =====
+          // {
+          //   name: "iddsiLevel",
+          //   label: "IDDSI Level",
+          //   type: "radio",
+          //   options: [
+          //     { label: "0", value: "0" },
+          //     { label: "1", value: "1" },
+          //     { label: "2", value: "2" },
+          //     { label: "3", value: "3" },
+          //     { label: "4", value: "4" },
+          //     { label: "5", value: "5" },
+          //     { label: "6", value: "6" },
+          //     { label: "7EC", value: "7EC" },
+          //     { label: "7", value: "7" }
+          //   ],
+          //   showIf: { field: "dietType", equals: "enteral" }
+          // },
+          // {
+          //   name: "fluids",
+          //   label: "Fluids",
+          //   type: "input",
+          //   readOnly: true,
+          //   showIf: { field: "iddsiLevel", oneOf: ["0","1","2","3","4"] }
+          // },
+          // {
+          //   name: "food",
+          //   label: "Food",
+          //   type: "input",
+          //   readOnly: true,
+          //   showIf: { field: "iddsiLevel", oneOf: ["3","4","5","6","7EC","7"] }
+          // }
         ]
       }
     ]
@@ -385,8 +406,8 @@ const SCHEMA_Objective = {
           type: "radio",
           options: [
             "Adequate",
-            "Lt anterior spillage",
-            "Rt anterior spillage"
+            "Lt",
+            "Rt"
           ]
         },
         {
@@ -665,301 +686,182 @@ const SCHEMA_PLAN = {
     {
       title: "Swallowing Recommendations",
       fields: [
-                          { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},
+        { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
 
-        // ===== FOOD =====
-    //     {
-    //       type: "group",
-    //       label: "Food",
-    //       fields: [
-    //         {
-    //           name: "foodMode",
-    //           type: "radio",
-    //           options: ["NPO", "Allow orally"]
-    //         },
-    //         {
-    //           name: "foodIddsi",
-    //           label: "IDDSI Level",
-    //           type: "checkbox-group=",
-    //           options: ["3","4","5","6","7EC","7"]
-    //         },
-    //         {
-    //           name: "foodAmount",
-    //           label: "Amount",
-    //           type: "radio",
-    //           options: ["Oral trials", "Half portion", "Full portion"]
-    //         },
-    //         {
-    //           name: "foodFrequency",
-    //           label: "Frequency (times/day)",
-    //           type: "input"
-    //         }
-    //       ]
-    //     },
+        // ── Food Route ──
+        {
+          name: "food_route",
+          type: "radio",
+          label: "Food: Route",
+          options: [
+            { label: "NPO", value: "NPO" },
+            { label: "Allow orally", value: "allow_orally" }
+          ]
+        },
 
-    //     // ===== FLUIDS =====
-    //     {
-    //       type: "group",
-    //       label: "Fluids",
-    //       fields: [
-    //         {
-    //           name: "fluidMode",
-    //           type: "radio",
-    //           options: ["NPO", "Allow orally"]
-    //         },
-    //         {
-    //           name: "fluidIddsi",
-    //           label: "IDDSI Level",
-    //           type: "checkbox-group",
-    //           options: ["0","1","2","3","4"]
-    //         },
-    //         {
-    //           name: "fluidAmount",
-    //           label: "Amount",
-    //           type: "radio",
-    //           options: ["50 ml", "100 ml", "No restriction"]
-    //         },
-    //         {
-    //           name: "fluidFrequency",
-    //           label: "Frequency",
-    //           type: "radio",
-    //           options: ["Every feeding time", "As & when"]
-    //         }
-    //       ]
-    //     },
+        // ── Food fields: only when NOT NPO ──
+        {
+          name: "food_iddsi_level",
+          type: "radio",
+          label: "Food: IDDSI Level",
+          options: ["3", "4", "5", "6", "7EC", "7"],
+          showIf: { field: "food_route", equals: "allow_orally" }
+        },
+        {
+          name: "food_amount",
+          type: "radio",
+          label: "Food: Amount",
+          options: ["Oral trials", "Half portion", "Full portion"],
+          showIf: { field: "food_route", equals: "allow_orally" }
+        },
+        {
+          name: "food_frequency",
+          type: "input",
+          label: "Food: Frequency (times/day)",
+          showIf: { field: "food_route", equals: "allow_orally" }
+        },
 
-    //     // ===== NON ORAL =====
-    //     {
-    //       name: "nonOralFeeding",
-    //       label: "Non-Oral Feeding",
-    //       type: "radio",
-    //       options: [
-    //         "Continue enteral feeding as per dietitian’s order",
-    //         "N/A"
-    //       ]
-    //     },
-    //     {
-    //       name: "referral",
-    //       type: "radio",
-    //       label: "Referral for medical management"
-    //     },
-    //     {
-    //       name: "furtherAssessment",
-    //       type: "radio",
-    //       label: "Further Assessment",
-         
-    //     },
-    //   ]
-    // },
+        // ── Fluids Route ──
+        {
+          name: "fluid_route",
+          type: "radio",
+          label: "Fluids: Route",
+          options: [
+            { label: "NPO", value: "NPO" },
+            { label: "Allow orally", value: "allow_orally" }
+          ]
+        },
 
-    // // ===== SAFE STRATEGIES =====
-    // {
-    //   title: "Safe Swallowing Strategies",
-    //   fields: [
-    //     {
-    //       name: "strategies",
-    //       type: "checkbox-group",
-    //       options: [
-    //         "Upright fully during intake & 30 min post",
-    //         "Feed via spoon only",
-    //         "Small sips/bites",
-    //         "Slow rate",
-    //         "Provide verbal cue to swallow",
-    //         "Double/multiple swallows",
-    //         "Voluntary cough",
-    //         "Head turn to weak side",
-    //         "Head tilt to strong side",
-    //         "Chin tuck",
-    //         "Cyclic ingestion"
-    //       ]
-    //     }
-    {
-    name: "food_route",
-    type: "radio",
-    label: "Food: Route",
-    options: ["NPO", "Allow orally"]
-  },
-    {
-    name: "food_iddsi_level",
-    type: "radio",
-    label: "Food: IDDSI Level",
-    options: ["3", "4", "5", "6", "7EC", "7"]
-  },
-   {
-    name: "food_amount",
-    type: "radio",
-    label: "Food: Amount",
-    options: ["Oral trials", "Half portion", "Full portion"]
-  },
-  {
-    name: "food_frequency",
-    type: "input",
-    label: "Food: Frequency (times/day)"
-  },
+        // ── Fluids fields: only when NOT NPO ──
+        {
+          name: "fluid_iddsi_level",
+          type: "radio",
+          label: "Fluids: IDDSI Level",
+          options: ["0", "1", "2", "3", "4"],
+          showIf: { field: "fluid_route", equals: "allow_orally" }
+        },
+        {
+          name: "fluid_amount",
+          type: "radio",
+          label: "Fluids: Amount",
+          options: ["50 ml", "100 ml", "No restriction"],
+          showIf: { field: "fluid_route", equals: "allow_orally" }
+        },
+        {
+          name: "fluid_frequency",
+          type: "radio",
+          label: "Fluids: Frequency",
+          options: ["Every feeding time", "As & when"],
+          showIf: { field: "fluid_route", equals: "allow_orally" }
+        },
 
-  {
-    name: "fluid_route",
-    type: "radio",
-    label: "Fluids: Route",
-    options: ["NPO", "Allow orally"]
-  },
-  {
-    name: "fluid_iddsi_level",
-    type: "radio",
-    label: "Fluids: IDDSI Level",
-    options: ["0", "1", "2", "3", "4"]
-  },
-  {
-    name: "fluid_amount",
-    type: "radio",
-    label: "Fluids: Amount",
-    options: ["50 ml", "100 ml", "No restriction"]
-  },
-  {
-    name: "fluid_frequency",
-    type: "radio",
-    label: "Fluids: Frequency",
-    options: ["Every feeding time", "As & when"]
-  },
-  {
-    name: "non_oral_feeding",
-    type: "radio",
-    label: "Non-Oral Feeding",
-    options: [
-      { label: "Continue enteral feeding as per dietitian's order", value: "enteral" },
-      { label: "N/A", value: "na" }
-    ]
-  },
-  {
-    name: "plan_iddsi_level",
-    label: "IDDSI Level",
-    type: "radio",
-    options: ["0", "1", "2", "3", "4", "5", "6", "7EC", "7"],
-    labelAbove: true,
-    showIf: { field: "non_oral_feeding", equals: "enteral" }
-  },
-  {
-    type: "row",
-    showIf: { field: "non_oral_feeding", equals: "enteral" },
-    fields: [
-      {
-        name: "plan_fluids",
-        label: "Fluids",
-        type: "input",
-        readOnly: true,
-        showIf: { field: "plan_iddsi_level", oneOf: ["0","1","2","3","4"] }
-      },
-      {
-        name: "plan_food",
-        label: "Food",
-        type: "input",
-        readOnly: true,
-        showIf: { field: "plan_iddsi_level", oneOf: ["3","4","5","6","7EC","7"] }
-      }
-    ]
-  },
-            { type: "subheading", label: "Safe Swallowing Strategies"},
+        // ── Non-Oral Feeding ──
+        {
+          name: "non_oral_feeding",
+          type: "radio",
+          label: "Non-Oral Feeding",
+          options: [
+            { label: "Continue enteral feeding as per dietitian's order", value: "enteral" },
+            { label: "N/A", value: "na" }
+          ]
+        },
+        {
+          name: "plan_iddsi_level",
+          label: "IDDSI Level",
+          type: "radio",
+          options: ["0", "1", "2", "3", "4", "5", "6", "7EC", "7"],
+          labelAbove: true,
+          showIf: { field: "non_oral_feeding", equals: "enteral" }
+        },
+        {
+          type: "row",
+          showIf: { field: "non_oral_feeding", equals: "enteral" },
+          fields: [
+            {
+              name: "plan_fluids",
+              label: "Fluids",
+              type: "input",
+              readOnly: true,
+              showIf: { field: "plan_iddsi_level", oneOf: ["0","1","2","3","4"] }
+            },
+            {
+              name: "plan_food",
+              label: "Food",
+              type: "input",
+              readOnly: true,
+              showIf: { field: "plan_iddsi_level", oneOf: ["3","4","5","6","7EC","7"] }
+            }
+          ]
+        },
 
+        { type: "subheading", label: "Safe Swallowing Strategies" },
+        {
+          name: "safe_swallowing_strategies",
+          type: "checkbox-group",
+          options: [
+            { label: "Upright fully during intake & 30 min post", value: "upright_during_and_post" },
+            { label: "Feed via spoon only", value: "feed_via_spoon_only" },
+            { label: "Small sips/bites", value: "small_sips_bites" },
+            { label: "Slow rate", value: "slow_rate" },
+            { label: "Provide verbal cue to swallow", value: "verbal_cue_to_swallow" },
+            { label: "Double/multiple swallows", value: "double_multiple_swallows" },
+            { label: "Voluntary cough", value: "voluntary_cough" },
+            { label: "Head turn to the weak side", value: "head_turn_weak_side" },
+            { label: "Head tilt to the strong side", value: "head_tilt_strong_side" },
+            { label: "Chin tuck", value: "chin_tuck" },
+            { label: "Cyclic ingestion", value: "cyclic_ingestion" }
+          ]
+        },
 
-    {
-  name: "safe_swallowing_strategies",
-  type: "checkbox-group",
-  options: [
-    { label: "Upright fully during intake & 30 min post", value: "upright_during_and_post" },
-    { label: "Feed via spoon only", value: "feed_via_spoon_only" },
-    { label: "Small sips/bites", value: "small_sips_bites" },
-    { label: "Slow rate", value: "slow_rate" },
-    { label: "Provide verbal cue to swallow", value: "verbal_cue_to_swallow" },
-    { label: "Double/multiple swallows", value: "double_multiple_swallows" },
-    { label: "Voluntary cough", value: "voluntary_cough" },
-    { label: "Head turn to the weak side", value: "head_turn_weak_side" },
-    { label: "Head tilt to the strong side", value: "head_tilt_strong_side" },
-    { label: "Chin tuck", value: "chin_tuck" },
-    { label: "Cyclic ingestion", value: "cyclic_ingestion" }
-  ]
-},
+        { type: "subheading", label: "Monitoring During Oral Intake" },
+        {
+          name: "monitoring_during_oral_intake",
+          type: "checkbox-group",
+          options: [
+            { label: "Monitor for overt signs of aspiration (coughing, throat clearing, wet/gurgly voice, increased respiratory effort, desaturation)", value: "monitor_aspiration" },
+            { label: "Stop oral intake if overt aspiration occurs or patient fatigues", value: "stop_oral_intake" },
+            { label: "Document tolerance and clinical signs post-intake", value: "document_tolerance" }
+          ]
+        },
 
-          { type: "subheading", label: "Monitoring During Oral Intake" },
-{
-  name: "monitoring_during_oral_intake",
-  type: "radio",
-  options: ["Monitor for overt signs of aspiration (coughing, throat clearing, wet/gurgly voice, increased respiratory effort, desaturation)", "Stop oral intake if overt aspiration occurs or patient fatigues", "Document tolerance and clinical signs post-intake",    "Document tolerance and clinical signs post-intake",
-    "Stop oral intake if overt aspiration occurs or patient fatigues"
-  ],
-   
-  
-},
-          { type: "subheading", label: "ORAL CARE" },
-
-
- {
-    name: "oral_care_method",
-    type: "radio",
-    label: "Oral Care: Method",
-    options: [
-      { label: "Brush teeth", value: "brush_teeth" },
-      { label: "Gauze stick", value: "gauze_stick" },
-      { label: "Gargle", value: "gargle" }
-    ]
-  },
-  {
-    name: "oral_care_frequency",
-    type: "radio",
-    label: "Oral Care: Frequency",
-    options: [
-      { label: "3-4 times/day", value: "3_4_times_per_day" },
-      { label: "Before & after meals/oral trials", value: "before_after_meals" }
-    ]
-  },
-//    {
-//   name: "therapy",
-//   type: "radio",
-//   label: "Therapy",
-//   options: [
-//     {
-//       label: "KTC.PH.ZZ Training about swallowing",
-//       value: "ktc_ph_zz_training_swallowing"
-//     },
-//     {
-//       label: "KTC.PM.ZZ Education about swallowing",
-//       value: "ktc_pm_zz_education_swallowing"
-//     },
-//     {
-//       label: "KTC.PN.ZZ Advising about swallowing",
-//       value: "ktc_pn_zz_advising_swallowing"
-//     }
-//   ]
-// },
-{
-  name: "swallow_exercises",
-  type: "textarea",
-  label: "Swallow Exercises",
-  placeholder: "Enter exercises details",
-  rows: 3
-},
-{
-  name: "other_management",
-  type: "radio",
-  label: "Other Management",
-  options: [
-    {
-      label: "Referral for medical management",
-      value: "referral_medical_management"
-    },
-    {
-      label: "Further Assessment",
-      value: "further_assessment"
-    }
-  ]
-},
-  
-
-  
+        { type: "subheading", label: "ORAL CARE" },
+        {
+          name: "oral_care_method",
+          type: "radio",
+          label: "Oral Care: Method",
+          options: [
+            { label: "Brush teeth", value: "brush_teeth" },
+            { label: "Gauze stick", value: "gauze_stick" },
+            { label: "Gargle", value: "gargle" }
+          ]
+        },
+        {
+          name: "oral_care_frequency",
+          type: "radio",
+          label: "Oral Care: Frequency",
+          options: [
+            { label: "3-4 times/day", value: "3_4_times_per_day" },
+            { label: "Before & after meals/oral trials", value: "before_after_meals" }
+          ]
+        },
+        {
+          name: "swallow_exercises",
+          type: "textarea",
+          label: "Swallow Exercises",
+          placeholder: "Enter exercises details",
+          rows: 3
+        },
+        {
+          name: "other_management",
+          type: "radio",
+          label: "Other Management",
+          options: [
+            { label: "Referral for medical management", value: "referral_medical_management" },
+            { label: "Further Assessment", value: "further_assessment" }
+          ]
+        }
       ]
-    },
-
-    // ===== MONITORING =====
- 
+    }
   ]
 };
 const SCHEMA_MAP = {

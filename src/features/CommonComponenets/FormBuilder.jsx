@@ -1087,6 +1087,9 @@ function AssessmentLauncher({
     return opt.regions.some(r => selectedRegions.includes(r));
   });
 
+  // Remarks key per active assessment button
+  const remarksKey = active ? `${field.name}_${active}_remarks` : null;
+
   return (
     <div>
       {!field.autoOpen && (
@@ -1117,6 +1120,31 @@ function AssessmentLauncher({
           <ActiveComponent values={values} onChange={onChange} layout="nested" />
         </div>
       ) : null}
+
+      {/* Remarks textarea — shown per active assessment */}
+      {active && remarksKey && (
+        <div style={{ marginTop: 12 }}>
+          <label style={{ display: "block", fontWeight: 600, fontSize: 13, marginBottom: 6, color: "#374151" }}>
+            Remarks
+          </label>
+          <textarea
+            rows={3}
+            placeholder={`Remarks for ${visibleOptions.find(o => o.value === active)?.label || active}...`}
+            value={values[remarksKey] || ""}
+            onChange={e => onChange(remarksKey, e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "1px solid #d1d5db",
+              borderRadius: 8,
+              fontSize: 13,
+              resize: "vertical",
+              boxSizing: "border-box",
+              fontFamily: "inherit"
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -2636,6 +2664,23 @@ if (typeof col === "object" && col.type === "radio") {
         </div>
       );
 
+
+    case "select":
+      return (
+        <select
+          style={{ ...styles.input, cursor: "pointer", background: "#fff" }}
+          value={value || ""}
+          disabled={readOnly}
+          onChange={e => !readOnly && onChange(field.name, e.target.value)}
+        >
+          <option value="">{field.placeholder || "— Select —"}</option>
+          {(field.options || []).map(opt => {
+            const val = typeof opt === "string" ? opt : opt.value;
+            const lbl = typeof opt === "string" ? opt : opt.label;
+            return <option key={val} value={val}>{lbl}</option>;
+          })}
+        </select>
+      );
 
     case "textarea":
       return (

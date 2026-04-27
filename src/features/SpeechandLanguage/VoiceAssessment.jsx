@@ -304,11 +304,21 @@ useEffect(() => {
             type: "checkbox-group",
             options: HYDRATION_OPTIONS
           },
+          // {
+          //   name: "diet_intake",
+          //   label: "Diet intake",
+          //   type: "textarea"
+          // },
           {
-            name: "diet_intake",
-            label: "Diet intake",
-            type: "textarea"
-          },
+  type: "subheading",
+  label: "Diet Intake"
+},
+{
+  name: "diet_intake",
+  label: "Enter Diet Intake Details",
+  type: "textarea",
+  placeholder: "Type diet intake information here..."
+},
           {
             name: "alcohol",
             label: "Alcohol",
@@ -1113,6 +1123,14 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
+         { name: "cape_overall", label: "Overall Severity", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
+        },
 
         // Resonance — Yes/No toggle, scale only shows when Yes
         { name: "cape_resonance_applicable", label: "Resonance (if applicable)", type: "radio",
@@ -1138,7 +1156,7 @@ const SCHEMA_OBJECTIVE = {
       fields: [
         {
           name: "voice_status",
-          label: "Voice Status",
+          label: "The patient present with to Voice disorder",
           type: "radio",
           labelAbove: true,
           options: [
