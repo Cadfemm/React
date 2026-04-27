@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
+import {Hearingaidtrial } from "../Audiology/hearingaidtrial";
 
 export function AuditoryAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
@@ -280,7 +281,7 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
   );
 }
 
-export function AuditoryAdvancedFormObj({ onBack }) {
+export function AuditoryAdvancedFormObj({ onBack, mode  }) {
   const [values, setValues] = useState({});
 
   const FREQUENCIES = ["500", "1000", "2000", "4000"];
@@ -301,6 +302,35 @@ export function AuditoryAdvancedFormObj({ onBack }) {
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
+     {
+  title: "Hearing Aid Trial",
+  fields: [
+    {
+      name: "hearingaidtrial_required",
+      label: "Hearing Aid Trial",
+      type: "radio",
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ]
+    },
+    {
+      name: "hearingaidtrial_launcher_obj",
+      label: "",
+      type: "assessment-launcher",
+      showIf: {
+        field: "hearingaidtrial_required",
+        equals: "yes"
+      },
+      options: [
+        {
+          label: "Hearing Aid Trial",
+          value: "hearingaidtrial_form_obj"
+        }
+      ]
+    }
+  ]
+},
       // =========================
       // ACOUSTIC REFLEX
       // =========================
@@ -557,13 +587,21 @@ export function AuditoryAdvancedFormObj({ onBack }) {
     ]
   };
 
-  return (
-    <CommonFormBuilder
-      schema={schema}
-      values={values}
-      layout="nested"
-      onChange={(n, v) => setValues(prev => ({ ...prev, [n]: v }))}
-      onAction={(type) => type === "back" && onBack?.()}
-    />
-  );
+ return (
+  <CommonFormBuilder
+    schema={schema}
+    values={values}
+    layout="nested"
+    onChange={(n, v) => setValues((prev) => ({ ...prev, [n]: v }))}
+    onAction={(type) => type === "back" && onBack?.()}
+    assessmentRegistry={{
+      hearingaidtrial_form_obj: ({ onChange }) => (
+        <Hearingaidtrial
+          mode={mode}
+          onBack={() => onChange("hearingaidtrial_launcher_obj", null)}
+        />
+      )
+    }}
+  />
+);
 }
