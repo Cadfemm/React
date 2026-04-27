@@ -659,7 +659,7 @@ const submitAndSave = () => {
           { name: "sleep", label: "Sleeping Pattern", type: "single-select", options: [{ label: "Good", value: "Good" }, { label: "Difficulty in sleeping due to Pain", value: "PAIN" }, { label: "Difficulty in sleeping due to other reason", value: "OTHER" }, { label: "Difficulty in sleeping", value: "NOREASON" }] },
           { name: "sleep_difficulty_reason", label: "Reason", type: "textarea", showIf: { field: "sleep", oneOf: ["OTHER"] } },
           { name: "hypoglycemic_episode", label: "Hypoglycemic Episode", type: "single-select", options: [{ label: "Never", value: "Never" }, { label: "Occasional", value: "Occasional" }, { label: "Frequent", value: "Frequent" }, { label: "Unknown", value: "UNKNOWN" }, { label: "Not Relevant", value: "NOT_RELEVANT" }] },
-          { name: "hypoglycemic_episode_details", label: "Hypoglycemic Episode Details", type: "textarea", placeholder: "Please specify...", showIf: { field: "hypoglycemic_episode", oneOf: ["Occasional", "Frequent", "UNKNOWN", "NOT_RELEVANT"] } },
+          { name: "hypoglycemic_episode_details", label: "Hypoglycemic Episode Details", type: "textarea", placeholder: "Please specify...", showIf: { field: "hypoglycemic_episode", oneOf: ["Occasional", "Frequent", "UNKNOWN"] } },
           { name: "other_complaints", label: "Other Nutrition-Related Complaints", type: "textarea" },
           { type: "subheading", label: "Food / Nutrition Related History" },
           { name: "medications", label: "List of Medication", type: "textarea", readOnly: true },
