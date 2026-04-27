@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import AudiologyDepartmentAdultPage    from "./components/AudiologyAdultIA";
 import AudiologyDepartmentPediatricPage from "./components/AudiologyPediatricIA";
 import AudiologyProgressAssessmentForm from "./components/AudiologyProgress";
+import AudiologyGroupAssessmentForm from "./components/AudiologyGroup";
 import api from "../../shared/api/apiClient";
 import { API_URL } from "../../platform/config/api.config";
 
@@ -83,22 +84,12 @@ export default function AudiologyPatients({ onBack }) {
 
     // group — coming soon
     if (assessmentView === "group") {
-      const card = OPTION_CARDS.find(c => c.id === "group");
       return (
-        <div style={S.page}>
-          <div style={{ padding: 48, textAlign: "center" }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>{card.icon}</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#374151", marginBottom: 6 }}>
-              {card.title} — Coming Soon
-            </div>
-            <div style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>
-              This module is under development for Audiology.
-            </div>
-            <button onClick={() => setAssessmentView(null)} style={S.backBtn}>
-              ← Back to Options
-            </button>
-          </div>
-        </div>
+        <AudiologyGroupAssessmentForm
+          patient={selectedPatient}
+          onSubmit={() => setAssessmentView(null)}
+          onBack={() => setAssessmentView(null)}
+        />
       );
     }
 
