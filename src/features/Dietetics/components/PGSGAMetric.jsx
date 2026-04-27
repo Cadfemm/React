@@ -322,6 +322,20 @@ w1_weightLoss2Weeks: "no",    // "yes" | "no"
     setForm({ ...form, [key]: value });
   };
 
+  // Auto-suggest global rating = max of individual site ratings
+  const updateMuscleSites = (sites) => {
+    const maxSite = Math.max(...Object.values(sites).map(Number));
+    setForm(prev => ({ ...prev, muscleSites: sites, muscleGlobal: maxSite }));
+  };
+  const updateFatSites = (sites) => {
+    const maxSite = Math.max(...Object.values(sites).map(Number));
+    setForm(prev => ({ ...prev, fatSites: sites, fatGlobal: maxSite }));
+  };
+  const updateFluidSites = (sites) => {
+    const maxSite = Math.max(...Object.values(sites).map(Number));
+    setForm(prev => ({ ...prev, fluidSites: sites, fluidGlobal: maxSite }));
+  };
+
 
 const worksheet1Score = useMemo(() => {
   let score = Number(form.w1_weightLossBand || 0);
@@ -492,12 +506,15 @@ const functionalScore = box4Score;
 
 
   // Worksheet 4 - Physical Exam Score
-const physicalExamScore = useMemo(() => {
-  if (form.muscleGlobal > 0) return form.muscleGlobal;
-  if (form.fatGlobal > 0) return form.fatGlobal;
-  if (form.fluidGlobal > 0) return form.fluidGlobal;
-  return 0;
-}, [form.muscleGlobal, form.fatGlobal, form.fluidGlobal]);
+  // W4 score = maximum of the three global ratings (muscle, fat, fluid)
+  // Per PG-SGA scoring: the overall physical exam score is the highest deficit found
+  const physicalExamScore = useMemo(() => {
+    return Math.max(
+      Number(form.muscleGlobal) || 0,
+      Number(form.fatGlobal) || 0,
+      Number(form.fluidGlobal) || 0
+    );
+  }, [form.muscleGlobal, form.fatGlobal, form.fluidGlobal]);
 
 
 
@@ -1106,16 +1123,16 @@ const pgStage = useMemo(() => {
       ["clavicles", "Clavicles (pectoralis & deltoids)"],
       ["shoulders", "Shoulders (deltoids)"],
       ["interosseous", "Interosseous muscles"],
-        ["scapula", "scapula (latissimus dorsi, trapezius, deltoids)"],
+      ["scapula", "Scapula (latissimus dorsi, trapezius, deltoids)"],
       ["thighs", "Thighs (quadriceps)"],
-      ["calf", "Calf (gastrocnemius)"],
+      ["calves", "Calf (gastrocnemius)"],
     ].map(([key, label]) => (
       <div key={key} style={styles.fieldBox}>
         <label>{label}</label>
         <select
           value={form.muscleSites[key]}
           onChange={(e) =>
-            updateForm("muscleSites", {
+            updateMuscleSites({
               ...form.muscleSites,
               [key]: Number(e.target.value),
             })
@@ -1161,7 +1178,7 @@ const pgStage = useMemo(() => {
         <select
           value={form.fatSites[key]}
           onChange={(e) =>
-            updateForm("fatSites", {
+            updateFatSites({
               ...form.fatSites,
               [key]: Number(e.target.value),
             })
@@ -1207,7 +1224,7 @@ const pgStage = useMemo(() => {
         <select
           value={form.fluidSites[key]}
           onChange={(e) =>
-            updateForm("fluidSites", {
+            updateFluidSites({
               ...form.fluidSites,
               [key]: Number(e.target.value),
             })
@@ -1242,6 +1259,12 @@ const pgStage = useMemo(() => {
     value={physicalExamScore}
     color="#0F172A"
   />
+  {/* <div style={{ marginTop: 8, fontSize: 12, color: "#6b7280", display: "flex", gap: 16 }}>
+    <span>Muscle Global: <b>{form.muscleGlobal}</b></span>
+    <span>Fat Global: <b>{form.fatGlobal}</b></span>
+    <span>Fluid Global: <b>{form.fluidGlobal}</b></span>
+    <span style={{ color: "#0f172a", fontWeight: 700 }}>Score = max({form.muscleGlobal}, {form.fatGlobal}, {form.fluidGlobal}) = {physicalExamScore}</span>
+  </div> */}
 </div>
 
 <div style={styles.card}>
