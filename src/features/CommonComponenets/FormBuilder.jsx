@@ -456,7 +456,7 @@ export default function CommonFormBuilder({
                                 {field.type === "radio" && !field.inRow && field.labelAbove ? (
                                   <div style={{ marginBottom: 16 }}>
                                     {(field.label || field.info) && (
-                                      <label style={styles.label}>
+                                     <label style={{...styles.label, whiteSpace: "pre-line"}}>
                                         {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                         {field.info && <InfoTooltip info={field.info} />}
                                       </label>
@@ -1791,9 +1791,10 @@ function renderField(
 
     case "info-text":
       return (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+        <div
+          style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A", whiteSpace: "pre-line" }}>
           {Array.isArray(field.text)
-            ? field.text.map((t, i) => <div key={i}>{t}</div>)
+            ? field.text.map((txt, i) => (<div key={i} style={{ marginBottom: 10 }}>{txt} </div>))
             : field.text}
         </div>
       );

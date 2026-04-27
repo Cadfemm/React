@@ -6,7 +6,7 @@ import { TinnitusAdvancedForm,TinnitusAdvancedFormObj } from "../tinnitusassessm
 import { HyperacusisAdvancedForm, HyperacusisAdvancedFormObj } from "../hyperacusisassessment";
 import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassessment";
 import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
-
+import { Hearingaidtrial } from "../hearingaidtrial";
 /* ===================== OPTIONS ===================== */
 
 const INTACT_IMPAIRED = [
@@ -696,7 +696,8 @@ export default function AudiologyDepartmentAdultPage({ patient, mode, onSubmit, 
     tinnitus_form_obj: TinnitusAdvancedAdapterObj,
     loudness_form_obj: HyperacusisAdvancedAdapterObj,
     hearing_form_obj: AuditoryAdvancedAdapterObj,
-    vestibular_form_obj: VestibularAdvancedAdapterObj
+    vestibular_form_obj: VestibularAdvancedAdapterObj,
+    hearingaidtrial_form_obj: HearingAidTrialAdapter,
   };
 function TinnitusAdvancedAdapter({ onChange }) {
   return (
@@ -765,6 +766,15 @@ function VestibularAdvancedAdapterObj({ onChange }) {
     <VestibularAdvancedFormObj
     mode={mode}
       onBack={() => onChange("hearing_assessments_launcher_obj", null)}
+    />
+  );
+}
+
+function HearingAidTrialAdapter({ onChange }) {
+  return (
+    <Hearingaidtrial
+    mode={mode}
+      onBack={() => onChange("hearingaidtrial_launcher_obj", null)}
     />
   );
 }
