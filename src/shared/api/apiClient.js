@@ -6,6 +6,14 @@ let accessToken = null;  // Store the access token in memory for security reason
 let isRefreshing = false // Stop duplicate call check
 let refreshInterval = null;  // Set refresh interval for access token (e.g., every 5 minutes)
 
+// Rehydrate from localStorage on module load (handles page refresh)
+const _storedToken  = localStorage.getItem("access_token");
+const _storedExpiry = localStorage.getItem("access_token_expiry");
+if (_storedToken && _storedExpiry && new Date(_storedExpiry) > new Date()) {
+  accessToken = _storedToken;
+  expireAt    = _storedExpiry;
+}
+
 // Create an Axios instance with default settings
 const api = axios.create({
   withCredentials: true,
@@ -15,14 +23,19 @@ const api = axios.create({
 // Set access token and expire at
 export const setAccessToken = (data) => {
   accessToken = data.access.token;
-  expireAt = data.access.expire_at
-  startTokenRefresh(expireAt)
+  expireAt = data.access.expire_at;
+  // Persist so the token survives a page refresh
+  localStorage.setItem("access_token", data.access.token);
+  localStorage.setItem("access_token_expiry", data.access.expire_at);
+  startTokenRefresh(expireAt);
 };
 
 // Clear access token and expire at
 export const clearAccessToken = () => {
   expireAt = null;
   accessToken = null;
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("access_token_expiry");
   if (refreshInterval) {
     clearTimeout(refreshInterval);
   }
@@ -65,8 +78,10 @@ const startTokenRefresh = (expireAt) => {
 // Attach token automatically (if available)
 api.interceptors.request.use(
   (config) => {
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    // Use in-memory token first; fall back to localStorage (survives page refresh)
+    const token = accessToken || localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
