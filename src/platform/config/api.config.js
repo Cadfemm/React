@@ -12,9 +12,6 @@ const API_URL = {
     VERIFY: BASE_API + 'token/verify/',
     REFRESH: BASE_API + 'token/refresh/',
 
-    // Forms apis
-    FORM: BASE_API + 'form/',
-
     // Assessment apis
     ASSESSMENT: BASE_API + 'assessment/',
 
