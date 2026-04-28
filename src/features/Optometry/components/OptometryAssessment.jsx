@@ -28,33 +28,98 @@ const LowVisionAssessment         = lazy(() => import("../LowVisionAssessment"))
 const AssessmentFallback = <ShimmerForm rows={6} />;
 
 // ── Context ────────────────────────────────────────────────────────────────
+// Carries patient + the questionaire FormData ID map + save helper
 const PatientContext = createContext(null);
 
+// Registry key → exact name as returned in assessment_ids from the backend
+const REGISTRY_KEY_TO_NAME = {
+  BINOCULAR_VISION:      "Binocular Vision",
+  REFRACTION:            "Refraction Assessment",
+  VISION_DRIVING:        "Vision for Driving",
+  OCULAR_HEALTH:         "Ocular Health / Structure",
+  SPECIAL_DIAGNOSTIC:    "Special Diagnostic",
+  LOW_VISION_ASSESSMENT: "Low Vision Assessment",
+  VISUAL_FUNCTION:       "Visual Function Questionnaire",
+  LVQOL:                 "Low Vision Quality of Life Questionnaire (LVQoL)",
+  BRAIN_VISION:          "Brain Injury Vision Symptoms Survey (BIVSS)",
+  BVDQ:                  "Binocular Vision Dysfunction Questionnaire (BVDQ)",
+};
+
 // ── Adapter factory ────────────────────────────────────────────────────────
-// Sub-assessment components each have their own internal schema — no schema prop needed.
-function makeAdapter(Component, activeKey) {
-  const Adapter = memo(function Adapter({ onChange, layout }) {
-    const patient = useContext(PatientContext);
-    const handleBack = useCallback(() => { onChange(activeKey, null); }, [onChange]);
+// Each adapter: reads its FormData ID from context, loads existing data,
+// auto-saves on every field change (1 s debounce).
+function makeAdapter(Component, activeKey, registryKey) {
+  const Adapter = memo(function Adapter({ onChange: outerOnChange, layout }) {
+    const ctx = useContext(PatientContext);
+    const patient          = ctx?.patient   ?? ctx;   // backward-compat
+    const questionaireIds  = ctx?.questionaireIds ?? {};
+    const formDataId       = questionaireIds[registryKey] ?? null;
+
+    const [values,  setValues]  = useState({});
+    const [loading, setLoading] = useState(false);
+    const saveTimer = useRef(null);
+
+    // Load existing data when the sub-assessment opens
+    useEffect(() => {
+      if (!formDataId) return;
+      setLoading(true);
+      api.get(API_URL.ASSESSMENT + `data/${formDataId}/`)
+        .then(res => {
+          const existing = res.data?.data;
+          if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
+            setValues(existing);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }, [formDataId]);
+
+    const handleChange = useCallback((name, value) => {
+      setValues(v => {
+        const next = { ...v, [name]: value };
+        // Debounced PATCH
+        if (saveTimer.current) clearTimeout(saveTimer.current);
+        saveTimer.current = setTimeout(() => {
+          if (formDataId) {
+            api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
+              .catch(() => {});
+          }
+        }, 1000);
+        return next;
+      });
+    }, [formDataId]);
+
+    const handleBack = useCallback(() => {
+      outerOnChange(activeKey, null);
+    }, [outerOnChange]);
+
+    if (loading) return <ShimmerForm rows={5} />;
+
     return (
       <Suspense fallback={AssessmentFallback}>
-        <Component patient={patient} onBack={handleBack} layout={layout} />
+        <Component
+          patient={patient}
+          values={values}
+          onChange={handleChange}
+          onBack={handleBack}
+          layout={layout}
+        />
       </Suspense>
     );
   });
   return Adapter;
 }
 
-const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active");
-const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active");
-const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active");
-const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active");
-const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active");
-const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active");
-const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active");
-const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active");
-const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active");
-const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active");
+const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active", "BINOCULAR_VISION");
+const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active", "REFRACTION");
+const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active", "VISION_DRIVING");
+const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active", "OCULAR_HEALTH");
+const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active", "SPECIAL_DIAGNOSTIC");
+const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active", "LVQOL");
+const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active", "BRAIN_VISION");
+const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active", "VISUAL_FUNCTION");
+const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active", "BVDQ");
+const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active", "LOW_VISION_ASSESSMENT");
 
 
 export const OPTOMETRY_ASSESSMENT_REGISTRY = {
@@ -231,9 +296,11 @@ export default function OptometryAssessment({
   patient,
   onSubmit,
   onBack,
-  savedValues = null,
-  readOnly    = false,
-  mode        = "initial",
+  savedValues          = null,
+  readOnly             = false,
+  mode                 = "initial",
+  initialSessionId     = null,   // pre-seeded when opened via direct link
+  initialAssessmentIds = [],     // pre-seeded assessment_ids array
 }) {
   const [values,        setValues]        = useState(readOnly && savedValues ? savedValues : {});
   const [submitted,     setSubmitted]     = useState(readOnly);
@@ -245,11 +312,33 @@ export default function OptometryAssessment({
   const [isDirty,       setIsDirty]       = useState(false);
   const [toast,         setToast]         = useState(null);
   const [showReferral,  setShowReferral]  = useState(false);
-  const [assessmentId,  setAssessmentId]  = useState(null);   // set after Start
-  const [formDataIds,   setFormDataIds]   = useState({});     // { subjective: uuid, objective: uuid, ... }
+  const [assessmentId,  setAssessmentId]  = useState(initialSessionId);
+  const [formDataIds,   setFormDataIds]   = useState(() => {
+    // Pre-build the map if initialAssessmentIds were passed in
+    const idMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
+        const key = (fd.type || '').toLowerCase();
+        if (key) idMap[key] = fd.id;
+      }
+    });
+    return idMap;
+  });
+  const [questionaireIds, setQuestionaireIds] = useState(() => {
+    const qMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'QUESTIONAIRE') {
+        const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+          k => REGISTRY_KEY_TO_NAME[k] === fd.name
+        );
+        if (regKey) qMap[regKey] = fd.id;
+      }
+    });
+    return qMap;
+  });
   const [starting,      setStarting]      = useState(false);
-  const [tabLoading,    setTabLoading]    = useState(false);  // loading FormData on tab switch
-  const autoSaveTimer = useRef(null);   // debounce handle for auto-save
+  const [tabLoading,    setTabLoading]    = useState(false);
+  const autoSaveTimer = useRef(null);
 
   const isFollowup = mode === "followup";
 
@@ -2018,13 +2107,22 @@ export default function OptometryAssessment({
 
       // Map FormData ids — only INITIAL form_type gives one record per SOAP tab
       const idMap = {};
+      const qMap  = {};   // QUESTIONAIRE sub-assessments keyed by registry key
       (data.assessment_ids || []).forEach(fd => {
-        if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
-          const key = (fd.type || '').toLowerCase();   // "subjective" | "objective" | "assessment" | "plan"
+        const ft = (fd.form_type || '').toUpperCase();
+        if (ft === 'INITIAL') {
+          const key = (fd.type || '').toLowerCase();
           if (key) idMap[key] = fd.id;
+        } else if (ft === 'QUESTIONAIRE') {
+          // Match by name to registry key
+          const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+            k => REGISTRY_KEY_TO_NAME[k] === fd.name
+          );
+          if (regKey) qMap[regKey] = fd.id;
         }
       });
       setFormDataIds(idMap);
+      setQuestionaireIds(qMap);
       setToast({ message: 'Assessment session started', variant: 'success' });
     } catch (err) {
       const detail = err?.response?.data;
@@ -2118,7 +2216,7 @@ export default function OptometryAssessment({
 
   /* ===================== RENDER ===================== */
   return (
-    <PatientContext.Provider value={patient}>
+    <PatientContext.Provider value={{ patient, questionaireIds }}>
       {showReferral && (
         <ReferralModal patient={patient} onSubmit={handleReferralSubmit} onClose={() => setShowReferral(false)} />
       )}

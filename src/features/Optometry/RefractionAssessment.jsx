@@ -153,13 +153,17 @@ const RefractionAssessmentSchema = {
   ]
 };
 
-const RefractionAssessment = memo(function RefractionAssessment({ schema, onBack, layout = "root" }) {
-  const [values,    setValues]    = useState({});
+const RefractionAssessment = memo(function RefractionAssessment({ schema, onBack, layout = "root", values: externalValues, onChange: externalOnChange }) {
+  const [internalValues, setInternalValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const onChange = useCallback((name, value) => {
-    setValues(v => ({ ...v, [name]: value }));
+  const values = externalValues ?? internalValues;
+
+  const internalOnChange = useCallback((name, value) => {
+    setInternalValues(v => ({ ...v, [name]: value }));
   }, []);
+
+  const onChange = externalOnChange ?? internalOnChange;
 
   const onAction = useCallback((type) => {
     if (type === "submit") setSubmitted(true);
