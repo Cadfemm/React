@@ -163,7 +163,7 @@ const TAB_META = {
 
 
 // ── Patient Header Card (light blue hospital grade) ────────────────────────
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId }) {
+const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId, onCopyLink }) {
   if (!patient) return null;
   const initial = (patient.name || patient.email || "P")[0].toUpperCase();
   const fields = [
@@ -254,6 +254,7 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           padding: "6px 20px",
           background: "#f0fdf4",
           borderBottom: "1px solid #bbf7d0",
+          flexWrap: "wrap",
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Session ID
@@ -267,7 +268,24 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           }}>
             {assessmentId}
           </span>
-          <span style={{ fontSize: 11, color: "#86efac" }}>— click to select &amp; copy</span>
+          <button
+            title="Copy shareable link with your token — recipient opens directly without login"
+            style={{
+              marginLeft: 4,
+              padding: "2px 10px", borderRadius: 4,
+              background: "#16a34a", color: "#fff",
+              border: "none", fontSize: 11, fontWeight: 700,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              const token = localStorage.getItem("access_token") || "";
+              const url   = `${window.location.origin}/optometry/assessment/${assessmentId}?token=${token}`;
+              navigator.clipboard.writeText(url).then(() => onCopyLink?.());
+            }}
+          >
+            Copy Link
+          </button>
+          <span style={{ fontSize: 11, color: "#86efac" }}>— share this link; recipient opens directly</span>
         </div>
       )}
 
@@ -314,7 +332,6 @@ export default function OptometryAssessment({
   const [showReferral,  setShowReferral]  = useState(false);
   const [assessmentId,  setAssessmentId]  = useState(initialSessionId);
   const [formDataIds,   setFormDataIds]   = useState(() => {
-    // Pre-build the map if initialAssessmentIds were passed in
     const idMap = {};
     (initialAssessmentIds || []).forEach(fd => {
       if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
@@ -2254,6 +2271,7 @@ export default function OptometryAssessment({
             onStart={handleStart}
             starting={starting}
             assessmentId={assessmentId}
+            onCopyLink={() => setToast({ message: "Shareable link copied to clipboard", variant: "success" })}
           />
         </div>
 
