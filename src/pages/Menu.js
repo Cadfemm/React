@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import * as React from "react";
 // Font Awesome icons
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useHistory } from "react-router-dom";
 import DashboardTab from "../components/DashboardTab";
 import ClinicalSwallowEvaluation from "../components/ClinicalSwallowEvaluation";
 import DietDepartmentPage from "../features/Dietetics/pages/DietPatientspage";
@@ -72,6 +72,36 @@ export default function App() {
   const [tab, setTab] = useState("");
 
   const { mode } = useParams();
+  const location  = useLocation();
+  const history   = useHistory();
+
+  /* ── Department tab → URL slug ── */
+  const TAB_TO_SLUG = {
+    "Audiology":               "audiology",
+    "Physiotherapy":           "physiotherapy",
+    "Occupational Therapy":    "occupational-therapy",
+    "Psychology":              "psychology",
+    "Optometry":               "optometry",
+    "Nursing":                 "nursing",
+    "Dietetics":               "dietetics",
+    "Speech & Language Therapy": "speech",
+    "Prosthetics & Orthotics": "prosthetics",
+    "Work & Vocational Rehab": "vocational",
+    "Doctor":                  "doctor",
+    "Medical Assistant":       "medical-assistant",
+  };
+
+  /* Wraps setTab — also updates the URL when switching to a department */
+  const navigateToTab = (newTab) => {
+    setTab(newTab);
+    const slug = TAB_TO_SLUG[newTab];
+    if (slug) {
+      history.replace(`/menu/${slug}`);
+    } else {
+      history.replace("/menu");
+    }
+  };
+
   const [userType, setUserType] = useState("");
   const [icdCode, setIcdCode] = useState(""); // deepest ICD from ICD tab
   const [showVitals, setShowVitals] = useState(false);
@@ -96,6 +126,35 @@ export default function App() {
       handleUserSelection("EXISTING_USER");
     }
     // if mode is undefined, your normal landing stays
+  }, [mode]);
+
+  /* ── Deep-link: set department tab from location state ── */
+  useEffect(() => {
+    const initialTab = location?.state?.initialTab;
+    if (initialTab) {
+      setTab(initialTab);
+    }
+  }, [location?.state?.initialTab]);
+
+  /* ── Direct URL hit: /menu/<slug> → set the correct tab ── */
+  const SLUG_TO_TAB = {
+    "audiology":            "Audiology",
+    "physiotherapy":        "Physiotherapy",
+    "occupational-therapy": "Occupational Therapy",
+    "psychology":           "Psychology",
+    "optometry":            "Optometry",
+    "nursing":              "Nursing",
+    "dietetics":            "Dietetics",
+    "speech":               "Speech & Language Therapy",
+    "prosthetics":          "Prosthetics & Orthotics",
+    "vocational":           "Work & Vocational Rehab",
+    "doctor":               "Doctor",
+    "medical-assistant":    "Medical Assistant",
+  };
+  useEffect(() => {
+    if (mode && SLUG_TO_TAB[mode]) {
+      setTab(SLUG_TO_TAB[mode]);
+    }
   }, [mode]);
 
   // Patient controlled form state in App (for summary & persistence)
@@ -319,7 +378,7 @@ useEffect(() => {
         {/* Left rail */}
         <SidebarNav
           tab={tab}
-          setTab={setTab}
+          setTab={navigateToTab}
           userType={userType}
           icdCode={icdCode}
           icfCode={icfCode}
@@ -335,8 +394,8 @@ useEffect(() => {
           <TopToolbar
             showProfileMenu={showProfileMenu}
             toggleProfileMenu={toggleProfileMenu}
-            onBook={() => setTab("BOOK_APPOINTMENT")}
-            onOrder={() => setTab("ORDER_INVESTIGATIONS")}
+            onBook={() => navigateToTab("BOOK_APPOINTMENT")}
+            onOrder={() => navigateToTab("ORDER_INVESTIGATIONS")}
             onSaveAll={saveEverything}
           />
 

@@ -1,8 +1,6 @@
 import "./App.css";
 import "./styles/design-system.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Login from "./pages/Signin"; // Assuming useLocation is used in the Login component
+import Login from "./pages/Signin";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
@@ -19,6 +17,7 @@ import SpinalInjury from "./pages/SpinalInjury";
 import stroke from "./pages/stroke";
 import latest from "./pages/Carddisplay.js";
 import PatientDetails from "./features/Psychology/components/PatientDetails.jsx";
+import DeptEntry from "./pages/DeptEntry";
 
 function App() {
   console.log("App component rendering...");
@@ -27,37 +26,30 @@ function App() {
     return (
       <div className="App">
         <Router basename="/React">
-          {/* Navbar */}
-          {/* <Route
-            render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Navbar />}
-          /> */}
-
-          {/* Switch and Routes */}
           <Switch>
-            <Route path="/Home" exact component={Home} />
-            <Route path="/menu/:mode?" exact component={Menu} />
-            <Route path="/about" exact component={About} />
-            <Route path="/Patients" exact component={Cyberdyne} />
-            <Route path="/Neurophysics" exact component={pablotests} />
-            <Route path="/" exact component={Login} />
-            <Route path="/contact" exact component={Contact} />
-            <Route path="/AdminTherapist" exact component={treatments} />
-            <Route path="/CMO" exact component={Tymo} />
-            <Route path="/HOD" exact component={Plabo} />
-            <Route path="/Doctor" exact component={stroke} />
-            <Route path="/Spinalinjury" exact component={SpinalInjury} />
-            <Route path="/Output" exact component={Output} />
+            {/* ── Public ── */}
+            <Route path="/"       exact component={Login} />
             <Route path="/Signup" exact component={Signup} />
+            <Route path="/about"  exact component={About} />
+            <Route path="/contact" exact component={Contact} />
 
+            {/* ── Deep-link: /dept/<slug>?token=<jwt> ── */}
+            <Route path="/dept/:department" component={DeptEntry} />
+
+            {/* ── App pages ── */}
+            <Route path="/Home"           exact component={Home} />
+            <Route path="/menu/:mode?"    exact component={Menu} />
+            <Route path="/Patients"       exact component={Cyberdyne} />
+            <Route path="/Neurophysics"   exact component={pablotests} />
+            <Route path="/AdminTherapist" exact component={treatments} />
+            <Route path="/CMO"            exact component={Tymo} />
+            <Route path="/HOD"            exact component={Plabo} />
+            <Route path="/Doctor"         exact component={stroke} />
+            <Route path="/Spinalinjury"   exact component={SpinalInjury} />
+            <Route path="/Output"         exact component={Output} />
             <Route path="/psychology/patient/:id" exact component={PatientDetails} />
-            <Route path="/Modalities" exact component={latest} />
-
+            <Route path="/Modalities"     exact component={latest} />
           </Switch>
-
-          {/* Footer */}
-          {/* <Route
-            render={({ location }) => (location.pathname !== "/" && location.pathname !== "/Signup") && <Footer />}
-          /> */}
         </Router>
       </div>
     );

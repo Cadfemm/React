@@ -115,8 +115,8 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
           // =========================
           { type: "subheading", label: "Subjective Rating Scales (Hearing Loss)" },
           { type: "info-text", text: "0 = none, 10 = worst possible"},
-          { name: "emotional_vas", label: "Emotional (0–10)", type: "scale-slider", min: 0, max: 10 },
-          { name: "social_vas", label: "Social / Situational (0–10)", type: "scale-slider", min: 0, max: 10 },
+          { name: "emotional_vas", label: "Analogue Scale : Emotional (0–10)", type: "scale-slider", min: 0, max: 10 },
+          { name: "social_vas", label: "Analogue Scale : Social / Situational (0–10)", type: "scale-slider", min: 0, max: 10 },
 
           // =========================
           // HHIA

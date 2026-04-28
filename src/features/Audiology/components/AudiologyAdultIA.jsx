@@ -828,13 +828,23 @@ const SUBJECTIVE_SCHEMA = {
             oneOf: ["right", "left", "bilateral"] 
           }
         },
-
         {
           name: "head_neck_injury",
           label: "Head or Neck Injury",
-          type: "textarea"
+          type: "radio",
+          options: [
+            { label: "Yes", value: "1"},
+            { label: "No", value: "0"}
+          ]
         },
-
+        {
+          name: "head_neck_notes",
+          type: "textarea",
+          showIf: {
+            field: "head_neck_injury",
+            equals: "1"
+          }
+        },
         {
           name: "ear_pain",
           label: "Otalgia",
@@ -944,7 +954,24 @@ const SUBJECTIVE_SCHEMA = {
             oneOf: ["right", "left", "bilateral"] 
           }
         },
-
+        {
+          name: "better_hearing",
+          label: "Better Hearing",
+          type: "radio",
+          options: [
+            // { label: "No", value: "none" },
+            ...IMPAIRED_LOCATION
+          ]
+        },
+        {
+          name: "better_hearing_notes",
+          label: "",
+          type: "textarea",
+          showIf: { 
+            field: "better_hearing", 
+            oneOf: ["right", "left", "bilateral"] 
+          }
+        },
         {
           name: "communication_difficulties",
           label: "Communication Difficulties",
