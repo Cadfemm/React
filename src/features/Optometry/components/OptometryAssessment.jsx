@@ -344,7 +344,7 @@ export default function OptometryAssessment({
   const [questionaireIds, setQuestionaireIds] = useState(() => {
     const qMap = {};
     (initialAssessmentIds || []).forEach(fd => {
-      if ((fd.form_type || '').toUpperCase() === 'QUESTIONAIRE') {
+      if ((fd.form_type || '').toUpperCase() === 'QUESTIONNAIRE') {
         const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
           k => REGISTRY_KEY_TO_NAME[k] === fd.name
         );
@@ -2130,7 +2130,7 @@ export default function OptometryAssessment({
         if (ft === 'INITIAL') {
           const key = (fd.type || '').toLowerCase();
           if (key) idMap[key] = fd.id;
-        } else if (ft === 'QUESTIONAIRE') {
+        } else if (ft === 'QUESTIONNAIRE') {
           // Match by name to registry key
           const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
             k => REGISTRY_KEY_TO_NAME[k] === fd.name
