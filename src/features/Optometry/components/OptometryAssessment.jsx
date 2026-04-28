@@ -163,7 +163,7 @@ const TAB_META = {
 
 
 // ── Patient Header Card (light blue hospital grade) ────────────────────────
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId }) {
+const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId, onCopyLink }) {
   if (!patient) return null;
   const initial = (patient.name || patient.email || "P")[0].toUpperCase();
   const fields = [
@@ -280,9 +280,7 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
             onClick={() => {
               const token = localStorage.getItem("access_token") || "";
               const url   = `${window.location.origin}/optometry/assessment/${assessmentId}?token=${token}`;
-              navigator.clipboard.writeText(url).then(() =>
-                setToast({ message: "Shareable link copied to clipboard", variant: "success" })
-              );
+              navigator.clipboard.writeText(url).then(() => onCopyLink?.());
             }}
           >
             Copy Link
@@ -2274,6 +2272,7 @@ export default function OptometryAssessment({
             onStart={handleStart}
             starting={starting}
             assessmentId={assessmentId}
+            onCopyLink={() => setToast({ message: "Shareable link copied to clipboard", variant: "success" })}
           />
         </div>
 
