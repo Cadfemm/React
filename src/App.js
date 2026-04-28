@@ -18,6 +18,7 @@ import stroke from "./pages/stroke";
 import latest from "./pages/Carddisplay.js";
 import PatientDetails from "./features/Psychology/components/PatientDetails.jsx";
 import DeptEntry from "./pages/DeptEntry";
+import SessionAssessmentPage from "./features/Optometry/pages/SessionAssessmentPage";
 
 function App() {
   console.log("App component rendering...");
@@ -25,7 +26,7 @@ function App() {
   try {
     return (
       <div className="App">
-        <Router basename="/React">
+        <Router basename="">
           <Switch>
             {/* ── Public ── */}
             <Route path="/"       exact component={Login} />
@@ -48,6 +49,9 @@ function App() {
             <Route path="/Spinalinjury"   exact component={SpinalInjury} />
             <Route path="/Output"         exact component={Output} />
             <Route path="/psychology/patient/:id" exact component={PatientDetails} />
+            {/* ── Optometry session direct link ── */}
+            <Route path="/optometry/assessment/:sessionId/:patientId" exact component={SessionAssessmentPage} />
+            <Route path="/optometry/assessment/:sessionId" exact component={SessionAssessmentPage} />
             <Route path="/Modalities"     exact component={latest} />
           </Switch>
         </Router>

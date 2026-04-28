@@ -1,6 +1,6 @@
 import {
   lazy, Suspense,
-  useEffect, useState, useCallback, useMemo,
+  useEffect, useState, useCallback, useMemo, useRef,
   createContext, useContext, memo
 } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
@@ -28,33 +28,98 @@ const LowVisionAssessment         = lazy(() => import("../LowVisionAssessment"))
 const AssessmentFallback = <ShimmerForm rows={6} />;
 
 // ── Context ────────────────────────────────────────────────────────────────
+// Carries patient + the questionaire FormData ID map + save helper
 const PatientContext = createContext(null);
 
+// Registry key → exact name as returned in assessment_ids from the backend
+const REGISTRY_KEY_TO_NAME = {
+  BINOCULAR_VISION:      "Binocular Vision",
+  REFRACTION:            "Refraction Assessment",
+  VISION_DRIVING:        "Vision for Driving",
+  OCULAR_HEALTH:         "Ocular Health / Structure",
+  SPECIAL_DIAGNOSTIC:    "Special Diagnostic",
+  LOW_VISION_ASSESSMENT: "Low Vision Assessment",
+  VISUAL_FUNCTION:       "Visual Function Questionnaire",
+  LVQOL:                 "Low Vision Quality of Life Questionnaire (LVQoL)",
+  BRAIN_VISION:          "Brain Injury Vision Symptoms Survey (BIVSS)",
+  BVDQ:                  "Binocular Vision Dysfunction Questionnaire (BVDQ)",
+};
+
 // ── Adapter factory ────────────────────────────────────────────────────────
-// Sub-assessment components each have their own internal schema — no schema prop needed.
-function makeAdapter(Component, activeKey) {
-  const Adapter = memo(function Adapter({ onChange, layout }) {
-    const patient = useContext(PatientContext);
-    const handleBack = useCallback(() => { onChange(activeKey, null); }, [onChange]);
+// Each adapter: reads its FormData ID from context, loads existing data,
+// auto-saves on every field change (1 s debounce).
+function makeAdapter(Component, activeKey, registryKey) {
+  const Adapter = memo(function Adapter({ onChange: outerOnChange, layout }) {
+    const ctx = useContext(PatientContext);
+    const patient          = ctx?.patient   ?? ctx;   // backward-compat
+    const questionaireIds  = ctx?.questionaireIds ?? {};
+    const formDataId       = questionaireIds[registryKey] ?? null;
+
+    const [values,  setValues]  = useState({});
+    const [loading, setLoading] = useState(false);
+    const saveTimer = useRef(null);
+
+    // Load existing data when the sub-assessment opens
+    useEffect(() => {
+      if (!formDataId) return;
+      setLoading(true);
+      api.get(API_URL.ASSESSMENT + `data/${formDataId}/`)
+        .then(res => {
+          const existing = res.data?.data;
+          if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
+            setValues(existing);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }, [formDataId]);
+
+    const handleChange = useCallback((name, value) => {
+      setValues(v => {
+        const next = { ...v, [name]: value };
+        // Debounced PATCH
+        if (saveTimer.current) clearTimeout(saveTimer.current);
+        saveTimer.current = setTimeout(() => {
+          if (formDataId) {
+            api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
+              .catch(() => {});
+          }
+        }, 1000);
+        return next;
+      });
+    }, [formDataId]);
+
+    const handleBack = useCallback(() => {
+      outerOnChange(activeKey, null);
+    }, [outerOnChange]);
+
+    if (loading) return <ShimmerForm rows={5} />;
+
     return (
       <Suspense fallback={AssessmentFallback}>
-        <Component patient={patient} onBack={handleBack} layout={layout} />
+        <Component
+          patient={patient}
+          values={values}
+          onChange={handleChange}
+          onBack={handleBack}
+          layout={layout}
+        />
       </Suspense>
     );
   });
   return Adapter;
 }
 
-const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active");
-const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active");
-const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active");
-const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active");
-const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active");
-const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active");
-const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active");
-const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active");
-const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active");
-const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active");
+const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active", "BINOCULAR_VISION");
+const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active", "REFRACTION");
+const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active", "VISION_DRIVING");
+const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active", "OCULAR_HEALTH");
+const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active", "SPECIAL_DIAGNOSTIC");
+const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active", "LVQOL");
+const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active", "BRAIN_VISION");
+const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active", "VISUAL_FUNCTION");
+const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active", "BVDQ");
+const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active", "LOW_VISION_ASSESSMENT");
 
 
 export const OPTOMETRY_ASSESSMENT_REGISTRY = {
@@ -98,7 +163,7 @@ const TAB_META = {
 
 
 // ── Patient Header Card (light blue hospital grade) ────────────────────────
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup }) {
+const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId }) {
   if (!patient) return null;
   const initial = (patient.name || patient.email || "P")[0].toUpperCase();
   const fields = [
@@ -147,11 +212,29 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
         <div style={PI.headerActions}>
           <button
             style={PI.reportBtn}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.65)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.45)"}
+            onMouseEnter={e => e.currentTarget.style.background = "#0369a1"}
+            onMouseLeave={e => e.currentTarget.style.background = "#0284c7"}
             onClick={() => alert("Report will be generating soon")}
           >
             Doctors Report
+          </button>
+          {/* ── Start button ── */}
+          <button
+            style={{
+              ...PI.startBtn,
+              opacity: starting ? 0.7 : 1,
+              cursor: starting ? "not-allowed" : "pointer",
+              background: assessmentId ? "rgba(255,255,255,0.20)" : "rgba(255,255,255,0.92)",
+              color: assessmentId ? "#fff" : "#0369a1",
+              border: assessmentId ? "1.5px solid rgba(255,255,255,0.5)" : "none",
+            }}
+            onMouseEnter={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255, 255, 255, 0.75)"; }}
+            onMouseLeave={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255,255,255,0.92)"; }}
+            onClick={!assessmentId && !starting ? onStart : undefined}
+            disabled={starting || !!assessmentId}
+            title={assessmentId ? `Session active: ${assessmentId}` : "Start a new assessment session"}
+          >
+            {starting ? "Starting…" : assessmentId ? "✓ Started" : "Start"}
           </button>
           <button
             style={PI.referralBtn}
@@ -163,6 +246,30 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           </button>
         </div>
       </div>
+
+      {/* ── Session ID banner (shown only after Start) ── */}
+      {assessmentId && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10,
+          padding: "6px 20px",
+          background: "#f0fdf4",
+          borderBottom: "1px solid #bbf7d0",
+        }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            Session ID
+          </span>
+          <span style={{
+            fontFamily: "monospace", fontSize: 12, fontWeight: 600,
+            color: "#166534", background: "#dcfce7",
+            border: "1px solid #bbf7d0", borderRadius: 4,
+            padding: "2px 8px", letterSpacing: "0.3px",
+            userSelect: "all",
+          }}>
+            {assessmentId}
+          </span>
+          <span style={{ fontSize: 11, color: "#86efac" }}>— click to select &amp; copy</span>
+        </div>
+      )}
 
       <div style={PI.grid}>
         {fields.map((f, i) => (
@@ -189,20 +296,49 @@ export default function OptometryAssessment({
   patient,
   onSubmit,
   onBack,
-  savedValues = null,
-  readOnly    = false,
-  mode        = "initial",
+  savedValues          = null,
+  readOnly             = false,
+  mode                 = "initial",
+  initialSessionId     = null,   // pre-seeded when opened via direct link
+  initialAssessmentIds = [],     // pre-seeded assessment_ids array
 }) {
-  const [values,       setValues]       = useState(readOnly && savedValues ? savedValues : {});
-  const [submitted,    setSubmitted]    = useState(readOnly);
-  const [activeTab,    setActiveTab]    = useState("subjective");
-  const [forms,        setForms]        = useState([]);  // kept for future API integration
-  const [formsLoading, setFormsLoading] = useState(false);
-  const [formsError,   setFormsError]   = useState(false);
-  const [showConfirm,  setShowConfirm]  = useState(false);
-  const [isDirty,      setIsDirty]      = useState(false);
-  const [toast,        setToast]        = useState(null);
-  const [showReferral, setShowReferral] = useState(false);
+  const [values,        setValues]        = useState(readOnly && savedValues ? savedValues : {});
+  const [submitted,     setSubmitted]     = useState(readOnly);
+  const [activeTab,     setActiveTab]     = useState("subjective");
+  const [forms,         setForms]         = useState([]);  // kept for future API integration
+  const [formsLoading,  setFormsLoading]  = useState(false);
+  const [formsError,    setFormsError]    = useState(false);
+  const [showConfirm,   setShowConfirm]   = useState(false);
+  const [isDirty,       setIsDirty]       = useState(false);
+  const [toast,         setToast]         = useState(null);
+  const [showReferral,  setShowReferral]  = useState(false);
+  const [assessmentId,  setAssessmentId]  = useState(initialSessionId);
+  const [formDataIds,   setFormDataIds]   = useState(() => {
+    // Pre-build the map if initialAssessmentIds were passed in
+    const idMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
+        const key = (fd.type || '').toLowerCase();
+        if (key) idMap[key] = fd.id;
+      }
+    });
+    return idMap;
+  });
+  const [questionaireIds, setQuestionaireIds] = useState(() => {
+    const qMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'QUESTIONAIRE') {
+        const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+          k => REGISTRY_KEY_TO_NAME[k] === fd.name
+        );
+        if (regKey) qMap[regKey] = fd.id;
+      }
+    });
+    return qMap;
+  });
+  const [starting,      setStarting]      = useState(false);
+  const [tabLoading,    setTabLoading]    = useState(false);
+  const autoSaveTimer = useRef(null);
 
   const isFollowup = mode === "followup";
 
@@ -229,6 +365,23 @@ export default function OptometryAssessment({
       allergies_from_registration:      patient.allergies         || "No data available",
     }));
   }, [patient, readOnly]);
+
+  // ── Fetch FormData for the active tab whenever the session is active ──────
+  useEffect(() => {
+    const formDataId = formDataIds[activeTab];
+    if (!formDataId || !assessmentId) return;
+
+    setTabLoading(true);
+    api.get(API_URL.ASSESSMENT + `data/${formDataId}/`)
+      .then(res => {
+        const existing = res.data?.data;
+        if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
+          setValues(v => ({ ...v, ...existing }));
+        }
+      })
+      .catch(() => {/* silently ignore — form stays editable */})
+      .finally(() => setTabLoading(false));
+  }, [activeTab, formDataIds, assessmentId]);
 
   const sectionShowIf = (key) => (isFollowup ? { field: "general_questions", includes: key } : undefined);
   const sectionShowIfAnd = (key, andCond) =>
@@ -1900,8 +2053,87 @@ export default function OptometryAssessment({
   const onChange = useCallback((name, value) => {
     if (readOnly) return;
     setIsDirty(true);
-    setValues(v => ({ ...v, [name]: value }));
-  }, [readOnly]);
+    setValues(v => {
+      const next = { ...v, [name]: value };
+
+      // Debounced auto-save to API (1.5 s after last keystroke)
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+      autoSaveTimer.current = setTimeout(() => {
+        const formDataId = formDataIds[activeTab];
+        if (formDataId && assessmentId) {
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
+            .catch(() => {/* silent — user can still hit Save manually */});
+        }
+        // Always persist draft locally too
+        if (storageKey) {
+          localStorage.setItem(storageKey, JSON.stringify({ values: next, updatedAt: new Date() }));
+        }
+      }, 1500);
+
+      return next;
+    });
+  }, [readOnly, activeTab, formDataIds, assessmentId, storageKey]);
+
+  // ── Start assessment session ──────────────────────────────────────────────
+  const handleStart = useCallback(async () => {
+    if (!patient) return;
+
+    // Get the logged-in doctor's id from localStorage
+    let doctorId = null;
+    try {
+      const me = JSON.parse(localStorage.getItem("user") || "{}");
+      doctorId = me.id || null;
+    } catch {}
+
+    if (!doctorId) {
+      setToast({ message: 'Could not identify logged-in doctor. Please re-login.', variant: 'error' });
+      return;
+    }
+
+    setStarting(true);
+    try {
+      const res = await api.post(
+        API_URL.ASSESSMENT + 'optometry/start',
+        {
+          doctor:       doctorId,
+          patient:      patient.id,
+          visit_type:   mode === 'followup' ? 'FOLLOW_UP' : 'INITIAL',
+          is_completed: false,
+          total_score:  0,
+        }
+      );
+      const data = res.data;
+      setAssessmentId(data.id);
+
+      // Map FormData ids — only INITIAL form_type gives one record per SOAP tab
+      const idMap = {};
+      const qMap  = {};   // QUESTIONAIRE sub-assessments keyed by registry key
+      (data.assessment_ids || []).forEach(fd => {
+        const ft = (fd.form_type || '').toUpperCase();
+        if (ft === 'INITIAL') {
+          const key = (fd.type || '').toLowerCase();
+          if (key) idMap[key] = fd.id;
+        } else if (ft === 'QUESTIONAIRE') {
+          // Match by name to registry key
+          const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+            k => REGISTRY_KEY_TO_NAME[k] === fd.name
+          );
+          if (regKey) qMap[regKey] = fd.id;
+        }
+      });
+      setFormDataIds(idMap);
+      setQuestionaireIds(qMap);
+      setToast({ message: 'Assessment session started', variant: 'success' });
+    } catch (err) {
+      const detail = err?.response?.data;
+      const msg = typeof detail === 'object'
+        ? Object.values(detail).flat().join(' ')
+        : 'Failed to start assessment. Please try again.';
+      setToast({ message: msg, variant: 'error' });
+    } finally {
+      setStarting(false);
+    }
+  }, [patient, mode]);
 
   const handleAction = useCallback((type) => {
     if (type === "back") { onBack?.(); return; }
@@ -1913,10 +2145,24 @@ export default function OptometryAssessment({
     }
     if (type === "clear") { setValues({}); setSubmitted(false); localStorage.removeItem(storageKey); }
     if (type === "save") {
+      // Persist draft locally
       localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
-      setToast({ message: "Draft saved successfully", variant: "success" });
+
+      // Push to API immediately on explicit Save click
+      if (assessmentId) {
+        const formDataId = formDataIds[activeTab];
+        if (formDataId) {
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values })
+            .then(() => setToast({ message: 'Saved successfully', variant: 'success' }))
+            .catch(() => setToast({ message: 'Save failed. Draft kept locally.', variant: 'error' }));
+        } else {
+          setToast({ message: 'Draft saved locally', variant: 'success' });
+        }
+      } else {
+        setToast({ message: 'Draft saved locally (start a session to sync)', variant: 'success' });
+      }
     }
-  }, [readOnly, activeTab, storageKey, values, onBack]);
+  }, [readOnly, activeTab, storageKey, values, onBack, assessmentId, formDataIds]);
 
   const handleConfirmedSubmit = useCallback(async () => {
     setShowConfirm(false);
@@ -1970,7 +2216,7 @@ export default function OptometryAssessment({
 
   /* ===================== RENDER ===================== */
   return (
-    <PatientContext.Provider value={patient}>
+    <PatientContext.Provider value={{ patient, questionaireIds }}>
       {showReferral && (
         <ReferralModal patient={patient} onSubmit={handleReferralSubmit} onClose={() => setShowReferral(false)} />
       )}
@@ -2001,7 +2247,14 @@ export default function OptometryAssessment({
       <div style={S.page}>
         {/* Patient header */}
         <div style={S.patientCardWrap}>
-          <OptometryPatientInfo patient={patient} onReferral={() => setShowReferral(true)} isFollowup={isFollowup} />
+          <OptometryPatientInfo
+            patient={patient}
+            onReferral={() => setShowReferral(true)}
+            isFollowup={isFollowup}
+            onStart={handleStart}
+            starting={starting}
+            assessmentId={assessmentId}
+          />
         </div>
 
         {/* SOAP tab shell */}
@@ -2009,8 +2262,9 @@ export default function OptometryAssessment({
           {/* Tab bar — full width equal columns */}
           <div style={S.tabBar}>
             {TAB_ORDER.map((tab, idx) => {
-              const isActive = activeTab === tab;
-              const isDone   = idx < activeTabIdx;
+              const isActive  = activeTab === tab;
+              const isDone    = idx < activeTabIdx;
+              const hasData   = !!formDataIds[tab];   // linked to a FormData record
               return (
                 <button
                   key={tab}
@@ -2018,6 +2272,13 @@ export default function OptometryAssessment({
                   onClick={() => setActiveTab(tab)}
                 >
                   {TAB_META[tab].label}
+                  {hasData && (
+                    <span style={{
+                      marginLeft: 6, width: 7, height: 7, borderRadius: "50%",
+                      background: isActive ? "#2563eb" : "#10b981",
+                      display: "inline-block", flexShrink: 0,
+                    }} title="FormData linked" />
+                  )}
                 </button>
               );
             })}
@@ -2025,7 +2286,9 @@ export default function OptometryAssessment({
 
           {/* Tab content — full width */}
           <div style={S.tabContent}>
-            {formsLoading ? (
+            {tabLoading ? (
+              <div style={S.contentPad}><ShimmerForm rows={6} /></div>
+            ) : formsLoading ? (
               <div style={S.contentPad}><ShimmerForm rows={6} /></div>
             ) : formsError ? (
               <div style={S.contentPad}>
@@ -2267,15 +2530,25 @@ const PI = {
   reportBtn: {
     display: "inline-flex",
     alignItems: "center",
-    background: "#fff",
-    border: "1px solid #bae6fd",
-    color: "#0369a1",
+    background: "#0284c7",
+    border: "1.5px solid rgba(255,255,255,0.6)",
+    color: "#fff",
     borderRadius: 6,
     padding: "6px 14px",
     fontSize: 12,
     fontWeight: 600,
     cursor: "pointer",
     transition: "background .15s",
+  },
+  startBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 5,
+    borderRadius: 6,
+    padding: "6px 16px",
+    fontSize: 12,
+    fontWeight: 700,
+    transition: "background .15s, opacity .15s",
   },
   referralBtn: {
     display: "inline-flex",
