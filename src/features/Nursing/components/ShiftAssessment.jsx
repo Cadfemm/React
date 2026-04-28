@@ -577,7 +577,7 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
           <WoundTable v={v} set={set} />
           <div style={st.infoNote}>Attach wound photograph labelled with date, time, and nurse ID. Log in photographic record.</div>
           <F label="Pressure Injury Prevention Measures">
-            <Checks name="pressure_injury_prevention" opts={["2-hourly repositioning chart active","Pressure-relieving mattress in use","Heel protectors applied","Moisture barrier cream","Air vest in use (log updated)","Repositioning chart updated","Patient / family education done","Dietitian referral for nutrition"]} v={v} set={set} />
+            <Checks name="pressure_injury_prevention" opts={["2-hourly positioning chart active","Pressure-relieving mattress in use","Heel protectors applied","Moisture barrier cream","Air vest in use (log updated)","Positioning chart updated","Patient / family education done","Dietitian referral for nutrition"]} v={v} set={set} />
           </F>
         </Sec>
 
@@ -674,6 +674,7 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
             <F label="Carer Comprehension Level"><Radios name="carer_comprehension" opts={["Understood well","Partial understanding","Needs follow-up","Interpreter required"]} v={v} set={set} /></F>
             <F label="Carer Concerns Raised"><Txt name="carer_concerns" v={v} set={set} /></F>
           </div>
+          <button style={st.btnPrimary}>Open Carer Log Book</button>
         </Sec>
 
         {/* ── ISBAR ── */}

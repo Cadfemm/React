@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-
-const VOICE_OPTIONS = [
-  { label: "Normal", value: "normal" },
-  { label: "Positive", value: "positive" }
-];
 
 export default function RespiratoryAssessment({ layout = "root" }) {
   const [values, setValues] = useState({});
@@ -13,332 +8,466 @@ export default function RespiratoryAssessment({ layout = "root" }) {
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Pack-years = packs/day × years (when both present); clear when either is empty
-  useEffect(() => {
-    const packs = parseFloat(values.resp_smoking_packs_per_day, 10);
-    const years = parseFloat(values.resp_smoking_years, 10);
-    const next = Number.isFinite(packs) && Number.isFinite(years)
-      ? String(packs * years)
-      : "";
-    setValues((prev) => (prev.resp_smoking_pack_years === next ? prev : { ...prev, resp_smoking_pack_years: next }));
-  }, [values.resp_smoking_packs_per_day, values.resp_smoking_years]);
+  const labelStyle = { display: "flex", alignItems: "center", gap: 8, fontSize: 14, marginBottom: 4 };
 
   const RESPIRATORY_SCHEMA = {
-    title: "Respiratory Assessment",
+    title: "Respiratory Focused Assessment",
     sections: [
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 1 — SUBJECTIVE
-      // ═══════════════════════════════════════════════════════════════
+      // ─────────────────────────────────────────────
+      // RESPIRATORY HISTORY
+      // ─────────────────────────────────────────────
       {
-        title: "SECTION 1 — SUBJECTIVE (Patient Reported)",
+        title: "RESPIRATORY HISTORY",
         fields: [
           {
-            name: "resp_complaint",
-            label: "1. Current Respiratory Complaint",
+            // Multiple complaints can coexist → checkbox
+            name: "respiratory_complaint",
+            label: "Respiratory Complaint (select all that apply)",
             type: "checkbox-group",
             options: [
-              { label: "Shortness of breath", value: "shortness_of_breath" },
+              { label: "None", value: "none", exclusive: true },
+              { label: "Shortness of breath", value: "sob" },
               { label: "Cough", value: "cough" },
-              { label: "Frank hemoptysis", value: "frank_hemoptysis" },
               { label: "Wheeze", value: "wheeze" },
               { label: "Chest tightness", value: "chest_tightness" },
               { label: "Chest pain on breathing", value: "chest_pain_breathing" },
               { label: "Fatigue on exertion", value: "fatigue_exertion" },
-              { label: "Fever", value: "fever" },
-              { label: "Recent Respiratory infection", value: "recent_resp_infection" },
-              { label: "Other", value: "other" }
+              { label: "Fever / recent respiratory infection", value: "fever_infection" },
+              { label: "Frank haemoptysis", value: "haemoptysis" }
             ]
           },
           {
-            type: "info-text",
-            text: "⚠ If Frank hemoptysis was selected, patient must go to doctor.",
-            showIf: { field: "resp_complaint", includes: "frank_hemoptysis" }
-          },
-          {
-            name: "resp_complaint_other_specify",
-            label: "Other — Specify",
-            type: "input",
-            showIf: { field: "resp_complaint", includes: "other" }
-          },
-          // ─── 2. Dyspnea ───
-          {
-            name: "resp_dyspnea_onset",
-            label: "Onset",
-            type: "radio",
-            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
-            options: [
-              { label: "Sudden", value: "sudden" },
-              { label: "Gradual", value: "gradual" },
-              { label: "Unknown", value: "unknown" }
-            ]
-          },
-          {
-            name: "resp_dyspnea_occurs",
-            label: "Occurs",
-            type: "radio",
-            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
-            options: [
-              { label: "At rest", value: "at_rest" },
-              { label: "With exertion", value: "with_exertion" },
-              { label: "At night", value: "at_night" }
-            ]
-          },
-          {
-            name: "resp_dyspnea_severity",
-            label: "Severity (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1,
-            showValue: true,
-            showIf: { field: "resp_complaint", includes: "shortness_of_breath" }
-          },
-          {
-            name: "resp_orthopnea",
-            label: "Orthopnea",
-            type: "radio",
-            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "resp_orthopnea_pillows",
-            label: "Pillows used",
-            type: "input",
-            showIf: {
-              field: "resp_orthopnea",
-              equals: "yes",
-              and: { field: "resp_complaint", includes: "shortness_of_breath" }
+            // Other with specify below
+            name: "respiratory_complaint_other_custom",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              const checked = values["respiratory_complaint"] || [];
+              const toggle = (val) => {
+                const next = checked.includes(val)
+                  ? checked.filter((v) => v !== val)
+                  : [...checked, val];
+                onChange("respiratory_complaint", next);
+              };
+              return (
+                <div>
+                  <label style={labelStyle}>
+                    <input type="checkbox" checked={checked.includes("other")} onChange={() => toggle("other")} />
+                    Other:
+                  </label>
+                  {checked.includes("other") && (
+                    <input
+                      type="text"
+                      value={values["respiratory_complaint_other_specify"] || ""}
+                      onChange={(e) => onChange("respiratory_complaint_other_specify", e.target.value)}
+                      placeholder="Specify other complaint"
+                      style={{
+                        marginTop: 8,
+                        padding: "8px 12px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        fontSize: 14,
+                        width: "300px"
+                      }}
+                    />
+                  )}
+                </div>
+              );
             }
           },
+          // Dyspnoea: 2 options → side-by-side
           {
-            name: "resp_pnd",
-            label: "Paroxysmal nocturnal Dyspnea",
+            name: "dyspnoea_present",
+            label: "Dyspnoea",
             type: "radio",
-            showIf: { field: "resp_complaint", includes: "shortness_of_breath" },
+            position: "side",
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
           },
+          // Dyspnoea details - show when Yes is selected
           {
-            name: "resp_cough_present",
-            label: "3. Cough",
+            name: "dyspnoea_details",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["dyspnoea_present"] !== "yes") return null;
+              
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 12 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Onset</label>
+                      {["Sudden", "Gradual", "Unknown"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="dyspnoea_onset"
+                            checked={values["dyspnoea_onset"] === item.toLowerCase()}
+                            onChange={() => onChange("dyspnoea_onset", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Occurs</label>
+                      {["At rest", "With exertion", "Nocturnal"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="dyspnoea_occurs"
+                            checked={values["dyspnoea_occurs"] === item.toLowerCase().replace(" ", "_")}
+                            onChange={() => onChange("dyspnoea_occurs", item.toLowerCase().replace(" ", "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Severity (0-10)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={values["dyspnoea_severity"] || ""}
+                        onChange={(e) => onChange("dyspnoea_severity", e.target.value)}
+                        style={{ width: "100%", padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          },
+          // Orthopnoea: 2 options → side-by-side
+          {
+            name: "orthopnoea",
+            label: "Orthopnoea",
             type: "radio",
+            position: "side",
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
           },
+          // Orthopnoea pillows - show when Yes is selected
           {
-            name: "resp_cough_duration",
-            label: "Duration",
+            name: "orthopnoea_pillows_field",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["orthopnoea"] !== "yes") return null;
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>Pillows used:</label>
+                  <input
+                    type="text"
+                    value={values["orthopnoea_pillows"] || ""}
+                    onChange={(e) => onChange("orthopnoea_pillows", e.target.value)}
+                    placeholder="Number of pillows"
+                    style={{ padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px", width: "150px" }}
+                  />
+                </div>
+              );
+            }
+          },
+          // PND: 2 options → side-by-side
+          {
+            name: "pnd",
+            label: "PND",
             type: "radio",
-            showIf: { field: "resp_cough_present", equals: "yes" },
+            position: "side",
             options: [
-              { label: "Acute (<3 weeks)", value: "acute" },
-              { label: "Subacute (3–8 weeks)", value: "subacute" },
-              { label: "Chronic (>8 weeks)", value: "chronic" }
+              { label: "No", value: "no" },
+              { label: "Yes", value: "yes" }
             ]
           },
+          // Cough: 2 options → side-by-side
           {
-            name: "resp_cough_timing",
-            label: "Timing",
+            name: "cough_present",
+            label: "Cough",
             type: "radio",
-            showIf: { field: "resp_cough_present", equals: "yes" },
+            position: "side",
             options: [
-              { label: "Morning", value: "morning" },
-              { label: "Night", value: "night" },
-              { label: "Continuous", value: "continuous" },
-              { label: "Intermittent", value: "intermittent" }
+              { label: "No", value: "no" },
+              { label: "Yes", value: "yes" }
             ]
           },
+          // Cough details - show when Yes is selected
           {
-            name: "resp_cough_character",
-            label: "Character",
-            type: "radio",
-            showIf: { field: "resp_cough_present", equals: "yes" },
-            options: [
-              { label: "Dry", value: "dry" },
-              { label: "Productive", value: "productive" }
-            ]
+            name: "cough_details",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["cough_present"] !== "yes") return null;
+              
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Duration</label>
+                      {["Acute <3 wks", "Subacute 3–8 wks", "Chronic >8 wks"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="cough_duration"
+                            checked={values["cough_duration"] === item.toLowerCase().replace(/[^a-z0-9]/g, "_")}
+                            onChange={() => onChange("cough_duration", item.toLowerCase().replace(/[^a-z0-9]/g, "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Character</label>
+                      {["Dry", "Productive"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="cough_character"
+                            checked={values["cough_character"] === item.toLowerCase()}
+                            onChange={() => onChange("cough_character", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Timing</label>
+                      {["Morning", "Night", "Continuous", "Intermittent"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="cough_timing"
+                            checked={values["cough_timing"] === item.toLowerCase()}
+                            onChange={() => onChange("cough_timing", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
           },
-          // ─── 4. Sputum ───
-          { type: "subheading", label: "4. Sputum (If Productive)" },
+          // Sputum section - show when cough is productive
           {
-            name: "resp_sputum_amount",
-            label: "Amount",
-            type: "radio",
-            options: [
-              { label: "Scant", value: "scant" },
-              { label: "Small", value: "small" },
-              { label: "Moderate", value: "moderate" },
-              { label: "Large", value: "large" }
-            ]
+            name: "sputum_section",
+            label: "Sputum (if productive)",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["cough_character"] !== "productive") return null;
+              
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Amount</label>
+                      {["Scant", "Small", "Moderate", "Large"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="sputum_amount"
+                            checked={values["sputum_amount"] === item.toLowerCase()}
+                            onChange={() => onChange("sputum_amount", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Odour</label>
+                      {["None", "Foul"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="sputum_odour"
+                            checked={values["sputum_odour"] === item.toLowerCase()}
+                            onChange={() => onChange("sputum_odour", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Colour</label>
+                      {["Clear", "White", "Yellow", "Green", "Blood-tinged", "Rust", "Black"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="sputum_colour"
+                            checked={values["sputum_colour"] === item.toLowerCase().replace("-", "_")}
+                            onChange={() => onChange("sputum_colour", item.toLowerCase().replace("-", "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Consistency</label>
+                      {["Thin", "Thick"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="sputum_consistency"
+                            checked={values["sputum_consistency"] === item.toLowerCase()}
+                            onChange={() => onChange("sputum_consistency", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
           },
+          // Smoking: 3 options → side-by-side
           {
-            name: "resp_sputum_color",
-            label: "Color",
+            name: "smoking_status",
+            label: "Smoking",
             type: "radio",
-            options: [
-              { label: "Clear", value: "clear" },
-              { label: "White", value: "white" },
-              { label: "Yellow", value: "yellow" },
-              { label: "Green", value: "green" },
-              { label: "Blood-tinged", value: "blood_tinged" },
-              { label: "Rust-colored", value: "rust" },
-              { label: "Black", value: "black" }
-            ]
-          },
-          {
-            name: "resp_sputum_odor",
-            label: "Odor",
-            type: "radio",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Foul", value: "foul" }
-            ]
-          },
-          {
-            name: "resp_sputum_consistency",
-            label: "Consistency",
-            type: "radio",
-            options: [
-              { label: "Thin", value: "thin" },
-              { label: "Thick", value: "thick" }
-            ]
-          },
-          // ─── 5. Smoking / Exposure ───
-          { type: "subheading", label: "5. Smoking / Exposure" },
-          {
-            name: "resp_smoking_status",
-            label: "Smoking status",
-            type: "radio",
+            position: "side",
             options: [
               { label: "Never", value: "never" },
               { label: "Former", value: "former" },
               { label: "Current", value: "current" }
             ]
           },
+          // Pack-years field - show when Former or Current is selected
           {
-            type: "row",
-            fields: [
-              {
-                name: "resp_smoking_packs_per_day",
-                label: "Packs/day",
-                type: "input",
-                showIf: { field: "resp_smoking_status", oneOf: ["former", "current"] }
-              },
-              {
-                name: "resp_smoking_years",
-                label: "Years",
-                type: "input",
-                showIf: { field: "resp_smoking_status", oneOf: ["former", "current"] }
-              }
-            ]
+            name: "pack_years_field",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (!["former", "current"].includes(values["smoking_status"])) return null;
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>Pack-years (auto-calc):</label>
+                  <input
+                    type="text"
+                    value={values["pack_years"] || ""}
+                    onChange={(e) => onChange("pack_years", e.target.value)}
+                    style={{ padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px", width: "150px" }}
+                  />
+                </div>
+              );
+            }
           },
+          // Environmental Exposure: 4 options → side-by-side
           {
-            name: "resp_smoking_pack_years",
-            label: "Pack-years (auto-calculated)",
-            type: "input",
-            readOnly: true,
-            showIf: { field: "resp_smoking_status", oneOf: ["former", "current"] }
-          },
-          {
-            name: "resp_environmental_exposure",
-            label: "Environmental exposure",
-            type: "radio",
-            labelAbove: true,
+            name: "environmental_exposure",
+            label: "Environmental Exposure",
+            type: "checkbox-group",
+            position: "side",
             options: [
               { label: "Second-hand smoke", value: "second_hand_smoke" },
               { label: "Occupational dust/chemicals", value: "occupational" },
-              { label: "Biomass fuel exposure", value: "biomass" },
-              { label: "None", value: "none" }
+              { label: "Biomass fuel", value: "biomass_fuel" },
+              { label: "None", value: "none", exclusive: true }
             ]
           },
-          // ─── 6. Past Respiratory History ───
+          // Past Respiratory History: 10 options → display below
           {
-            name: "resp_past_history",
-            label: "6. Past Respiratory History",
+            name: "past_respiratory_history",
+            label: "Past Respiratory History",
             type: "checkbox-group",
             options: [
               { label: "Asthma", value: "asthma" },
               { label: "COPD", value: "copd" },
-              { label: "Tuberculosis", value: "tb" },
+              { label: "Tuberculosis", value: "tuberculosis" },
               { label: "Pneumonia (recurrent)", value: "pneumonia" },
               { label: "Pulmonary embolism", value: "pe" },
               { label: "Lung cancer", value: "lung_cancer" },
-              { label: "Obstructive sleep apnea", value: "osa" },
-              { label: "COVID-related lung disease", value: "covid_lung" },
-              { label: "Mechanical ventilation history", value: "mech_vent" },
+              { label: "Obstructive sleep apnoea", value: "osa" },
+              { label: "COVID lung disease", value: "covid_lung" },
+              { label: "Mechanical ventilation Hx", value: "mech_vent_hx" },
               { label: "Chest trauma/surgery", value: "chest_trauma" },
-              { label: "None", value: "none" }
+              { label: "None", value: "none", exclusive: true }
             ]
           },
-          // ─── 7. Current Respiratory Treatments ───
+          // Current Respiratory Treatments: 7 options → display below
           {
-            name: "resp_current_treatments",
-            label: "7. Current Respiratory Treatments",
+            name: "current_respiratory_treatments",
+            label: "Current Respiratory Treatments",
             type: "checkbox-group",
             options: [
               { label: "Inhalers", value: "inhalers" },
-              { label: "Nebulizers", value: "nebulizers" },
+              { label: "Nebulisers", value: "nebulisers" },
               { label: "Oxygen therapy", value: "oxygen" },
               { label: "Steroids", value: "steroids" },
               { label: "Antibiotics", value: "antibiotics" },
               { label: "CPAP/BiPAP", value: "cpap_bipap" },
-              { label: "None", value: "none" }
+              { label: "None", value: "none", exclusive: true }
             ]
           },
-          // ─── 8. Functional Respiratory Status ───
+          // Functional Respiratory Status: 6 options → display below
           {
-            name: "resp_functional_status",
-            label: "8. Functional Respiratory Status",
-            type: "checkbox-group",
+            name: "functional_respiratory_status",
+            label: "Functional Respiratory Status",
+            type: "radio",
             options: [
               { label: "Speaks full sentences without breathlessness", value: "full_sentences" },
-              { label: "Dyspnea on exertion", value: "doe" },
-              { label: "Dyspnea at rest", value: "dor" },
+              { label: "Dyspnoea on exertion", value: "doe" },
+              { label: "Dyspnoea at rest", value: "dar" },
               { label: "Requires rest breaks", value: "rest_breaks" },
               { label: "Requires oxygen during activity", value: "oxygen_activity" },
-              { label: "Unable to tolerate therapy due to breathlessness", value: "unable_therapy" }
+              { label: "Unable to tolerate therapy", value: "unable" }
             ]
           }
         ]
       },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 2 — OBJECTIVE
-      // ═══════════════════════════════════════════════════════════════
+
+      // ─────────────────────────────────────────────
+      // CLINICAL EXAMINATION
+      // ─────────────────────────────────────────────
       {
-        title: "SECTION 2 — OBJECTIVE (Clinician Observed)",
+        title: "CLINICAL EXAMINATION",
         fields: [
-          { type: "subheading", label: "1. General Breathing Pattern" },
+          // Breathing Pattern
           {
-            name: "resp_breathing_pattern",
-            label: "General Breathing Pattern",
-            type: "checkbox-group",
-            options: [
-              { label: "Normal/easy breathing", value: "normal" },
-              { label: "Tachypnea", value: "tachypnea" },
-              { label: "Bradypnea", value: "bradypnea" },
-              { label: "Labored breathing", value: "labored" },
-              { label: "Air hunger", value: "air_hunger" },
-              { label: "Pursed-lip breathing", value: "pursed_lip" },
-              { label: "Tripod positioning", value: "tripod" },
-              { label: "Accessory muscle use", value: "accessory" },
-              { label: "Agonal respirations", value: "agonal" }
-            ]
+            name: "breathing_pattern_section",
+            label: "Breathing Pattern",
+            type: "custom",
+            render: ({ values, onChange }) => (
+              <div>
+                <label style={{ fontWeight: 600, fontSize: 14, marginBottom: 10, display: "block" }}>Breathing Pattern</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 12 }}>
+                  {[
+                    "Normal/easy breathing", "Tachypnoea", "Bradypnoea", "Laboured breathing",
+                    "Air hunger", "Pursed-lip breathing", "Tripod positioning", "Accessory muscle use", "Agonal respirations"
+                  ].map((item) => (
+                    <label key={item} style={labelStyle}>
+                      <input
+                        type="checkbox"
+                        checked={(values["breathing_pattern"] || []).includes(item.toLowerCase().replace(/[^a-z0-9]/g, "_"))}
+                        onChange={() => {
+                          const current = values["breathing_pattern"] || [];
+                          const val = item.toLowerCase().replace(/[^a-z0-9]/g, "_");
+                          const next = current.includes(val)
+                            ? current.filter(v => v !== val)
+                            : [...current, val];
+                          onChange("breathing_pattern", next);
+                        }}
+                      />
+                      {item}
+                    </label>
+                  ))}
+                </div>
+                <div>
+                  <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>RR (/min):</label>
+                  <input
+                    type="number"
+                    value={values["respiratory_rate"] || ""}
+                    onChange={(e) => onChange("respiratory_rate", e.target.value)}
+                    style={{ padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px", width: "100px" }}
+                  />
+                </div>
+              </div>
+            )
           },
+          // Level of Consciousness: 5 options → display below
           {
-            name: "resp_breathing_rate",
-            label: "Respiratory rate (breaths/min)",
-            type: "input"
-          },
-          {
-            name: "resp_loc",
-            label: "3. Level of Consciousness",
+            name: "level_of_consciousness",
+            label: "Level of Consciousness",
             type: "radio",
             options: [
               { label: "Alert", value: "alert" },
@@ -348,24 +477,25 @@ export default function RespiratoryAssessment({ layout = "root" }) {
               { label: "Unresponsive", value: "unresponsive" }
             ]
           },
+          // Chest Wall & Expansion: 6 options → display below
           {
-            name: "resp_chest_wall_expansion",
-            label: "4. Chest Wall & Expansion",
-            type: "radio",
-            labelAbove: true,
+            name: "chest_wall_expansion",
+            label: "Chest Wall & Expansion",
+            type: "checkbox-group",
             options: [
               { label: "Symmetrical expansion", value: "symmetrical" },
               { label: "Asymmetrical expansion", value: "asymmetrical" },
-              { label: "Barrel chest", value: "barrel" },
+              { label: "Barrel chest", value: "barrel_chest" },
               { label: "Retractions", value: "retractions" },
-              { label: "Flail segment", value: "flail" },
-              { label: "Chest deformity", value: "deformity" }
+              { label: "Flail segment", value: "flail_segment" },
+              { label: "Chest deformity", value: "chest_deformity" }
             ]
           },
+          // Airway & Secretions: 5 options → display below
           {
-            name: "resp_airway_secretions",
-            label: "5. Airway & Secretions",
-            type: "radio",
+            name: "airway_secretions",
+            label: "Airway & Secretions",
+            type: "checkbox-group",
             options: [
               { label: "Airway patent", value: "patent" },
               { label: "Drooling", value: "drooling" },
@@ -374,13 +504,13 @@ export default function RespiratoryAssessment({ layout = "root" }) {
               { label: "Stridor", value: "stridor" }
             ]
           },
+          // Skin & Perfusion: 6 options → display below
           {
-            name: "resp_skin_perfusion",
-            label: "6. Skin & Perfusion",
-            type: "radio",
-            labelAbove: true,
+            name: "skin_perfusion",
+            label: "Skin & Perfusion",
+            type: "checkbox-group",
             options: [
-              { label: "Normal color", value: "normal" },
+              { label: "Normal colour", value: "normal_colour" },
               { label: "Central cyanosis", value: "central_cyanosis" },
               { label: "Peripheral cyanosis", value: "peripheral_cyanosis" },
               { label: "Pallor", value: "pallor" },
@@ -388,44 +518,36 @@ export default function RespiratoryAssessment({ layout = "root" }) {
               { label: "Clubbing", value: "clubbing" }
             ]
           },
-          { type: "subheading", label: "7. Oxygenation" },
+          // SpO2 and Flow rate
           {
-            type: "row",
-            fields: [
-              { name: "resp_ox_spo2", label: "SpO₂ (%)", type: "input" },
-              {
-                name: "resp_ox_device",
-                label: "Oxygen device",
-                type: "radio",
-                labelAbove: true,
-                options: [
-                  { label: "Room air", value: "room_air" },
-                  { label: "Nasal cannula", value: "nasal_cannula" },
-                  { label: "Simple mask", value: "simple_mask" },
-                  { label: "Non-rebreather", value: "non_rebreather" },
-                  { label: "HFNC", value: "hfnc" },
-                  { label: "CPAP/BiPAP", value: "cpap_bipap" },
-                  { label: "Mechanical ventilation", value: "mech_vent" }
-                ]
-              }
-            ]
+            name: "spo2",
+            label: "SpO₂ (%)",
+            type: "input"
           },
           {
-            name: "resp_ox_flow_rate",
+            name: "flow_rate",
             label: "Flow rate (L/min)",
             type: "input"
-          }
-        ]
-      },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 3 — AUSCULTATION
-      // ═══════════════════════════════════════════════════════════════
-      {
-        title: "SECTION 3 — AUSCULTATION",
-        fields: [
+          },
+          // Oxygen device: 7 options → display below
           {
-            name: "resp_breath_sounds",
-            label: "8. Breath Sounds (Primary)",
+            name: "oxygen_device",
+            label: "Oxygen device",
+            type: "radio",
+            options: [
+              { label: "Room air", value: "room_air" },
+              { label: "Nasal cannula", value: "nasal_cannula" },
+              { label: "Simple mask", value: "simple_mask" },
+              { label: "Non-rebreather", value: "non_rebreather" },
+              { label: "HFNC", value: "hfnc" },
+              { label: "CPAP/BiPAP", value: "cpap_bipap" },
+              { label: "Mechanical ventilation", value: "mechanical_ventilation" }
+            ]
+          },
+          // Primary Breath Sounds: 5 options → display below
+          {
+            name: "primary_breath_sounds",
+            label: "Primary Breath Sounds",
             type: "radio",
             options: [
               { label: "Vesicular (normal)", value: "vesicular" },
@@ -435,165 +557,193 @@ export default function RespiratoryAssessment({ layout = "root" }) {
               { label: "Absent", value: "absent" }
             ]
           },
+          // Distribution: 3 options + specify → side-by-side
           {
-            name: "resp_breath_sounds_distribution",
+            name: "breath_sounds_distribution",
             label: "Distribution",
             type: "radio",
+            position: "side",
             options: [
               { label: "Bilateral", value: "bilateral" },
-              { label: "Right sided", value: "right" },
-              { label: "Left-sided", value: "left" },
-              { label: "Localized", value: "localized" }
+              { label: "Right-sided", value: "right_sided" },
+              { label: "Left-sided", value: "left_sided" }
             ]
           },
+          // Localised specify option
           {
-            name: "resp_adventitious",
-            label: "9. Adventitious Sounds",
+            name: "distribution_localised_custom",
+            type: "custom",
+            render: ({ values, onChange }) => (
+              <div>
+                <label style={labelStyle}>
+                  <input
+                    type="radio"
+                    name="breath_sounds_distribution"
+                    checked={values["breath_sounds_distribution"] === "localised"}
+                    onChange={() => onChange("breath_sounds_distribution", "localised")}
+                  />
+                  Localised — specify:
+                </label>
+                {values["breath_sounds_distribution"] === "localised" && (
+                  <input
+                    type="text"
+                    value={values["breath_sounds_localised_specify"] || ""}
+                    onChange={(e) => onChange("breath_sounds_localised_specify", e.target.value)}
+                    placeholder="Specify location"
+                    style={{
+                      marginTop: 4,
+                      padding: "6px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      width: "200px"
+                    }}
+                  />
+                )}
+              </div>
+            )
+          },
+          // Adventitious Sounds
+          {
+            name: "adventitious_sounds",
+            label: "Adventitious Sounds",
             type: "checkbox-group",
             options: [
-              { label: "None", value: "none" },
+              { label: "None", value: "none", exclusive: true },
               { label: "Crackles — Fine", value: "crackles_fine" },
               { label: "Crackles — Coarse", value: "crackles_coarse" },
-              { label: "Wheezes — Inspiratory", value: "wheezes_insp" },
-              { label: "Wheezes — Expiratory", value: "wheezes_exp" },
+              { label: "Wheezes — Inspiratory", value: "wheezes_inspiratory" },
+              { label: "Wheezes — Expiratory", value: "wheezes_expiratory" },
               { label: "Rhonchi", value: "rhonchi" },
               { label: "Stridor", value: "stridor" },
-              { label: "Pleural friction rub", value: "pleural_rub" }
+              { label: "Pleural friction rub", value: "pleural_friction_rub" }
             ]
           },
+          // Adventitious Sounds Location
           {
-            name: "resp_adventitious_location",
+            name: "adventitious_sounds_location",
             label: "Location(s)",
-            type: "input",
-            placeholder: "Free text"
-          }
-        ]
-      },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 4 — VOICE SOUNDS (radio matrix)
-      // ═══════════════════════════════════════════════════════════════
-      {
-        title: "SECTION 4 — VOICE SOUNDS",
-        fields: [
-          {
-            type: "grid-header",
-            label: "",
-            cols: ["Normal", "Positive"]
+            type: "input"
           },
+          // Palpation: Tactile Fremitus: 3 options → side-by-side
           {
-            name: "resp_bronchophony",
-            label: "Bronchophony",
-            type: "radio-matrix",
-            options: VOICE_OPTIONS
-          },
-          {
-            name: "resp_egophony",
-            label: "Egophony",
-            type: "radio-matrix",
-            options: VOICE_OPTIONS
-          },
-          {
-            name: "resp_whispered_pectoriloquy",
-            label: "Whispered pectoriloquy",
-            type: "radio-matrix",
-            options: VOICE_OPTIONS
-          }
-        ]
-      },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 5 — PALPATION
-      // ═══════════════════════════════════════════════════════════════
-      {
-        title: "SECTION 5 — PALPATION",
-        fields: [
-          {
-            name: "resp_tactile_fremitus",
-            label: "10. Tactile Fremitus",
+            name: "tactile_fremitus",
+            label: "Tactile Fremitus",
             type: "radio",
+            position: "side",
             options: [
               { label: "Normal", value: "normal" },
               { label: "Increased", value: "increased" },
               { label: "Decreased", value: "decreased" }
             ]
           },
+          // Chest Expansion: 2 options → side-by-side
           {
-            name: "resp_crepitus",
-            label: "11. Crepitus",
+            name: "chest_expansion_palpation",
+            label: "Chest Expansion",
             type: "radio",
+            position: "side",
+            options: [
+              { label: "Symmetrical", value: "symmetrical" },
+              { label: "Asymmetrical", value: "asymmetrical" }
+            ]
+          },
+          // Subcutaneous Crepitus: 2 options → side-by-side
+          {
+            name: "subcutaneous_crepitus",
+            label: "Subcutaneous Crepitus",
+            type: "radio",
+            position: "side",
             options: [
               { label: "Absent", value: "absent" },
               { label: "Present", value: "present" }
             ]
           },
+          // Crepitus Location - show when Present
           {
-            name: "resp_crepitus_location",
-            label: "Location (if present)",
-            type: "input",
-            showIf: { field: "resp_crepitus", equals: "present" }
+            name: "crepitus_location_field",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["subcutaneous_crepitus"] !== "present") return null;
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>Location:</label>
+                  <input
+                    type="text"
+                    value={values["crepitus_location"] || ""}
+                    onChange={(e) => onChange("crepitus_location", e.target.value)}
+                    placeholder="Specify location"
+                    style={{ padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px", width: "200px" }}
+                  />
+                </div>
+              );
+            }
           },
+          // Voice Sounds: Bronchophony: 2 options → side-by-side
           {
-            name: "resp_chest_expansion_palpation",
-            label: "12. Chest Expansion",
+            name: "bronchophony",
+            label: "Bronchophony",
             type: "radio",
+            position: "side",
             options: [
-              { label: "Symmetrical", value: "symmetrical" },
-              { label: "Asymmetrical", value: "asymmetrical" }
+              { label: "Normal", value: "normal" },
+              { label: "Positive", value: "positive" }
+            ]
+          },
+          // Egophony: 2 options → side-by-side
+          {
+            name: "egophony",
+            label: "Egophony",
+            type: "radio",
+            position: "side",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Positive", value: "positive" }
+            ]
+          },
+          // Whispered pectoriloquy: 2 options → side-by-side
+          {
+            name: "whispered_pectoriloquy",
+            label: "Whispered pectoriloquy",
+            type: "radio",
+            position: "side",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Positive", value: "positive" }
             ]
           }
         ]
       },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 6 — FUNCTIONAL IMPACT (REHAB)
-      // ═══════════════════════════════════════════════════════════════
+
+      // ─────────────────────────────────────────────
+      // FUNCTIONAL IMPACT (REHAB)
+      // ─────────────────────────────────────────────
       {
-        title: "SECTION 6 — FUNCTIONAL IMPACT (REHAB)",
+        title: "FUNCTIONAL IMPACT (REHAB)",
         fields: [
+          // Therapy tolerance → radio (5 options, display below)
           {
-            name: "resp_therapy_tolerance",
-            label: "13. Therapy Tolerance",
+            name: "therapy_tolerance",
+            label: "Therapy Tolerance",
             type: "radio",
             options: [
-              { label: "Full tolerance", value: "full" },
+              { label: "Full", value: "full" },
               { label: "Mild limitation", value: "mild" },
               { label: "Moderate limitation", value: "moderate" },
               { label: "Severe limitation", value: "severe" },
-              { label: "Unable to participate", value: "unable" }
+              { label: "Unable", value: "unable" }
             ]
           },
+          // ADL impact → radio (5 options, display below)
           {
-            name: "resp_adl_impact",
-            label: "14. ADL Impact",
+            name: "adl_impact",
+            label: "ADL Impact",
             type: "radio",
-            labelAbove: true,
             options: [
               { label: "Independent", value: "independent" },
               { label: "Requires pacing", value: "pacing" },
-              { label: "Requires rest breaks", value: "rest_breaks" },
-              { label: "Requires oxygen", value: "oxygen" },
-              { label: "Dependent due to dyspnea", value: "dependent" }
-            ]
-          }
-        ]
-      },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 7 — RED FLAGS
-      // ═══════════════════════════════════════════════════════════════
-      {
-        title: "SECTION 7 — RED FLAGS (Auto-Alert)",
-        fields: [
-          {
-            name: "resp_red_flags",
-            label: "Red flags (select all that apply)",
-            type: "checkbox-group",
-            options: [
-              { label: "RR <10 or >30", value: "rr_abnormal" },
-              { label: "SpO₂ <90% on oxygen", value: "spo2_low" },
-              { label: "Silent chest", value: "silent_chest" },
-              { label: "Severe accessory muscle use", value: "severe_accessory" },
-              { label: "Stridor", value: "stridor" },
-              { label: "Cyanosis", value: "cyanosis" },
-              { label: "Altered consciousness", value: "altered_consciousness" },
-              { label: "Sudden unilateral absent breath sounds", value: "unilateral_absent" }
+              { label: "Rest breaks", value: "rest_breaks" },
+              { label: "Needs oxygen", value: "needs_oxygen" },
+              { label: "Dependent — dyspnoea", value: "dependent" }
             ]
           }
         ]

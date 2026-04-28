@@ -8,213 +8,339 @@ export default function CardiacAssessment({ layout = "root" }) {
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
+  const labelStyle = { display: "flex", alignItems: "center", gap: 8, fontSize: 14, marginBottom: 4 };
+
   const CARDIAC_SCHEMA = {
-    title: "Focussed Cardiac Assessment",
+    title: "Cardiac Focused Assessment",
     sections: [
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 1 — SUBJECTIVE
-      // ═══════════════════════════════════════════════════════════════
+      // ─────────────────────────────────────────────
+      // CARDIAC HISTORY
+      // ─────────────────────────────────────────────
       {
-        title: "Subjective",
+        title: "CARDIAC HISTORY",
         fields: [
           {
-            name: "card_complaints",
-            label: "1. Current Cardiac Complaints",
+            // Multiple complaints can coexist → checkbox
+            name: "cardiac_complaint",
+            label: "Cardiac Complaint (select all that apply)",
             type: "checkbox-group",
             options: [
+              { label: "None", value: "none", exclusive: true },
               { label: "Chest pain/pressure", value: "chest_pain" },
               { label: "Palpitations", value: "palpitations" },
               { label: "Shortness of breath", value: "sob" },
-              { label: "Orthopnea", value: "orthopnea" },
-              { label: "Paroxysmal nocturnal dyspnea", value: "pnd" },
+              { label: "Orthopnoea", value: "orthopnoea" },
+              { label: "PND", value: "pnd" },
               { label: "Dizziness/light-headedness", value: "dizziness" },
               { label: "Syncope", value: "syncope" },
               { label: "Fatigue/exercise intolerance", value: "fatigue" },
-              { label: "Peripheral swelling", value: "peripheral_swelling" },
-              { label: "Other", value: "other" }
+              { label: "Peripheral swelling", value: "swelling" }
             ]
           },
           {
-            name: "card_complaints_other_specify",
-            label: "Other — Specify",
-            type: "input",
-            showIf: { field: "card_complaints", includes: "other" }
+            // Other with specify below
+            name: "cardiac_complaint_other_custom",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              const checked = values["cardiac_complaint"] || [];
+              const toggle = (val) => {
+                const next = checked.includes(val)
+                  ? checked.filter((v) => v !== val)
+                  : [...checked, val];
+                onChange("cardiac_complaint", next);
+              };
+              return (
+                <div>
+                  <label style={labelStyle}>
+                    <input type="checkbox" checked={checked.includes("other")} onChange={() => toggle("other")} />
+                    Other:
+                  </label>
+                  {checked.includes("other") && (
+                    <input
+                      type="text"
+                      value={values["cardiac_complaint_other_specify"] || ""}
+                      onChange={(e) => onChange("cardiac_complaint_other_specify", e.target.value)}
+                      placeholder="Specify other complaint"
+                      style={{
+                        marginTop: 8,
+                        padding: "8px 12px",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        fontSize: 14,
+                        width: "300px"
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            }
           },
-          // ─── 2. Chest Pain ───
+          // Chest Pain: 2 options → side-by-side
           {
-            name: "card_chest_pain_present",
-            label: "2. Chest Pain — Chest pain present?",
+            name: "chest_pain_present",
+            label: "Chest Pain",
             type: "radio",
+            position: "side",
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
           },
+          // Chest pain details - show when Yes is selected
           {
-            name: "card_chest_pain_onset",
-            label: "Onset",
+            name: "chest_pain_details",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["chest_pain_present"] !== "yes") return null;
+              
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Onset</label>
+                      {["Sudden", "Gradual"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="chest_pain_onset"
+                            checked={values["chest_pain_onset"] === item.toLowerCase()}
+                            onChange={() => onChange("chest_pain_onset", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Character</label>
+                      {["Pressure", "Tightness", "Burning", "Sharp", "Crushing"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="chest_pain_character"
+                            checked={values["chest_pain_character"] === item.toLowerCase()}
+                            onChange={() => onChange("chest_pain_character", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Location</label>
+                      {["Central", "Left-sided", "Right-sided", "Epigastric", "Other"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="chest_pain_location"
+                            checked={values["chest_pain_location"] === item.toLowerCase().replace("-", "_")}
+                            onChange={() => onChange("chest_pain_location", item.toLowerCase().replace("-", "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Radiation</label>
+                      {["None", "Left arm", "Jaw", "Back", "Shoulder"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="chest_pain_radiation"
+                            checked={values["chest_pain_radiation"] === item.toLowerCase().replace(" ", "_")}
+                            onChange={() => onChange("chest_pain_radiation", item.toLowerCase().replace(" ", "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Severity (0-10)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={values["chest_pain_severity"] || ""}
+                        onChange={(e) => onChange("chest_pain_severity", e.target.value)}
+                        style={{ width: "100%", padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px" }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Duration</label>
+                      <input
+                        type="text"
+                        value={values["chest_pain_duration"] || ""}
+                        onChange={(e) => onChange("chest_pain_duration", e.target.value)}
+                        placeholder="e.g. 30 minutes"
+                        style={{ width: "100%", padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 12 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Aggravating</label>
+                      {["Exertion", "Stress", "Breathing", "Movement", "Meals"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="checkbox"
+                            checked={(values["chest_pain_aggravating"] || []).includes(item.toLowerCase())}
+                            onChange={() => {
+                              const current = values["chest_pain_aggravating"] || [];
+                              const next = current.includes(item.toLowerCase())
+                                ? current.filter(v => v !== item.toLowerCase())
+                                : [...current, item.toLowerCase()];
+                              onChange("chest_pain_aggravating", next);
+                            }}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Relieving</label>
+                      {["Rest", "GTN/Nitroglycerin", "Oxygen", "Medications", "None"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="checkbox"
+                            checked={(values["chest_pain_relieving"] || []).includes(item.toLowerCase().replace("/", "_"))}
+                            onChange={() => {
+                              const current = values["chest_pain_relieving"] || [];
+                              const val = item.toLowerCase().replace("/", "_");
+                              const next = current.includes(val)
+                                ? current.filter(v => v !== val)
+                                : [...current, val];
+                              onChange("chest_pain_relieving", next);
+                            }}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          },
+          // Dyspnoea (cardiac): 2 options → side-by-side
+          {
+            name: "dyspnoea_present",
+            label: "Dyspnoea (cardiac)",
             type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "Sudden", value: "sudden" },
-              { label: "Gradual", value: "gradual" }
-            ]
-          },
-          {
-            name: "card_chest_pain_location",
-            label: "Location",
-            type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "Central", value: "central" },
-              { label: "Left-sided", value: "left" },
-              { label: "Right-sided", value: "right" },
-              { label: "Epigastric", value: "epigastric" },
-              { label: "Other", value: "other" }
-            ]
-          },
-          {
-            name: "card_chest_pain_radiation",
-            label: "Radiation",
-            type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "None", value: "none" },
-              { label: "Left arm", value: "left_arm" },
-              { label: "Jaw", value: "jaw" },
-              { label: "Back", value: "back" },
-              { label: "Shoulder", value: "shoulder" }
-            ]
-          },
-          {
-            name: "card_chest_pain_character",
-            label: "Character",
-            type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "Pressure", value: "pressure" },
-              { label: "Tightness", value: "tightness" },
-              { label: "Burning", value: "burning" },
-              { label: "Sharp", value: "sharp" },
-              { label: "Crushing", value: "crushing" }
-            ]
-          },
-          {
-            name: "card_chest_pain_severity",
-            label: "Severity (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1,
-            showValue: true,
-            showIf: { field: "card_chest_pain_present", equals: "yes" }
-          },
-          {
-            name: "card_chest_pain_duration",
-            label: "Duration",
-            type: "input",
-            showIf: { field: "card_chest_pain_present", equals: "yes" }
-          },
-          {
-            name: "card_chest_pain_aggravating",
-            label: "Aggravating factors",
-            type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "Exertion", value: "exertion" },
-              { label: "Stress", value: "stress" },
-              { label: "Breathing", value: "breathing" },
-              { label: "Movement", value: "movement" },
-              { label: "Meals", value: "meals" }
-            ]
-          },
-          {
-            name: "card_chest_pain_relieving",
-            label: "Relieving factors",
-            type: "radio",
-            showIf: { field: "card_chest_pain_present", equals: "yes" },
-            options: [
-              { label: "Rest", value: "rest" },
-              { label: "Nitroglycerin", value: "nitroglycerin" },
-              { label: "Oxygen", value: "oxygen" },
-              { label: "Medications", value: "medications" },
-              { label: "None", value: "none" }
-            ]
-          },
-          // ─── 3. Dyspnea ───
-          {
-            name: "card_dyspnea_present",
-            label: "3. Dyspnea",
-            type: "radio",
+            position: "side",
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
             ]
           },
+          // Dyspnoea details - show when Yes is selected
           {
-            name: "card_dyspnea_occurs",
-            label: "Occurs",
-            type: "radio",
-            showIf: { field: "card_dyspnea_present", equals: "yes" },
-            options: [
-              { label: "At rest", value: "at_rest" },
-              { label: "With exertion", value: "with_exertion" },
-              { label: "Nocturnal", value: "nocturnal" }
-            ]
+            name: "dyspnoea_details",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["dyspnoea_present"] !== "yes") return null;
+              
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 12 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Occurs</label>
+                      {["At rest", "With exertion", "Nocturnal"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="dyspnoea_occurs"
+                            checked={values["dyspnoea_occurs"] === item.toLowerCase().replace(" ", "_")}
+                            onChange={() => onChange("dyspnoea_occurs", item.toLowerCase().replace(" ", "_"))}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Onset</label>
+                      {["Sudden", "Progressive"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="dyspnoea_onset"
+                            checked={values["dyspnoea_onset"] === item.toLowerCase()}
+                            onChange={() => onChange("dyspnoea_onset", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Severity (0-10)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={values["dyspnoea_severity"] || ""}
+                        onChange={(e) => onChange("dyspnoea_severity", e.target.value)}
+                        style={{ width: "100%", padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Orthopnoea</label>
+                      {["No", "Yes"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="orthopnoea"
+                            checked={values["orthopnoea"] === item.toLowerCase()}
+                            onChange={() => onChange("orthopnoea", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                      {values["orthopnoea"] === "yes" && (
+                        <div style={{ marginTop: 8 }}>
+                          <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>Pillows:</label>
+                          <input
+                            type="text"
+                            value={values["orthopnoea_pillows"] || ""}
+                            onChange={(e) => onChange("orthopnoea_pillows", e.target.value)}
+                            placeholder="Number of pillows"
+                            style={{ width: "100%", padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px" }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>PND</label>
+                      {["No", "Yes"].map((item) => (
+                        <label key={item} style={labelStyle}>
+                          <input
+                            type="radio"
+                            name="pnd"
+                            checked={values["pnd"] === item.toLowerCase()}
+                            onChange={() => onChange("pnd", item.toLowerCase())}
+                          />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
           },
+          // Palpitations: 6 options → display below
           {
-            name: "card_dyspnea_onset",
-            label: "Onset",
-            type: "radio",
-            showIf: { field: "card_dyspnea_present", equals: "yes" },
-            options: [
-              { label: "Sudden", value: "sudden" },
-              { label: "Progressive", value: "progressive" }
-            ]
-          },
-          {
-            name: "card_dyspnea_orthopnea",
-            label: "Orthopnea",
-            type: "radio",
-            showIf: { field: "card_dyspnea_present", equals: "yes" },
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "card_dyspnea_orthopnea_pillows",
-            label: "Pillows used",
-            type: "input",
-            showIf: { field: "card_dyspnea_orthopnea", equals: "yes" }
-          },
-          {
-            name: "card_dyspnea_pnd",
-            label: "Paroxysmal nocturnal dyspnea",
-            type: "radio",
-            showIf: { field: "card_dyspnea_present", equals: "yes" },
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "card_dyspnea_severity",
-            label: "Severity (0–10)",
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            step: 1,
-            showValue: true,
-            showIf: { field: "card_dyspnea_present", equals: "yes" }
-          },
-          // ─── 4. Palpitations ───
-          {
-            name: "card_palpitations",
-            label: "4. Palpitations",
+            name: "palpitations",
+            label: "Palpitations",
             type: "checkbox-group",
             options: [
-              { label: "None", value: "none" },
+              { label: "None", value: "none", exclusive: true },
               { label: "Occasional", value: "occasional" },
               { label: "Frequent", value: "frequent" },
               { label: "With dizziness", value: "with_dizziness" },
@@ -222,41 +348,45 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Irregular heartbeat sensation", value: "irregular" }
             ]
           },
-          // ─── 5. Edema / Fluid Retention ───
+          // Oedema / Fluid Retention
           {
-            name: "card_edema_fluid",
-            label: "5. Edema / Fluid Retention",
+            name: "oedema_location",
+            label: "Oedema / Fluid Retention Location",
             type: "checkbox-group",
             options: [
-              { label: "None", value: "none" },
+              { label: "None", value: "none", exclusive: true },
               { label: "Ankles", value: "ankles" },
               { label: "Legs", value: "legs" },
               { label: "Abdomen", value: "abdomen" },
               { label: "Facial/periorbital", value: "facial" }
             ]
           },
+          // Oedema Onset: 2 options → side-by-side
           {
-            name: "card_edema_onset",
-            label: "Onset",
+            name: "oedema_onset",
+            label: "Oedema Onset",
             type: "radio",
+            position: "side",
             options: [
               { label: "Sudden", value: "sudden" },
               { label: "Gradual", value: "gradual" }
             ]
           },
+          // Oedema Worse in evening: 2 options → side-by-side
           {
-            name: "card_edema_worse_evening",
+            name: "oedema_worse_evening",
             label: "Worse in evening?",
             type: "radio",
+            position: "side",
             options: [
               { label: "Yes", value: "yes" },
               { label: "No", value: "no" }
             ]
           },
-          // ─── 6. Syncope / Presyncope ───
+          // Syncope / Presyncope
           {
-            name: "card_syncope",
-            label: "6. Syncope / Presyncope",
+            name: "syncope_presyncope_type",
+            label: "Syncope / Presyncope",
             type: "radio",
             options: [
               { label: "None", value: "none" },
@@ -265,22 +395,34 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Fainting episodes", value: "fainting" }
             ]
           },
+          // Syncope Trigger - show when not None
           {
-            name: "card_syncope_trigger",
-            label: "Trigger",
-            type: "radio",
-            showIf: { field: "card_syncope", oneOf: ["dizziness", "near_fainting", "fainting"] },
-            options: [
-              { label: "Standing", value: "standing" },
-              { label: "Exertion", value: "exertion" },
-              { label: "Postural change", value: "postural" },
-              { label: "Unknown", value: "unknown" }
-            ]
+            name: "syncope_trigger_field",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["syncope_presyncope_type"] === "none" || !values["syncope_presyncope_type"]) return null;
+              return (
+                <div style={{ marginLeft: 20, padding: "10px", border: "1px solid #e5e7eb", borderRadius: "6px", background: "#f9fafb" }}>
+                  <label style={{ fontWeight: 600, fontSize: 13, marginBottom: 6, display: "block" }}>Trigger</label>
+                  {["Standing", "Exertion", "Postural change", "Unknown"].map((item) => (
+                    <label key={item} style={labelStyle}>
+                      <input
+                        type="radio"
+                        name="syncope_trigger"
+                        checked={values["syncope_trigger"] === item.toLowerCase().replace(" ", "_")}
+                        onChange={() => onChange("syncope_trigger", item.toLowerCase().replace(" ", "_"))}
+                      />
+                      {item}
+                    </label>
+                  ))}
+                </div>
+              );
+            }
           },
-          // ─── 7. Past Cardiac History ───
+          // Past Cardiac History: 11 options → display below
           {
-            name: "card_past_history",
-            label: "7. Past Cardiac History",
+            name: "past_cardiac_history",
+            label: "Past Cardiac History",
             type: "checkbox-group",
             options: [
               { label: "Hypertension", value: "hypertension" },
@@ -291,16 +433,16 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Arrhythmia", value: "arrhythmia" },
               { label: "Pacemaker/ICD", value: "pacemaker_icd" },
               { label: "Congenital heart disease", value: "congenital" },
-              { label: "Cardiac surgery/intervention", value: "cardiac_surgery" },
+              { label: "Cardiac surgery/intervention", value: "surgery" },
               { label: "Stroke/TIA", value: "stroke_tia" },
               { label: "Peripheral vascular disease", value: "pvd" },
-              { label: "None", value: "none" }
+              { label: "None", value: "none", exclusive: true }
             ]
           },
-          // ─── 8. Cardiac Medications / Devices ───
+          // Cardiac Medications / Devices: 12 options → display below
           {
-            name: "card_medications_devices",
-            label: "8. Cardiac Medications / Devices",
+            name: "cardiac_medications_devices",
+            label: "Cardiac Medications / Devices",
             type: "checkbox-group",
             options: [
               { label: "Antihypertensives", value: "antihypertensives" },
@@ -309,99 +451,142 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Antiplatelets", value: "antiplatelets" },
               { label: "Diuretics", value: "diuretics" },
               { label: "Beta blockers", value: "beta_blockers" },
-              { label: "ACE/ARB", value: "ace_arb" },
+              { label: "ACE inhibitor/ARB", value: "ace_arb" },
               { label: "Digoxin", value: "digoxin" },
               { label: "Pacemaker", value: "pacemaker" },
               { label: "ICD", value: "icd" },
               { label: "LifeVest", value: "lifevest" },
-              { label: "None", value: "none" }
+              { label: "None", value: "none", exclusive: true }
             ]
           },
-          // ─── 9. Functional Cardiac Status ───
+          // Functional Cardiac Status: 6 options → display below
           {
-            name: "card_functional_status",
-            label: "9. Functional Cardiac Status (Rehab)",
-            type: "checkbox-group",
+            name: "functional_cardiac_status",
+            label: "Functional Cardiac Status (Rehab)",
+            type: "radio",
             options: [
-              { label: "Independent ADLs", value: "independent" },
+              { label: "Independent ADLs without limitation", value: "independent" },
               { label: "Fatigue with minimal exertion", value: "fatigue_minimal" },
-              { label: "Dyspnea with exertion", value: "doe" },
-              { label: "Unable to tolerate activity", value: "unable" },
+              { label: "Dyspnoea with exertion", value: "dyspnoea_exertion" },
               { label: "Requires rest breaks", value: "rest_breaks" },
-              { label: "Requires oxygen with activity", value: "oxygen_activity" }
+              { label: "Requires oxygen with activity", value: "oxygen_activity" },
+              { label: "Unable to tolerate activity", value: "unable" }
             ]
           }
         ]
       },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 2 — OBJECTIVE
-      // ═══════════════════════════════════════════════════════════════
+
+      // ─────────────────────────────────────────────
+      // CLINICAL EXAMINATION
+      // ─────────────────────────────────────────────
       {
-        title: "SECTION 2 — OBJECTIVE (Clinician Observed)",
+        title: "CLINICAL EXAMINATION",
         fields: [
-          { type: "subheading", label: "10. Cardiac Rhythm / Monitor" },
+          // Cardiac Rhythm: 9 options → display below
           {
-            name: "card_rhythm",
-            label: "Rhythm",
+            name: "cardiac_rhythm",
+            label: "Cardiac Rhythm",
             type: "radio",
-            labelAbove: true,
             options: [
               { label: "Sinus rhythm", value: "sinus" },
               { label: "Sinus bradycardia", value: "sinus_brady" },
               { label: "Sinus tachycardia", value: "sinus_tachy" },
               { label: "Atrial fibrillation/flutter", value: "af_flutter" },
-              { label: "SVT - Supraventricular Tachycardia", value: "svt" },
-              { label: "VT - Ventricular Tachycardia", value: "vt" },
-              { label: "PVCs - Premature Ventricular Contractions", value: "pvcs" },
+              { label: "SVT", value: "svt" },
+              { label: "VT", value: "vt" },
+              { label: "PVCs", value: "pvcs" },
               { label: "Paced rhythm", value: "paced" },
               { label: "Other", value: "other" }
             ]
           },
+          // Other rhythm specify
           {
-            name: "card_rhythm_other",
-            label: "Other — Specify",
-            type: "input",
-            showIf: { field: "card_rhythm", equals: "other" }
+            name: "cardiac_rhythm_other_field",
+            type: "custom",
+            render: ({ values, onChange }) => {
+              if (values["cardiac_rhythm"] !== "other") return null;
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <label style={{ fontSize: 13, marginBottom: 4, display: "block" }}>Specify:</label>
+                  <input
+                    type="text"
+                    value={values["cardiac_rhythm_other_specify"] || ""}
+                    onChange={(e) => onChange("cardiac_rhythm_other_specify", e.target.value)}
+                    placeholder="Specify other rhythm"
+                    style={{ padding: "6px", border: "1px solid #d1d5db", borderRadius: "4px", width: "200px" }}
+                  />
+                </div>
+              );
+            }
           },
+          // Rate and Regularity
           {
-            name: "card_rate_bpm",
+            name: "cardiac_rate_bpm",
             label: "Rate (bpm)",
             type: "input"
           },
+          // Regularity: 2 options → side-by-side
           {
-            name: "card_regularity",
+            name: "cardiac_regularity",
             label: "Regularity",
             type: "radio",
+            position: "side",
             options: [
               { label: "Regular", value: "regular" },
               { label: "Irregular", value: "irregular" }
             ]
           },
-          { type: "subheading", label: "11. Vital Signs (include time)" },
+          // Vital Signs
           {
-            name: "card_vital_time",
-            label: "Time recorded",
-            type: "input",
-            placeholder: "e.g. 14:30"
+            name: "vital_bp",
+            label: "BP (mmHg)",
+            type: "input"
           },
           {
-            name: "card_vital_trend",
+            name: "vital_hr",
+            label: "HR (bpm)",
+            type: "input"
+          },
+          {
+            name: "vital_rr",
+            label: "RR (/min)",
+            type: "input"
+          },
+          {
+            name: "vital_spo2",
+            label: "SpO₂ (%)",
+            type: "input"
+          },
+          {
+            name: "vital_temp",
+            label: "Temp (°C/°F)",
+            type: "input"
+          },
+          {
+            name: "vital_recorded_at",
+            label: "Recorded at",
+            type: "input"
+          },
+          // Vital Trend: 3 options → side-by-side
+          {
+            name: "vital_trend",
             label: "Trend",
             type: "radio",
+            position: "side",
             options: [
               { label: "Stable", value: "stable" },
               { label: "Improving", value: "improving" },
               { label: "Worsening", value: "worsening" }
             ]
           },
-          { type: "subheading", label: "12. General Appearance" },
+          // General Appearance: 7 options → display below
           {
-            name: "card_general_appearance",
+            name: "general_appearance",
             label: "General Appearance",
             type: "checkbox-group",
             options: [
               { label: "Comfortable at rest", value: "comfortable" },
-              { label: "Dyspneic at rest", value: "dyspneic" },
+              { label: "Dyspnoeic at rest", value: "dyspnoeic" },
               { label: "Diaphoretic", value: "diaphoretic" },
               { label: "Pale/ashen", value: "pale" },
               { label: "Cyanotic", value: "cyanotic" },
@@ -409,9 +594,9 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Altered sensorium", value: "altered" }
             ]
           },
-          { type: "subheading", label: "13. Neurological Status" },
+          // Neurological Screening
           {
-            name: "card_orientation",
+            name: "neuro_orientation",
             label: "Orientation",
             type: "checkbox-group",
             options: [
@@ -421,58 +606,55 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Situation", value: "situation" }
             ]
           },
+          // Speech: 3 options → side-by-side
           {
-            name: "card_speech",
+            name: "neuro_speech",
             label: "Speech",
             type: "radio",
+            position: "side",
             options: [
               { label: "Clear", value: "clear" },
               { label: "Slurred", value: "slurred" },
               { label: "Garbled", value: "garbled" }
             ]
           },
+          // Facial symmetry: 2 options → side-by-side
           {
-            name: "card_facial_symmetry",
+            name: "neuro_facial_symmetry",
             label: "Facial symmetry",
             type: "radio",
+            position: "side",
             options: [
               { label: "Symmetric", value: "symmetric" },
-              { label: "Asymmetric", value: "asymmetric" }
+              { label: "Asymmetric — facial droop", value: "asymmetric_droop" }
             ]
           },
+          // Visual fields: 2 options → side-by-side
           {
-            name: "card_visual_fields",
+            name: "neuro_visual_fields",
             label: "Visual fields",
             type: "radio",
+            position: "side",
             options: [
               { label: "Intact", value: "intact" },
               { label: "Deficit", value: "deficit" }
             ]
           },
+          // Respiratory Status
           {
-            name: "card_pupils",
-            label: "Pupils",
-            type: "radio",
-            options: [
-              { label: "Equal/reactive", value: "equal_reactive" },
-              { label: "Unequal", value: "unequal" },
-              { label: "Non-reactive", value: "non_reactive" }
-            ]
-          },
-          { type: "subheading", label: "14. Respiratory Status" },
-          {
-            name: "card_breathing_pattern",
-            label: "Breathing pattern",
+            name: "resp_breathing",
+            label: "Breathing",
             type: "radio",
             options: [
               { label: "Normal", value: "normal" },
-              { label: "Labored", value: "labored" },
-              { label: "Tachypnea", value: "tachypnea" },
+              { label: "Laboured", value: "laboured" },
+              { label: "Tachypnoea", value: "tachypnoea" },
               { label: "Accessory muscle use", value: "accessory" }
             ]
           },
+          // Lung sounds: 5 options → display below
           {
-            name: "card_lung_sounds",
+            name: "resp_lung_sounds",
             label: "Lung sounds",
             type: "radio",
             options: [
@@ -483,11 +665,11 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Rhonchi", value: "rhonchi" }
             ]
           },
+          // O₂ device: 6 options → display below
           {
-            name: "card_oxygen_device",
-            label: "Oxygen device",
+            name: "resp_o2_device",
+            label: "O₂ device",
             type: "radio",
-            labelAbove: true,
             options: [
               { label: "Room air", value: "room_air" },
               { label: "Nasal cannula", value: "nasal_cannula" },
@@ -498,13 +680,13 @@ export default function CardiacAssessment({ layout = "root" }) {
             ]
           },
           {
-            name: "card_flow_rate",
+            name: "resp_flow_rate",
             label: "Flow rate (L/min)",
             type: "input"
           },
-          { type: "subheading", label: "15. Cardiac Auscultation" },
+          // Heart sounds: 5 options → display below
           {
-            name: "card_heart_sounds",
+            name: "cardiac_heart_sounds",
             label: "Heart sounds",
             type: "radio",
             options: [
@@ -515,105 +697,99 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Pericardial friction rub", value: "pericardial_rub" }
             ]
           },
+          // PMI: 3 options → side-by-side
           {
-            name: "card_pmi",
+            name: "cardiac_pmi",
             label: "PMI",
             type: "radio",
+            position: "side",
             options: [
               { label: "Normal location", value: "normal" },
               { label: "Displaced", value: "displaced" },
               { label: "Not palpable", value: "not_palpable" }
             ]
           },
-          { type: "subheading", label: "16. Peripheral Pulses" },
+          // Radial pulse: 7 options → display below
           {
-            name: "card_radial_pulses",
-            label: "Radial pulses",
+            name: "radial_pulse",
+            label: "Radial pulse",
             type: "radio",
             options: [
               { label: "0", value: "0" },
-              { label: "1+", value: "1" },
-              { label: "2+", value: "2" },
-              { label: "3+", value: "3" },
-              { label: "4+", value: "4" },
+              { label: "1+", value: "1_plus" },
+              { label: "2+ (normal)", value: "2_plus" },
+              { label: "3+", value: "3_plus" },
+              { label: "4+", value: "4_plus" },
               { label: "Equal bilaterally", value: "equal" },
               { label: "Unequal", value: "unequal" }
             ]
           },
+          // Pedal pulse: 3 options → side-by-side
           {
-            name: "card_pedal_pulses",
-            label: "Pedal pulses (DP/PT)",
+            name: "pedal_pulse",
+            label: "Pedal pulse (DP/PT)",
             type: "radio",
+            position: "side",
             options: [
               { label: "Palpable", value: "palpable" },
               { label: "Doppler required", value: "doppler" },
               { label: "Absent", value: "absent" }
             ]
           },
-          { type: "subheading", label: "17. Capillary Refill" },
+          // Capillary refill: 2 options → side-by-side
           {
-            name: "card_cap_refill",
-            label: "Capillary Refill",
+            name: "capillary_refill",
+            label: "Capillary refill",
             type: "radio",
+            position: "side",
             options: [
-              { label: "≤ 2 seconds", value: "normal" },
-              { label: "> 2 seconds", value: "delayed" }
+              { label: "≤2 seconds (normal)", value: "normal" },
+              { label: ">2 seconds (impaired)", value: "delayed" }
             ]
           },
-          { type: "subheading", label: "18. Edema" },
+          // Oedema Grade: 5 options → display below
           {
-            name: "card_edema_grade",
-            label: "Edema",
+            name: "oedema_grade",
+            label: "Oedema Grade",
             type: "radio",
             options: [
               { label: "None", value: "none" },
-              { label: "1+", value: "1" },
-              { label: "2+", value: "2" },
-              { label: "3+", value: "3" },
-              { label: "4+", value: "4" }
+              { label: "1+", value: "1_plus" },
+              { label: "2+", value: "2_plus" },
+              { label: "3+", value: "3_plus" },
+              { label: "4+", value: "4_plus" }
             ]
           },
+          // Oedema Location: 5 options → display below
           {
-            name: "card_edema_location",
-            label: "Location",
+            name: "oedema_exam_location",
+            label: "Oedema Location",
             type: "checkbox-group",
             options: [
               { label: "Ankles", value: "ankles" },
               { label: "Legs", value: "legs" },
               { label: "Sacrum", value: "sacrum" },
               { label: "Hands", value: "hands" },
-              { label: "Generalized", value: "generalized" }
+              { label: "Generalised", value: "generalised" }
             ]
           },
-          { type: "subheading", label: "19. Skin Integrity / Lines & Devices" },
+          // IV site: 4 options → side-by-side
           {
-            name: "card_skin",
-            label: "Skin",
+            name: "iv_site",
+            label: "IV site",
             type: "radio",
-            options: [
-              { label: "Warm/dry", value: "warm_dry" },
-              { label: "Cool/clammy", value: "cool_clammy" },
-              { label: "Pale", value: "pale" },
-              { label: "Cyanotic", value: "cyanotic" },
-              { label: "Diaphoretic", value: "diaphoretic" }
-            ]
-          },
-          {
-            name: "card_iv_sites",
-            label: "IV sites",
-            type: "radio",
+            position: "side",
             options: [
               { label: "Intact", value: "intact" },
-              { label: "Redness", value: "redness" },
-              { label: "Swelling", value: "swelling" },
+              { label: "Redness/swelling", value: "redness_swelling" },
               { label: "Leakage", value: "leakage" }
             ]
           },
+          // Lines/devices: 8 options → display below
           {
-            name: "card_lines_devices",
-            label: "Lines/devices present",
-            type: "radio",
-            labelAbove: true,
+            name: "lines_devices",
+            label: "Lines/devices",
+            type: "checkbox-group",
             options: [
               { label: "Peripheral IV", value: "peripheral_iv" },
               { label: "Central line", value: "central_line" },
@@ -622,128 +798,42 @@ export default function CardiacAssessment({ layout = "root" }) {
               { label: "Dialysis catheter", value: "dialysis_cath" },
               { label: "Feeding tube", value: "feeding_tube" },
               { label: "Pacemaker/ICD", value: "pacemaker_icd" },
-              { label: "None", value: "none" }
-            ]
-          },
-          { type: "subheading", label: "20. Abdomen" },
-          {
-            name: "card_bowel_sounds",
-            label: "Bowel sounds",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Hypoactive", value: "hypoactive" },
-              { label: "Hyperactive", value: "hyperactive" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
-          {
-            name: "card_distension",
-            label: "Distension",
-            type: "radio",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Mild", value: "mild" },
-              { label: "Moderate", value: "moderate" },
-              { label: "Severe", value: "severe" }
-            ]
-          },
-          {
-            name: "card_tenderness",
-            label: "Tenderness",
-            type: "radio",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Present", value: "present" }
-            ]
-          },
-          { type: "subheading", label: "21. Musculoskeletal / Motor" },
-          {
-            name: "card_ue_strength",
-            label: "Upper extremity strength",
-            type: "radio",
-            options: [
-              { label: "Equal", value: "equal" },
-              { label: "Unequal", value: "unequal" },
-              { label: "Weak", value: "weak" }
-            ]
-          },
-          {
-            name: "card_le_strength",
-            label: "Lower extremity strength",
-            type: "radio",
-            options: [
-              { label: "Equal", value: "equal" },
-              { label: "Unequal", value: "unequal" },
-              { label: "Weak", value: "weak" }
-            ]
-          },
-          {
-            name: "card_sensation",
-            label: "Sensation",
-            type: "radio",
-            options: [
-              { label: "Intact", value: "intact" },
-              { label: "Numbness", value: "numbness" },
-              { label: "Tingling", value: "tingling" }
+              { label: "None", value: "none", exclusive: true }
             ]
           }
         ]
       },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 3 — FUNCTIONAL IMPACT (REHAB)
-      // ═══════════════════════════════════════════════════════════════
+
+      // ─────────────────────────────────────────────
+      // FUNCTIONAL IMPACT (REHAB)
+      // ─────────────────────────────────────────────
       {
-        title: "SECTION 3 — FUNCTIONAL IMPACT (REHAB)",
+        title: "FUNCTIONAL IMPACT (REHAB)",
         fields: [
+          // Activity tolerance → radio (5 options, display below)
           {
-            name: "card_activity_tolerance",
-            label: "22. Activity Tolerance",
+            name: "activity_tolerance",
+            label: "Activity Tolerance",
             type: "radio",
-            labelAbove: true,
             options: [
-              { label: "Full tolerance", value: "full" },
+              { label: "Full", value: "full" },
               { label: "Mild limitation", value: "mild" },
               { label: "Moderate limitation", value: "moderate" },
-              { label: "Severe limitation", value: "severe" },
-              { label: "Unable to participate", value: "unable" }
+              { label: "Severe", value: "severe" },
+              { label: "Unable", value: "unable" }
             ]
           },
+          // ADL performance → radio (5 options, display below)
           {
-            name: "card_adl_performance",
-            label: "23. ADL Performance",
+            name: "adl_performance",
+            label: "ADL Performance",
             type: "radio",
-            labelAbove: true,
             options: [
               { label: "Independent", value: "independent" },
-              { label: "Requires pacing", value: "pacing" },
-              { label: "Requires rest breaks", value: "rest_breaks" },
-              { label: "Requires assistance", value: "assistance" },
+              { label: "Pacing required", value: "pacing" },
+              { label: "Rest breaks", value: "rest_breaks" },
+              { label: "Assistance needed", value: "assistance" },
               { label: "Dependent", value: "dependent" }
-            ]
-          }
-        ]
-      },
-      // ═══════════════════════════════════════════════════════════════
-      // SECTION 4 — RED FLAGS
-      // ═══════════════════════════════════════════════════════════════
-      {
-        title: "SECTION 4 — RED FLAGS (Auto-Alert)",
-        fields: [
-          {
-            name: "card_red_flags",
-            label: "Red flags (select all that apply)",
-            type: "checkbox-group",
-            options: [
-              { label: "Chest pain unrelieved by rest/Nitroglycerin", value: "chest_pain_unrelieved" },
-              { label: "New malignant arrhythmia", value: "malignant_arrhythmia" },
-              { label: "HR <40 or >130", value: "hr_abnormal" },
-              { label: "SBP <90 or >180", value: "sbp_abnormal" },
-              { label: "SpO₂ <90%", value: "spo2_low" },
-              { label: "Acute pulmonary edema", value: "pulmonary_edema" },
-              { label: "Syncope", value: "syncope" },
-              { label: "New focal neurological deficit", value: "neuro_deficit" },
-              { label: "Sudden unequal pulses", value: "unequal_pulses" }
             ]
           }
         ]
