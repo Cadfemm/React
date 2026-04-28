@@ -278,8 +278,9 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
               cursor: "pointer",
             }}
             onClick={() => {
-              const token = localStorage.getItem("access_token") || "";
-              const url   = `${window.location.origin}/optometry/assessment/${assessmentId}?token=${token}`;
+              const token     = localStorage.getItem("access_token") || "";
+              const patientId = patient?.id || "";
+              const url = `${window.location.origin}/optometry/assessment/${assessmentId}?patient_id=${patientId}&token=${token}`;
               navigator.clipboard.writeText(url).then(() => onCopyLink?.());
             }}
           >
@@ -344,7 +345,7 @@ export default function OptometryAssessment({
   const [questionaireIds, setQuestionaireIds] = useState(() => {
     const qMap = {};
     (initialAssessmentIds || []).forEach(fd => {
-      if ((fd.form_type || '').toUpperCase() === 'QUESTIONNAIRE') {
+      if ((fd.form_type || '').toUpperCase() === 'QUESTIONNAIRE' || (fd.form_type || '').toUpperCase() === 'QUESTIONAIRE') {
         const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
           k => REGISTRY_KEY_TO_NAME[k] === fd.name
         );
@@ -2130,7 +2131,7 @@ export default function OptometryAssessment({
         if (ft === 'INITIAL') {
           const key = (fd.type || '').toLowerCase();
           if (key) idMap[key] = fd.id;
-        } else if (ft === 'QUESTIONNAIRE') {
+        } else if (ft === 'QUESTIONNAIRE' || ft === 'QUESTIONAIRE') {
           // Match by name to registry key
           const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
             k => REGISTRY_KEY_TO_NAME[k] === fd.name

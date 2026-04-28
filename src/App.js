@@ -50,7 +50,6 @@ function App() {
             <Route path="/Output"         exact component={Output} />
             <Route path="/psychology/patient/:id" exact component={PatientDetails} />
             {/* ── Optometry session direct link ── */}
-            <Route path="/optometry/assessment/:sessionId/:patientId" exact component={SessionAssessmentPage} />
             <Route path="/optometry/assessment/:sessionId" exact component={SessionAssessmentPage} />
             <Route path="/Modalities"     exact component={latest} />
           </Switch>
