@@ -332,7 +332,6 @@ export default function OptometryAssessment({
   const [showReferral,  setShowReferral]  = useState(false);
   const [assessmentId,  setAssessmentId]  = useState(initialSessionId);
   const [formDataIds,   setFormDataIds]   = useState(() => {
-    // Pre-build the map if initialAssessmentIds were passed in
     const idMap = {};
     (initialAssessmentIds || []).forEach(fd => {
       if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
