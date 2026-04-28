@@ -70,17 +70,13 @@ const VisionTherapyAssessmentSchema = {
   ]
 }
 
-const VisionAssessment = memo(function VisionAssessment({ schema, onBack, layout = "root", values: externalValues, onChange: externalOnChange }) {
-  const [internalValues, setInternalValues] = useState({});
+const VisionAssessment = memo(function VisionAssessment({ schema, onBack, layout = "root" }) {
+  const [values,    setValues]    = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const values = externalValues ?? internalValues;
-
-  const internalOnChange = useCallback((name, value) => {
-    setInternalValues(v => ({ ...v, [name]: value }));
+  const onChange = useCallback((name, value) => {
+    setValues(v => ({ ...v, [name]: value }));
   }, []);
-
-  const onChange = externalOnChange ?? internalOnChange;
 
   const onAction = useCallback((type) => {
     if (type === "submit") setSubmitted(true);

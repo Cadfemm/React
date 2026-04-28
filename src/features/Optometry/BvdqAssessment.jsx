@@ -113,13 +113,11 @@ function calculateSSI(values) {
   return { total, result: total >= 15 ? "Suggestive of BVD" : "Within normal range" };
 }
 
-const BVDAssessment = memo(function BVDAssessment({ schema, onBack, layout = "root", values: externalValues, onChange: externalOnChange }) {
-  const [internalValues, setInternalValues] = useState({});
+const BVDAssessment = memo(function BVDAssessment({ schema, onBack, layout = "root" }) {
+  const [values, setValues] = useState({});
 
-  const values = externalValues ?? internalValues;
-
-  const internalHandleChange = useCallback((name, payload) => {
-    setInternalValues(prev => {
+  const handleChange = useCallback((name, payload) => {
+    setValues(prev => {
       const next = { ...prev };
       if (payload && typeof payload === "object" && "row" in payload) {
         const arr = Array.isArray(prev[name]) ? [...prev[name]] : [];
@@ -137,8 +135,6 @@ const BVDAssessment = memo(function BVDAssessment({ schema, onBack, layout = "ro
       return next;
     });
   }, []);
-
-  const handleChange = externalOnChange ?? internalHandleChange;
 
   const summary = useMemo(() => ({
     bvdTotal:  values.bvdq_total  || 0,

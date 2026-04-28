@@ -122,14 +122,12 @@ const LVQOL_SCALE = [
   ]
 };
 
-const LVQoLForm = memo(function LVQoLForm({ schema, layout = "root", values: externalValues, onChange: externalOnChange }) {
-  const [internalValues, setInternalValues] = useState({});
+const LVQoLForm = memo(function LVQoLForm({ schema, layout = "root" }) {
+  const [values,   setValues]   = useState({});
   const [language, setLanguage] = useState("en");
 
-  const values = externalValues ?? internalValues;
-
-  const internalHandleChange = useCallback((name, value) => {
-    setInternalValues(prev => {
+  const handleChange = useCallback((name, value) => {
+    setValues(prev => {
       const normalized = typeof value === "string" && !isNaN(value) ? Number(value) : value;
       const next = { ...prev, [name]: normalized };
       const { total, category } = calculateLVQoL(next);
@@ -138,8 +136,6 @@ const LVQoLForm = memo(function LVQoLForm({ schema, layout = "root", values: ext
       return next;
     });
   }, []);
-
-  const handleChange = externalOnChange ?? internalHandleChange;
 
   const handleAction = useCallback((type) => {
     if (type === "toggle-language") setLanguage(l => (l === "en" ? "ms" : "en"));
