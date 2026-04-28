@@ -285,7 +285,7 @@ const SUBJECTIVE_SCHEMA = {
   label: "Assessments",
   options: [
     { label: "CSE", value: "swallow_subjective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication Assessment", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Communication", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_subjective", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_subjective", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -336,10 +336,16 @@ const OBJECTIVE_SCHEMA = {
             "45 degrees"
           ]
         },
+        { type: "subheading", label: "Vitals" },
         {
-          name: "spo2",
-          label: "SpO2 (%)",
-          type: "textarea"
+          type: "row",
+          fields: [
+            { name: "spo2",        label: "SpO2 (%)",       type: "input", placeholder: "e.g. 98" },
+            { name: "rr",          label: "RR (breaths/min)", type: "input", placeholder: "e.g. 18" },
+            { name: "hr",          label: "HR (bpm)",        type: "input", placeholder: "e.g. 72" },
+            { name: "bp",          label: "BP (mmHg)",       type: "input", placeholder: "e.g. 120/80" },
+            { name: "temperature", label: "Temp (°C)",       type: "input", placeholder: "e.g. 37.0" }
+          ]
         },
         {
           name: "oralHygiene",
@@ -487,7 +493,7 @@ const OBJECTIVE_SCHEMA = {
   label: "Assessments",
   options: [
     { label: "CSE", value: "swallow_objective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication Assessment", value: "comm_objective", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Communication", value: "comm_objective", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_objective", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_objective", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -514,23 +520,23 @@ const OBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
-        {
-          type: "label",
-          label: "Clinical Impression"
-        },
-        {
-          name: "clinicalImpression",
-          type: "textarea",
-          placeholder: "Enter clinical impression...",
-          rows: 4
-        },
+        // {
+        //   type: "label",
+        //   label: "Clinical Impression"
+        // },
+        // {
+        //   name: "clinicalImpression",
+        //   type: "textarea",
+        //   placeholder: "Enter clinical impression...",
+        //   rows: 4
+        // },
         {
   name: "assessmentLauncher",
   type: "assessment-launcher",
   label: "Assessments",
   options: [
     { label: "CSE", value: "swallow_assessment", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication Assessment", value: "comm_assessment", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Communication", value: "comm_assessment", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_assessment", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_assessment", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
