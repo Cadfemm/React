@@ -40,8 +40,9 @@ export default function SessionAssessmentPage() {
       return;
     }
 
-    const params = new URLSearchParams(location.search);
-    const token  = params.get("token");
+    const params    = new URLSearchParams(location.search);
+    const token     = params.get("token");
+    const patientIdFromUrl = params.get("patient_id");
 
     // Step 1 — if token in URL, authenticate the recipient (SSO)
     const authReady = token
@@ -70,10 +71,10 @@ export default function SessionAssessmentPage() {
         const sess = res.data;
         setSession(sess);
 
-        const patientId = sess.patient;
+        const patientId = patientIdFromUrl || sess.patient;
 
-        // Reflect patientId in URL (clean up token param too)
-        history.replace(`/optometry/assessment/${sessionId}/${patientId}`);
+        // Reflect patientId as query param — keeps URL short and clean
+        history.replace(`/optometry/assessment/${sessionId}?patient_id=${patientId}`);
 
         return api.get(API_URL.PATIENT + `?department=Optometry`).then(pr => {
           const found = (pr.data.results || []).find(p => p.id === patientId);
