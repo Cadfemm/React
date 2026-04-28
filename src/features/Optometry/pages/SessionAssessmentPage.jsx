@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import api from "../../../shared/api/apiClient";
+import { useParams, useLocation, useHistory } from "react-router-dom";
+import api, { setAccessToken } from "../../../shared/api/apiClient";
 import { API_URL } from "../../../platform/config/api.config";
 import OptometryAssessment from "../components/OptometryAssessment";
 import SidebarNav from "../../../components/SidebarNav";
@@ -9,14 +9,20 @@ import StyleBlock from "../../../components/StyleBlock";
 import { ShimmerForm } from "../../../shared/ui/Shimmer";
 
 /**
- * Direct-link: /optometry/assessment/:sessionId
+ * SSO Direct-link: /optometry/assessment/:sessionId?token=<jwt>
  *
- * 1. Fetches the Assessment session by ID
- * 2. Uses session.patient to fetch the patient record automatically
- * 3. Renders the full app shell + OptometryAssessment pre-loaded
+ * Flow:
+ *  1. Extract ?token from URL → call setAccessToken (authenticates the recipient)
+ *  2. Fetch /user/me to populate localStorage (username, userRole)
+ *  3. Fetch the Assessment session by ID
+ *  4. Auto-fetch patient from session.patient
+ *  5. Render full app shell + OptometryAssessment pre-loaded
+ *
+ * If no token in URL, uses existing localStorage token (already logged-in user).
  */
 export default function SessionAssessmentPage() {
-  const { sessionId, patientId: patientIdFromUrl } = useParams();
+  const { sessionId }       = useParams();
+  const location            = useLocation();
   const history             = useHistory();
 
   const [session,         setSession]         = useState(null);
@@ -25,7 +31,7 @@ export default function SessionAssessmentPage() {
   const [loading,         setLoading]         = useState(true);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const username = localStorage.getItem("username") || "";
+  const [username, setUsername] = useState(localStorage.getItem("username") || "");
 
   useEffect(() => {
     if (!sessionId) {
@@ -34,35 +40,58 @@ export default function SessionAssessmentPage() {
       return;
     }
 
-    // Step 1 — fetch the session
-    api.get(API_URL.ASSESSMENT + `session/${sessionId}/`)
+    const params = new URLSearchParams(location.search);
+    const token  = params.get("token");
+
+    // Step 1 — if token in URL, authenticate the recipient (SSO)
+    const authReady = token
+      ? (() => {
+          setAccessToken({
+            access: {
+              token,
+              expire_at: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+            }
+          });
+          // Fetch profile to populate localStorage
+          return api.get(API_URL.ME).then(res => {
+            const user = res.data;
+            localStorage.setItem("user",     JSON.stringify(user));
+            localStorage.setItem("username", user.username?.trim() || "");
+            localStorage.setItem("userRole", user.user_type || "");
+            setUsername(user.username?.trim() || "");
+          });
+        })()
+      : Promise.resolve();   // already authenticated — skip
+
+    // Step 2 — fetch session + patient after auth is ready
+    authReady
+      .then(() => api.get(API_URL.ASSESSMENT + `session/${sessionId}/`))
       .then(res => {
         const sess = res.data;
         setSession(sess);
 
         const patientId = sess.patient;
 
-        // Push patientId into URL if not already there
-        if (!patientIdFromUrl && patientId) {
-          history.replace(`/optometry/assessment/${sessionId}/${patientId}`);
-        }
+        // Reflect patientId in URL (clean up token param too)
+        history.replace(`/optometry/assessment/${sessionId}/${patientId}`);
 
-        // Step 2 — fetch the patient record
-        return api.get(API_URL.PATIENT + `?department=Optometry`)
-          .then(pr => {
-            const found = (pr.data.results || []).find(p => p.id === patientId);
-            setPatient(found || { id: patientId });
-          });
+        return api.get(API_URL.PATIENT + `?department=Optometry`).then(pr => {
+          const found = (pr.data.results || []).find(p => p.id === patientId);
+          setPatient(found || { id: patientId });
+        });
       })
       .catch(err => {
+        const status = err?.response?.status;
         setError(
-          err?.response?.status === 404
+          status === 401
+            ? "Authentication failed. The token may be invalid or expired."
+            : status === 404
             ? `Session "${sessionId}" not found.`
-            : "Failed to load session. Check your connection or re-login."
+            : "Failed to load session. Check your connection."
         );
       })
       .finally(() => setLoading(false));
-  }, [sessionId]);
+  }, [sessionId]);   // run once on mount
 
   const handleBack = () => history.push("/menu/optometry");
 
@@ -94,7 +123,7 @@ export default function SessionAssessmentPage() {
             <div style={{ padding: 32, maxWidth: 640, margin: "0 auto" }}>
               <ShimmerForm rows={8} />
               <p style={{ textAlign: "center", color: "#64748b", fontSize: 13, marginTop: 16 }}>
-                Loading session <code>{sessionId}</code>…
+                Loading session…
               </p>
             </div>
           )}
@@ -107,7 +136,9 @@ export default function SessionAssessmentPage() {
               <div style={S.errorMsg}>{error}</div>
               <code style={S.errorId}>{sessionId}</code>
               <br />
-              <button style={S.backBtn} onClick={handleBack}>← Back to Optometry</button>
+              <button style={S.backBtn} onClick={() => history.push("/")}>
+                Go to Login
+              </button>
             </div>
           )}
 

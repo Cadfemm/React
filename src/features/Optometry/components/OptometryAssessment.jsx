@@ -254,6 +254,7 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           padding: "6px 20px",
           background: "#f0fdf4",
           borderBottom: "1px solid #bbf7d0",
+          flexWrap: "wrap",
         }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Session ID
@@ -267,7 +268,26 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           }}>
             {assessmentId}
           </span>
-          <span style={{ fontSize: 11, color: "#86efac" }}>— click to select &amp; copy</span>
+          <button
+            title="Copy shareable link with your token — recipient opens directly without login"
+            style={{
+              marginLeft: 4,
+              padding: "2px 10px", borderRadius: 4,
+              background: "#16a34a", color: "#fff",
+              border: "none", fontSize: 11, fontWeight: 700,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              const token = localStorage.getItem("access_token") || "";
+              const url   = `${window.location.origin}/optometry/assessment/${assessmentId}?token=${token}`;
+              navigator.clipboard.writeText(url).then(() =>
+                setToast({ message: "Shareable link copied to clipboard", variant: "success" })
+              );
+            }}
+          >
+            Copy Link
+          </button>
+          <span style={{ fontSize: 11, color: "#86efac" }}>— share this link; recipient opens directly</span>
         </div>
       )}
 
