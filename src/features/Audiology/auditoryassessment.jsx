@@ -303,7 +303,9 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
 
     sections: [
      {
+      
   title: "Hearing Aid Trial",
+  showIf: { field: "mode", equals: "followup" },
   fields: [
     {
       name: "hearingaidtrial_required",
@@ -590,7 +592,7 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
  return (
   <CommonFormBuilder
     schema={schema}
-    values={values}
+    values={{ ...values, mode }}
     layout="nested"
     onChange={(n, v) => setValues((prev) => ({ ...prev, [n]: v }))}
     onAction={(type) => type === "back" && onBack?.()}

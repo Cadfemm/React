@@ -209,19 +209,143 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
   const schema = {
     title: "Objective Hyperacusis Assessment",
     actions: [{ type: "back", label: "Back" }],
-    sections: [{
-      title: "Loudness Discomfort Levels (LDL)",
-      fields: FREQUENCIES.flatMap((freq) => [
-        { type: "subheading", label: `${freq} Hz` },
-        {
-          type: "row",
-          fields: [
-            { name: `ldl_r_${freq}`, label: "Right Ear (dB HL)", type: "input" },
-            { name: `ldl_l_${freq}`, label: "Left Ear (dB HL)",  type: "input" }
-          ]
-        }
-      ])
-    }]
+
+    sections: [
+      {
+        title: "Loudness Discomfort Levels (LDL)",
+        fields: [
+          ...FREQUENCIES.flatMap((freq) => [
+            { type: "subheading", label: `${freq} Hz` },
+            {
+              type: "row",
+              cols: 2,
+              fields: [
+                {
+                  name: `ldl_r_${freq}`,
+                  label: "Right Ear (dB HL)",
+                  type: "input"
+                },
+                {
+                  name: `ldl_l_${freq}`,
+                  label: "Left Ear (dB HL)",
+                  type: "input"
+                }
+              ]
+            }
+          ]),
+
+          {
+            type: "subheading",
+            label: "Special Test"
+          },
+          {
+            name: "special_test",
+            label: "Details",
+            type: "input"
+          },
+
+          {
+            type: "subheading",
+            label: "Intervention: Counselling"
+          },
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "counselling_option",
+                label: "Required ?",
+                type: "radio",
+                options: [
+                  { label: "No", value: 0 },
+                  { label: "Yes", value: 1 }
+                ]
+              },
+              {
+                name: "counselling_notes",
+                label: "Remarks",
+                type: "input"
+              }
+            ]
+          },
+
+          {
+            type: "subheading",
+            label: "Intervention: Sound Desensitisation / Sound Tolerance Training"
+          },
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "sound_option",
+                label: "Required ?",
+                type: "radio",
+                options: [
+                  { label: "No", value: 0 },
+                  { label: "Yes", value: 1 }
+                ]
+              },
+              {
+                name: "sound_notes",
+                label: "Remarks",
+                type: "input"
+              }
+            ]
+          },
+
+          {
+            type: "subheading",
+            label: "Intervention: Hearing Aids / Assistive Devices"
+          },
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "hearingaid_option",
+                label: "Required ?",
+                type: "radio",
+                options: [
+                  { label: "No", value: 0 },
+                  { label: "Yes", value: 1 }
+                ]
+              },
+              {
+                name: "hearingaid_notes",
+                label: "Remarks",
+                type: "input"
+              }
+            ]
+          },
+
+          {
+            type: "subheading",
+            label: "Intervention: Environmental Modification"
+          },
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              {
+                name: "environment_option",
+                label: "Required ?",
+                type: "radio",
+                options: [
+                  { label: "No", value: 0 },
+                  { label: "Yes", value: 1 }
+                ]
+              },
+              {
+                name: "environment_notes",
+                label: "Remarks",
+                type: "input"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   };
 
   return (

@@ -527,28 +527,100 @@ export function VestibularAdvancedFormObj({ onBack }) {
     ]),
   });
 
-  const buildBinaryOptions = (prefix, title) => ({
-    title,
-    fields: [
-      "Horizontal Left Passive",
-      "Horizontal Right Passive",
-      "Vertical Up Passive",
-      "Vertical Down Passive",
-      "Horizontal Left Active",
-      "Horizontal Right Active",
-      "Vertical Up Active",
-      "Vertical Down Active",
-    ].map((key) => ({
-      name: `${prefix}_${key}`,
-      label: formatLabel(key),
-      type: "radio-matrix",
-      options: [
-        { label: "Within normal range", value: 0 },
-        { label: "Deviated", value: 1 },
-      ],
-    })),
-  });
+const buildBinaryOptions = (prefix, title) => ({
+  title,
+  fields: [
 
+    {
+      type: "subheading",
+      label: "Dynamic Visual Acuity (Passive)"
+    },
+
+    "Horizontal Left Passive",
+    "Horizontal Right Passive",
+    "Vertical Up Passive",
+    "Vertical Down Passive",
+
+    {
+      type: "subheading",
+      label: "Dynamic Visual Acuity (Passive)"
+    },
+
+    "Left Anterior Passive",
+    "Right Posterior Passive",
+    "Right Anterior Passive",
+    "Left Posterior Passive",
+
+    {
+      type: "subheading",
+      label: "Dynamic Visual Acuity (Active)"
+    },
+
+    "Horizontal Left Active",
+    "Horizontal Right Active",
+    "Vertical Up Active",
+    "Vertical Down Active",
+
+    {
+      type: "subheading",
+      label: "Dynamic Visual Acuity (Active)"
+    },
+
+    "Left Anterior Active",
+    "Right Posterior Active",
+    "Right Anterior Active",
+    "Left Posterior Active"
+  ].map((item) =>
+    typeof item === "string"
+      ? {
+          name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+          label: item,
+          type: "radio-matrix",
+          options: [
+            { label: "Within normal range", value: 0 },
+            { label: "Deviated", value: 1 }
+          ]
+        }
+      : item
+  )
+});
+const buildBinaryOptionsgaze = (prefix, title) => ({
+  title,
+  fields: [
+    {
+      type: "subheading",
+      label: "Gaze Stabilization (Active)"
+    },
+
+    "Horizontal Left Active",
+    "Horizontal Right Active",
+    "Vertical Up Active",
+    "Vertical Down Active",
+
+    {
+      type: "subheading",
+      label: "Gaze Stabilization (Active)"
+    },
+
+    "Left Anterior",
+    "Right Posterior",
+    "Right Anterior",
+    "Left Posterior",
+    "Vertical Down Active"
+  ].map((item) =>
+    typeof item === "string"
+      ? {
+          name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+          label: item,
+          type: "radio-matrix",
+          options: [
+            { label: "Within normal range", value: 0 },
+            { label: "Deviated", value: 1 }
+          ]
+        }
+      : item
+  )
+});
   // =========================
   // FGA AUTO SCORE
   // =========================
@@ -570,12 +642,12 @@ export function VestibularAdvancedFormObj({ onBack }) {
       // =========================
       // SACCADE
       // =========================
-      buildEyeSection("saccade_h", "Saccade - Horizontal", [
+      buildEyeSection("saccade_h", "Videonystagmography Saccade - Horizontal", [
         "Velocity",
         "Precision",
         "Latency",
       ]),
-      buildEyeSection("saccade_v", "Saccade - Vertical", [
+      buildEyeSection("saccade_v", "Videonystagmography Saccade - Vertical", [
         "Velocity",
         "Precision",
         "Latency",
@@ -584,7 +656,7 @@ export function VestibularAdvancedFormObj({ onBack }) {
       // =========================
       // SMOOTH PURSUIT
       // =========================
-      buildEyeSection("smooth_h", "Smooth Pursuit - Horizontal", [
+      buildEyeSection("smooth_h", "Videonystagmography Smooth Pursuit - Horizontal", [
         "Velocity",
         "Precision",
       ]),
@@ -709,23 +781,96 @@ export function VestibularAdvancedFormObj({ onBack }) {
           ]
         }))
       },
-
-      // =========================
-      // POSITIONAL
-      // =========================
       {
         title: "Positional Test",
         fields: [
-          { name: "positional_test", label: "Test", type: "textarea" },
-          { name: "positional_impression", label: "Impression", type: "textarea" },
-        ],
-      },
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "dixhallpike_r", label: "Dix HallPike - Right Side", type: "input" },
+              { name: "dixhallpike_l", label: "Dix HallPike - Left Side", type: "input" }
+            ]
+          },
 
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "epley_r", label: "Epley Maneuver - Right Side", type: "input" },
+              { name: "epley_l", label: "Epley Maneuver - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "rolltest_r", label: "Roll Test - Right Side", type: "input" },
+              { name: "rolltest_l", label: "Roll Test - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "barbecue_r", label: "Barbecue Roll Test - Right Side", type: "input" },
+              { name: "barbecue_l", label: "Barbecue Roll Test - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "supine_r", label: "Supine Straight Head Extension - Right Side", type: "input" },
+              { name: "supine_l", label: "Supine Straight Head Extension - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "semont_r", label: "Semont - Right Side", type: "input" },
+              { name: "semont_l", label: "Semont - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "gufoni_r", label: "Gufoni - Right Side", type: "input" },
+              { name: "gufoni_l", label: "Gufoni - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "appiani_r", label: "Appiani - Right Side", type: "input" },
+              { name: "appiani_l", label: "Appiani - Left Side", type: "input" }
+            ]
+          },
+
+          {
+            type: "row",
+            cols: 2,
+            fields: [
+              { name: "others_r", label: "Others - Right Side", type: "input" },
+              { name: "others_l", label: "Others - Left Side", type: "input" }
+            ]
+          }
+        ]
+      },
       // =========================
       // DVA + GAZE STABILIZATION
       // =========================
       buildBinaryOptions("dva", "Dynamic Visual Acuity (DVA)"),
-      buildBinaryOptions("gaze_stab", "Gaze Stabilization"),
+      buildBinaryOptionsgaze("gaze_stab", "Gaze Stabilization"),
 
       // =========================
       // vHIT
@@ -903,6 +1048,144 @@ export function VestibularAdvancedFormObj({ onBack }) {
             }
           ]
         },
+        {
+  fields: [
+    {
+      type: "subheading",
+      label: "Special Test"
+    },
+    {
+      name: "special_test",
+      label: "Details",
+      type: "input"
+    },
+
+    {
+      type: "subheading",
+      label: "Intervention: Vestibular Rehabilitation Exercises"
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        {
+          name: "vre_option",
+          label: "Required ?",
+          type: "radio",
+          options: [
+            { label: "No", value: 0 },
+            { label: "Yes", value: 1 }
+          ]
+        },
+        {
+          name: "vre_notes",
+          label: "Remarks",
+          type: "input"
+        }
+      ]
+    },
+
+    {
+      type: "subheading",
+      label: "Intervention: Canalith Repositioning Maneuver"
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        {
+          name: "crm_option",
+          label: "Required ?",
+          type: "radio",
+          options: [
+            { label: "No", value: 0 },
+            { label: "Yes", value: 1 }
+          ]
+        },
+        {
+          name: "crm_notes",
+          label: "Remarks",
+          type: "input"
+        }
+      ]
+    },
+
+    {
+      type: "subheading",
+      label: "Intervention: Gaze Stability Training"
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        {
+          name: "gst_option",
+          label: "Required ?",
+          type: "radio",
+          options: [
+            { label: "No", value: 0 },
+            { label: "Yes", value: 1 }
+          ]
+        },
+        {
+          name: "gst_notes",
+          label: "Remarks",
+          type: "input"
+        }
+      ]
+    },
+
+    {
+      type: "subheading",
+      label: "Intervention: Fall Prevention Education"
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        {
+          name: "fall_option",
+          label: "Required ?",
+          type: "radio",
+          options: [
+            { label: "No", value: 0 },
+            { label: "Yes", value: 1 }
+          ]
+        },
+        {
+          name: "fall_notes",
+          label: "Remarks",
+          type: "input"
+        }
+      ]
+    },
+
+    {
+      type: "subheading",
+      label: "Psychosocial Counseling"
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        {
+          name: "psycho_option",
+          label: "Required ?",
+          type: "radio",
+          options: [
+            { label: "No", value: 0 },
+            { label: "Yes", value: 1 }
+          ]
+        },
+        {
+          name: "psycho_notes",
+          label: "Remarks",
+          type: "input"
+        }
+      ]
+    }
+  ]
+}
     ],
   };
 
