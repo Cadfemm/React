@@ -68,7 +68,7 @@ export default function OptometryPatients({ onBack, loading = false }) {
   const [submittedAssessments, setSubmittedAssessments] = useState({});
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
-  const [patients, setPatients] = useState([]);
+  const [patients,             setPatients]             = useState([]);
 
   const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
   const handleBackToCards    = useCallback(() => { setAssessmentView(null); }, []);
@@ -82,27 +82,31 @@ export default function OptometryPatients({ onBack, loading = false }) {
         const res = await api.get(
           API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole) ? `?department=Optometry` : '')
         );
-        const list = res.data.results || [];
-        setPatients(list);
-
-        // ── Deep-link: ?patient_id=<uuid>&assessment=initial|followup|progress ──
-        const params     = new URLSearchParams(window.location.search);
-        const patientId  = params.get("patient_id");
-        const assessment = params.get("assessment") || "initial";
-
-        if (patientId) {
-          const found = list.find(p => p.id === patientId);
-          if (found) {
-            setSelectedPatient(found);
-            setAssessmentView(assessment);
-          }
-        }
+        setPatients(res.data.results || []);
       } catch (e) {
         setPatients([]);
       }
     };
     fetchPatients();
   }, []);
+
+  /* Deep-link: auto-select patient once list is loaded */
+  React.useEffect(() => {
+    if (!patients.length) return;                          // wait for list
+    if (selectedPatient) return;                           // already selected
+
+    const params     = new URLSearchParams(window.location.search);
+    const patientId  = params.get("patient_id");
+    const assessment = params.get("assessment") || "initial";
+
+    if (!patientId) return;
+
+    const found = patients.find(p => p.id === patientId);
+    if (found) {
+      setSelectedPatient(found);
+      setAssessmentView(assessment);
+    }
+  }, [patients]);                                          // runs whenever patients loads
 
   /* hooks must be before early returns */
   const filtered = useMemo(() => patients.filter(p => {
