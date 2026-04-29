@@ -3,6 +3,10 @@ import SixMWTForm from "./SixMWTForm";
 import MMTForm from "./MMTForm";
 import YBalanceTestForm from "./YBalanceTestForm";
 import LegPressForm from "./LegPressForm";
+import SPADIForm from "./SPADIForm";
+import HOOSForm from "./HOOSForm";
+import KOOSForm from "./KOOSForm";
+import FAOSForm from "./FAOSForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
 
@@ -11,6 +15,10 @@ export const CONDITIONING_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
   y_balance: YBalanceTestForm,
   fac: LegPressForm,
+  spadi: SPADIForm,
+  hoos: HOOSForm,
+  koos: KOOSForm,
+  faos: FAOSForm,
 };
 
 export default function Conditioning({ patient, onSubmit, onBack }) {
@@ -345,6 +353,10 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
         { label: "Manual Muscle Test (MMT)", value: "mmt" },
         { label: "Y balance", value: "y_balance" },
         { label: "Leg press symmetry", value: "fac" },
+        { label: "Shoulder Pain & Disability Index (SPADI)", value: "spadi" },
+        { label: "HOOS", value: "hoos" },
+        { label: "Knee Injury and Osteoarthritis", value: "koos" },
+        { label: "FAOS", value: "faos" },
       ]
     },
         ]
@@ -509,101 +521,15 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
   const PLAN_SCHEMA = {
     title: "Plan",
     sections: [
-
-      /* ===================================================== */
-      /* SHORT TERM GOALS                                      */
-      /* ===================================================== */
-
       {
-        title: "Short Term Goals",
         fields: [
-          {
-            type: "dynamic-section",
-            name: "short_term_goals",
-            addButtonLabel: "Add Short Term Goal",
-            fields: [
+          { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+          { type: "dynamic-goals", name: "short_term_goals" },
 
-              { type: "input", name: "goal", label: "Goal (Functional Task)" },
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+          { type: "dynamic-goals", name: "long_term_goals" },
 
-              {
-                type: "single-select",
-                name: "assist_level",
-                label: "Assist Level",
-                options: [
-                  { label: "Independent", value: "Independent" },
-                  { label: "Supervision", value: "Supervision" },
-                  { label: "Stand-by Assist (SBA)", value: "SBA" },
-                  { label: "Contact Guard Assist (CGA)", value: "CGA" },
-                  { label: "Minimal Assist (Min A)", value: "MinAssist" },
-                  { label: "Moderate Assist (Mod A)", value: "ModAssist" },
-                  { label: "Maximum Assist (Max A)", value: "MaxAssist" }
-                ]
-              },
-
-              { type: "input", name: "device", label: "Device / Prosthesis Used" },
-
-              { type: "input", name: "context", label: "Context (Where / Condition)" },
-
-              { type: "input", name: "target", label: "Measurable Target" },
-
-              { type: "date", name: "target_date", label: "Target Date" }
-
-            ]
-          }
-        ]
-      },
-
-      /* ===================================================== */
-      /* LONG TERM GOALS                                       */
-      /* ===================================================== */
-
-      {
-        title: "Long Term Goals",
-        fields: [
-          {
-            type: "dynamic-section",
-            name: "long_term_goals",
-            addButtonLabel: "Add Long Term Goal",
-            fields: [
-
-              { type: "input", name: "goal", label: "Goal (Functional Task)" },
-
-              {
-                type: "single-select",
-                name: "assist_level",
-                label: "Assist Level",
-                options: [
-                  { label: "Independent", value: "Independent" },
-                  { label: "Supervision", value: "Supervision" },
-                  { label: "Stand-by Assist (SBA)", value: "SBA" },
-                  { label: "Contact Guard Assist (CGA)", value: "CGA" },
-                  { label: "Minimal Assist (Min A)", value: "MinAssist" },
-                  { label: "Moderate Assist (Mod A)", value: "ModAssist" },
-                  { label: "Maximum Assist (Max A)", value: "MaxAssist" }
-                ]
-              },
-
-              { type: "input", name: "device", label: "Device / Prosthesis Used" },
-
-              { type: "input", name: "context", label: "Context (Where / Condition)" },
-
-              { type: "input", name: "target", label: "Measurable Target" },
-
-              { type: "date", name: "target_date", label: "Target Date" }
-
-            ]
-          }
-        ]
-      },
-
-      /* ===================================================== */
-      /* STRENGTH CONDITIONING                                 */
-      /* ===================================================== */
-
-      {
-        title: "Strength Conditioning",
-        fields: [
-
+          { type: "subheading", label: "Strength Conditioning" },
           {
             type: "checkbox-group",
             name: "strength_exercises",
@@ -618,23 +544,9 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             ]
           },
 
-          {
-            type: "textarea",
-            name: "strength_notes",
-            label: "Strength Conditioning Notes"
-          }
+          { type: "textarea", name: "strength_notes", label: "Strength Conditioning Notes" },
 
-        ]
-      },
-
-      /* ===================================================== */
-      /* ENDURANCE                                              */
-      /* ===================================================== */
-
-      {
-        title: "Endurance Training",
-        fields: [
-
+          { type: "subheading", label: "Endurance Training" },
           {
             type: "checkbox-group",
             name: "endurance_activities",
@@ -649,19 +561,9 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
 
           { type: "input", name: "endurance_duration", label: "Duration (Minutes)" },
 
-          { type: "textarea", name: "endurance_notes", label: "Endurance Notes" }
+          { type: "textarea", name: "endurance_notes", label: "Endurance Notes" },
 
-        ]
-      },
-
-      /* ===================================================== */
-      /* BALANCE                                                */
-      /* ===================================================== */
-
-      {
-        title: "Balance Training",
-        fields: [
-
+          { type: "subheading", label: "Balance Training" },
           {
             type: "checkbox-group",
             name: "balance_exercises",
@@ -676,19 +578,9 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             ]
           },
 
-          { type: "textarea", name: "balance_notes", label: "Balance Notes" }
+          { type: "textarea", name: "balance_notes", label: "Balance Notes" },
 
-        ]
-      },
-
-      /* ===================================================== */
-      /* HOME PROGRAM                                           */
-      /* ===================================================== */
-
-      {
-        title: "Home Program",
-        fields: [
-
+          { type: "subheading", label: "Home Program" },
           {
             type: "checkbox-group",
             name: "home_program_exercises",
@@ -709,7 +601,6 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
 
         ]
       }
-
     ]
   };
 

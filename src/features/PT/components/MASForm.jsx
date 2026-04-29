@@ -24,7 +24,15 @@ const MAS_INFO = {
   ]
 };
 
-const mas = (name, label) => ({ type: "radio-matrix", name, label, options: MAS_OPTIONS, info: MAS_INFO, showInfoInRow: false });
+const mas = (name, label) => ({
+  type: "radio-matrix",
+  name,
+  label,
+  options: MAS_OPTIONS,
+  info: MAS_INFO,
+  matrixHeaderLabel: "MAS Grade",
+  showInfoInRow: false
+});
 
 function splitMasGroupsBySubheading(fields) {
   const groups = [];
@@ -67,6 +75,7 @@ const MAS_FIELDS_FLAT = [
 
 const MAS_SCHEMA = {
   title: "Modified Ashworth Scale (MAS)",
+  titleInfo: MAS_INFO,
   fields: splitMasGroupsBySubheading(MAS_FIELDS_FLAT).map((g, idx) => ({
     type: "accordion",
     name: `mas_section_${String(g.label).replace(/[^a-z0-9]+/gi, "_").toLowerCase()}_${idx}`,

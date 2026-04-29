@@ -45,27 +45,12 @@ const HEARING_SECTIONS = [
             { label: "Deformity", value: "deformity" }
           ]
         },
-              ...[
-  "ear_pain",
-  "hearing_loss",
-  "tinnitus",
-  "fullness",
-  "ear_discharge",
-  "dizziness",
-  "vertigo",
-  "nausea",
-  "itching",
-  "hyperacusis",
-  "deformity"
-].map(issue => ({
-  type: "input",
-  name: `hearing_issue_${issue}_notes`,
-  label: `Elaboration – ${issue.replace(/_/g, " ")}`,
-  showIf: {
-    field: "hearing_issue",
-    includes: issue
-  }
-}))
+        {
+          type: "input",
+          name: "hearing_issue_notes",
+          label: "Specify",
+          showIf: { field: "hearing_issue", notEmpty: true }
+        }
       ]
     },
 

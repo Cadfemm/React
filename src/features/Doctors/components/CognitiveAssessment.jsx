@@ -2821,7 +2821,7 @@ const PsqiModal = ({ onClose, onSave }) => {
       <div style={styles.container}>
 
       <Card >
-        <Card title="Cognitive">
+        <Card >
           <RadioRow
             label="Cognitive"
             value={hasCognitiveImpairment}
@@ -2830,7 +2830,7 @@ const PsqiModal = ({ onClose, onSave }) => {
           />
         </Card>
 
-        <Card title="State of consciousness">
+        <Card title="Consciousness">
           <RadioRow
             label="State of consciousness"
             value={alert}

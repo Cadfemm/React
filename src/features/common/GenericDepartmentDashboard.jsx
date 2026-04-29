@@ -24,6 +24,7 @@ import { DoctorsInitialAssessmentForm as DoctorsAssessment } from "../Doctors/co
 const ASSESSMENT_MAP = {
   "Nursing":                  NursingPatientDetails,
   "Physiotherapy":            PTPatientDetails,
+  "Integrated Rehab":         PTPatientDetails,
   "Occupational Therapy":     OTPatientDetails,
   "Audiology":                AudiologyAdultIA,
   "Dietetics":                DietAssessment,
