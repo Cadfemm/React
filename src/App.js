@@ -1,7 +1,7 @@
 import "./App.css";
 import "./styles/design-system.css";
 import Login from "./pages/Signin";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
@@ -19,6 +19,32 @@ import latest from "./pages/Carddisplay.js";
 import PatientDetails from "./features/Psychology/components/PatientDetails.jsx";
 import DeptEntry from "./pages/DeptEntry";
 import SessionAssessmentPage from "./features/Optometry/pages/SessionAssessmentPage";
+import SSOProvider from "./shared/auth/SSOProvider";
+
+// ── Auth check ──────────────────────────────────────────────────────────────
+function isAuthenticated() {
+  const token  = localStorage.getItem("access_token");
+  const expiry = localStorage.getItem("access_token_expiry");
+  if (!token) return false;
+  if (expiry && new Date(expiry) <= new Date()) return false;
+  return true;
+}
+
+// ── Protected route — redirects to / if not logged in ──────────────────────
+function PrivateRoute({ component: Component, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={({ location, ...props }) =>
+        isAuthenticated() ? (
+          <Component {...props} location={location} />
+        ) : (
+          <Redirect to={{ pathname: "/", state: { from: location } }} />
+        )
+      }
+    />
+  );
+}
 
 function App() {
   console.log("App component rendering...");
@@ -26,34 +52,35 @@ function App() {
   try {
     return (
       <div className="App">
-        <Router basename="">
-          <Switch>
-            {/* ── Public ── */}
-            <Route path="/"       exact component={Login} />
-            <Route path="/Signup" exact component={Signup} />
-            <Route path="/about"  exact component={About} />
-            <Route path="/contact" exact component={Contact} />
+        <SSOProvider>
+          <Router basename="">
+            <Switch>
+              {/* ── Public — no auth required ── */}
+              <Route path="/"        exact component={Login} />
+              <Route path="/Signup"  exact component={Signup} />
+              <Route path="/about"   exact component={About} />
+              <Route path="/contact" exact component={Contact} />
 
-            {/* ── Deep-link: /dept/<slug>?token=<jwt> ── */}
-            <Route path="/dept/:department" component={DeptEntry} />
+              {/* ── SSO deep-links — handle their own auth via ?token= ── */}
+              <Route path="/dept/:department"                 component={DeptEntry} />
+              <Route path="/optometry/assessment/:sessionId"  exact component={SessionAssessmentPage} />
 
-            {/* ── App pages ── */}
-            <Route path="/Home"           exact component={Home} />
-            <Route path="/menu/:mode?"    exact component={Menu} />
-            <Route path="/Patients"       exact component={Cyberdyne} />
-            <Route path="/Neurophysics"   exact component={pablotests} />
-            <Route path="/AdminTherapist" exact component={treatments} />
-            <Route path="/CMO"            exact component={Tymo} />
-            <Route path="/HOD"            exact component={Plabo} />
-            <Route path="/Doctor"         exact component={stroke} />
-            <Route path="/Spinalinjury"   exact component={SpinalInjury} />
-            <Route path="/Output"         exact component={Output} />
-            <Route path="/psychology/patient/:id" exact component={PatientDetails} />
-            {/* ── Optometry session direct link ── */}
-            <Route path="/optometry/assessment/:sessionId" exact component={SessionAssessmentPage} />
-            <Route path="/Modalities"     exact component={latest} />
-          </Switch>
-        </Router>
+              {/* ── Protected pages — redirect to / if not logged in ── */}
+              <PrivateRoute path="/Home"           exact component={Home} />
+              <PrivateRoute path="/menu/:mode?"    exact component={Menu} />
+              <PrivateRoute path="/Patients"       exact component={Cyberdyne} />
+              <PrivateRoute path="/Neurophysics"   exact component={pablotests} />
+              <PrivateRoute path="/AdminTherapist" exact component={treatments} />
+              <PrivateRoute path="/CMO"            exact component={Tymo} />
+              <PrivateRoute path="/HOD"            exact component={Plabo} />
+              <PrivateRoute path="/Doctor"         exact component={stroke} />
+              <PrivateRoute path="/Spinalinjury"   exact component={SpinalInjury} />
+              <PrivateRoute path="/Output"         exact component={Output} />
+              <PrivateRoute path="/psychology/patient/:id" exact component={PatientDetails} />
+              <PrivateRoute path="/Modalities"     exact component={latest} />
+            </Switch>
+          </Router>
+        </SSOProvider>
       </div>
     );
   } catch (error) {
