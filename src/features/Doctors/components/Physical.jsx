@@ -5,12 +5,15 @@ import SpinalcordInjury from "./SpinalcordInjury";
 import humanBodyImage from "../../../assets/Human Body.jpg";
 import PTROMForm from "../../PT/components/ROMForm";
 import PTMASForm from "../../PT/components/MASForm";
+import OswestryLowBackPainAssessment from "./OswestryLowBackPainAssessment";
+import BriefPainInventoryAssessment from "./BriefPainInventoryAssessment";
+import KOOSKneeSurvey from "./KOOSKneeSurvey";
+import SPADIShoulderAssessment from "./SPADIShoulderAssessment";
+import BCTQAssessment from "./BCTQAssessment";
 
 export default function Physical({ onChange }) {
   const [values, setValues] = useState({
     is_sci_selected: false,
-    // Default both sides selected for compact "side selector" views.
-    // Start unselected (checkboxes unchecked); per-side radios appear only after side selection.
     pe_muscle_bulk_side: [],
     pe_posture_side: [],
     pe_deformity_side: [],
@@ -562,11 +565,14 @@ export default function Physical({ onChange }) {
   }
   const PHYSICAL_ASSESSMENT_REGISTRY = {
     pain_assessment: PainAssessmentForm,
+    oswestry_low_back_pain: OswestryLowBackPainAssessment,
+    brief_pain_inventory: BriefPainInventoryAssessment,
+    koos_knee_survey: KOOSKneeSurvey,
+    spadi_shoulder: SPADIShoulderAssessment,
+    bctq: BCTQAssessment,
     mrc_scale: MRCScaleForm,
     myotome_testing: MyotomeTestingForm,
-    // Use the full MAS scale form (radio-matrix) for neurology/tone assessment.
     mas_scale: PTMASForm,
-    // Keep notes form available if needed elsewhere.
     mas_scale_notes: MASNotesForm,
     rom: PTROMForm,
     asia_sci: SpinalcordInjury,
@@ -622,6 +628,7 @@ export default function Physical({ onChange }) {
             type: "radio",
             options: ["Yes", "No"],
           },
+
           {
             name: "motor_pain_assessment",
             label: "",
