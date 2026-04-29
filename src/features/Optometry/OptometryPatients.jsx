@@ -68,7 +68,6 @@ export default function OptometryPatients({ onBack, loading = false }) {
   const [submittedAssessments, setSubmittedAssessments] = useState({});
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
-
   const [patients, setPatients] = useState([]);
 
   const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
@@ -79,17 +78,31 @@ export default function OptometryPatients({ onBack, loading = false }) {
   /* Fetch patients department wise */
   React.useEffect(() => {
     const fetchPatients = async () => {
-      try{
+      try {
         const res = await api.get(
-          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=Optometry`:'')
-        )
-        setPatients(res.data.results);
-      } catch(e){
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole) ? `?department=Optometry` : '')
+        );
+        const list = res.data.results || [];
+        setPatients(list);
+
+        // ── Deep-link: ?patient_id=<uuid>&assessment=initial|followup|progress ──
+        const params     = new URLSearchParams(window.location.search);
+        const patientId  = params.get("patient_id");
+        const assessment = params.get("assessment") || "initial";
+
+        if (patientId) {
+          const found = list.find(p => p.id === patientId);
+          if (found) {
+            setSelectedPatient(found);
+            setAssessmentView(assessment);
+          }
+        }
+      } catch (e) {
         setPatients([]);
       }
-    }
+    };
     fetchPatients();
-  }, [])
+  }, []);
 
   /* hooks must be before early returns */
   const filtered = useMemo(() => patients.filter(p => {
