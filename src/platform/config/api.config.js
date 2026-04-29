@@ -1,4 +1,4 @@
-const BASE_API = (process.env.REACT_APP_API_DJANGO || 'http://127.0.0.1:8000') + '/api/'
+const BASE_API = (process.env.REACT_APP_API_DJANGO || 'https://backend.tps-ind.com') + '/api/'
 
 const API_URL = {
     // Users apis
