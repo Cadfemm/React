@@ -91,18 +91,18 @@ mixed_feeding_details: "",
     iddsi_level: "",
     iddsi_food: "6",
     iddsi_drink: "3",
-    current_diet_intake_type: "",
-    cdi_food_consistency: "",
-    cdi_fluids_consistency: "",
-    cdi_amount: "",
-    cdi_frequency: "",
-    cdi_enteral_type: "",
-    cdi_enteral_scoops: "",
-    cdi_enteral_water_ml: "",
-    cdi_enteral_schedule: "",
-    cdi_enteral_iddsi_level: "",
-    cdi_enteral_fluids: "",
-fluid_intake_details: "",
+//     current_diet_intake_type: "",
+//     cdi_food_consistency: "",
+//     cdi_fluids_consistency: "",
+//     cdi_amount: "",
+//     cdi_frequency: "",
+//     cdi_enteral_type: "",
+//     cdi_enteral_scoops: "",
+//     cdi_enteral_water_ml: "",
+//     cdi_enteral_schedule: "",
+//     cdi_enteral_iddsi_level: "",
+//     cdi_enteral_fluids: "",
+// fluid_intake_details: "",
     ffq: "",
 ons_regime: "",
     weight_record_date: "",
@@ -531,6 +531,61 @@ const submitAndSave = () => {
     if (type === "clear") {
       if (window.confirm("Clear all form data?")) {
         setForm({
+          // chief_complaint: "",
+          // additional_allergic_conditions: "",
+          // medical_history: patient?.medical_history || "",
+          // family_history: patient?.family_history || "",
+          // oral_intake: "", tube_type: "", swallowing_issue: "", chewing_issue: "",
+          // dentition_issue: "", appetite: "", bo: "", bo_details: "", bo_pattern_details: "",
+          // pu: "", pu_details: "", voiding_method: "", voiding_method_other: "", sleep: "", nausea: "", vomiting: "", other_complaints: "",
+          // breakfast_diet: [], breakfast_time: "", morning_tea_diet: [], morning_tea_time: "",
+          // lunch_diet: [], lunch_time: "", afternoon_tea_diet: [], afternoon_tea_time: "",
+          // dinner_diet: [], dinner_time: "", supper_diet: [], supper_time: "",
+          // meal_plan_feeding_type: [], meal_plan_enteral_details: "", meal_plan_mixed_details: "",
+          // meal_plan_fluid_details: "", from_date: "", to_date: "",
+          // diagnosis_problems: [],
+          // diet_breakfast: "", diet_morning_tea: "", diet_lunch: "", diet_afternoon_tea: "",
+          // diet_supper: "", diet_dinner: "", feeding_type: "",
+          // enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", iddsi_food: "6", iddsi_drink: "3", fluid_intake_details: "",
+          // current_diet_intake_type: "", cdi_food_consistency: "", cdi_fluids_consistency: "", cdi_amount: "", cdi_frequency: "",
+          // cdi_enteral_type: "", cdi_enteral_scoops: "", cdi_enteral_water_ml: "", cdi_enteral_schedule: "", cdi_enteral_iddsi_level: "", cdi_enteral_fluids: "",
+          // ons_regime: "", weight_record_date: "",
+          // wheelchair_weight: patient?.wheelchair_weight || "30",
+          // wheelchair_type: patient?.wheelchair_type || "",
+          // wheelchair_size: patient?.wheelchair_size || "",
+          // diet_assessment_data: {},
+          // diet_prognosis: "",
+          // diet_intervention: [],
+          // diet_intervention_initiate_nutrition: "",
+          // diet_intervention_monitor_intake: "",
+          // diet_intervention_document_plan: "",
+          // diet_intervention_order_consult: "",
+          // diet_intervention_supplements_enteral: "",
+          // diet_intervention_others: "",
+          // meal_plan_mod_feeding_type: "",
+          // meal_plan_mod_oral: [],
+          // meal_plan_mod_oral_others: "",
+          // plan_enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
+          // plan_enteral_feeding_details: "",
+          // plan_mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }],
+          // plan_mixed_feeding_details: "",
+          // plan_oral_fluid_intake: "",
+          // plan_enteral_fluid_intake: "",
+          // plan_mixed_fluid_intake: "",
+          // plan_short_term_goals: "",
+          // plan_long_term_goals: "",
+          // plan_review_date: "",
+          // plan_referral_type: "",
+          // plan_referral_internal: [],
+          // plan_referral_internal_others: "",
+          // plan_referral_optometry_details: "",
+          // plan_referral_psychology_details: "",
+          // plan_referral_doctors_details: "",
+          // plan_referral_audiology_details: "",
+          // plan_referral_speech_details: "",
+          // plan_referral_others_details: "",
+          // plan_referral_internal_memo: null,
+          // plan_referral_external_memo: null
           chief_complaint: "",
           additional_allergic_conditions: "",
           medical_history: patient?.medical_history || "",
@@ -547,8 +602,6 @@ const submitAndSave = () => {
           diet_breakfast: "", diet_morning_tea: "", diet_lunch: "", diet_afternoon_tea: "",
           diet_supper: "", diet_dinner: "", feeding_type: "",
           enteral_feeding_details: "", enteral_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], mixed_feeding_details: "", mixed_feeding_table_rows: [{ time: "", scoops: "", water: "", flushing: "" }], iddsi_level: "", iddsi_food: "6", iddsi_drink: "3", fluid_intake_details: "",
-          current_diet_intake_type: "", cdi_food_consistency: "", cdi_fluids_consistency: "", cdi_amount: "", cdi_frequency: "",
-          cdi_enteral_type: "", cdi_enteral_scoops: "", cdi_enteral_water_ml: "", cdi_enteral_schedule: "", cdi_enteral_iddsi_level: "", cdi_enteral_fluids: "",
           ons_regime: "", weight_record_date: "",
           wheelchair_weight: patient?.wheelchair_weight || "30",
           wheelchair_type: patient?.wheelchair_type || "",
@@ -677,57 +730,103 @@ const submitAndSave = () => {
           { type: "subheading", label: "Food / Nutrition Related History" },
           { name: "medications", label: "List of Medication", type: "textarea", readOnly: true },
 
-          { type: "subheading", label: "Current Diet Intake" },
+          // { type: "subheading", label: "Current Diet Intake" },
+          // {
+          //   name: "current_diet_intake_type",
+          //   label: "Current Diet Intake",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Oral / Enteral Feeding", value: "oral_enteral" },
+          //     { label: "Enteral Feeding", value: "enteral" }
+          //   ]
+          // },
+
+          // ── ORAL / ENTERAL sub-fields ──
+          // {
+          //   name: "cdi_food_consistency",
+          //   label: "Food Consistency",
+          //   type: "radio",
+          //   labelAbove: true,
+          //   showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
+          //   options: [
+          //     { label: "Level 3 – Liquidised", value: "3" },
+          //     { label: "Level 4 – Pureed", value: "4" },
+          //     { label: "Level 5 – Minced & Moist", value: "5" },
+          //     { label: "Level 6 – Soft & Bite-sized", value: "6" },
+          //     { label: "Level 7EC – Easy to Chew", value: "7EC" },
+          //     { label: "Level 7 – Regular", value: "7" }
+          //   ]
+          // },
+          // {
+          //   name: "cdi_fluids_consistency",
+          //   label: "Fluids Consistency",
+          //   type: "radio",
+          //   labelAbove: true,
+          //   showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
+          //   options: [
+          //     { label: "Level 0 – Thin", value: "0" },
+          //     { label: "Level 1 – Slightly Thick", value: "1" },
+          //     { label: "Level 2 – Mildly Thick", value: "2" },
+          //     { label: "Level 3 – Moderately Thick", value: "3" },
+          //     { label: "Level 4 – Extremely Thick", value: "4" }
+          //   ]
+          // },
+          // {
+          //   name: "cdi_amount",
+          //   label: "Amount",
+          //   type: "radio",
+          //   showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
+          //   options: [
+          //     { label: "Half portion", value: "half" },
+          //     { label: "Full portion", value: "full" }
+          //   ]
+          // },
+           { name: "feeding_type", label: "Feeding Type", type: "radio", options: [{ label: "Oral Feeding", value: "oral" }, { label: "Enteral Feeding", value: "enteral" }, { label: "Mixed Feeding", value: "mixed" }] },
+          { type: "row", fields: [
+            { name: "diet_breakfast", label: "Breakfast", type: "textarea" },
+            { name: "diet_morning_tea", label: "Morning Tea", type: "textarea" },
+            { name: "diet_lunch", label: "Lunch", type: "textarea" },
+            { name: "diet_afternoon_tea", label: "Afternoon Tea", type: "textarea" },
+            { name: "diet_supper", label: "Dinner", type: "textarea" },
+            { name: "diet_dinner", label: "Supper", type: "textarea" }
+          ], showIf: { field: "feeding_type", equals: "oral" }},
+          { name: "enteral_feeding_table", label: "Enteral Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "enteral" } },
+          { name: "enteral_feeding_details", label: "Enteral Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "enteral" } },
+          { name: "mixed_feeding_table", label: "Mixed Feeding", type: "enteral-feeding-table", showIf: { field: "feeding_type", equals: "mixed" } },
+          { name: "mixed_feeding_details", label: "Mixed Feeding Notes", type: "textarea", showIf: { field: "feeding_type", equals: "mixed" } },
+
+          { type: "subheading", label: "Texture Modification @ IDDSI Level", showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] } },
           {
-            name: "current_diet_intake_type",
-            label: "Current Diet Intake",
+            name: "iddsi_food",
+            label: "Food",
             type: "radio",
+            labelAbove: true,
+            showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] },
             options: [
-              { label: "Oral / Enteral Feeding", value: "oral_enteral" },
-              { label: "Enteral Feeding", value: "enteral" }
+              { label: "7 – Regular", value: "7" },
+              { label: "6 – Easy To Chew", value: "6" },
+              { label: "5 – Soft & Bite-Sized", value: "5" },
+              { label: "4 – Pureed", value: "4" },
+              { label: "3 – Liquidised", value: "3" }
+            ]
+          },
+          {
+            name: "iddsi_drink",
+            label: "Drink",
+            type: "radio",
+            labelAbove: true,
+            showIf: { field: "feeding_type", oneOf: ["oral", "mixed"] },
+            options: [
+              { label: "0 – Thin", value: "0" },
+              { label: "1 – Slightly Thick", value: "1" },
+              { label: "2 – Mildly Thick", value: "2" },
+              { label: "3 – Moderately Thick", value: "3" },
+              { label: "4 – Extremely Thick", value: "4" }
             ]
           },
 
-          // ── ORAL / ENTERAL sub-fields ──
-          {
-            name: "cdi_food_consistency",
-            label: "Food Consistency",
-            type: "radio",
-            labelAbove: true,
-            showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
-            options: [
-              { label: "Level 3 – Liquidised", value: "3" },
-              { label: "Level 4 – Pureed", value: "4" },
-              { label: "Level 5 – Minced & Moist", value: "5" },
-              { label: "Level 6 – Soft & Bite-sized", value: "6" },
-              { label: "Level 7EC – Easy to Chew", value: "7EC" },
-              { label: "Level 7 – Regular", value: "7" }
-            ]
-          },
-          {
-            name: "cdi_fluids_consistency",
-            label: "Fluids Consistency",
-            type: "radio",
-            labelAbove: true,
-            showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
-            options: [
-              { label: "Level 0 – Thin", value: "0" },
-              { label: "Level 1 – Slightly Thick", value: "1" },
-              { label: "Level 2 – Mildly Thick", value: "2" },
-              { label: "Level 3 – Moderately Thick", value: "3" },
-              { label: "Level 4 – Extremely Thick", value: "4" }
-            ]
-          },
-          {
-            name: "cdi_amount",
-            label: "Amount",
-            type: "radio",
-            showIf: { field: "current_diet_intake_type", equals: "oral_enteral" },
-            options: [
-              { label: "Half portion", value: "half" },
-              { label: "Full portion", value: "full" }
-            ]
-          },
+          { name: "fluid_intake_details", label: "Fluid Intake", type: "input", showIf: { field: "feeding_type", oneOf: ["oral", "enteral", "mixed"] } },
+
           {
             name: "cdi_frequency",
             label: "Frequency (times/day)",

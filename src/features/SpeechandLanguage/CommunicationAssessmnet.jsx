@@ -64,10 +64,10 @@ export default function CommunicationAssessment({ mode = "objective" }) {
     sections: [
       {
         fields: [
-          // ===== SPEECH FUNCTIONS — radio: one at a time =====
+          // ===== SPEECH FUNCTIONS =====
           {
             name: "speech_functions",
-            label: "Speech language Assessment",
+            label: "Speech Language Assessment",
             type: "radio",
             labelAbove: true,
             options: [
@@ -78,6 +78,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
 
           // ===== LANGUAGE SECTION =====
           { type: "subheading", label: "Language", showIf: { field: "speech_functions", equals: "language" } },
+
           {
             name: "language_assessment_tools",
             label: "Assessment tool",
@@ -89,15 +90,20 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Cognitive Linguistic Quick Test", value: "clqt" },
               { label: "Comprehensive Aphasia Test", value: "cat" },
               { label: "Mount Wilga High Level Language Test (MWHLLT)", value: "mwhllt" },
-              { label: "Other", value: "lang_other" }
+              { label: "Other (specify)", value: "other" }
             ]
           },
           {
             name: "language_assessment_other",
-            label: "Other (please specify)",
+            label: "Specify other assessment tool",
             type: "input",
-            showIf: { field: "language_assessment_tools", includes: "lang_other" }
+            showIf: {
+              field: "language_assessment_tools",
+              includes: "other",
+              and: { field: "speech_functions", equals: "language" }
+            }
           },
+
           {
             name: "language_score",
             label: "Score",
@@ -106,11 +112,12 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             showIf: { field: "speech_functions", equals: "language" }
           },
 
-          // Language impairments
+          // ===== LANGUAGE IMPAIRMENTS =====
           { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", equals: "language" } },
+
           {
             name: "lang_impairments",
-            label: "Impairments observed in ",
+            label: "Impairments observed in",
             type: "checkbox-group",
             showIf: { field: "speech_functions", equals: "language" },
             options: [
@@ -121,33 +128,58 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Pragmatics", value: "pragmatics" },
               { label: "Cognitive-communication skills", value: "cognitive_comm" },
               { label: "Reading comprehension", value: "reading_comprehension" },
-              { label: "Written expression", value: "written_expression" }
+              { label: "Written expression", value: "written_expression" },
+              { label: "Other (specify)", value: "other" }
             ]
           },
-          { name: "lang_auditory_severity", label: "Auditory comprehension – severity", type: "select", options: impairmentSeverityOptions, placeholder: "— Select severity —", showIf: { field: "lang_impairments", includes: "auditory_comprehension" } },
-          
+          {
+            name: "lang_impairments_other",
+            label: "Specify other impairment",
+            type: "input",
+            showIf: {
+              field: "lang_impairments",
+              includes: "other",
+              and: { field: "speech_functions", equals: "language" }
+            }
+          },
+
+          {
+            name: "lang_auditory_severity",
+            label: "Auditory comprehension – severity",
+            type: "single-select",
+            options: impairmentSeverityOptions,
+            placeholder: "— Select severity —",
+            showIf: {
+              field: "lang_impairments",
+              includes: "auditory_comprehension",
+              and: { field: "speech_functions", equals: "language" }
+            }
+          },
+
           // ===== SPEECH SECTION =====
           { type: "subheading", label: "Speech", showIf: { field: "speech_functions", equals: "speech" } },
+
           {
             name: "speech_assessment_tools",
             label: "Assessment tool",
             type: "checkbox-group",
             showIf: { field: "speech_functions", equals: "speech" },
             options: [
-              { label: "Frenchay Dysarthria Assessment, 2nd Ed. (FDA-2)", value: "fda2" },
+              { label: "Frenchay Dysarthria Assessment (FDA-2)", value: "fda2" },
               { label: "Robertson", value: "robertson" },
-              { label: "Apraxia Battery for Adults, 2nd Ed. (ABA-2)", value: "aba2" },
-              { label: "Stuttering Severity Index, 4th Ed. (SSI-4)", value: "ssi4" },
-              { label: "The One Page Stuttering Assessment", value: "one_page_stuttering" },
-              { label: "Other", value: "speech_other" }
+              { label: "Apraxia Battery for Adults (ABA-2)", value: "aba2" },
+              { label: "Stuttering Severity Index (SSI-4)", value: "ssi4" },
+              { label: "One Page Stuttering Assessment", value: "one_page" },
+              { label: "Other (specify)", value: "other" }
             ]
           },
           {
             name: "speech_assessment_other",
-            label: "Other (please specify)",
+            label: "Specify other assessment tool",
             type: "input",
-            showIf: { field: "speech_assessment_tools", includes: "speech_other" }
+            showIf: { field: "speech_assessment_tools", includes: "other" }
           },
+
           {
             name: "speech_score",
             label: "Score",
@@ -155,27 +187,21 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             placeholder: "Enter score...",
             showIf: { field: "speech_functions", equals: "speech" }
           },
+
           {
             name: "speech_fda2_graph",
             label: "Upload FDA-2 graph",
             type: "attach-file",
             accept: "image/*,.pdf",
-            showIf: { field: "speech_functions", equals: "speech" }
+            showIf: { field: "speech_assessment_tools", includes: "fda2" }
           },
 
-          // {
-          //   name: "speech_fda2_graph",
-          //   label: "Upload FDA-2 graph",
-          //   type: "attach-file",
-          //   accept: "image/*,.pdf",
-          //   showIf: { field: "speech_assessment_tools", includes: "fda2" }
-          // },
-
-          // Speech impairments
+          // ===== SPEECH IMPAIRMENTS =====
           { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", equals: "speech" } },
+
           {
             name: "speech_impairments",
-            label: "Impairments observed in ",
+            label: "Impairments observed in",
             type: "checkbox-group",
             showIf: { field: "speech_functions", equals: "speech" },
             options: [
@@ -185,16 +211,124 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Articulation: Lips / Tongue", value: "articulation" },
               { label: "Resonance", value: "resonance" },
               { label: "Prosody & intelligibility", value: "intelligibility" },
-              { label: "Other(s)", value: "other" }
+              { label: "Other (specify)", value: "other" }
             ]
           },
-          { name: "reflexes_severity",     label: "Reflexes – severity",                  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "reflexes" } },
-          { name: "respiratory_severity",  label: "Respiratory support – severity",        type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "respiration" } },
-          { name: "phonatory_severity",    label: "Phonatory function – severity",         type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "phonatory" } },
-          { name: "articulation_severity", label: "Articulation: Lips / Tongue – severity",type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "articulation" } },
-          { name: "resonance_severity",    label: "Resonance – severity",                  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "resonance" } },
-          { name: "prosody_severity",      label: "Prosody & intelligibility – severity",  type: "select", options: IMPAIRMENT_SCALE_OPTIONS, placeholder: "— Select severity —", showIf: { field: "speech_impairments", includes: "intelligibility" } },
-          { name: "speech_impairments_other", label: "Other(s) – please specify", type: "input", showIf: { field: "speech_impairments", includes: "other" } },
+
+          {
+            name: "reflexes_severity",
+            label: "Reflexes – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "reflexes" }
+          },
+          {
+            name: "reflexes_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "reflexes_severity", equals: "other" }
+          },
+
+          {
+            name: "respiratory_severity",
+            label: "Respiratory support – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "respiration" }
+          },
+          {
+            name: "respiratory_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "respiratory_severity", equals: "other" }
+          },
+
+          {
+            name: "phonatory_severity",
+            label: "Phonatory function – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "phonatory" }
+          },
+          {
+            name: "phonatory_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "phonatory_severity", equals: "other" }
+          },
+
+          {
+            name: "articulation_severity",
+            label: "Articulation: Lips / Tongue – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "articulation" }
+          },
+          {
+            name: "articulation_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "articulation_severity", equals: "other" }
+          },
+
+          {
+            name: "resonance_severity",
+            label: "Resonance – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "resonance" }
+          },
+          {
+            name: "resonance_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "resonance_severity", equals: "other" }
+          },
+
+          {
+            name: "prosody_severity",
+            label: "Prosody & intelligibility – severity",
+            type: "single-select",
+            options: [
+              ...IMPAIRMENT_SCALE_OPTIONS,
+              { label: "Other (specify)", value: "other" }
+            ],
+            placeholder: "— Select severity —",
+            showIf: { field: "speech_impairments", includes: "intelligibility" }
+          },
+          {
+            name: "prosody_severity_other",
+            label: "Specify other severity",
+            type: "input",
+            showIf: { field: "prosody_severity", equals: "other" }
+          },
+
+          {
+            name: "speech_impairments_other",
+            label: "Specify other impairment",
+            type: "input",
+            showIf: { field: "speech_impairments", includes: "other" }
+          },
 
           {
             name: "intelligibility_rating",
@@ -320,15 +454,6 @@ export default function CommunicationAssessment({ mode = "objective" }) {
         title: "Plan",
         fields: [
           { type: "subheading", label: "Communication Plan" },
-          // {
-          //   name: "speech_language_therapy",
-          //   label: "Therapy",
-          //   type: "checkbox-group",
-          //   options: [
-          //     { label: "SEA.PH.ZZ – Training in receiving spoken messages", value: "SEA.PH.ZZ" },
-          //     { label: "SFA.PH.ZZ – Training in speaking", value: "SFA.PH.ZZ" }
-          //   ]
-          // },
           {
             name: "speech_exercises",
             label: "Speech exercises",
@@ -342,20 +467,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
               { label: "Referral for medical management", value: "Referral for medical management" },
               { label: "Further Assessment", value: "Further Assessment" }
             ]
-          },
-          // {
-          //   name: "further_assessment",
-          //   label: "Further Assessment",
-          //   type: "checkbox-group",
-          //   options: [
-          //     { label: "SE1.AA.ZZ – Assessment of communication", value: "SE1.AA.ZZ" },
-          //     { label: "SE1.AC.ZZ – Test of communication", value: "SE1.AC.ZZ" },
-          //     { label: "SE1.AM.ZZ – Observation of communication", value: "SE1.AM.ZZ" },
-          //     { label: "SE1.AN.ZZ – Interview", value: "SE1.AN.ZZ" },
-          //     { label: "KTB.AA.ZZ – Assessment of ingestion", value: "KTB.AA.ZZ" },
-          //     { label: "KTC.AA.ZZ – Assessment of swallowing", value: "KTC.AA.ZZ" }
-          //   ]
-          // }
+          }
         ]
       }
     ]

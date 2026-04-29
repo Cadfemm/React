@@ -140,20 +140,20 @@ const SESSION_SCHEMA = {
             ]
           },
 
-          {
-            name: "attendance_status",
-            label: "Attendance Status",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "No Show", value: "no_show" },
-              { label: "Cancelled", value: "cancelled" }
-            ]
-          },
+          // {
+          //   name: "attendance_status",
+          //   label: "Attendance Status",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "No Show", value: "no_show" },
+          //     { label: "Cancelled", value: "cancelled" }
+          //   ]
+          // },
 
         {
   name: "attender_present",
-  label: "Attender Present",
+  label: "Carer Present",
   type: "radio",
   options: [
     { label: "Yes", value: "yes" },
@@ -421,7 +421,7 @@ const SESSION_SCHEMA = {
 {
   name: "medication_adherence",
   label: "Medication Adherence",
-  type: "radio",
+  type: "checkbox-group",
   options: [
     { label: "Fully Adherent", value: "fully_adherent" },
     { label: "Partially Adherent", value: "partially_adherent" },
@@ -461,7 +461,7 @@ const SESSION_SCHEMA = {
   name: "non_adherent_reason",
   label: "Reason",
   
-  type: "radio",
+  type: "checkbox-group",
   options: [
     { label: "Forgot", value: "forgot" },
     { label: "Side effects", value: "side_effects" },
@@ -504,8 +504,10 @@ const SESSION_SCHEMA = {
 
 {
   name: "substance_use",
-  label: "Substance Use Update",
-  type: "radio",
+  // label: "Substance Use Update",
+    label: "Drug Review",
+
+  type: "checkbox-group",
   options: [
     { label: "No Use", value: "no_use" },
     { label: "No Change", value: "no_change" },
@@ -732,145 +734,538 @@ const SESSION_SCHEMA = {
     sections: []
   };
 
-  const OBJECTIVE_SCHEMA = {
+//   const OBJECTIVE_SCHEMA = {
+//     actions: SUBJECTIVE_SCHEMA.actions,
+//     sections: [
+//       {
+//         fields: [
+//           { type: "subheading", label: "Client’s Condition " },
+         
+          
+//               {
+//   name: "mood_affect",
+//   label: "Mood & Affect",
+//   type: "radio",
+//   options: [
+//     { label: "No Change", value: "no_change" },
+//     { label: "Notable Change ", value: "Notable_Change " }
+    
+//   ]
+// },
+// {
+//   name: "mood_affect_details",
+//   label: "Specify Details",
+//   type: "input",
+//   placeholder: "Enter details",
+//   showIf: {
+//     field: "mood_affect",
+//     equals: "Notable_Change " // 👈 trigger here
+//   }
+// },
+
+         
+//          {
+//   name: "thought_process",
+//   label: "Thought Process",
+//   type: "radio", // or keep single-select if you want
+//   options: [
+//     { label: "No Change", value: "no_change" },
+//     { label: "Notable Change ", value: "Notable_Change " },
+    
+//   ]
+// },
+// {
+//   name: "thought_process_details",
+//   label: "Specify Details",
+//   type: "input",
+//   showIf: {
+//     field: "thought_process",
+//     equals: "Notable_Change "
+//   }
+// },
+// {
+//   name: "behavior_functioning",
+//   label: "Behavior / Functioning",
+//   type: "radio",
+//   options: [
+//     { label: "No Change", value: "no_change" },
+//     { label: "Notable Change", value: "Notable_Change" },
+    
+//   ]
+// },
+// {
+//   name: "behavior_functioning_details",
+//   label: " Specify Details",
+//   type: "input",
+//   showIf: {
+//     field: "behavior_functioning",
+//     equals: "Notable_Change",
+//   }
+// },{
+//   name: "medical_condition",
+//   label: "Medical Condition",
+//   type: "radio",
+//   options: [
+//     { label: "No Change", value: "no_change" },
+//     { label: "Notable Change ", value: "Notable_Change " }
+//   ]
+// },
+// {
+//   name: "medical_condition_details",
+//   label: " Specify Details",
+//   type: "input",
+//   showIf: {
+//     field: "medical_condition",
+//     equals: "Notable_Change "
+//   }
+// },
+// {
+//   name: "substance_use",
+//   label: "Substance Use",
+//   type: "radio",
+//   options: [
+//     { label: "No Change", value: "no_change" },
+//     { label: "Notable Change ", value: "Notable_Change " },
+    
+//   ]
+// },
+// {
+//   name: "substance_use_details",
+//   label: " Specify Details",
+//   type: "input",
+//   showIf: {
+//     field: "substance_use",
+//     equals: "Notable_Change "
+//   }
+// },
+//           {type:"subheading", label: "Risk Assessment"},
+//          {
+//             name: "risk_assessment",
+//             label: "Risk Status",
+//             type: "radio",
+//             options: [
+//               { label: "No risk", value: "no_risk" },
+//               { label: "Suicidal Ideation", value: "Suicidal Ideation" },
+//               { label: "Homicidal ideation", value: "homicidal_ideation" },
+//               { label: "Self-harm risk", value: "self_harm_risk" },
+//               { label: "Risk to others", value: "risk_to_others" }
+//             ]
+//           },
+//           {
+//             name: "risk_checkbox",
+//             label: "",
+//             type: "checkbox-group",
+//             options:[
+//               {label: "Ideation", value: "ideation"},
+//               {label: "Plan", value: "plan"},
+//               {label: "Intent", value: "Intent"},
+//               {label: "Attempt", value: "attempt"}
+//             ],
+//             showIf: {
+//               field: "risk_assessment",
+//               oneOf: ["Suicidal Ideation","self_harm_risk", "risk_to_others"]
+//             }
+//           }
+          
+         
+//         ]
+//       }
+//     ]
+//   };
+const OBJECTIVE_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Client’s Condition " },
-         
-          
-              {
-  name: "mood_affect",
-  label: "Mood & Affect",
-  type: "radio",
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Notable Change ", value: "Notable_Change " }
-    
-  ]
-},
-{
-  name: "mood_affect_details",
-  label: "Specify Details",
-  type: "input",
-  placeholder: "Enter details",
-  showIf: {
-    field: "mood_affect",
-    equals: "Notable_Change " // 👈 trigger here
-  }
-},
-
-         
-         {
-  name: "thought_process",
-  label: "Thought Process",
-  type: "radio", // or keep single-select if you want
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Notable Change ", value: "Notable_Change " },
-    
-  ]
-},
-{
-  name: "thought_process_details",
-  label: "Specify Details",
-  type: "input",
-  showIf: {
-    field: "thought_process",
-    equals: "Notable_Change "
-  }
-},
-{
-  name: "behavior_functioning",
-  label: "Behavior / Functioning",
-  type: "radio",
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Notable Change", value: "Notable_Change" },
-    
-  ]
-},
-{
-  name: "behavior_functioning_details",
-  label: " Specify Details",
-  type: "input",
-  showIf: {
-    field: "behavior_functioning",
-    equals: "Notable_Change",
-  }
-},{
-  name: "medical_condition",
-  label: "Medical Condition",
-  type: "radio",
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Notable Change ", value: "Notable_Change " }
-  ]
-},
-{
-  name: "medical_condition_details",
-  label: " Specify Details",
-  type: "input",
-  showIf: {
-    field: "medical_condition",
-    equals: "Notable_Change "
-  }
-},
-{
-  name: "substance_use",
-  label: "Substance Use",
-  type: "radio",
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Notable Change ", value: "Notable_Change " },
-    
-  ]
-},
-{
-  name: "substance_use_details",
-  label: " Specify Details",
-  type: "input",
-  showIf: {
-    field: "substance_use",
-    equals: "Notable_Change "
-  }
-},
-          {type:"subheading", label: "Risk Assessment"},
-         {
-            name: "risk_assessment",
-            label: "Risk Status",
-            type: "radio",
+          {
+            type: "subheading",
+            label: "Doctors view to Psycho view"
+          },
+          {
+            name: "psychology_assessments",
+            type: "assessment-launcher",
             options: [
-              { label: "No risk", value: "no_risk" },
-              { label: "Suicidal Ideation", value: "Suicidal Ideation" },
-              { label: "Homicidal ideation", value: "homicidal_ideation" },
-              { label: "Self-harm risk", value: "self_harm_risk" },
-              { label: "Risk to others", value: "risk_to_others" }
+              { label: "Depression Anxiety Stress Scale (DASS-21)", value: "dass21" },
+              { label: "Perceived Stress Scale (PSS)", value: "pss" },
+              { label: "Patient Health Questionnaire (PHQ-9)", value: "phq9" },
+              { label: "Generalized Anxiety Disorder (GAD-7)", value: "gad7" },
+              { label: "Hamilton Depression Rating Scale (HAM-D)", value: "hamd" },
+              { label: "Hamilton Anxiety Rating Scale (HAM-A)", value: "hama" }
             ]
           },
           {
-            name: "risk_checkbox",
-            label: "",
+            type: "subheading",
+            label: "Appearance & Behaviour"
+          },
+          {
+            type: "subheading",
+            label: "Appearance"
+          },
+          {
+            name: "appearance_grooming",
+            label: "Grooming",
+            type: "radio",
+            options: [
+              { label: "Well-groomed", value: "well_groomed" },
+              { label: "Adequate", value: "adequate" },
+              { label: "Poor", value: "poor" },
+              { label: "Not Applicable", value: "na" }
+            ]
+          },
+          {
+            name: "appearance_dress",
+            label: "Dress",
+            type: "radio",
+            options: [
+              { label: "Appropriate", value: "appropriate" },
+              { label: "Inappropriate", value: "inappropriate" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "appearance_hygiene",
+            label: "Hygiene",
+            type: "radio",
+            options: [
+              { label: "Clean", value: "clean" },
+              { label: "Poor", value: "poor" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "appearance_build_posture",
+            label: "Build/Posture",
+            type: "radio",
+            options: [
+              { label: "Thin", value: "thin" },
+              { label: "Average", value: "average" },
+              { label: "Overweight", value: "overweight" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "appearance_visible_marks",
+            label: "Visible Marks",
             type: "checkbox-group",
-            options:[
-              {label: "Ideation", value: "ideation"},
-              {label: "Plan", value: "plan"},
-              {label: "Intent", value: "Intent"},
-              {label: "Attempt", value: "attempt"}
-            ],
-            showIf: {
-              field: "risk_assessment",
-              oneOf: ["Suicidal Ideation","self_harm_risk", "risk_to_others"]
-            }
-          }
-          
-         
+            inlineWithLabel: true,
+            options: [
+              { label: "Scars", value: "scars" },
+              { label: "Bruises", value: "bruises" },
+              { label: "Tattoos", value: "tattoos" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Behaviour"
+          },
+          {
+            name: "behavior_cooperation",
+            label: "Cooperation",
+            type: "radio",
+            options: [
+              { label: "Cooperative", value: "cooperative" },
+              { label: "Guarded", value: "guarded" },
+              { label: "Uncooperative", value: "uncooperative" },
+              { label: "Hostile", value: "hostile" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "behavior_eye_contact",
+            label: "Eye contact",
+            type: "radio",
+            options: [
+              { label: "Good", value: "good" },
+              { label: "Poor", value: "poor" },
+              { label: "Avoidant", value: "avoidant" },
+              { label: "Intense", value: "intense" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "behavior_psychomotor_activity",
+            label: "Psychomotor activity",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Agitated", value: "agitated" },
+              { label: "Retarded", value: "retarded" },
+              { label: "Restless", value: "restless" }
+            ]
+          },
+          {
+            name: "behavior_impulse_control",
+            label: "Impulse control",
+            type: "radio",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "behavior_attention",
+            label: "Attention",
+            type: "radio",
+            options: [
+              { label: "Alert", value: "alert" },
+              { label: "Distracted", value: "distracted" },
+              { label: "Focused", value: "focused" }
+            ]
+          },
+          {
+            name: "behavior_engagement_attitude",
+            label: "Engagement/Attitude",
+            type: "radio",
+            options: [
+              { label: "Open", value: "open" },
+              { label: "Defensive", value: "defensive" },
+              { label: "Withdrawn", value: "withdrawn" },
+              { label: "Evasive", value: "evasive" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "behavior_affect_behavioral_state",
+            label: "Affect/behavioral state",
+            type: "radio",
+            options: [
+              { label: "Calm", value: "calm" },
+              { label: "Anxious", value: "anxious" },
+              { label: "Tearful", value: "tearful" },
+              { label: "Agitated", value: "agitated" },
+              { label: "Tense", value: "tense" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "behavior_activity_level",
+            label: "Activity level",
+            type: "radio",
+            options: [
+              { label: "Relaxed", value: "relaxed" },
+              { label: "Restless", value: "restless" },
+              { label: "Fidgety", value: "fidgety" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Speech"
+          },
+          {
+            name: "speech_rate",
+            label: "Rate",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Rapid/Pressured", value: "rapid_pressured" },
+              { label: "Slow", value: "slow" },
+              { label: "Disorganized", value: "disorganized" },
+              { label: "Poverty", value: "poverty" },
+              { label: "Variable", value: "variable" },
+              { label: "Mute", value: "mute" },
+              { label: "Echolalia", value: "echolalia" }
+            ]
+          },
+          {
+            name: "speech_volume",
+            label: "Volume",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Loud", value: "loud" },
+              { label: "Soft", value: "soft" },
+              { label: "Whispered", value: "whispered" }
+            ]
+          },
+          {
+            name: "speech_fluency",
+            label: "Fluency",
+            type: "radio",
+            options: [
+              { label: "Fluent/Coherent", value: "fluent_coherent" },
+              { label: "Hesitant", value: "hesitant" },
+              { label: "Slurred", value: "slurred" },
+              { label: "Dysarthric", value: "dysarthric" },
+              { label: "Stammering", value: "stammering" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "speech_quantity",
+            label: "Quantity",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Talkative", value: "talkative" },
+              { label: "Poverty of speech", value: "poverty_of_speech" },
+              { label: "Spontaneous expansive", value: "spontaneous_expansive" }
+            ]
+          },
+          {
+            name: "speech_tone_prosody",
+            label: "Tone/Prosody",
+            type: "radio",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Dull", value: "dull" },
+              { label: "Monotonous/Flat", value: "monotonous_flat" },
+              { label: "Flat", value: "flat" },
+              { label: "Loud", value: "loud" },
+              { label: "Whispered", value: "whispered" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Mood & Affect"
+          },
+          {
+            name: "mood_observed",
+            label: "Mood",
+            type: "textarea"
+          },
+          {
+            name: "affect_observed",
+            label: "Affect",
+            type: "checkbox-group",
+            inlineWithLabel: true,
+            options: [
+              { label: "Euthymic", value: "euthymic" },
+              { label: "Constricted", value: "constricted" },
+              { label: "Flat", value: "flat" },
+              { label: "Blunted", value: "blunted" },
+              { label: "Labile", value: "labile" },
+              { label: "Congruent", value: "congruent" },
+              { label: "Incongruent", value: "incongruent" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Thought"
+          },
+          {
+            name: "thought_form_process",
+            label: "Form/Process",
+            type: "checkbox-group",
+            options: [
+              { label: "Normal", value: "normal" },
+              { label: "Loose associations", value: "loose_associations" },
+              { label: "Clang associations", value: "clang_associations" },
+              { label: "Tangential", value: "tangential" },
+              { label: "Circumstantial", value: "circumstantial" },
+              { label: "Flight of ideas", value: "flight_of_ideas" },
+              { label: "Word salad", value: "word_salad" },
+              { label: "Poverty of thought", value: "poverty_of_thought" },
+              { label: "Pressure of thought", value: "pressure_of_thought" },
+              { label: "Thought blocking", value: "thought_blocking" },
+              { label: "Spontaneous", value: "spontaneous" }
+            ]
+          },
+          {
+            name: "thought_content_observed",
+            label: "Content (observed/reported)",
+            type: "checkbox-group",
+            options: [
+              { label: "Delusions (Grandiose, Erotomanic, Somatic, Referential, Persecutory, Control, Religious)", value: "delusions" },
+              { label: "Hallucinations", value: "hallucinations" },
+              { label: "Illusions", value: "illusions" },
+              { label: "Suicidal/Homicidal ideation", value: "suicidal_homicidal_ideation" },
+              { label: "Paranoia", value: "paranoia" },
+              { label: "Obsessions", value: "obsessions" },
+              { label: "Compulsions", value: "compulsions" },
+              { label: "Thought insertion", value: "thought_insertion" },
+              { label: "Thought broadcasting", value: "thought_broadcasting" },
+              { label: "Thought withdrawal", value: "thought_withdrawal" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "Cognition"
+          },
+          {
+            name: "cognition_orientation",
+            label: "Orientation",
+            type: "checkbox-group",
+            inlineWithLabel: true,
+            options: [
+              { label: "Person", value: "person" },
+              { label: "Place", value: "place" },
+              { label: "Time", value: "time" },
+              { label: "Situation", value: "situation" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "cognition_attention_concentration",
+            label: "Attention/Concentration",
+            type: "radio",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Mildly impaired", value: "mildly_impaired" },
+              { label: "Severely impaired", value: "severely_impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "cognition_memory_immediate",
+            label: "Memory",
+            type: "radio",
+            options: [
+              { label: "Immediate", value: "immediate" },
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "cognition_memory_recent",
+            label: "Recent",
+            type: "radio-matrix",
+            matrixHeaderLabel: "Category",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "cognition_memory_remote",
+            label: "Remote",
+            type: "radio-matrix",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+            name: "cognition_abstract_thinking",
+            label: "Abstract thinking",
+            type: "radio-matrix",
+            options: [
+              { label: "Intact", value: "intact" },
+              { label: "Impaired", value: "impaired" },
+              { label: "N/A", value: "na" }
+            ]
+          },
+          {
+  type: "subheading",
+  label: "Additional Comments"
+},
+{
+  name: "additional_comments",
+  label: "Add additional comments (Other/Specify)",
+  type: "textarea",
+  placeholder: "Enter any overall observations, notes, or summary..."
+},
         ]
       }
     ]
   };
-
   const ASSESSMENT_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
@@ -1000,11 +1395,11 @@ const SESSION_SCHEMA = {
             type: "date"
           },
 
-          {
-            name: "follow_up_specify",
-            label: "Specify",
-            type: "textarea"
-          }
+          // {
+          //   name: "follow_up_specify",
+          //   label: "Specify",
+          //   type: "textarea"
+          // }
         ]
       }
     ]
