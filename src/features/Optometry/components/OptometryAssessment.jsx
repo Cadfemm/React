@@ -2184,20 +2184,25 @@ export default function OptometryAssessment({
 
   const handleConfirmedSubmit = useCallback(async () => {
     setShowConfirm(false);
-    try {
-      // const res = await api.post(API_URL.FORM + forms[0].id + "/assessment/", {
-      //   patient: patient.id, visit_type: "IN",
-      //   data: values || {}, score: values?.score || {}, total_score: values?.total_score || 0,
-      // });
-      setToast({ message: "Assessment submitted successfully", variant: "success" });
-    } catch {
-      setToast({ message: "Submission failed. Please try again.", variant: "error" });
-    }
     if (readOnly) return;
+
+    // End the session if one is active
+    if (assessmentId) {
+      try {
+        await api.patch(API_URL.ASSESSMENT + `session/${assessmentId}/end/`);
+        setToast({ message: "Assessment submitted and session ended", variant: "success" });
+      } catch {
+        setToast({ message: "Submission failed. Please try again.", variant: "error" });
+        return;
+      }
+    } else {
+      setToast({ message: "Assessment submitted (no active session)", variant: "success" });
+    }
+
     setSubmitted(true);
     setIsDirty(false);
     onSubmit?.(values);
-  }, [readOnly, values, onSubmit]);
+  }, [readOnly, values, onSubmit, assessmentId]);
 
   // const schemaMap = useMemo(() => {
   //   const map = {};
