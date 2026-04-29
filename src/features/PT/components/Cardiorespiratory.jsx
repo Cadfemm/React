@@ -813,26 +813,12 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
-        title: "Short-Term Goals (2–4 weeks)",
         fields: [
-          {
-            type: "dynamic-goals",
-            name: "short_term_goals"
-          }
-        ]
-      },
-      {
-        title: "Long-Term Goals (6–12 weeks)",
-        fields: [
-          {
-            type: "dynamic-goals",
-            name: "long_term_goals"
-          }
-        ]
-      },
-      {
-        title: "Interventions",
-        fields: [
+          { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+          { type: "dynamic-goals", name: "short_term_goals" },
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+          { type: "dynamic-goals", name: "long_term_goals" },
+          { type: "subheading", label: "Interventions" },
           {
             name: "interventions_airway_clearance",
             label: "Airway Clearance",

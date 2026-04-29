@@ -661,64 +661,20 @@ const PLAN_SCHEMA = {
   fields: [
     {
       type: "subheading",
-      label: "Short Term Goals"
+      label: "Short-Term Goals (2–4 weeks)"
     },
     {
-      type: "dynamic-section",
-      name: "hydro_shortterm_blocks",
-      fields: [
-        { name: "shortterm_goals", label: "Goals (Functional Task)", type: "input" },
-        {
-          name: "shortterm_assist_level",
-          label: "Assist Level",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Independent", value: "independent" },
-            { label: "Supervision", value: "supervision" },
-            { label: "Stand-by Assist", value: "sba" },
-            { label: "Contact Guard Assist", value: "cga" },
-            { label: "Minimal Assist", value: "min_a" },
-            { label: "Moderate Assist", value: "mod_a" },
-            { label: "Maximum Assist", value: "max_a" }
-          ]
-        },
-        { name: "shortterm_device", label: "Device/Prosthesis Used", type: "input" },
-        { name: "shortterm_context", label: "Context (Where/Condition)", type: "input" },
-        { name: "shortterm_target", label: "Measurable Target", type: "input" },
-        { name: "shortterm_target_date", label: "Target Date", type: "date" }
-      ]
+      type: "dynamic-goals",
+      name: "hydro_shortterm_blocks"
     },
 
     {
       type: "subheading",
-      label: "Long Term Goals"
+      label: "Long-Term Goals (6–12 weeks)"
     },
     {
-      type: "dynamic-section",
-      name: "hydro_longterm_blocks",
-      fields: [
-        { name: "longterm_goals", label: "Goals (Functional Task)", type: "input" },
-        {
-          name: "longterm_assist_level",
-          label: "Assist Level",
-          type: "radio",
-          labelAbove: true,
-          options: [
-            { label: "Independent", value: "independent" },
-            { label: "Supervision", value: "supervision" },
-            { label: "Stand-by Assist", value: "sba" },
-            { label: "Contact Guard Assist", value: "cga" },
-            { label: "Minimal Assist", value: "min_a" },
-            { label: "Moderate Assist", value: "mod_a" },
-            { label: "Maximum Assist", value: "max_a" }
-          ]
-        },
-        { name: "longterm_device", label: "Device/Prosthesis Used", type: "input" },
-        { name: "longterm_context", label: "Context (Where/Condition)", type: "input" },
-        { name: "longterm_target", label: "Measurable Target", type: "input" },
-        { name: "longterm_target_date", label: "Target Date", type: "date" }
-      ]
+      type: "dynamic-goals",
+      name: "hydro_longterm_blocks"
     },
 
     {

@@ -17,29 +17,260 @@ import PatientCard from "../../../shared/cards/PatientCard";
 
 
 /* ROM wrapper — shows only UL or LL sections based on amp_region */
+/* ── helpers ── */
+function ampSides(ampSide) {
+  return {
+    right: ampSide === "right" || ampSide === "bilateral",
+    left:  ampSide === "left"  || ampSide === "bilateral",
+  };
+}
+
+/**
+ * Given amp_level_lower (array) and amp_side, compute:
+ *  - which joint sections to show
+ *  - per-section side overrides
+ *
+ * Rule: the amputated side loses the amputated joint AND everything distal to it.
+ *   Partial Foot        → loses: Ankle (amputated side)
+ *   Ankle Disarticulation → loses: Ankle (amputated side)
+ *   Transtibial (BK)    → loses: Knee, Ankle (amputated side)
+ *   Knee Disarticulation → loses: Knee, Ankle (amputated side)
+ *   Transfemoral (AK)   → loses: Knee, Ankle (amputated side)
+ *   Hip Disarticulation → loses: Hip, Knee, Ankle (amputated side)
+ *   Hemipelvectomy      → loses: Hip, Knee, Ankle (amputated side)
+ *   Bilateral variants  → both sides lose the relevant joints
+ */
+function getLowerLimbConfig(levels = [], ampSide) {
+  const has = v => levels.includes(v);
+  const side = ampSide || "bilateral";
+
+  // Start with all sections visible on both sides
+  const sectionSides = {
+    Hip:          { right: true, left: true },
+    Knee:         { right: true, left: true },
+    "Ankle / Foot": { right: true, left: true },
+  };
+
+  // Helper: remove a side from a joint
+  const removeSide = (joint, s) => {
+    if (s === "bilateral") {
+      sectionSides[joint].right = false;
+      sectionSides[joint].left  = false;
+    } else if (s === "right") {
+      sectionSides[joint].right = false;
+    } else if (s === "left") {
+      sectionSides[joint].left = false;
+    }
+  };
+
+  if (has("ankle_disarticulation")) {
+    removeSide("Ankle / Foot", side);
+  }
+
+  if (has("transtibial") || has("knee_disarticulation")) {
+    removeSide("Knee",         side);
+    removeSide("Ankle / Foot", side);
+  }
+
+  if (has("transfemoral")) {
+    removeSide("Knee",         side);
+    removeSide("Ankle / Foot", side);
+  }
+
+  if (has("hip_disarticulation") || has("hemipelvectomy")) {
+    removeSide("Hip",          side);
+    removeSide("Knee",         side);
+    removeSide("Ankle / Foot", side);
+  }
+
+  if (has("bilateral_transtibial")) {
+    removeSide("Ankle / Foot", "bilateral");
+  }
+
+  if (has("bilateral_transfemoral")) {
+    removeSide("Knee",         "bilateral");
+    removeSide("Ankle / Foot", "bilateral");
+  }
+
+  // Build section list using ROM key names
+  const allSections = ["Hip", "Knee", "Ankle / Foot"];
+  const sections = allSections.filter(s => {
+    const ss = sectionSides[s];
+    return ss.right || ss.left;
+  });
+
+  // Only pass sectionSides override when a side is actually hidden
+  const cleanSides = {};
+  for (const s of sections) {
+    const ss = sectionSides[s];
+    if (!ss.right || !ss.left) cleanSides[s] = ss;
+  }
+
+  // MMT uses "Ankle" not "Ankle / Foot" — build a parallel map
+  const mmtSectionSides = {};
+  for (const [k, v] of Object.entries(cleanSides)) {
+    mmtSectionSides[k === "Ankle / Foot" ? "Ankle" : k] = v;
+  }
+  const mmtSections = sections.map(s => s === "Ankle / Foot" ? "Ankle" : s);
+
+  return {
+    sections:       sections.length ? sections : null,
+    mmtSections:    mmtSections.length ? mmtSections : null,
+    sectionSides:   cleanSides,
+    mmtSectionSides,
+  };
+}
+
+/**
+ * Upper limb amputation config.
+ * Rule: amputated side loses the amputated joint and everything distal.
+ *   Partial Hand / Wrist Disarticulation → loses: Wrist (amputated side)
+ *   Transradial (BE)                     → loses: Elbow, Wrist (amputated side)
+ *   Elbow Disarticulation                → loses: Elbow, Wrist (amputated side)
+ *   Transhumeral (AE)                    → loses: Elbow, Wrist (amputated side)
+ *   Shoulder Disarticulation / Forequarter → loses: Shoulder, Elbow, Wrist (amputated side)
+ *   Bilateral variants                   → both sides lose relevant joints
+ */
+function getUpperLimbConfig(levels = [], ampSide) {
+  const has = v => levels.includes(v);
+  const side = ampSide || "bilateral";
+
+  const sectionSides = {
+    "Shoulder":       { right: true, left: true },
+    "Elbow / Forearm":{ right: true, left: true },
+    "Wrist / Hand":   { right: true, left: true },
+  };
+
+  const removeSide = (joint, s) => {
+    if (s === "bilateral") {
+      sectionSides[joint].right = false;
+      sectionSides[joint].left  = false;
+    } else if (s === "right") {
+      sectionSides[joint].right = false;
+    } else if (s === "left") {
+      sectionSides[joint].left = false;
+    }
+  };
+
+  if (has("partial_hand") || has("wrist_disarticulation")) {
+    removeSide("Wrist / Hand", side);
+  }
+
+  if (has("transradial") || has("elbow_disarticulation")) {
+    removeSide("Elbow / Forearm", side);
+    removeSide("Wrist / Hand",    side);
+  }
+
+  if (has("transhumeral")) {
+    removeSide("Elbow / Forearm", side);
+    removeSide("Wrist / Hand",    side);
+  }
+
+  if (has("shoulder_disarticulation") || has("forequarter")) {
+    removeSide("Shoulder",        side);
+    removeSide("Elbow / Forearm", side);
+    removeSide("Wrist / Hand",    side);
+  }
+
+  if (has("bilateral_transradial")) {
+    // Both elbows present (above amputation), both wrists gone
+    removeSide("Wrist / Hand", "bilateral");
+  }
+
+  if (has("quadruple_amputation")) {
+    removeSide("Shoulder",        "bilateral");
+    removeSide("Elbow / Forearm", "bilateral");
+    removeSide("Wrist / Hand",    "bilateral");
+  }
+
+  const allSections = ["Shoulder", "Elbow / Forearm", "Wrist / Hand"];
+  const sections = allSections.filter(s => {
+    const ss = sectionSides[s];
+    return ss.right || ss.left;
+  });
+
+  const cleanSides = {};
+  for (const s of sections) {
+    const ss = sectionSides[s];
+    if (!ss.right || !ss.left) cleanSides[s] = ss;
+  }
+
+  // MMT uses "Elbow" and "Wrist" (not "Elbow / Forearm" / "Wrist / Hand")
+  const mmtKeyMap = { "Elbow / Forearm": "Elbow", "Wrist / Hand": "Wrist" };
+  const mmtSectionSides = {};
+  for (const [k, v] of Object.entries(cleanSides)) {
+    mmtSectionSides[mmtKeyMap[k] || k] = v;
+  }
+  const mmtSections = sections.map(s => mmtKeyMap[s] || s);
+
+  return { sections: sections.length ? sections : null, mmtSections, sectionSides: cleanSides, mmtSectionSides };
+}
+
+
 function AmpROMForm({ values, onChange }) {
-  const region = values?.amp_region;
+  const region   = values?.amp_region;
+  const ampSide  = values?.amp_side;
+  const llLevels = values?.amp_level_lower || [];
+  const ulLevels = values?.amp_level_upper || [];
+  const isLL     = region === "lower_limb" || region === "both";
+  const isUL     = region === "upper_limb" || region === "both";
+
+  const { sections: llSections, sectionSides: llSides } = isLL
+    ? getLowerLimbConfig(llLevels, ampSide)
+    : { sections: null, sectionSides: {} };
+
+  const { sections: ulSections, sectionSides: ulSides } = isUL
+    ? getUpperLimbConfig(ulLevels, ampSide)
+    : { sections: null, sectionSides: {} };
+
   const mapped = [];
-  if (region === "upper_limb" || region === "both") mapped.push("upper_limb");
-  if (region === "lower_limb" || region === "both") mapped.push("lower_limb");
-  const schema = useMemo(() => buildROMSchema(mapped), [region]);
+  if (isUL) mapped.push("upper_limb");
+  if (isLL) mapped.push("lower_limb");
+
+  const forceSections = (isUL || isLL) ? [
+    ...(ulSections || (isUL ? ["Shoulder", "Elbow / Forearm", "Wrist / Hand"] : [])),
+    ...(llSections || (isLL ? ["Hip", "Knee", "Ankle / Foot"] : [])),
+  ] : null;
+
+  const sectionSides = { ...ulSides, ...llSides };
+
+  const schema = useMemo(
+    () => buildROMSchema(mapped, undefined, undefined, undefined, undefined, sectionSides, forceSections),
+    [JSON.stringify(mapped), JSON.stringify(sectionSides), JSON.stringify(forceSections)]
+  );
+
   return <CommonFormBuilder schema={schema} values={values} onChange={onChange} layout="nested" />;
 }
 
-/* MMT wrapper — accordion structure matching MSK MMT, filtered by amp_region */
+/* MMT wrapper */
 function AmpMMTForm({ values, onChange }) {
-  const region = values?.amp_region;
-  const ulSections = ["Shoulder", "Elbow", "Wrist"];
-  const llSections = ["Hip", "Knee", "Ankle"];
-  let filter = null;
-  if (region === "upper_limb") filter = ulSections;
-  else if (region === "lower_limb") filter = llSections;
-  else if (region === "both") filter = [...ulSections, ...llSections];
+  const region   = values?.amp_region;
+  const ampSide  = values?.amp_side;
+  const llLevels = values?.amp_level_lower || [];
+  const ulLevels = values?.amp_level_upper || [];
+  const isLL     = region === "lower_limb" || region === "both";
+  const isUL     = region === "upper_limb" || region === "both";
+
+  const { mmtSections: llMmtSections, mmtSectionSides: llMmtSides } = isLL
+    ? getLowerLimbConfig(llLevels, ampSide)
+    : { mmtSections: [], mmtSectionSides: {} };
+
+  const { mmtSections: ulMmtSections, mmtSectionSides: ulMmtSides } = isUL
+    ? getUpperLimbConfig(ulLevels, ampSide)
+    : { mmtSections: [], mmtSectionSides: {} };
+
+  const filterSections = (isUL || isLL) ? [
+    ...(ulMmtSections || (isUL ? ["Shoulder", "Elbow", "Wrist"] : [])),
+    ...(llMmtSections || (isLL ? ["Hip", "Knee", "Ankle"] : [])),
+  ] : null;
+
+  const mmtSectionSides = { ...ulMmtSides, ...llMmtSides };
 
   const schema = useMemo(
-    () => ({ title: "Manual Muscle Testing (MMT)", fields: buildMmtAccordionFields(filter) }),
-    [region]
+    () => ({ title: "Manual Muscle Testing (MMT)", fields: buildMmtAccordionFields(filterSections, mmtSectionSides) }),
+    [JSON.stringify(filterSections), JSON.stringify(mmtSectionSides)]
   );
+
   return <CommonFormBuilder schema={schema} values={values} onChange={onChange} layout="nested" />;
 }
 

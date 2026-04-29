@@ -72,27 +72,27 @@ export default function CASPAssessment() {
                         {/* ✅ IMAGE + TEXT */}
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Naming:</b></p>
-                            <img src="/naming.png" style={{ width: "100%" }} />
+                            <img src="/naming.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Reproducing a Copy of a Cube:</b></p>
-                            <img src="/cube.png" style={{ width: "100%" }} />
+                            <img src="/cube.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Graphic Series:</b></p>
-                            <img src="/graphic.png" style={{ width: "100%" }} />
+                            <img src="/graphic.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Image Recall:</b></p>
-                            <img src="/imagerecall.png" style={{ width: "100%" }} />
+                            <img src="/imagerecall.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Praxis:</b></p>
-                            <img src="/praxis.png" style={{ width: "100%" }} />
+                            <img src="/praxis.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>   
                         <div style={{ marginBottom: 20 }}>
                             <p><b>Calendar:</b></p>
-                            <img src="/calendar.png" style={{ width: "100%" }} />
+                            <img src="/calendar.png" style={{ width: "100%", transform: "rotate(180deg)" }} />
                         </div>                                               
                         <button onClick={() => setShowModal(false)}>
                             Close

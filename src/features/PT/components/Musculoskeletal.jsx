@@ -667,31 +667,13 @@ const PLAN_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
-      title: "Short-Term Goals (2–4 weeks)",
       fields: [
-        {
-          type: "dynamic-goals",
-          name: "msk_short_term_goals"
-        }
-      ]
-    },
-    {
-      title: "Long-Term Goals (6–12 weeks)",
-      fields: [
-        {
-          type: "dynamic-goals",
-          name: "msk_long_term_goals"
-        }
-      ]
-    },
-    {
-      title: "Interventions",
-      fields: [
-        {
-          name: "msk_interventions",
-          label: "Interventions",
-          type: "textarea"
-        }
+        { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+        { type: "dynamic-goals", name: "msk_short_term_goals" },
+        { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+        { type: "dynamic-goals", name: "msk_long_term_goals" },
+        { type: "subheading", label: "Interventions" },
+        { name: "msk_interventions", label: "Interventions", type: "textarea" }
       ]
     }
   ]

@@ -244,7 +244,7 @@ function splitFieldsBySubheading(fields) {
   return out;
 }
 
-export function buildROMSchema(region, subRegion, category, ampLowerLimbLocation, ampUpperLimbLocation) {
+export function buildROMSchema(region, subRegion, category, ampLowerLimbLocation, ampUpperLimbLocation, sectionSides = {}, forceSections = null) {
   const sectionsByName = splitFieldsBySubheading(ROM_FIELDS.fields);
 
   const spineSections = ["Cervical Spine", "Thoracolumbar Spine"];
@@ -320,20 +320,60 @@ export function buildROMSchema(region, subRegion, category, ampLowerLimbLocation
 
   wanted = Array.from(new Set(wanted));
 
+  // forceSections overrides everything — used by AmpROMForm
+  if (forceSections) wanted = forceSections;
+
   if (!wanted.length && !forceEmpty) {
     wanted = SECTION_ORDER; // PT usage (no region) shows everything
   }
 
   return {
     title: ROM_FIELDS.title,
-    // Render each ROM section as its own collapsible panel.
-    fields: wanted.map((title, idx) => ({
-      type: "accordion",
-      name: `rom_section_${title}`,
-      label: title,
-      defaultOpen: idx === 0,
-      children: sectionsByName.get(title) || [],
-    })),
+    fields: wanted.map((title, idx) => {
+      let children = sectionsByName.get(title) || [];
+
+      // Apply side filtering if specified for this section
+      const sides = sectionSides[title];
+      if (sides && (!sides.right || !sides.left)) {
+        children = children.map(child => {
+          if (child.type !== "refraction-12col") return child;
+
+          // Mark columns as disabled instead of removing them
+          const newGroups = child.groups.map(g => {
+            const lbl = g.label || "";
+            const isNormal = lbl === "Normal" || lbl === "";
+            if (isNormal) return g;
+            const newCols = g.columns.map(col => {
+              const colKey = (col?.key || "").toLowerCase();
+              const disable =
+                (colKey === "right" && !sides.right) ||
+                (colKey === "left"  && !sides.left);
+              return disable ? { ...col, disabled: true } : col;
+            });
+            return { ...g, columns: newCols };
+          });
+
+          // Rebuild rows: mark corresponding column positions as disabled
+          const flatDisabled = newGroups.flatMap(g => g.columns.map(c => !!c.disabled));
+          const newRows = child.rows.map(row => ({
+            ...row,
+            columns: (row.columns || []).map((col, i) =>
+              flatDisabled[i] ? { ...col, disabled: true } : col
+            ),
+          }));
+
+          return { ...child, groups: newGroups, rows: newRows };
+        });
+      }
+
+      return {
+        type: "accordion",
+        name: `rom_section_${title}`,
+        label: title,
+        defaultOpen: idx === 0,
+        children,
+      };
+    }),
   };
 }
 

@@ -989,51 +989,21 @@ title:"Functional and Mobility Status",
  
        {
   type: "subheading",
-  label: "Short Term Goals"
+  label: "Short-Term Goals (2–4 weeks)"
 },
- {
-      type: "dynamic-section",
-      name: "shortterm_blocks",
-      fields: [
-        {name: "shorttermgoals", label: "Goals (Functional Task)", type: "input"},
-       {name: "shorttermassistlevel", label: "Assist Level", type: "radio",labelAbove:true,options:[
-        { label: "Independent", value: "shorttermindependent" },
-         { label: "Supervision", value: "shorttermsupervision" },
-          { label: "Stand-by Assist", value: "shorttermsba" },
-           { label: "Contact Guard Assist", value: "shorttermcga"},
-          { label: "Minimal Assist", value: "shorttermmina"},
-          { label: "Moderate Assist", value: "shorttermmoda"},
-          { label: "Maximum Assist", value: "shorttermmaxa"},
-       ]},
-           {name: "shorttermdevice", label: "Device/Prosthesis Used", type: "input"},
-          {name: "shorttermcontext", label: "Context(Where/Condition)", type: "input"},
-             {name: "shorttermtarget", label: "Measurable Target", type: "input"},
-               {name: "shorttermtarget_date", label: "Target Date", type: "date"},
-        ]},
+{
+  type: "dynamic-goals",
+  name: "shortterm_blocks"
+},
 
                {
   type: "subheading",
-  label: "Long Term Goals"
+  label: "Long-Term Goals (6–12 weeks)"
 },
- {
-      type: "dynamic-section",
-      name: "longterm_blocks",
-      fields: [
-        {name: "longtermgoals", label: "Goals (Functional Task)", type: "input"},
-       {name: "longtermassistlevel", label: "Assist Level", type: "radio",labelAbove:true,options:[
-        { label: "Independent", value: "longtermindependent" },
-         { label: "Supervision", value: "longtermsupervision" },
-          { label: "Stand-by Assist", value: "longtermsba" },
-           { label: "Contact Guard Assist", value: "longtermcga"},
-          { label: "Minimal Assist", value: "longtermmina"},
-          { label: "Moderate Assist", value: "longtermmoda"},
-          { label: "Maximum Assist", value: "longtermmaxa"},
-       ]},
-           {name: "longtermdevice", label: "Device/Prosthesis Used", type: "input"},
-          {name: "longtermcontext", label: "Context(Where/Condition)", type: "input"},
-             {name: "longtermtarget", label: "Measurable Target", type: "input"},
-               {name: "longtermtarget_date", label: "Target Date", type: "date"},
-        ]},
+{
+  type: "dynamic-goals",
+  name: "longterm_blocks"
+},
 
       
              {

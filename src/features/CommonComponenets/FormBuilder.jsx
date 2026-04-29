@@ -3340,17 +3340,21 @@ if (typeof col === "object" && col.type === "radio") {
             <div style={cornerLikeGroupHeader ? { ...styles.vaGroupHeader, borderRight: "1px solid #eef2f7" } : styles.vaCorner}>
               {cornerLabel}
             </div>
-            {groups.map((g, i) => (
-              <div
-                key={i}
-                style={{
-                  ...styles.vaGroupHeader,
-                  gridColumn: `span ${g.columns.length}`
-                }}
-              >
-                {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
-              </div>
-            ))}
+            {groups.map((g, i) => {
+              const allDisabled = g.columns.length > 0 && g.columns.every(c => c.disabled);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    ...styles.vaGroupHeader,
+                    gridColumn: `span ${g.columns.length}`,
+                    ...(allDisabled ? { background: "#f0f0f0", color: "#aaa" } : {})
+                  }}
+                >
+                  {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
+                </div>
+              );
+            })}
           </div>
 
           {showColumnHeaders && (
@@ -3367,6 +3371,9 @@ if (typeof col === "object" && col.type === "radio") {
 
           <div style={{ overflowX: "auto" }}>
             {rows.map(r => {
+              // Skip row if its showIf condition is not met
+              if (r.showIf && !evaluateShowIf(r.showIf, values)) return null;
+
               const rowCols = r.columns || flatCols;
 
               return (
@@ -3393,9 +3400,16 @@ if (typeof col === "object" && col.type === "radio") {
                     rowCols.map((col, i) => {
                       const key = `${field.name}_${r.value}_${i}`;
                       const v = values[key] || "";
+                      const isDisabled = col.disabled === true;
+                      const disabledStyle = isDisabled ? {
+                        background: "#f0f0f0",
+                        opacity: 0.5,
+                        pointerEvents: "none",
+                        cursor: "not-allowed"
+                      } : {};
 
                       return (
-                        <div key={key} style={styles.vaCell}>
+                        <div key={key} style={{ ...styles.vaCell, ...disabledStyle }}>
                           {col.type === "static" ? (
                             <div style={styles.vaStaticCell}>
                               {col.value || ""}
@@ -3403,10 +3417,11 @@ if (typeof col === "object" && col.type === "radio") {
                           ) : col.type === "select" ? (
                             <select
                               value={v}
-                              onChange={e => onChange(key, e.target.value)}
-                              style={styles.vaSelect}
+                              disabled={isDisabled}
+                              onChange={e => !isDisabled && onChange(key, e.target.value)}
+                              style={{ ...styles.vaSelect, ...(isDisabled ? { background: "#f0f0f0", color: "#aaa" } : {}) }}
                             >
-                              <option value="">Select</option>
+                              <option value="">—</option>
                               {(col.options || []).map((o, i) => {
                                 const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
                                 const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
@@ -3423,15 +3438,17 @@ if (typeof col === "object" && col.type === "radio") {
                                 name={`${field.name}_${r.value}`}
                                 value={col.value ?? col.key ?? i}
                                 checked={v === (col.value ?? col.key ?? i)}
-                                onChange={() => onChange(key, col.value ?? col.key ?? i)}
-                                style={{ cursor: "pointer" }}
+                                disabled={isDisabled}
+                                onChange={() => !isDisabled && onChange(key, col.value ?? col.key ?? i)}
+                                style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
                               />
                             </div>
                           ) : (
                             <input
                               value={v}
-                              onChange={e => onChange(key, e.target.value)}
-                              style={styles.vaInput}
+                              disabled={isDisabled}
+                              onChange={e => !isDisabled && onChange(key, e.target.value)}
+                              style={{ ...styles.vaInput, ...(isDisabled ? { background: "#f0f0f0", color: "#aaa" } : {}) }}
                             />
                           )}
                         </div>

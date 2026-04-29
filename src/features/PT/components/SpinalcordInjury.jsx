@@ -130,7 +130,12 @@ const SUBJECTIVE_SCHEMA = {
       {
         name: "chief_complaint",
         label: "Chief Complaint",
-        type: "textarea"
+        type: "input"
+      },
+      {
+        name: "hopi",
+        label: "History of Presenting Illness",
+        type: "input"
       },
       {
         name: "pain_score",
@@ -162,25 +167,9 @@ const SUBJECTIVE_SCHEMA = {
         showValue: true
       },
       {
-        name: "present_history",
-        label: "Present History",
-        type: "textarea"
-      },
-      {
-        name: "past_history",
-        label: "Past History",
-        type: "textarea"
-      },
-
-      {
-        name: "past_surgical_history",
-        label: "Past Surgical History",
-        type: "textarea"
-      },
-      {
         name: "medication",
-        label: "Medication",
-        type: "textarea"
+        label: "Current Medication",
+        type: "input"
       },
       {
         name: "social_history",
@@ -242,19 +231,19 @@ const SUBJECTIVE_SCHEMA = {
         ]
       },
       {
-        name: "goals",
-        label: "Goals",
+        name: "patient_goals",
+        label: "Patient Goals",
         type: "subheading"
       },
       {
         name: "short_term_goals",
         label: "Short Term Goals",
-        type: "textarea"
+        type: "input"
       },
       {
         name: "long_term_goals",
         label: "Long Term Goals",
-        type: "textarea"
+        type: "input"
       },
       {
         name: "bowel",
@@ -286,17 +275,17 @@ const OBJECTIVE_SCHEMA = {
         {
           name: "general_observations",
           label: "General Observations",
-          type: "textarea"
+          type: "input"
         },
         {
           name: "local_observations",
           label: "Local Observations",
-          type: "textarea"
+          type: "input"
         },
         {
           name: "palpation",
           label: "Palpation",
-          type: "textarea"
+          type: "input"
         },
         {
           type: "subheading",
@@ -347,15 +336,15 @@ const PLAN_SCHEMA = {
   sections: [
     {
       fields: [
+          { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
           {
-            type: "textarea",
-            name: "short_term_goals",
-            label: "Short Term Goals"
+            type: "dynamic-goals",
+            name: "short_term_goals"
           },
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
           {
-            type: "textarea",
-            name: "long_term_goals",
-            label: "Long Term Goals"
+            type: "dynamic-goals",
+            name: "long_term_goals"
           },      
           {
             name: "intervention_plan",
@@ -530,6 +519,50 @@ export default function SpinalCordInjury({patient, onSubmit, onBack}) {
         
                 {/* ===== HISTORY ===== */}
                 <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+                  <h3>Patient History</h3>
+
+                  <div>
+                    <b>Past Medical History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <b>Family History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <b>Allergies</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
                   <button style={alertBtn}>🚨 Alerts</button>
                 </div>
               </div>
