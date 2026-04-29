@@ -43,7 +43,10 @@ export default function GenericDepartmentDashboard({
   PatientsComponent,   // optional override — used by Optometry which has its own patients page
   updatePatientInMainList,
 }) {
-  const [showPatients, setShowPatients] = useState(false);
+  // If ?patient_id is in the URL, skip the dashboard and go straight to patients
+  const hasDeepLink = !!new URLSearchParams(window.location.search).get("patient_id");
+
+  const [showPatients, setShowPatients] = useState(hasDeepLink);
   const [poSelectedCard, setPoSelectedCard] = useState(null); // tracks which P&O card was clicked
   const dept = departmentName.replace(" Department", "");
   const AssessmentComponent = ASSESSMENT_MAP[dept] || null;
