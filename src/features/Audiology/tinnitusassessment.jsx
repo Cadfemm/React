@@ -446,11 +446,120 @@ export function TinnitusAdvancedFormObj({ onBack }) {
               { name: "ldl_r", label: "Right Ear", type: "input" },
               { name: "ldl_l", label: "Left Ear", type: "input" }
             ]
-          }
-        ]
-      }
-    ]
-  };
+          },
+         {
+          type: "subheading",
+          label: "Special Test"
+        },
+        {
+          name: "special_test",
+          label: "Details",
+          type: "input"
+        },
+
+        {
+          type: "subheading",
+          label: "Intervention: Tinnitus Retraining Therapy"
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "trt_option",
+              label: "Required ?",
+              type: "radio",
+              options: [
+                { label: "No", value: 0 },
+                { label: "Yes", value: 1 }
+              ]
+            },
+            {
+              name: "trt_notes",
+              label: "Remarks",
+              type: "input"
+            }
+          ]
+        },
+
+        {
+          type: "subheading",
+          label: "Intervention: Sound Therapy"
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "sound_option",
+              label: "Required ?",
+              type: "radio",
+              options: [
+                { label: "No", value: 0 },
+                { label: "Yes", value: 1 }
+              ]
+            },
+            {
+              name: "sound_notes",
+              label: "Remarks",
+              type: "input"
+            }
+          ]
+        },
+
+        {
+          type: "subheading",
+          label: "Intervention: Hearing Aids / Assistive Devices"
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "ha_option",
+              label: "Required ?",
+              type: "radio",
+              options: [
+                { label: "No", value: 0 },
+                { label: "Yes", value: 1 }
+              ]
+            },
+            {
+              name: "ha_notes",
+              label: "Remarks",
+              type: "input"
+            }
+          ]
+        },
+
+        {
+          type: "subheading",
+          label: "Intervention: Counselling"
+        },
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "counselling_option",
+              label: "Required ?",
+              type: "radio",
+              options: [
+                { label: "No", value: 0 },
+                { label: "Yes", value: 1 }
+              ]
+            },
+            {
+              name: "counselling_notes",
+              label: "Remarks",
+              type: "input"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
 
   return (
     <CommonFormBuilder

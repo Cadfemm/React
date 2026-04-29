@@ -1166,63 +1166,6 @@ const SUBJECTIVE_SCHEMA = {
         }
       ]
     },
-        {
-      title: "Audiometry",
-      fields: [
-         {
-      name: "audifile",
-      label: "Upload Audiometry File",
-      type: "file-upload-modal",
-    },
-        { type: "audiogram-graph", name: "audiogram_graph"},
-        {
-          type: "row",
-          fields: [
-            {
-              name: "impression_r",
-              label: "Impression – Right Ear",
-              type: "textarea"
-            },
-            {
-              name: "impression_l",
-              label: "Impression – Left Ear",
-              type: "textarea"
-            },
-          ]
-        },
-        {
-          name: "audiometry_type",
-          label: "Type of Audiometry",
-          type: "radio",
-          options: [
-            { label: "Screening", value: "screening" },
-            { label: "Diagnostic Pure Tone", value: "pta" },
-            { label: "Play", value: "play" },
-            { label: "Visual Reinforcement (VR)", value: "vra" }
-          ]
-        },
-
-        {
-          name: "masking",
-          label: "Masking",
-          type: "radio",
-          options: [
-            { label: "Unmasked", value: "unmasked" },
-            { label: "Masking", value: "masked" }
-          ]
-        },
-        {
-          name: "reliability",
-          label: "Reliability",
-          type: "radio",
-          options: [
-            { label: "Good", value: "Good" },
-            { label: "Fair", value: "Fair" },
-            { label: "Poor", value: "Poor" }
-          ]
-        },
-      ]
-    }
   ]
 };
 
@@ -1358,6 +1301,65 @@ const OBJECTIVE_SCHEMA = {
       ]
     },
 
+        /* ===================== AUDIOMETRY ===================== */
+
+   {
+      title: "Audiometry",
+      fields: [
+         {
+      name: "audifile",
+      label: "Upload Audiometry File",
+      type: "file-upload-modal",
+    },
+        { type: "audiogram-graph", name: "audiogram_graph"},
+        {
+          type: "row",
+          fields: [
+            {
+              name: "impression_r",
+              label: "Impression – Right Ear",
+              type: "textarea"
+            },
+            {
+              name: "impression_l",
+              label: "Impression – Left Ear",
+              type: "textarea"
+            },
+          ]
+        },
+        {
+          name: "audiometry_type",
+          label: "Type of Audiometry",
+          type: "radio",
+          options: [
+            { label: "Screening", value: "screening" },
+            { label: "Diagnostic Pure Tone", value: "pta" },
+            { label: "Play", value: "play" },
+            { label: "Visual Reinforcement (VR)", value: "vra" }
+          ]
+        },
+
+        {
+          name: "masking",
+          label: "Masking",
+          type: "radio",
+          options: [
+            { label: "Unmasked", value: "unmasked" },
+            { label: "Masking", value: "masked" }
+          ]
+        },
+        {
+          name: "reliability",
+          label: "Reliability",
+          type: "radio",
+          options: [
+            { label: "Good", value: "Good" },
+            { label: "Fair", value: "Fair" },
+            { label: "Poor", value: "Poor" }
+          ]
+        },
+      ]
+    },    
     /* ===================== TYMPANOMETRY ===================== */
     {
       title: "Tympanometry",
@@ -1616,7 +1618,15 @@ const OBJECTIVE_SCHEMA = {
       {
         name: "plan_list",
         label: "Intervention Plan",
-        type: "textarea"
+        type: "multi-select-dropdown",
+        options: [
+            { label: "Monitoring", value: "monitoring" },
+            { label: "Amplification", value: "amplification" },
+            { label: "Auditory training", value: "auditory_training" },
+            { label: "Tinnitus management", value: "tinnitus_management" },
+            { label: "Hyperacusis management", value: "hyperacusis_management" },
+            { label: "Vestibular management", value: "vestibular_management" },
+        ]
       },
       {
         name: "plan_options",
