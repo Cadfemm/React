@@ -520,16 +520,16 @@ const OBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
-        // {
-        //   type: "label",
-        //   label: "Clinical Impression"
-        // },
-        // {
-        //   name: "clinicalImpression",
-        //   type: "textarea",
-        //   placeholder: "Enter clinical impression...",
-        //   rows: 4
-        // },
+        {
+          type: "label",
+          label: "Clinical Impression"
+        },
+        {
+          name: "clinicalImpression",
+          type: "textarea",
+          placeholder: "Enter clinical impression...",
+          rows: 4
+        },
         {
   name: "assessmentLauncher",
   type: "assessment-launcher",
