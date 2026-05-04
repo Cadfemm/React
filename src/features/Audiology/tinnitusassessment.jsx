@@ -385,69 +385,167 @@ export function TinnitusAdvancedFormObj({ onBack }) {
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
+     {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "tinnitus_section",
+          label: "Tinnitus Psychoacoustic Measurements",
+          defaultOpen: false,
+
+          children: [
+            {
+              type: "refraction-12col",
+              name: "tinnitus_matrix",
+
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+
+              groups: [
+                {
+                  label: "",
+                  columns: [
+                    { key: "Right Ear" },
+                    { key: "Left Ear" }
+                  ]
+                }
+              ],
+
+              rows: [
+                {
+                  value: "pitch",
+                  label: "Pitch Matching (Hz)",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "loudness",
+                  label: "Loudness Matching (dB HL)",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "mml",
+                  label: "Minimum Masking Level (MML) (dB HL)",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "ri",
+                  label: "Residual Inhibition",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "ldl",
+                  label: "Loudness Discomfort Level (LDL)",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+  
+       {
+        type: "accordion",
+        name: "intervention_section",
+        label: "Interventions",
+        defaultOpen: false,
+
+        children: [
+          {
+            type: "refraction-12col",
+            name: "intervention_matrix",
+
+            cornerLabel: "",
+            cornerLikeGroupHeader: false,
+            showColumnHeaders: true,
+
+            groups: [
+              {
+                label: "",
+                columns: [
+                  { key: "Yes / No" },
+                  { key: "Remarks" }
+                ]
+              }
+            ],
+
+            rows: [
+              {
+                value: "trt",
+                label: "Tinnitus Retraining Therapy",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "sound",
+                label: "Sound Therapy",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "hearing_aid",
+                label: "Hearing Aids / Assistive Devices",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "counselling",
+                label: "Counselling",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       {
-        title: "Tinnitus Psychoacoustic Measurements",
-        fields: [
-          {
-            type: "subheading",
-            label: "Pitch Matching(Hz)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "pitch_r", label: "Right Ear", type: "input" },
-              { name: "pitch_l", label: "Left Ear", type: "input" }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Loudness Matching (dB HL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "loudness_r", label: "Right Ear", type: "input" },
-              { name: "loudness_l", label: "Left Ear", type: "input" }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Minimum Masking Level (MML) (dBHL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "mml_r", label: "Right Ear", type: "input" },
-              { name: "mml_l", label: "Left Ear", type: "input" }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Residual Inhibition"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "ri_r", label: "Right Ear", type: "input" },
-              { name: "ri_l", label: "Left Ear", type: "input" }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Loudness Discomfort Level (LDL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "ldl_r", label: "Right Ear", type: "input" },
-              { name: "ldl_l", label: "Left Ear", type: "input" }
-            ]
-          },
-         {
           type: "subheading",
           label: "Special Test"
         },
@@ -456,108 +554,8 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           label: "Details",
           type: "input"
         },
-
-        {
-          type: "subheading",
-          label: "Intervention: Tinnitus Retraining Therapy"
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "trt_option",
-              label: "Required ?",
-              type: "radio",
-              options: [
-                { label: "No", value: 0 },
-                { label: "Yes", value: 1 }
-              ]
-            },
-            {
-              name: "trt_notes",
-              label: "Remarks",
-              type: "input"
-            }
-          ]
-        },
-
-        {
-          type: "subheading",
-          label: "Intervention: Sound Therapy"
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "sound_option",
-              label: "Required ?",
-              type: "radio",
-              options: [
-                { label: "No", value: 0 },
-                { label: "Yes", value: 1 }
-              ]
-            },
-            {
-              name: "sound_notes",
-              label: "Remarks",
-              type: "input"
-            }
-          ]
-        },
-
-        {
-          type: "subheading",
-          label: "Intervention: Hearing Aids / Assistive Devices"
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "ha_option",
-              label: "Required ?",
-              type: "radio",
-              options: [
-                { label: "No", value: 0 },
-                { label: "Yes", value: 1 }
-              ]
-            },
-            {
-              name: "ha_notes",
-              label: "Remarks",
-              type: "input"
-            }
-          ]
-        },
-
-        {
-          type: "subheading",
-          label: "Intervention: Counselling"
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "counselling_option",
-              label: "Required ?",
-              type: "radio",
-              options: [
-                { label: "No", value: 0 },
-                { label: "Yes", value: 1 }
-              ]
-            },
-            {
-              name: "counselling_notes",
-              label: "Remarks",
-              type: "input"
-            }
-          ]
-        }
       ]
-    }
+    },
   ]
 };
 
