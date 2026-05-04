@@ -207,33 +207,136 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
   const FREQUENCIES = ["500", "1000", "2000", "4000"];
 
   const schema = {
-    title: "Objective Hyperacusis Assessment",
+    title: "Hyperacusis Assessment",
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
+    {
+    title: null,
+    fields: [
       {
-        title: "Loudness Discomfort Levels (LDL)",
-        fields: [
-          ...FREQUENCIES.flatMap((freq) => [
-            { type: "subheading", label: `${freq} Hz` },
-            {
-              type: "row",
-              cols: 2,
-              fields: [
-                {
-                  name: `ldl_r_${freq}`,
-                  label: "Right Ear (dB HL)",
-                  type: "input"
-                },
-                {
-                  name: `ldl_l_${freq}`,
-                  label: "Left Ear (dB HL)",
-                  type: "input"
-                }
-              ]
-            }
-          ]),
+        type: "accordion",
+        name: "ldl_section",
+        label: "Loudness Discomfort Levels (LDL)",
+        defaultOpen: false,
 
+        children: [
+          {
+            type: "refraction-12col",
+            name: "ldl_matrix",
+            cornerLabel: "Frequency",
+            cornerLikeGroupHeader: true,
+            showColumnHeaders: true,
+            showGroupHeaders: false,
+
+            groups: [
+              {
+                label: null,
+                columns: [
+                  { key: "Right Ear (dB HL)" },
+                  { key: "Left Ear (dB HL)" }
+                ]
+              }
+            ],
+
+            rows: FREQUENCIES.map(freq => ({
+              value: freq,
+              label: `${freq} Hz`,
+              columns: [
+                { type: "input" },
+                { type: "input" }
+              ]
+            }))
+          }
+        ]
+      },
+
+      {
+        type: "accordion",
+        name: "intervention_section",
+        label: "Interventions",
+        defaultOpen: false,
+
+        children: [
+          {
+            type: "refraction-12col",
+            name: "intervention_matrix",
+
+            cornerLabel: "",
+            cornerLikeGroupHeader: false,
+            showColumnHeaders: true,
+
+            groups: [
+              {
+                label: "",
+                columns: [
+                  { key: "Yes / No" },
+                  { key: "Remarks" }
+                ]
+              }
+            ],
+
+            rows: [
+              {
+                value: "counselling",
+                label: "Counselling",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "sound",
+                label: "Sound Desensitisation / Sound Tolerance Training",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "hearingaid",
+                label: "Hearing Aids / Assistive Devices",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "environment",
+                label: "Environmental Modification",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
           {
             type: "subheading",
             label: "Special Test"
@@ -243,106 +346,6 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
             label: "Details",
             type: "input"
           },
-
-          {
-            type: "subheading",
-            label: "Intervention: Counselling"
-          },
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              {
-                name: "counselling_option",
-                label: "Required ?",
-                type: "radio",
-                options: [
-                  { label: "No", value: 0 },
-                  { label: "Yes", value: 1 }
-                ]
-              },
-              {
-                name: "counselling_notes",
-                label: "Remarks",
-                type: "input"
-              }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Intervention: Sound Desensitisation / Sound Tolerance Training"
-          },
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              {
-                name: "sound_option",
-                label: "Required ?",
-                type: "radio",
-                options: [
-                  { label: "No", value: 0 },
-                  { label: "Yes", value: 1 }
-                ]
-              },
-              {
-                name: "sound_notes",
-                label: "Remarks",
-                type: "input"
-              }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Intervention: Hearing Aids / Assistive Devices"
-          },
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              {
-                name: "hearingaid_option",
-                label: "Required ?",
-                type: "radio",
-                options: [
-                  { label: "No", value: 0 },
-                  { label: "Yes", value: 1 }
-                ]
-              },
-              {
-                name: "hearingaid_notes",
-                label: "Remarks",
-                type: "input"
-              }
-            ]
-          },
-
-          {
-            type: "subheading",
-            label: "Intervention: Environmental Modification"
-          },
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              {
-                name: "environment_option",
-                label: "Required ?",
-                type: "radio",
-                options: [
-                  { label: "No", value: 0 },
-                  { label: "Yes", value: 1 }
-                ]
-              },
-              {
-                name: "environment_notes",
-                label: "Remarks",
-                type: "input"
-              }
-            ]
-          }
         ]
       }
     ]

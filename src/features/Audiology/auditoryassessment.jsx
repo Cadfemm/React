@@ -298,7 +298,7 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
   }));
 
   const schema = {
-    title: "Objective Auditory Assessment",
+    title: "Auditory Assessment",
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
@@ -337,68 +337,83 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
       // ACOUSTIC REFLEX
       // =========================
       {
-        title: "Acoustic Reflex - Frequency (Hz)",
-        fields: FREQUENCIES.flatMap(freq => [
+        title: null,
+        fields: [
           {
-            type: "subheading",
-            label: `${freq} Hz`
-          },
-          {
-            name: `ipsi_r_${freq}`,
-            label: "Ipsilateral (Right Ear, dB HL)",
-            type: "radio",
-            options: reflexOptions
-          },
-          {
-            name: `ipsi_l_${freq}`,
-            label: "Ipsilateral (Left Ear, dB HL)",
-            type: "radio",
-            options: reflexOptions
-          },
-          {
-            name: `contra_r_${freq}`,
-            label: "Contralateral (Right Ear Stim)",
-            type: "radio",
-            options: reflexOptions
-          },
-          {
-            name: `contra_l_${freq}`,
-            label: "Contralateral (Left Ear Stim)",
-            type: "radio",
-            options: reflexOptions
-          },
-          {
-            name: `reflex_impression_${freq}`,
-            label: "Impression",
-            type: "input"
+            type: "accordion",
+            name: "acoustic_reflex_section",
+            label: "Acoustic Reflex - Frequency (Hz)",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "acoustic_reflex_matrix",
+
+                cornerLabel: "Frequency",
+                cornerLikeGroupHeader: true,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Ipsilateral (Right Ear, dB HL)" },
+                      { key: "Ipsilateral (Left Ear, dB HL)" },
+                      { key: "Contralateral (Right Ear Stim)" },
+                      { key: "Contralateral (Left Ear Stim)" }
+                    ]
+                  }
+                ],
+
+                rows: FREQUENCIES.map(freq => ({
+                  value: freq,
+                  label: `${freq} Hz`,
+                  columns: [
+                    { type: "select", options: reflexOptions }, // Ipsi R
+                    { type: "select", options: reflexOptions }, // Ipsi L
+                    { type: "select", options: reflexOptions }, // Contra R
+                    { type: "select", options: reflexOptions }  // Contra L
+                  ]
+                }))
+              }
+            ]
           }
-        ])
+        ]
       },
 
       // =========================
       // ETF
       // =========================
-      {
+        {
         title: "Eustachian Tube Function",
         fields: [
           {
-            name: "etf_right",
-            label: "Right Ear Peak Pressure (daPa)",
-            type: "radio",
-            options: [
-              { label: "Normal", value: 0 },
-              { label: "Reduced", value: 1 },
-              { label: "Absent", value: 2 }
-            ]
-          },
-          {
-            name: "etf_left",
-            label: "Left Ear Peak Pressure (daPa)",
-            type: "radio",
-            options: [
-              { label: "Normal", value: 0 },
-              { label: "Reduced", value: 1 },
-              { label: "Absent", value: 2 }
+            type: "row",
+            cols: 2,
+            labelAbove: true,   // ✅ labels on top
+
+            fields: [
+              {
+                name: "etf_right",
+                label: "Right Ear Peak Pressure (daPa)",
+                type: "radio",
+                options: [
+                  { label: "Normal", value: 0 },
+                  { label: "Reduced", value: 1 },
+                  { label: "Absent", value: 2 }
+                ]
+              },
+              {
+                name: "etf_left",
+                label: "Left Ear Peak Pressure (daPa)",
+                type: "radio",
+                options: [
+                  { label: "Normal", value: 0 },
+                  { label: "Reduced", value: 1 },
+                  { label: "Absent", value: 2 }
+                ]
+              }
             ]
           }
         ]
@@ -408,141 +423,209 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
       // SPEECH
       // =========================
       {
-      title: "Speech Test",
-      fields: [
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "srt_r",
-              label: "Speech Reception Threshold (SRT) Right Ear",
-              type: "input"
-            },
-            {
-              name: "srt_l",
-              label: "Speech Reception Threshold (SRT) Left Ear",
-              type: "input"
-            }
-          ]
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "wrs_r",
-              label: "Word Recognition Score (WRS) Right Ear",
-              type: "input"
-            },
-            {
-              name: "wrs_l",
-              label: "Word Recognition Score (WRS) Left Ear",
-              type: "input"
-            }
-          ]
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "lct_r",
-              label: "Listening comprehension task Right Ear",
-              type: "input"
-            },
-            {
-              name: "lct_l",
-              label: "Listening comprehension task Left Ear",
-              type: "input"
-            }
-          ]
-        },
-        {
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: "apt_r",
-              label: "Auditory processing task Right Ear",
-              type: "input"
-            },
-            {
-              name: "apt_l",
-              label: "Auditory processing task Left Ear",
-              type: "input"
-            }
-          ]
-        }, 
-        {
-              name: "remarks",
-              label: "Remarks",
-              type: "input"
-            }      
-      ]
-    },
+        title: "Speech Test",
+        fields: [
+          {
+            type: "checkbox-group",
+            name: "speech_tests",
+            label: "",
+            options: [
+              { label: "Speech Reception Threshold (SRT)", value: "srt" },
+              { label: "Word Recognition Score (WRS)", value: "wrs" },
+              { label: "Listening Comprehension Task (LCT)", value: "lct" },
+              { label: "Auditory Processing Task (APT)", value: "apt" }
+            ]
+          },
+
+          // ✅ SRT
+          {
+            type: "row",
+            cols: 2,
+            showIf: { field: "speech_tests", includes: "srt" },
+            fields: [
+              {
+                name: "srt_r",
+                label: "SRT Right Ear",
+                type: "input"
+              },
+              {
+                name: "srt_l",
+                label: "SRT Left Ear",
+                type: "input"
+              }
+            ]
+          },
+
+          // ✅ WRS
+          {
+            type: "row",
+            cols: 2,
+            showIf: { field: "speech_tests", includes: "wrs" },
+            fields: [
+              {
+                name: "wrs_r",
+                label: "WRS Right Ear",
+                type: "input"
+              },
+              {
+                name: "wrs_l",
+                label: "WRS Left Ear",
+                type: "input"
+              }
+            ]
+          },
+
+          // ✅ LCT
+          {
+            type: "row",
+            cols: 2,
+            showIf: { field: "speech_tests", includes: "lct" },
+            fields: [
+              {
+                name: "lct_r",
+                label: "LCT Right Ear",
+                type: "input"
+              },
+              {
+                name: "lct_l",
+                label: "LCT Left Ear",
+                type: "input"
+              }
+            ]
+          },
+
+          // ✅ APT
+          {
+            type: "row",
+            cols: 2,
+            showIf: { field: "speech_tests", includes: "apt" },
+            fields: [
+              {
+                name: "apt_r",
+                label: "APT Right Ear",
+                type: "input"
+              },
+              {
+                name: "apt_l",
+                label: "APT Left Ear",
+                type: "input"
+              }
+            ]
+          },
+
+          // ✅ COMMON REMARKS
+          {
+        name: "remarks",
+        label: "Remarks",
+        type: "input",
+        showIf: { field: "speech_tests", notEmpty: true }
+      }
+        ]
+      },
 
       // =========================
       // ASSR
       // =========================
       {
-      title: "Auditory Steady-State Response",
-      fields: [
-        ...FREQUENCIES.flatMap(freq => [
+        title: null,
+        fields: [
           {
-            type: "row",
-            cols: 2,
-            fields: [
+            type: "accordion",
+            name: "assr_section",
+            label: "Auditory Steady-State Response",
+            defaultOpen: false,
+
+            children: [
               {
-                name: `assr_r_${freq}`,
-                label: `${freq} Right Ear Threshold (dB nHL)`,
-                type: "radio",
-                options: thresholdOptions
+                type: "refraction-12col",
+                name: "assr_matrix",
+
+                cornerLabel: "Frequency",
+                cornerLikeGroupHeader: true,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Ear Threshold (dB nHL)" },
+                      { key: "Left Ear Threshold (dB nHL)" }
+                    ]
+                  }
+                ],
+
+                rows: FREQUENCIES.map(freq => ({
+                  value: freq,
+                  label: `${freq} Hz`,
+                  columns: [
+                    { type: "select", options: thresholdOptions }, // Right
+                    { type: "select", options: thresholdOptions }  // Left
+                  ]
+                }))
               },
+
               {
-                name: `assr_l_${freq}`,
-                label: `${freq} Left Ear Threshold (dB nHL)`,
-                type: "radio",
-                options: thresholdOptions
+                name: "assr_imp",
+                label: "Impression",
+                type: "input"
               }
             ]
           }
-        ]),
-        {
-          name: "assr_imp",
-          label: "Impression",
-          type: "input"
-        }
-      ]
-    },
-      
+        ]
+      },
+          
 
       // =========================
       // ABR
       // =========================
       {
-        title: "Auditory Brainstem Response",
+        title: null,
         fields: [
           {
-            type: "row",
-            cols: 2,
-            fields: [
+            type: "accordion",
+            name: "abr_section",
+            label: "Auditory Brainstem Response",
+            defaultOpen: false,
+
+            children: [
               {
-                name: "abr_r",
-                label: "Right Ear",
-                type: "input"
-              },
-              {
-                name: "abr_l",
-                label: "Left Ear",
-                type: "input"
+                type: "refraction-12col",
+                name: "abr_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Ear" },
+                      { key: "Left Ear" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "abr",
+                    label: "Auditory Brainstem Response",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "impression",
+                    label: "Impression",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  }
+                ]
               }
             ]
-          },
-          {
-            name: "abr_impression",
-            label: "Impression",
-            type: "input"
           }
         ]
       },
@@ -551,28 +634,53 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
       // ELECTROPHYSIOLOGY
       // =========================
       {
-        title: "Electrophysiology For Hearing ",
+        title: null,
         fields: [
           {
-            type: "row",
-            cols: 2,
-            fields: [
+            type: "accordion",
+            name: "ep_section",
+            label: "Electrophysiology For Hearing",
+            defaultOpen: false,
+
+            children: [
               {
-                name: "ep_r",
-                label: "Right Ear",
-                type: "input"
-              },
-              {
-                name: "ep_l",
-                label: "Left Ear",
-                type: "input"
+                type: "refraction-12col",
+                name: "ep_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Ear" },
+                      { key: "Left Ear" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "ep",
+                    label: "Electrophysiology For Hearing",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "impression",
+                    label: "Impression",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  }
+                ]
               }
             ]
-          },
-          {
-            name: "ep_impression",
-            label: "Impression",
-            type: "input"
           }
         ]
       },
@@ -583,7 +691,7 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
       {
         title: "Special Test",
         fields: [
-          { name: "special_test", label: "Details", type: "textarea" }
+          { name: "special_test", label: "Details", type: "input" }
         ]
       }
     ]

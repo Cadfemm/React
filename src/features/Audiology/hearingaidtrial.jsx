@@ -270,6 +270,214 @@ export function Hearingaidtrial({ onBack }) {
           { name: "recommendation", label: "Recommendation",         type: "score-box" },
         ]
       }] : []),
+       {
+      title: "Hearing Aid Orientation",
+      fields: [
+        {
+          name: "topics_discussed",
+          label: "Topics discussed",
+          type: "checkbox-group",
+          options: [
+            { label: "None", value: 0 },
+            { label: "Nature of hearing loss and expected benefit", value: 1 },
+            { label: "Realistic communication goals", value: 2 },
+            { label: "Care, cleaning, and maintenance", value: 3 },
+            { label: "Battery / charger handling", value: 4 },
+            { label: "Wearing schedule and adaptation timeline", value: 5 },
+            { label: "Communication strategies", value: 6 },
+            { label: "Family education and support", value: 7 },
+            { label: "Maintain stable hearing thresholds", value: 8 }
+          ]
+        },
+        {
+          name: "client_understanding",
+          label: "Client’s understanding",
+          type: "radio",
+          options: [
+            { label: "Good", value: 0 },
+            { label: "Partial", value: 1 },
+            { label: "Poor", value: 2 }
+          ]
+        },
+        {
+          name: "motivation",
+          label: "Motivation to use device",
+          type: "radio",
+          options: [
+            { label: "High", value: 0 },
+            { label: "Moderate", value: 1 },
+            { label: "Low", value: 2 }
+          ]
+        }
+      ]
+    },
+
+   {
+  title: "Auditory Training",
+  fields: [
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        { name: "detection", label: "Detection", type: "input" },
+        { name: "discrimination", label: "Discrimination", type: "input" }
+      ]
+    },
+    {
+      type: "row",
+      cols: 2,
+      fields: [
+        { name: "identification", label: "Identification", type: "input" },
+        { name: "comprehension", label: "Comprehension", type: "input" }
+      ]
+    },
+    {
+      type: "row",
+      cols: 1,
+      fields: [
+        { name: "speech_tracking", label: "Speech Tracking", type: "input" }
+      ]
+    }
+  ]
+},
+
+  {
+    title: "Worksite Assessment",
+    fields: [
+      { type: "subheading", label: "Environmental Parameters" },
+
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "ambient_noise", label: "Ambient noise level", type: "input" },
+          { name: "reverb_echo", label: "Reverberation & echo", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "distance_source", label: "Distance to sound source", type: "input" },
+          { name: "snr", label: "Signal-to-noise ratio (SNR)", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "equipment_noise", label: "Equipment noise", type: "input" },
+          { name: "lighting_visibility", label: "Lighting & visibility", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 1,
+        fields: [
+          { name: "acoustic_treatment", label: "Acoustic treatment", type: "input" }
+        ]
+      },
+
+      { type: "subheading", label: "Communication Demand" },
+
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "verbal_frequency", label: "Verbal communication frequency", type: "input" },
+          { name: "noise_during_comm", label: "Noise during communication", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "communication_partners", label: "Communication partners", type: "input" },
+          { name: "telephone_use", label: "Telephone use", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 1,
+        fields: [
+          { name: "ha_accessories", label: "Use of hearing aid accessories", type: "input" }
+        ]
+      },
+
+      { type: "subheading", label: "Hearing Aid Function in Workplace" },
+
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "performance_quiet", label: "Performance in quiet", type: "input" },
+          { name: "performance_noise", label: "Performance in noise", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "feedback_distortion", label: "Feedback or distortion", type: "input" },
+          { name: "comfort_fit", label: "Comfort and physical fit", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "safety_gear", label: "Compatibility with safety gear", type: "input" },
+          { name: "connectivity_issues", label: "Connectivity issues", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 1,
+        fields: [
+          { name: "battery_access", label: "Battery/recharging accessibility", type: "input" }
+        ]
+      },
+
+      { type: "subheading", label: "Safety Considerations" },
+
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "warning_awareness", label: "Awareness of warning signals", type: "input" },
+          { name: "dual_protection", label: "Use of dual protection", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "emergency_comm", label: "Communication in emergency situations", type: "input" },
+          { name: "hearing_compliance", label: "Hearing protection compliance", type: "input" }
+        ]
+      },
+
+      { type: "subheading", label: "Worker’s Self-Report / Feedback" },
+
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "hearing_difficulty", label: "Perceived hearing difficulty at work", type: "input" },
+          { name: "communication_satisfaction", label: "Communication satisfaction", type: "input" }
+        ]
+      },
+      {
+        type: "row",
+        cols: 2,
+        fields: [
+          { name: "fatigue_effort", label: "Fatigue or listening effort", type: "input" },
+          
+        ]
+      },
+      { name: "recommendations", label: "Recommendations", type: "input" }
+    ]
+  }
     ]
   };
 

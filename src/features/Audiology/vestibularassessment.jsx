@@ -498,133 +498,179 @@ export function VestibularAdvancedFormObj({ onBack }) {
   const formatLabel = (str) =>
     str.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
-  const buildEyeSection = (prefix, title, metrics) => ({
-    title,
-    fields: metrics.flatMap((metric) => [
-      { type: "subheading", label: metric },
-
-      {
-        type: "row",
-        fields: [
-          {
-            name: `${prefix}_${metric}_right`,
-            label: "Right Eye",
-            type: "input",
-          },
-          {
-            name: `${prefix}_${metric}_left`,
-            label: "Left Eye",
-            type: "input",
-          },
-        ],
-      },
-
-      {
-        name: `${prefix}_${metric}_impression`,
-        label: "Impression",
-        type: "input",
-      },
-    ]),
-  });
-
-const buildBinaryOptions = (prefix, title) => ({
-  title,
+  const buildGazeMatrix = (name, label) => ({
+  title: null,
   fields: [
-
     {
-      type: "subheading",
-      label: "Dynamic Visual Acuity (Passive)"
-    },
+      type: "accordion",
+      name: `${name}_section`,
+      label,
+      defaultOpen: false,
 
+      children: [
+        {
+          type: "refraction-12col",
+          name: `${name}_matrix`,
+
+          cornerLabel: "",
+          cornerLikeGroupHeader: false,
+          showColumnHeaders: true,
+          showGroupHeaders: false,
+
+          groups: [
+            {
+              label: null,
+              columns: [
+                { key: "Right Eye" },
+                { key: "Left Eye" },
+                { key: "Impression" }
+              ]
+            }
+          ],
+
+          rows: [
+            {
+              value: "h_spv",
+              label: "Horizontal - Slow Phase Velocity",
+              columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+            },
+            {
+              value: "h_amp",
+              label: "Horizontal - Amplitude",
+              columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+            },
+            {
+              value: "v_spv",
+              label: "Vertical - Slow Phase Velocity",
+              columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+            },
+            {
+              value: "v_amp",
+              label: "Vertical - Amplitude",
+              columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+});
+const buildBinaryOptions = (prefix, title) => ([
+  {
+    type: "subheading",
+    label: title
+  },
+
+  {
+    type: "subheading",
+    label: "Dynamic Visual Acuity (Passive)"
+  },
+
+  ...[
     "Horizontal Left Passive",
     "Horizontal Right Passive",
     "Vertical Up Passive",
     "Vertical Down Passive",
-
-    {
-      type: "subheading",
-      label: "Dynamic Visual Acuity (Passive)"
-    },
-
     "Left Anterior Passive",
     "Right Posterior Passive",
     "Right Anterior Passive",
-    "Left Posterior Passive",
+    "Left Posterior Passive"
+  ].map(item => ({
+    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+    label: item,
+    type: "radio-matrix",
+    options: [
+      { label: "Within normal range", value: 0 },
+      { label: "Deviated", value: 1 }
+    ]
+  })),
 
-    {
-      type: "subheading",
-      label: "Dynamic Visual Acuity (Active)"
-    },
+  {
+    type: "subheading",
+    label: "Dynamic Visual Acuity (Active)"
+  },
 
+  ...[
     "Horizontal Left Active",
     "Horizontal Right Active",
     "Vertical Up Active",
     "Vertical Down Active",
-
-    {
-      type: "subheading",
-      label: "Dynamic Visual Acuity (Active)"
-    },
-
     "Left Anterior Active",
     "Right Posterior Active",
     "Right Anterior Active",
     "Left Posterior Active"
-  ].map((item) =>
-    typeof item === "string"
-      ? {
-          name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-          label: item,
-          type: "radio-matrix",
-          options: [
-            { label: "Within normal range", value: 0 },
-            { label: "Deviated", value: 1 }
-          ]
-        }
-      : item
-  )
-});
-const buildBinaryOptionsgaze = (prefix, title) => ({
-  title,
-  fields: [
-    {
-      type: "subheading",
-      label: "Gaze Stabilization (Active)"
-    },
+  ].map(item => ({
+    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+    label: item,
+    type: "radio-matrix",
+    options: [
+      { label: "Within normal range", value: 0 },
+      { label: "Deviated", value: 1 }
+    ]
+  }))
+]);
+const buildBinaryOptionsgaze = (prefix, title) => ([
+  {
+    type: "subheading",
+    label: title
+  },
 
+  {
+    type: "subheading",
+    label: "Gaze Stabilization (Passive)"
+  },
+
+  ...[
+    "Horizontal Left Passive",
+    "Horizontal Right Passive",
+    "Vertical Up Passive",
+    "Vertical Down Passive",
+    "Left Anterior Passive",
+    "Right Posterior Passive",
+    "Right Anterior Passive",
+    "Left Posterior Passive",
+    "Vertical Down Active"
+  ].map(item => ({
+    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+    label: item,
+    type: "radio-matrix",
+    options: [
+      { label: "Within normal range", value: 0 },
+      { label: "Deviated", value: 1 }
+    ]
+  })),
+
+  {
+    type: "subheading",
+    label: "Gaze Stabilization (Active)"
+  },
+
+  ...[
     "Horizontal Left Active",
     "Horizontal Right Active",
     "Vertical Up Active",
     "Vertical Down Active",
-
-    {
-      type: "subheading",
-      label: "Gaze Stabilization (Active)"
-    },
-
-    "Left Anterior",
-    "Right Posterior",
-    "Right Anterior",
-    "Left Posterior",
+    "Left Anterior Active",
+    "Right Posterior Active",
+    "Right Anterior Active",
+    "Left Posterior Active",
     "Vertical Down Active"
-  ].map((item) =>
-    typeof item === "string"
-      ? {
-          name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-          label: item,
-          type: "radio-matrix",
-          options: [
-            { label: "Within normal range", value: 0 },
-            { label: "Deviated", value: 1 }
-          ]
-        }
-      : item
-  )
-});
+  ].map(item => ({
+    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
+    label: item,
+    type: "radio-matrix",
+    options: [
+      { label: "Within normal range", value: 0 },
+      { label: "Deviated", value: 1 }
+    ]
+  }))
+]);
   // =========================
   // FGA AUTO SCORE
   // =========================
   const fgaScore = useMemo(() => {
+    // Updated filter to catch keys inside the matrix structure if needed, 
+    // but primarily looks for keys starting with fga_
     return Object.keys(values)
       .filter((k) => k.startsWith("fga_"))
       .reduce((sum, k) => sum + (Number(values[k]) || 0), 0);
@@ -635,233 +681,894 @@ const buildBinaryOptionsgaze = (prefix, title) => ({
   // =========================
 
   const schema = {
-    title: "Vestibular Evaluation",
+    title: "Vestibular Assessment",
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
-      // =========================
-      // SACCADE
-      // =========================
-      buildEyeSection("saccade_h", "Videonystagmography Saccade - Horizontal", [
-        "Velocity",
-        "Precision",
-        "Latency",
-      ]),
-      buildEyeSection("saccade_v", "Videonystagmography Saccade - Vertical", [
-        "Velocity",
-        "Precision",
-        "Latency",
-      ]),
+      {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "saccade_horizontal_section",
+            label: "Videonystagmography Saccade - Horizontal",
+            defaultOpen: false,
 
+            children: [
+              {
+                type: "refraction-12col",
+                name: "saccade_horizontal_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "velocity",
+                    label: "Velocity",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "precision",
+                    label: "Precision",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "latency",
+                    label: "Latency",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "saccade_vertical_section",
+            label: "Videonystagmography Saccade - Vertical",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "saccade_vertical_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "velocity",
+                    label: "Velocity",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "precision",
+                    label: "Precision",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "latency",
+                    label: "Latency",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       // =========================
       // SMOOTH PURSUIT
       // =========================
-      buildEyeSection("smooth_h", "Videonystagmography Smooth Pursuit - Horizontal", [
-        "Velocity",
-        "Precision",
-      ]),
+      {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "smooth_horizontal_section",
+          label: "Videonystagmography Smooth Pursuit - Horizontal",
+          defaultOpen: false,
+
+          children: [
+            {
+              type: "refraction-12col",
+              name: "smooth_horizontal_matrix",
+
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+
+              groups: [
+                {
+                  label: "",
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+
+              rows: [
+                {
+                  value: "velocity",
+                  label: "Velocity",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "precision",
+                  label: "Precision",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "smooth_vertical_section",
+          label: "Videonystagmography Smooth Pursuit - Vertical",
+          defaultOpen: false,
+
+          children: [
+            {
+              type: "refraction-12col",
+              name: "smooth_vertical_matrix",
+
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+
+              groups: [
+                {
+                  label: "",
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+
+              rows: [
+                {
+                  value: "velocity",
+                  label: "Velocity",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "precision",
+                  label: "Precision",
+                  columns: [
+                    { type: "input" },
+                    { type: "input" },
+                    { type: "input" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
 
       // =========================
       // OPTOKINETIC
       // =========================
-      buildEyeSection("opto_lr", "Optokinetic Test - Left to Right", [
-        "Gain",
-        "Fast Phase Direction",
-      ]),
-      buildEyeSection("opto_rl", "Optokinetic Test - Right to Left", [
-        "Velocity",
-        "Precision",
-      ]),
-      buildEyeSection("opto_tb", "Optokinetic Test - Top to Bottom", [
-        "Velocity",
-        "Precision",
-      ]),
-      buildEyeSection("opto_bt", "Optokinetic Test - Bottom to Top", [
-        "Velocity",
-        "Precision",
-      ]),
+      {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "opto_lr_section",
+            label: "Optokinetic Test - Left to Right",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "opto_lr_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "gain",
+                    label: "Gain",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "fast_phase",
+                    label: "Fast Phase Direction",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+            {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "opto_rl_section",
+            label: "Optokinetic Test - Right to Left",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "opto_rl_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "velocity",
+                    label: "Velocity",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "precision",
+                    label: "Precision",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+        {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "opto_tb_section",
+            label: "Optokinetic Test - Top to Bottom",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "opto_tb_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "velocity",
+                    label: "Velocity",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "precision",
+                    label: "Precision",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "opto_bt_section",
+            label: "Optokinetic Test - Bottom to Top",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "opto_bt_matrix",
+
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+
+                groups: [
+                  {
+                    label: "",
+                    columns: [
+                      { key: "Right Eye" },
+                      { key: "Left Eye" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "velocity",
+                    label: "Velocity",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "precision",
+                    label: "Precision",
+                    columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
 
       // =========================
       // NYSTAGMUS
       // =========================
-      buildEyeSection("nystagmus_light_h", "Nystagmus: Spontaneous in Light - Horizontal", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
-      buildEyeSection("nystagmus_light_v", "Nystagmus: Spontaneous in Light - Vertical", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
-      buildEyeSection("nystagmus_dark_h", "Nystagmus: Spontaneous in Dark - Horizontal", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
-      buildEyeSection("nystagmus_dark_v", "Nystagmus: Spontaneous in Dark - Vertical", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
-      buildEyeSection("headshake_h", "Nystagmus: High Frequency Head Shake - Horizontal", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
-      buildEyeSection("headshake_v", "Nystagmus: High Frequency Head Shake - Vertical", [
-        "Slow Phase Velocity",
-        "Amplitude",
-      ]),
+      // Nystagmus - Light (Horizontal)
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "nystagmus_light_h_section",
+          label: "Nystagmus: Spontaneous in Light - Horizontal",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "nystagmus_light_h_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
 
-      {
-        title: "Nystagmus - Others",
-        fields: [
-          { name: "nystagmus_other_test", label: "Test", type: "textarea" },
-          {
-            name: "nystagmus_other_impression",
-            label: "Impression",
-            type: "textarea",
-          },
-        ],
-      },
+    // ======================
+    // Nystagmus - Light (Vertical)
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "nystagmus_light_v_section",
+          label: "Nystagmus: Spontaneous in Light - Vertical",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "nystagmus_light_v_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // ======================
+    // Nystagmus - Dark (Horizontal)
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "nystagmus_dark_h_section",
+          label: "Nystagmus: Spontaneous in Dark - Horizontal",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "nystagmus_dark_h_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // ======================
+    // Nystagmus - Dark (Vertical)
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "nystagmus_dark_v_section",
+          label: "Nystagmus: Spontaneous in Dark - Vertical",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "nystagmus_dark_v_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // ======================
+    // Head Shake - Horizontal
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "headshake_h_section",
+          label: "High Frequency Head Shake - Horizontal",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "headshake_h_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // ======================
+    // Head Shake - Vertical
+    // ======================
+    {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "headshake_v_section",
+          label: "High Frequency Head Shake - Vertical",
+          defaultOpen: false,
+          children: [
+            {
+              type: "refraction-12col",
+              name: "headshake_v_matrix",
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Right Eye" },
+                    { key: "Left Eye" },
+                    { key: "Impression" }
+                  ]
+                }
+              ],
+              rows: [
+                {
+                  value: "spv",
+                  label: "Slow Phase Velocity",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                },
+                {
+                  value: "amp",
+                  label: "Amplitude",
+                  columns: [{ type: "input" }, { type: "input" }, { type: "input" }]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    // ======================
+    // Others (keep as is)
+    // ======================
+    {
+      title: "Nystagmus - Others",
+      fields: [
+        {
+          type: "row",
+          cols: 2,
+          fields: [
+            {
+              name: "nystagmus_other_test",
+              label: "Test",
+              type: "input"
+            },
+            {
+              name: "nystagmus_other_impression",
+              label: "Impression",
+              type: "input"
+            }
+          ]
+        }
+      ]
+    },
 
       // =========================
       // GAZE (ALL DIRECTIONS)
       // =========================
-      buildEyeSection("gaze_center", "Gaze Test: Centre - Fixation", [
-        "Horizontal - Slow Phase Velocity",
-        "Horizontal - Amplitude",
-        "Vertical - Slow Phase Velocity",
-        "Vertical - Amplitude"
-      ]),
-
-      buildEyeSection("gaze_left", "Gaze Test: Left - Fixation", [
-        "Horizontal - Slow Phase Velocity",
-        "Horizontal - Amplitude",
-        "Vertical - Slow Phase Velocity",
-        "Vertical - Amplitude"
-      ]),
-
-      buildEyeSection("gaze_up", "Gaze Test: Up - Fixation", [
-        "Horizontal - Slow Phase Velocity",
-        "Horizontal - Amplitude",
-        "Vertical - Slow Phase Velocity",
-        "Vertical - Amplitude"
-      ]),
-
-      buildEyeSection("gaze_right", "Gaze Test: Right - Fixation", [
-        "Horizontal - Slow Phase Velocity",
-        "Horizontal - Amplitude",
-        "Vertical - Slow Phase Velocity",
-        "Vertical - Amplitude"
-      ]),
-
-      buildEyeSection("gaze_down", "Gaze Test: Down - Fixation", [
-        "Horizontal - Slow Phase Velocity",
-        "Horizontal - Amplitude",
-        "Vertical - Slow Phase Velocity",
-        "Vertical - Amplitude"
-      ]),
+      buildGazeMatrix("gaze_center", "Gaze Test: Centre"),
+      buildGazeMatrix("gaze_left", "Gaze Test: Left"),
+      buildGazeMatrix("gaze_up", "Gaze Test: Up"),
+      buildGazeMatrix("gaze_right", "Gaze Test: Right"),
+      buildGazeMatrix("gaze_down", "Gaze Test: Down"),
 
       // =========================
       // SVV
       // =========================
       {
-        title: "Subjective Visual Vertical",
-        fields: ["clockwise", "anticlockwise", "blank"].map((dir) => ({
-          type: "row",
-          cols: 2,
-          fields: [
-            {
-              name: `svv_${dir}_result`,
-              label: `${formatLabel(dir)} Result`,
-              type: "input"
-            },
-            {
-              name: `svv_${dir}_impression`,
-              label: `${formatLabel(dir)} Impression`,
-              type: "input"
-            }
-          ]
-        }))
-      },
-      {
-        title: "Positional Test",
+        title: null,
         fields: [
           {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "dixhallpike_r", label: "Dix HallPike - Right Side", type: "input" },
-              { name: "dixhallpike_l", label: "Dix HallPike - Left Side", type: "input" }
-            ]
-          },
+            type: "accordion",
+            name: "svv_section",
+            label: "Subjective Visual Vertical",
+            defaultOpen: false,
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "epley_r", label: "Epley Maneuver - Right Side", type: "input" },
-              { name: "epley_l", label: "Epley Maneuver - Left Side", type: "input" }
-            ]
-          },
+            children: [
+              {
+                type: "refraction-12col",
+                name: "svv_matrix",
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "rolltest_r", label: "Roll Test - Right Side", type: "input" },
-              { name: "rolltest_l", label: "Roll Test - Left Side", type: "input" }
-            ]
-          },
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+                showGroupHeaders: false,
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "barbecue_r", label: "Barbecue Roll Test - Right Side", type: "input" },
-              { name: "barbecue_l", label: "Barbecue Roll Test - Left Side", type: "input" }
-            ]
-          },
+                groups: [
+                  {
+                    label: null,
+                    columns: [
+                      { key: "Result" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "supine_r", label: "Supine Straight Head Extension - Right Side", type: "input" },
-              { name: "supine_l", label: "Supine Straight Head Extension - Left Side", type: "input" }
+                rows: [
+                  {
+                    value: "clockwise",
+                    label: "Clockwise",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "anticlockwise",
+                    label: "Anticlockwise",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  },
+                  {
+                    value: "blank",
+                    label: "Blank",
+                    columns: [
+                      { type: "input" },
+                      { type: "input" }
+                    ]
+                  }
+                ]
+              }
             ]
-          },
-
+          }
+        ]
+      },
+      {
+        title: null,
+        fields: [
           {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "semont_r", label: "Semont - Right Side", type: "input" },
-              { name: "semont_l", label: "Semont - Left Side", type: "input" }
-            ]
-          },
+            type: "accordion",
+            name: "positional_section",
+            label: "Positional Test",
+            defaultOpen: false,
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "gufoni_r", label: "Gufoni - Right Side", type: "input" },
-              { name: "gufoni_l", label: "Gufoni - Left Side", type: "input" }
-            ]
-          },
+            children: [
+              {
+                type: "refraction-12col",
+                name: "positional_matrix",
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "appiani_r", label: "Appiani - Right Side", type: "input" },
-              { name: "appiani_l", label: "Appiani - Left Side", type: "input" }
-            ]
-          },
+                cornerLabel: "",
+                cornerLikeGroupHeader: false,
+                showColumnHeaders: true,
+                showGroupHeaders: false,
 
-          {
-            type: "row",
-            cols: 2,
-            fields: [
-              { name: "others_r", label: "Others - Right Side", type: "input" },
-              { name: "others_l", label: "Others - Left Side", type: "input" }
+                groups: [
+                  {
+                    label: null,
+                    columns: [
+                      { key: "Right Side" },
+                      { key: "Left Side" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "dixhallpike",
+                    label: "Dix Hallpike",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "epley",
+                    label: "Epley Maneuver",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "rolltest",
+                    label: "Roll Test",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "barbecue",
+                    label: "Barbecue Roll Test",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "supine",
+                    label: "Supine Straight Head Extension",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "semont",
+                    label: "Semont",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "gufoni",
+                    label: "Gufoni",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "appiani",
+                    label: "Appiani",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "others",
+                    label: "Others",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -869,56 +1576,83 @@ const buildBinaryOptionsgaze = (prefix, title) => ({
       // =========================
       // DVA + GAZE STABILIZATION
       // =========================
-      buildBinaryOptions("dva", "Dynamic Visual Acuity (DVA)"),
-      buildBinaryOptionsgaze("gaze_stab", "Gaze Stabilization"),
+      {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "dva_section",
+            label: "Dynamic Visual Acuity (DVA)",
+            defaultOpen: false,
+
+            children: [
+              ...buildBinaryOptions("dva", "")
+            ]
+          },
+
+          {
+            type: "accordion",
+            name: "gaze_section",
+            label: "Gaze Stabilization",
+            defaultOpen: false,
+
+            children: [
+              ...buildBinaryOptionsgaze("gaze_stab", "")
+            ]
+          }
+        ]
+      },
 
       // =========================
       // vHIT
       // =========================
       {
-        title: "Video Head Impulse Test (vHIT)",
-        fields: [
-          // {
-          //   name: "vhit_pdf",
-          //   label: "Require PDF attachment",
-          //   type: "file-upload-modal"
-          // },
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "vhit_section",
+          label: "Video Head Impulse Test (vHIT)",
+          defaultOpen: false,
 
-          ...["anterior", "lateral", "posterior"].flatMap((canal) =>
-            ["R", "L"].map((side) => ({
-              type: "row",
-              cols: 5,
-              fields: [
+          children: [
+            {
+              type: "refraction-12col",
+              name: "vhit_matrix",
+
+              cornerLabel: "Canal",
+              cornerLikeGroupHeader: true,
+              showColumnHeaders: true,
+              showGroupHeaders: false,
+
+              groups: [
                 {
-                  name: `vhit_${canal}_${side}_n`,
-                  label: `${formatLabel(canal)} ${side} n`,
-                  type: "input"
-                },
-                {
-                  name: `vhit_${canal}_${side}_gain`,
-                  label: `${formatLabel(canal)} ${side} Mean Gain`,
-                  type: "input"
-                },
-                {
-                  name: `vhit_${canal}_${side}_sd`,
-                  label: `${formatLabel(canal)} ${side} Standard Deviation`,
-                  type: "input"
-                },
-                {
-                  name: `vhit_${canal}_${side}_asym`,
-                  label: `${formatLabel(canal)} ${side} Asymetry (%)`,
-                  type: "input"
-                },
-                {
-                  name: `vhit_${canal}_${side}_impression`,
-                  label: `${formatLabel(canal)} ${side} Impression`,
-                  type: "input"
+                  label: null,
+                  columns: [
+                    { key: "n" },
+                    { key: "Mean Gain" },
+                    { key: "Standard Deviation" },
+                    { key: "Asymmetry (%)" },
+                    { key: "Impression" }
+                  ]
                 }
+              ],
+
+              rows: [
+                { value: "anterior_r", label: "Anterior Right", columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] },
+                { value: "anterior_l", label: "Anterior Left",  columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] },
+
+                { value: "lateral_r", label: "Lateral Right",   columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] },
+                { value: "lateral_l", label: "Lateral Left",    columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] },
+
+                { value: "posterior_r", label: "Posterior Right", columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] },
+                { value: "posterior_l", label: "Posterior Left",  columns: [{type:"input"},{type:"input"},{type:"input"},{type:"input"},{type:"input"}] }
               ]
-            }))
-          )
-        ]
-      },
+            }
+          ]
+        }
+      ]
+    },
 
       // =========================
       // POSTUROGRAPHY
@@ -940,252 +1674,455 @@ const buildBinaryOptionsgaze = (prefix, title) => ({
       },
 
       // =========================
-      // FGA
+      // FGA (Refactored to Accordion/Matrix)
       // =========================
       {
-        title: "Functional Gait Assessment",
+        title: null,
         fields: [
-          "Gait Level Surface",
-          "Change in Gait Speed",
-          "Gait with Horizontal Head Turns",
-          "Gait with Vertical Head Turns",
-          "Gait and Pivot Turn",
-          "Step Over Obstacle",
-          "Gait with Narrow Base of Support",
-          "Gait with Eyes Closed",
-          "Ambulating Backward",
-          "Steps"
+          {
+            type: "accordion",
+            name: "fga_section",
+            label: "Functional Gait Assessment",
+            defaultOpen: false,
+            children: [
+              {
+                type: "refraction-12col",
+                name: "fga_matrix",
+                cornerLabel: "Test Condition",
+                cornerLikeGroupHeader: true,
+                showColumnHeaders: true,
+                showGroupHeaders: false,
+                groups: [
+                  {
+                    label: null,
+                    columns: [
+                      { key: "Grading" }
+                    ]
+                  }
+                ],
+                rows: [
+                  {
+                    value: "gait_level_surface",
+                    label: "Gait Level Surface",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_level_surface",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "change_in_gait_speed",
+                    label: "Change in Gait Speed",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_change_in_gait_speed",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "gait_with_horizontal_head_turns",
+                    label: "Gait with Horizontal Head Turns",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_with_horizontal_head_turns",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "gait_with_vertical_head_turns",
+                    label: "Gait with Vertical Head Turns",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_with_vertical_head_turns",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "gait_and_pivot_turn",
+                    label: "Gait and Pivot Turn",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_and_pivot_turn",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "step_over_obstacle",
+                    label: "Step Over Obstacle",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_step_over_obstacle",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "gait_with_narrow_base_of_support",
+                    label: "Gait with Narrow Base of Support",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_with_narrow_base_of_support",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "gait_with_eyes_closed",
+                    label: "Gait with Eyes Closed",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_gait_with_eyes_closed",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "ambulating_backward",
+                    label: "Ambulating Backward",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_ambulating_backward",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    value: "steps",
+                    label: "Steps",
+                    columns: [
+                      { 
+                        type: "select", 
+                        name: "fga_steps",
+                        options: [
+                          { label: "Normal (3)", value: 3 },
+                          { label: "Mild impairment (2)", value: 2 },
+                          { label: "Moderate impairment (1)", value: 1 },
+                          { label: "Severe impairment (0)", value: 0 },
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                name: "fga_total_display",
+                label: `**Total Score (${fgaScore}/30)**`,
+                type: "display",
+                style: { marginTop: "1rem", fontWeight: "bold", fontSize: "1.1em" }
+              }
+            ]
+          }
         ]
-          .map((k) => ({
-            name: `fga_${k}`,
-            label: formatLabel(k),
-            type: "radio",
-            options: [
-              { label: "Normal", value: 3 },
-              { label: "Mild impairment", value: 2 },
-              { label: "Moderate impairment", value: 1 },
-              { label: "Severe impairment", value: 0 },
-            ],
-          }))
-          .concat([
-            {
-              name: "fga_total",
-             label: `**Total Score (${fgaScore}/30)**`,
-              type: "display",
-            },
-          ]),
       },
 
       // =========================
       // cVEMP
       // =========================
+       {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "cvemp_section",
+            label: "cVEMP",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "cvemp_matrix",
+
+                cornerLabel: "Side",
+                cornerLikeGroupHeader: true,
+
+                showColumnHeaders: true,
+                showGroupHeaders: false,
+
+                groups: [
+                  {
+                    label: null,
+                    columns: [
+                      { key: "N" },
+                      { key: "P1" },
+                      { key: "N1" },
+                      { key: "P1-N1 (%)" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "right",
+                    label: "Right Ear",
+                    columns: [
+                      { type: "input", name: "cvemp_right_n" },
+                      { type: "input", name: "cvemp_right_p1" },
+                      { type: "input", name: "cvemp_right_n1" },
+                      { type: "input", name: "cvemp_right_asym" },
+                      { type: "input", name: "cvemp_right_impression" }
+                    ]
+                  },
+                  {
+                    value: "left",
+                    label: "Left Ear",
+                    columns: [
+                      { type: "input", name: "cvemp_left_n" },
+                      { type: "input", name: "cvemp_left_p1" },
+                      { type: "input", name: "cvemp_left_n1" },
+                      { type: "input", name: "cvemp_left_asym" },
+                      { type: "input", name: "cvemp_left_impression" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+       {
+        title: null,
+        fields: [
+          {
+            type: "accordion",
+            name: "ovemp_section",
+            label: "oVEMP",
+            defaultOpen: false,
+
+            children: [
+              {
+                type: "refraction-12col",
+                name: "ovemp_matrix",
+
+                cornerLabel: "Side",
+                cornerLikeGroupHeader: true,
+
+                showColumnHeaders: true,
+                showGroupHeaders: false,
+
+                groups: [
+                  {
+                    label: null,
+                    columns: [
+                      { key: "N" },
+                      { key: "N1" },
+                      { key: "P1" },
+                      { key: "N1-P1 (%)" },
+                      { key: "Impression" }
+                    ]
+                  }
+                ],
+
+                rows: [
+                  {
+                    value: "right",
+                    label: "Right Ear",
+                    columns: [
+                      { type: "input", name: "ovemp_right_n" },
+                      { type: "input", name: "ovemp_right_n1" },
+                      { type: "input", name: "ovemp_right_p1" },
+                      { type: "input", name: "ovemp_right_asym" },
+                      { type: "input", name: "ovemp_right_impression" }
+                    ]
+                  },
+                  {
+                    value: "left",
+                    label: "Left Ear",
+                    columns: [
+                      { type: "input", name: "ovemp_left_n" },
+                      { type: "input", name: "ovemp_left_n1" },
+                      { type: "input", name: "ovemp_left_p1" },
+                      { type: "input", name: "ovemp_left_asym" },
+                      { type: "input", name: "ovemp_left_impression" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+       
+    {
+      title: null,
+      fields: [
         {
-          title: "cVEMP",
-          fields: [
-            // {
-            //   name: "cvemp_pdf",
-            //   label: "Require PDF attachment",
-            //   type: "file-upload-modal"
-            // },
+          type: "subheading",
+          label: "Special Test"
+        },
+        {
+          name: "special_test",
+          label: "Details",
+          type: "input"
+        },
 
-            {
-              type: "row",
-              cols: 5,
-              fields: [
-                { name: "cvemp_right_n", label: "Right Ear N", type: "input" },
-                { name: "cvemp_right_p1", label: "Right Ear P1", type: "input" },
-                { name: "cvemp_right_n1", label: "Right Ear N1", type: "input" },
-                { name: "cvemp_right_asym", label: "Right Ear P1-N1 %", type: "input" },
-                { name: "cvemp_right_impression", label: "Right Ear Impression", type: "input" }
-              ]
-            },
+        {
+          type: "accordion",
+          name: "intervention_section",
+          label: "Interventions",
+          defaultOpen: false,
 
+          children: [
             {
-              type: "row",
-              cols: 5,
-              fields: [
-                { name: "cvemp_left_n", label: "Left Ear N", type: "input" },
-                { name: "cvemp_left_p1", label: "Left Ear P1", type: "input" },
-                { name: "cvemp_left_n1", label: "Left Ear N1", type: "input" },
-                { name: "cvemp_left_asym", label: "Left Ear P1-N1 %", type: "input" },
-                { name: "cvemp_left_impression", label: "Left Ear Impression", type: "input" }
+              type: "refraction-12col",
+              name: "intervention_matrix",
+
+              cornerLabel: "Intervention",
+              cornerLikeGroupHeader: true,
+              showColumnHeaders: true,
+
+              groups: [
+                {
+                  label: null,
+                  columns: [
+                    { key: "Yes / No" },
+                    { key: "Remarks" }
+                  ]
+                }
+              ],
+
+              rows: [
+                {
+                  value: "vre",
+                  label: "Vestibular Rehabilitation Exercises",
+                  columns: [
+                    {
+                      type: "select",
+                      name: "vre_option",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input", name: "vre_notes" }
+                  ]
+                },
+                {
+                  value: "crm",
+                  label: "Canalith Repositioning Maneuver",
+                  columns: [
+                    {
+                      type: "select",
+                      name: "crm_option",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input", name: "crm_notes" }
+                  ]
+                },
+                {
+                  value: "gst",
+                  label: "Gaze Stability Training",
+                  columns: [
+                    {
+                      type: "select",
+                      name: "gst_option",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input", name: "gst_notes" }
+                  ]
+                },
+                {
+                  value: "fall",
+                  label: "Fall Prevention Education",
+                  columns: [
+                    {
+                      type: "select",
+                      name: "fall_option",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input", name: "fall_notes" }
+                  ]
+                },
+                {
+                  value: "psycho",
+                  label: "Psychosocial Counseling",
+                  columns: [
+                    {
+                      type: "select",
+                      name: "psycho_option",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input", name: "psycho_notes" }
+                  ]
+                }
               ]
             }
           ]
-        },
-
-        {
-          title: "oVEMP",
-          fields: [
-            // {
-            //   name: "ovemp_pdf",
-            //   label: "Attached PDF",
-            //   type: "file-upload-modal"
-            // },
-
-            {
-              type: "row",
-              cols: 5,
-              fields: [
-                { name: "ovemp_right_n", label: "Right Ear N", type: "input" },
-                { name: "ovemp_right_n1", label: "Right Ear N1", type: "input" },
-                { name: "ovemp_right_p1", label: "Right Ear P1", type: "input" },
-                { name: "ovemp_right_asym", label: "Right Ear N1-P1 %", type: "input" },
-                { name: "ovemp_right_impression", label: "Right Ear Impression", type: "input" }
-              ]
-            },
-
-            {
-              type: "row",
-              cols: 5,
-              fields: [
-                { name: "ovemp_left_n", label: "Left Ear N", type: "input" },
-                { name: "ovemp_left_n1", label: "Left Ear N1", type: "input" },
-                { name: "ovemp_left_p1", label: "Left Ear P1", type: "input" },
-                { name: "ovemp_left_asym", label: "Left Ear N1-P1 %", type: "input" },
-                { name: "ovemp_left_impression", label: "Left Ear Impression", type: "input" }
-              ]
-            }
-          ]
-        },
-        {
-  fields: [
-    {
-      type: "subheading",
-      label: "Special Test"
-    },
-    {
-      name: "special_test",
-      label: "Details",
-      type: "input"
-    },
-
-    {
-      type: "subheading",
-      label: "Intervention: Vestibular Rehabilitation Exercises"
-    },
-    {
-      type: "row",
-      cols: 2,
-      fields: [
-        {
-          name: "vre_option",
-          label: "Required ?",
-          type: "radio",
-          options: [
-            { label: "No", value: 0 },
-            { label: "Yes", value: 1 }
-          ]
-        },
-        {
-          name: "vre_notes",
-          label: "Remarks",
-          type: "input"
-        }
-      ]
-    },
-
-    {
-      type: "subheading",
-      label: "Intervention: Canalith Repositioning Maneuver"
-    },
-    {
-      type: "row",
-      cols: 2,
-      fields: [
-        {
-          name: "crm_option",
-          label: "Required ?",
-          type: "radio",
-          options: [
-            { label: "No", value: 0 },
-            { label: "Yes", value: 1 }
-          ]
-        },
-        {
-          name: "crm_notes",
-          label: "Remarks",
-          type: "input"
-        }
-      ]
-    },
-
-    {
-      type: "subheading",
-      label: "Intervention: Gaze Stability Training"
-    },
-    {
-      type: "row",
-      cols: 2,
-      fields: [
-        {
-          name: "gst_option",
-          label: "Required ?",
-          type: "radio",
-          options: [
-            { label: "No", value: 0 },
-            { label: "Yes", value: 1 }
-          ]
-        },
-        {
-          name: "gst_notes",
-          label: "Remarks",
-          type: "input"
-        }
-      ]
-    },
-
-    {
-      type: "subheading",
-      label: "Intervention: Fall Prevention Education"
-    },
-    {
-      type: "row",
-      cols: 2,
-      fields: [
-        {
-          name: "fall_option",
-          label: "Required ?",
-          type: "radio",
-          options: [
-            { label: "No", value: 0 },
-            { label: "Yes", value: 1 }
-          ]
-        },
-        {
-          name: "fall_notes",
-          label: "Remarks",
-          type: "input"
-        }
-      ]
-    },
-
-    {
-      type: "subheading",
-      label: "Psychosocial Counseling"
-    },
-    {
-      type: "row",
-      cols: 2,
-      fields: [
-        {
-          name: "psycho_option",
-          label: "Required ?",
-          type: "radio",
-          options: [
-            { label: "No", value: 0 },
-            { label: "Yes", value: 1 }
-          ]
-        },
-        {
-          name: "psycho_notes",
-          label: "Remarks",
-          type: "input"
         }
       ]
     }
-  ]
-}
     ],
   };
 
