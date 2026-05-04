@@ -11,6 +11,7 @@ import { MdVisibility } from "react-icons/md";
 /* ── Department → Assessment component map ─────────────── */
 import NursingPatientDetails    from "../Nursing/components/PatientDetails";
 import PTPatientDetails         from "../PT/components/PatientDetails";
+import IntegratedRehabProgramTabs from "../PT/components/IntegratedRehabProgramTabs";
 import OTPatientDetails         from "../OT/components/PatientDetails";
 import AudiologyAdultIA         from "../Audiology/components/AudiologyAdultIA";import DietAssessment           from "../Dietetics/pages/DietPatientspage";
 import PsychologyAssessment     from "../Psychology/components/PsychologyAssessment";
@@ -24,7 +25,7 @@ import { DoctorsInitialAssessmentForm as DoctorsAssessment } from "../Doctors/co
 const ASSESSMENT_MAP = {
   "Nursing":                  NursingPatientDetails,
   "Physiotherapy":            PTPatientDetails,
-  "Integrated Rehab":         PTPatientDetails,
+  "Integrated Rehab":         IntegratedRehabProgramTabs,
   "Occupational Therapy":     OTPatientDetails,
   "Audiology":                AudiologyAdultIA,
   "Dietetics":                DietAssessment,

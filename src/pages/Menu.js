@@ -30,6 +30,7 @@ import ICHITab from "../components/ICHITab";
 import TopToolbar from "../components/TopToolbar";
 import ICDInfinite from "../components/ICDInfinite";
 import RAPFinal from "../components/RAPFinal"
+import RAPCaseDashboardView from "../components/RAPCaseDashboardView";
 import ICDAD from "../components/ICDAssignDoctor";
 import "chart.js/auto";
 import DoctorsDepartmentPage from "../features/Doctors/pages/DoctorsPatientspage";
@@ -89,6 +90,8 @@ export default function App() {
     "Work & Vocational Rehab": "vocational",
     "Doctor":                  "doctor",
     "Medical Assistant":       "medical-assistant",
+    "RAPFINAL":                "rap-case",
+    "RAP":                     "rap",
   };
 
   /* Wraps setTab — also updates the URL when switching to a department */
@@ -150,6 +153,8 @@ export default function App() {
     "vocational":           "Work & Vocational Rehab",
     "doctor":               "Doctor",
     "medical-assistant":    "Medical Assistant",
+    "rap-case":             "RAPFINAL",
+    "rap":                  "RAP",
   };
   useEffect(() => {
     if (mode && SLUG_TO_TAB[mode]) {
@@ -570,9 +575,9 @@ useEffect(() => {
             <NewAssessmentTab />
           </section>
           <section
-            style={{ display: tab === "RAPFINAL" ? "block" : "none" }}
+            style={{ display: tab === "RAPFINAL" || mode === "rap-case" ? "block" : "none" }}
           >
-            <RAPFinal />
+            <RAPCaseDashboardView />
           </section>
           {/* SUMMARY */}
           <section style={{ display: tab === "SUMMARY" ? "block" : "none" }}>
@@ -752,6 +757,9 @@ export function MainContent({
 
     case "Physiotherapy":
       return <GenericDepartmentDashboard departmentName="Physiotherapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
+    case "Integrated Rehab":
+      return <GenericDepartmentDashboard departmentName="Integrated Rehab Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Occupational Therapy":
       return <GenericDepartmentDashboard departmentName="Occupational Therapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
