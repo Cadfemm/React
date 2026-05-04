@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, createContext, useContext } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import BarthelIndexForm from "./BarthelIndexForm";
@@ -26,6 +27,8 @@ import SeizureChart from "./SeizureChart";
 import NursingSwallowScreener from "./NursingSwallowScreener";
 import WaterSwallowTest from "./WaterSwallowTest";
 import RepositioningSkinChart from "./RepositioningSkinChart";
+import PatientCard from "../../../shared/cards/PatientCard";
+
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -359,11 +362,31 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+    const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: "",
+    past_family_history: "",
+    alerts_and_allergies: ""
+  });
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
     ? `nursing_assessment_draft_${patient.id}`
     : null;
+   useEffect(() => {
+    if (!storageKey) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) setValues(JSON.parse(saved).values || {});
+  }, [storageKey]);
+
+
+ useEffect(() => {
+        if (!patient) return;
+        setPatientHistory({
+          past_medical_history: patient.medical_history || "",
+          past_family_history: patient.family_medical_history || "",
+          alerts_and_allergies: patient.alerts_and_allergies_history || ""
+        });
+      }, [patient]);
 
   useEffect(() => {
     if (!storageKey) return;
@@ -459,6 +482,99 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
     onSubmit?.(values);
     alert("Nursing assessment submitted");
   };
+function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   /* ===================== SCHEMAS ===================== */
 
@@ -2083,38 +2199,38 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   };
 
   const NURSING_PATIENT_INFO_SCHEMA = {
-    title: "Patient Information",
+    // title: "Patient Information",
     sections: [
       {
         fields: [
-          { type: "row", fields: [
-            { name: "patient_name", label: "Name", type: "input", readOnly: true },
-            { name: "patient_ic", label: "IC", type: "input", readOnly: true },
-            { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
-            { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
-          ]},
-          { type: "subheading", label: "Diagnosis" },
-          { type: "row", fields: [
-            { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
-            { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
-          ]},
-          { type: "subheading", label: "Allergies" },
-          { name: "allergy_drug", label: "Drug", type: "input" },
-          { name: "allergy_food", label: "Food", type: "input" },
-          { name: "allergy_environmental", label: "Environmental", type: "input" },
-          { type: "subheading", label: "General Information" },
-          { type: "row", fields: [
-            { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
-            { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
-          ]},
-          { type: "row", fields: [
-            { name: "occupation", label: "Occupation", type: "input", readOnly: true },
-            { name: "education_background", label: "Education Background", type: "input", readOnly: true }
-          ]},
-          { type: "row", fields: [
-            { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
-            { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
-          ]},
+          // { type: "row", fields: [
+          //   { name: "patient_name", label: "Name", type: "input", readOnly: true },
+          //   { name: "patient_ic", label: "IC", type: "input", readOnly: true },
+          //   { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
+          //   { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
+          // ]},
+          // { type: "subheading", label: "Diagnosis" },
+          // { type: "row", fields: [
+          //   { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
+          //   { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
+          // ]},
+          // { type: "subheading", label: "Allergies" },
+          // { name: "allergy_drug", label: "Drug", type: "input" },
+          // { name: "allergy_food", label: "Food", type: "input" },
+          // { name: "allergy_environmental", label: "Environmental", type: "input" },
+          // { type: "subheading", label: "General Information" },
+          // { type: "row", fields: [
+          //   { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
+          //   { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
+          // ]},
+          // { type: "row", fields: [
+          //   { name: "occupation", label: "Occupation", type: "input", readOnly: true },
+          //   { name: "education_background", label: "Education Background", type: "input", readOnly: true }
+          // ]},
+          // { type: "row", fields: [
+          //   { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
+          //   { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
+          // ]},
           { type: "subheading", label: "Biological Status" },
           { name: "biological_status", type: "checkbox-group", options: [
             { label: "Comorbidities & Medical history", value: "comorbidities" },
@@ -2181,6 +2297,22 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   return (
     <PatientContext.Provider value={patient}>
       <div style={mainContent}>
+        <CommonFormBuilder
+          schema={{ title: "Patient Information", sections: [] }}
+          values={{}}
+          onChange={() => {}}
+        >
+          <PatientInformationBlock
+            patient={patient}
+            patientHistory={patientHistory}
+            setPatientHistory={setPatientHistory}
+          />
+        
+          <button style={doctorsReportBtn}>
+            Doctors Reports
+          </button>
+        </CommonFormBuilder>
+
         {/* ===== PATIENT INFORMATION CARD ===== */}
         <CommonFormBuilder
           schema={NURSING_PATIENT_INFO_SCHEMA}
@@ -2290,4 +2422,27 @@ const doctorsReportBtn = {
   fontWeight: 600,
   cursor: "pointer",
   marginTop: 8
+};
+
+
+const textarea = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
 };

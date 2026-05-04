@@ -1,33 +1,105 @@
 import React, { useEffect, useState, createContext } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+import PatientCard from "../../../shared/cards/PatientCard";
 
-const PatientContext = createContext(null);
+
 
 /* ---------------- PATIENT CARD ---------------- */
-function PatientCard({ patient }) {
+function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
   if (!patient) return null;
 
-  return (
-    <div style={section}>
-      <div style={patientGrid}>
-               
-        <div><b>Name:</b> {patient.name}</div>
-        <div><b>IC:</b> {patient.id}</div>
-        <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
-        <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-        <div><b>ICD:</b> {patient.icd}</div>
-        <div><b>Accommodation:</b> {patient.accommodation || "-"}</div>
-        <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-        <div><b>Case Manager:</b> {patient.case_manager || patient.cm || "-"}</div>
-        <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-        <div><b>Date of Encounter/Visit:</b></div>
-        <div><b>Visit Type:</b></div>
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
 
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
       </div>
     </div>
   );
 }
+
 /* ---------------- MAIN COMPONENT ---------------- */
 
 const YES_NO = [
@@ -45,6 +117,12 @@ export default function PsychologyFollowUpAssessment({
   
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+  const PatientContext = createContext(null);
+  const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: "",
+    past_family_history: "",
+    alerts_and_allergies: ""
+  });
  
   
  
@@ -1420,12 +1498,27 @@ return (
 
       {/* PATIENT INFO */}
       <CommonFormBuilder
+                schema={{ title: "Patient Information", sections: [] }}
+                values={{}}
+                onChange={() => {}}
+              >
+                <PatientInformationBlock
+                  patient={patient}
+                  patientHistory={patientHistory}
+                  setPatientHistory={setPatientHistory}
+                />
+              
+                <button style={doctorsReportBtn}>
+                  Doctors Reports
+                </button>
+              </CommonFormBuilder>
+      {/* <CommonFormBuilder
         schema={{ sections: [] }}
         values={{}}
         onChange={() => {}}
       >
         <PatientCard patient={patient} />
-      </CommonFormBuilder>
+      </CommonFormBuilder> */}
 {/* ✅ SESSION DETAILS ABOVE TABS */}
         <CommonFormBuilder
           schema={SESSION_SCHEMA}
@@ -1527,4 +1620,31 @@ const patientGrid = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
   gap: 12
+};
+const textarea = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
+};
+
+const doctorsReportBtn = {
+  padding: "10px 20px", background: "#2563EB", color: "#fff",
+  border: "none", borderRadius: 6, fontSize: 14,
+  fontWeight: 600, cursor: "pointer", marginTop: 8
 };
