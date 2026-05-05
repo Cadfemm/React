@@ -7,6 +7,7 @@ import { HyperacusisAdvancedForm, HyperacusisAdvancedFormObj } from "../hyperacu
 import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassessment";
 import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
 import { Hearingaidtrial } from "../hearingaidtrial";
+import { IndustrialAudiometry } from "../industrialaudiometry";
 /* ===================== OPTIONS ===================== */
 
 const INTACT_IMPAIRED = [
@@ -698,6 +699,7 @@ export default function AudiologyDepartmentAdultPage({ patient, mode, onSubmit, 
     hearing_form_obj: AuditoryAdvancedAdapterObj,
     vestibular_form_obj: VestibularAdvancedAdapterObj,
     hearingaidtrial_form_obj: HearingAidTrialAdapter,
+    industrial_form_obj:IndusTrialAdapter,
   };
 function TinnitusAdvancedAdapter({ onChange }) {
   return (
@@ -778,6 +780,16 @@ function HearingAidTrialAdapter({ onChange }) {
     />
   );
 }
+
+function IndusTrialAdapter({ onChange }) {
+  return (
+    <IndustrialAudiometry
+    mode={mode}
+      onBack={() => onChange("industrial_launcher_obj", null)}
+    />
+  );
+}
+
   /* ===================== SCHEMAS ===================== */
 
 const SUBJECTIVE_SCHEMA = {
@@ -1218,6 +1230,7 @@ const OBJECTIVE_SCHEMA = {
             { label: "Tinnitus", value: "tinnitus_form_obj" },
             { label: "Hyperacusis", value: "loudness_form_obj" },
             { label: "Vestibular", value: "vestibular_form_obj" },
+            { label: "Industrial Audiometry", value: "industrial_form_obj" },
           ]
         }
       ]
@@ -1317,7 +1330,7 @@ const OBJECTIVE_SCHEMA = {
               label: "Upload Audiometry File",
               type: "file-upload-modal",
             },
-            { type: "audiogram-graph", name: "audiogram_graph" },
+            // { type: "audiogram-graph", name: "audiogram_graph" },
             {
               type: "row",
               fields: [
@@ -1341,7 +1354,9 @@ const OBJECTIVE_SCHEMA = {
                 { label: "Screening", value: "screening" },
                 { label: "Diagnostic Pure Tone", value: "pta" },
                 { label: "Play", value: "play" },
-                { label: "Visual Reinforcement (VR)", value: "vra" }
+                { label: "Visual Reinforcement (VR)", value: "vra" },
+                { label: "Free field Audiometry", value: "free_field"},
+                { label: "Aided Response", value: "aided"}
               ]
             },
             {
