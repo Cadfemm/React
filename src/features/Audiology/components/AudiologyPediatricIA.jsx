@@ -680,65 +680,6 @@ const SUBJECTIVE_SCHEMA = {
         }
       ]
     },
-
-    /* ===================== D. AUDIOMETRY ===================== */
-    {
-      title: "Audiometry",
-      fields: [
-          {
-      name: "audifile",
-      label: "Upload Audiometry File",
-      type: "file-upload-modal",
-    },
-        { type: "audiogram-graph", name: "audiogram_graph"},    
-        {
-          type: "row",
-          fields: [
-            {
-              name: "impression_r",
-              label: "Impression – Right Ear",
-              type: "textarea"
-            },
-            {
-              name: "impression_l",
-              label: "Impression – Left Ear",
-              type: "textarea"
-            }
-          ]
-        },
-        {
-          name: "audiometry_type",
-          label: "Type of Audiometry",
-          type: "radio",
-          options: [
-            { label: "Screening", value: "screening" },
-            { label: "Diagnostic Pure Tone", value: "pta" },
-            { label: "Play", value: "play" },
-            { label: "Visual Reinforcement (VR)", value: "vra" }
-          ]
-        },
-
-        {
-          name: "masking",
-          label: "Masking",
-          type: "radio",
-          options: [
-            { label: "Unmasked", value: "unmasked" },
-            { label: "Masking", value: "masked" }
-          ]
-        },
-        {
-          name: "reliability",
-          label: "Reliability",
-          type: "radio",
-          options: [
-            { label: "Good", value: "Good" },
-            { label: "Fair", value: "Fair" },
-            { label: "Poor", value: "Poor" }
-          ]
-        }
-      ]
-    }
   ]
 };
 
@@ -795,161 +736,233 @@ const OBJECTIVE_SCHEMA = {
         }
       ]
     },
-    /* ===================== OTOSCOPIC EXAMINATION ===================== */
-    {
-      title: "Otoscopic Examination",
+ {
+      title: "",
       fields: [
+
+        /* ===================== OTOSCOPY ===================== */
         {
-          type: "row",
-          columns: 2,
-          fields: [
+          type: "accordion",
+          name: "otoscopy_section",
+          label: "Otoscopic Examination",
+          defaultOpen: false,
+          children: [
             {
-              type: "attach-file",
-              name: "otoscopic_examination_right",
-              accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "otoscopic_examination_right",
+                  accept: "application/pdf,image/*",
+                  title: "Otoscopic Examination - Right",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                },
+                {
+                  type: "attach-file",
+                  name: "otoscopic_examination_left",
+                  accept: "application/pdf,image/*",
+                  title: "Otoscopic Examination - Left",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                }
+              ]
             },
             {
-              type: "attach-file",
-              name: "otoscopic_examination_left",
-              accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              type: "paired-select",
+              right: { name: "external_canal_r", title: "External Ear Canal – Right" },
+              left: { name: "external_canal_l", title: "External Ear Canal – Left" },
+              options: [
+                { label: "Clear", value: "clear" },
+                { label: "Inflamed", value: "inflamed" },
+                { label: "Minimal cerumen", value: "minimal_cerumen" },
+                { label: "Impacted cerumen", value: "impacted_cerumen" },
+                { label: "Discharge present", value: "discharge" },
+                { label: "Swelling", value: "swelling" }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
+              left: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
+              options: [
+                { label: "Intact", value: "intact" },
+                { label: "Perforated", value: "perforated" },
+                { label: "Dull", value: "dull" },
+                { label: "Retracted", value: "retracted" },
+                { label: "Bulging", value: "bulging" },
+                { label: "Opaque", value: "opaque" }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tm_colour_r", title: "TM Colour – Right" },
+              left: { name: "tm_colour_l", title: "TM Colour – Left" },
+              options: [
+                { label: "Pearly grey", value: "pearly_grey" },
+                { label: "Reddened", value: "red" },
+                { label: "Yellowish", value: "yellow" },
+                { label: "Bluish", value: "blue" },
+                { label: "White patches", value: "white_patches" }
+              ]
+            },
+            {
+              type: "paired-text",
+              pairs: [
+                { name: "otoscopy_other_r", title: "Other Findings – Right" },
+                { name: "otoscopy_other_l", title: "Other Findings – Left" }
+              ]
             }
           ]
         },
-        {
-          type: "paired-select",
-          right: { name: "external_canal_r", title: "External Ear Canal – Right" },
-          left: { name: "external_canal_l", title: "External Ear Canal – Left" },
-          options: [
-            { label: "Clear", value: "clear" },
-            { label: "Inflamed", value: "inflamed" },
-            { label: "Minimal cerumen", value: "minimal_cerumen" },
-            { label: "Impacted cerumen", value: "impacted_cerumen" },
-            { label: "Discharge present", value: "discharge" },
-            { label: "Swelling", value: "swelling" }
-          ]
-        },
 
+        /* ===================== AUDIOMETRY ===================== */
         {
-          type: "paired-select",
-          right: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
-          left: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
-          options: [
-            { label: "Intact", value: "intact" },
-            { label: "Perforated", value: "perforated" },
-            { label: "Dull", value: "dull" },
-            { label: "Retracted", value: "retracted" },
-            { label: "Bulging", value: "bulging" },
-            { label: "Opaque", value: "opaque" }
-          ]
-        },
-
-        {
-          type: "paired-select",
-          right: { name: "tm_colour_r", title: "TM Colour – Right" },
-          left: { name: "tm_colour_l", title: "TM Colour – Left" },
-          options: [
-            { label: "Pearly grey", value: "pearly_grey" },
-            { label: "Reddened", value: "red" },
-            { label: "Yellowish", value: "yellow" },
-            { label: "Bluish", value: "blue" },
-            { label: "White patches", value: "white_patches" }
-          ]
-        },
-
-        {
-          type: "paired-text",
-          pairs: [
-            { name: "otoscopy_other_r", title: "Other Findings – Right" },
-            { name: "otoscopy_other_l", title: "Other Findings – Left" }
-          ]
-        }
-      ]
-    },
-
-    /* ===================== TYMPANOMETRY ===================== */
-    {
-      title: "Tympanometry",
-      fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
+          type: "accordion",
+          name: "audiometry_section",
+          label: "Audiometry",
+          defaultOpen: false,
+          children: [
             {
-              type: "attach-file",
-              name: "tympanometry_report_right",
-              accept: "application/pdf,image/*",
-              title: "Tympanometry - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              name: "audifile",
+              label: "Upload Audiometry File",
+              type: "file-upload-modal",
+            },
+            // { type: "audiogram-graph", name: "audiogram_graph" },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "impression_r",
+                  label: "Impression – Right Ear",
+                  type: "textarea"
+                },
+                {
+                  name: "impression_l",
+                  label: "Impression – Left Ear",
+                  type: "textarea"
+                }
+              ]
             },
             {
-              type: "attach-file",
-              name: "tympanometry_report_left",
-              accept: "application/pdf,image/*",
-              title: "Tympanometry - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
+              name: "audiometry_type",
+              label: "Type of Audiometry",
+              type: "radio",
+              options: [
+                { label: "Screening", value: "screening" },
+                { label: "Diagnostic Pure Tone", value: "pta" },
+                { label: "Play", value: "play" },
+                { label: "Visual Reinforcement (VR)", value: "vra" },
+                { label: "Free field Audiometry", value: "free_field"},
+                { label: "Aided Response", value: "aided"}
+              ]
+            },
+            {
+              name: "masking",
+              label: "Masking",
+              type: "radio",
+              options: [
+                { label: "Unmasked", value: "unmasked" },
+                { label: "Masking", value: "masked" }
+              ]
+            },
+            {
+              name: "reliability",
+              label: "Reliability",
+              type: "radio",
+              options: [
+                { label: "Good", value: "Good" },
+                { label: "Fair", value: "Fair" },
+                { label: "Poor", value: "Poor" }
+              ]
             }
           ]
         },
+
+        /* ===================== TYMPANOMETRY ===================== */
         {
-          type: "paired-select",
-          right: { name: "tymp_type_r", title: "Right Ear" },
-          left: { name: "tymp_type_l", title: "Left Ear" },
-          options: [
-            { label: "Type A", value: "A" },
-            { label: "Type As", value: "As" },
-            { label: "Type Ad", value: "Ad" },
-            { label: "Type B (Normal ECV)", value: "B_normal" },
-            { label: "Type B (Small ECV)", value: "B_small" },
-            { label: "Type B (Large ECV)", value: "B_large" },
-            { label: "Type C", value: "C" }
+          type: "accordion",
+          name: "tympanometry_section",
+          label: "Tympanometry",
+          defaultOpen: false,
+          children: [
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "tympanometry_report_right",
+                  accept: "application/pdf,image/*",
+                  title: "Tympanometry - Right",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                },
+                {
+                  type: "attach-file",
+                  name: "tympanometry_report_left",
+                  accept: "application/pdf,image/*",
+                  title: "Tympanometry - Left",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tymp_type_r", title: "Right Ear" },
+              left: { name: "tymp_type_l", title: "Left Ear" },
+              options: [
+                { label: "Type A", value: "A" },
+                { label: "Type As", value: "As" },
+                { label: "Type Ad", value: "Ad" },
+                { label: "Type B (Normal ECV)", value: "B_normal" },
+                { label: "Type B (Small ECV)", value: "B_small" },
+                { label: "Type B (Large ECV)", value: "B_large" },
+                { label: "Type C", value: "C" }
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "peak_pressure",
+              pairs: [
+                { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
+                { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "static_compliance",
+              pairs: [
+                { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
+                { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "ecv",
+              pairs: [
+                { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
+                { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }
+              ]
+            }
           ]
         },
 
-        {
-          type: "paired-text",
-          name: "peak_pressure",
-          pairs: [
-            { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
-            { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
-          ]
-        },
+        /* ===================== OAE ===================== */
+          {
+              type: "accordion",
+              name: "oae_section",
+              label: "OAE Screening",
+              defaultOpen: false,
+              children: [
 
-        {
-          type: "paired-text",
-          name: "static_compliance",
-          pairs: [
-            { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
-            { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }
-          ]
-        },
-
-        {
-          type: "paired-text",
-          name: "ecv",
-          pairs: [
-            { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
-            { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }
-          ]
-        }
-      ]
-    },
-
-    /* ===================== OAE ===================== */
-    {
-      title: "OAE Screening",
-      fields: [
+        /* ----------- OAE ----------- */
         {
           type: "row",
           columns: 2,
@@ -975,26 +988,26 @@ const OBJECTIVE_SCHEMA = {
           fields: [
             {
               name: "oae_right",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             },
             {
               name: "oae_left",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             }
           ]
         },
+
+        /* ----------- DPOAE ----------- */
         {
           type: "row",
           columns: 2,
@@ -1020,26 +1033,26 @@ const OBJECTIVE_SCHEMA = {
           fields: [
             {
               name: "dpoae_right",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             },
             {
               name: "dpoae_left",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             }
           ]
         },
+
+        /* ----------- TEOAE ----------- */
         {
           type: "row",
           columns: 2,
@@ -1065,28 +1078,28 @@ const OBJECTIVE_SCHEMA = {
           fields: [
             {
               name: "teoae_right",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             },
             {
               name: "teoae_left",
-              label: "",
               type: "radio",
               options: [
                 { label: "Pass", value: "pass" },
                 { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
+                { label: "Could Not Test", value: "could_not_test" }
               ]
             }
           ]
         }
       ]
     }
+   ]
+  }
   ]
 };
 
