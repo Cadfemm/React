@@ -728,10 +728,10 @@ const OBJECTIVE_SCHEMA = {
           label: "",
           type: "assessment-launcher",
           options: [
-            { label: "Auditory", value: "hearing_form_obj" },
-            { label: "Tinnitus", value: "tinnitus_form_obj" },
-            { label: "Hyperacusis", value: "loudness_form_obj" },
-            { label: "Vestibular", value: "vestibular_form_obj" },
+            { label: "Auditory Profile", value: "hearing_form_obj" },
+            { label: "Tinnitus Profile", value: "tinnitus_form_obj" },
+            { label: "Hyperacusis Profile", value: "loudness_form_obj" },
+            { label: "Vestibular Profile", value: "vestibular_form_obj" },
           ]
         }
       ]
