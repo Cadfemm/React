@@ -261,140 +261,179 @@ export default function CurrentDietIntake({ mode = "objective" }) {
 
 const SCHEMA_Objective = {
   sections: [
-    {
-      // title: "Consistencies & amount trialled",
-      fields: [
-                  { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},
+   {
+    fields: [
+      { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
 
-       {
-  name: "consistencyType",
-  label: "Consistencies & amount trialled",
-  type: "radio",
-  options: [
-    { label: "Fluids", value: "fluids" },
-    { label: "Food", value: "food" }
-  ]
-},
+      {
+        name: "consistencyType",
+        label: "Consistencies & amount trialled",
+        type: "checkbox-group",
+        defaultValue: [],
+        options: [
+          { label: "Fluids", value: "fluids" },
+          { label: "Food", value: "food" }
+        ]
+      },
 
-{
-  name: "fluid_iddsi_level",
-  label: "Fluids: IDDSI Level",
-  type: "checkbox-group",
-  options: [
-    { label: "0 - Thin", value: "thin" },
-    { label: "1 - Slightly Thick", value: "slightly_thick" },
-    { label: "2 - Mildly Thick", value: "mildly_thick" },
-    { label: "3 - Moderately Thick", value: "moderately_thick" },
-    { label: "4 - Extremely Thick", value: "extremely_thick" }
-  ],
-  showIf: {
-    field: "consistencyType",
-    equals: "fluids"
-  }
-},
-{
-  name: "thin_ml",
-  label: "0 - Thin (ml)",
-  type: "input",
-  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "thin" } }
-},
-{
-  name: "slightly_thick_ml",
-  label: "1 - Slightly Thick (ml)",
-  type: "input",
-  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "slightly_thick" } }
-},
-{
-  name: "mildly_thick_ml",
-  label: "2 - Mildly Thick (ml)",
-  type: "input",
-  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "mildly_thick" } }
-},
-{
-  name: "moderately_thick_ml",
-  label: "3 - Moderately Thick (ml)",
-  type: "input",
-  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "moderately_thick" } }
-},
-{
-  name: "extremely_thick_ml",
-  label: "4 - Extremely Thick (ml)",
-  type: "input",
-  showIf: { field: "consistencyType", equals: "fluids", and: { field: "fluid_iddsi_level", includes: "extremely_thick" } }
-},
-// ===== FOOD (checkbox + ml input per level) =====
+      // ===== FLUIDS =====
+      {
+        name: "fluid_iddsi_level",
+        label: "Fluids: IDDSI Level",
+        type: "checkbox-group",
+        defaultValue: [],
+        options: [
+          { label: "0 - Thin", value: "thin" },
+          { label: "1 - Slightly Thick", value: "slightly_thick" },
+          { label: "2 - Mildly Thick", value: "mildly_thick" },
+          { label: "3 - Moderately Thick", value: "moderately_thick" },
+          { label: "4 - Extremely Thick", value: "extremely_thick" }
+        ],
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids"
+        }
+      },
 
-// ===== FOOD (simple checkbox selection) =====
-{
-          name: "food_iddsi_level",
-          label: "Food: IDDSI Level",
-          type: "checkbox-group",
-          options: [
-            { label: "3 - Liquidised", value: "liquidised" },
-            { label: "4 - Pureed", value: "pureed" },
-            { label: "5 - Minced & Moist", value: "minced" },
-            { label: "6 - Soft & Bite-sized", value: "soft" },
-            { label: "7EC - Easy to chew", value: "easy_chew" },
-            { label: "7 - Regular", value: "regular" }
-          ],
-          showIf: {
-            field: "consistencyType",
-            equals: "food"
-          }
-        },
+      {
+        name: "thin_ml",
+        label: "0 - Thin (ml)",
+        type: "input",
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids",
+          and: { field: "fluid_iddsi_level", includes: "thin" }
+        }
+      },
+      {
+        name: "slightly_thick_ml",
+        label: "1 - Slightly Thick (ml)",
+        type: "input",
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids",
+          and: { field: "fluid_iddsi_level", includes: "slightly_thick" }
+        }
+      },
+      {
+        name: "mildly_thick_ml",
+        label: "2 - Mildly Thick (ml)",
+        type: "input",
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids",
+          and: { field: "fluid_iddsi_level", includes: "mildly_thick" }
+        }
+      },
+      {
+        name: "moderately_thick_ml",
+        label: "3 - Moderately Thick (ml)",
+        type: "input",
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids",
+          and: { field: "fluid_iddsi_level", includes: "moderately_thick" }
+        }
+      },
+      {
+        name: "extremely_thick_ml",
+        label: "4 - Extremely Thick (ml)",
+        type: "input",
+        showIf: {
+          field: "consistencyType",
+          includes: "fluids",
+          and: { field: "fluid_iddsi_level", includes: "extremely_thick" }
+        }
+      },
 
-        // 🔹 INPUTS (IMPORTANT: MUST BE INSIDE SAME fields ARRAY)
+      // ===== FOOD =====
+      {
+        name: "food_iddsi_level",
+        label: "Food: IDDSI Level",
+        type: "checkbox-group",
+        defaultValue: [],
+        options: [
+          { label: "3 - Liquidised", value: "liquidised" },
+          { label: "4 - Pureed", value: "pureed" },
+          { label: "5 - Minced & Moist", value: "minced" },
+          { label: "6 - Soft & Bite-sized", value: "soft" },
+          { label: "7EC - Easy to chew", value: "easy_chew" },
+          { label: "7 - Regular", value: "regular" }
+        ],
+        showIf: {
+          field: "consistencyType",
+          includes: "food"
+        }
+      },
 
-        {
-          name: "liquidised_ml",
-          label: "3 - Liquidised (ml)",
-          type: "input",
-          placeholder: "Enter ml",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "liquidised" } }
-        },
-
-        {
-          name: "pureed_ml",
-          label: "4 - Pureed (ml)",
-          type: "input",
-          placeholder: "Enter ml",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "pureed" } }
-        },
-
-        {
-          name: "minced_tsp",
-          label: "5 - Minced & Moist (tsp)",
-          type: "input",
-          placeholder: "Enter tsp",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "minced" } }
-        },
-
-        {
-          name: "soft_tsp",
-          label: "6 - Soft & Bite-sized (tsp)",
-          type: "input",
-          placeholder: "Enter tsp",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "soft" } }
-        },
-
-        {
-          name: "easy_chew_piece",
-          label: "7EC - Easy to chew (piece)",
-          type: "input",
-          placeholder: "Enter pieces",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "easy_chew" } }
-        },
-
-        {
-          name: "regular_piece",
-          label: "7 - Regular (piece)",
-          type: "input",
-          placeholder: "Enter pieces",
-          showIf: { field: "consistencyType", equals: "food", and: { field: "food_iddsi_level", includes: "regular" } }
-        },
-
-      ]
-    },
+      {
+        name: "liquidised_ml",
+        label: "3 - Liquidised (ml)",
+        type: "input",
+        placeholder: "Enter ml",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "liquidised" }
+        }
+      },
+      {
+        name: "pureed_ml",
+        label: "4 - Pureed (ml)",
+        type: "input",
+        placeholder: "Enter ml",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "pureed" }
+        }
+      },
+      {
+        name: "minced_tsp",
+        label: "5 - Minced & Moist (tsp)",
+        type: "input",
+        placeholder: "Enter tsp",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "minced" }
+        }
+      },
+      {
+        name: "soft_tsp",
+        label: "6 - Soft & Bite-sized (tsp)",
+        type: "input",
+        placeholder: "Enter tsp",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "soft" }
+        }
+      },
+      {
+        name: "easy_chew_piece",
+        label: "7EC - Easy to chew (piece)",
+        type: "input",
+        placeholder: "Enter pieces",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "easy_chew" }
+        }
+      },
+      {
+        name: "regular_piece",
+        label: "7 - Regular (piece)",
+        type: "input",
+        placeholder: "Enter pieces",
+        showIf: {
+          field: "consistencyType",
+          includes: "food",
+          and: { field: "food_iddsi_level", includes: "regular" }
+        }
+      }
+    ]
+  },
 
     // ===== ORAL PHASE =====
     {
@@ -406,8 +445,8 @@ const SCHEMA_Objective = {
           type: "radio",
           options: [
             "Adequate",
-            "Lt",
-            "Rt"
+            "Left Anterior Spillage",
+            "Right Anterior Spillage "
           ]
         },
         {
@@ -616,7 +655,7 @@ const SCHEMA_Objective = {
 const SCHEMA_ASSESSMENT = {
   sections: [
     {
-      title: "CSE",
+      title: "",
       fields: [
 
                           { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},

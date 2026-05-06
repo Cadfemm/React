@@ -53,67 +53,77 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
   const SCHEMA_TRACHEOSTOMY = {
     sections: [
       {
-        title: "ThacheostomyAssessment",
-        fields: [
+  title: "Thacheostomy Assessment",
+  fields: [
 
-          /* ===== MEDICAL HISTORY ===== */
+    {
+      type: "row",
+      fields: [
         {
-  type: "subheading",
-  label: "Suction needs frequenscy (airway clearance function)"
-},
-
+          type: "subheading",
+          label: "Suction needs frequency (airway clearance function)"
+        },
+      ]
+    },
 {
-  name: "suction_frequency",
-  label: "Frequency (every ___ hours)",
-  type: "textarea"
-},
-
-{
-  name: "secretion_amount",
-  label: "Secretion amount",
+  name: "suction_required",
+  label: "Suction Need",
   type: "radio",
-  options: ["Small", "Moderate", "Large"]
+  options: [
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" }
+  ],
+  direction: "row"   // or inline: true (depending on your builder)
 },
+    {
+      name: "suction_frequency",
+      label: "Frequency (every ___ hours)",
+      type: "textarea",
+      showIf: { field: "suction_required", equals: "Yes" }
+    },
 
-{
-  name: "secretion_colour",
-  label: "Colour",
-  type: "radio",
-  options: ["Whitish", "Yellowish", "Greenish", "Blood-tinged"]
-},
+    {
+      name: "secretion_amount",
+      label: "Secretion amount",
+      type: "radio",
+      options: ["Small", "Moderate", "Large"],
+      showIf: { field: "suction_required", equals: "Yes" }
+    },
 
-{
-  name: "secretion_consistency",
-  label: "Consistency",
-  type: "radio",
-  options: ["Thick", "Loose"]
-},
+    {
+      name: "secretion_colour",
+      label: "Colour",
+      type: "radio",
+      options: ["Whitish", "Yellowish", "Greenish", "Blood-tinged"],
+      showIf: { field: "suction_required", equals: "Yes" }
+    },
 
-/* ===== TRACHEOSTOMY ===== */
+    {
+      name: "secretion_consistency",
+      label: "Consistency",
+      type: "radio",
+      options: ["Thick", "Loose"],
+      showIf: { field: "suction_required", equals: "Yes" }
+    },
 
-{
-  type: "subheading",
-  label: "Tracheostomy Status"
-},
-{
-  name: "trach_date",
-  label: "Date of tracheostomy insertion",
-  type: "date"
-},
-{
-  name: "trach_date",
-  label: "Last tracheostomy change",
-  type: "date"
-},
-{
-  name: "trach_indication",
-  label: "Indication for tracheostomy",
-  type: "textarea"
-},
-{
-  type: "subheading",
-  label: "Tracheostomy tube"
-},
+    /* ===== TRACHEOSTOMY ===== */
+
+    {
+      type: "subheading",
+      label: "Tracheostomy Status"
+    },
+
+    {
+      name: "trach_date",
+      label: "Date of tracheostomy insertion",
+      type: "date"
+    },
+
+    {
+      name: "trach_change_date", // ⚠️ FIX duplicate name
+      label: "Last tracheostomy change",
+      type: "date"
+    },
 
 /* ===== SIZE ===== */
 {
@@ -457,7 +467,7 @@ const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
         // ===== MODIFIED EVAN'S BLUE DYE TEST =====
         { type: "subheading", label: "Modified Evan's Blue Dye Test  –  Ingestion functions", showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
         { name: "blue_cough", label: "Cough", type: "radio", options: [{ label: "Immediate", value: "immediate" }, { label: "Delayed", value: "delayed" },{ label: "None", value: "none" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
-        { name: "blue_cough_none_remarks", label: "Cough – None (specify)", type: "input", showIf: { field: "blue_cough", equals: "none", and: { field: "tracheostomy_trials", includes: "blue_dye_test" } } },
+        // { name: "blue_cough_none_remarks", label: "Cough – None (specify)", type: "input", showIf: { field: "blue_cough", equals: "none", and: { field: "tracheostomy_trials", includes: "blue_dye_test" } } },
         { name: "blue_wet_voice", label: "Wet voice", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
         { name: "blue_wob", label: "Increased work of breathing", type: "radio", options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }], showIf: { field: "tracheostomy_trials", includes: "blue_dye_test" } },
         {
@@ -484,7 +494,7 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
       fields: [
 
         // ===== SUBHEADING =====
-        { type: "subheading", label: "TRACHEOSTOMY ASSESSMENT" },
+        { type: "subheading", label: "Tracheostomy Assessment" },
 
         // ===== WEANING STATUS =====
         // {

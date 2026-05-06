@@ -347,7 +347,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
   const SCHEMA_ASSESSMENT = {
     sections: [
       {
-        title: "Assessment",
+        title: "Communication Assessment",
         fields: [
           {
             name: "speech_language_status",
