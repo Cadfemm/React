@@ -4607,7 +4607,17 @@ function FilePreview({ file, field, onChange, previewSize }) {
 }
 
 function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
-  const { min, max, step = 1, ranges = [], showValue } = field;
+  const {
+    min,
+    max,
+    step = 1,
+    ranges = [],
+    showValue,
+    tickMajorValues,     // optional: e.g. [0,5,10,15,20,22]
+    tickMinorStep,       // optional: e.g. 1
+    showMinorTicks = true,
+    showMinorLabels = false
+  } = field;
   const span = max - min;
 
   // support both {from,to} and {min,max} range shapes
@@ -4649,23 +4659,74 @@ function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
         </div>
       )}
 
-      {/* Number ticks — show boundary ticks from ranges, or evenly spaced (max ~11 ticks) */}
+      {/* Tick marks */}
       {(() => {
-        const MAX_TICKS = 11;
-        // Prefer range boundary values so labels align with colour bands
-        const boundaryTicks = normalised.length > 0
-          ? [...new Set([min, ...normalised.flatMap(r => [r.from, r.to]), max])].sort((a, b) => a - b)
-          : null;
-        // Fall back to evenly spaced ticks when no ranges or too many boundaries
-        const tickInterval = Math.ceil(span / (MAX_TICKS - 1));
-        const evenTicks = Array.from({ length: Math.floor(span / tickInterval) + 1 }, (_, i) => min + i * tickInterval);
-        if (evenTicks[evenTicks.length - 1] !== max) evenTicks.push(max);
-        const ticks = (boundaryTicks && boundaryTicks.length <= MAX_TICKS) ? boundaryTicks : evenTicks;
+        if (span <= 0) return null;
+
+        const pctOf = (n) => Math.max(0, Math.min(100, ((n - min) / span) * 100));
+
+        const majorTicks = Array.isArray(tickMajorValues) && tickMajorValues.length > 0
+          ? [...new Set(tickMajorValues)].filter(n => n >= min && n <= max).sort((a, b) => a - b)
+          : (normalised.length > 0
+              ? [...new Set([min, ...normalised.flatMap(r => [r.from, r.to]), max])]
+                  .sort((a, b) => a - b)
+              : null);
+
+        const majorTickSet = new Set(majorTicks || []);
+
+        const minorStep = Number.isFinite(tickMinorStep) ? tickMinorStep : (step || 1);
+        const minorTicks = showMinorTicks && minorStep > 0
+          ? Array.from(
+              { length: Math.floor((max - min) / minorStep) + 1 },
+              (_, i) => min + i * minorStep
+            ).filter(n => n >= min && n <= max)
+          : [];
+
         return (
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 2 }}>
-            {ticks.map(n => (
-              <span key={n} style={{ fontWeight: Number(value) === n ? 700 : 400, color: activeRange?.color || "#64748b" }}>{n}</span>
-            ))}
+          <div style={{ position: "relative", width: "100%", height: 22, marginBottom: 2 }}>
+            {/* Minor ticks */}
+            {showMinorTicks && minorTicks.map(n => {
+              const isMajor = majorTickSet.has(n);
+              const isActive = Number(value) === n;
+              const color = isMajor ? (activeRange?.color || "#64748b") : "#94a3b8";
+              return (
+                <div
+                  key={`minor-${n}`}
+                  style={{
+                    position: "absolute",
+                    left: `${pctOf(n)}%`,
+                    top: 0,
+                    transform: "translateX(-50%)",
+                    width: 1,
+                    height: isMajor ? 12 : 7,
+                    background: isActive ? (activeRange?.color || "#0ea5e9") : color,
+                    borderRadius: 1,
+                  }}
+                />
+              );
+            })}
+
+            {/* Major tick labels */}
+            {(majorTicks || []).map(n => {
+              const isActive = Number(value) === n;
+              return (
+                <div
+                  key={`label-${n}`}
+                  style={{
+                    position: "absolute",
+                    left: `${pctOf(n)}%`,
+                    top: 13,
+                    transform: "translateX(-50%)",
+                    fontSize: 11,
+                    color: isActive ? (activeRange?.color || "#0f172a") : "#64748b",
+                    fontWeight: isActive ? 800 : 600,
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  {n}
+                </div>
+              );
+            })}
           </div>
         );
       })()}
