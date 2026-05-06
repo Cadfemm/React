@@ -164,7 +164,13 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
   // ✅ HANDLE CHANGE (AUTO COMPUTE)
   const handleChange = (name, value) => {
     setValues((prev) => {
-      const updated = { ...prev, [name]: value };
+    const updated = {
+      ...prev,
+      [name]:
+        name === "tinnitus_type" || name === "associated_symptoms"
+          ? (Array.isArray(value) ? value : value ? [value] : [])
+          : value
+    };
 
       const thi = computeTHI(updated);
       const tfi = computeTFI(updated);
@@ -214,10 +220,22 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           { name: "duration", label: "Duration", type: "input" },
 
           {
-            name: "type",
+            name: "tinnitus_type",
             label: "Type",
-            type: "radio",
-            options: ["Constant", "Intermittent", "Pulsatile", "Noise", "Tonal"]
+            type: "checkbox-group",
+            options: [
+              { label: "Constant", value: "constant" },
+              { label: "Intermittent", value: "intermittent" },
+              { label: "Pulsatile", value: "pulsatile" },
+              { label: "Noise-like", value: "noise" },
+              { label: "Tonal", value: "tonal" }
+            ]
+          },
+          {
+            name: "tinnitus_type_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "tinnitus_type", notEmpty: true }
           },
 
           {
@@ -244,22 +262,22 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           {
             name: "associated_symptoms",
             label: "Associated symptoms",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              { label: "Hearing loss", value: "0" },
-              { label: "Vertigo", value: "1" },
-              { label: "Ear fullness", value: "2" },
-              { label: "Otalgia", value: "3" },
-              { label: "Hyperacusis", value: "4" },
-              { label: "Other", value: "5" }
+              { label: "None", value: "associated_none" },
+              { label: "Hearing loss", value: "hearing_loss" },
+              { label: "Vertigo", value: "vertigo" },
+              { label: "Ear fullness", value: "ear_fullness" },
+              { label: "Otalgia", value: "otalgia" },
+              { label: "Hyperacusis", value: "hyperacusis" },
+              { label: "Other", value: "other" }
             ]
           },
-
           {
-            name: "associated_symptoms_other",
-            label: "If Other, specify",
+            name: "associated_symptoms_details",
+            label: "Specify",
             type: "textarea",
-            showIf: { field: "associated_symptoms", equals: "5" }
+            showIf: { field: "associated_symptoms", notEmpty: true }
           },
 
           { name: "previous_treatment", label: "Previous treatment / intervention", type: "input" },
@@ -267,12 +285,18 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           {
             name: "noise_exposure",
             label: "Noise exposure history",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              { label: "None", value: "0" },
-              { label: "Recreational", value: "1" },
-              { label: "Occupational", value: "2" }
+              { label: "None", value: "none" },
+              { label: "Recreational", value: "recreational" },
+              { label: "Occupational", value: "occupational" }
             ]
+          },
+          {
+            name: "noise_exposure_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "noise_exposure", notEmpty: true }
           },
 
           { name: "ototoxic_drugs", label: "Ototoxic drug use", type: "input" },
@@ -551,7 +575,15 @@ export function TinnitusAdvancedFormObj({ onBack }) {
             }
           ]
         },
-
+        {
+          type: "subheading",
+          label: "Special Test"
+        },
+        {
+          name: "special_test",
+          label: "Details",
+          type: "input"
+        },
         {
           type: "accordion",
           name: "intervention_section",
@@ -638,15 +670,6 @@ export function TinnitusAdvancedFormObj({ onBack }) {
             }
           ]
         },
-        {
-          type: "subheading",
-          label: "Special Test"
-        },
-        {
-          name: "special_test",
-          label: "Details",
-          type: "input"
-        }
       ]
     }
   ]

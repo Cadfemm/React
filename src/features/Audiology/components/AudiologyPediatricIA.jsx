@@ -28,10 +28,55 @@ const FULLTERM_PRETERM = [
   { label: "Pre-term", value: "1" }];
 /* ===================== COMPONENT ===================== */
 
-export default function AudiologyDepartmentPediatricPage({ patient, onSubmit, onBack }) {
+export default function AudiologyDepartmentPediatricPage({ patient, onUpdatePatient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+
+  /* --------- Patient History State --------- */
+  const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: patient?.medical_history || "",
+    past_family_history: patient?.family_medical_history || "",
+    alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+  });
+
+  useEffect(() => {
+    setPatientHistory({
+      past_medical_history: patient?.medical_history || "",
+      past_family_history: patient?.family_medical_history || "",
+      alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+    });
+  }, [patient?.id]);
+
+  useEffect(() => {
+    if (!patient) return;
+    const updated = {
+      ...patient,
+      medical_history: patientHistory.past_medical_history,
+      family_medical_history: patientHistory.past_family_history,
+      alerts_and_allergies_history: patientHistory.alerts_and_allergies
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history, patientHistory.alerts_and_allergies]);
+
+  const today = new Date();
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try { return new Date(dateStr).toLocaleDateString(); } catch { return "-"; }
+  };
+  const calculateDuration = (onset) => {
+    if (!onset) return "-";
+    const onsetDate = new Date(onset);
+    if (isNaN(onsetDate)) return "-";
+    const diff = today - onsetDate;
+    const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
+    if (months < 1) return "< 1 month";
+    if (months < 12) return `${months} month${months > 1 ? "s" : ""}`;
+    const years = Math.floor(months / 12);
+    const rem = months % 12;
+    return rem > 0 ? `${years}y ${rem}m` : `${years} year${years > 1 ? "s" : ""}`;
+  };
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -737,7 +782,7 @@ const OBJECTIVE_SCHEMA = {
       ]
     },
  {
-      title: "",
+      title: "General Audiology Assessment",
       fields: [
 
         /* ===================== OTOSCOPY ===================== */
@@ -827,9 +872,13 @@ const OBJECTIVE_SCHEMA = {
           defaultOpen: false,
           children: [
             {
-              name: "audifile",
-              label: "Upload Audiometry File",
-              type: "file-upload-modal",
+              name: "audifile_pd",
+              type: "attach-file",
+              accept: "application/pdf,image/*",
+              title: "Upload Audiometry File",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
             },
             // { type: "audiogram-graph", name: "audiogram_graph" },
             {
@@ -1289,29 +1338,65 @@ const OBJECTIVE_SCHEMA = {
     sections: []
   };
 
-  function AudioPatientInfo({ patient }) {
+  function AudioPatientInfo({ patient, patientHistory, setPatientHistory }) {
     if (!patient) return null;
-
-    const handleDoctorsReport = () => {
-      alert("Report will be generating soon");
-    };
 
     return (
       <div style={section}>
         <div style={patientGrid}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
+          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+          <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
+          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
           <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
-          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-          <div style={{ gridColumn: "1 / -1" }}>
-            <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
-              Doctors Reports
-            </button>
+          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+
+          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+              <textarea
+                value={patientHistory.past_medical_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+              <textarea
+                value={patientHistory.past_family_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+              <textarea
+                value={patientHistory.alerts_and_allergies}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <button
+                type="button"
+                onClick={() => console.log("Alerts button clicked!")}
+                style={{ marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0,123,255)", background: "rgb(0,123,255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
+              >
+                🚨 Alerts
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1411,7 +1496,7 @@ const OBJECTIVE_SCHEMA = {
     values={{}}
     onChange={() => {}}
   >
-    <AudioPatientInfo patient={patient} />
+    <AudioPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
   </CommonFormBuilder>
 
   {/* ===== TABS ===== */}
