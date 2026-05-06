@@ -146,7 +146,7 @@ const SOAP_ACTIONS = [
   /* ================= SUBJECTIVE ================= */
 
 const SUBJECTIVE_SCHEMA = {
-    title: "Subjective",
+    title: "",
     actions: SOAP_ACTIONS,
     sections: [
       {
@@ -285,7 +285,7 @@ const SUBJECTIVE_SCHEMA = {
   label: "Assessments",
   options: [
     { label: "CSE", value: "swallow_subjective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    // { label: "Communication", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_subjective", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_subjective", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -306,7 +306,7 @@ const SUBJECTIVE_SCHEMA = {
   };
 
 const OBJECTIVE_SCHEMA = {
-  title: "Objective",
+  title: "",
   actions: SOAP_ACTIONS,
   sections: [
     {
@@ -515,21 +515,11 @@ const OBJECTIVE_SCHEMA = {
   ]
 };
  const ASSESSMENT_SCHEMA = {
-  title: "Assessment",
+  title: "",
   actions: SOAP_ACTIONS,
   sections: [
     {
       fields: [
-        {
-          type: "label",
-          label: "Clinical Impression"
-        },
-        {
-          name: "clinicalImpression",
-          type: "textarea",
-          placeholder: "Enter clinical impression...",
-          rows: 4
-        },
         {
   name: "assessmentLauncher",
   type: "assessment-launcher",
@@ -554,11 +544,11 @@ const OBJECTIVE_SCHEMA = {
   ]
 };
   const PLAN_SCHEMA = {
-    title: "Plan",
+    title: "",
     actions: SOAP_ACTIONS,
     sections: [
       {
-        title: "Plan",
+        title: "",
         fields: [
           {
             name: "others",
