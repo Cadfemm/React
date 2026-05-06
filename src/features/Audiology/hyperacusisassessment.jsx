@@ -118,10 +118,42 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
         { name: "ears",        label: "Ears affected", type: "radio",
           options: ["Right", "Left", "Bilateral"],
           showIf: { field: "mode", equals: "followup" } },
-        { name: "associated", label: "Associated symptoms", type: "radio",
-          options: ["Hearing loss","Vertigo","Ear fullness","Otalgia","Hyperacusis","Other"] },
-        { name: "exposure", label: "Noise exposure history", type: "radio",
-          options: ["Occupational","Recreational","None"] },
+         {
+            name: "associated",
+            label: "Associated symptoms",
+            type: "checkbox-group",
+            options: [
+              { label: "None", value: "associated_none" },
+              { label: "Hearing loss", value: "hearing_loss" },
+              { label: "Vertigo", value: "vertigo" },
+              { label: "Ear fullness", value: "ear_fullness" },
+              { label: "Otalgia", value: "otalgia" },
+              // { label: "Hyperacusis", value: "hyperacusis" },
+              { label: "Other", value: "other" }
+            ]
+          },
+          {
+            name: "associated_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "associated", notEmpty: true }
+          },
+        {
+            name: "exposure",
+            label: "Noise exposure history",
+            type: "checkbox-group",
+            options: [
+              { label: "None", value: "none" },
+              { label: "Recreational", value: "recreational" },
+              { label: "Occupational", value: "occupational" }
+            ]
+          },
+          {
+            name: "exposure_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "exposure", notEmpty: true }
+          },
         { name: "triggers",   label: "Type of sounds that trigger discomfort", type: "input" },
         { name: "situations", label: "Situations where sound intolerance is most noticeable", type: "input" },
         { name: "reaction",   label: "Typical reaction to sound exposure", type: "input" },
@@ -347,7 +379,15 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
           }
         ]
       },
-
+      {
+        type: "subheading",
+        label: "Special Test"
+      },
+      {
+        name: "special_test",
+        label: "Details",
+        type: "input"
+      },
       {
         type: "accordion",
         name: "intervention_section",
@@ -434,15 +474,6 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
           }
         ]
       },
-      {
-        type: "subheading",
-        label: "Special Test"
-      },
-      {
-        name: "special_test",
-        label: "Details",
-        type: "input"
-      }
     ]
     }
   ]

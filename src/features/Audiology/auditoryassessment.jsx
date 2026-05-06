@@ -121,7 +121,24 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
     sections: [{
       title: null,
       fields: [
-        // placeholder — actual content split below
+      {
+        name: "enable_vas",
+        label: "Subjective Rating Scales (Hearing Loss)",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        name: "enable_hhia",
+        label: "HHIA (Hearing Handicap Inventory for Adults)",
+        type: "radio",
+        options: ["Yes", "No"]
+      },
+      {
+        name: "enable_cosi",
+        label: "COSI (Client Oriented Scale of Improvement)",
+        type: "radio",
+        options: ["Yes", "No"]
+      }
       ]
     }]
   };
@@ -259,32 +276,42 @@ export function AuditoryAdvancedForm({ onBack, mode }) {
       />
 
       {/* VAS - own Doctor View toggle */}
-      <CommonFormBuilder
-        schema={vasSchema}
-        values={allValues}
-        onChange={handleChange}
-        layout="nested"
-        showScores={vasScoresVisible}
-        onAction={(type) => { if (type === "toggle-show-scores") setVasScoresVisible(v => !v); }}
-      />
+      {values.enable_vas === "Yes" && (
+        <CommonFormBuilder
+          schema={vasSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vasScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setVasScoresVisible(v => !v);
+          }}
+        />
+      )}
 
       {/* HHIA - own Doctor View toggle */}
-      <CommonFormBuilder
-        schema={hhiaSchema}
-        values={allValues}
-        onChange={handleChange}
-        layout="nested"
-        showScores={hhiaScoresVisible}
-        onAction={(type) => { if (type === "toggle-show-scores") setHhiaScoresVisible(v => !v); }}
-      />
+      {values.enable_hhia === "Yes" && (
+        <CommonFormBuilder
+          schema={hhiaSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={hhiaScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setHhiaScoresVisible(v => !v);
+          }}
+        />
+      )}
 
       {/* COSI + Counseling - no toggle */}
-      <CommonFormBuilder
-        schema={cosiSchema}
-        values={allValues}
-        onChange={handleChange}
-        layout="nested"
-      />
+      {values.enable_cosi === "Yes" && (
+        <CommonFormBuilder
+          schema={cosiSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+        />
+      )}
     </div>
   );
 }
