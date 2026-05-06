@@ -212,11 +212,19 @@ const OBJECTIVE_SCHEMA = {
       },
       {
         name: "dr_rdb", label: "Rookwood Driving Battery (RDB)",
-        type: "scale-slider", min: 1, max: 22, step: 1, showValue: true,
+        type: "scale-slider",
+        min: 0,
+        max: 22,
+        step: 1,
+        showValue: true,
+        tickMajorValues: [0, 5, 10, 15, 20, 22],
+        tickMinorStep: 1,
+        showMinorTicks: true,
+        showMinorLabels: false,
         ranges: [
-          { min: 1,  max: 5,  label: "Pass On Road Test",                          color: "#22c55e" },
-          { min: 5,  max: 10, label: "Reduced Ability but Appropriate For On Road", color: "#f59e0b" },
-          { min: 10, max: 22, label: "Not Indicated For On Road Test",              color: "#ef4444" },
+          { min: 0,  max: 5,  label: "Pass On Road Test",                          color: "#22c55e" },
+          { min: 6,  max: 10, label: "Reduced Ability but Appropriate For On Road", color: "#f59e0b" },
+          { min: 11, max: 22, label: "Not Indicated For On Road Test",              color: "#ef4444" },
         ]
       },
       {
@@ -328,15 +336,7 @@ const ASSESSMENT_SCHEMA = {
 
       /* ── Clinical Impression & Rehab Potential ── */
       { name: "dr_clinical_impression", label: "Clinical Impression", type: "textarea" },
-      {
-        name: "dr_rehab_potential", label: "Rehab Potential", type: "radio",
-        options: [
-          { label: "Excellent", value: "excellent" },
-          { label: "Good",      value: "good"      },
-          { label: "Fair",      value: "fair"      },
-          { label: "Poor",      value: "poor"      },
-        ]
-      },
+      
     ]
   }]
 };
@@ -347,13 +347,6 @@ const PLAN_SCHEMA = {
   sections: [{
     fields: [
 
-      /* ── Short Term Goals ── */
-      { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
-      { type: "dynamic-goals", name: "dr_short_term_goals" },
-
-      /* ── Long Term Goals ── */
-      { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
-      { type: "dynamic-goals", name: "dr_long_term_goals" },
 
       /* ── Therapeutic Intervention ── */
       { type: "subheading", label: "Therapeutic Intervention" },
@@ -421,24 +414,29 @@ const PLAN_SCHEMA = {
       },
 
       /* Plan free text */
-      { type: "subheading", label: "Plan" },
-      { name: "dr_plan", label: "Plan", type: "textarea" },
+      { type: "subheading", label: "Summary" },
+      { name: "dr_plan", type: "textarea" },
 
     ]
   }]
 };
 
-const schemaMap = {
-  subjective: SUBJECTIVE_SCHEMA,
-  objective:  OBJECTIVE_SCHEMA,
-  assessment: ASSESSMENT_SCHEMA,
-  plan:       PLAN_SCHEMA,
+const COMBINED_SCHEMA = {
+  title: "DRIVING REHABILITATION ASSESSMENT",
+  actions: ACTIONS,
+  sections: [{
+    fields: [
+      ...SUBJECTIVE_SCHEMA.sections[0].fields,
+      ...OBJECTIVE_SCHEMA.sections[0].fields,
+      ...ASSESSMENT_SCHEMA.sections[0].fields,
+      ...PLAN_SCHEMA.sections[0].fields,
+    ]
+  }]
 };
 
 export default function DrivingRehab({ patient, onSubmit, onBack }) {
   const [values, setValues]     = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [activeTab, setActiveTab] = useState("subjective");
   const [showConsentModal, setShowConsentModal] = useState(false);
   const dryNeedlingRef  = React.useRef({});
   const wallClimbingRef = React.useRef({});
@@ -479,8 +477,6 @@ export default function DrivingRehab({ patient, onSubmit, onBack }) {
       alert("Driving Rehab draft saved");
     }
   };
-
-  const nextTab = (t) => ({ subjective: "objective", objective: "assessment", assessment: "plan" }[t] || t);
 
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: patient?.medical_history || "",
@@ -574,43 +570,33 @@ export default function DrivingRehab({ patient, onSubmit, onBack }) {
           </div>
         </div>
       )}
-
-      {/* Tabs */}
-      <div style={tabBar}>
-        {["subjective","objective","assessment","plan"].map(tab => (
-          <div key={tab} style={activeTab === tab ? tabActive : tabBtn} onClick={() => setActiveTab(tab)}>
-            {tab.toUpperCase()}
-          </div>
-        ))}
-      </div>
-
-      {/* Tab Content */}
+ 
+      {/* Combined Scrollable Report (Subjective, Objective, Assessment, Plan) */}
       <CommonFormBuilder
-        schema={schemaMap[activeTab]}
+        schema={COMBINED_SCHEMA}
         values={values}
         onChange={onChange}
         submitted={submitted}
         onAction={handleAction}
       >
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-          {activeTab !== "plan" ? (
-            <button type="button" style={submitBtn} onClick={() => setActiveTab(nextTab(activeTab))}>
-              Next
-            </button>
-          ) : (
-            <button type="button" style={submitBtn} onClick={() => { setSubmitted(true); onSubmit?.(values); alert("Driving Rehab assessment submitted"); }}>
-              Submit
-            </button>
-          )}
+          <button
+            type="button"
+            style={submitBtn}
+            onClick={() => {
+              setSubmitted(true);
+              onSubmit?.(values);
+              alert("Driving Rehab assessment submitted");
+            }}
+          >
+            Submit
+          </button>
         </div>
       </CommonFormBuilder>
     </div>
   );
 }
 
-const tabBar    = { display: "flex", gap: 12, justifyContent: "center", borderBottom: "1px solid #ddd", marginBottom: 12 };
-const tabBtn    = { padding: "10px 22px", fontWeight: 600, cursor: "pointer", color: "#0f172a" };
-const tabActive = { ...tabBtn, borderBottom: "3px solid #2451b3", color: "#2451b3" };
 const submitBtn = { padding: "12px 32px", background: "#2563EB", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" };
 const taStyle   = { width: "100%", minHeight: 90, marginTop: 6, marginBottom: 12, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, resize: "vertical" };
 const alertBtn  = { marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid #007bff", background: "#007bff", color: "#fff", fontWeight: 600, cursor: "pointer" };
