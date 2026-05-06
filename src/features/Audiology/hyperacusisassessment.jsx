@@ -3,7 +3,9 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function HyperacusisAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
-  const [scoresVisible, setScoresVisible] = useState(true);
+  const [vasScoresVisible, setVasScoresVisible] = useState(true);
+  const [hqScoresVisible, setHqScoresVisible] = useState(true);
+  const [khalfaScoresVisible, setKhalfaScoresVisible] = useState(true);
 
   const HQ_QUESTIONS = [
     "Do you ever use ear-plugs or ear-muffs to reduce your noise perception (do not consider use during high exposure)?",
@@ -89,10 +91,10 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
       const khalfa = computeKhalfa(updated);
       return {
         ...updated,
-        vas_loudness_score:    vas.loudness,
-        vas_annoyance_score:   vas.annoyance,
-        vas_loudness_severity: vas.loudness_severity,
-        vas_annoyance_severity:vas.annoyance_severity,
+        vas_loudness_score:     vas.loudness,
+        vas_annoyance_score:    vas.annoyance,
+        vas_loudness_severity:  vas.loudness_severity,
+        vas_annoyance_severity: vas.annoyance_severity,
         hq_att: hq.att, hq_soc: hq.soc, hq_emo: hq.emo, hq_total: hq.total,
         khalfa_func: khalfa.func, khalfa_soc: khalfa.soc,
         khalfa_emo:  khalfa.emo,  khalfa_total: khalfa.total
@@ -100,11 +102,12 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
     });
   };
 
-  /* ── Schema ── */
-  const schema = {
+  // ══════════════════════════════════════════════════════════
+  // MAIN SCHEMA — title + Back button + case history + scale selectors
+  // ══════════════════════════════════════════════════════════
+  const mainSchema = {
     title: "Additional Hyperacusis Profile",
-    enableScoreToggle: true,
-    actions: [{ type: "toggle-show-scores" }, { type: "back", label: "Back" }],
+    actions: [{ type: "back", label: "Back" }],
     sections: [{
       title: null,
       fields: [
@@ -125,55 +128,96 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
         { name: "impact",     label: "Daily impact (work, sleep, social interaction)", type: "input" },
 
         { type: "subheading", label: "Subjective Rating Scales" },
-        { name: "enable_vas",    label: "Visual Analog Scale (VAS)",              type: "radio", options: ["Yes","No"] },
-        { name: "enable_hq",     label: "Hyperacusis Questionnaire (HQ)",         type: "radio", options: ["Yes","No"] },
-        { name: "enable_khalfa", label: "Modified Khalfa Hyperacusis Questionnaire", type: "radio", options: ["Yes","No"] },
+        { name: "enable_vas",    label: "Visual Analog Scale (VAS)",                  type: "radio", options: ["Yes","No"] },
+        { name: "enable_hq",     label: "Hyperacusis Questionnaire (HQ)",             type: "radio", options: ["Yes","No"] },
+        { name: "enable_khalfa", label: "Modified Khalfa Hyperacusis Questionnaire",  type: "radio", options: ["Yes","No"] }
+      ]
+    }]
+  };
 
-        /* VAS */
-        { type: "subheading", label: "Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
-        { type: "info-text", text: "0 = none, 10 = worst possible", showIf: { field: "enable_vas", equals: "Yes" } },
-        { name: "vas_loudness",  label: "VAS — Loudness Discomfort", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-        ...(scoresVisible ? [{ name: "vas_loudness_severity",  label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } }] : []),
-        { name: "vas_annoyance", label: "VAS — Annoyance", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-        ...(scoresVisible ? [{ name: "vas_annoyance_severity", label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } }] : []),
+  // ══════════════════════════════════════════════════════════
+  // VAS SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const vasSchema = {
+    title: "Visual Analog Scale (VAS)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        { type: "info-text", text: "0 = none, 10 = worst possible" },
+        { name: "vas_loudness",  label: "VAS — Loudness Discomfort", type: "scale-slider", min: 0, max: 10 },
+        ...(vasScoresVisible ? [{ name: "vas_loudness_severity",  label: "Severity", type: "score-box" }] : []),
+        { name: "vas_annoyance", label: "VAS — Annoyance", type: "scale-slider", min: 0, max: 10 },
+        ...(vasScoresVisible ? [{ name: "vas_annoyance_severity", label: "Severity", type: "score-box" }] : [])
+      ]
+    }]
+  };
 
-        /* HQ */
-        { type: "subheading", label: "Hyperacusis Questionnaire (HQ)", showIf: { field: "enable_hq", equals: "Yes" } },
+  // ══════════════════════════════════════════════════════════
+  // HQ SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const hqSchema = {
+    title: "Hyperacusis Questionnaire (HQ)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
         ...HQ_QUESTIONS.map((q, i) => ({
           name: `hq_${i + 1}`, label: `${i + 1}. ${q}`, type: "radio-matrix",
-          options: scoresVisible
+          options: hqScoresVisible
             ? [{ label: "No (0)", value: 0 }, { label: "A little (1)", value: 1 }, { label: "Quite a lot (2)", value: 2 }, { label: "A lot (3)", value: 3 }]
-            : [{ label: "No",     value: 0 }, { label: "A little",     value: 1 }, { label: "Quite a lot",     value: 2 }, { label: "A lot",     value: 3 }],
-          showIf: { field: "enable_hq", equals: "Yes" }
+            : [{ label: "No",     value: 0 }, { label: "A little",     value: 1 }, { label: "Quite a lot",     value: 2 }, { label: "A lot",     value: 3 }]
         })),
-        ...(scoresVisible ? [
-          { name: "hq_att",   label: "Attentional", type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_soc",   label: "Social",      type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_emo",   label: "Emotional",   type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_total", label: "Total",        type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-        ] : []),
+        ...(hqScoresVisible ? [
+          { name: "hq_att",   label: "Attentional", type: "score-box" },
+          { name: "hq_soc",   label: "Social",      type: "score-box" },
+          { name: "hq_emo",   label: "Emotional",   type: "score-box" },
+          { name: "hq_total", label: "Total",        type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
 
-        /* Khalfa */
-        { type: "subheading", label: "Modified Khalfa Questionnaire", showIf: { field: "enable_khalfa", equals: "Yes" } },
+  // ══════════════════════════════════════════════════════════
+  // KHALFA SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const khalfaSchema = {
+    title: "Modified Khalfa Questionnaire",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
         ...KHALFA_QUESTIONS.map((q, i) => ({
           name: `khalfa_${i + 1}`, label: `${i + 1}. ${q}`, type: "radio-matrix",
-          options: scoresVisible
+          options: khalfaScoresVisible
             ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Yes (4)", value: 4 }]
-            : [{ label: "No",     value: 0 }, { label: "Sometimes",     value: 2 }, { label: "Yes",     value: 4 }],
-          showIf: { field: "enable_khalfa", equals: "Yes" }
+            : [{ label: "No",     value: 0 }, { label: "Sometimes",     value: 2 }, { label: "Yes",     value: 4 }]
         })),
-        ...(scoresVisible ? [
-          { name: "khalfa_func",  label: "Functional", type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_soc",   label: "Social",     type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_emo",   label: "Emotional",  type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_total", label: "Total",      type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-        ] : []),
+        ...(khalfaScoresVisible ? [
+          { name: "khalfa_func",  label: "Functional", type: "score-box" },
+          { name: "khalfa_soc",   label: "Social",     type: "score-box" },
+          { name: "khalfa_emo",   label: "Emotional",  type: "score-box" },
+          { name: "khalfa_total", label: "Total",      type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
 
+  // ══════════════════════════════════════════════════════════
+  // FUNCTIONAL IMPACT & COUNSELING SCHEMA — no toggle
+  // ══════════════════════════════════════════════════════════
+  const lifestyleSchema = {
+    sections: [{
+      title: null,
+      fields: [
         { type: "subheading", label: "Functional and Daily Life Impact for hyperacusis" },
-        { name: "work",          label: "Work / Study",                    type: "input" },
-        { name: "communication", label: "Communication",                   type: "input" },
-        { name: "social",        label: "Family / Social",                 type: "input" },
-        { name: "rest",          label: "Relaxation / Rest",               type: "input" },
+        { name: "work",          label: "Work / Study",                     type: "input" },
+        { name: "communication", label: "Communication",                    type: "input" },
+        { name: "social",        label: "Family / Social",                  type: "input" },
+        { name: "rest",          label: "Relaxation / Rest",                type: "input" },
         { name: "noise",         label: "Outdoor / Public noise tolerance", type: "input" },
 
         { type: "subheading", label: "Counseling Summary", showIf: { field: "mode", equals: "followup" } },
@@ -186,18 +230,71 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
     }]
   };
 
+  const allValues = { ...values, mode };
+
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={{ ...values, mode }}
-      onChange={handleChange}
-      layout="nested"
-      showScores={scoresVisible}
-      onAction={(type) => {
-        if (type === "toggle-show-scores") setScoresVisible(v => !v);
-        if (type === "back") onBack();
-      }}
-    />
+    <div>
+      {/* Main form: title + Back button + case history + scale selectors */}
+      <CommonFormBuilder
+        schema={mainSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+        onAction={(type) => {
+          if (type === "back") onBack();
+        }}
+      />
+
+      {/* VAS — only when enabled, with its own Doctor View toggle */}
+      {values.enable_vas === "Yes" && (
+        <CommonFormBuilder
+          schema={vasSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vasScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setVasScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* HQ — only when enabled, with its own Doctor View toggle */}
+      {values.enable_hq === "Yes" && (
+        <CommonFormBuilder
+          schema={hqSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={hqScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setHqScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* Khalfa — only when enabled, with its own Doctor View toggle */}
+      {values.enable_khalfa === "Yes" && (
+        <CommonFormBuilder
+          schema={khalfaSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={khalfaScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setKhalfaScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* Functional impact & counseling — no toggle */}
+      <CommonFormBuilder
+        schema={lifestyleSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+      />
+    </div>
   );
 }
 
@@ -337,18 +434,18 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
           }
         ]
       },
-          {
-            type: "subheading",
-            label: "Special Test"
-          },
-          {
-            name: "special_test",
-            label: "Details",
-            type: "input"
-          },
-        ]
+      {
+        type: "subheading",
+        label: "Special Test"
+      },
+      {
+        name: "special_test",
+        label: "Details",
+        type: "input"
       }
     ]
+    }
+  ]
   };
 
   return (
