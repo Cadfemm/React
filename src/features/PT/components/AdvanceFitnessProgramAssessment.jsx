@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import PatientCard from "../../../shared/cards/PatientCard";
+import ATVConsentForm from "./ATVConsentForm";
+import { loadAtvConsent, saveAtvConsent } from "./atvConsentStorage";
 
 const SOAP_TABS = ["subjective", "objective", "assessment", "plan"];
 
@@ -128,6 +131,56 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
       ],
     },
   ],
+};
+
+const OBJECTIVE_SUB_TABS = [
+  { key: "cervical", label: "Cervical"  },
+  { key: "shoulder", label: "Shoulder"  },
+  { key: "elbow",    label: "Elbow"     },
+  { key: "lumbar",   label: "Lumbar"    },
+  { key: "knee",     label: "Knee"      },
+  { key: "hip",      label: "Hip"       },
+];
+
+function ObjectiveWithSubTabs({ values, onChange, onSave, onClear }) {
+  const [activeSub, setActiveSub] = useState("cervical");
+  const saveProps = { onSave, onClear };
+
+  return (
+    <div>
+      <div style={subTabRowStyle}>
+        {OBJECTIVE_SUB_TABS.map(tab => (
+          <div
+            key={tab.key}
+            onClick={() => setActiveSub(tab.key)}
+            style={{ ...subTabItemStyle, ...(activeSub === tab.key ? subTabActiveStyle : {}) }}
+          >
+            {tab.label}
+          </div>
+        ))}
+      </div>
+      {activeSub === "cervical" && <CervicalNeuracAssessment values={values} onChange={onChange} {...saveProps} />}
+      {activeSub === "shoulder" && <ShoulderNeuracAssessment values={values} onChange={onChange} {...saveProps} />}
+      {activeSub === "elbow"    && <ElbowNeuracAssessment    values={values} onChange={onChange} {...saveProps} />}
+      {activeSub === "lumbar"   && <LumbarNeuracAssessment   values={values} onChange={onChange} {...saveProps} />}
+      {activeSub === "knee"     && <KneeNeuracAssessment     values={values} onChange={onChange} {...saveProps} />}
+      {activeSub === "hip"      && <HipNeuracAssessment      values={values} onChange={onChange} {...saveProps} />}
+    </div>
+  );
+}
+
+const subTabRowStyle = {
+  display: "flex", gap: 0,
+  borderBottom: "2px solid #e5e7eb",
+  background: "#f1f5f9", padding: "0 16px",
+};
+const subTabItemStyle = {
+  padding: "10px 24px", fontWeight: 600, fontSize: 14,
+  cursor: "pointer", color: "#475569",
+  borderBottom: "3px solid transparent", marginBottom: -2,
+};
+const subTabActiveStyle = {
+  color: "#2563eb", borderBottom: "3px solid #2563eb", background: "#fff",
 };
 
 const OBJECTIVE_SCHEMA = {
@@ -345,7 +398,9 @@ const SCHEMA_MAP = {
 
 export default function AdvanceFitnessProgramAssessment({ patient }) {
   const [values, setValues] = useState({});
+  const [consentValues, setConsentValues] = useState({});
   const [activeTab, setActiveTab] = useState("subjective");
+  const [atvSubmitted, setAtvSubmitted] = useState(false);
 
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: patient?.medical_history || "",
@@ -361,9 +416,8 @@ export default function AdvanceFitnessProgramAssessment({ patient }) {
     });
   }, [patient]);
 
-  const onChange = (name, value) => {
-    setValues((prev) => ({ ...prev, [name]: value }));
-  };
+  const onChange = (name, value) => setValues((prev) => ({ ...prev, [name]: value }));
+  const onConsentChange = (name, value) => setConsentValues((prev) => ({ ...prev, [name]: value }));
 
   useEffect(() => {
     if (!patient) return;
@@ -374,26 +428,86 @@ export default function AdvanceFitnessProgramAssessment({ patient }) {
     }));
   }, [patient]);
 
+  // Load persisted ATV consent so "already submitted" shows everywhere
+  useEffect(() => {
+    if (!patient) return;
+    const saved = loadAtvConsent(patient);
+    if (!saved) {
+      setAtvSubmitted(false);
+      return;
+    }
+    setConsentValues(saved);
+    setAtvSubmitted(!!saved.saved);
+  }, [patient]);
+
   return (
     <div>
+      {/* ===== PATIENT INFORMATION CARD ===== */}
       <CommonFormBuilder
         schema={SPINAL_CONTAINER_SCHEMA}
         values={{}}
         onChange={() => {}}
       >
-        <PatientInformationBlock
-          patient={patient}
-          patientHistory={patientHistory}
-          setPatientHistory={setPatientHistory}
-        />
+        <PatientCard patient={patient} />
+
+        {/* Patient History */}
+        <div style={{ marginTop: 16 }}>
+          <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+            <textarea
+              value={patientHistory.past_medical_history}
+              onChange={(e) => setPatientHistory(p => ({ ...p, past_medical_history: e.target.value }))}
+              style={historyTextarea}
+            />
+          </div>
+
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+            <textarea
+              value={patientHistory.past_family_history}
+              onChange={(e) => setPatientHistory(p => ({ ...p, past_family_history: e.target.value }))}
+              style={historyTextarea}
+            />
+          </div>
+
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+            <textarea
+              value={patientHistory.alerts_and_allergies}
+              onChange={(e) => setPatientHistory(p => ({ ...p, alerts_and_allergies: e.target.value }))}
+              style={historyTextarea}
+            />
+          </div>
+
+          <button type="button" style={alertBtn}>🚨 Alerts</button>
+        </div>
+
+        <button style={doctorsReportBtn}>Doctors Reports</button>
       </CommonFormBuilder>
 
+      {/* ===== CONSENT & REFERRAL ===== */}
       <CommonFormBuilder
         schema={CONSENT_AND_REFERRAL_SCHEMA}
         values={values}
         onChange={onChange}
       />
 
+      {/* ===== ATV CONSENT FORM ===== */}
+      <ATVConsentForm
+        patient={patient}
+        values={consentValues}
+        onChange={onConsentChange}
+        submitted={atvSubmitted}
+        onSubmit={(data) => {
+          const saved = saveAtvConsent(patient, data);
+          setConsentValues(saved || data);
+          setAtvSubmitted(true);
+        }}
+      />
+
+      {/* ===== SOAP TABS ===== */}
       <div>
         <div style={tabBar}>
           {SOAP_TABS.map((tab) => (
@@ -625,4 +739,27 @@ const alertBtn = {
   color: "#fff",
   fontWeight: 600,
   cursor: "pointer",
+};
+
+const historyTextarea = {
+  width: "100%",
+  minHeight: 90,
+  padding: "10px 12px",
+  borderRadius: 6,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  fontFamily: "inherit",
+  resize: "vertical",
+};
+
+const doctorsReportBtn = {
+  padding: "10px 20px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  marginTop: 8,
 };
