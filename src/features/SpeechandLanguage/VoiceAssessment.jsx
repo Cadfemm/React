@@ -184,7 +184,7 @@ useEffect(() => {
   const SCHEMA_SUBJECTIVE = {
     sections: [
       {
-        title: "Voice Assessment",
+        title: "Voice History",
         fields: [
 
           /* ===== MEDICAL HISTORY ===== */
@@ -234,7 +234,7 @@ useEffect(() => {
     {
       name: "onset_duration",
       label: "Date or duration",
-      type: "date"
+      type: "input"
     }
   ]
 },
@@ -428,7 +428,7 @@ useEffect(() => {
 
 {
   name: "neck_shoulder_tension",
-  label: "Neck/shoulder tension",
+  label: "Neck / shoulder tension",
   type: "radio",
   options: YES_NO_OPTIONS
 }
@@ -1012,10 +1012,7 @@ const SCHEMA_OBJECTIVE = {
 
         // --- S/Z Ratio ---
         { type: "subheading", label: "S/Z Ratio  (longest s ÷ longest z)  –  Normal reference ≈ 1.0" },
-        {
-          type: "note",
-          label: "Elevated ratio (>1.4) → possible vocal fold inefficiency  |  Low ratio (<0.8) → phonation difficulties possible"
-        },
+        
         {
           type: "row",
           fields: [
@@ -1033,7 +1030,10 @@ const SCHEMA_OBJECTIVE = {
           ]
         },
         { name: "sz_ratio", label: "S/Z Ratio (auto-calculated)", type: "input", readOnly: true },
-
+        {
+          type: "info-text",
+          text: "Elevated ratio (>1.4) → possible vocal fold inefficiency | Low ratio (<0.8) → phonation difficulties possible"
+        },
         // --- Acoustic Analysis (Praat) ---
         { type: "subheading", label: "Acoustic Analysis (Praat)  –  Task: Sustained /a/ for 3 trials (best trial analysed)" },
         {
@@ -1083,7 +1083,16 @@ const SCHEMA_OBJECTIVE = {
         //     { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
         //   ]
         // },
-        { name: "cape_overall", label: "Overall Severity", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_severity",
+          label: "Overall Severity",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_overall", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1091,7 +1100,16 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-        { name: "cape_roughness", label: "Roughness", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_roughness",
+          label: "Roughness",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_roughness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1099,7 +1117,16 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-        { name: "cape_breathiness", label: "Breathiness", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_breathiness",
+          label: "Breathiness",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_breathiness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1107,7 +1134,16 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-        { name: "cape_strain", label: "Strain", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_strain",
+          label: "Strain",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_strain", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1115,7 +1151,16 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-        { name: "cape_pitch", label: "Pitch", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_pitch",
+          label: "Pitch",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_pitch", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1123,7 +1168,16 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-        { name: "cape_loudness", label: "Loudness", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        {
+          name: "overall_loudness",
+          label: "Loudness",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_loudness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           ranges: [
             { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
             { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
@@ -1131,11 +1185,25 @@ const SCHEMA_OBJECTIVE = {
             { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
           ]
         },
-
+        {
+          name: "overall_resonance",
+          label: " Resonance",
+          type: "radio",
+          options: [
+            { label: "Normal", value: "normal" },
+            { label: "Other", value: "other" }
+          ],
+        },
+        {
+          name: "overall_resonance_other",
+          label: "Specify",
+          type: "textarea",
+          showIf: { field: "overall_resonance", equals: "other" }
+        },
         // Resonance — Yes/No toggle, scale only shows when Yes
-        { name: "cape_resonance_applicable", label: "Resonance (if applicable)", type: "radio",
-          options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
-        },
+        // { name: "cape_resonance_applicable", label: "Resonance (if applicable)", type: "radio",
+        //   options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
+        // },
         { name: "cape_resonance", label: "Resonance", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
           showIf: { field: "cape_resonance_applicable", equals: "yes" },
           ranges: [
@@ -1152,16 +1220,15 @@ const SCHEMA_OBJECTIVE = {
   const SCHEMA_ASSESSMENT = {
   sections: [
     {
-      title: "Voice Assessment",
+      title: "Clinical Impression",
       fields: [
         {
           name: "voice_status",
           label: "Voice Status",
           type: "radio",
-          labelAbove: true,
           options: [
             { label: "Voice is within functional limits", value: "voice_normal" },
-            { label: "The patient presents with", value: "presents_with" }
+            { label: "The patient presents with voice disorders", value: "presents_with" }
           ]
         },
 

@@ -181,7 +181,7 @@ const SUBJECTIVE_SCHEMA = {
     { label: "Drooling", value: "drooling" },
     { label: "Coughing with drink", value: "coughing" },
     { label: "Choking on food", value: "choking" },
-    { label: "Food/pills stuck in throat", value: "stuck" },
+    { label: "Food / pills stuck in throat", value: "stuck" },
     { label: "Pain on swallowing (odynophagia)", value: "pain" }
   ],
   showIf: {
@@ -253,7 +253,7 @@ const SUBJECTIVE_SCHEMA = {
   options: [
     { label: "Poor secretion management", value: "secretion" },
     { label: "Absent or weak voice", value: "weak_voice" },
-    { label: "Difficulty tolerating cuff deflation", value: "cuff" },
+    { label: "Difficulty tolerating cuff deflation or speaking valve", value: "cuff" },
     { label: "Unable to wean / decannulate", value: "wean" },
     { label: "Increased coughing during oral intake", value: "coughing" }
   ],
@@ -282,10 +282,10 @@ const SUBJECTIVE_SCHEMA = {
 {
   name: "subjectiveLauncher",
   type: "assessment-launcher",
-  label: "Assessments",
+  label: "History",
   options: [
-    { label: "CSE", value: "swallow_subjective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    // { label: "Communication", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Swallowing", value: "swallow_subjective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
+    // { label: "Speech & Language", value: "comm_subjective", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_subjective", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_subjective", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -344,7 +344,7 @@ const OBJECTIVE_SCHEMA = {
             { name: "rr",          label: "RR (breaths/min)", type: "input", placeholder: "e.g. 18" },
             { name: "hr",          label: "HR (bpm)",        type: "input", placeholder: "e.g. 72" },
             { name: "bp",          label: "BP (mmHg)",       type: "input", placeholder: "e.g. 120/80" },
-            { name: "temperature", label: "Temp (°C)",       type: "input", placeholder: "e.g. 37.0" }
+            // { name: "temperature", label: "Temp (°C)",       type: "input", placeholder: "e.g. 37.0" }
           ]
         },
         {
@@ -356,7 +356,7 @@ const OBJECTIVE_SCHEMA = {
 
         {
           type: "subheading",
-          label: "Oral-motor structure observation"
+          label: "Oral Structure Observation"
         },
 
         {
@@ -370,11 +370,6 @@ const OBJECTIVE_SCHEMA = {
           label: "Hard palate",
           type: "radio",
           options: ["No Abnormality Detected", "High arch", "Cleft"]
-        },
-        {
-          name: "hardPalateRemarks",
-          label: "Hard palate Remarks",
-          type: "textarea"
         },
         {
           name: "softPalate",
@@ -411,13 +406,22 @@ const OBJECTIVE_SCHEMA = {
             "Scarring"
           ]
         },
+        {
+          name: "hardPalateRemarks",
+          label: "Remarks",
+          type: "textarea"
+        },        
         // {
         //   type: "subheading",
         //   label: "Cranial Nerve Examination"
         // },
         {
+          type: "subheading",
+          label: "Cranial Nerve Examination"
+        },
+        {
           name: "cranial_nerve",
-          label: "Cranial Nerve Examination",
+          label: "",
           type: "checkbox-group",
           options: [
             { label: "CN V", value: "cn_v" },
@@ -429,7 +433,7 @@ const OBJECTIVE_SCHEMA = {
 
         // CN V
         {  label: "CN V", showIf: { field: "cranial_nerve", includes: "cn_v" } },
-        { name: "cn5_motor", label: "Motor (Jaw ROM/strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_v" }, options: [
+        { name: "cn5_motor", label: "Motor (Jaw ROM / Strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_v" }, options: [
           { label: "Within Normal Limit", value: "wnl" },
           { label: "Impaired", value: "impaired" },
           { label: "Not Tested", value: "not_tested" }
@@ -453,7 +457,7 @@ const OBJECTIVE_SCHEMA = {
           { label: "Left Facial Droop", value: "left_droop" },
           { label: "Right Facial Droop", value: "right_droop" }
         ]},
-        { name: "cn7_sensory", label: "Sensory (Taste - ant 2/3 tongue)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_vii" }, options: [
+        { name: "cn7_sensory", label: "Sensory (Taste - anterior 2/3 tongue)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_vii" }, options: [
           { label: "Within Normal Limit", value: "wnl" },
           { label: "Impaired", value: "impaired" },
           { label: "Not Tested", value: "not_tested" }
@@ -461,7 +465,7 @@ const OBJECTIVE_SCHEMA = {
 
         // CN IX & X
         { label: "CN IX & X", showIf: { field: "cranial_nerve", includes: "cn_ix_x" } },
-        { name: "cn9_10_motor", label: "Motor (SP, Cough)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_ix_x" }, options: [
+        { name: "cn9_10_motor", label: "Motor (Soft Palate, Cough)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_ix_x" }, options: [
           { label: "Within Normal Limit", value: "wnl" },
           { label: "Impaired", value: "impaired" },
           { label: "Not Tested", value: "not_tested" }
@@ -479,7 +483,7 @@ const OBJECTIVE_SCHEMA = {
 
         // CN XII
         { label: "CN XII", showIf: { field: "cranial_nerve", includes: "cn_xii" } },
-        { name: "cn12_motor", label: "Motor (Tongue ROM/strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_xii" }, options: [
+        { name: "cn12_motor", label: "Motor (Tongue ROM / Strength)", type: "radio", showIf: { field: "cranial_nerve", includes: "cn_xii" }, options: [
           { label: "Within Normal Limit", value: "wnl" },
           { label: "Impaired", value: "impaired" },
           { label: "Not Tested", value: "not_tested" }
@@ -490,10 +494,10 @@ const OBJECTIVE_SCHEMA = {
         {
   name: "objectiveLauncher",
   type: "assessment-launcher",
-  label: "Assessments",
+  label: "History",
   options: [
-    { label: "CSE", value: "swallow_objective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication", value: "comm_objective", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Swallowing", value: "swallow_objective", visibleIf: { field: "swallowingProblems", equals: "YES" } },
+    { label: "Speech & Language", value: "comm_objective", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_objective", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_objective", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -523,10 +527,10 @@ const OBJECTIVE_SCHEMA = {
         {
   name: "assessmentLauncher",
   type: "assessment-launcher",
-  label: "Assessments",
+  label: "History",
   options: [
-    { label: "CSE", value: "swallow_assessment", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication", value: "comm_assessment", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Swallowing", value: "swallow_assessment", visibleIf: { field: "swallowingProblems", equals: "YES" } },
+    { label: "Speech & Language", value: "comm_assessment", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_assessment", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_assessment", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -550,18 +554,14 @@ const OBJECTIVE_SCHEMA = {
       {
         title: "",
         fields: [
-          {
-            name: "others",
-            label: "Others",
-            type: "textarea"
-          },
+         
           {
   name: "planLauncher",
   type: "assessment-launcher",
-  label: "Assessments",
+  label: "History",
   options: [
-    { label: "CSE", value: "swallow_plan", visibleIf: { field: "swallowingProblems", equals: "YES" } },
-    { label: "Communication", value: "comm_plan", visibleIf: { field: "communicationProblems", equals: "YES" } },
+    { label: "Swallowing", value: "swallow_plan", visibleIf: { field: "swallowingProblems", equals: "YES" } },
+    { label: "Speech & Language", value: "comm_plan", visibleIf: { field: "communicationProblems", equals: "YES" } },
     { label: "Voice", value: "voice_plan", visibleIf: { field: "voiceProblems", equals: "YES" } },
     { label: "Tracheostomy", value: "trach_plan", visibleIf: { field: "tracheostomyProblems", equals: "YES" } }
   ],
@@ -574,6 +574,11 @@ const OBJECTIVE_SCHEMA = {
     ]
   }
 },
+ {
+            name: "others",
+            label: "Others",
+            type: "textarea"
+          },
         ]
       }
     ]
