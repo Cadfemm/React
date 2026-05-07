@@ -512,6 +512,20 @@ export function TinnitusAdvancedFormObj({ onBack }) {
           defaultOpen: false,
 
           children: [
+            // ✅ ADD THIS SELECTOR
+            {
+              name: "psychoacoustic_fields",
+              label: "Select Measurements",
+              type: "checkbox-group",
+              options: [
+                { label: "Pitch Matching", value: "pitch" },
+                { label: "Loudness Matching", value: "loudness" },
+                { label: "Minimum Masking Level (MML)", value: "mml" },
+                { label: "Residual Inhibition", value: "ri" },
+                { label: "Loudness Discomfort Level (LDL)", value: "ldl" }
+              ]
+            },
+
             {
               type: "refraction-12col",
               name: "tinnitus_matrix",
@@ -530,48 +544,40 @@ export function TinnitusAdvancedFormObj({ onBack }) {
                 }
               ],
 
-              rows: [
-                {
-                  value: "pitch",
-                  label: "Pitch Matching (Hz)",
-                  columns: [
-                    { type: "input" },
-                    { type: "input" }
-                  ]
-                },
-                {
-                  value: "loudness",
-                  label: "Loudness Matching (dB HL)",
-                  columns: [
-                    { type: "input" },
-                    { type: "input" }
-                  ]
-                },
-                {
-                  value: "mml",
-                  label: "Minimum Masking Level (MML) (dB HL)",
-                  columns: [
-                    { type: "input" },
-                    { type: "input" }
-                  ]
-                },
-                {
-                  value: "ri",
-                  label: "Residual Inhibition",
-                  columns: [
-                    { type: "input" },
-                    { type: "input" }
-                  ]
-                },
-                {
-                  value: "ldl",
-                  label: "Loudness Discomfort Level (LDL)",
-                  columns: [
-                    { type: "input" },
-                    { type: "input" }
-                  ]
-                }
-              ]
+              // ✅ FILTER ROWS BASED ON SELECTION
+              rows: (values) => {
+                const selected = values.psychoacoustic_fields || [];
+
+                const allRows = [
+                  {
+                    value: "pitch",
+                    label: "Pitch Matching (Hz)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "loudness",
+                    label: "Loudness Matching (dB HL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "mml",
+                    label: "Minimum Masking Level (MML) (dB HL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "ri",
+                    label: "Residual Inhibition",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "ldl",
+                    label: "Loudness Discomfort Level (LDL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  }
+                ];
+
+                return allRows.filter(row => selected.includes(row.value));
+              }
             }
           ]
         },

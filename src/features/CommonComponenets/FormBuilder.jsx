@@ -3323,7 +3323,9 @@ if (typeof col === "object" && col.type === "radio") {
 
 
     case "refraction-12col": {
-      const rows = field.rows || [];
+      const rows = typeof field.rows === "function"
+        ? field.rows(values)
+        : field.rows;
       const groups = field.groups || [];
       const cornerLabel = field.cornerLabel || "";
       const cornerLikeGroupHeader = field.cornerLikeGroupHeader === true;

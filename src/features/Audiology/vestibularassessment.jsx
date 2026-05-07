@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function VestibularAdvancedForm({ onBack, mode }) {
@@ -687,18 +687,23 @@ const buildBinaryOptions = (prefix, title) => ([
     "Vertical Up Passive",
     "Vertical Down Passive",
     "Left Anterior Passive",
-    "Right Posterior Passive",
     "Right Anterior Passive",
-    "Left Posterior Passive"
-  ].map(item => ({
-    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-    label: item,
-    type: "radio-matrix",
-    options: [
-      { label: "Within normal range", value: 0 },
-      { label: "Deviated", value: 1 }
-    ]
-  })),
+    "Left Posterior Passive",
+    "Right Posterior Passive",
+  ].map(item => {
+    const key = item.toLowerCase().replace(/\s+/g, "_");
+
+    return {
+      name: `${prefix}_${key}`,
+      label: item,
+      type: "radio-matrix",
+      showIf: { field: "dva_fields", includes: key },
+      options: [
+        { label: "Within normal range", value: 0 },
+        { label: "Deviated", value: 1 }
+      ]
+    };
+  }),
 
   {
     type: "subheading",
@@ -714,15 +719,20 @@ const buildBinaryOptions = (prefix, title) => ([
     "Right Posterior Active",
     "Right Anterior Active",
     "Left Posterior Active"
-  ].map(item => ({
-    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-    label: item,
-    type: "radio-matrix",
-    options: [
-      { label: "Within normal range", value: 0 },
-      { label: "Deviated", value: 1 }
-    ]
-  }))
+  ].map(item => {
+    const key = item.toLowerCase().replace(/\s+/g, "_");
+
+    return {
+      name: `${prefix}_${key}`,
+      label: item,
+      type: "radio-matrix",
+      showIf: { field: "dva_fields", includes: key },
+      options: [
+        { label: "Within normal range", value: 0 },
+        { label: "Deviated", value: 1 }
+      ]
+    };
+  })
 ]);
 const buildBinaryOptionsgaze = (prefix, title) => ([
   {
@@ -741,19 +751,25 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
     "Vertical Up Passive",
     "Vertical Down Passive",
     "Left Anterior Passive",
-    "Right Posterior Passive",
     "Right Anterior Passive",
     "Left Posterior Passive",
-    "Vertical Down Active"
-  ].map(item => ({
-    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-    label: item,
-    type: "radio-matrix",
-    options: [
-      { label: "Within normal range", value: 0 },
-      { label: "Deviated", value: 1 }
-    ]
-  })),
+    "Right Posterior Passive"
+  ].map(item => {
+    const key = item.toLowerCase().replace(/\s+/g, "_");
+
+    return {
+      name: `${prefix}_${key}`,
+      label: item,
+      type: "radio-matrix",
+
+      showIf: { field: "gaze_fields", includes: key },
+
+      options: [
+        { label: "Within normal range", value: 0 },
+        { label: "Deviated", value: 1 }
+      ]
+    };
+  }),
 
   {
     type: "subheading",
@@ -767,18 +783,24 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
     "Vertical Down Active",
     "Left Anterior Active",
     "Right Posterior Active",
-    "Right Anterior Active",
     "Left Posterior Active",
-    "Vertical Down Active"
-  ].map(item => ({
-    name: `${prefix}_${item.toLowerCase().replace(/\s+/g, "_")}`,
-    label: item,
-    type: "radio-matrix",
-    options: [
-      { label: "Within normal range", value: 0 },
-      { label: "Deviated", value: 1 }
-    ]
-  }))
+    "Right Anterior Active",
+  ].map(item => {
+    const key = item.toLowerCase().replace(/\s+/g, "_");
+
+    return {
+      name: `${prefix}_${key}`,
+      label: item,
+      type: "radio-matrix",
+
+      showIf: { field: "gaze_fields", includes: key },
+
+      options: [
+        { label: "Within normal range", value: 0 },
+        { label: "Deviated", value: 1 }
+      ]
+    };
+  })
 ]);
   // =========================
   // FGA AUTO SCORE
@@ -1359,6 +1381,24 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
             defaultOpen: false,
 
             children: [
+              // ✅ SELECTOR
+              {
+                name: "positional_fields",
+                label: "Select Tests",
+                type: "checkbox-group",
+                options: [
+                  { label: "Dix Hallpike", value: "dixhallpike" },
+                  { label: "Epley Maneuver", value: "epley" },
+                  { label: "Roll Test", value: "rolltest" },
+                  { label: "Barbecue Roll Test", value: "barbecue" },
+                  { label: "Supine Straight Head Extension", value: "supine" },
+                  { label: "Semont", value: "semont" },
+                  { label: "Gufoni", value: "gufoni" },
+                  { label: "Appiani", value: "appiani" },
+                  { label: "Others", value: "others" }
+                ]
+              },
+
               {
                 type: "refraction-12col",
                 name: "positional_matrix",
@@ -1378,53 +1418,60 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
                   }
                 ],
 
-                rows: [
-                  {
-                    value: "dixhallpike",
-                    label: "Dix Hallpike",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "epley",
-                    label: "Epley Maneuver",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "rolltest",
-                    label: "Roll Test",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "barbecue",
-                    label: "Barbecue Roll Test",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "supine",
-                    label: "Supine Straight Head Extension",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "semont",
-                    label: "Semont",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "gufoni",
-                    label: "Gufoni",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "appiani",
-                    label: "Appiani",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  },
-                  {
-                    value: "others",
-                    label: "Others",
-                    columns: [{ type: "input" }, { type: "input" }]
-                  }
-                ]
+                // ✅ FILTERED ROWS
+                rows: (values) => {
+                  const selected = values.positional_fields || [];
+
+                  const allRows = [
+                    {
+                      value: "dixhallpike",
+                      label: "Dix Hallpike",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "epley",
+                      label: "Epley Maneuver",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "rolltest",
+                      label: "Roll Test",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "barbecue",
+                      label: "Barbecue Roll Test",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "supine",
+                      label: "Supine Straight Head Extension",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "semont",
+                      label: "Semont",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "gufoni",
+                      label: "Gufoni",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "appiani",
+                      label: "Appiani",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    },
+                    {
+                      value: "others",
+                      label: "Others",
+                      columns: [{ type: "input" }, { type: "input" }]
+                    }
+                  ];
+
+                  return allRows.filter(row => selected.includes(row.value));
+                }
               }
             ]
           }
@@ -1443,6 +1490,31 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
             defaultOpen: false,
 
             children: [
+              {
+                name: "dva_fields",
+                label: "Select Tests",
+                type: "checkbox-group",
+                options: [
+                  { label: "Horizontal Left Passive", value: "horizontal_left_passive" },
+                  { label: "Horizontal Right Passive", value: "horizontal_right_passive" },
+                  { label: "Vertical Up Passive", value: "vertical_up_passive" },
+                  { label: "Vertical Down Passive", value: "vertical_down_passive" },
+                  { label: "Left Anterior Passive", value: "left_anterior_passive" },
+                  { label: "Right Anterior Passive", value: "right_anterior_passive" },
+                  { label: "Left Posterior Passive", value: "left_posterior_passive" },
+                  { label: "Right Posterior Passive", value: "right_posterior_passive" },
+                  
+                  { label: "Horizontal Left Active", value: "horizontal_left_active" },
+                  { label: "Horizontal Right Active", value: "horizontal_right_active" },
+                  { label: "Vertical Up Active", value: "vertical_up_active" },
+                  { label: "Vertical Down Active", value: "vertical_down_active" },
+                  { label: "Left Anterior Active", value: "left_anterior_active" },
+                  { label: "Right Anterior Active", value: "right_anterior_active" },
+                  { label: "Left Posterior Active", value: "left_posterior_active" },
+                  { label: "Right Posterior Active", value: "right_posterior_active" },
+                ]
+              },
+
               ...buildBinaryOptions("dva", "")
             ]
           },
@@ -1454,6 +1526,33 @@ const buildBinaryOptionsgaze = (prefix, title) => ([
             defaultOpen: false,
 
             children: [
+              {
+                name: "gaze_fields",
+                label: "Select Tests",
+                type: "checkbox-group",
+                options: [
+                  // Passive
+                  { label: "Horizontal Left Passive", value: "horizontal_left_passive" },
+                  { label: "Horizontal Right Passive", value: "horizontal_right_passive" },
+                  { label: "Vertical Up Passive", value: "vertical_up_passive" },
+                  { label: "Vertical Down Passive", value: "vertical_down_passive" },
+                  { label: "Left Anterior Passive", value: "left_anterior_passive" },
+                  { label: "Right Anterior Passive", value: "right_anterior_passive" },
+                  { label: "Left Posterior Passive", value: "left_posterior_passive" },
+                  { label: "Right Posterior Passive", value: "right_posterior_passive" },
+
+                  // Active
+                  { label: "Horizontal Left Active", value: "horizontal_left_active" },
+                  { label: "Horizontal Right Active", value: "horizontal_right_active" },
+                  { label: "Vertical Up Active", value: "vertical_up_active" },
+                  { label: "Vertical Down Active", value: "vertical_down_active" },
+                  { label: "Left Anterior Active", value: "left_anterior_active" },
+                  { label: "Right Anterior Active", value: "right_anterior_active" },
+                  { label: "Left Posterior Active", value: "left_posterior_active" },
+                  { label: "Right Posterior Active", value: "right_posterior_active" },
+                ]
+              },
+
               ...buildBinaryOptionsgaze("gaze_stab", "")
             ]
           }
