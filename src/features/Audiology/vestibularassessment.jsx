@@ -1,9 +1,12 @@
-import React, { useState, useMemo } from "react";
+﻿import React, { useState, useMemo } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function VestibularAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
-  const [scoresVisible, setScoresVisible] = useState(true);
+  const [dhiScoresVisible, setDhiScoresVisible] = useState(true);
+  const [vvasScoresVisible, setVvasScoresVisible] = useState(true);
+  const [vhqScoresVisible, setVhqScoresVisible] = useState(true);
+  const [mvvssScoresVisible, setMvvssScoresVisible] = useState(true);
 
   const DHI_QUESTIONS = [
   "Does looking up increase your problem?",
@@ -88,13 +91,13 @@ const MVVSS_QUESTIONS = [
 ];
 const MVVSS_OPTIONS = [
   { label: "Tidak pernah (0)", value: 0 },
-  { label: "Beberapa kali (1–3 kali setahun) (1)", value: 1 },
-  { label: "Banyak kali (4–12 kali setahun) (2)", value: 2 },
+  { label: "Beberapa kali (1â€“3 kali setahun) (1)", value: 1 },
+  { label: "Banyak kali (4â€“12 kali setahun) (2)", value: 2 },
   { label: "Agak kerap (lebih dari sekali sebulan) (3)", value: 3 },
   { label: "Sangat kerap (lebih dari sekali seminggu) (4)", value: 4 }
 ];
   // =========================
-  // ✅ CALCULATIONS
+  // âœ… CALCULATIONS
   // =========================
 
   const computeDHI = (v) => {
@@ -154,7 +157,7 @@ const MVVSS_OPTIONS = [
   };
 
   // =========================
-  // ✅ HANDLE CHANGE
+  // âœ… HANDLE CHANGE
   // =========================
   const handleChange = (name, value) => {
     setValues((prev) => {
@@ -189,21 +192,16 @@ const MVVSS_OPTIONS = [
   };
 
   // =========================
-  // ✅ SCHEMA
+  // âœ… SCHEMAS (split per scale for individual Doctor View toggles)
   // =========================
 
-  const schema = {
+  // Main: title + Back + case history + scale selectors
+  const mainSchema = {
     title: "Additional Vestibular Profile",
-    enableScoreToggle: true,
-    actions: [{ type: "toggle-show-scores" }, { type: "back", label: "Back" }],
-
-    sections: [
-      {
-        title: null, // Single unified section
-        fields: [
-          // =========================
-          // CASE HISTORY
-          // =========================
+    actions: [{ type: "back", label: "Back" }],
+    sections: [{
+      title: null,
+      fields: [
           { type: "subheading", label: "Case History (Vestibular)" },
 
         { type: "info-text", label: "1. Symptoms" },
@@ -237,12 +235,7 @@ const MVVSS_OPTIONS = [
           { label: "Travel", value: "Travel" },
           { label: "Others", value: "Others" }
         ]},
-        {
-          name: "situational_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "situational", includes: "Others" }
-        },
+        { name: "situational_details", label: "Specify", type: "textarea", showIf: { field: "situational", includes: "Others" } },
         { name: "third_window", label: "Third window", type: "checkbox-group", options: [
           { label: "None", value: "none"},
           { label: "Loud sounds", value: "Loud sounds" },
@@ -253,12 +246,7 @@ const MVVSS_OPTIONS = [
           { label: "Straining", value: "Straining" },
           { label: "Others", value: "Others" }
         ]},
-        {
-          name: "third_window_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "third_window", includes: "Others" }
-        },
+        { name: "third_window_details", label: "Specify", type: "textarea", showIf: { field: "third_window", includes: "Others" } },
         { name: "movement", label: "Movement", type: "checkbox-group", options: [
           { label: "None", value: "none"},
           { label: "Bending over", value: "Bending over" },
@@ -271,13 +259,7 @@ const MVVSS_OPTIONS = [
           { label: "Turning head R/L", value: "Turning head R/L" },
           { label: "Others", value: "Others" }
         ]},
-        {
-          name: "movement_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "movement", includes: "Others" }
-        },
-
+        { name: "movement_details", label: "Specify", type: "textarea", showIf: { field: "movement", includes: "Others" } },
         { name: "environmental", label: "Environmental", type: "checkbox-group", options: [
           { label: "None", value: "none"},
           { label: "Open spaces", value: "Open spaces" },
@@ -288,118 +270,78 @@ const MVVSS_OPTIONS = [
           { label: "Uneven ground", value: "Uneven ground" },
           { label: "Others", value: "Others" }
         ]},
-        {
-          name: "environmental_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "environmental", includes: "Others" }
-        },
+        { name: "environmental_details", label: "Specify", type: "textarea", showIf: { field: "environmental", includes: "Others" } },
 
         { type: "info-text", label: "3. Duration" },
-        {
-          name: "duration",
-          label: "Episode duration",
-          type: "checkbox-group",
-          options: [
-            { label: "<10s", value: "<10s" },
-            { label: "10s-1min", value: "10s-1min" },
-            { label: "1-5min", value: "1-5min" },
-            { label: "30min-12h", value: "30min-12h" },
-            { label: "12-72h", value: "12-72h" },
-            { label: "Weeks", value: "weeks" },
-            { label: ">3 days-<1 week", value: "3d_1w" },
-            { label: "Months", value: "months" }
-          ]
-        },
+        { name: "duration", label: "Episode duration", type: "checkbox-group", options: [
+          { label: "<10s", value: "<10s" },
+          { label: "10s-1min", value: "10s-1min" },
+          { label: "1-5min", value: "1-5min" },
+          { label: "30min-12h", value: "30min-12h" },
+          { label: "12-72h", value: "12-72h" },
+          { label: "Weeks", value: "weeks" },
+          { label: ">3 days-<1 week", value: "3d_1w" },
+          { label: "Months", value: "months" }
+        ]},
 
         { type: "info-text", label: "4. Onset" },
         { name: "onset_date", label: "Date / How long ago", type: "input" },
-        {
-          name: "onset_after",
-          label: "After what?",
-          type: "checkbox-group",
-          options: [
-            { label: "Severe vertigo", value: "severe_vertigo" },
-            { label: "Trauma", value: "trauma" },
-            { label: "Immobilization", value: "immobilization" },
-            { label: "Surgery", value: "surgery" },
-            { label: "No association", value: "none" },
-            { label: "Medication", value: "medication" },
-            { label: "New diagnosis", value: "new_diagnosis" },
-            { label: "Fever", value: "fever" },
-            { label: "Others", value: "other" }
-          ]
-        },
-        {
-        name: "onset_after_details",
-        label: "Specify",
-        type: "textarea",
-        showIf: { field: "onset_after", includes: "other" }
-      },
+        { name: "onset_after", label: "After what?", type: "checkbox-group", options: [
+          { label: "Severe vertigo", value: "severe_vertigo" },
+          { label: "Trauma", value: "trauma" },
+          { label: "Immobilization", value: "immobilization" },
+          { label: "Surgery", value: "surgery" },
+          { label: "No association", value: "none" },
+          { label: "Medication", value: "medication" },
+          { label: "New diagnosis", value: "new_diagnosis" },
+          { label: "Fever", value: "fever" },
+          { label: "Others", value: "other" }
+        ]},
+        { name: "onset_after_details", label: "Specify", type: "textarea", showIf: { field: "onset_after", includes: "other" } },
 
         { type: "info-text", label: "5. Frequency" },
-        {
-          name: "frequency",
-          label: "Symptom frequency",
-          type: "checkbox-group",
-          options: [
-            { label: "Only once", value: "once" },
-            { label: "Several times/day", value: "several_per_day" },
-            { label: "Daily (intermittent)", value: "daily_intermittent" },
-            { label: "Continuous", value: "continuous" },
-            { label: "Variable symptom-free period", value: "variable_free" },
-            { label: "Only with trigger", value: "trigger_only" },
-            { label: "Daily", value: "daily" },
-            { label: "Weekly", value: "weekly" },
-            { label: "Several years", value: "years" },
-            { label: "Continuous with worsening", value: "worsening" },
-            { label: "Others", value: "other" }
-          ]
-        },
-        {
-          name: "frequency_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "frequency", includes: "other" }
-        },
+        { name: "frequency", label: "Symptom frequency", type: "checkbox-group", options: [
+          { label: "Only once", value: "once" },
+          { label: "Several times/day", value: "several_per_day" },
+          { label: "Daily (intermittent)", value: "daily_intermittent" },
+          { label: "Continuous", value: "continuous" },
+          { label: "Variable symptom-free period", value: "variable_free" },
+          { label: "Only with trigger", value: "trigger_only" },
+          { label: "Daily", value: "daily" },
+          { label: "Weekly", value: "weekly" },
+          { label: "Several years", value: "years" },
+          { label: "Continuous with worsening", value: "worsening" },
+          { label: "Others", value: "other" }
+        ]},
+        { name: "frequency_details", label: "Specify", type: "textarea", showIf: { field: "frequency", includes: "other" } },
 
         { type: "info-text", label: "6. Evolution" },
-        {
-          name: "evolution",
-          label: "Symptom evolution",
-          type: "checkbox-group",
-          options: [
-            { label: "Worst initially then improving", value: "initial_worst_improving" },
-            { label: "Worsening day by day", value: "worsening_daily" },
-            { label: "Severe during attacks only", value: "attack_only" },
-            { label: "Stable with little fluctuation", value: "stable" },
-            { label: "Others", value: "other" }
-          ]
-        },
-        {
-          name: "evolution_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "evolution", includes: "other" }
-        },
+        { name: "evolution", label: "Symptom evolution", type: "checkbox-group", options: [
+          { label: "Worst initially then improving", value: "initial_worst_improving" },
+          { label: "Worsening day by day", value: "worsening_daily" },
+          { label: "Severe during attacks only", value: "attack_only" },
+          { label: "Stable with little fluctuation", value: "stable" },
+          { label: "Others", value: "other" }
+        ]},
+        { name: "evolution_details", label: "Specify", type: "textarea", showIf: { field: "evolution", includes: "other" } },
 
         { type: "info-text", label: "7. Otological" },
-        { name: "hearing", label: "Hearing loss", type: "input" },
-        { name: "ear_pressure", label: "Ear pressure / fullness", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "vesicles", label: "Vesicles in or around ear", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "paresthesia", label: "Paresthesia", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "tinnitus", label: "Tinnitus", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "ear_pain", label: "Pain in or around ear", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "ear_discharge", label: "Ear discharge", type: "radio", options: ["No","Right","Left","Bilateral"] },
-        { name: "autophony", label: "Autophony", type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "hearing",       label: "Hearing loss",                type: "input" },
+        { name: "ear_pressure",  label: "Ear pressure / fullness",     type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "vesicles",      label: "Vesicles in or around ear",   type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "paresthesia",   label: "Paresthesia",                 type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "tinnitus",      label: "Tinnitus",                    type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "ear_pain",      label: "Pain in or around ear",       type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "ear_discharge", label: "Ear discharge",               type: "radio", options: ["No","Right","Left","Bilateral"] },
+        { name: "autophony",     label: "Autophony",                   type: "radio", options: ["No","Right","Left","Bilateral"] },
 
         { type: "info-text", label: "8. Neurological" },
-        { name: "headache", label: "Headache", type: "radio", options: ["No","Yes"] },
+        { name: "headache",        label: "Headache",        type: "radio", options: ["No","Yes"] },
         { name: "facial_weakness", label: "Facial weakness", type: "radio", options: ["No","Yes"] },
-        { name: "photophobia", label: "Photophobia", type: "radio", options: ["No","Yes"] },
+        { name: "photophobia",     label: "Photophobia",     type: "radio", options: ["No","Yes"] },
         { name: "facial_numbness", label: "Facial numbness", type: "radio", options: ["No","Yes"] },
-        { name: "diplopia", label: "Diplopia", type: "radio", options: ["No","Yes"] },
-        { name: "neuro_other", label: "Others", type: "input" },
+        { name: "diplopia",        label: "Diplopia",        type: "radio", options: ["No","Yes"] },
+        { name: "neuro_other",     label: "Others",          type: "input" },
 
         { type: "info-text", label: "9. Others" },
         { name: "meds", label: "Current medications", type: "input" },
@@ -409,190 +351,219 @@ const MVVSS_OPTIONS = [
           { label: "Dyslipidemia", value: "Dyslipidemia" },
           { label: "Others", value: "Others" }
         ]},
-        {
-          name: "conditions_details",
-          label: "Specify",
-          type: "textarea",
-          showIf: { field: "conditions", includes: "Others" }
-        },
+        { name: "conditions_details", label: "Specify", type: "textarea", showIf: { field: "conditions", includes: "Others" } },
         { name: "improved_meds", label: "Which medicine improved symptoms?", type: "input" },
 
-          // =========================
-          // TOGGLES
-          // =========================
-          { type: "subheading", label: "Scales" },
-
-          { name: "enable_dhi", label: "Dizziness Handicap Inventory (DHI)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_vvas", label: "Visual Vertigo Analogue Score (VVAS)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_vhq", label: "Vertigo Handicap Questionnaire (VHQ)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_mvvss", label: "Malay Version Vertigo Symptom Scale (MVVSS)", type: "radio", options: ["Yes", "No"] },
-
-          // =========================
-          // DHI
-          // =========================
-          { type: "subheading", label: "Dizziness Handicap Inventory (DHI)", showIf: { field: "enable_dhi", equals: "Yes" } },
-
-          ...DHI_QUESTIONS.map((q, i) => ({
-            name: `dhi_${i + 1}`,
-            label: `${i + 1}. ${q}`,
-            type: "radio-matrix",
-            options: scoresVisible
-              ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Always (4)", value: 4 }]
-              : [{ label: "No", value: 0 }, { label: "Sometimes", value: 2 }, { label: "Always", value: 4 }],
-            showIf: { field: "enable_dhi", equals: "Yes" }
-          })),
-
-          ...(scoresVisible ? [
-            { name: "dhi_physical", label: "Physical", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-            { name: "dhi_emotional", label: "Emotional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-            { name: "dhi_functional", label: "Functional", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-            { name: "dhi_total", label: "Total", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-            { name: "dhi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_dhi", equals: "Yes" } },
-          ] : []),
-
-          // =========================
-          // VVAS
-          // =========================
-          { type: "subheading", label: "Visual Vertigo Analogue Score (VVAS)", showIf: { field: "enable_vvas", equals: "Yes" } },
-          { type: "info-text", text: "0 = none, 10 = worst possible", showIf: { field: "enable_vvas", equals: "Yes" } },
-          ...VVAS_QUESTIONS.map((q, i) => ({
-            name: `vvas_${i + 1}`,
-            label: `${i + 1}. ${q}`,
-            type: "scale-slider",
-            min: 0,
-            max: 10,
-            showIf: { field: "enable_vvas", equals: "Yes" }
-          })),
-
-          ...(scoresVisible ? [
-            { name: "vvas_score", label: "Score", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
-            { name: "vvas_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_vvas", equals: "Yes" } },
-          ] : []),
-
-          // =========================
-          // VHQ
-          // =========================
-          { type: "subheading", label: "Vertigo Handicap Questionnaire (VHQ)", showIf: { field: "enable_vhq", equals: "Yes" } },
-
-          ...VHQ_QUESTIONS.map((q, i) => ({
-            name: `vhq_${i + 1}`,
-            label: `${i + 1}. ${q.text}`,
-            type: "radio-matrix",
-            options: scoresVisible
-              ? [{ label: "Never (0)", value: 0 }, { label: "Occasionally (1)", value: 1 }, { label: "Sometimes (2)", value: 2 }, { label: "Often (3)", value: 3 }, { label: "Always (4)", value: 4 }]
-              : [{ label: "Never", value: 0 }, { label: "Occasionally", value: 1 }, { label: "Sometimes", value: 2 }, { label: "Often", value: 3 }, { label: "Always", value: 4 }],
-            showIf: { field: "enable_vhq", equals: "Yes" }
-          })),
-
-          ...(scoresVisible ? [{ name: "vhq_total", label: "Total", type: "score-box", showIf: { field: "enable_vhq", equals: "Yes" } }] : []),
-          {
-            name: "vhq_work",
-            label: "26. Are you currently employed?",
-            type: "radio",
-            options: scoresVisible
-              ? [
-                  { label: "No (0)", value: 0 },
-                  { label: "Yes (1)", value: 1 }
-                ]
-              : [
-                  { label: "No", value: 0 },
-                  { label: "Yes", value: 1 }
-                ],
-            showIf: { field: "enable_vhq", equals: "Yes" }
-          },
-
-          {
-            name: "vhq_26a",
-            label: "Did you give up work because of vertigo?",
-            type: "radio",
-            options: ["No", "Yes"],
-            showIf: { field: "vhq_work", equals: 0 }
-          },
-
-          {
-            name: "vhq_26b",
-            label: "Have you changed your work because of vertigo?",
-            type: "radio",
-            options: ["No", "Yes"],
-            showIf: { field: "vhq_work", equals: 1 }
-          },
-
-          {
-            name: "vhq_26c",
-            label: "Does vertigo cause difficulty at work?",
-            type: "radio",
-            options: ["No", "Yes"],
-            showIf: { field: "vhq_work", equals: 1 }
-          },
-          // =========================
-          // MVVSS
-          // =========================
-          { type: "subheading", label: "Malay Version Vertigo Symptom Scale (MVVSS)", showIf: { field: "enable_mvvss", equals: "Yes" } },
-
-          ...MVVSS_QUESTIONS.map((q, i) => ({
-            name: `mvvss_${i + 1}`,
-            label: `${i + 1}. ${q}`,
-            type: "radio-matrix",
-            options: scoresVisible ? MVVSS_OPTIONS : MVVSS_OPTIONS.map(o => ({ ...o, label: o.label.replace(/ \(\d+\)/, "") })),
-            showIf: { field: "enable_mvvss", equals: "Yes" }
-          })),
-
-          ...(scoresVisible ? [{ name: "mvvss_total", label: "Total", type: "score-box", showIf: { field: "enable_mvvss", equals: "Yes" } }] : []),
-
-          // =========================
-          // FUNCTIONAL
-          // =========================
-          { type: "subheading", label: "Functional and Daily Life Impact for vestibular" },
-
-          { name: "work", label: "Work / Study", type: "input" },
-          { name: "communication", label: "Communication", type: "input" },
-          { name: "social", label: "Family / Social", type: "input" },
-          { name: "rest", label: "Relaxation / Rest", type: "input" },
-          { name: "outdoor", label: "Outdoor / Public noise tolerance", type: "input" },
-
-          // =========================
-          // COUNSELING
-          // =========================
-          {
-            type: "subheading",
-            label: "Counseling Summary",
-            showIf: { field: "mode", equals: "followup" }
-          },
-
-          { name: "understanding", label: "Patient’s understanding of vestibular disorder", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "goals", label: "Expectations / goals", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "motivation", label: "Motivation for therapy", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "education", label: "Education & counseling provided", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "next_steps", label: "Recommended next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
-        ]
-      }
-    ]
+        // Scale selectors
+        { type: "subheading", label: "Scales" },
+        { name: "enable_dhi",   label: "Dizziness Handicap Inventory (DHI)",          type: "radio", options: ["Yes", "No"] },
+        { name: "enable_vvas",  label: "Visual Vertigo Analogue Score (VVAS)",         type: "radio", options: ["Yes", "No"] },
+        { name: "enable_vhq",   label: "Vertigo Handicap Questionnaire (VHQ)",         type: "radio", options: ["Yes", "No"] },
+        { name: "enable_mvvss", label: "Malay Version Vertigo Symptom Scale (MVVSS)",  type: "radio", options: ["Yes", "No"] }
+      ]
+    }]
   };
 
+  // DHI - own Doctor View toggle
+  const dhiSchema = {
+    title: "Dizziness Handicap Inventory (DHI)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        ...DHI_QUESTIONS.map((q, i) => ({
+          name: `dhi_${i + 1}`,
+          label: `${i + 1}. ${q}`,
+          type: "radio-matrix",
+          options: dhiScoresVisible
+            ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Always (4)", value: 4 }]
+            : [{ label: "No", value: 0 }, { label: "Sometimes", value: 2 }, { label: "Always", value: 4 }]
+        })),
+        ...(dhiScoresVisible ? [
+          { name: "dhi_physical",       label: "Physical",       type: "score-box" },
+          { name: "dhi_emotional",      label: "Emotional",      type: "score-box" },
+          { name: "dhi_functional",     label: "Functional",     type: "score-box" },
+          { name: "dhi_total",          label: "Total",          type: "score-box" },
+          { name: "dhi_interpretation", label: "Interpretation", type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
+
+  // VVAS - own Doctor View toggle
+  const vvasSchema = {
+    title: "Visual Vertigo Analogue Score (VVAS)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        { type: "info-text", text: "0 = none, 10 = worst possible" },
+        ...VVAS_QUESTIONS.map((q, i) => ({
+          name: `vvas_${i + 1}`,
+          label: `${i + 1}. ${q}`,
+          type: "scale-slider",
+          min: 0,
+          max: 10
+        })),
+        ...(vvasScoresVisible ? [
+          { name: "vvas_score",          label: "Score",          type: "score-box" },
+          { name: "vvas_interpretation", label: "Interpretation", type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
+
+  // VHQ - own Doctor View toggle
+  const vhqSchema = {
+    title: "Vertigo Handicap Questionnaire (VHQ)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        ...VHQ_QUESTIONS.map((q, i) => ({
+          name: `vhq_${i + 1}`,
+          label: `${i + 1}. ${q.text}`,
+          type: "radio-matrix",
+          options: vhqScoresVisible
+            ? [{ label: "Never (0)", value: 0 }, { label: "Occasionally (1)", value: 1 }, { label: "Sometimes (2)", value: 2 }, { label: "Often (3)", value: 3 }, { label: "Always (4)", value: 4 }]
+            : [{ label: "Never", value: 0 }, { label: "Occasionally", value: 1 }, { label: "Sometimes", value: 2 }, { label: "Often", value: 3 }, { label: "Always", value: 4 }]
+        })),
+        ...(vhqScoresVisible ? [{ name: "vhq_total", label: "Total", type: "score-box" }] : []),
+        {
+          name: "vhq_work",
+          label: "26. Are you currently employed?",
+          type: "radio",
+          options: vhqScoresVisible
+            ? [{ label: "No (0)", value: 0 }, { label: "Yes (1)", value: 1 }]
+            : [{ label: "No", value: 0 }, { label: "Yes", value: 1 }]
+        },
+        { name: "vhq_26a", label: "Did you give up work because of vertigo?",      type: "radio", options: ["No", "Yes"], showIf: { field: "vhq_work", equals: 0 } },
+        { name: "vhq_26b", label: "Have you changed your work because of vertigo?", type: "radio", options: ["No", "Yes"], showIf: { field: "vhq_work", equals: 1 } },
+        { name: "vhq_26c", label: "Does vertigo cause difficulty at work?",         type: "radio", options: ["No", "Yes"], showIf: { field: "vhq_work", equals: 1 } }
+      ]
+    }]
+  };
+
+  // MVVSS - own Doctor View toggle
+  const mvvssSchema = {
+    title: "Malay Version Vertigo Symptom Scale (MVVSS)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        ...MVVSS_QUESTIONS.map((q, i) => ({
+          name: `mvvss_${i + 1}`,
+          label: `${i + 1}. ${q}`,
+          type: "radio-matrix",
+          options: mvvssScoresVisible
+            ? MVVSS_OPTIONS
+            : MVVSS_OPTIONS.map(o => ({ ...o, label: o.label.replace(/ \(\d+\)/, "") }))
+        })),
+        ...(mvvssScoresVisible ? [{ name: "mvvss_total", label: "Total", type: "score-box" }] : [])
+      ]
+    }]
+  };
+
+  // Functional impact & counseling - no toggle
+  const lifestyleSchema = {
+    sections: [{
+      title: null,
+      fields: [
+        { type: "subheading", label: "Functional and Daily Life Impact for vestibular" },
+        { name: "work",          label: "Work / Study",                     type: "input" },
+        { name: "communication", label: "Communication",                    type: "input" },
+        { name: "social",        label: "Family / Social",                  type: "input" },
+        { name: "rest",          label: "Relaxation / Rest",                type: "input" },
+        { name: "outdoor",       label: "Outdoor / Public noise tolerance", type: "input" },
+
+        { type: "subheading", label: "Counseling Summary", showIf: { field: "mode", equals: "followup" } },
+        { name: "understanding", label: "Patient's understanding of vestibular disorder", type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "goals",         label: "Expectations / goals",             type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "motivation",    label: "Motivation for therapy",           type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "education",     label: "Education & counseling provided",  type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "next_steps",    label: "Recommended next steps",           type: "input", showIf: { field: "mode", equals: "followup" } }
+      ]
+    }]
+  };
+
+  const allValues = { ...values, mode };
+
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={{ ...values, mode }}
-      onChange={handleChange}
-      layout="nested"
-      showScores={scoresVisible}
-      onAction={(type) => {
-        if (type === "toggle-show-scores") setScoresVisible(v => !v);
-        if (type === "back") onBack();
-      }}
-    />
+    <div>
+      {/* Main form: title + Back + case history + scale selectors */}
+      <CommonFormBuilder
+        schema={mainSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+        onAction={(type) => { if (type === "back") onBack(); }}
+      />
+
+      {/* DHI - only when enabled, with its own Doctor View toggle */}
+      {values.enable_dhi === "Yes" && (
+        <CommonFormBuilder
+          schema={dhiSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={dhiScoresVisible}
+          onAction={(type) => { if (type === "toggle-show-scores") setDhiScoresVisible(v => !v); }}
+        />
+      )}
+
+      {/* VVAS - only when enabled, with its own Doctor View toggle */}
+      {values.enable_vvas === "Yes" && (
+        <CommonFormBuilder
+          schema={vvasSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vvasScoresVisible}
+          onAction={(type) => { if (type === "toggle-show-scores") setVvasScoresVisible(v => !v); }}
+        />
+      )}
+
+      {/* VHQ - only when enabled, with its own Doctor View toggle */}
+      {values.enable_vhq === "Yes" && (
+        <CommonFormBuilder
+          schema={vhqSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vhqScoresVisible}
+          onAction={(type) => { if (type === "toggle-show-scores") setVhqScoresVisible(v => !v); }}
+        />
+      )}
+
+      {/* MVVSS - only when enabled, with its own Doctor View toggle */}
+      {values.enable_mvvss === "Yes" && (
+        <CommonFormBuilder
+          schema={mvvssSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={mvvssScoresVisible}
+          onAction={(type) => { if (type === "toggle-show-scores") setMvvssScoresVisible(v => !v); }}
+        />
+      )}
+
+      {/* Functional impact & counseling - no toggle */}
+      <CommonFormBuilder
+        schema={lifestyleSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+      />
+    </div>
   );
 }
 
 export function VestibularAdvancedFormObj({ onBack }) {
   const [values, setValues] = useState({});
-
-  // =========================
-  // HELPERS
-  // =========================
-
-  const formatLabel = (str) =>
-    str.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
   const buildGazeMatrix = (name, label) => ({
   title: null,
