@@ -324,7 +324,8 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
   const reflexOptions = [
     { label: "Present", value: 0 },
     { label: "Elevated", value: 1 },
-    { label: "Absent", value: 2 }
+    { label: "Absent", value: 2 },
+    { label: "Could Not Test", value: 3}
   ];
 
   const thresholdOptions = Array.from({ length: 21 }).map((_, i) => ({
@@ -366,6 +367,223 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
       {
         title: null,
         fields: [
+                  /* ===================== TYMPANOMETRY ===================== */
+        {
+          type: "accordion",
+          name: "tympanometry_section",
+          label: "Tympanometry",
+          defaultOpen: false,
+          children: [
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "tympanometry_report_right",
+                  accept: "application/pdf,image/*",
+                  title: "Tympanometry - Right",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                },
+                {
+                  type: "attach-file",
+                  name: "tympanometry_report_left",
+                  accept: "application/pdf,image/*",
+                  title: "Tympanometry - Left",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tymp_type_r", title: "Right Ear" },
+              left: { name: "tymp_type_l", title: "Left Ear" },
+              options: [
+                { label: "Type A", value: "A" },
+                { label: "Type As", value: "As" },
+                { label: "Type Ad", value: "Ad" },
+                { label: "Type B (Normal ECV)", value: "B_normal" },
+                { label: "Type B (Small ECV)", value: "B_small" },
+                { label: "Type B (Large ECV)", value: "B_large" },
+                { label: "Type C", value: "C" },
+                { label: "Could Not Test", value: "could_not"}
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "peak_pressure",
+              pairs: [
+                { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
+                { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "static_compliance",
+              pairs: [
+                { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
+                { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }
+              ]
+            },
+            {
+              type: "paired-text",
+              name: "ecv",
+              pairs: [
+                { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
+                { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }
+              ]
+            }
+          ]
+        },
+        
+        /* ===================== OAE ===================== */
+          {
+              type: "accordion",
+              name: "oae_section",
+              label: "OAE Screening",
+              defaultOpen: false,
+              children: [
+
+            /* ----------- OAE ----------- */
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "oae_right_upload",
+                  accept: "application/pdf,image/*",
+                  title: "OAE – Right Ear",
+                  multiple: false
+                },
+                {
+                  type: "attach-file",
+                  name: "oae_left_upload",
+                  accept: "application/pdf,image/*",
+                  title: "OAE – Left Ear",
+                  multiple: false
+                }
+              ]
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "oae_right",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                },
+                {
+                  name: "oae_left",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                }
+              ]
+            },
+
+            /* ----------- DPOAE ----------- */
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "dpoae_right_upload",
+                  accept: "application/pdf,image/*",
+                  title: "DPOAE – Right Ear",
+                  multiple: false
+                },
+                {
+                  type: "attach-file",
+                  name: "dpoae_left_upload",
+                  accept: "application/pdf,image/*",
+                  title: "DPOAE – Left Ear",
+                  multiple: false
+                }
+              ]
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "dpoae_right",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                },
+                {
+                  name: "dpoae_left",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                }
+              ]
+            },
+
+            /* ----------- TEOAE ----------- */
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "teoae_right_upload",
+                  accept: "application/pdf,image/*",
+                  title: "TEOAE – Right Ear",
+                  multiple: false
+                },
+                {
+                  type: "attach-file",
+                  name: "teoae_left_upload",
+                  accept: "application/pdf,image/*",
+                  title: "TEOAE – Left Ear",
+                  multiple: false
+                }
+              ]
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "teoae_right",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                },
+                {
+                  name: "teoae_left",
+                  type: "radio",
+                  options: [
+                    { label: "Pass", value: "pass" },
+                    { label: "Refer", value: "refer" },
+                    { label: "Could Not Test", value: "could_not_test" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
           {
             type: "accordion",
             name: "acoustic_reflex_section",
@@ -421,7 +639,8 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
                 options: [
                   { label: "Normal", value: 0 },
                   { label: "Reduced", value: 1 },
-                  { label: "Absent", value: 2 }
+                  { label: "Absent", value: 2 },
+                  { label: "Could Not Test", value: "could_not"}
                 ]
               },
               {
@@ -431,7 +650,8 @@ export function AuditoryAdvancedFormObj({ onBack, mode  }) {
                 options: [
                   { label: "Normal", value: 0 },
                   { label: "Reduced", value: 1 },
-                  { label: "Absent", value: 2 }
+                  { label: "Absent", value: 2 },
+                  { label: "Could Not Test", value: "could_not"}
                 ]
               }
             ]
