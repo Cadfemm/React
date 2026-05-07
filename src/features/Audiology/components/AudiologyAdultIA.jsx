@@ -1273,24 +1273,7 @@ const AUDIO_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const OBJECTIVE_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
-             {
-      title: "",
-      fields: [
-        {
-          name: "hearing_assessments_launcher_obj",
-          label: "",
-          type: "assessment-launcher",
-          options: [
-            { label: "Auditory Profile", value: "hearing_form_obj" },
-            { label: "Tinnitus Profile", value: "tinnitus_form_obj" },
-            { label: "Hyperacusis Profile", value: "loudness_form_obj" },
-            { label: "Vestibular Profile", value: "vestibular_form_obj" },
-            { label: "Industrial Audiometry", value: "industrial_form_obj" },
-          ]
-        }
-      ]
-    },
- {
+     {
       title: "General Audiology Assessment",
       fields: [
 
@@ -1439,225 +1422,25 @@ const OBJECTIVE_SCHEMA = {
             }
           ]
         },
-
-        /* ===================== TYMPANOMETRY ===================== */
+   ]
+  },
+    {
+      title: "",
+      fields: [
         {
-          type: "accordion",
-          name: "tympanometry_section",
-          label: "Tympanometry",
-          defaultOpen: false,
-          children: [
-            {
-              type: "row",
-              columns: 2,
-              fields: [
-                {
-                  type: "attach-file",
-                  name: "tympanometry_report_right",
-                  accept: "application/pdf,image/*",
-                  title: "Tympanometry - Right",
-                  multiple: false,
-                  previewSize: { width: 400, height: 400 },
-                  hideInputAfterSelect: true
-                },
-                {
-                  type: "attach-file",
-                  name: "tympanometry_report_left",
-                  accept: "application/pdf,image/*",
-                  title: "Tympanometry - Left",
-                  multiple: false,
-                  previewSize: { width: 400, height: 400 },
-                  hideInputAfterSelect: true
-                }
-              ]
-            },
-            {
-              type: "paired-select",
-              right: { name: "tymp_type_r", title: "Right Ear" },
-              left: { name: "tymp_type_l", title: "Left Ear" },
-              options: [
-                { label: "Type A", value: "A" },
-                { label: "Type As", value: "As" },
-                { label: "Type Ad", value: "Ad" },
-                { label: "Type B (Normal ECV)", value: "B_normal" },
-                { label: "Type B (Small ECV)", value: "B_small" },
-                { label: "Type B (Large ECV)", value: "B_large" },
-                { label: "Type C", value: "C" }
-              ]
-            },
-            {
-              type: "paired-text",
-              name: "peak_pressure",
-              pairs: [
-                { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
-                { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
-              ]
-            },
-            {
-              type: "paired-text",
-              name: "static_compliance",
-              pairs: [
-                { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
-                { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }
-              ]
-            },
-            {
-              type: "paired-text",
-              name: "ecv",
-              pairs: [
-                { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
-                { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }
-              ]
-            }
-          ]
-        },
-
-        /* ===================== OAE ===================== */
-          {
-              type: "accordion",
-              name: "oae_section",
-              label: "OAE Screening",
-              defaultOpen: false,
-              children: [
-
-        /* ----------- OAE ----------- */
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "oae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "OAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "oae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "OAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "oae_right",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "oae_left",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            }
-          ]
-        },
-
-        /* ----------- DPOAE ----------- */
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "dpoae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "DPOAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "dpoae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "DPOAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "dpoae_right",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "dpoae_left",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            }
-          ]
-        },
-
-        /* ----------- TEOAE ----------- */
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "teoae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "TEOAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "teoae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "TEOAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "teoae_right",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "teoae_left",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not Test", value: "could_not_test" }
-              ]
-            }
+          name: "hearing_assessments_launcher_obj",
+          label: "",
+          type: "assessment-launcher",
+          options: [
+            { label: "Auditory Profile", value: "hearing_form_obj" },
+            { label: "Tinnitus Profile", value: "tinnitus_form_obj" },
+            { label: "Hyperacusis Profile", value: "loudness_form_obj" },
+            { label: "Vestibular Profile", value: "vestibular_form_obj" },
+            { label: "Industrial Audiometry", value: "industrial_form_obj" },
           ]
         }
       ]
-    }
-   ]
-  }
+    },
  ]
 };
 
@@ -1681,38 +1464,33 @@ const OBJECTIVE_SCHEMA = {
   const PLAN_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     fields: [
-      {
-        name: "plan_short_term_goals",
-        label: "Short Term Goals",
-        type: "textarea"
-      },
-      {
-        name: "plan_target_date_short_term",
-        label: "Target Date (Short Term)",
-        type: "date"
-      },
-      {
-        name: "plan_long_term_goals",
-        label: "Long Term Goals",
-        type: "textarea"
-      },
-      {
-        name: "plan_target_date_long_term",
-        label: "Target Date (Long Term)",
-        type: "date"
-      },
-      {
-        name: "plan_list",
-        label: "Intervention Plan",
-        type: "multi-select-dropdown",
-        options: [
+        { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
+        { type: "dynamic-goals", name: "short_term_goals" },
+        
+        { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
+        { type: "dynamic-goals", name: "long_term_goals" },
+        {
+          name: "intervention_plan",
+          label: "Intervention Plan",
+          type: "checkbox-group",
+          options: [
             { label: "Monitoring", value: "monitoring" },
             { label: "Amplification", value: "amplification" },
+            { label: "Medical referral", value: "medical_referral" },
+            { label: "Further assessment", value: "further_assessment" },
             { label: "Auditory training", value: "auditory_training" },
             { label: "Tinnitus management", value: "tinnitus_management" },
             { label: "Hyperacusis management", value: "hyperacusis_management" },
             { label: "Vestibular management", value: "vestibular_management" },
-        ]
+            { label: "Prevention program", value: "prevention_program" },
+            { label: "Others", value: "other" }
+          ]
+        },
+        {
+          name: "intervention_plan_details",
+          label: "Specify",
+          type: "textarea",
+          showIf: { field: "intervention_plan", includes: "other" }
       },
       {
         name: "plan_options",
@@ -1734,8 +1512,40 @@ const OBJECTIVE_SCHEMA = {
           { label: "Tinnitus", value: "tinnitus" },
           { label: "Hyperacusis", value: "hyperacusis" },
           { label: "Vestibular", value: "vestibular" },
-          { label: "Speech Test", value: "speech_test" }
+          { label: "Speech Test", value: "speech_test" },
+
+          // ✅ ADDED MISSING ONES BELOW
+
+          { label: "Videonystagmography", value: "vng" },
+          { label: "Optokinetic Test", value: "optokinetic" },
+          { label: "Spontaneous Nystagmus", value: "spontaneous_nystagmus" },
+          { label: "High Frequency Head Shake", value: "head_shake" },
+          { label: "Gaze Test", value: "gaze_test" },
+          { label: "Subjective Visual Vertical", value: "svv" },
+          { label: "Positional Test", value: "positional_test" },
+          { label: "Dynamic Visual Acuity (DVA)", value: "dva" },
+          { label: "Gaze Stabilization", value: "gaze_stabilization" },
+          { label: "Video Head Impulse Test (vHIT)", value: "vhit" },
+          { label: "Posturography", value: "posturography" },
+          { label: "Functional Gait Assessment", value: "fga" },
+          { label: "Sensory Organization Performance", value: "sop" },
+          { label: "VEMP", value: "vemp" },
+
+          { label: "Hearing Device Orientation", value: "hearing_device_orientation" },
+          { label: "Hearing Device Trial", value: "hearing_device_trial" },
+          { label: "Hearing Device Fitting", value: "hearing_device_fitting" },
+          { label: "Hearing Device Verification", value: "hearing_device_verification" },
+          { label: "Hearing Device Validation", value: "hearing_device_validation" },
+          { label: "Fine Tuning of Hearing Device", value: "hearing_device_finetuning" },
+
+          { label: "Others", value: "other" }
         ]
+      },
+      {
+        name: "plan_options_details",
+        label: "Specify",
+        type: "textarea",
+        showIf: { field: "plan_options", includes: "other" }
       },
       {
         name: "plan_tinnitus_options",
@@ -1876,13 +1686,20 @@ const OBJECTIVE_SCHEMA = {
                 style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
               />
             </div>
-            <div style={{ marginBottom: 10 }}>
+            <div style={{ marginBottom: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
               <button
                 type="button"
                 onClick={() => console.log("Alerts button clicked!")}
                 style={{ marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0,123,255)", background: "rgb(0,123,255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
               >
                 🚨 Alerts
+              </button>
+              <button
+                type="button"
+                onClick={() => alert("Report will be generating soon")}
+                style={{ ...doctorsReportBtn, marginTop: 10 }}
+              >
+                Doctors Reports
               </button>
             </div>
           </div>
