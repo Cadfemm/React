@@ -1,59 +1,99 @@
-import React, { useState, useRef } from "react";
- 
-export default function MMSEAssessment({ onSave, onCancel }) {
- 
-  const MAX = {
-    q1: 5, q2: 5, q3: 3, q4: 5, q5: 3,
-    q6: 1, q7: 1, q8: 1, q9: 1, q10: 3,
-    q11: 1
-  };
- 
-  const scrollRef = useRef(null);
- 
-  const [scores, setScores] = useState(
-    Object.keys(MAX).reduce((a, k) => ({ ...a, [k]: 0 }), {})
-  );
- 
-  const [pentagonCorrect, setPentagonCorrect] = useState(null);
-  const [pentagonImage, setPentagonImage] = useState(null);
- 
-  const setScore = (k, v) => {
-    const val = Math.max(0, Math.min(MAX[k], Number(v) || 0));
-    setScores(s => ({ ...s, [k]: val }));
-  };
- 
-  const total =
-    Object.values(scores).reduce((a, b) => a + b, 0) +
-    (pentagonCorrect ? 1 : 0);
- 
-  const interpretation =
-    total >= 26 ? "Normal" :
-    total >= 20 ? "Mild cognitive impairment" :
-    total >= 10 ? "Moderate cognitive impairment" :
-    "Severe cognitive impairment";
- 
-  const FlatRow = ({ index, text, max, value, onChange, isLast }) => (
+import React, { useMemo, useRef, useState } from "react";
+
+const QUESTIONS = {
+  q1: [
+    "What year is this?",
+    "What is the current season?",
+    "What month is this?",
+    "What is the date today?",
+    "What day of the week is it?"
+  ],
+  q2: [
+    "Which country are we in right now?",
+    "What state/province are we in?",
+    "What city or town are we in?",
+    "What building are we in?",
+    "On which floor are we located?"
+  ],
+  q3: [
+    "BALL",
+    "CAR",
+    "MAN"
+  ],
+  q4: [
+    "D",
+    "L",
+    "R",
+    "O",
+    "W"
+  ],
+  q5: [
+    "BALL",
+    "CAR",
+    "MAN"
+  ],
+  q6: ["What object is this? (Show a wrist watch)"],
+  q7: ["What object is this? (Show a pencil)"],
+  q8: ["Repeat this phrase: No ifs, ands, or buts."],
+  q9: ["Read and perform: CLOSE YOUR EYES"],
+  q10: [
+    "Take the paper in your right/left hand",
+    "Fold it in half",
+    "Put it on the floor"
+  ],
+  q11: ["Write a complete sentence on a piece of paper."]
+};
+
+function FlatRow({ index, title, groupKey, isLast, responses, scores, toggleResponse }) {
+  return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 80px",
-        gap: 20,
+        gridTemplateColumns: "1fr 120px",
+        gap: 16,
         padding: "14px 0",
         borderBottom: isLast ? "none" : "1px solid #E5E7EB"
       }}
     >
-      <div
-        style={{
-          fontSize: 14,
-          color: "#0F172A",
-          lineHeight: 1.65,
-          whiteSpace: "pre-line"
-        }}
-      >
-        <span style={{ fontWeight: 600 }}>{index}. </span>
-        {text}
+      <div>
+        <div
+          style={{
+            fontSize: 14,
+            color: "#0F172A",
+            lineHeight: 1.5,
+            fontWeight: 600,
+            marginBottom: 8
+          }}
+        >
+          {index}. {title}
+        </div>
+        <div>
+          {QUESTIONS[groupKey].map((question, itemIdx) => (
+            <label
+              key={`${groupKey}-${itemIdx}`}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10,
+                marginBottom: 6,
+                cursor: "pointer"
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={responses[groupKey][itemIdx]}
+                onChange={() => toggleResponse(groupKey, itemIdx)}
+                style={{ marginTop: 2 }}
+              />
+              <span style={{ fontSize: 14, color: "#334155", lineHeight: 1.5 }}>
+                {QUESTIONS[groupKey].length > 1 ? `${itemIdx + 1}. ` : ""}
+                {question}
+              </span>
+            </label>
+          ))}
+        </div>
       </div>
- 
+
       <div
         style={{
           display: "flex",
@@ -61,29 +101,59 @@ export default function MMSEAssessment({ onSave, onCancel }) {
           alignItems: "flex-end"
         }}
       >
-        <input
-          type="number"
-          min={0}
-          max={max}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          style={{
-            width: 56,
-            height: 38,
-            borderRadius: 8,
-            border: "1px solid #CBD5E1",
-            textAlign: "center",
-            fontSize: 15,
-            fontWeight: 600,
-            background: "#fff"
-          }}
-        />
+        <span style={{ fontSize: 18, fontWeight: 700, color: "#0F172A" }}>
+          {scores[groupKey]}
+        </span>
         <span style={{ fontSize: 11, color: "#64748B", marginTop: 4 }}>
-          / {max}
+          / {QUESTIONS[groupKey].length}
         </span>
       </div>
     </div>
   );
+}
+ 
+export default function MMSEAssessment({ onSave, onCancel }) {
+  const scrollRef = useRef(null);
+ 
+  const [responses, setResponses] = useState(
+    Object.fromEntries(
+      Object.entries(QUESTIONS).map(([key, items]) => [
+        key,
+        items.map(() => false)
+      ])
+    )
+  );
+ 
+  const [pentagonCorrect, setPentagonCorrect] = useState(null);
+  const [pentagonImage, setPentagonImage] = useState(null);
+ 
+  const toggleResponse = (groupKey, index) => {
+    setResponses((prev) => ({
+      ...prev,
+      [groupKey]: prev[groupKey].map((checked, idx) =>
+        idx === index ? !checked : checked
+      )
+    }));
+  };
+ 
+  const scores = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(responses).map(([key, values]) => [
+          key,
+          values.filter(Boolean).length
+        ])
+      ),
+    [responses]
+  );
+
+  const total = Object.values(scores).reduce((a, b) => a + b, 0) + (pentagonCorrect ? 1 : 0);
+ 
+  const interpretation =
+    total >= 26 ? "Normal" :
+    total >= 20 ? "Mild cognitive impairment" :
+    total >= 10 ? "Moderate cognitive impairment" :
+    "Severe cognitive impairment";
  
   return (
     <div
@@ -119,104 +189,101 @@ export default function MMSEAssessment({ onSave, onCancel }) {
       >
         <FlatRow
           index={1}
-          max={5}
-          value={scores.q1}
-          onChange={v => setScore("q1", v)}
-          text={`What year is this?
-What is the current season?
-What month is this?
-What is the date today?
-What day of the week is it?`}
+          title="Time Orientation"
+          groupKey="q1"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={2}
-          max={5}
-          value={scores.q2}
-          onChange={v => setScore("q2", v)}
-          text={`Which country are we in right now?
-What state/province are we in?
-What city or town are we in?
-What building are we in?
-On which floor are we located?`}
+          title="Place Orientation"
+          groupKey="q2"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={3}
-          max={3}
-          value={scores.q3}
-          onChange={v => setScore("q3", v)}
-          text={`I’m going to name three words/objects and you need to repeat them.
-Then remember them because I’m going to ask you to name them again later.
-Words: BALL – CAR – MAN`}
+          title="Registration (Repeat words)"
+          groupKey="q3"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={4}
-          max={5}
-          value={scores.q4}
-          onChange={v => setScore("q4", v)}
-          text={`Spell WORLD backwards.
-Answer: D-L-R-O-W`}
+          title="Spell WORLD backwards"
+          groupKey="q4"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={5}
-          max={3}
-          value={scores.q5}
-          onChange={v => setScore("q5", v)}
-          text={`Now, name the three objects/words I asked you to remember.`}
+          title="Recall words"
+          groupKey="q5"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={6}
-          max={1}
-          value={scores.q6}
-          onChange={v => setScore("q6", v)}
-          text={`What object is this? (Show a wrist watch)`}
+          title="Naming"
+          groupKey="q6"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={7}
-          max={1}
-          value={scores.q7}
-          onChange={v => setScore("q7", v)}
-          text={`What object is this? (Show a pencil)`}
+          title="Naming"
+          groupKey="q7"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={8}
-          max={1}
-          value={scores.q8}
-          onChange={v => setScore("q8", v)}
-          text={`Repeat this phrase: No ifs, ands, or buts.`}
+          title="Repetition"
+          groupKey="q8"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={9}
-          max={1}
-          value={scores.q9}
-          onChange={v => setScore("q9", v)}
-          text={`Read the words and then do what it says.
-Instruction shown: CLOSE YOUR EYES`}
+          title="Reading and obeying"
+          groupKey="q9"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={10}
-          max={3}
-          value={scores.q10}
-          onChange={v => setScore("q10", v)}
-          text={`Take the paper in your right/left hand,
-fold it in half,
-and put it on the floor.`}
+          title="3-step command"
+          groupKey="q10"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
         />
  
         <FlatRow
           index={11}
-          max={1}
-          value={scores.q11}
-          onChange={v => setScore("q11", v)}
-          text={`Make up and write a complete sentence on a piece of paper.`}
+          title="Writing"
+          groupKey="q11"
+          responses={responses}
+          scores={scores}
+          toggleResponse={toggleResponse}
           isLast
         />
  
