@@ -7,6 +7,19 @@ export default function VisualAssessment() {
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
+    // If "No issue" is selected in Vision Issue, clear all other selections
+    if (name === "vision_issues") {
+      const next = Array.isArray(value) ? value : [];
+      const hasNoIssue = next.includes("no_issue");
+      const sanitized = hasNoIssue ? ["no_issue"] : next.filter(v => v !== "no_issue");
+      setValues(prev => ({
+        ...prev,
+        [name]: sanitized,
+        ...(hasNoIssue ? { vision_issues_notes: "" } : null)
+      }));
+      return;
+    }
+
     setValues(prev => ({ ...prev, [name]: value }));
   };
 

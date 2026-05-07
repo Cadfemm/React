@@ -6,6 +6,19 @@ export default function HearingAssessment() {
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
+    // If "No issue" is selected in Hearing Issue, clear all other selections
+    if (name === "hearing_issue") {
+      const next = Array.isArray(value) ? value : [];
+      const hasNoIssue = next.includes("no_issue");
+      const sanitized = hasNoIssue ? ["no_issue"] : next.filter(v => v !== "no_issue");
+      setValues(v => ({
+        ...v,
+        [name]: sanitized,
+        ...(hasNoIssue ? { hearing_issue_notes: "" } : null)
+      }));
+      return;
+    }
+
     setValues(v => ({ ...v, [name]: value }));
   };
 const HEARING_SECTIONS = [
