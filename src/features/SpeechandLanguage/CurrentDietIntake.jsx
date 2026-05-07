@@ -127,12 +127,12 @@ export default function CurrentDietIntake({ mode = "objective" }) {
     sections: [
       {
         fields: [
-          { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
+          { type: "subheading", label: " Swallowing" },
 
           {
             name: "dietType",
             label: "Current Diet Intake",
-            type: "radio",
+            type: "checkbox-group",
             options: DIET_TYPE_OPTIONS
           },
 
@@ -182,7 +182,7 @@ export default function CurrentDietIntake({ mode = "objective" }) {
           {
             name: "regimen",
             label: "Regimen",
-            type: "textarea",
+            type: "",
             showIf: { field: "dietType", equals: "enteral" }
           },
           {
@@ -205,22 +205,22 @@ export default function CurrentDietIntake({ mode = "objective" }) {
           //   showIf: { field: "dietType", equals: "enteral" }
           // },
           {
-  name: "feedingSchedule",
-  label: "Feeding schedule",
-  type: "radio",
-  options: FEEDING_SCHEDULE_OPTIONS,
-  showIf: { field: "dietType", equals: "enteral" }
-},
-{
-  name: "continuous_input",
-  label: "Enter Continuous Feeding Details",
-  type: "input",
-  placeholder: "e.g., 50 ml/hr",
-  showIf: {
-    field: "feedingSchedule",
-    equals: "continuous"
-  }
-},
+            name: "feedingSchedule",
+            label: "Feeding schedule",
+            type: "radio",
+            options: FEEDING_SCHEDULE_OPTIONS,
+            showIf: { field: "dietType", equals: "enteral" }
+          },
+          {
+            name: "continuous_input",
+            label: "Enter Continuous Feeding Details",
+            type: "input",
+            placeholder: "e.g., 50 ml/hr",
+            showIf: {
+              field: "feedingSchedule",
+              equals: "continuous"
+            }
+          },
 
           // ===== IDDSI (enteral) =====
           // {
@@ -263,7 +263,7 @@ const SCHEMA_Objective = {
   sections: [
    {
     fields: [
-      { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
+      { type: "subheading", label: " Swallowing" },
 
       {
         name: "consistencyType",
@@ -445,8 +445,8 @@ const SCHEMA_Objective = {
           type: "radio",
           options: [
             "Adequate",
-            "Left Anterior Spillage",
-            "Right Anterior Spillage "
+            "Left",
+            "Right"
           ]
         },
         {
@@ -658,13 +658,13 @@ const SCHEMA_ASSESSMENT = {
       title: "",
       fields: [
 
-                          { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)"},
+        { type: "subheading", label: "Clinical Impression"},
 
 
          {
         name: "swallowing_status",
         type: "radio",
-        label: "Swallowing",
+        label: "",
         options: [
           { label: "No swallowing impairment", value: "none" },
           { label: "The patient presents with signs and symptoms of dysphagia", value: "dysphagia" }
@@ -708,11 +708,11 @@ const SCHEMA_ASSESSMENT = {
           direction: "column",
           options: [
             { label: "1 - No oral intake", value: "1" },
-            { label: "2 - Tube dependent with minimal/inconsistent oral intake", value: "2" },
+            { label: "2 - Tube dependent with minimal / inconsistent oral intake", value: "2" },
             { label: "3 - Tube supplements with consistent oral intake", value: "3" },
             { label: "4 - Total oral intake of a single consistency", value: "4" },
             { label: "5 - Total oral intake of multiple consistencies requiring special preparation", value: "5" },
-            { label: "6 - Total oral intake with no special preparation, but must avoid specific foods/liquids", value: "6" },
+            { label: "6 - Total oral intake with no special preparation, but must avoid specific foods / liquids", value: "6" },
             { label: "7 - Total oral intake with no restrictions", value: "7" }
           ]
         }
@@ -725,7 +725,7 @@ const SCHEMA_PLAN = {
     {
       title: "Swallowing Recommendations",
       fields: [
-        { type: "subheading", label: "CSE (Clinical Swallowing Evaluation)" },
+        // { type: "subheading", label: " Swallowing" },
 
         // ── Food Route ──
         {
@@ -840,10 +840,10 @@ const SCHEMA_PLAN = {
           options: [
             { label: "Upright fully during intake & 30 min post", value: "upright_during_and_post" },
             { label: "Feed via spoon only", value: "feed_via_spoon_only" },
-            { label: "Small sips/bites", value: "small_sips_bites" },
+            { label: "Small sips / bites", value: "small_sips_bites" },
             { label: "Slow rate", value: "slow_rate" },
             { label: "Provide verbal cue to swallow", value: "verbal_cue_to_swallow" },
-            { label: "Double/multiple swallows", value: "double_multiple_swallows" },
+            { label: "Double / multiple swallows", value: "double_multiple_swallows" },
             { label: "Voluntary cough", value: "voluntary_cough" },
             { label: "Head turn to the weak side", value: "head_turn_weak_side" },
             { label: "Head tilt to the strong side", value: "head_tilt_strong_side" },
@@ -857,13 +857,13 @@ const SCHEMA_PLAN = {
           name: "monitoring_during_oral_intake",
           type: "checkbox-group",
           options: [
-            { label: "Monitor for overt signs of aspiration (coughing, throat clearing, wet/gurgly voice, increased respiratory effort, desaturation)", value: "monitor_aspiration" },
+            { label: "Monitor for overt signs of aspiration (coughing, throat clearing, wet / gurgly voice, increased respiratory effort, desaturation)", value: "monitor_aspiration" },
             { label: "Stop oral intake if overt aspiration occurs or patient fatigues", value: "stop_oral_intake" },
             { label: "Document tolerance and clinical signs post-intake", value: "document_tolerance" }
           ]
         },
 
-        { type: "subheading", label: "ORAL CARE" },
+        { type: "subheading", label: "Oral Care" },
         {
           name: "oral_care_method",
           type: "radio",

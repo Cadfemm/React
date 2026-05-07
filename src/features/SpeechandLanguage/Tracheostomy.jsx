@@ -53,7 +53,7 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
   const SCHEMA_TRACHEOSTOMY = {
     sections: [
       {
-  title: "Thacheostomy Assessment",
+  title: "Thacheostomy",
   fields: [
 
     {
@@ -494,7 +494,7 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
       fields: [
 
         // ===== SUBHEADING =====
-        { type: "subheading", label: "Tracheostomy Assessment" },
+        { type: "subheading", label: "Clinical Impression" },
 
         // ===== WEANING STATUS =====
         // {
@@ -515,16 +515,16 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
         // },
         {
   name: "weaning_status",
-  label: "Weaning Status",
+  label: "",
   type: "radio",
   labelAbove: true,
   options: [
     {
-      label: "No difficulties observed during tracheostomy weaning. Suitable to proceed with weaning programme",
+      label: "No difficulties observed during tracheostomy weaning. The patient is a suitable candidate to proceed with the tracheostomy weaning programme.",
       value: "no_difficulty"
     },
     {
-      label: "Poor tolerance to tracheostomy capping; requires full dependence",
+      label: "The patient presents with poor tolerance to tracheostomy capping and currently requires full tracheostomy dependence.",
       value: "poor_tolerance"
     }
   ]
@@ -601,23 +601,13 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
           options: [
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
-            { label: "Requires further evaluation (FEES/VFSS)", value: "further_eval" }
+            { label: "Requires further evaluation (FEES / VFSS)", value: "further_eval" }
           ]
         },
                   { type: "subheading", label: "Tolerance level [based on monitoring]:" },
                   {
               name: "cuff_deflation",
               label: "Cuff deflation",
-              type: "radio",
-              options: [
-                { label: "Tolerated", value: "tolerated" },
-                { label: "Not tolerated", value: "not_tolerated" },
-                { label: "N/A", value: "na" }
-              ]
-            },
-            {
-              name: "speaking_valve",
-              label: "Speaking valve",
               type: "radio",
               options: [
                 { label: "Tolerated", value: "tolerated" },
@@ -635,6 +625,17 @@ const SCHEMA_ASSESSMENT_TRACHEOSTOMY = {
                 { label: "N/A", value: "na" }
               ]
             },
+            {
+              name: "speaking_valve",
+              label: "Speaking valve",
+              type: "radio",
+              options: [
+                { label: "Tolerated", value: "tolerated" },
+                { label: "Not tolerated", value: "not_tolerated" },
+                { label: "N/A", value: "na" }
+              ]
+            },
+
                   {
               name: "tolerance_capping",
               label: "Capping trial",

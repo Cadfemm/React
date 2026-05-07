@@ -68,7 +68,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
           {
             name: "speech_functions",
             label: "Speech Language Assessment",
-            type: "radio",
+            type: "checkbox-group",
             labelAbove: true,
             options: [
               { label: "Language", value: "language" },
@@ -77,13 +77,13 @@ export default function CommunicationAssessment({ mode = "objective" }) {
           },
 
           // ===== LANGUAGE SECTION =====
-          { type: "subheading", label: "Language", showIf: { field: "speech_functions", equals: "language" } },
+          { type: "subheading", label: "Language", showIf: { field: "speech_functions", includes: "language" } },
 
           {
             name: "language_assessment_tools",
             label: "Assessment tool",
             type: "checkbox-group",
-            showIf: { field: "speech_functions", equals: "language" },
+            showIf: { field: "speech_functions", includes: "language" },
             options: [
               { label: "Western Aphasia Battery – Revised", value: "wab_r" },
               { label: "Boston Diagnostic Aphasia Examination", value: "bdae" },
@@ -100,7 +100,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             showIf: {
               field: "language_assessment_tools",
               includes: "other",
-              and: { field: "speech_functions", equals: "language" }
+              and: { field: "speech_functions", includes: "language" }
             }
           },
 
@@ -109,17 +109,17 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             label: "Score",
             type: "input",
             placeholder: "Enter score...",
-            showIf: { field: "speech_functions", equals: "language" }
+            showIf: { field: "speech_functions", includes: "language" }
           },
 
           // ===== LANGUAGE IMPAIRMENTS =====
-          { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", equals: "language" } },
+          { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", includes: "language" } },
 
           {
             name: "lang_impairments",
             label: "Impairments observed in",
             type: "checkbox-group",
-            showIf: { field: "speech_functions", equals: "language" },
+            showIf: { field: "speech_functions", includes: "language" },
             options: [
               { label: "Auditory comprehension", value: "auditory_comprehension" },
               { label: "Verbal expression", value: "verbal_expression" },
@@ -139,7 +139,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             showIf: {
               field: "lang_impairments",
               includes: "other",
-              and: { field: "speech_functions", equals: "language" }
+              and: { field: "speech_functions", includes: "language" }
             }
           },
 
@@ -152,18 +152,18 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             showIf: {
               field: "lang_impairments",
               includes: "auditory_comprehension",
-              and: { field: "speech_functions", equals: "language" }
+              and: { field: "speech_functions", includes: "language" }
             }
           },
 
           // ===== SPEECH SECTION =====
-          { type: "subheading", label: "Speech", showIf: { field: "speech_functions", equals: "speech" } },
+          { type: "subheading", label: "Speech", showIf: { field: "speech_functions", includes: "speech" } },
 
           {
             name: "speech_assessment_tools",
             label: "Assessment tool",
             type: "checkbox-group",
-            showIf: { field: "speech_functions", equals: "speech" },
+            showIf: { field: "speech_functions", includes: "speech" },
             options: [
               { label: "Frenchay Dysarthria Assessment (FDA-2)", value: "fda2" },
               { label: "Robertson", value: "robertson" },
@@ -185,7 +185,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             label: "Score",
             type: "input",
             placeholder: "Enter score...",
-            showIf: { field: "speech_functions", equals: "speech" }
+            showIf: { field: "speech_functions", includes: "speech" }
           },
 
           {
@@ -197,13 +197,13 @@ export default function CommunicationAssessment({ mode = "objective" }) {
           },
 
           // ===== SPEECH IMPAIRMENTS =====
-          { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", equals: "speech" } },
+          { type: "subheading", label: "Impairments observed in", showIf: { field: "speech_functions", includes: "speech" } },
 
           {
             name: "speech_impairments",
             label: "Impairments observed in",
             type: "checkbox-group",
-            showIf: { field: "speech_functions", equals: "speech" },
+            showIf: { field: "speech_functions", includes: "speech" },
             options: [
               { label: "Reflexes", value: "reflexes" },
               { label: "Respiratory support", value: "respiration" },
@@ -230,7 +230,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "reflexes_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "reflexes_severity", equals: "other" }
+            showIf: { field: "reflexes_severity", includes: "other" }
           },
 
           {
@@ -248,7 +248,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "respiratory_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "respiratory_severity", equals: "other" }
+            showIf: { field: "respiratory_severity", includes: "other" }
           },
 
           {
@@ -266,7 +266,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "phonatory_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "phonatory_severity", equals: "other" }
+            showIf: { field: "phonatory_severity", includes: "other" }
           },
 
           {
@@ -284,7 +284,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "articulation_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "articulation_severity", equals: "other" }
+            showIf: { field: "articulation_severity", includes: "other" }
           },
 
           {
@@ -302,7 +302,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "resonance_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "resonance_severity", equals: "other" }
+            showIf: { field: "resonance_severity", includes: "other" }
           },
 
           {
@@ -320,7 +320,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             name: "prosody_severity_other",
             label: "Specify other severity",
             type: "input",
-            showIf: { field: "prosody_severity", equals: "other" }
+            showIf: { field: "prosody_severity", includes: "other" }
           },
 
           {
@@ -336,7 +336,7 @@ export default function CommunicationAssessment({ mode = "objective" }) {
             type: "radio",
             labelAbove: true,
             options: INTELLIGIBILITY_OPTIONS,
-            showIf: { field: "speech_functions", equals: "speech" }
+            showIf: { field: "speech_functions", includes: "speech" }
           }
         ]
       }
@@ -347,15 +347,15 @@ export default function CommunicationAssessment({ mode = "objective" }) {
   const SCHEMA_ASSESSMENT = {
     sections: [
       {
-        title: "Communication Assessment",
+        title: "Clinical Impression",
         fields: [
           {
             name: "speech_language_status",
-            label: "Speech-Language",
+            label: "",
             type: "radio",
             options: [
               { label: "No speech and language impairment observed", value: "none" },
-              { label: "The patient presents with impairment(s)", value: "impaired" }
+              { label: "The patient presents with speech-language impairment(s)", value: "impaired" }
             ]
           },
           {
@@ -453,12 +453,6 @@ export default function CommunicationAssessment({ mode = "objective" }) {
       {
         title: "Plan",
         fields: [
-          { type: "subheading", label: "Communication Plan" },
-          {
-            name: "speech_exercises",
-            label: "Speech exercises",
-            type: "textarea"
-          },
           {
             name: "Other management",
             label: "Other management",
