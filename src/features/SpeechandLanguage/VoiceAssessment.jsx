@@ -1303,82 +1303,93 @@ const SCHEMA_PLAN = {
     {
       title: "Plan",
       fields: [
-        // {
-        //   name: "voice_therapy",
-        //   label: "Therapy",
-        //   type: "checkbox-group",
-        //   options: [
-        //     {
-        //       label: "JUB.PH.ZZ Training of voice functions",
-        //       value: "training_voice_functions"
-        //     },
-        //     {
-        //       label: "JUB.PM.ZZ Education about voice functions",
-        //       value: "education_voice_functions"
-        //     },
-        //     {
-        //       label: "JUB.PN.ZZ Advising about voice functions",
-        //       value: "advising_voice_functions"
-        //     }
-        //   ]
-        // },
 
-        // ✅ separate field
+        // Therapy
+        {
+          type: "subheading",
+          label: "Therapy"
+        },
+        {
+          name: "voice_therapy",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Training of voice functions",
+              value: "training_voice_functions"
+            },
+            {
+              label: "Education about voice functions",
+              value: "education_voice_functions"
+            },
+            {
+              label: "Advising about voice functions",
+              value: "advising_voice_functions"
+            }
+          ]
+        },
+
+        // Voice Exercises
         {
           name: "voice_exercises",
           label: "Voice exercises",
           type: "textarea",
-          placeholder: "Enter voice exercises..."
         },
 
-        // ✅ FIX: checkbox-group needs options
-      
+        // Other Management
         {
-            name: "Other management",
-            label: "Other management",
-            type: "radio",
-            options: [
-              { label: "Referral for medical management", value: "Referral for medical management" },
-              { label: "Further Assessment", value: "Further Assessment" }
-            ]
+          type: "subheading",
+          label: "Other Management"
+        },
+        {
+          name: "other_management",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Referral for medical management",
+              value: "medical_referral"
+            },
+            {
+              label: "Further Assessment",
+              value: "further_assessment"
+            }
+          ]
+        },
+
+        // Further Assessment Options
+        {
+          name: "further_assessment",
+          label: "",
+          type: "checkbox-group",
+          showIf: {
+            field: "other_management",
+            includes: "further_assessment"
           },
+          options: [
+            {
+              label: "Assessment of communication, unspecified",
+              value: "assessment"
+            },
+            {
+              label: "Test of communication, unspecified",
+              value: "test"
+            },
+            {
+              label: "Observation of communication, unspecified",
+              value: "observation"
+            },
+            {
+              label: "Interview in relation to communication, unspecified",
+              value: "interview"
+            }
+          ]
+        }
 
-        // ✅ separate field
-        //           { type: "subheading", label: "further_assessment" },
-
-        // {
-        //   name: "further_assessment",
-          
-        //   type: "radio",
-        //   options: [
-        //     {
-        //       label: "SE1.AA.ZZ Assessment of communication, unspecified",
-        //       value: "assessment"
-        //     },
-        //     {
-        //       label: "SE1.AC.ZZ Test of communication, unspecified",
-        //       value: "test"
-        //     },
-        //     {
-        //       label: "SE1.AM.ZZ Observation of communication, unspecified",
-        //       value: "observation"
-        //     },
-        //     {
-        //       label: "SE1.AN.ZZ Interview in relation to communication, unspecified",
-        //       value: "interview"
-        //     }
-        //   ]
-        // }
       ]
     }
   ]
 };
-
-
-
-
-
-
 
 const FORM_SCHEMAS = {
   subjective: SCHEMA_SUBJECTIVE,
