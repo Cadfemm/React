@@ -448,24 +448,102 @@ export default function CommunicationAssessment({ mode = "objective" }) {
   };
 
   /* ================= SCHEMA_PLAN ================= */
-  const SCHEMA_PLAN = {
-    sections: [
-      {
-        title: "Plan",
-        fields: [
-          {
-            name: "Other management",
-            label: "Other management",
-            type: "radio",
-            options: [
-              { label: "Referral for medical management", value: "Referral for medical management" },
-              { label: "Further Assessment", value: "Further Assessment" }
-            ]
-          }
-        ]
-      }
-    ]
-  };
+const SCHEMA_PLAN = {
+  sections: [
+    {
+      title: "Plan",
+      fields: [
+
+        // Therapy
+        {
+          type: "subheading",
+          label: "Therapy"
+        },
+        {
+          name: "therapy_plan",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Training in receiving spoken messages",
+              value: "spoken_messages_training"
+            },
+            {
+              label: "Training in speaking",
+              value: "speaking_training"
+            }
+          ]
+        },
+
+        // Speech Exercises
+        {
+          name: "speech_exercises",
+          label: "Speech exercises",
+          type: "textarea"
+        },
+
+        // Other Management
+        {
+          type: "subheading",
+          label: "Other Management"
+        },
+        {
+          name: "other_management",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Referral for medical management",
+              value: "medical_referral"
+            },
+            {
+              label: "Further Assessment",
+              value: "further_assessment"
+            }
+          ]
+        },
+
+        // Further Assessment
+        {
+          name: "further_assessment_options",
+          label: "Further Assessment",
+          type: "checkbox-group",
+          showIf: {
+            field: "other_management",
+            includes: "further_assessment"
+          },
+          options: [
+            {
+              label: "Assessment of communication, unspecified",
+              value: "communication_assessment"
+            },
+            {
+              label: "Test of communication, unspecified",
+              value: "communication_test"
+            },
+            {
+              label: "Observation of communication, unspecified",
+              value: "communication_observation"
+            },
+            {
+              label: "Interview in relation to communication, unspecified",
+              value: "communication_interview"
+            },
+            {
+              label: "Assessment of ingestion functions",
+              value: "ingestion_assessment"
+            },
+            {
+              label: "Assessment of swallowing",
+              value: "swallowing_assessment"
+            }
+          ]
+        }
+
+      ]
+    }
+  ]
+};
 
   /* ================= SCHEMA_SUBJECTIVE ================= */
   const SCHEMA_SUBJECTIVE = {

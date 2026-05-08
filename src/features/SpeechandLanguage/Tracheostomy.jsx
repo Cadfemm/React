@@ -221,121 +221,160 @@ export default function ThacheostomyAssessment({ mode = "objective" }) {
   };
 const SCHEMA_PLAN_TRACHEOSTOMY = {
   form_name: "Tracheostomy Weaning Recommendations",
+
   sections: [
-    
     {
-      title: "Tracheostomy weaning recommendations",
+      // title: "Tracheostomy weaning recommendations",
+
       fields: [
-        
+
+        // Tracheostomy Weaning Recommendations
+        {
+          type: "subheading",
+          label: "Tracheostomy Weaning Recommendations"
+        },
+
         {
           name: "capping_duration",
           label: "Suggested capping duration (hours)",
           type: "input"
         },
+
         {
           name: "frequency",
           label: "Frequency (times/day)",
           type: "input"
         },
-        {
-          name: "flow_rate",
-          label: "Flow rate (L of O2)",
-          type: "input"
-        },
+
         {
           name: "monitoring",
           label: "Monitoring parameters",
-          type: "radio",
-          options: ["SpO2", "Respiratory Rate", "Work of Breathing"]
+          type: "checkbox-group",
+          options: [
+            { label: "Monitor SpO₂", value: "spo2" },
+            { label: "Respiratory Rate", value: "rr" },
+            { label: "Work of Breathing", value: "wob" }
+          ]
         },
-                  { type: "subheading", label: "Oral Care" },
-          {
+
+        // Oral Care
+        {
+          type: "subheading",
+          label: "Oral Care"
+        },
+
+        {
           name: "oral_care_method",
           label: "Method",
-          type: "radio",
-          options: ["Brush teeth", "Gauze stick", "Gargle"]
+          type: "checkbox-group",
+          options: [
+            { label: "Brush teeth", value: "brush_teeth" },
+            { label: "Gauze stick", value: "gauze_stick" },
+            { label: "Gargle", value: "gargle" }
+          ]
         },
-{
-  name: "oral_care_frequency",
-  label: "Frequency",
-  type: "checkbox-group",
-  options: [
-    { label: "3–4 times/day", value: "3_4_day" },
-    { label: "Before & after meals", value: "before_after_meals" },
-    { label: "Before & after oral trials", value: "before_after_trials" }
-  ]
-},
-//                           { type: "subheading", label: "Therapy" },
-// {
-//       name: "therapy",
-//       type: "checkbox-group",
-//       options: [
-//         {
-//           label: "KTC.AM.ZZ Observation of breathing functions",
-//           value: "breathing_observation"
-//         },
-//         {
-//           label: "KBC.DA.AD Voice facilitation intervention",
-//           value: "voice_facilitation"
-//         },
-//         {
-//           label: "KTC.AA.ZZ Assessment of swallowing",
-//           value: "swallowing_assessment"
-//         },
-//         {
-//           label: "KTC.PH.ZZ Training about swallowing / airway clearance",
-//           value: "swallowing_training"
-//         },
-//         {
-//           label: "KTC.PN.ZZ Advising about swallowing / airway management",
-//           value: "airway_advising"
-//         }
-//       ]
-//     },
+
+        {
+          name: "oral_care_frequency",
+          label: "Frequency",
+          type: "checkbox-group",
+          options: [
+            { label: "3–4x/day", value: "3_4_day" },
+            { label: "Before meals", value: "before_meals" },
+            { label: "After meals", value: "after_meals" },
+            { label: "Before oral trials", value: "before_trials" },
+            { label: "After oral trials", value: "after_trials" }
+          ]
+        },
+
+        // Therapy
+        {
+          type: "subheading",
+          label: "Therapy"
+        },
+
+        {
+          name: "therapy",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Observation of breathing functions",
+              value: "breathing_observation"
+            },
+            {
+              label: "Voice facilitation intervention",
+              value: "voice_facilitation"
+            },
+            {
+              label: "Assessment of swallowing",
+              value: "swallowing_assessment"
+            },
+            {
+              label: "Training about swallowing / airway clearance",
+              value: "swallowing_training"
+            },
+            {
+              label: "Advising about swallowing / airway management",
+              value: "airway_advising"
+            }
+          ]
+        },
+
+        // Exercises
         {
           name: "exercises",
           label: "Exercises",
           type: "textarea",
-          placeholder: "Enter breathing, swallowing, and voice exercises"
         },
+
+        // Other Management
         {
-  name: "other_management",
-  label: "Other management",
-  type: "radio",
-  options: [
-    { label: "Referral for medical management", value: "referral" },
-    { label: "Further Assessment", value: "further" }
-  ]
-},
+          type: "subheading",
+          label: "Other Management"
+        },
 
-// {
-//   name: "further_assessment",
-//   label: "Further Assessment",
-//   type: "checkbox-group",
-//   options: [
-//     {
-//       label: "KTC.AE.AD Video endoscopic evaluation of swallowing",
-//       value: "fees"
-//     },
-//     {
-//       label: "KBC.DA.AD Voice facilitation intervention",
-//       value: "advanced_voice"
-//     }
-//   ],
-//   showIf: {
-//     field: "other_management",
-//     equals: "further"
-//   }
-// },
+        {
+          name: "other_management",
+          label: "",
+          type: "checkbox-group",
+          options: [
+            {
+              label: "Referral for medical management",
+              value: "referral"
+            },
+            {
+              label: "Further Assessment",
+              value: "further"
+            }
+          ]
+        },
 
+        // Further Assessment
+        {
+          name: "further_assessment",
+          label: "Further Assessment",
+          type: "checkbox-group",
+          showIf: {
+            field: "other_management",
+            includes: "further"
+          },
+          options: [
+            {
+              label: "Video endoscopic evaluation of swallowing",
+              value: "fees"
+            },
+            {
+              label: "Voice facilitation intervention",
+              value: "advanced_voice"
+            }
+          ]
+        }
 
       ]
-    },
-
-    
+    }
   ]
 };
-
 
 const SCHEMA_OBJECTIVE_TRACHEOSTOMY = {
   sections: [
