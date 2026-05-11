@@ -1455,12 +1455,12 @@ export default function OptometryAssessment({
             type: "assessment-launcher",
             name: "optometry_assessments",
             options: [
-              { label: "Binocular Vision", value: "BINOCULAR_VISION" },
-              { label: "Refraction Assessment", value: "REFRACTION" },
+              { label: "Binocular Vision Profile", value: "BINOCULAR_VISION" },
+              { label: "Refraction Analysis", value: "REFRACTION" },
               { label: "Vision For Driving", value: "VISION_DRIVING" },
-              { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
+              { label: "Ocular Health Profile", value: "OCULAR_HEALTH" },
               { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
-              { label: "Low Vision Assessment", value: "LOW_VISION_ASSESSMENT"}
+              { label: "Low Vision/Blind Profile", value: "LOW_VISION_ASSESSMENT"}
             ]
           },
           {
@@ -1965,28 +1965,11 @@ export default function OptometryAssessment({
     sections: [
       {
         fields: [
-          {
-            type: "input",
-            name: "short_term_goals",
-            label: "Short Term Goals"
-          },
-          {
-            type: "date",
-            name: "short_term_goals_date",
-            label: "Target Date (Short Term)",
-            format: "DD/MM/YYYY"
-          },
-          {
-            type: "input",
-            name: "long_term_goals",
-            label: "Long Term Goals"
-          },
-          {
-            type: "date",
-            name: "long_term_goals_date",
-            label: "Target Date (Long Term)",
-            format: "DD/MM/YYYY"
-          },
+        { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
+        { type: "dynamic-goals", name: "short_term_goals" },
+        
+        { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
+        { type: "dynamic-goals", name: "long_term_goals" },
           {
             type: "textarea",
             name: "intervention_plan",

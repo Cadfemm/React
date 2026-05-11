@@ -335,7 +335,6 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     "Functional",
     "Social History",
     "Work History",
-    "Procedure",
     "Medication"
   ];
 
