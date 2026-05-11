@@ -35,7 +35,54 @@ const LSCHEMA = {
       { type: "grid-header", cols: ["Description", "D/N", "R/L", "VA", "Comments"] },
       { type: "grid-row", name: "optical",     label: "Optical",     cols: ["input", "input", "input", "input", "input"] },
       { type: "grid-row", name: "non_optical", label: "Non Optical", cols: ["input", "input", "input", "input", "input"] },
+//       {
+//   type: "dynamic-section",
+//   name: "low_vision_aid_trial",
+//   fields: [
 
+//     {
+//       name: "type",
+//       label: "Type",
+//       type: "single-select",
+//       options: [
+//         { label: "Optical", value: "optical" },
+//         { label: "Non Optical", value: "non_optical" }
+//       ]
+//     },
+
+//     {
+//       type: "row",
+//       cols: 5,
+//       fields: [
+//         {
+//           name: "description",
+//           label: "Description",
+//           type: "input"
+//         },
+//         {
+//           name: "dn",
+//           label: "D/N",
+//           type: "input"
+//         },
+//         {
+//           name: "rl",
+//           label: "R/L",
+//           type: "input"
+//         },
+//         {
+//           name: "va",
+//           label: "VA",
+//           type: "input"
+//         },
+//         {
+//           name: "comments",
+//           label: "Comments",
+//           type: "input"
+//         }
+//       ]
+//     }
+//   ]
+// },
       { name: "impressions_management_plan", label: "Impression, Management & Plan", type: "textarea" },
       { name: "remarks",                     label: "Remarks",                       type: "textarea" },
       { name: "low_vision_prescription",     label: "Low Vision Prescription",       type: "textarea" },

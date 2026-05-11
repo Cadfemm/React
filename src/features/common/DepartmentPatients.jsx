@@ -3,13 +3,15 @@ import React, { useState, useMemo } from "react";
 import EmptyState from "../../shared/ui/EmptyState";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
 import { API_URL } from "../../platform/config/api.config";
+import ProcedureAssessment from "../Doctors/components/ProcedureAssessment";
 
 /* ── Assessment type cards ─────────────────────────────── */
 const ASSESSMENT_CARDS = [
-  { id: "initial",  title: "Initial Assessment",   desc: "Comprehensive assessment for new patient visit",    icon: "📋", accent: "#1D4ED8", tag: "New Patient",    tagBg: "#dbeafe", tagColor: "#1d4ed8" },
-  { id: "followup", title: "Follow-up Visit",       desc: "Review progress and adjust treatment plan",         icon: "🔄", accent: "#059669", tag: "Returning",      tagBg: "#d1fae5", tagColor: "#065f46" },
-  { id: "progress", title: "Progress Intervention", desc: "Document interventions and track outcomes",         icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",   tagBg: "#ede9fe", tagColor: "#5b21b6" },
-  { id: "group",    title: "Group Intervention",    desc: "Record group session and multi-patient notes",      icon: "👥", accent: "#DC2626", tag: "Group Session",  tagBg: "#fee2e2", tagColor: "#991b1b" },
+  { id: "initial",   title: "Initial Assessment",    desc: "Comprehensive assessment for new patient visit",   icon: "📋", accent: "#1D4ED8", tag: "New Patient",    tagBg: "#dbeafe", tagColor: "#1d4ed8" },
+  { id: "followup",  title: "Follow-up Visit",        desc: "Review progress and adjust treatment plan",        icon: "🔄", accent: "#059669", tag: "Returning",      tagBg: "#d1fae5", tagColor: "#065f46" },
+  { id: "progress",  title: "Progress Intervention",  desc: "Document interventions and track outcomes",        icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",   tagBg: "#ede9fe", tagColor: "#5b21b6" },
+  { id: "group",     title: "Group Intervention",     desc: "Record group session and multi-patient notes",     icon: "👥", accent: "#DC2626", tag: "Group Session",  tagBg: "#fee2e2", tagColor: "#991b1b" },
+  { id: "procedure", title: "Procedure Assessment",   desc: "BTI, FEES, RTMS, TDCS, NESA, EST and more",       icon: "🩺", accent: "#0891B2", tag: "Procedure",      tagBg: "#cffafe", tagColor: "#0e7490", doctorOnly: true },
 ];
 
 /* ── Status palette ────────────────────────────────────── */
@@ -133,6 +135,16 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
 
   /* ── Assessment view ── */
   if (selectedPatient && assessmentView) {
+    // Procedure Assessment — only for Doctor department
+    if (assessmentView === "procedure") {
+      return (
+        <ProcedureAssessment
+          patient={selectedPatient}
+          onBack={handleBackToCards}
+          onSubmit={handleBackToCards}
+        />
+      );
+    }
     if (AssessmentComponent) {
       return (
         <AssessmentComponent
@@ -177,7 +189,7 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
           <div style={{ fontSize: 22, fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>Select Assessment Type</div>
           <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 32 }}>Choose the appropriate assessment for this patient visit</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 18, width: "100%", maxWidth: 860 }}>
-            {ASSESSMENT_CARDS.map(card => (
+            {ASSESSMENT_CARDS.filter(card => !card.doctorOnly || department === "Doctor").map(card => (
               <AssessmentCard key={card.id} card={card} onClick={() => setAssessmentView(card.id)} />
             ))}
           </div>
