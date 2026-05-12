@@ -208,10 +208,17 @@ const BLADDER_SCHEMA = {
             type: "textarea",
             placeholder: "Enter goals"
           },
-        { type: "subheading", label: "Plan" },
+        { type: "subheading", label: "Plan",  showIf: {
+          field: "__department",
+          equals: "doctors"
+        } },
         {
           type: "checkbox-group",
           name: "bladder_plan",
+            showIf: {
+            field: "__department",
+            equals: "doctors"
+          },
           label: "",
           options: [
             { label: "Investigation: Ufeme/ Urine C & S/ X RAY KUB/ SCC", value: "investigation_bundle" },
@@ -234,8 +241,11 @@ const initialValues = {
 
 
 
-export default function BladderAssessment({ onChange: onParentChange }) {
-  const [values, setValues] = useState(initialValues);
+export default function BladderAssessment({ onChange: onParentChange, department }) {
+  const [values, setValues] = useState({
+    ...initialValues,
+    __department: department
+  });
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
