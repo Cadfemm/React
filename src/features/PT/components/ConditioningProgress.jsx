@@ -83,7 +83,7 @@ actions: [
   }
 },
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "rom_exercise" }, fields: [
-  { name: "rom_exercise_remarks", label: "Remark", type: "textarea" },
+  { name: "rom_exercise_remarks", label: "Remark", type: "input" },
 ]},
 // =========================
 
@@ -91,7 +91,7 @@ actions: [
 // STRENGTHENING EXERCISE
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "strengthening_exercise" }, fields: [
-  { name: "strengthening_exercise_remarks", label: "Strengthening Exercise Remarks", type: "textarea" },
+  { name: "strengthening_exercise_remarks", label: "Strengthening Exercise Remarks", type: "input" },
 ]},
 
 // =========================
@@ -112,14 +112,14 @@ actions: [
   }
 },
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "gait_training" }, fields: [
-  { name: "gait_training_remarks", label: "Gait Training Remarks", type: "textarea" },
+  { name: "gait_training_remarks", label: "Gait Training Remarks", type: "input" },
 ]},
 
 // =========================
 // WEIGHT-BEARING EXERCISE
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "weight_bearing_exercise" }, fields: [
-  { name: "weight_bearing_exercise_remarks", label: "Weight-bearing Exercise Remarks", type: "textarea" },
+  { name: "weight_bearing_exercise_remarks", label: "Weight-bearing Exercise Remarks", type: "input" },
 ]},
 
 // =========================
@@ -139,28 +139,28 @@ actions: [
   }
 },
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "balance_training" }, fields: [
-  { name: "balance_training_remarks", label: "Balance Training Remarks", type: "textarea" },
+  { name: "balance_training_remarks", label: "Balance Training Remarks", type: "input" },
 ]},
 
 // =========================
 // MAT ACTIVITY
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "mat_activity" }, fields: [
-  { name: "mat_activity_remarks", label: "Mat Activity Remarks", type: "textarea" },
+  { name: "mat_activity_remarks", label: "Mat Activity Remarks", type: "input" },
 ]},
 
 // =========================
 // POSTURAL CONTROL TRAINING
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "postural_control_training" }, fields: [
-  { name: "postural_control_training_remarks", label: "Postural Control Training Remarks", type: "textarea" },
+  { name: "postural_control_training_remarks", label: "Postural Control Training Remarks", type: "input" },
 ]},
 
 // =========================
 // COORDINATION
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "coordination" }, fields: [
-  { name: "coordination_remarks", label: "Coordination Remarks", type: "textarea" },
+  { name: "coordination_remarks", label: "Coordination Remarks", type: "input" },
 ]},
 
 // =========================
@@ -180,14 +180,14 @@ actions: [
   }
 },
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "stretching" }, fields: [
-  { name: "stretching_remarks", label: "Stretching Remarks", type: "textarea" },
+  { name: "stretching_remarks", label: "Stretching Remarks", type: "input" },
 ]},
 
 // =========================
 // ENDURANCE TRAINING
 // =========================
 { type: "row", showIf: { field: "therapeutic_exercise_list", includes: "endurance_training" }, fields: [
-  { name: "endurance_training_remarks", label: "Endurance Training Remarks", type: "textarea" },
+  { name: "endurance_training_remarks", label: "Endurance Training Remarks", type: "input" },
 ]},
 {
           type: "subheading",
@@ -280,7 +280,7 @@ actions: [
 
         { type: "row", showIf: { field: "axelero_mode", equals: "duration" }, fields: [
           { name: "axelero_time", label: "Time", type: "input" },
-          { name: "axelero_speed", label: "Speed", type: "input", showIf: { field: "functional_exercises", includes: "axelero_gait_balance" } },
+          { name: "axelero_speed", label: "Speed", type: "input" },
         ]},
 
         { type: "row", showIf: { field: "axelero_mode", equals: "distance" }, fields: [
@@ -327,24 +327,17 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "constant" },
   fields: [
     {
       name: "constant_weight",
       label: "Weight (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "constant"
-      }
     },
     {
       name: "constant_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "constant"
-      }
     }
   ]
 },
@@ -359,24 +352,17 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "eccentric" },
   fields: [
     {
       name: "eccentric_weight",
       label: "Weight (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "eccentric"
-      }
     },
     {
       name: "eccentric_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "eccentric"
-      }
     }
   ]
 },
@@ -391,33 +377,22 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "auxotonic" },
   fields: [
     {
       name: "auxotonic_stiffness",
       label: "Stiffness Level",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "auxotonic"
-      }
     },
     {
       name: "auxotonic_min_load",
       label: "Min Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "auxotonic"
-      }
     },
     {
       name: "auxotonic_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "auxotonic"
-      }
     }
   ]
 },
@@ -432,56 +407,38 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "viscous" },
   fields: [
     {
       name: "viscous_viscosity_level",
       label: "Viscosity Level",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "viscous"
-      }
     },
     {
       name: "viscous_min_load",
       label: "Min Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "viscous"
-      }
     },
     {
       name: "viscous_return_load",
       label: "Return Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "viscous"
-      }
     }
   ]
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "viscous" },
   fields: [
     {
       name: "viscous_space_transition",
       label: "Space Transition (cm)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "viscous"
-      }
     },
     {
       name: "viscous_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "viscous"
-      }
     }
   ]
 },
@@ -496,33 +453,22 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "vibration" },
   fields: [
     {
       name: "vibration_base_load",
       label: "Base Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "vibration"
-      }
     },
     {
       name: "vibration_amplitude",
       label: "Amplitude (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "vibration"
-      }
     },
     {
       name: "vibration_frequency",
       label: "Frequency (Hz)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "vibration"
-      }
     }
   ]
 },
@@ -537,24 +483,17 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "precision" },
   fields: [
     {
       name: "precision_load",
       label: "Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "precision"
-      }
     },
     {
       name: "precision_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "precision"
-      }
     }
   ]
 },
@@ -569,50 +508,82 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "magnetic" },
   fields: [
     {
       name: "magnetic_stiffness",
       label: "Stiffness Level",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "magnetic"
-      }
     },
     {
       name: "magnetic_max_load",
       label: "Max Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "magnetic"
-      }
     },
     {
       name: "magnetic_min_load",
       label: "Min Load (kg)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "magnetic"
-      }
     }
   ]
 },
 {
   type: "row",
+  showIf: { field: "akuis_training_type", includes: "magnetic" },
   fields: [
     {
       name: "magnetic_angle",
       label: "Angle (degree)",
       type: "input",
-      showIf: {
-        field: "akuis_training_type",
-        includes: "magnetic"
-      }
     }
   ]
 },
+
+{
+  type: "subheading",
+  label: "Isometric Training",
+  showIf: { field: "akuis_training_type", includes: "isometric" }
+},
+{
+  type: "row",
+  showIf: { field: "akuis_training_type", includes: "isometric" },
+  fields: [
+    { name: "isometric_load", label: "Load (kg)", type: "input" },
+    { name: "isometric_hold_time", label: "Hold Time (sec)", type: "input" },
+    { name: "isometric_angle", label: "Angle (degree)", type: "input" }
+  ]
+},
+
+{
+  type: "subheading",
+  label: "Isokinetic Training",
+  showIf: { field: "akuis_training_type", includes: "isokinetic" }
+},
+{
+  type: "row",
+  showIf: { field: "akuis_training_type", includes: "isokinetic" },
+  fields: [
+    { name: "isokinetic_speed", label: "Speed (deg/sec)", type: "input" },
+    { name: "isokinetic_repetitions", label: "Repetitions", type: "input" },
+    { name: "isokinetic_angle", label: "Angle (degree)", type: "input" }
+  ]
+},
+
+{
+  type: "subheading",
+  label: "Random Training",
+  showIf: { field: "akuis_training_type", includes: "random" }
+},
+{
+  type: "row",
+  showIf: { field: "akuis_training_type", includes: "random" },
+  fields: [
+    { name: "random_load", label: "Load (kg)", type: "input" },
+    { name: "random_angle", label: "Angle (degree)", type: "input" },
+    { name: "random_remarks", label: "Remarks", type: "input" }
+  ]
+},
+
         {
   type: "subheading",
   label: "BIODEX Isokinetic",
@@ -718,7 +689,7 @@ actions: [
 },
 
 { type: "row", showIf: { field: "biodex_mode_setup", equals: "isometric" }, fields: [
-  { name: "biodex_isometric_remarks", label: "Remarks", type: "textarea" },
+  { name: "biodex_isometric_remarks", label: "Remarks", type: "input" },
 ]},
 
 // ======================================================
@@ -957,33 +928,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "biodex_isokinetic" },
   fields: [
     {
       name: "biodex_peak_torque",
       label: "Peak Torque",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "biodex_isokinetic"
-      }
     },
     {
       name: "biodex_total_work",
       label: "Total Works",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "biodex_isokinetic"
-      }
     },
     {
       name: "biodex_coefficient_variable",
       label: "% Coefficient of Variable",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "biodex_isokinetic"
-      }
     }
   ]
 },
@@ -1112,65 +1072,43 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "dbc_machine" },
   fields: [
     {
       name: "dbc_weight",
       label: "Weight (kg/lbs)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     },
     {
       name: "dbc_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     },
     {
       name: "dbc_set",
       label: "Set",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     }
   ]
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "dbc_machine" },
   fields: [
     {
       name: "dbc_hold",
       label: "Hold",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     },
     {
       name: "dbc_rest",
       label: "Rest",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     },
     {
       name: "dbc_others",
       label: "Others",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "dbc_machine"
-      }
     }
   ]
 },
@@ -1189,42 +1127,27 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "hur_system" },
   fields: [
     {
       name: "hur_exercise_type",
       label: "Types of Exercise",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hur_system"
-      }
     },
     {
       name: "hur_minutes",
       label: "Minutes",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hur_system"
-      }
     },
     {
       name: "hur_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hur_system"
-      }
     },
     {
   name: "hur_other_exercise",
   label: "Other Exercise",
   type: "input",
-  showIf: {
-    field: "functional_exercises",
-    includes: "hur_system"
-  }
 },
   ]
 },
@@ -1278,38 +1201,27 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "treadmill" },
   fields: [
     {
       name: "treadmill_duration",
       label: "Duration (Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "treadmill"
-      }
     },
     {
       name: "treadmill_distance",
       label: "Distance (KM)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "treadmill"
-      }
     },
     {
       name: "treadmill_elevation",
       label: "Elevation Level",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "treadmill"
-      }
     }
   ]
 },
 { type: "row", showIf: { field: "treadmill_exercise_type", includes: "others" }, fields: [
-  { name: "treadmill_other_exercise", label: "Other Exercise", type: "textarea" },
+  { name: "treadmill_other_exercise", label: "Other Exercise", type: "input" },
 ]},
 // ======================================================
 // MULTIPURPOSE GYM
@@ -1356,65 +1268,43 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "multipurpose_gym" },
   fields: [
     {
       name: "gym_weight",
       label: "Weight (kg/lbs)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     },
     {
       name: "gym_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     },
     {
       name: "gym_sets",
       label: "Sets",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     }
   ]
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "multipurpose_gym" },
   fields: [
     {
       name: "gym_hold",
       label: "Hold",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     },
     {
       name: "gym_rest",
       label: "Rest",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     },
     {
       name: "gym_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "multipurpose_gym"
-      }
     }
   ]
 },
@@ -1494,33 +1384,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "power_plate_mode", equals: "single_movement" },
   fields: [
     {
       name: "power_plate_single_exercise",
       label: "Type Exercise",
       type: "input",
-      showIf: {
-        field: "power_plate_mode",
-        equals: "single_movement"
-      }
     },
     {
       name: "power_plate_single_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "power_plate_mode",
-        equals: "single_movement"
-      }
     },
     {
       name: "power_plate_single_vibration",
       label: "Vibration Level",
       type: "input",
-      showIf: {
-        field: "power_plate_mode",
-        equals: "single_movement"
-      }
     }
   ]
 },
@@ -1553,24 +1432,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "power_plate_mode", equals: "physical_rehab" },
   fields: [
     {
       name: "power_plate_rehab_vibration",
       label: "Vibration Level",
       type: "input",
-      showIf: {
-        field: "power_plate_mode",
-        equals: "physical_rehab"
-      }
     },
     {
       name: "power_plate_rehab_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "power_plate_mode",
-        equals: "physical_rehab"
-      }
     }
   ]
 },
@@ -1616,24 +1488,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "power_plate_program_category", equals: "neuro_health" },
   fields: [
     {
       name: "power_plate_neuro_vibration",
       label: "Vibration Level",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "neuro_health"
-      }
     },
     {
       name: "power_plate_neuro_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "neuro_health"
-      }
     }
   ]
 },
@@ -1659,24 +1524,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "power_plate_program_category", equals: "pain_relief" },
   fields: [
     {
       name: "power_plate_pain_vibration",
       label: "Vibration Level",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "pain_relief"
-      }
     },
     {
       name: "power_plate_pain_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "pain_relief"
-      }
     }
   ]
 },
@@ -1704,24 +1562,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "power_plate_program_category", equals: "common_condition" },
   fields: [
     {
       name: "power_plate_common_vibration",
       label: "Vibration Level",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "common_condition"
-      }
     },
     {
       name: "power_plate_common_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "power_plate_program_category",
-        equals: "common_condition"
-      }
     }
   ]
 },
@@ -1787,60 +1638,37 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "quadriceps_bench" },
   fields: [
     {
       name: "quadriceps_bench_weight",
       label: "Weight (kg/lbs)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
     {
       name: "quadriceps_bench_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
     {
       name: "quadriceps_bench_sets",
       label: "Sets",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
      {
       name: "quadriceps_bench_hold",
       label: "Hold (Sec)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
     {
       name: "quadriceps_bench_rest",
       label: "Rest (Sec/Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
     {
       name: "quadriceps_bench_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "quadriceps_bench"
-      }
     },
   ]
 },
@@ -1902,51 +1730,32 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "hip_machine" },
   fields: [
     {
       name: "hip_machine_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hip_machine"
-      }
     },
     {
       name: "hip_machine_sets",
       label: "Sets",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hip_machine"
-      }
     },
     {
       name: "hip_machine_hold",
       label: "Hold (Sec)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hip_machine"
-      }
     },
      {
       name: "hip_machine_rest",
       label: "Rest (Sec/Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hip_machine"
-      }
     },
     {
       name: "hip_machine_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "hip_machine"
-      }
     },
   ]
 },
@@ -2015,24 +1824,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "fibod_balance" },
   fields: [
     {
       name: "fibod_time",
       label: "Time",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "fibod_balance"
-      }
     },
     {
       name: "fibod_score",
       label: "Score",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "fibod_balance"
-      }
     }
   ]
 },
@@ -2094,42 +1896,27 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "static_bicycle" },
   fields: [
     {
       name: "static_bicycle_duration",
       label: "Duration (Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "static_bicycle"
-      }
     },
     {
       name: "static_bicycle_distance",
       label: "Distance (KM)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "static_bicycle"
-      }
     },
     {
       name: "static_bicycle_resistance",
       label: "Resistance Level",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "static_bicycle"
-      }
     },
     {
   name: "static_bicycle_remarks",
   label: "Remarks",
   type: "input",
-  showIf: {
-    field: "functional_exercises",
-    includes: "static_bicycle"
-  }
 },
   ]
 },
@@ -2196,60 +1983,37 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "leg_press" },
   fields: [
     {
       name: "leg_press_weight",
       label: "Weight (kg/lbs)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     },
     {
       name: "leg_press_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     },
     {
       name: "leg_press_sets",
       label: "Sets",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     },
     {
       name: "leg_press_hold",
       label: "Hold (Sec)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     },
     {
       name: "leg_press_rest",
       label: "Rest (Sec/Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     },
     {
       name: "leg_press_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "leg_press"
-      }
     }
   ]
 },
@@ -2292,42 +2056,27 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "recumbent_bike" },
   fields: [
     {
       name: "recumbent_bike_duration",
       label: "Duration (Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_bike"
-      }
     },
     {
       name: "recumbent_bike_distance",
       label: "Distance (KM)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_bike"
-      }
     },
     {
       name: "recumbent_bike_resistance",
       label: "Resistance Level",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_bike"
-      }
     },
     {
   name: "recumbent_bike_remarks",
   label: "Remarks",
   type: "input",
-  showIf: {
-    field: "functional_exercises",
-    includes: "recumbent_bike"
-  }
 },
   ]
 },
@@ -2372,33 +2121,22 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "recumbent_stepper" },
   fields: [
     {
       name: "recumbent_stepper_duration",
       label: "Duration (Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_stepper"
-      }
     },
     {
       name: "recumbent_stepper_resistance",
       label: "Resistance Level",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_stepper"
-      }
     },
     {
       name: "recumbent_stepper_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "recumbent_stepper"
-      }
     }
   ]
 },
@@ -2442,33 +2180,22 @@ actions: [
 },
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "cross_trainer" },
   fields: [
     {
       name: "cross_trainer_duration",
       label: "Duration (Min)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "cross_trainer"
-      }
     },
     {
       name: "cross_trainer_resistance",
       label: "Resistance Level",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "cross_trainer"
-      }
     },
     {
       name: "cross_trainer_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "cross_trainer"
-      }
     }
   ]
 },
@@ -2504,7 +2231,7 @@ actions: [
 },
 
 { type: "row", showIf: { field: "battle_rope_exercise_type", includes: "others" }, fields: [
-  { name: "battle_rope_other_exercise", label: "Other Exercise", type: "textarea" },
+  { name: "battle_rope_other_exercise", label: "Other Exercise", type: "input" },
 ]},
 {
   type: "subheading",
@@ -2517,51 +2244,32 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "functional_exercises", includes: "battle_rope" },
   fields: [
     {
       name: "battle_rope_reps",
       label: "Repetitions",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "battle_rope"
-      }
     },
     {
       name: "battle_rope_sets",
       label: "Sets",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "battle_rope"
-      }
     },
     {
       name: "battle_rope_hold",
       label: "Hold (Sec)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "battle_rope"
-      }
     },
       {
       name: "battle_rope_rest",
       label: "Rest (Min/Sec)",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "battle_rope"
-      }
     },
     {
       name: "battle_rope_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "functional_exercises",
-        includes: "battle_rope"
-      }
     }
   ]
 },
@@ -3175,33 +2883,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "balance_system_sd_mode", equals: "training" },
   fields: [
     {
       name: "balance_postural_stability_level",
       label: "Level (1-12)",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_postural_stability_phase_target",
       label: "Phase Target",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_postural_stability_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     }
   ]
 },
@@ -3235,33 +2932,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "balance_system_sd_mode", equals: "training" },
   fields: [
     {
       name: "balance_weight_shift_level",
       label: "Level (1-12)",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_weight_shift_rotate_target",
       label: "Rotate Target / Skill Level",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_weight_shift_weight_bearing",
       label: "% Weight Bearing",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     }
   ]
 },
@@ -3302,24 +2988,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "balance_system_sd_mode", equals: "training" },
   fields: [
     {
       name: "balance_limit_stability_level",
       label: "Level (1-12)",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_limit_stability_time_score",
       label: "Time Score",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     }
   ]
 },
@@ -3414,24 +3093,17 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "balance_system_sd_mode", equals: "training" },
   fields: [
     {
       name: "balance_system_sd_others",
       label: "Others",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     },
     {
       name: "balance_system_sd_other_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "balance_system_sd_mode",
-        equals: "training"
-      }
     }
   ]
 },
@@ -3463,33 +3135,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "pain_management", includes: "cold_therapy" },
   fields: [
     {
       name: "cold_therapy_body_part",
       label: "Body Part",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "cold_therapy"
-      }
     },
     {
       name: "cold_therapy_duration",
       label: "Duration (Minutes)",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "cold_therapy"
-      }
     },
     {
       name: "cold_therapy_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "cold_therapy"
-      }
     }
   ]
 },
@@ -3499,33 +3160,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "pain_management", includes: "heat_therapy" },
   fields: [
     {
       name: "heat_therapy_body_part",
       label: "Body Part",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "heat_therapy"
-      }
     },
     {
       name: "heat_therapy_duration",
       label: "Duration",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "heat_therapy"
-      }
     },
     {
       name: "heat_therapy_remarks",
       label: "Remarks",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "heat_therapy"
-      }
     }
   ]
 },
@@ -3535,33 +3185,22 @@ actions: [
 
 {
   type: "row",
+  showIf: { field: "pain_management", includes: "laser_therapy" },
   fields: [
     {
       name: "laser_therapy_body_parts",
       label: "Body Parts",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "laser_therapy"
-      }
     },
     {
       name: "laser_therapy_applicator",
       label: "Types of Applicators",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "laser_therapy"
-      }
     },
     {
       name: "laser_therapy_power",
       label: "Power (Watts)",
       type: "input",
-      showIf: {
-        field: "pain_management",
-        includes: "laser_therapy"
-      }
     }
   ]
 },
@@ -3588,11 +3227,11 @@ actions: [
 // ======================================================
 
 { type: "row", showIf: { field: "pain_management", includes: "ultrasound_therapy" }, fields: [
-  { name: "ultrasound_therapy_remarks", label: "Remarks", type: "textarea" },
+  { name: "ultrasound_therapy_remarks", label: "Remarks", type: "input" },
 ]},
 
 { type: "row", showIf: { field: "pain_management", includes: "others" }, fields: [
-  { name: "pain_management_others", label: "Others", type: "textarea" },
+  { name: "pain_management_others", label: "Others", type: "input" },
 ]},
         
       ]

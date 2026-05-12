@@ -289,7 +289,7 @@ actions: [
 
 {
   name: "functional_exercises",
-  label: "Exercise Modalities",
+  // label: "Exercise Modalities",
   type: "checkbox-group",
   options: [
     { label: "AXELERO Gait and Balance", value: "axelero_gait_balance" },
@@ -410,321 +410,7 @@ actions: [
   ]
 },
 
-// {
-//   name: "akuis_weight",
-//   label: "Weight (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "constant_training"
-//   }
-// },
 
-// {
-//   name: "akuis_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "constant_training"
-//   }
-// },
-// {
-//   name: "akuis_eccentric_weight",
-//   label: "Weight (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "eccentric_training"
-//   }
-// },
-// {
-//   name: "akuis_eccentric_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "eccentric_training"
-//   }
-// },
-// {
-//   name: "akuis_auxotonic_stiffness",
-//   label: "Stiffness Level",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "auxotonic_training"
-//   }
-// },
-// {
-//   name: "akuis_auxotonic_min_load",
-//   label: "Min Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "auxotonic_training"
-//   }
-// },
-// {
-//   name: "akuis_auxotonic_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "auxotonic_training"
-//   }
-// },
-
-// // 4. Viscous Training
-// {
-//   name: "akuis_viscous_viscosity",
-//   label: "Viscosity Level",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "viscous_training"
-//   }
-// },
-// {
-//   name: "akuis_viscous_min_load",
-//   label: "Min Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "viscous_training"
-//   }
-// },
-// {
-//   name: "akuis_viscous_return_load",
-//   label: "Return Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "viscous_training"
-//   }
-// },
-// {
-//   name: "akuis_viscous_space_transition",
-//   label: "Space Transition (cm)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "viscous_training"
-//   }
-// },
-// {
-//   name: "akuis_viscous_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "viscous_training"
-//   }
-// },
-
-// // 5. Vibration Training
-// {
-//   name: "akuis_vibration_base_load",
-//   label: "Base Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "vibration_training"
-//   }
-// },
-// {
-//   name: "akuis_vibration_amplitude",
-//   label: "Amplitude (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "vibration_training"
-//   }
-// },
-// {
-//   name: "akuis_vibration_frequency",
-//   label: "Frequency (Hz)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "vibration_training"
-//   }
-// },
-// {
-//   name: "akuis_vibration_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "vibration_training"
-//   }
-// },
-
-// // 6. Precision Training
-// {
-//   name: "akuis_precision_load",
-//   label: "Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "precision_training"
-//   }
-// },
-// {
-//   name: "akuis_precision_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "precision_training"
-//   }
-// },
-
-// // 7. Magnetic Training
-// {
-//   name: "akuis_magnetic_stiffness",
-//   label: "Stiffness Level",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "magnetic_training"
-//   }
-// },
-// {
-//   name: "akuis_magnetic_max_load",
-//   label: "Max Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "magnetic_training"
-//   }
-// },
-// {
-//   name: "akuis_magnetic_min_load",
-//   label: "Min Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "magnetic_training"
-//   }
-// },
-// {
-//   name: "akuis_magnetic_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "magnetic_training"
-//   }
-// },
-
-// // 8. Isometric Training
-// {
-//   name: "akuis_isometric_position",
-//   label: "Position (cm)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isometric_training"
-//   }
-// },
-// {
-//   name: "akuis_isometric_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isometric_training"
-//   }
-// },
-
-// // 9. Isokinetic Training
-// {
-//   name: "akuis_isokinetic_speed",
-//   label: "Speed (mm/s)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isokinetic_training"
-//   }
-// },
-// {
-//   name: "akuis_isokinetic_return_load",
-//   label: "Return Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isokinetic_training"
-//   }
-// },
-// {
-//   name: "akuis_isokinetic_start_position",
-//   label: "Start Position (cm)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isokinetic_training"
-//   }
-// },
-// {
-//   name: "akuis_isokinetic_stop_position",
-//   label: "Stop Position (cm)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isokinetic_training"
-//   }
-// },
-// {
-//   name: "akuis_isokinetic_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "isokinetic_training"
-//   }
-// },
-
-// // 10. Random Training
-// {
-//   name: "akuis_random_base_load",
-//   label: "Base Load (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "random_training"
-//   }
-// },
-// {
-//   name: "akuis_random_lambda",
-//   label: "Lambda Level",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "random_training"
-//   }
-// },
-// {
-//   name: "akuis_random_amplitude",
-//   label: "Amplitude (kg)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "random_training"
-//   }
-// },
-// {
-//   name: "akuis_random_angle",
-//   label: "Constant Angle / Fixed Position (degree)",
-//   type: "input",
-//   showIf: {
-//     field: "akuis_training_types",
-//     includes: "random_training"
-//   }
-// },
-//
-// Constant Training
-//
 {
   type: "subheading",
   label: "Constant Training",
@@ -1441,7 +1127,53 @@ actions: [
     { label: "Functional movement patterns", value: "functional_movement_patterns" }
   ]
 },
-
+{
+  type: "subheading",
+  label: "Multipurpose Gym  - Parameters",
+  showIf: {
+    field: "functional_exercises",
+    includes: "multipurpose_gym"
+  }
+},
+{
+  type: "row",
+  showIf: {
+    field: "functional_exercises",
+    includes: "multipurpose_gym"
+  },
+  fields: [
+    {
+      name: "gym_weight",
+      label: "Weight",
+      type: "input"
+    },
+    {
+      name: "gym_reps",
+      label: "Reps",
+      type: "input"
+    },
+    {
+      name: "gym_sets",
+      label: "Sets",
+      type: "input"
+    },
+    {
+      name: "gym_hold",
+      label: "Hold",
+      type: "input"
+    },
+    {
+      name: "gym_rest",
+      label: "Rest",
+      type: "input"
+    },
+    {
+      name: "gym_remarks",
+      label: "Remarks",
+      type: "input"
+    }
+  ]
+},
 
 {
   type: "row",
@@ -1660,25 +1392,6 @@ actions: [
   ]
 },
 
-// {
-//   name: "pp_physical_vibration_level",
-//   label: "Vibration Level",
-//   type: "input",
-//   showIf: {
-//     field: "power_plate_mode",
-//     equals: "physical_rehab"
-//   }
-// },
-
-// {
-//   name: "pp_physical_time",
-//   label: "Time",
-//   type: "input",
-//   showIf: {
-//     field: "power_plate_mode",
-//     equals: "physical_rehab"
-//   }
-// },
 
 // =========================
 // 4. Complete Program
@@ -2194,225 +1907,7 @@ actions: [
    Training Library
 ========================= */
 
-// {
-//   type: "subheading",
-//   label: "Training Library",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
 
-// {
-//   name: "dwall_training_library",
-//   label: "Training Library",
-//   type: "checkbox-group",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   },
-//   options: [
-//     { label: "Balance", value: "balance" },
-//     { label: "Strength", value: "strength" },
-//     { label: "Endurance", value: "endurance" },
-//     { label: "Mobility", value: "mobility" },
-//     { label: "Agility", value: "agility" }
-//   ]
-// },
-
-// {
-//   name: "dwall_balance",
-//   label: "Balance",
-//   type: "input",
-//   placeholder: "Enter balance training details...",
-//   showIf: {
-//     field: "dwall_training_library",
-//     includes: "balance"
-//   }
-// },
-
-// {
-//   name: "dwall_strength",
-//   label: "Strength",
-//   type: "input",
-//   placeholder: "Enter strength training details...",
-//   showIf: {
-//     field: "dwall_training_library",
-//     includes: "strength"
-//   }
-// },
-
-// {
-//   name: "dwall_endurance",
-//   label: "Endurance",
-//   type: "input",
-//   placeholder: "Enter endurance training details...",
-//   showIf: {
-//     field: "dwall_training_library",
-//     includes: "endurance"
-//   }
-// },
-
-// {
-//   name: "dwall_mobility",
-//   label: "Mobility",
-//   type: "input",
-//   placeholder: "Enter mobility training details...",
-//   showIf: {
-//     field: "dwall_training_library",
-//     includes: "mobility"
-//   }
-// },
-
-// {
-//   name: "dwall_agility",
-//   label: "Agility",
-//   type: "input",
-//   placeholder: "Enter agility training details...",
-//   showIf: {
-//     field: "dwall_training_library",
-//     includes: "agility"
-//   }
-// },
-
-// {
-//   name: "dwall_repetitions",
-//   label: "Repetitions",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_series",
-//   label: "Series",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_time",
-//   label: "Time",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_loads",
-//   label: "Loads",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_final_score",
-//   label: "Final Score",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_training_remarks",
-//   label: "Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks...",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// /* =========================
-//    Exer Games
-// ========================= */
-
-// {
-//   type: "subheading",
-//   label: "Exer Games",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_exer_games",
-//   label: "Exer Games",
-//   type: "checkbox-group",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   },
-//   options: [
-//     { label: "Equilibrium", value: "equilibrium" },
-//     { label: "Ski", value: "ski" },
-//     { label: "Fly", value: "fly" },
-//     { label: "Shooting Range", value: "shooting_range" },
-//     { label: "Fruit cutter", value: "fruit_cutter" },
-//     { label: "Shelf", value: "shelf" },
-//     { label: "Library", value: "library" },
-//     { label: "Move", value: "move" },
-//     { label: "Navigation", value: "navigation" },
-//     { label: "Upper limbs", value: "upper_limbs" },
-//     { label: "Freewalk", value: "freewalk" },
-//     { label: "Occupation Therapy", value: "occupation_therapy" }
-//   ]
-// },
-
-// {
-//   name: "dwall_games_time",
-//   label: "Time",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_games_levels",
-//   label: "Levels",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_games_final_score",
-//   label: "Final Score",
-//   type: "input",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
-
-// {
-//   name: "dwall_games_remarks",
-//   label: "Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks...",
-//   showIf: {
-//     field: "functional_exercises",
-//     includes: "d_wall"
-//   }
-// },
 {
   name: "dwall_sections",
  
@@ -2538,7 +2033,7 @@ actions: [
 },
 {
   name: "pain_management",
-  label: "Pain Management Modalities",
+  // label: "Pain Management Modalities",
   type: "checkbox-group",
   options: [
     { label: "Cold Therapy", value: "cold_therapy" },
@@ -2726,13 +2221,6 @@ const handleSubmit = () => {
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
   const activeTabIdx = tabOrder.indexOf(activeTab);
 
-  // const handleAction = (type) => {
-  //   if (type === "clear") setValues({});
-  //   if (type === "save") {
-  //     if (storageKey) localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
-  //     alert("Progress & Intervention saved.");
-  //   }
-  // };
   const handleAction = (type) => {
     if (type === "back") onBack?.();
     if (type === "clear") {

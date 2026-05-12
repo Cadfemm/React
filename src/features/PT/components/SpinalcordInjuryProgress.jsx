@@ -46,7 +46,7 @@ actions: [
         // =========================
         {
           name: "therapeutic_exercises",
-          label: "Select Therapeutic Exercises",
+          // label: "Select Therapeutic Exercises",
           type: "checkbox-group",
           options: [
             {
@@ -303,7 +303,7 @@ actions: [
 },
 {
   name: "functional_mobility_training",
-  label: "Select Functional Mobility Training",
+  // label: "Select Functional Mobility Training",
   type: "checkbox-group",
   options: [
     {
@@ -422,7 +422,7 @@ actions: [
 },
 {
   name: "manual_therapy",
-  label: "Select Manual Therapy",
+  // label: "Select Manual Therapy",
   type: "checkbox-group",
   options: [
     {
@@ -2335,7 +2335,7 @@ actions: [
 },
 {
   name: "pain_management",
-  label: "Select Pain Management",
+  // label: "Select Pain Management",
   type: "checkbox-group",
   options: [
     {
