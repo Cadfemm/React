@@ -83,25 +83,25 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "equipment_perkeso",
           label: "PERKESO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "perkeso" }
         },
         {
           name: "equipment_ngo",
           label: "NGO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "ngo" }
         },
         {
           name: "equipment_self",
           label: "Self-purchased Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "self" }
         },
         {
           name: "equipment_others",
           label: "Other Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "others" }
         },
         { type: "subheading", label: "Referral Information" },
@@ -114,7 +114,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "referral_reasons",
           label: "Referral Reasons",
-          type: "textarea",
+          type: "input",
           readOnly: true
         }
       ]
@@ -144,6 +144,19 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+  const [patientHistory, setPatientHistory] = useState({
+            past_medical_history: "",
+            past_family_history: "",
+            alerts_and_allergies: ""
+          });
+          useEffect(() => {
+                if (!patient) return;
+                setPatientHistory({
+                  past_medical_history: patient.medical_history || "",
+                  past_family_history: patient.family_medical_history || "",
+                  alerts_and_allergies: patient.alerts_and_allergies_history || ""
+                });
+              }, [patient])
 
   const storageKey = patient ? `pt_cardio_assessment_draft_${patient.id}` : null;
 
@@ -207,12 +220,12 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
       {
         name: "chief_complaint",
         label: "Chief Complaint",
-        type: "textarea"
+        type: "input"
       },
       {
         name: "hpi",
         label: "History of Present Illness",
-        type: "textarea"
+        type: "input"
       },
       {
         name: "associated_symptoms",
@@ -286,10 +299,25 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
           }
         ]
       },
+      // {
+      //   name: "patient_goals",
+      //   label: "Patient Goals / Expectations",
+      //   type: "textarea"
+      // },
       {
         name: "patient_goals",
-        label: "Patient Goals / Expectations",
-        type: "textarea"
+        label: "Patient Goals",
+        type: "subheading"
+      },
+      {
+        name: "short_term_goals",
+        label: "Short Term Goals",
+        type: "input"
+      },
+      {
+        name: "long_term_goals",
+        label: "Long Term Goals",
+        type: "input"
       },
       {
         type: "subheading",
@@ -750,16 +778,106 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
     sections: [
       {
         fields: [
+          // {
+          //   name: "problem_list",
+          //   label: "Problem List",
+          //   type: "input"
+          // },
+          { type: "subheading", label: "Problem List" },
           {
-            name: "problem_list",
-            label: "Problem List",
-            type: "input"
-          },
-          {
-            name: "clinical_impression",
-            label: "Clinical Impression",
-            type: "input"
-          },
+  name: "problem_list",
+  type: "checkbox-group",
+  options: [
+    { label: "Sputum retention", value: "sputum_retention" },
+    { label: "Reduced cough effort", value: "reduced_cough_effort" },
+
+    {
+      label: "Reduced chest expansion (Apical)",
+      value: "reduced_chest_expansion_apical"
+    },
+    {
+      label: "Reduced chest expansion (Upper Lateral Costal)",
+      value: "reduced_chest_expansion_upper_lateral_costal"
+    },
+    {
+      label: "Reduced chest expansion (Lower Lateral Costal)",
+      value: "reduced_chest_expansion_lower_lateral_costal"
+    },
+
+    {
+      label: "Reduced cardiopulmonary endurance (6-Minute Walk Test, 1.6 Treadmill Test, 30 Sec Sit to Stand Test)",
+      value: "reduced_cardiopulmonary_endurance"
+    },
+
+    { label: "Others", value: "other" }
+  ]
+},
+{ type: "subheading", label: "Clinical Impression" },
+{
+  name: "clinical_impression",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Sputum retention (reduced cough effort, chest infection, immobility, secondary lung complications)",
+      value: "sputum_retention"
+    },
+    {
+      label: "Reduced air entry (reduced chest expansion, chest deformity, posture)",
+      value: "reduced_air_entry"
+    },
+
+    {
+      label: "Underlying cause: Tracheostomy",
+      value: "tracheostomy"
+    },
+    {
+      label: "Underlying cause: Stroke",
+      value: "stroke"
+    },
+    {
+      label: "Underlying cause: Spinal Cord Injury (SCI)",
+      value: "sci"
+    },
+    {
+      label: "Underlying cause: Traumatic Brain Injury (TBI)",
+      value: "tbi"
+    },
+    {
+      label: "Underlying cause: CABG",
+      value: "cabg"
+    },
+    {
+      label: "Underlying cause: Myocardial Infarction (MI)",
+      value: "mi"
+    },
+    {
+      label: "Underlying cause: Pacemaker",
+      value: "pacemaker"
+    },
+    {
+      label: "Underlying cause: Heart Failure",
+      value: "heart_failure"
+    },
+
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "clinical_impression_other",
+  label: "Specify Other Clinical Impression",
+  type: "input",
+  placeholder: "Enter other clinical impression",
+  showIf: {
+    field: "clinical_impression",
+    includes: "other"
+  }
+},
+
+          // {
+          //   name: "clinical_impression",
+          //   label: "Clinical Impression",
+          //   type: "input"
+          // },
           {
             name: "underlying_cause",
             label: "Underlying Cause",
@@ -815,59 +933,236 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
       {
         fields: [
           { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+          {
+  name: "short_term_goals",
+  label: "Short-Term Goals (2–4 weeks)",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Clear airway within 14/7",
+      value: "clear_airway_14_days"
+    },
+    {
+      label: "Improve cough effort within 14/7",
+      value: "improve_cough_effort_14_days"
+    },
+    {
+      label: "Improve chest expansion (poor → good)",
+      value: "improve_chest_expansion"
+    }
+  ]
+},
           { type: "dynamic-goals", name: "short_term_goals" },
           { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+          {
+  name: "long_term_goals",
+  label: "Long-Term Goals (6–12 weeks)",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Maintain clear airway",
+      value: "maintain_clear_airway"
+    },
+    {
+      label: "Prevent secondary lung complications",
+      value: "prevent_secondary_lung_complications"
+    },
+    {
+      label: "Return to daily activity without SOB or fatigue",
+      value: "return_daily_activity_without_sob_fatigue"
+    },
+    {
+      label: "Improve cardiovascular endurance",
+      value: "improve_cardiovascular_endurance"
+    },
+    {
+      label: "Return to work",
+      value: "return_to_work"
+    }
+  ]
+},
           { type: "dynamic-goals", name: "long_term_goals" },
           { type: "subheading", label: "Interventions" },
-          {
-            name: "interventions_airway_clearance",
-            label: "Airway Clearance",
-            type: "checkbox-group",
-            options: [
-              { label: "Percussion", value: "percussion" },
-              { label: "Vibration", value: "vibration" },
-              { label: "Suctioning", value: "suctioning" },
-              { label: "ACBT", value: "acbt" },
-              { label: "Huffing", value: "huffing" },
-              { label: "Postural Drainage", value: "postural_drainage" },
-              { label: "Assisted Cough", value: "assisted_cough" }
-            ]
-          },
-          {
-            name: "interventions_breathing",
-            label: "Breathing Exercises",
-            type: "checkbox-group",
-            options: [
-              { label: "Diaphragmatic", value: "diaphragmatic" },
-              { label: "Segmental", value: "segmental" },
-              { label: "Incentive Spirometry", value: "incentive_spirometry" }
-            ]
-          },
-          {
-            name: "interventions_mobility",
-            label: "Mobility & Conditioning",
-            type: "checkbox-group",
-            options: [
-              { label: "Thoracic mobility", value: "thoracic_mobility" },
-              { label: "Circuit", value: "circuit" },
-              { label: "Treadmill", value: "treadmill" },
-              { label: "Static bicycle", value: "static_bicycle" },
-              { label: "Step training", value: "step_training" },
-              { label: "Elliptical", value: "elliptical" }
-            ]
-          },
-          {
-            name: "interventions_education",
-            label: "Education",
-            type: "checkbox-group",
-            options: [
-              { label: "HEP", value: "hep" },
-              { label: "Energy conservation", value: "energy_conservation" },
-              { label: "Postural correction", value: "postural_correction" },
-              { label: "Airway clearance", value: "airway_clearance" },
-              { label: "Safety precautions", value: "safety_precautions" }
-            ]
-          },
+
+/* ---------------- AIRWAY CLEARANCE ---------------- */
+{
+  name: "airway_clearance",
+  label: "Airway Clearance",
+  type: "checkbox-group",
+  options: [
+    { label: "Active Cycle of Breathing Technique (ACBT)", value: "acbt" },
+    { label: "Percussion", value: "percussion" },
+    { label: "Vibration", value: "vibration" },
+    { label: "Postural drainage", value: "postural_drainage" },
+    { label: "Huffing / coughing techniques", value: "huffing_coughing" },
+    { label: "Suctioning", value: "suctioning" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "airway_clearance_other",
+  label: "Specify Other Airway Clearance",
+  type: "input",
+  placeholder: "Enter other airway clearance technique",
+  showIf: {
+    field: "airway_clearance",
+    includes: "other"
+  }
+},
+
+/* ---------------- BREATHING EXERCISES ---------------- */
+{
+  name: "breathing_exercises",
+  label: "Breathing Exercises",
+  type: "checkbox-group",
+  options: [
+    { label: "Diaphragmatic breathing", value: "diaphragmatic_breathing" },
+    { label: "Segmental breathing", value: "segmental_breathing" },
+    { label: "Incentive spirometry", value: "incentive_spirometry" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "breathing_exercises_other",
+  label: "Specify Other Breathing Exercise",
+  type: "input",
+  placeholder: "Enter other breathing exercise",
+  showIf: {
+    field: "breathing_exercises",
+    includes: "other"
+  }
+},
+
+/* ---------------- MOBILISATION / EXERCISE ---------------- */
+{
+  name: "mobilisation_exercise",
+  label: "Mobilisation / Exercise",
+  type: "checkbox-group",
+  options: [
+    { label: "Bed mobility", value: "bed_mobility" },
+    { label: "Sitting / standing exercise", value: "sitting_standing_exercise" },
+    { label: "Ambulation training", value: "ambulation_training" },
+    { label: "Endurance training (treadmill / walking)", value: "endurance_training" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "mobilisation_exercise_other",
+  label: "Specify Other Mobilisation/Exercise",
+  type: "input",
+  placeholder: "Enter other mobilisation/exercise",
+  showIf: {
+    field: "mobilisation_exercise",
+    includes: "other"
+  }
+},
+
+/* ---------------- EDUCATION ---------------- */
+{
+  name: "education",
+  label: "Education",
+  type: "checkbox-group",
+  options: [
+    { label: "Energy conservation", value: "energy_conservation" },
+    { label: "Breathing control", value: "breathing_control" },
+    { label: "Home exercise program", value: "hep" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "education_other",
+  label: "Specify Other Education",
+  type: "input",
+  placeholder: "Enter other education component",
+  showIf: {
+    field: "education",
+    includes: "other"
+  }
+},
+
+/* ---------------- FREQUENCY & DURATION ---------------- */
+{
+  name: "frequency_duration",
+  label: "Frequency & Duration",
+  type: "input",
+  placeholder: "e.g., 45–60 minutes × 5 sessions/week × 4 weeks"
+},
+{
+  type: "subheading",
+  label: "Follow-up Plan"
+},
+
+{
+  name: "follow_up_plan",
+  label: "Follow-up Plan",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Reassessment scheduled in 2–4 weeks",
+      value: "reassessment_2_4_weeks"
+    },
+
+    {
+      label: "Track progress via Auscultation",
+      value: "auscultation"
+    },
+    {
+      label: "Track progress via Chest Expansion",
+      value: "chest_expansion"
+    },
+    {
+      label: "Track progress via RPE",
+      value: "rpe"
+    },
+    {
+      label: "Track progress via 6MWT",
+      value: "six_minute_walk_test"
+    },
+    {
+      label: "Track progress via Incentive Spirometry",
+      value: "incentive_spirometry"
+    },
+    {
+      label: "Track progress via Peak Flow Meter",
+      value: "peak_flow_meter"
+    },
+    {
+      label: "Track progress via Peak Cough Meter",
+      value: "peak_cough_meter"
+    },
+    {
+      label: "Track progress via ROM",
+      value: "rom"
+    },
+    {
+      label: "Track progress via MMT",
+      value: "mmt"
+    },
+    {
+      label: "Track progress via 1.6 Treadmill Test",
+      value: "treadmill_1_6_test"
+    },
+    {
+      label: "Track progress via 30 Sec Sit to Stand Test",
+      value: "sit_to_stand_30sec"
+    },
+
+    {
+      label: "Others",
+      value: "other"
+    }
+  ]
+},
+{
+  name: "follow_up_plan_other",
+  label: "Specify Other Follow-up Method",
+  type: "input",
+  placeholder: "Enter other follow-up / outcome measure",
+  showIf: {
+    field: "follow_up_plan",
+    includes: "other"
+  }
+},
           {
             name: "interventions_referrals",
             label: "Referrals",
@@ -937,128 +1232,104 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
     plan: PLAN_SCHEMA
   };
 
-    const [patientHistory, setPatientHistory] = useState({
-    past_medical_history: patient?.medical_history || "",
-    past_family_history: patient?.family_medical_history || "",
-    alerts_and_allergies: patient?.alerts_and_allergies_history || ""
-  });
-  function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-    if (!patient) return null;
-  
-    const formatDate = (dateStr) => {
-      if (!dateStr) return "-";
-      try {
-        return new Date(dateStr).toLocaleDateString();
-      } catch {
-        return "-";
-      }
-    };
-  
-    return (
-      <div style={{ marginBottom: 24 }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: 12,
-          fontSize: 14
-        }}>
-          <div><b>Name:</b> {patient.name}</div>
-          <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-  
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
-  
-          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-          <div><b>Duration of Diagnosis:</b> -</div>
-          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-  
-          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-  
-          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-  
-          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || "-"}</div>
-  
-          {/* ===== HISTORY ===== */}
-          <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-            <h3>Patient History</h3>
-  
-            <div>
-              <b>Past Medical History</b>
-              <textarea
-                style={textarea}
-                value={patientHistory.past_medical_history}
-                onChange={(e) =>
-                  setPatientHistory(prev => ({
-                    ...prev,
-                    past_medical_history: e.target.value
-                  }))
-                }
-              />
-            </div>
-  
-            <div>
-              <b>Family History</b>
-              <textarea
-                style={textarea}
-                value={patientHistory.past_family_history}
-                onChange={(e) =>
-                  setPatientHistory(prev => ({
-                    ...prev,
-                    past_family_history: e.target.value
-                  }))
-                }
-              />
-            </div>
-  
-            <div>
-              <b>Allergies</b>
-              <textarea
-                style={textarea}
-                value={patientHistory.alerts_and_allergies}
-                onChange={(e) =>
-                  setPatientHistory(prev => ({
-                    ...prev,
-                    alerts_and_allergies: e.target.value
-                  }))
-                }
-              />
-            </div>
-  
-            <button style={alertBtn}>🚨 Alerts</button>
-          </div>
+  //   const [patientHistory, setPatientHistory] = useState({
+  //   past_medical_history: patient?.medical_history || "",
+  //   past_family_history: patient?.family_medical_history || "",
+  //   alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+  // });
+    function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <input
+                      style={input}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
         </div>
       </div>
-    );
-  }
-  const textarea = {
-    width: "100%",
-    minHeight: 90,
-    marginTop: 6,
-    marginBottom: 12,
-    padding: "10px 12px",
-    borderRadius: 6,
-    border: "1px solid #d1d5db",
-    fontSize: 14,
-    resize: "vertical"
-  };
-  
-  const alertBtn = {
-    marginTop: 10,
-    padding: "10px 20px",
-    borderRadius: 6,
-    border: "1.5px solid #007bff",
-    background: "#007bff",
-    color: "#fff",
-    fontWeight: 600,
-    cursor: "pointer"
-  };
+    </div>
+  );
+}
   return (
     <div style={mainContent}>
       {/* ===== PATIENT INFORMATION CARD ===== */}
@@ -1067,7 +1338,16 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
         values={{}}
         onChange={() => {}}
       >
-        <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
+         <PatientInformationBlock
+                  patient={patient}
+                  patientHistory={patientHistory}
+                  setPatientHistory={setPatientHistory}
+                />
+              
+                <button style={doctorsReportBtn}>
+                  Doctors Reports
+                </button>
+        {/* <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/> */}
       </CommonFormBuilder>
 
       {/* ===== CONSENT & REFERRAL ===== */}
@@ -1177,3 +1457,29 @@ const submitBtn = {
   fontWeight: 700
 };
 
+const input = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
+};
+const doctorsReportBtn = {
+  padding: "10px 20px", background: "#2563EB", color: "#fff",
+  border: "none", borderRadius: 6, fontSize: 14,
+  fontWeight: 600, cursor: "pointer", marginTop: 8
+};

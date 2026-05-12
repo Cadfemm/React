@@ -41,7 +41,7 @@ const OBJECTIVE_SCHEMA = {
       fields: [
         {
   name: "therapeutic_exercises_given",
-  label: "Therapeutic Exercises",
+  // label: "Therapeutic Exercises",
   type: "checkbox-group",
   options: [
     { label: "ROM exercise", value: "rom_exercise" },
@@ -125,6 +125,7 @@ const OBJECTIVE_SCHEMA = {
     includes: "stretching"
   }
 },
+
 { type: "row", showIf: { field: "therapeutic_exercises_given", includes: "stretching" }, fields: [
   { name: "stretching_remarks", label: "Remark", type: "input" },
 ]},
@@ -140,9 +141,10 @@ const OBJECTIVE_SCHEMA = {
 { type: "row", showIf: { field: "therapeutic_exercises_given", includes: "others" }, fields: [
   { name: "therapeutic_exercises_others", label: "Others", type: "input" },
 ]},
+ { type: "subheading", label: "Therapeutic Modalities" },
 {
   name: "therapeutic_modalities",
-  label: "Therapeutic Modalities",
+  // label: "Therapeutic Modalities",
   type: "checkbox-group",
   options: [
     { label: "LEGA Kit", value: "lega_kit" },
