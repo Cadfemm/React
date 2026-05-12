@@ -1122,7 +1122,7 @@ function AssessmentLauncher({
       ) : null}
 
       {/* Remarks textarea — shown per active assessment */}
-      {active && remarksKey && (
+      {active && remarksKey && !field.hideRemarks &&(
         <div style={{ marginTop: 12 }}>
           <label style={{ display: "block", fontWeight: 600, fontSize: 13, marginBottom: 6, color: "#374151" }}>
             Remarks

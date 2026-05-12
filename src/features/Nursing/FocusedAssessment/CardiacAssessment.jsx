@@ -807,37 +807,37 @@ export default function CardiacAssessment({ layout = "root" }) {
       // ─────────────────────────────────────────────
       // FUNCTIONAL IMPACT (REHAB)
       // ─────────────────────────────────────────────
-      {
-        title: "FUNCTIONAL IMPACT (REHAB)",
-        fields: [
-          // Activity tolerance → radio (5 options, display below)
-          {
-            name: "activity_tolerance",
-            label: "Activity Tolerance",
-            type: "radio",
-            options: [
-              { label: "Full", value: "full" },
-              { label: "Mild limitation", value: "mild" },
-              { label: "Moderate limitation", value: "moderate" },
-              { label: "Severe", value: "severe" },
-              { label: "Unable", value: "unable" }
-            ]
-          },
-          // ADL performance → radio (5 options, display below)
-          {
-            name: "adl_performance",
-            label: "ADL Performance",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "Pacing required", value: "pacing" },
-              { label: "Rest breaks", value: "rest_breaks" },
-              { label: "Assistance needed", value: "assistance" },
-              { label: "Dependent", value: "dependent" }
-            ]
-          }
-        ]
-      }
+      // {
+      //   title: "FUNCTIONAL IMPACT (REHAB)",
+      //   fields: [
+      //     // Activity tolerance → radio (5 options, display below)
+      //     {
+      //       name: "activity_tolerance",
+      //       label: "Activity Tolerance",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Full", value: "full" },
+      //         { label: "Mild limitation", value: "mild" },
+      //         { label: "Moderate limitation", value: "moderate" },
+      //         { label: "Severe", value: "severe" },
+      //         { label: "Unable", value: "unable" }
+      //       ]
+      //     },
+      //     // ADL performance → radio (5 options, display below)
+      //     {
+      //       name: "adl_performance",
+      //       label: "ADL Performance",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Independent", value: "independent" },
+      //         { label: "Pacing required", value: "pacing" },
+      //         { label: "Rest breaks", value: "rest_breaks" },
+      //         { label: "Assistance needed", value: "assistance" },
+      //         { label: "Dependent", value: "dependent" }
+      //       ]
+      //     }
+      //   ]
+      // }
     ]
   };
 

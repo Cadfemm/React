@@ -1774,9 +1774,11 @@ export default  function ProcedureAssessment({ patient, onUpdatePatient, onSubmi
 
 const mainContent = {
   width: "100%",
-  maxWidth: "1440px",
-  margin: "0 auto",
-  padding: "0 24px 32px"
+  maxWidth: "100%",
+  padding: 15,
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
 };
 
 const tabBar = {
