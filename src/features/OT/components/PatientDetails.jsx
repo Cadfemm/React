@@ -8,6 +8,7 @@ import Conditioning from "./Conditioning";
 import Cardiorespiratory from "./Cardiorespiratory";
 import Amputee from "./Amputee";
 import DrivingRehab from "./DrivingRehab";
+import HomeAssessment from "./HomeAssessment";
 
 export default function ProgramTabsWithContent({ patient }) {
   const tabs = [
@@ -17,6 +18,7 @@ export default function ProgramTabsWithContent({ patient }) {
     { key: "sci",            label: "Spinal Cord Injury" },
     { key: "amputee",        label: "Amputee"            },
     { key: "driving_rehab",  label: "Driving Rehab"      },
+    { key: "home_assessment", label: "Home Assessment"   },
   ];
 
   const [activeTab, setActiveTab] = useState("sci");
@@ -46,6 +48,9 @@ export default function ProgramTabsWithContent({ patient }) {
 
       case "driving_rehab":
         return <DrivingRehab patient={patient} />;
+
+      case "home_assessment":
+        return <HomeAssessment patient={patient} />;
 
       default:
         return null;
