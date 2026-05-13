@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import BarthelIndexForm from "./BarthelIndexForm";
 
 export default function ADLForm({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
@@ -64,78 +65,78 @@ export default function ADLForm({ patient, onSubmit, onBack }) {
   const ADL_SCHEMA = {
     title: "Activities of Daily Living (ADL)",
     sections: [
-      {
-        title: "TRANSFERRING TO CHAIR/WHEELCHAIR/COMMODE",
-        fields: [
-          {
-            name: "transferring",
-            label: "",
-            type: "radio",
-            options: [
-              { label: "Self Transfer", value: "self_transfer" },
-              { label: "Need Supervision", value: "need_supervision" },
-              { label: "1 Man Lift", value: "1_man_lift" },
-              { label: "Pro Turner", value: "pro_turner" },
-              { label: "Hoist-Lift", value: "hoist_lift" },
-              { label: "Vegetative State/Bed Ridden", value: "vegetative_state_bed_ridden" }
-            ]
-          }
-        ]
-      },
-      {
-        title: "HOSTEL SIMULATION",
-        fields: [
-          {
-            name: "hostel_simulation",
-            label: "",
-            type: "radio",
-            options: [
-              { label: "Normal Bed", value: "normal_bed" },
-              { label: "Adjustable Bed", value: "adjustable_bed" }
-            ]
-          }
-        ]
-      },
-      {
-        title: "AMBULATION",
-        fields: [
-          {
-            name: "ambulation",
-            label: "",
-            type: "radio",
-            options: [
-              { label: "Normal", value: "normal" },
-              { label: "Walking Aid", value: "walking_aid" },
-              { label: "Wheelchair", value: "wheelchair" },
-              { label: "Bed Ridden", value: "bed_ridden" }
-            ]
-          },
-          {
-            name: "ambulation_walking_aid",
-            label: "Walking Aid:",
-            type: "radio",
-            showIf: { field: "ambulation", equals: "walking_aid" },
-            options: [
-              { label: "Walking Stick/Cane", value: "walking_stick_cane" },
-              { label: "Quadripod", value: "quadripod" },
-              { label: "Walking Frame", value: "walking_frame" },
-              { label: "Elbow Crutches", value: "elbow_crutches" },
-              { label: "Axillary Crutches", value: "axillary_crutches" }
-            ]
-          },
-          {
-            name: "ambulation_wheelchair",
-            label: "Wheelchair:",
-            type: "radio",
-            showIf: { field: "ambulation", equals: "wheelchair" },
-            options: [
-              { label: "Self Propelled", value: "self_propelled" },
-              { label: "Unable to Self Propel", value: "unable_to_self_propel" },
-              { label: "Electric Wheelchair", value: "electric_wheelchair" }
-            ]
-          }
-        ]
-      },
+      // {
+      //   title: "TRANSFERRING TO CHAIR/WHEELCHAIR/COMMODE",
+      //   fields: [
+      //     {
+      //       name: "transferring",
+      //       label: "",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Self Transfer", value: "self_transfer" },
+      //         { label: "Need Supervision", value: "need_supervision" },
+      //         { label: "1 Man Lift", value: "1_man_lift" },
+      //         { label: "Pro Turner", value: "pro_turner" },
+      //         { label: "Hoist-Lift", value: "hoist_lift" },
+      //         { label: "Vegetative State/Bed Ridden", value: "vegetative_state_bed_ridden" }
+      //       ]
+      //     }
+      //   ]
+      // },
+      // {
+      //   title: "HOSTEL SIMULATION",
+      //   fields: [
+      //     {
+      //       name: "hostel_simulation",
+      //       label: "",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Normal Bed", value: "normal_bed" },
+      //         { label: "Adjustable Bed", value: "adjustable_bed" }
+      //       ]
+      //     }
+      //   ]
+      // },
+      // {
+      //   title: "AMBULATION",
+      //   fields: [
+      //     {
+      //       name: "ambulation",
+      //       label: "",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Normal", value: "normal" },
+      //         { label: "Walking Aid", value: "walking_aid" },
+      //         { label: "Wheelchair", value: "wheelchair" },
+      //         { label: "Bed Ridden", value: "bed_ridden" }
+      //       ]
+      //     },
+      //     {
+      //       name: "ambulation_walking_aid",
+      //       label: "Walking Aid:",
+      //       type: "radio",
+      //       showIf: { field: "ambulation", equals: "walking_aid" },
+      //       options: [
+      //         { label: "Walking Stick/Cane", value: "walking_stick_cane" },
+      //         { label: "Quadripod", value: "quadripod" },
+      //         { label: "Walking Frame", value: "walking_frame" },
+      //         { label: "Elbow Crutches", value: "elbow_crutches" },
+      //         { label: "Axillary Crutches", value: "axillary_crutches" }
+      //       ]
+      //     },
+      //     {
+      //       name: "ambulation_wheelchair",
+      //       label: "Wheelchair:",
+      //       type: "radio",
+      //       showIf: { field: "ambulation", equals: "wheelchair" },
+      //       options: [
+      //         { label: "Self Propelled", value: "self_propelled" },
+      //         { label: "Unable to Self Propel", value: "unable_to_self_propel" },
+      //         { label: "Electric Wheelchair", value: "electric_wheelchair" }
+      //       ]
+      //     }
+      //   ]
+      // },
       {
         title: "FEEDING",
         fields: [
@@ -571,116 +572,116 @@ export default function ADLForm({ patient, onSubmit, onBack }) {
           }
         ]
       },
-      {
-        title: "MEDICATION",
-        fields: [
-          {
-            name: "medication",
-            label: "",
-            type: "checkbox-group",
-            inlineWithLabel: true,
-            options: [
-              { label: "Self-Taking", value: "self_taking" },
-              { label: "Carer-Serve", value: "carer_serve" },
-              { label: "Medication Box", value: "medication_box" },
-              { label: "Nurse-Serve", value: "nurse_serve" }
-            ]
-          },
-          {
-            name: "medication_self_taking",
-            label: "Self-Taking:",
-            type: "radio",
-            showIf: { field: "medication", includes: "self_taking" },
-            options: [
-              { label: "Taken On-Time", value: "taken_on_time" },
-              { label: "Frequent Off-Scheduled Time", value: "frequent_off_scheduled_time" },
-              { label: "Phone Reminder Alert", value: "phone_reminder_alert" }
-            ]
-          },
-          {
-            name: "medication_carer_serve",
-            label: "Carer-Serve:",
-            type: "radio",
-            showIf: { field: "medication", includes: "carer_serve" },
-            options: [
-              { label: "Served On-Time", value: "served_on_time" },
-              { label: "Frequent Off-Scheduled Time", value: "frequent_off_scheduled_time" }
-            ]
-          },
-          {
-            name: "medication_box_keeper",
-            label: "Medication Box:",
-            type: "radio",
-            showIf: { field: "medication", includes: "medication_box" },
-            options: [
-              { label: "Self Keep", value: "self_keep" },
-              { label: "Nurse Keep", value: "nurse_keep" }
-            ]
-          },
-          {
-            name: "medication_self_keep",
-            label: "Self Keep:",
-            type: "radio",
-            showIf: { field: "medication_box_keeper", equals: "self_keep" },
-            options: [
-              { label: "Taken On-Time", value: "taken_on_time" },
-              { label: "Phone Reminder Alert", value: "phone_reminder_alert" },
-              { label: "Weekly Refill", value: "weekly_refill" }
-            ]
-          },
-          {
-            name: "medication_self_keep_weekly_refill",
-            label: "Weekly Refill:",
-            type: "radio",
-            showIf: { field: "medication_self_keep", equals: "weekly_refill" },
-            options: [
-              { label: "Self Refill", value: "self_refill" },
-              { label: "Nurse Refill", value: "nurse_refill" }
-            ]
-          },
-          {
-            name: "medication_nurse_keep",
-            label: "Nurse Keep:",
-            type: "radio",
-            showIf: { field: "medication_box_keeper", equals: "nurse_keep" },
-            options: [
-              { label: "Weekly Refill", value: "weekly_refill" },
-              { label: "Taking at Counter", value: "taking_at_counter" },
-              { label: "Served to Bed", value: "served_to_bed" }
-            ]
-          },
-          {
-            name: "medication_nurse_keep_weekly_refill",
-            label: "Weekly Refill:",
-            type: "radio",
-            showIf: { field: "medication_nurse_keep", equals: "weekly_refill" },
-            options: [
-              { label: "Self Refill", value: "self_refill" },
-              { label: "Nurse Refill", value: "nurse_refill" }
-            ]
-          },
-          {
-            name: "medication_nurse_keep_taking_at_counter",
-            label: "Taking at Counter:",
-            type: "radio",
-            showIf: { field: "medication_nurse_keep", equals: "taking_at_counter" },
-            options: [
-              { label: "Taken On Time", value: "taken_on_time" },
-              { label: "Nurse Call", value: "nurse_call" }
-            ]
-          },
-          {
-            name: "medication_nurse_serve",
-            label: "Nurse-Serve:",
-            type: "radio",
-            showIf: { field: "medication", includes: "nurse_serve" },
-            options: [
-              { label: "Need Crushing", value: "need_crushing" },
-              { label: "No Crushing Needed", value: "no_crushing_needed" }
-            ]
-          }
-        ]
-      },
+      // {
+      //   title: "MEDICATION",
+      //   fields: [
+      //     {
+      //       name: "medication",
+      //       label: "",
+      //       type: "checkbox-group",
+      //       inlineWithLabel: true,
+      //       options: [
+      //         { label: "Self-Taking", value: "self_taking" },
+      //         { label: "Carer-Serve", value: "carer_serve" },
+      //         { label: "Medication Box", value: "medication_box" },
+      //         { label: "Nurse-Serve", value: "nurse_serve" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_self_taking",
+      //       label: "Self-Taking:",
+      //       type: "radio",
+      //       showIf: { field: "medication", includes: "self_taking" },
+      //       options: [
+      //         { label: "Taken On-Time", value: "taken_on_time" },
+      //         { label: "Frequent Off-Scheduled Time", value: "frequent_off_scheduled_time" },
+      //         { label: "Phone Reminder Alert", value: "phone_reminder_alert" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_carer_serve",
+      //       label: "Carer-Serve:",
+      //       type: "radio",
+      //       showIf: { field: "medication", includes: "carer_serve" },
+      //       options: [
+      //         { label: "Served On-Time", value: "served_on_time" },
+      //         { label: "Frequent Off-Scheduled Time", value: "frequent_off_scheduled_time" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_box_keeper",
+      //       label: "Medication Box:",
+      //       type: "radio",
+      //       showIf: { field: "medication", includes: "medication_box" },
+      //       options: [
+      //         { label: "Self Keep", value: "self_keep" },
+      //         { label: "Nurse Keep", value: "nurse_keep" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_self_keep",
+      //       label: "Self Keep:",
+      //       type: "radio",
+      //       showIf: { field: "medication_box_keeper", equals: "self_keep" },
+      //       options: [
+      //         { label: "Taken On-Time", value: "taken_on_time" },
+      //         { label: "Phone Reminder Alert", value: "phone_reminder_alert" },
+      //         { label: "Weekly Refill", value: "weekly_refill" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_self_keep_weekly_refill",
+      //       label: "Weekly Refill:",
+      //       type: "radio",
+      //       showIf: { field: "medication_self_keep", equals: "weekly_refill" },
+      //       options: [
+      //         { label: "Self Refill", value: "self_refill" },
+      //         { label: "Nurse Refill", value: "nurse_refill" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_nurse_keep",
+      //       label: "Nurse Keep:",
+      //       type: "radio",
+      //       showIf: { field: "medication_box_keeper", equals: "nurse_keep" },
+      //       options: [
+      //         { label: "Weekly Refill", value: "weekly_refill" },
+      //         { label: "Taking at Counter", value: "taking_at_counter" },
+      //         { label: "Served to Bed", value: "served_to_bed" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_nurse_keep_weekly_refill",
+      //       label: "Weekly Refill:",
+      //       type: "radio",
+      //       showIf: { field: "medication_nurse_keep", equals: "weekly_refill" },
+      //       options: [
+      //         { label: "Self Refill", value: "self_refill" },
+      //         { label: "Nurse Refill", value: "nurse_refill" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_nurse_keep_taking_at_counter",
+      //       label: "Taking at Counter:",
+      //       type: "radio",
+      //       showIf: { field: "medication_nurse_keep", equals: "taking_at_counter" },
+      //       options: [
+      //         { label: "Taken On Time", value: "taken_on_time" },
+      //         { label: "Nurse Call", value: "nurse_call" }
+      //       ]
+      //     },
+      //     {
+      //       name: "medication_nurse_serve",
+      //       label: "Nurse-Serve:",
+      //       type: "radio",
+      //       showIf: { field: "medication", includes: "nurse_serve" },
+      //       options: [
+      //         { label: "Need Crushing", value: "need_crushing" },
+      //         { label: "No Crushing Needed", value: "no_crushing_needed" }
+      //       ]
+      //     }
+      //   ]
+      // },
       {
         title: "Remarks",
         fields: [
@@ -721,6 +722,15 @@ export default function ADLForm({ patient, onSubmit, onBack }) {
             Submit
           </button>
         </div>
+          <div style={{ marginTop: 32 }}>
+    <BarthelIndexForm
+      patient={patient}
+      onSubmit={(payload) => {
+        console.log("Barthel Submitted:", payload);
+      }}
+      onBack={() => {}}
+    />
+  </div>
       </CommonFormBuilder>
     </div>
   );

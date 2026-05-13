@@ -11,7 +11,12 @@ function parseRating(v) {
   return n;
 }
 
-export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }) {
+export default function NumericPainRatingScaleForm({ 
+  patient, 
+  onSubmit, 
+  onBack, 
+  onChange: parentOnChange  // ✅ Accept parent's onChange for real-time propagation
+}) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -29,8 +34,15 @@ export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }
     }
   }, [storageKey]);
 
-  const onChange = (name, value) => {
+  // ✅ Wrapper that updates local state AND notifies parent immediately
+  const handleFieldChange = (name, value) => {
+    // Update local state for form display
     setValues(v => ({ ...v, [name]: value }));
+    
+    // ✅ Propagate to parent with prefix on EVERY keystroke
+    if (parentOnChange) {
+      parentOnChange(`numeric_pain_scale_${name}`, value);
+    }
   };
 
   const handleAction = (type) => {
@@ -104,7 +116,7 @@ export default function NumericPainRatingScaleForm({ patient, onSubmit, onBack }
       <CommonFormBuilder
         schema={SCHEMA}
         values={valuesWithAverage}
-        onChange={onChange}
+        onChange={handleFieldChange}
         submitted={submitted}
         onAction={handleAction}
         layout="nested"

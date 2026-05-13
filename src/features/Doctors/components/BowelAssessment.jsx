@@ -331,7 +331,7 @@ const absentPresent = (name, label) => ({
   ]
 });
 
-function BristolChartAssessment({ values = {}, onChange }) {
+export function BristolChartAssessment({ values = {}, onChange }) {
   const rows = [
     {
       key: "1",

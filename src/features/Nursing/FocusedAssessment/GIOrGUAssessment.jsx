@@ -15,244 +15,244 @@ export default function GIOrGUAssessment({ layout = "root" }) {
       // SUBJECTIVE (Patient Reported)
       // ═══════════════════════════════════════════════════════════════
       {
-        title: "SUBJECTIVE (Patient Reported)",
+        // title: "SUBJECTIVE (Patient Reported)",
         fields: [
-          {
-            name: "gigu_chief_complaint",
-            label: "Chief Complaint",
-            type: "checkbox-group",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Abdominal pain", value: "abdominal_pain" },
-              { label: "Nausea", value: "nausea" },
-              { label: "Vomiting", value: "vomiting" },
-              { label: "Constipation", value: "constipation" },
-              { label: "Diarrhea", value: "diarrhea" },
-              { label: "Bloating/distension", value: "bloating" },
-              { label: "Heartburn/reflux", value: "heartburn" },
-              { label: "Dysphagia", value: "dysphagia" },
-              { label: "Bloody stool", value: "bloody_stool" },
-              { label: "Black/tarry stool", value: "black_stool" },
-              { label: "Hematemesis", value: "hematemesis" },
-              { label: "Dysuria", value: "dysuria" },
-              { label: "Urinary frequency", value: "urinary_frequency" },
-              { label: "Urinary urgency", value: "urinary_urgency" },
-              { label: "Urinary retention", value: "urinary_retention" },
-              { label: "Urinary incontinence", value: "urinary_incontinence" },
-              { label: "Hematuria", value: "hematuria" },
-              { label: "Flank pain", value: "flank_pain" },
-              { label: "Other", value: "other" }
-            ]
-          },
-          {
-            name: "gigu_chief_complaint_other",
-            label: "Other — Specify",
-            type: "input",
-            showIf: { field: "gigu_chief_complaint", includes: "other" }
-          },
-          // Abdominal pain OPQRST (if selected)
-          { type: "subheading", label: "Abdominal Pain (OPQRST)", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          { name: "gigu_ap_onset", label: "O — Onset", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          {
-            name: "gigu_ap_provocation",
-            label: "P — Provocation/Palliation",
-            type: "radio",
-            labelAbove: true,
-            options: [
-              { label: "With movement", value: "with_movement" },
-              { label: "At rest", value: "at_rest" },
-              { label: "Both", value: "both" },
-              { label: "Relieved by", value: "relieved_by" }
-            ],
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" }
-          },
-          { name: "gigu_ap_relieved_by", label: "Relieved by (specify)", type: "input", showIf: { field: "gigu_ap_provocation", equals: "relieved_by" } },
-          { name: "gigu_ap_quality", label: "Q — Quality", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          { name: "gigu_ap_region", label: "R — Region/Radiation", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          {
-            type: "row",
-            fields: [
-              { name: "gigu_ap_severity_rest", label: "S — Severity At rest (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-              { name: "gigu_ap_severity_movement", label: "S — Severity With movement (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } }
-            ]
-          },
-          { name: "gigu_ap_timing", label: "T — Timing", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          // GI History
-          { type: "subheading", label: "GI History" },
-          {
-            name: "gigu_gi_condition",
-            label: "Known GI condition",
-            type: "checkbox-group",
-            options: [
-              { label: "None", value: "none" },
-              { label: "GERD - Gastroesophageal Reflux Disease", value: "gerd" },
-              { label: "IBS - Irritable Bowel Syndrome", value: "ibs" },
-              { label: "IBD - Inflammatory Bowel Disease", value: "ibd" },
-              { label: "Peptic ulcer disease", value: "pud" },
-              { label: "Liver disease", value: "liver" },
-              { label: "Pancreatitis", value: "pancreatitis" },
-              { label: "GI malignancy", value: "gi_malignancy" },
-              { label: "Other", value: "other" }
-            ]
-          },
-          { name: "gigu_gi_condition_other", label: "Other — Specify", type: "input", showIf: { field: "gigu_gi_condition", includes: "other" } },
-          {
-            name: "gigu_prior_abdominal_surgery",
-            label: "Prior abdominal surgery",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          { name: "gigu_prior_abdominal_surgery_specify", label: "Specify", type: "input", showIf: { field: "gigu_prior_abdominal_surgery", equals: "yes" } },
-          // GU History
-          { type: "subheading", label: "GU History" },
-          {
-            name: "gigu_gu_condition",
-            label: "Known GU condition",
-            type: "checkbox-group",
-            options: [
-              { label: "None", value: "none" },
-              { label: "UTI", value: "uti" },
-              { label: "Kidney stones", value: "kidney_stones" },
-              { label: "CKD", value: "ckd" },
-              { label: "Prostate disorder", value: "prostate" },
-              { label: "Neurogenic bladder", value: "neurogenic_bladder" },
-              { label: "Incontinence disorder", value: "incontinence" },
-              { label: "Other", value: "other" }
-            ]
-          },
-          { name: "gigu_gu_condition_other", label: "Other — Specify", type: "input", showIf: { field: "gigu_gu_condition", includes: "other" } },
-          {
-            name: "gigu_prior_gu_surgery",
-            label: "Prior GU surgery",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          { name: "gigu_prior_gu_surgery_specify", label: "Specify", type: "input", showIf: { field: "gigu_prior_gu_surgery", equals: "yes" } },
-          // Abdominal Pain (Display if selected above) — below GU History, above Bowel Pattern
-          { type: "subheading", label: "Abdominal Pain (Display if selected above)", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
-          {
-            name: "gigu_ap_location",
-            label: "Location",
-            type: "checkbox-group",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "RUQ (Right Upper Quadrant)", value: "ruq" },
-              { label: "RLQ (Right Lower Quadrant)", value: "rlq" },
-              { label: "LUQ (Left Upper Quadrant)", value: "luq" },
-              { label: "LLQ (Left Lower Quadrant)", value: "llq" },
-              { label: "Epigastric", value: "epigastric" },
-              { label: "Suprapubic", value: "suprapubic" },
-              { label: "Diffuse", value: "diffuse" }
-            ]
-          },
-          {
-            name: "gigu_ap_radiation",
-            label: "Radiation",
-            type: "radio",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "None", value: "none" },
-              { label: "Back", value: "back" },
-              { label: "Groin", value: "groin" },
-              { label: "Shoulder", value: "shoulder" }
-            ]
-          },
-          {
-            name: "gigu_ap_quality_detail",
-            label: "Quality",
-            type: "radio",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Cramping", value: "cramping" },
-              { label: "Sharp", value: "sharp" },
-              { label: "Dull", value: "dull" },
-              { label: "Burning", value: "burning" },
-              { label: "Colicky", value: "colicky" },
-              { label: "Pressure", value: "pressure" }
-            ]
-          },
-          {
-            name: "gigu_ap_severity_range",
-            label: "Severity",
-            type: "radio",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "0–3", value: "0_3" },
-              { label: "4–6", value: "4_6" },
-              { label: "7–10", value: "7_10" }
-            ]
-          },
-          {
-            name: "gigu_ap_onset_detail",
-            label: "Onset",
-            type: "radio",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Sudden", value: "sudden" },
-              { label: "Gradual", value: "gradual" }
-            ]
-          },
-          {
-            name: "gigu_ap_duration",
-            label: "Duration",
-            type: "radio",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Minutes", value: "minutes" },
-              { label: "Hours", value: "hours" },
-              { label: "Days", value: "days" }
-            ]
-          },
-          {
-            name: "gigu_ap_aggravating",
-            label: "Aggravating factors",
-            type: "checkbox-group",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Eating", value: "eating" },
-              { label: "Movement", value: "movement" },
-              { label: "Urination", value: "urination" },
-              { label: "Bowel movement", value: "bowel_movement" },
-              { label: "Stress", value: "stress" },
-              { label: "None", value: "none" }
-            ]
-          },
-          {
-            name: "gigu_ap_relieving",
-            label: "Relieving factors",
-            type: "checkbox-group",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Rest", value: "rest" },
-              { label: "Medications", value: "medications" },
-              { label: "Position change", value: "position_change" },
-              { label: "Bowel movement", value: "bowel_movement" },
-              { label: "Fluids", value: "fluids" },
-              { label: "None", value: "none" }
-            ]
-          },
-          {
-            name: "gigu_ap_associated",
-            label: "Associated symptoms",
-            type: "checkbox-group",
-            showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
-            options: [
-              { label: "Fever (if fever present, check for dysuria)", value: "fever" },
-              { label: "Nausea", value: "nausea" },
-              { label: "Vomiting", value: "vomiting" },
-              { label: "Constipation", value: "constipation" },
-              { label: "Diarrhea", value: "diarrhea" },
-              { label: "Bloody stool", value: "bloody_stool" },
-              { label: "Hematuria", value: "hematuria" },
-              { label: "None", value: "none" }
-            ]
-          },
+          // {
+          //   name: "gigu_chief_complaint",
+          //   label: "Chief Complaint",
+          //   type: "checkbox-group",
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "Abdominal pain", value: "abdominal_pain" },
+          //     { label: "Nausea", value: "nausea" },
+          //     { label: "Vomiting", value: "vomiting" },
+          //     { label: "Constipation", value: "constipation" },
+          //     { label: "Diarrhea", value: "diarrhea" },
+          //     { label: "Bloating/distension", value: "bloating" },
+          //     { label: "Heartburn/reflux", value: "heartburn" },
+          //     { label: "Dysphagia", value: "dysphagia" },
+          //     { label: "Bloody stool", value: "bloody_stool" },
+          //     { label: "Black/tarry stool", value: "black_stool" },
+          //     { label: "Hematemesis", value: "hematemesis" },
+          //     { label: "Dysuria", value: "dysuria" },
+          //     { label: "Urinary frequency", value: "urinary_frequency" },
+          //     { label: "Urinary urgency", value: "urinary_urgency" },
+          //     { label: "Urinary retention", value: "urinary_retention" },
+          //     { label: "Urinary incontinence", value: "urinary_incontinence" },
+          //     { label: "Hematuria", value: "hematuria" },
+          //     { label: "Flank pain", value: "flank_pain" },
+          //     { label: "Other", value: "other" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_chief_complaint_other",
+          //   label: "Other — Specify",
+          //   type: "input",
+          //   showIf: { field: "gigu_chief_complaint", includes: "other" }
+          // },
+          // // Abdominal pain OPQRST (if selected)
+          // { type: "subheading", label: "Abdominal Pain (OPQRST)", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // { name: "gigu_ap_onset", label: "O — Onset", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // {
+          //   name: "gigu_ap_provocation",
+          //   label: "P — Provocation/Palliation",
+          //   type: "radio",
+          //   labelAbove: true,
+          //   options: [
+          //     { label: "With movement", value: "with_movement" },
+          //     { label: "At rest", value: "at_rest" },
+          //     { label: "Both", value: "both" },
+          //     { label: "Relieved by", value: "relieved_by" }
+          //   ],
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" }
+          // },
+          // { name: "gigu_ap_relieved_by", label: "Relieved by (specify)", type: "input", showIf: { field: "gigu_ap_provocation", equals: "relieved_by" } },
+          // { name: "gigu_ap_quality", label: "Q — Quality", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // { name: "gigu_ap_region", label: "R — Region/Radiation", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // {
+          //   type: "row",
+          //   fields: [
+          //     { name: "gigu_ap_severity_rest", label: "S — Severity At rest (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          //     { name: "gigu_ap_severity_movement", label: "S — Severity With movement (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } }
+          //   ]
+          // },
+          // { name: "gigu_ap_timing", label: "T — Timing", type: "input", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // // GI History
+          // { type: "subheading", label: "GI History" },
+          // {
+          //   name: "gigu_gi_condition",
+          //   label: "Known GI condition",
+          //   type: "checkbox-group",
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "GERD - Gastroesophageal Reflux Disease", value: "gerd" },
+          //     { label: "IBS - Irritable Bowel Syndrome", value: "ibs" },
+          //     { label: "IBD - Inflammatory Bowel Disease", value: "ibd" },
+          //     { label: "Peptic ulcer disease", value: "pud" },
+          //     { label: "Liver disease", value: "liver" },
+          //     { label: "Pancreatitis", value: "pancreatitis" },
+          //     { label: "GI malignancy", value: "gi_malignancy" },
+          //     { label: "Other", value: "other" }
+          //   ]
+          // },
+          // { name: "gigu_gi_condition_other", label: "Other — Specify", type: "input", showIf: { field: "gigu_gi_condition", includes: "other" } },
+          // {
+          //   name: "gigu_prior_abdominal_surgery",
+          //   label: "Prior abdominal surgery",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+          // { name: "gigu_prior_abdominal_surgery_specify", label: "Specify", type: "input", showIf: { field: "gigu_prior_abdominal_surgery", equals: "yes" } },
+          // // GU History
+          // { type: "subheading", label: "GU History" },
+          // {
+          //   name: "gigu_gu_condition",
+          //   label: "Known GU condition",
+          //   type: "checkbox-group",
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "UTI", value: "uti" },
+          //     { label: "Kidney stones", value: "kidney_stones" },
+          //     { label: "CKD", value: "ckd" },
+          //     { label: "Prostate disorder", value: "prostate" },
+          //     { label: "Neurogenic bladder", value: "neurogenic_bladder" },
+          //     { label: "Incontinence disorder", value: "incontinence" },
+          //     { label: "Other", value: "other" }
+          //   ]
+          // },
+          // { name: "gigu_gu_condition_other", label: "Other — Specify", type: "input", showIf: { field: "gigu_gu_condition", includes: "other" } },
+          // {
+          //   name: "gigu_prior_gu_surgery",
+          //   label: "Prior GU surgery",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+          // { name: "gigu_prior_gu_surgery_specify", label: "Specify", type: "input", showIf: { field: "gigu_prior_gu_surgery", equals: "yes" } },
+          // // Abdominal Pain (Display if selected above) — below GU History, above Bowel Pattern
+          // { type: "subheading", label: "Abdominal Pain (Display if selected above)", showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" } },
+          // {
+          //   name: "gigu_ap_location",
+          //   label: "Location",
+          //   type: "checkbox-group",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "RUQ (Right Upper Quadrant)", value: "ruq" },
+          //     { label: "RLQ (Right Lower Quadrant)", value: "rlq" },
+          //     { label: "LUQ (Left Upper Quadrant)", value: "luq" },
+          //     { label: "LLQ (Left Lower Quadrant)", value: "llq" },
+          //     { label: "Epigastric", value: "epigastric" },
+          //     { label: "Suprapubic", value: "suprapubic" },
+          //     { label: "Diffuse", value: "diffuse" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_radiation",
+          //   label: "Radiation",
+          //   type: "radio",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "Back", value: "back" },
+          //     { label: "Groin", value: "groin" },
+          //     { label: "Shoulder", value: "shoulder" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_quality_detail",
+          //   label: "Quality",
+          //   type: "radio",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Cramping", value: "cramping" },
+          //     { label: "Sharp", value: "sharp" },
+          //     { label: "Dull", value: "dull" },
+          //     { label: "Burning", value: "burning" },
+          //     { label: "Colicky", value: "colicky" },
+          //     { label: "Pressure", value: "pressure" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_severity_range",
+          //   label: "Severity",
+          //   type: "radio",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "0–3", value: "0_3" },
+          //     { label: "4–6", value: "4_6" },
+          //     { label: "7–10", value: "7_10" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_onset_detail",
+          //   label: "Onset",
+          //   type: "radio",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Sudden", value: "sudden" },
+          //     { label: "Gradual", value: "gradual" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_duration",
+          //   label: "Duration",
+          //   type: "radio",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Minutes", value: "minutes" },
+          //     { label: "Hours", value: "hours" },
+          //     { label: "Days", value: "days" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_aggravating",
+          //   label: "Aggravating factors",
+          //   type: "checkbox-group",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Eating", value: "eating" },
+          //     { label: "Movement", value: "movement" },
+          //     { label: "Urination", value: "urination" },
+          //     { label: "Bowel movement", value: "bowel_movement" },
+          //     { label: "Stress", value: "stress" },
+          //     { label: "None", value: "none" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_relieving",
+          //   label: "Relieving factors",
+          //   type: "checkbox-group",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Rest", value: "rest" },
+          //     { label: "Medications", value: "medications" },
+          //     { label: "Position change", value: "position_change" },
+          //     { label: "Bowel movement", value: "bowel_movement" },
+          //     { label: "Fluids", value: "fluids" },
+          //     { label: "None", value: "none" }
+          //   ]
+          // },
+          // {
+          //   name: "gigu_ap_associated",
+          //   label: "Associated symptoms",
+          //   type: "checkbox-group",
+          //   showIf: { field: "gigu_chief_complaint", includes: "abdominal_pain" },
+          //   options: [
+          //     { label: "Fever (if fever present, check for dysuria)", value: "fever" },
+          //     { label: "Nausea", value: "nausea" },
+          //     { label: "Vomiting", value: "vomiting" },
+          //     { label: "Constipation", value: "constipation" },
+          //     { label: "Diarrhea", value: "diarrhea" },
+          //     { label: "Bloody stool", value: "bloody_stool" },
+          //     { label: "Hematuria", value: "hematuria" },
+          //     { label: "None", value: "none" }
+          //   ]
+          // },
           // Bowel Pattern
           { type: "subheading", label: "Bowel Pattern" },
           {
@@ -312,225 +312,225 @@ export default function GIOrGUAssessment({ layout = "root" }) {
             ]
           },
           // Nausea / Vomiting
-          { type: "subheading", label: "Nausea / Vomiting" },
-          {
-            name: "gigu_nausea",
-            label: "Nausea",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_vomiting",
-            label: "Vomiting",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_vomiting_frequency",
-            label: "Frequency",
-            type: "radio",
-            showIf: { field: "gigu_vomiting", equals: "yes" },
-            options: [
-              { label: "Occasional", value: "occasional" },
-              { label: "Frequent", value: "frequent" },
-              { label: "Persistent", value: "persistent" }
-            ]
-          },
-          {
-            name: "gigu_vomiting_character",
-            label: "Character",
-            type: "radio",
-            showIf: { field: "gigu_vomiting", equals: "yes" },
-            options: [
-              { label: "Food contents", value: "food" },
-              { label: "Bilious", value: "bilious" },
-              { label: "Bloody", value: "bloody" },
-              { label: "Coffee-ground", value: "coffee_ground" }
-            ]
-          },
-          // Diet / Swallowing
-          { type: "subheading", label: "Diet / Swallowing" },
-          {
-            name: "gigu_appetite",
-            label: "Appetite",
-            type: "radio",
-            options: [
-              { label: "Normal", value: "normal" },
-              { label: "Decreased", value: "decreased" },
-              { label: "Increased", value: "increased" },
-              { label: "Unable to eat", value: "unable" }
-            ]
-          },
-          {
-            name: "gigu_weight_change",
-            label: "Recent weight change",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_weight_change_type",
-            label: "Weight change type",
-            type: "radio",
-            showIf: { field: "gigu_weight_change", equals: "yes" },
-            options: [
-              { label: "Loss", value: "loss" },
-              { label: "Gain", value: "gain" }
-            ]
-          },
-          {
-            name: "gigu_swallowing",
-            label: "Swallowing difficulty",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_swallowing_type",
-            label: "Swallowing difficulty type",
-            type: "checkbox-group",
-            showIf: { field: "gigu_swallowing", equals: "yes" },
-            options: [
-              { label: "Solids", value: "solids" },
-              { label: "Liquids", value: "liquids" },
-              { label: "Both", value: "both" }
-            ]
-          },
-          // Urinary Symptoms
-          { type: "subheading", label: "Urinary Symptoms" },
-          {
-            name: "gigu_dysuria",
-            label: "Dysuria",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_dysuria_type",
-            label: "Dysuria type",
-            type: "checkbox-group",
-            showIf: { field: "gigu_dysuria", equals: "yes" },
-            options: [
-              { label: "Internal", value: "internal" },
-              { label: "External", value: "external" }
-            ]
-          },
-          {
-            name: "gigu_frequency",
-            label: "Frequency",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_frequency_type",
-            label: "Frequency type",
-            type: "checkbox-group",
-            showIf: { field: "gigu_frequency", equals: "yes" },
-            options: [
-              { label: "Daytime", value: "daytime" },
-              { label: "Nocturia", value: "nocturia" },
-              { label: "Both", value: "both" }
-            ]
-          },
-          {
-            name: "gigu_urgency",
-            label: "Urgency",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_incontinence",
-            label: "Incontinence",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Stress", value: "stress" },
-              { label: "Urge", value: "urge" },
-              { label: "Overflow", value: "overflow" },
-              { label: "Functional", value: "functional" }
-            ]
-          },
-          {
-            name: "gigu_hesitancy",
-            label: "Hesitancy",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_weak_stream",
-            label: "Weak stream",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_hematuria",
-            label: "Hematuria",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "gigu_flank_pain",
-            label: "Flank pain",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          // Flank pain OPQRST (if yes)
-          { type: "subheading", label: "Flank pain OPQRST", showIf: { field: "gigu_flank_pain", equals: "yes" } },
-          { name: "gigu_fp_onset", label: "O — Onset", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
-          {
-            name: "gigu_fp_provocation",
-            label: "P — Provocation/Palliation",
-            type: "radio",
-            labelAbove: true,
-            options: [
-              { label: "With movement", value: "with_movement" },
-              { label: "At rest", value: "at_rest" },
-              { label: "Both", value: "both" },
-              { label: "Relieved by", value: "relieved_by" }
-            ],
-            showIf: { field: "gigu_flank_pain", equals: "yes" }
-          },
-          { name: "gigu_fp_relieved_by", label: "Relieved by (specify)", type: "input", showIf: { field: "gigu_fp_provocation", equals: "relieved_by" } },
-          { name: "gigu_fp_quality", label: "Q — Quality", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
-          { name: "gigu_fp_region", label: "R — Region/Radiation", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
-          {
-            type: "row",
-            fields: [
-              { name: "gigu_fp_severity_rest", label: "S — Severity At rest (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_flank_pain", equals: "yes" } },
-              { name: "gigu_fp_severity_movement", label: "S — Severity With movement (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_flank_pain", equals: "yes" } }
-            ]
-          },
-          { name: "gigu_fp_timing", label: "T — Timing", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } }
+      //     { type: "subheading", label: "Nausea / Vomiting" },
+      //     {
+      //       name: "gigu_nausea",
+      //       label: "Nausea",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_vomiting",
+      //       label: "Vomiting",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_vomiting_frequency",
+      //       label: "Frequency",
+      //       type: "radio",
+      //       showIf: { field: "gigu_vomiting", equals: "yes" },
+      //       options: [
+      //         { label: "Occasional", value: "occasional" },
+      //         { label: "Frequent", value: "frequent" },
+      //         { label: "Persistent", value: "persistent" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_vomiting_character",
+      //       label: "Character",
+      //       type: "radio",
+      //       showIf: { field: "gigu_vomiting", equals: "yes" },
+      //       options: [
+      //         { label: "Food contents", value: "food" },
+      //         { label: "Bilious", value: "bilious" },
+      //         { label: "Bloody", value: "bloody" },
+      //         { label: "Coffee-ground", value: "coffee_ground" }
+      //       ]
+      //     },
+      //     // Diet / Swallowing
+      //     { type: "subheading", label: "Diet / Swallowing" },
+      //     {
+      //       name: "gigu_appetite",
+      //       label: "Appetite",
+      //       type: "radio",
+      //       options: [
+      //         { label: "Normal", value: "normal" },
+      //         { label: "Decreased", value: "decreased" },
+      //         { label: "Increased", value: "increased" },
+      //         { label: "Unable to eat", value: "unable" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_weight_change",
+      //       label: "Recent weight change",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_weight_change_type",
+      //       label: "Weight change type",
+      //       type: "radio",
+      //       showIf: { field: "gigu_weight_change", equals: "yes" },
+      //       options: [
+      //         { label: "Loss", value: "loss" },
+      //         { label: "Gain", value: "gain" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_swallowing",
+      //       label: "Swallowing difficulty",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_swallowing_type",
+      //       label: "Swallowing difficulty type",
+      //       type: "checkbox-group",
+      //       showIf: { field: "gigu_swallowing", equals: "yes" },
+      //       options: [
+      //         { label: "Solids", value: "solids" },
+      //         { label: "Liquids", value: "liquids" },
+      //         { label: "Both", value: "both" }
+      //       ]
+      //     },
+      //     // Urinary Symptoms
+      //     { type: "subheading", label: "Urinary Symptoms" },
+      //     {
+      //       name: "gigu_dysuria",
+      //       label: "Dysuria",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_dysuria_type",
+      //       label: "Dysuria type",
+      //       type: "checkbox-group",
+      //       showIf: { field: "gigu_dysuria", equals: "yes" },
+      //       options: [
+      //         { label: "Internal", value: "internal" },
+      //         { label: "External", value: "external" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_frequency",
+      //       label: "Frequency",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_frequency_type",
+      //       label: "Frequency type",
+      //       type: "checkbox-group",
+      //       showIf: { field: "gigu_frequency", equals: "yes" },
+      //       options: [
+      //         { label: "Daytime", value: "daytime" },
+      //         { label: "Nocturia", value: "nocturia" },
+      //         { label: "Both", value: "both" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_urgency",
+      //       label: "Urgency",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_incontinence",
+      //       label: "Incontinence",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Stress", value: "stress" },
+      //         { label: "Urge", value: "urge" },
+      //         { label: "Overflow", value: "overflow" },
+      //         { label: "Functional", value: "functional" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_hesitancy",
+      //       label: "Hesitancy",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_weak_stream",
+      //       label: "Weak stream",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_hematuria",
+      //       label: "Hematuria",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     {
+      //       name: "gigu_flank_pain",
+      //       label: "Flank pain",
+      //       type: "radio",
+      //       options: [
+      //         { label: "No", value: "no" },
+      //         { label: "Yes", value: "yes" }
+      //       ]
+      //     },
+      //     // Flank pain OPQRST (if yes)
+      //     { type: "subheading", label: "Flank pain OPQRST", showIf: { field: "gigu_flank_pain", equals: "yes" } },
+      //     { name: "gigu_fp_onset", label: "O — Onset", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
+      //     {
+      //       name: "gigu_fp_provocation",
+      //       label: "P — Provocation/Palliation",
+      //       type: "radio",
+      //       labelAbove: true,
+      //       options: [
+      //         { label: "With movement", value: "with_movement" },
+      //         { label: "At rest", value: "at_rest" },
+      //         { label: "Both", value: "both" },
+      //         { label: "Relieved by", value: "relieved_by" }
+      //       ],
+      //       showIf: { field: "gigu_flank_pain", equals: "yes" }
+      //     },
+      //     { name: "gigu_fp_relieved_by", label: "Relieved by (specify)", type: "input", showIf: { field: "gigu_fp_provocation", equals: "relieved_by" } },
+      //     { name: "gigu_fp_quality", label: "Q — Quality", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
+      //     { name: "gigu_fp_region", label: "R — Region/Radiation", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } },
+      //     {
+      //       type: "row",
+      //       fields: [
+      //         { name: "gigu_fp_severity_rest", label: "S — Severity At rest (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_flank_pain", equals: "yes" } },
+      //         { name: "gigu_fp_severity_movement", label: "S — Severity With movement (0–10)", type: "scale-slider", min: 0, max: 10, step: 1, showValue: true, showIf: { field: "gigu_flank_pain", equals: "yes" } }
+      //       ]
+      //     },
+      //     { name: "gigu_fp_timing", label: "T — Timing", type: "input", showIf: { field: "gigu_flank_pain", equals: "yes" } }
         ]
       },
       // ═══════════════════════════════════════════════════════════════
