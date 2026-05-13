@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import DryNeedling from "./DryNeedling";
+import WallClimbing from "./WallClimbing";
 // features/neuro/assessments/registry.js
 import MMTForm from "../../PT/components/MMTForm";
 import TUG from "../../PT/components/TUGForm";
@@ -191,6 +193,9 @@ export default function MusculoskeletalAssessment({ patient, onSubmit, onBack })
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+  const [showConsentModal, setShowConsentModal] = useState(false);
+  const dryNeedlingRef  = React.useRef({});
+  const wallClimbingRef = React.useRef({});
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -219,6 +224,13 @@ export default function MusculoskeletalAssessment({ patient, onSubmit, onBack })
 
   const onChange = (name, value) => {
     setValues(v => ({ ...v, [name]: value }));
+    if (name === "consent_obtained" && value && value !== values.consent_obtained) {
+      setShowConsentModal(true);
+    }
+    if (name === "_open_consent_trigger" && value) {
+      setValues(v => ({ ...v, consent_obtained: value }));
+      setShowConsentModal(true);
+    }
   };
 
   const handleAction = (type) => {
@@ -391,16 +403,32 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
           fields: [
             {
               name: "consent_obtained",
-              type: "checkbox-group",
-              options: [{ label: "Consent obtained", value: "yes" }]
+              label: "Consent",
+              type: "single-select",
+              options: [
+                { label: "Dry Needling",  value: "dry_needling"  },
+                { label: "Wall Climbing", value: "wall_climbing" }
+              ]
             },
-            {
-              name: "consent_upload",
-              label: "Upload",
-              type: "file-upload",
-              showIf: { field: "consent_obtained", includes: "yes" }
-            }
           ]
+        },
+        {
+          type: "custom",
+          name: "_open_saved_consent",
+          render: ({ values, onChange: _onChange }) => {
+            const hasDry  = !!values.dry_needling_consent;
+            const hasWall = !!values.wall_climbing_consent;
+            if (!hasDry && !hasWall) return null;
+            return (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: "#0F172A", marginBottom: 8 }}>Open Saved Consent</div>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  {hasDry  && <button type="button" style={savedBtn} onClick={() => _onChange("_open_consent_trigger", "dry_needling")}>Open Dry Needling Consent</button>}
+                  {hasWall && <button type="button" style={savedBtn} onClick={() => _onChange("_open_consent_trigger", "wall_climbing")}>Open Wall Climbing Consent</button>}
+                </div>
+              </div>
+            );
+          }
         },
         {
           name: "hep_reviewed",
@@ -995,6 +1023,32 @@ const alertBtn = {
       onChange={onChange}
     />
 
+      {/* ===== CONSENT MODAL ===== */}
+      {showConsentModal && values.consent_obtained && (
+        <div style={modalOverlay}>
+          <div style={modalBox}>
+            <button style={modalClose} onClick={() => setShowConsentModal(false)}>×</button>
+            <div style={{ maxHeight: "75vh", overflowY: "auto", paddingRight: 6 }}>
+              {values.consent_obtained === "dry_needling" && (
+                <DryNeedling key={`dry-${values.dry_needling_consent?.submittedAt || "new"}`} patient={patient} initialValues={values.dry_needling_consent || {}} onBack={() => setShowConsentModal(false)} onValuesChange={(l) => { dryNeedlingRef.current = l; }} onSubmit={(v) => { onChange("dry_needling_consent", { ...v, submittedAt: new Date().toISOString(), saved: true, consent_type: "Dry Needling" }); setShowConsentModal(false); }} />
+              )}
+              {values.consent_obtained === "wall_climbing" && (
+                <WallClimbing key={`wall-${values.wall_climbing_consent?.submittedAt || "new"}`} patient={patient} initialValues={values.wall_climbing_consent || {}} onBack={() => setShowConsentModal(false)} onValuesChange={(l) => { wallClimbingRef.current = l; }} onSubmit={(v) => { onChange("wall_climbing_consent", { ...v, submittedAt: new Date().toISOString(), saved: true, consent_type: "Wall Climbing" }); setShowConsentModal(false); }} />
+              )}
+            </div>
+            <div style={{ textAlign: "right", marginTop: 16 }}>
+              <button style={saveCloseBtn} onClick={() => {
+                const t = values.consent_obtained?.trim();
+                const lv = t === "dry_needling" ? dryNeedlingRef.current : wallClimbingRef.current;
+                if (t === "dry_needling") onChange("dry_needling_consent", { ...lv, submittedAt: new Date().toISOString(), saved: true, consent_type: "Dry Needling" });
+                else if (t === "wall_climbing") onChange("wall_climbing_consent", { ...lv, submittedAt: new Date().toISOString(), saved: true, consent_type: "Wall Climbing" });
+                setShowConsentModal(false);
+              }}>Save & Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ===== TABS ===== */}
       <div style={tabBar}>
         {["subjective", "objective", "assessment", "plan"].map(tab => (
@@ -1167,3 +1221,9 @@ const td = {
   border: "1px solid #ccc",
   padding: 10
 };
+
+const modalOverlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 };
+const modalBox     = { background: "#fff", width: "95%", maxWidth: 1100, maxHeight: "92vh", borderRadius: 14, padding: 24, position: "relative", overflow: "hidden", boxShadow: "0 20px 50px rgba(0,0,0,0.25)" };
+const modalClose   = { position: "absolute", top: 1, right: 4, border: "none", background: "#ef4444", color: "#fff", width: 29, height: 30, borderRadius: "50%", cursor: "pointer", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 };
+const saveCloseBtn = { padding: "10px 18px", border: "none", borderRadius: 8, background: "#2563eb", color: "#fff", fontWeight: 700, cursor: "pointer" };
+const savedBtn     = { padding: "10px 14px", borderRadius: 8, border: "1px solid #2563eb", background: "#eff6ff", color: "#2563eb", fontWeight: 700, fontSize: 14, cursor: "pointer", whiteSpace: "nowrap" };

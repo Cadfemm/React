@@ -7,6 +7,19 @@ export default function VisualAssessment() {
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
+    // If "No issue" is selected in Vision Issue, clear all other selections
+    if (name === "vision_issues") {
+      const next = Array.isArray(value) ? value : [];
+      const hasNoIssue = next.includes("no_issue");
+      const sanitized = hasNoIssue ? ["no_issue"] : next.filter(v => v !== "no_issue");
+      setValues(prev => ({
+        ...prev,
+        [name]: sanitized,
+        ...(hasNoIssue ? { vision_issues_notes: "" } : null)
+      }));
+      return;
+    }
+
     setValues(prev => ({ ...prev, [name]: value }));
   };
 
@@ -63,29 +76,13 @@ const VISUAL_SECTIONS = [
           ]
         },
 
-        /* Dynamic Elaboration (Like Hearing) */
-        ...[
-          "eye_pain",
-          "redness_swelling",
-          "blurred_vision",
-          "dry_eye",
-          "flashes_floaters",
-          "myopia",
-          "hyperopia",
-          "vision_loss",
-          "colour_blindness",
-          "ptosis",
-          "proptosis",
-          "foreign_body"
-        ].map(issue => ({
+        /* Single Specify field for all selected issues */
+        {
           type: "input",
-          name: `vision_issue_${issue}_notes`,
-          label: `Elaboration – ${issue.replace(/_/g, " ")}`,
-          showIf: {
-            field: "vision_issues",
-            includes: issue
-          }
-        }))
+          name: "vision_issues_notes",
+          label: "Specify",
+          showIf: { field: "vision_issues", notEmpty: true }
+        }
       ]
     },
 
@@ -324,8 +321,8 @@ const VISUAL_SECTIONS = [
           label: "Diplopia",
           value: "diplopia",
           columns: [
-            { type: "select", options: ["Monocular", "Binocular"] },
-            { type: "select", options: ["Monocular", "Binocular"] }
+            { type: "select", options: ["Nil", "Monocular", "Binocular"] },
+            { type: "select", options: ["Nil", "Monocular", "Binocular"] }
           ]
         },
         {

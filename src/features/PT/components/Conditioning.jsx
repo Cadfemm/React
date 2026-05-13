@@ -3,6 +3,10 @@ import SixMWTForm from "./SixMWTForm";
 import MMTForm from "./MMTForm";
 import YBalanceTestForm from "./YBalanceTestForm";
 import LegPressForm from "./LegPressForm";
+import SPADIForm from "./SPADIForm";
+import HOOSForm from "./HOOSForm";
+import KOOSForm from "./KOOSForm";
+import FAOSForm from "./FAOSForm";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import PatientCard from "../../../shared/cards/PatientCard";
 
@@ -11,12 +15,34 @@ export const CONDITIONING_ASSESSMENT_REGISTRY = {
   mmt: MMTForm,
   y_balance: YBalanceTestForm,
   fac: LegPressForm,
+  spadi: SPADIForm,
+  hoos: HOOSForm,
+  koos: KOOSForm,
+  faos: FAOSForm,
 };
-
+const PROGNOSIS_OPTIONS = [
+  { label: "Excellent", value: "excellent" },
+  { label: "Good", value: "good" },
+  { label: "Fair", value: "fair" },
+  { label: "Poor", value: "poor" }
+];
 export default function Conditioning({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+  const [patientHistory, setPatientHistory] = useState({
+          past_medical_history: "",
+          past_family_history: "",
+          alerts_and_allergies: ""
+        });
+        useEffect(() => {
+              if (!patient) return;
+              setPatientHistory({
+                past_medical_history: patient.medical_history || "",
+                past_family_history: patient.family_medical_history || "",
+                alerts_and_allergies: patient.alerts_and_allergies_history || ""
+              });
+            }, [patient])
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -85,22 +111,37 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
         fields: [
 
           {
-            type: "textarea",
+            type: "input",
             name: "chief_complaint",
             label: "Chief Complaint"
           },
           {
-            type: "textarea",
+            type: "input",
             name: "history_present_illness",
             label: "History of Present Illness"
           },
+          // {
+          //   type: "textarea",
+          //   name: "patient_goals",
+          //   label: "Patient's Goals / Expectations"
+          // },
           {
-            type: "textarea",
-            name: "patient_goals",
-            label: "Patient's Goals / Expectations"
-          },
+        name: "patient_goals",
+        label: "Patient Goals",
+        type: "subheading"
+      },
+      {
+        name: "short_term_goals",
+        label: "Short Term Goals",
+        type: "input"
+      },
+      {
+        name: "long_term_goals",
+        label: "Long Term Goals",
+        type: "input"
+      },
           {
-            type: "textarea",
+            type: "input",
             name: "prior_level_function",
             label: "Prior Level of Function"
           }
@@ -209,7 +250,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             label: "Assistive Device"
           },
           {
-            type: "textarea",
+            type: "input",
             name: "premorbid_activity",
             label: "Pre-morbid Activity Level"
           }
@@ -292,25 +333,25 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
           {
             name: "equipment_perkeso",
             label: "PERKESO Equipment Details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "equipment_owned", includes: "perkeso" }
           },
           {
             name: "equipment_ngo",
             label: "NGO Equipment Details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "equipment_owned", includes: "ngo" }
           },
           {
             name: "equipment_self",
             label: "Self-purchased Equipment Details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "equipment_owned", includes: "self" }
           },
           {
             name: "equipment_others",
             label: "Other Equipment Details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "equipment_owned", includes: "others" }
           },
           { type: "subheading", label: "Referral Information" },
@@ -323,7 +364,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
           {
             name: "referral_reasons",
             label: "Referral Reasons",
-            type: "textarea",
+            type: "input",
             readOnly: true
           }
         ]
@@ -345,6 +386,10 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
         { label: "Manual Muscle Test (MMT)", value: "mmt" },
         { label: "Y balance", value: "y_balance" },
         { label: "Leg press symmetry", value: "fac" },
+        { label: "Shoulder Pain & Disability Index (SPADI)", value: "spadi" },
+        { label: "HOOS", value: "hoos" },
+        { label: "Knee Injury and Osteoarthritis", value: "koos" },
+        { label: "FAOS", value: "faos" },
       ]
     },
         ]
@@ -456,7 +501,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             type: "row",
             fields: [
               {
-                type: "textarea",
+                type: "input",
                 name: "muscle_interpretation",
                 label: "Interpretation Formula: (Force / Body weight) × 100"
               }
@@ -469,141 +514,267 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
     ]
   };
 
-  const ASSESSMENT_SCHEMA = {
-    title: "Assessment",
-    sections: [
+//   const ASSESSMENT_SCHEMA = {
 
-      /* ===================================================== */
-      /* REHABILITATION ASSESSMENT                             */
-      /* ===================================================== */
+//     actions: SUBJECTIVE_SCHEMA.actions,
+//     fields: [
+//              {
+//   type: "subheading",
+//   label: "Problem List"
+// },
+//       // { name: "problem_list", label: "Problem Listing", type: "textarea" },
+//       {
+//   name: "problem_list",
+//   type: "checkbox-group",
+//   options: [
+//     { label: "Reduced muscle strength", value: "reduced_muscle_strength" },
+//     { label: "Reduced muscle endurance", value: "reduced_muscle_endurance" },
+//     { label: "Reduced cardiovascular endurance", value: "reduced_cardiovascular_endurance" },
+//     { label: "Reduced ROM", value: "reduced_rom" },
+//     { label: "Poor wheelchair skills", value: "poor_wheelchair_skills" },
+//     { label: "Reduced standing balance", value: "reduced_standing_balance" },
+//     { label: "Reduced sitting balance", value: "reduced_sitting_balance" },
+//     { label: "Poor trunk control", value: "poor_trunk_control" },
+//     { label: "Unable to walk", value: "unable_to_walk" },
+//     { label: "Poor walking endurance", value: "poor_walking_endurance" },
+//     { label: "Poor wheelchair endurance", value: "poor_wheelchair_endurance" },
+//     { label: "Others", value: "other" }
+//   ]
+// },
+// {
+//   name: "problem_list_other_text",
+//   label: "Other Problem (Specify)",
+//   type: "input",
+//   placeholder: "Enter additional problems...",
+//   showIf: {
+//     field: "problem_list",
+//     includes: "other"
+//   }
+// },
+//              {
+//   type: "subheading",
+//   label: "Functional Limitations"
+// },
 
+//       {name:"functional_limitations", type:"checkbox-group",
+//         options: [
+//     { label: "Gait Impairment", value: "gaitimpairment" },
+//     { label: "Unsafe Transfers", value: "unsafetransfers" },
+//     { label: "Reduced Endurance", value: "reducedendurance" },
+//     { label: "Balance Deficit", value: "balancedeficit" },
+//     { label: "ADL Dependency", value: "adldependency" },
+//     { label: "No Functional Limitations", value: "nofunctionallimitations" },
+//     { label: "Others", value: "others" }
+//   ]
+//       },
+//       {
+//           name: "functional_limitations_others",
+//           label: "Specify Others",
+//           type: "input",
+//           showIf: { field: "functional_limitations", includes: "others" }
+//         },
+//       {
+//         name: "clinical_impression",
+//         label: "Clinical Impression",
+//         type: "textarea"
+//       },
+//       {
+//         name: "prognosis",
+//         label: "Rehab Prognosis",
+//         type: "radio",
+//         options: PROGNOSIS_OPTIONS
+//       },
+
+ 
+//     ]
+//   };
+
+const ASSESSMENT_SCHEMA = {
+  title: "ASSESSMENT",
+  actions: SUBJECTIVE_SCHEMA.actions,
+  sections: [
+    {
+      fields: [
+               {
+  type: "subheading",
+  label: "Problem List"
+},
+            {
+  name: "problem_list",
+  type: "checkbox-group",
+  options: [
+    { label: "Reduced muscle strength", value: "reduced_muscle_strength" },
+    { label: "Reduced muscle endurance", value: "reduced_muscle_endurance" },
+    { label: "Reduced cardiovascular endurance", value: "reduced_cardiovascular_endurance" },
+    { label: "Reduced ROM", value: "reduced_rom" },
+    { label: "Poor wheelchair skills", value: "poor_wheelchair_skills" },
+    { label: "Reduced standing balance", value: "reduced_standing_balance" },
+    { label: "Reduced sitting balance", value: "reduced_sitting_balance" },
+    { label: "Poor trunk control", value: "poor_trunk_control" },
+    { label: "Unable to walk", value: "unable_to_walk" },
+    { label: "Poor walking endurance", value: "poor_walking_endurance" },
+    { label: "Poor wheelchair endurance", value: "poor_wheelchair_endurance" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "problem_list_other_text",
+  label: "Other Problem (Specify)",
+  type: "input",
+  placeholder: "Enter additional problems...",
+  showIf: {
+    field: "problem_list",
+    includes: "other"
+  }
+},
+//              {
+//   type: "subheading",
+//   label: "Functional Limitations"
+// },
+
+//       {name:"functional_limitations", type:"checkbox-group",
+//         options: [
+//     { label: "Gait Impairment", value: "gaitimpairment" },
+//     { label: "Unsafe Transfers", value: "unsafetransfers" },
+//     { label: "Reduced Endurance", value: "reducedendurance" },
+//     { label: "Balance Deficit", value: "balancedeficit" },
+//     { label: "ADL Dependency", value: "adldependency" },
+//     { label: "No Functional Limitations", value: "nofunctionallimitations" },
+//     { label: "Others", value: "others" }
+//   ]
+//       },
+//       {
+//           name: "functional_limitations_others",
+//           label: "Specify Others",
+//           type: "input",
+//           showIf: { field: "functional_limitations", includes: "others" }
+//         },
       {
-        title: "Assessment",
-        fields: [
-
-          {
-            type: "textarea",
-            name: "problem_list",
-            label: "Problem List"
-          },
-
-          {
-            type: "textarea",
-            name: "clinical_impression",
-            label: "Clinical Impression"
-          },
-
-          {
-            type: "radio",
-            name: "rehabilitation_prognosis",
-            label: "Rehabilitation Potential / Prognosis",
-            options: ["Good", "Poor", "Excellent", "Fair"]
-          }
-
-        ]
-      }
-
-    ]
-  };
-
+        name: "clinical_impression",
+        label: "Clinical Impression",
+        type: "input"
+      },
+      {
+        name: "prognosis",
+        label: "Rehab Prognosis",
+        type: "radio",
+        options: PROGNOSIS_OPTIONS
+      },
+      ]
+    }
+  ]
+};
   const PLAN_SCHEMA = {
     title: "Plan",
     sections: [
-
-      /* ===================================================== */
-      /* SHORT TERM GOALS                                      */
-      /* ===================================================== */
-
       {
-        title: "Short Term Goals",
         fields: [
+          { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+          { type: "dynamic-goals", name: "short_term_goals" },
+
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+          { type: "dynamic-goals", name: "long_term_goals" },
           {
-            type: "dynamic-section",
-            name: "short_term_goals",
-            addButtonLabel: "Add Short Term Goal",
-            fields: [
+  type: "subheading",
+  label: "Interventions and Plan"
+},
 
-              { type: "input", name: "goal", label: "Goal (Functional Task)" },
+{
+  name: "interventions_plan",
+ 
+  type: "checkbox-group",
+  options: [
+    { label: "Bed mobility training", value: "bed_mobility_training" },
+    { label: "Transfer training", value: "transfer_training" },
+    { label: "Muscle tone management", value: "muscle_tone_management" },
+    { label: "Sitting balance training", value: "sitting_balance_training" },
+    { label: "Standing balance training", value: "standing_balance_training" },
+    { label: "Functional ROM exercise", value: "functional_rom_exercise" },
+    {
+      label: "Functional strengthening exercise",
+      value: "functional_strengthening_exercise"
+    },
+    { label: "Endurance training", value: "endurance_training" },
+    { label: "Functional training", value: "functional_training" },
+    { label: "Gait training", value: "gait_training" },
+    { label: "Bobath / NDT therapy", value: "bobath_ndt_therapy" },
+    { label: "Walking aid prescription", value: "walking_aid_prescription" },
+    { label: "Others", value: "other" }
+  ]
+},
 
-              {
-                type: "single-select",
-                name: "assist_level",
-                label: "Assist Level",
-                options: [
-                  { label: "Independent", value: "Independent" },
-                  { label: "Supervision", value: "Supervision" },
-                  { label: "Stand-by Assist (SBA)", value: "SBA" },
-                  { label: "Contact Guard Assist (CGA)", value: "CGA" },
-                  { label: "Minimal Assist (Min A)", value: "MinAssist" },
-                  { label: "Moderate Assist (Mod A)", value: "ModAssist" },
-                  { label: "Maximum Assist (Max A)", value: "MaxAssist" }
-                ]
-              },
+{
+  name: "interventions_plan_other",
+  label: "Specify Other Intervention",
+  type: "input",
+  placeholder: "Enter other rehabilitation intervention",
+  showIf: {
+    field: "interventions_plan",
+    includes: "other"
+  }
+},
+{
+  type: "subheading",
+  label: "HEP (Home Exercise Program)"
+},
 
-              { type: "input", name: "device", label: "Device / Prosthesis Used" },
+{
+  name: "home_exercise_program",
+ 
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Strengthening exercises",
+      value: "strengthening_exercises"
+    },
+    {
+      label: "Stretching exercises",
+      value: "stretching_exercises"
+    },
+    {
+      label: "Standing / Sitting balance training",
+      value: "balance_training"
+    },
+    {
+      label: "Endurance training",
+      value: "endurance_training"
+    },
+    {
+      label: "Fitness regime",
+      value: "fitness_regime"
+    },
+    {
+      label: "Mobilization",
+      value: "mobilization"
+    },
+    {
+      label: "ROM exercise",
+      value: "rom_exercise"
+    },
+    {
+      label: "Patient & Carer education",
+      value: "patient_carer_education"
+    },
+    {
+      label: "Others",
+      value: "other"
+    }
+  ]
+},
 
-              { type: "input", name: "context", label: "Context (Where / Condition)" },
+{
+  name: "home_exercise_program_other",
+  label: "Specify Other HEP",
+  type: "input",
+  placeholder: "Enter other home exercise program",
+  showIf: {
+    field: "home_exercise_program",
+    includes: "other"
+  }
+},
 
-              { type: "input", name: "target", label: "Measurable Target" },
-
-              { type: "date", name: "target_date", label: "Target Date" }
-
-            ]
-          }
-        ]
-      },
-
-      /* ===================================================== */
-      /* LONG TERM GOALS                                       */
-      /* ===================================================== */
-
-      {
-        title: "Long Term Goals",
-        fields: [
-          {
-            type: "dynamic-section",
-            name: "long_term_goals",
-            addButtonLabel: "Add Long Term Goal",
-            fields: [
-
-              { type: "input", name: "goal", label: "Goal (Functional Task)" },
-
-              {
-                type: "single-select",
-                name: "assist_level",
-                label: "Assist Level",
-                options: [
-                  { label: "Independent", value: "Independent" },
-                  { label: "Supervision", value: "Supervision" },
-                  { label: "Stand-by Assist (SBA)", value: "SBA" },
-                  { label: "Contact Guard Assist (CGA)", value: "CGA" },
-                  { label: "Minimal Assist (Min A)", value: "MinAssist" },
-                  { label: "Moderate Assist (Mod A)", value: "ModAssist" },
-                  { label: "Maximum Assist (Max A)", value: "MaxAssist" }
-                ]
-              },
-
-              { type: "input", name: "device", label: "Device / Prosthesis Used" },
-
-              { type: "input", name: "context", label: "Context (Where / Condition)" },
-
-              { type: "input", name: "target", label: "Measurable Target" },
-
-              { type: "date", name: "target_date", label: "Target Date" }
-
-            ]
-          }
-        ]
-      },
-
-      /* ===================================================== */
-      /* STRENGTH CONDITIONING                                 */
-      /* ===================================================== */
-
-      {
-        title: "Strength Conditioning",
-        fields: [
-
+          { type: "subheading", label: "Strength Conditioning" },
+          
           {
             type: "checkbox-group",
             name: "strength_exercises",
@@ -618,23 +789,9 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             ]
           },
 
-          {
-            type: "textarea",
-            name: "strength_notes",
-            label: "Strength Conditioning Notes"
-          }
+          { type: "input", name: "strength_notes", label: "Strength Conditioning Notes" },
 
-        ]
-      },
-
-      /* ===================================================== */
-      /* ENDURANCE                                              */
-      /* ===================================================== */
-
-      {
-        title: "Endurance Training",
-        fields: [
-
+          { type: "subheading", label: "Endurance Training" },
           {
             type: "checkbox-group",
             name: "endurance_activities",
@@ -649,19 +806,9 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
 
           { type: "input", name: "endurance_duration", label: "Duration (Minutes)" },
 
-          { type: "textarea", name: "endurance_notes", label: "Endurance Notes" }
+          { type: "input", name: "endurance_notes", label: "Endurance Notes" },
 
-        ]
-      },
-
-      /* ===================================================== */
-      /* BALANCE                                                */
-      /* ===================================================== */
-
-      {
-        title: "Balance Training",
-        fields: [
-
+          { type: "subheading", label: "Balance Training" },
           {
             type: "checkbox-group",
             name: "balance_exercises",
@@ -676,40 +823,50 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             ]
           },
 
-          { type: "textarea", name: "balance_notes", label: "Balance Notes" }
+          { type: "input", name: "balance_notes", label: "Balance Notes" },
 
-        ]
-      },
+          // { type: "subheading", label: "Home Program" },
+          // {
+          //   type: "checkbox-group",
+          //   name: "home_program_exercises",
+          //   label: "Select Home Exercises",
+          //   options: [
+          //     { label: "Heel Raises × 15 reps × 3 sets", value: "heel_raises" },
+          //     { label: "Sit-to-Stand × 10 reps × 3 sets", value: "sit_to_stand" },
+          //     { label: "15 min Walking Daily", value: "walking" },
+          //     { label: "Stair Climbing (If Available)", value: "stairs" },
+          //     { label: "Quadriceps Sets × 15 reps × 3 sets", value: "quad_sets" },
+          //     { label: "Gluteal Sets × 15 reps × 3 sets", value: "glute_sets" }
+          //   ]
+          // },
 
-      /* ===================================================== */
-      /* HOME PROGRAM                                           */
-      /* ===================================================== */
+          // { type: "textarea", name: "home_instructions", label: "Home Program Instructions" },
 
-      {
-        title: "Home Program",
-        fields: [
-
+          { type: "input", name: "home_frequency", label: "Frequency (e.g., 3×/week)" },
           {
-            type: "checkbox-group",
-            name: "home_program_exercises",
-            label: "Select Home Exercises",
-            options: [
-              { label: "Heel Raises × 15 reps × 3 sets", value: "heel_raises" },
-              { label: "Sit-to-Stand × 10 reps × 3 sets", value: "sit_to_stand" },
-              { label: "15 min Walking Daily", value: "walking" },
-              { label: "Stair Climbing (If Available)", value: "stairs" },
-              { label: "Quadriceps Sets × 15 reps × 3 sets", value: "quad_sets" },
-              { label: "Gluteal Sets × 15 reps × 3 sets", value: "glute_sets" }
-            ]
-          },
+  type: "subheading",
+  label: "Follow-up Plan"
+},
 
-          { type: "textarea", name: "home_instructions", label: "Home Program Instructions" },
-
-          { type: "input", name: "home_frequency", label: "Frequency (e.g., 3×/week)" }
+{
+  name: "follow_up_plan",
+ 
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Reassessment scheduled in 2–4 weeks",
+      value: "reassessment_2_4_weeks"
+    },
+    {
+      label: "Track progress via Outcome measures",
+      value: "track_progress_outcome_measures"
+    }
+  ]
+},
+          
 
         ]
       }
-
     ]
   };
 
@@ -737,128 +894,104 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
     plan: PLAN_SCHEMA
   };
 
-      const [patientHistory, setPatientHistory] = useState({
-      past_medical_history: patient?.medical_history || "",
-      past_family_history: patient?.family_medical_history || "",
-      alerts_and_allergies: patient?.alerts_and_allergies_history || ""
-    });
-    function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-      if (!patient) return null;
-    
-      const formatDate = (dateStr) => {
-        if (!dateStr) return "-";
-        try {
-          return new Date(dateStr).toLocaleDateString();
-        } catch {
-          return "-";
-        }
-      };
-    
-      return (
-        <div style={{ marginBottom: 24 }}>  
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: 12,
-            fontSize: 14
-          }}>
-            <div><b>Name:</b> {patient.name}</div>
-            <div><b>IC:</b> {patient.id}</div>
-            <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-    
-            <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-            <div><b>ICD:</b> {patient.icd}</div>
-            <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
-    
-            <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-            <div><b>Duration of Diagnosis:</b> -</div>
-            <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-    
-            <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-            <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-            <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-    
-            <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-            <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-            <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-    
-            <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-            <div><b>Marital Status:</b> {patient.marital_status || "-"}</div>
-    
-            {/* ===== HISTORY ===== */}
-            <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-              <h3>Patient History</h3>
-    
-              <div>
-                <b>Past Medical History</b>
-                <textarea
-                  style={textarea}
-                  value={patientHistory.past_medical_history}
-                  onChange={(e) =>
-                    setPatientHistory(prev => ({
-                      ...prev,
-                      past_medical_history: e.target.value
-                    }))
-                  }
-                />
-              </div>
-    
-              <div>
-                <b>Family History</b>
-                <textarea
-                  style={textarea}
-                  value={patientHistory.past_family_history}
-                  onChange={(e) =>
-                    setPatientHistory(prev => ({
-                      ...prev,
-                      past_family_history: e.target.value
-                    }))
-                  }
-                />
-              </div>
-    
-              <div>
-                <b>Allergies</b>
-                <textarea
-                  style={textarea}
-                  value={patientHistory.alerts_and_allergies}
-                  onChange={(e) =>
-                    setPatientHistory(prev => ({
-                      ...prev,
-                      alerts_and_allergies: e.target.value
-                    }))
-                  }
-                />
-              </div>
-    
-              <button style={alertBtn}>🚨 Alerts</button>
-            </div>
-          </div>
+    //   const [patientHistory, setPatientHistory] = useState({
+    //   past_medical_history: patient?.medical_history || "",
+    //   past_family_history: patient?.family_medical_history || "",
+    //   alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+    // });
+     function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <input
+                      style={input}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
         </div>
-      );
-    }
-    const textarea = {
-      width: "100%",
-      minHeight: 90,
-      marginTop: 6,
-      marginBottom: 12,
-      padding: "10px 12px",
-      borderRadius: 6,
-      border: "1px solid #d1d5db",
-      fontSize: 14,
-      resize: "vertical"
-    };
-    
-    const alertBtn = {
-      marginTop: 10,
-      padding: "10px 20px",
-      borderRadius: 6,
-      border: "1.5px solid #007bff",
-      background: "#007bff",
-      color: "#fff",
-      fontWeight: 600,
-      cursor: "pointer"
-    };
+      </div>
+    </div>
+  );
+}
   return (
     <div style={mainContent}>
 
@@ -868,7 +1001,16 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
         values={{}}
         onChange={() => { }}
       >
-        <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
+         <PatientInformationBlock
+                  patient={patient}
+                  patientHistory={patientHistory}
+                  setPatientHistory={setPatientHistory}
+                />
+              
+                <button style={doctorsReportBtn}>
+                  Doctors Reports
+                </button>
+        {/* <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/> */}
       </CommonFormBuilder>
 
       {/* ===== CONSENT & REFERRAL ===== */}
@@ -1035,4 +1177,30 @@ const th = {
 const td = {
   border: "1px solid #ccc",
   padding: 10
+};
+const input = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
+};
+const doctorsReportBtn = {
+  padding: "10px 20px", background: "#2563EB", color: "#fff",
+  border: "none", borderRadius: 6, fontSize: 14,
+  fontWeight: 600, cursor: "pointer", marginTop: 8
 };

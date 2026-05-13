@@ -3,6 +3,9 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function HyperacusisAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
+  const [vasScoresVisible, setVasScoresVisible] = useState(true);
+  const [hqScoresVisible, setHqScoresVisible] = useState(true);
+  const [khalfaScoresVisible, setKhalfaScoresVisible] = useState(true);
 
   const HQ_QUESTIONS = [
     "Do you ever use ear-plugs or ear-muffs to reduce your noise perception (do not consider use during high exposure)?",
@@ -44,10 +47,7 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
     "Are you irritated by sounds that others tolerate?"
   ];
 
-  // =========================
-  // ✅ CALCULATIONS
-  // =========================
-
+  /* ── Calculations ── */
   const getVASSeverity = (score, type) => {
     if (score <= 2) return type === "annoyance" ? "No annoyance" : "Minimal";
     if (score <= 4) return "Mild";
@@ -57,243 +57,276 @@ export function HyperacusisAdvancedForm({ onBack, mode }) {
   };
 
   const computeVAS = (v) => {
-    const loudness = Number(v.vas_loudness || 0);
+    const loudness  = Number(v.vas_loudness  || 0);
     const annoyance = Number(v.vas_annoyance || 0);
-
     return {
-      loudness,
-      annoyance,
-      loudness_severity: getVASSeverity(loudness),
+      loudness, annoyance,
+      loudness_severity:  getVASSeverity(loudness),
       annoyance_severity: getVASSeverity(annoyance, "annoyance")
     };
   };
 
   const computeHQ = (v) => {
-    let att = 0, soc = 0, emo = 0;
-
-    const getVal = (x) => Number(x || 0);
-
-    [1,2,3,4].forEach(i => att += getVal(v[`hq_${i}`]));
-    [5,6,7,8,9,10].forEach(i => soc += getVal(v[`hq_${i}`]));
-    [11,12,13,14].forEach(i => emo += getVal(v[`hq_${i}`]));
-
-    const total = att + soc + emo;
-
-    return { att, soc, emo, total };
+    const g = (x) => Number(v[`hq_${x}`] || 0);
+    const att   = [1,2,3,4].reduce((s,i) => s + g(i), 0);
+    const soc   = [5,6,7,8,9,10].reduce((s,i) => s + g(i), 0);
+    const emo   = [11,12,13,14].reduce((s,i) => s + g(i), 0);
+    return { att, soc, emo, total: att + soc + emo };
   };
 
   const computeKhalfa = (v) => {
-    let func = 0, soc = 0, emo = 0;
-
-    const getVal = (x) => Number(x || 0);
-
-    [1,2,3,4,5,6,7].forEach(i => func += getVal(v[`khalfa_${i}`]));
-    [8,9,10,11,12,13].forEach(i => soc += getVal(v[`khalfa_${i}`]));
-    [14,15,16,17,18,19,20].forEach(i => emo += getVal(v[`khalfa_${i}`]));
-
-    const total = func + soc + emo;
-
-    return { func, soc, emo, total };
+    const g = (x) => Number(v[`khalfa_${x}`] || 0);
+    const func = [1,2,3,4,5,6,7].reduce((s,i) => s + g(i), 0);
+    const soc  = [8,9,10,11,12,13].reduce((s,i) => s + g(i), 0);
+    const emo  = [14,15,16,17,18,19,20].reduce((s,i) => s + g(i), 0);
+    return { func, soc, emo, total: func + soc + emo };
   };
 
-  // =========================
-  // ✅ HANDLE CHANGE
-  // =========================
+  /* ── Handle change ── */
   const handleChange = (name, value) => {
     setValues((prev) => {
       const updated = { ...prev, [name]: value };
-
-      const vas = computeVAS(updated);
-      const hq = computeHQ(updated);
+      const vas    = computeVAS(updated);
+      const hq     = computeHQ(updated);
       const khalfa = computeKhalfa(updated);
-
       return {
         ...updated,
-
-        // VAS
-        vas_loudness_score: vas.loudness,
-        vas_annoyance_score: vas.annoyance,
-        vas_loudness_severity: vas.loudness_severity,
+        vas_loudness_score:     vas.loudness,
+        vas_annoyance_score:    vas.annoyance,
+        vas_loudness_severity:  vas.loudness_severity,
         vas_annoyance_severity: vas.annoyance_severity,
-
-        // HQ
-        hq_att: hq.att,
-        hq_soc: hq.soc,
-        hq_emo: hq.emo,
-        hq_total: hq.total,
-
-        // Khalfa
-        khalfa_func: khalfa.func,
-        khalfa_soc: khalfa.soc,
-        khalfa_emo: khalfa.emo,
-        khalfa_total: khalfa.total
+        hq_att: hq.att, hq_soc: hq.soc, hq_emo: hq.emo, hq_total: hq.total,
+        khalfa_func: khalfa.func, khalfa_soc: khalfa.soc,
+        khalfa_emo:  khalfa.emo,  khalfa_total: khalfa.total
       };
     });
   };
 
-  // =========================
-  // ✅ SCHEMA
-  // =========================
-
-  const schema = {
+  // ══════════════════════════════════════════════════════════
+  // MAIN SCHEMA — title + Back button + case history + scale selectors
+  // ══════════════════════════════════════════════════════════
+  const mainSchema = {
     title: "Additional Hyperacusis Profile",
     actions: [{ type: "back", label: "Back" }],
-
-    sections: [
-      {
-        title: null, // Single unified section
-        fields: [
-          // =========================
-          // CASE HISTORY
-          // =========================
-          { type: "subheading", label: "Case History (Hyperacusis)" },
-
-          { name: "onset", label: "Onset of Hyperacusis", type: "input" },
-          { name: "duration", label: "Duration", type: "input" },
-          { name: "progression", label: "Progression of symptoms", type: "input" },
-
-          {
-            name: "ears",
-            label: "Ears affected",
-            type: "radio",
-            options: ["Right", "Left", "Bilateral"],
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          },
-
-          {
+    sections: [{
+      title: null,
+      fields: [
+        { type: "subheading", label: "Case History (Hyperacusis)" },
+        { name: "onset",       label: "Onset of Hyperacusis",      type: "input" },
+        { name: "duration",    label: "Duration",                   type: "input" },
+        { name: "progression", label: "Progression of symptoms",    type: "input" },
+        { name: "ears",        label: "Ears affected", type: "radio",
+          options: ["Right", "Left", "Bilateral"],
+          showIf: { field: "mode", equals: "followup" } },
+         {
             name: "associated",
             label: "Associated symptoms",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              "Hearing loss",
-              "Vertigo",
-              "Ear fullness",
-              "Otalgia",
-              "Hyperacusis",
-              "Other"
+              { label: "None", value: "associated_none" },
+              { label: "Hearing loss", value: "hearing_loss" },
+              { label: "Vertigo", value: "vertigo" },
+              { label: "Ear fullness", value: "ear_fullness" },
+              { label: "Otalgia", value: "otalgia" },
+              // { label: "Hyperacusis", value: "hyperacusis" },
+              { label: "Other", value: "other" }
             ]
           },
           {
+            name: "associated_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "associated", notEmpty: true }
+          },
+        {
             name: "exposure",
             label: "Noise exposure history",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              "Occupational",
-              "Recreational",
-              "None",
+              { label: "None", value: "none" },
+              { label: "Recreational", value: "recreational" },
+              { label: "Occupational", value: "occupational" }
             ]
           },
-          { name: "triggers", label: "Type of sounds that trigger discomfort (e.g. traffic, utensils, voices, music, machinery)", type: "input" },
-          { name: "situations", label: "Situations where sound intolerance is most noticeable", type: "input" },
-          { name: "reaction", label: "Typical reaction to sound exposure (e.g. pain, discomfort, anxiety, avoidance)", type: "input" },
-          { name: "impact", label: "Daily impact (work, sleep, social interaction)", type: "input" },
-
-          // =========================
-          // TOGGLES
-          // =========================
-          { type: "subheading", label: "Subjective Rating Scales" },
-
-          { name: "enable_vas", label: "Visual Analog Scale (VAS)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_hq", label: "Hyperacusis Questionnaire (HQ)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_khalfa", label: "Modified Khalfa Hyperacusis Questionnaire ", type: "radio", options: ["Yes", "No"] },
-
-          // =========================
-          // VAS
-          // =========================
-          { type: "subheading", label: "Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
-
-          { name: "vas_loudness", label: "Visual Analog Scale (VAS) — Loudness Discomfort", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_loudness_severity", label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
-
-          { name: "vas_annoyance", label: "Visual Analog Scale (VAS) — Annoyance", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_annoyance_severity", label: "Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
-
-          // =========================
-          // HQ
-          // =========================
-          { type: "subheading", label: "Hyperacusis Questionnaire (HQ)", showIf: { field: "enable_hq", equals: "Yes" } },
-
-          ...HQ_QUESTIONS.map((q, i) => ({
-            name: `hq_${i + 1}`,
-            label: `${i + 1}. ${q}`,
-            type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: 0 },
-              { label: "A little (1)", value: 1 },
-              { label: "Quite a lot (2)", value: 2 },
-              { label: "A lot (3)", value: 3 }
-            ],
-            showIf: { field: "enable_hq", equals: "Yes" }
-          })),
-
-          { name: "hq_att", label: "Attentional", type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_soc", label: "Social", type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_emo", label: "Emotional", type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-          { name: "hq_total", label: "Total", type: "score-box", showIf: { field: "enable_hq", equals: "Yes" } },
-
-          // =========================
-          // KHALFA
-          // =========================
-          { type: "subheading", label: "Modified Khalfa Questionnaire", showIf: { field: "enable_khalfa", equals: "Yes" } },
-
-          ...KHALFA_QUESTIONS.map((q, i) => ({
-            name: `khalfa_${i + 1}`,
-            label: `${i + 1}. ${q}`,
-            type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: 0 },
-              { label: "Sometimes (2)", value: 2 },
-              { label: "Yes (4)", value: 4 }
-            ],
-            showIf: { field: "enable_khalfa", equals: "Yes" }
-          })),
-
-          { name: "khalfa_func", label: "Functional", type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_soc", label: "Social", type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_emo", label: "Emotional", type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-          { name: "khalfa_total", label: "Total", type: "score-box", showIf: { field: "enable_khalfa", equals: "Yes" } },
-
-          // =========================
-          // FUNCTIONAL IMPACT
-          // =========================
-          { type: "subheading", label: "Functional and Daily Life Impact for hyperacusis" },
-
-          { name: "work", label: "Work / Study", type: "input" },
-          { name: "communication", label: "Communication", type: "input" },
-          { name: "social", label: "Family / Social", type: "input" },
-          { name: "rest", label: "Relaxation / Rest", type: "input" },
-          { name: "noise", label: "Outdoor / Public noise tolerance", type: "input" },
-
-          // =========================
-          // COUNSELING
-          // =========================
           {
-            type: "subheading",
-            label: "Counseling Summary",
-            showIf: { field: "mode", equals: "followup" }
+            name: "exposure_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "exposure", notEmpty: true }
           },
+        { name: "triggers",   label: "Type of sounds that trigger discomfort", type: "input" },
+        { name: "situations", label: "Situations where sound intolerance is most noticeable", type: "input" },
+        { name: "reaction",   label: "Typical reaction to sound exposure", type: "input" },
+        { name: "impact",     label: "Daily impact (work, sleep, social interaction)", type: "input" },
 
-          { name: "understanding", label: "Patient’s understanding of tinnitus", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "goals", label: "Expectations / goals", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "motivation", label: "Motivation for therapy", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "education", label: "Education & counseling provided", type: "input", showIf: { field: "mode", equals: "followup" } },
-          { name: "next_steps", label: "Recommended next steps", type: "input", showIf: { field: "mode", equals: "followup" } }
-        ]
-      }
-    ]
+        { type: "subheading", label: "Subjective Rating Scales" },
+        { name: "enable_vas",    label: "Visual Analog Scale (VAS)",                  type: "radio", options: ["Yes","No"] },
+        { name: "enable_hq",     label: "Hyperacusis Questionnaire (HQ)",             type: "radio", options: ["Yes","No"] },
+        { name: "enable_khalfa", label: "Modified Khalfa Hyperacusis Questionnaire",  type: "radio", options: ["Yes","No"] }
+      ]
+    }]
   };
 
+  // ══════════════════════════════════════════════════════════
+  // VAS SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const vasSchema = {
+    title: "Visual Analog Scale (VAS)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        { type: "info-text", text: "0 = none, 10 = worst possible" },
+        { name: "vas_loudness",  label: "VAS — Loudness Discomfort", type: "scale-slider", min: 0, max: 10 },
+        ...(vasScoresVisible ? [{ name: "vas_loudness_severity",  label: "Severity", type: "score-box" }] : []),
+        { name: "vas_annoyance", label: "VAS — Annoyance", type: "scale-slider", min: 0, max: 10 },
+        ...(vasScoresVisible ? [{ name: "vas_annoyance_severity", label: "Severity", type: "score-box" }] : [])
+      ]
+    }]
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // HQ SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const hqSchema = {
+    title: "Hyperacusis Questionnaire (HQ)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        ...HQ_QUESTIONS.map((q, i) => ({
+          name: `hq_${i + 1}`, label: `${i + 1}. ${q}`, type: "radio-matrix",
+          options: hqScoresVisible
+            ? [{ label: "No (0)", value: 0 }, { label: "A little (1)", value: 1 }, { label: "Quite a lot (2)", value: 2 }, { label: "A lot (3)", value: 3 }]
+            : [{ label: "No",     value: 0 }, { label: "A little",     value: 1 }, { label: "Quite a lot",     value: 2 }, { label: "A lot",     value: 3 }]
+        })),
+        ...(hqScoresVisible ? [
+          { name: "hq_att",   label: "Attentional", type: "score-box" },
+          { name: "hq_soc",   label: "Social",      type: "score-box" },
+          { name: "hq_emo",   label: "Emotional",   type: "score-box" },
+          { name: "hq_total", label: "Total",        type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // KHALFA SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const khalfaSchema = {
+    title: "Modified Khalfa Questionnaire",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [{
+      title: null,
+      fields: [
+        ...KHALFA_QUESTIONS.map((q, i) => ({
+          name: `khalfa_${i + 1}`, label: `${i + 1}. ${q}`, type: "radio-matrix",
+          options: khalfaScoresVisible
+            ? [{ label: "No (0)", value: 0 }, { label: "Sometimes (2)", value: 2 }, { label: "Yes (4)", value: 4 }]
+            : [{ label: "No",     value: 0 }, { label: "Sometimes",     value: 2 }, { label: "Yes",     value: 4 }]
+        })),
+        ...(khalfaScoresVisible ? [
+          { name: "khalfa_func",  label: "Functional", type: "score-box" },
+          { name: "khalfa_soc",   label: "Social",     type: "score-box" },
+          { name: "khalfa_emo",   label: "Emotional",  type: "score-box" },
+          { name: "khalfa_total", label: "Total",      type: "score-box" }
+        ] : [])
+      ]
+    }]
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // FUNCTIONAL IMPACT & COUNSELING SCHEMA — no toggle
+  // ══════════════════════════════════════════════════════════
+  const lifestyleSchema = {
+    sections: [{
+      title: null,
+      fields: [
+        { type: "subheading", label: "Functional and Daily Life Impact for hyperacusis" },
+        { name: "work",          label: "Work / Study",                     type: "input" },
+        { name: "communication", label: "Communication",                    type: "input" },
+        { name: "social",        label: "Family / Social",                  type: "input" },
+        { name: "rest",          label: "Relaxation / Rest",                type: "input" },
+        { name: "noise",         label: "Outdoor / Public noise tolerance", type: "input" },
+
+        { type: "subheading", label: "Counseling Summary", showIf: { field: "mode", equals: "followup" } },
+        { name: "understanding", label: "Patient's understanding of tinnitus",  type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "goals",         label: "Expectations / goals",                 type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "motivation",    label: "Motivation for therapy",               type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "education",     label: "Education & counseling provided",      type: "input", showIf: { field: "mode", equals: "followup" } },
+        { name: "next_steps",    label: "Recommended next steps",               type: "input", showIf: { field: "mode", equals: "followup" } }
+      ]
+    }]
+  };
+
+  const allValues = { ...values, mode };
+
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={{ ...values, mode }}
-      onChange={handleChange}
-      layout="nested"
-      onAction={(type) => type === "back" && onBack()}
-    />
+    <div>
+      {/* Main form: title + Back button + case history + scale selectors */}
+      <CommonFormBuilder
+        schema={mainSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+        onAction={(type) => {
+          if (type === "back") onBack();
+        }}
+      />
+
+      {/* VAS — only when enabled, with its own Doctor View toggle */}
+      {values.enable_vas === "Yes" && (
+        <CommonFormBuilder
+          schema={vasSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vasScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setVasScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* HQ — only when enabled, with its own Doctor View toggle */}
+      {values.enable_hq === "Yes" && (
+        <CommonFormBuilder
+          schema={hqSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={hqScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setHqScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* Khalfa — only when enabled, with its own Doctor View toggle */}
+      {values.enable_khalfa === "Yes" && (
+        <CommonFormBuilder
+          schema={khalfaSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={khalfaScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setKhalfaScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* Functional impact & counseling — no toggle */}
+      <CommonFormBuilder
+        schema={lifestyleSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+      />
+    </div>
   );
 }
 
@@ -303,35 +336,147 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
   const FREQUENCIES = ["500", "1000", "2000", "4000"];
 
   const schema = {
-    title: "Objective Hyperacusis Assessment",
+    title: "Hyperacusis Assessment",
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
+    {
+    title: null,
+    fields: [
       {
-        title: "Loudness Discomfort Levels (LDL)",
-        fields: FREQUENCIES.flatMap((freq) => [
+        type: "accordion",
+        name: "ldl_section",
+        label: "Loudness Discomfort Levels (LDL)",
+        defaultOpen: false,
+
+        children: [
           {
-            type: "subheading",
-            label: `${freq} Hz`
-          },
-          {
-            type: "row",
-            fields: [
+            type: "refraction-12col",
+            name: "ldl_matrix",
+            cornerLabel: "Frequency",
+            cornerLikeGroupHeader: true,
+            showColumnHeaders: true,
+            showGroupHeaders: false,
+
+            groups: [
               {
-                name: `ldl_r_${freq}`,
-                label: "Right Ear (dB HL)",
-                type: "input"
+                label: null,
+                columns: [
+                  { key: "Right Ear (dB HL)" },
+                  { key: "Left Ear (dB HL)" }
+                ]
+              }
+            ],
+
+            rows: FREQUENCIES.map(freq => ({
+              value: freq,
+              label: `${freq} Hz`,
+              columns: [
+                { type: "input" },
+                { type: "input" }
+              ]
+            }))
+          }
+        ]
+      },
+      {
+        type: "subheading",
+        label: "Special Test"
+      },
+      {
+        name: "special_test",
+        label: "Details",
+        type: "input"
+      },
+      {
+        type: "accordion",
+        name: "intervention_section",
+        label: "Interventions",
+        defaultOpen: false,
+
+        children: [
+          {
+            type: "refraction-12col",
+            name: "intervention_matrix",
+
+            cornerLabel: "",
+            cornerLikeGroupHeader: false,
+            showColumnHeaders: true,
+
+            groups: [
+              {
+                label: "",
+                columns: [
+                  { key: "Yes / No" },
+                  { key: "Remarks" }
+                ]
+              }
+            ],
+
+            rows: [
+              {
+                value: "counselling",
+                label: "Counselling",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
               },
               {
-                name: `ldl_l_${freq}`,
-                label: "Left Ear (dB HL)",
-                type: "input"
+                value: "sound",
+                label: "Sound Desensitisation / Sound Tolerance Training",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "hearingaid",
+                label: "Hearing Aids / Assistive Devices",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
+              },
+              {
+                value: "environment",
+                label: "Environmental Modification",
+                columns: [
+                  {
+                    type: "select",
+                    options: [
+                      { label: "No", value: 0 },
+                      { label: "Yes", value: 1 }
+                    ]
+                  },
+                  { type: "input" }
+                ]
               }
             ]
           }
-        ])
-      }
+        ]
+      },
     ]
+    }
+  ]
   };
 
   return (
@@ -339,9 +484,7 @@ export function HyperacusisAdvancedFormObj({ onBack }) {
       schema={schema}
       values={values}
       layout="nested"
-      onChange={(n, v) =>
-        setValues((prev) => ({ ...prev, [n]: v }))
-      }
+      onChange={(n, v) => setValues((prev) => ({ ...prev, [n]: v }))}
       onAction={(type) => type === "back" && onBack?.()}
     />
   );

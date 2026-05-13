@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 
 const SHIFTS = [
-  { key: "morning", label: "Shift A", sub: "7am–3pm",  color: "#fffbeb", labelColor: "#92400e", hours: [7,8,9,10,11,12,13,14] },
-  { key: "evening", label: "Shift B", sub: "3pm–11pm", color: "#f0fdf4", labelColor: "#166534", hours: [15,16,17,18,19,20,21,22] },
-  { key: "night",   label: "Shift C", sub: "11pm–7am", color: "#eff6ff", labelColor: "#1e40af", hours: [23,0,1,2,3,4,5,6] },
+  { key: "morning", label: "Shift A", sub: "7am–2pm",  color: "#fffbeb", labelColor: "#92400e", hours: [7,8,9,10,11,12,13,14] },
+  { key: "evening", label: "Shift B", sub: "2pm–9pm", color: "#f0fdf4", labelColor: "#166534", hours: [15,16,17,18,19,20,21,22] },
+  { key: "night",   label: "Shift C", sub: "9pm–7am", color: "#eff6ff", labelColor: "#1e40af", hours: [23,0,1,2,3,4,5,6] },
 ];
 
 const REFERENCE_CODES = [

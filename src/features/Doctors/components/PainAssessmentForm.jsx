@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import humanBodyImage from "../../../assets/Human Body.jpg";
 import faces0 from "../../../assets/faces-0.png";
@@ -7,9 +7,16 @@ import faces4 from "../../../assets/faces-4.png";
 import faces6 from "../../../assets/faces-6.png";
 import faces8 from "../../../assets/faces-8.png";
 import faces10 from "../../../assets/faces-10.png";
+import OswestryLowBackPainAssessment from "./OswestryLowBackPainAssessment";
+import BriefPainInventoryAssessment from "./BriefPainInventoryAssessment";
+import KOOSKneeSurvey from "./KOOSKneeSurvey";
+import SPADIShoulderAssessment from "./SPADIShoulderAssessment";
+import BCTQAssessment from "./BCTQAssessment";
 
 
 export default function PainAssessmentForm({ values, onChange }) {
+  const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [assessmentValues, setAssessmentValues] = useState({});
   const schema = useMemo(() => {
     return {
       title: "",
@@ -484,6 +491,113 @@ export default function PainAssessmentForm({ values, onChange }) {
         assessmentRegistry={PAIN_SCALE_REGISTRY}
         layout="nested"
       />
+
+      <div style={{ marginTop: 30, paddingTop: 20, borderTop: "2px solid #e5e7eb" }}>
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 16 }}>Additional Pain Assessments</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 20 }}>
+          <button
+            onClick={() => setSelectedAssessment("oswestry")}
+            style={{
+              padding: "10px 16px",
+              border: selectedAssessment === "oswestry" ? "2px solid #2563eb" : "1px solid #d1d5db",
+              background: selectedAssessment === "oswestry" ? "#eff6ff" : "#ffffff",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+              color: selectedAssessment === "oswestry" ? "#1e40af" : "#374151"
+            }}
+          >
+            Oswestry Low Back Pain
+          </button>
+          {/* <button
+            onClick={() => setSelectedAssessment("bpi")}
+            style={{
+              padding: "10px 16px",
+              border: selectedAssessment === "bpi" ? "2px solid #2563eb" : "1px solid #d1d5db",
+              background: selectedAssessment === "bpi" ? "#eff6ff" : "#ffffff",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+              color: selectedAssessment === "bpi" ? "#1e40af" : "#374151"
+            }}
+          >
+            Brief Pain Inventory
+          </button> */}
+          <button
+            onClick={() => setSelectedAssessment("koos")}
+            style={{
+              padding: "10px 16px",
+              border: selectedAssessment === "koos" ? "2px solid #2563eb" : "1px solid #d1d5db",
+              background: selectedAssessment === "koos" ? "#eff6ff" : "#ffffff",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+              color: selectedAssessment === "koos" ? "#1e40af" : "#374151"
+            }}
+          >
+            KOOS Knee Survey
+          </button>
+          <button
+            onClick={() => setSelectedAssessment("spadi")}
+            style={{
+              padding: "10px 16px",
+              border: selectedAssessment === "spadi" ? "2px solid #2563eb" : "1px solid #d1d5db",
+              background: selectedAssessment === "spadi" ? "#eff6ff" : "#ffffff",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+              color: selectedAssessment === "spadi" ? "#1e40af" : "#374151"
+            }}
+          >
+            SPADI Shoulder
+          </button>
+          <button
+            onClick={() => setSelectedAssessment("bctq")}
+            style={{
+              padding: "10px 16px",
+              border: selectedAssessment === "bctq" ? "2px solid #2563eb" : "1px solid #d1d5db",
+              background: selectedAssessment === "bctq" ? "#eff6ff" : "#ffffff",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+              color: selectedAssessment === "bctq" ? "#1e40af" : "#374151"
+            }}
+          >
+            Boston Carpal Tunnel Syndrome
+          </button>
+        </div>
+
+        {selectedAssessment === "oswestry" && (
+          <div style={{ marginTop: 20, padding: 16, background: "#f9fafb", borderRadius: 8 }}>
+            <OswestryLowBackPainAssessment values={assessmentValues} onChange={(name, value) => setAssessmentValues(prev => ({ ...prev, [name]: value }))} />
+          </div>
+        )}
+        {selectedAssessment === "bpi" && (
+          <div style={{ marginTop: 20, padding: 16, background: "#f9fafb", borderRadius: 8 }}>
+            <BriefPainInventoryAssessment values={assessmentValues} onChange={(name, value) => setAssessmentValues(prev => ({ ...prev, [name]: value }))} />
+          </div>
+        )}
+        {selectedAssessment === "koos" && (
+          <div style={{ marginTop: 20, padding: 16, background: "#f9fafb", borderRadius: 8 }}>
+            <KOOSKneeSurvey values={assessmentValues} onChange={(name, value) => setAssessmentValues(prev => ({ ...prev, [name]: value }))} />
+          </div>
+        )}
+        {selectedAssessment === "spadi" && (
+          <div style={{ marginTop: 20, padding: 16, background: "#f9fafb", borderRadius: 8 }}>
+            <SPADIShoulderAssessment values={assessmentValues} onChange={(name, value) => setAssessmentValues(prev => ({ ...prev, [name]: value }))} />
+          </div>
+        )}
+        {selectedAssessment === "bctq" && (
+          <div style={{ marginTop: 20, padding: 16, background: "#f9fafb", borderRadius: 8 }}>
+            <BCTQAssessment values={assessmentValues} onChange={(name, value) => setAssessmentValues(prev => ({ ...prev, [name]: value }))} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

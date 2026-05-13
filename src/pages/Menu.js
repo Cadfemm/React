@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import * as React from "react";
 // Font Awesome icons
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useHistory } from "react-router-dom";
 import DashboardTab from "../components/DashboardTab";
 import ClinicalSwallowEvaluation from "../components/ClinicalSwallowEvaluation";
 import DietDepartmentPage from "../features/Dietetics/pages/DietPatientspage";
@@ -30,6 +30,7 @@ import ICHITab from "../components/ICHITab";
 import TopToolbar from "../components/TopToolbar";
 import ICDInfinite from "../components/ICDInfinite";
 import RAPFinal from "../components/RAPFinal"
+import RAPCaseDashboardView from "../components/RAPCaseDashboardView";
 import ICDAD from "../components/ICDAssignDoctor";
 import "chart.js/auto";
 import DoctorsDepartmentPage from "../features/Doctors/pages/DoctorsPatientspage";
@@ -72,6 +73,38 @@ export default function App() {
   const [tab, setTab] = useState("");
 
   const { mode } = useParams();
+  const location  = useLocation();
+  const history   = useHistory();
+
+  /* ── Department tab → URL slug ── */
+  const TAB_TO_SLUG = {
+    "Audiology":               "audiology",
+    "Physiotherapy":           "physiotherapy",
+    "Occupational Therapy":    "occupational-therapy",
+    "Psychology":              "psychology",
+    "Optometry":               "optometry",
+    "Nursing":                 "nursing",
+    "Dietetics":               "dietetics",
+    "Speech & Language Therapy": "speech",
+    "Prosthetics & Orthotics": "prosthetics",
+    "Work & Vocational Rehab": "vocational",
+    "Doctor":                  "doctor",
+    "Medical Assistant":       "medical-assistant",
+    "RAPFINAL":                "rap-case",
+    "RAP":                     "rap",
+  };
+
+  /* Wraps setTab — also updates the URL when switching to a department */
+  const navigateToTab = (newTab) => {
+    setTab(newTab);
+    const slug = TAB_TO_SLUG[newTab];
+    if (slug) {
+      history.replace(`/menu/${slug}`);
+    } else {
+      history.replace("/menu");
+    }
+  };
+
   const [userType, setUserType] = useState("");
   const [icdCode, setIcdCode] = useState(""); // deepest ICD from ICD tab
   const [showVitals, setShowVitals] = useState(false);
@@ -96,6 +129,37 @@ export default function App() {
       handleUserSelection("EXISTING_USER");
     }
     // if mode is undefined, your normal landing stays
+  }, [mode]);
+
+  /* ── Deep-link: set department tab from location state ── */
+  useEffect(() => {
+    const initialTab = location?.state?.initialTab;
+    if (initialTab) {
+      setTab(initialTab);
+    }
+  }, [location?.state?.initialTab]);
+
+  /* ── Direct URL hit: /menu/<slug> → set the correct tab ── */
+  const SLUG_TO_TAB = {
+    "audiology":            "Audiology",
+    "physiotherapy":        "Physiotherapy",
+    "occupational-therapy": "Occupational Therapy",
+    "psychology":           "Psychology",
+    "optometry":            "Optometry",
+    "nursing":              "Nursing",
+    "dietetics":            "Dietetics",
+    "speech":               "Speech & Language Therapy",
+    "prosthetics":          "Prosthetics & Orthotics",
+    "vocational":           "Work & Vocational Rehab",
+    "doctor":               "Doctor",
+    "medical-assistant":    "Medical Assistant",
+    "rap-case":             "RAPFINAL",
+    "rap":                  "RAP",
+  };
+  useEffect(() => {
+    if (mode && SLUG_TO_TAB[mode]) {
+      setTab(SLUG_TO_TAB[mode]);
+    }
   }, [mode]);
 
   // Patient controlled form state in App (for summary & persistence)
@@ -319,7 +383,7 @@ useEffect(() => {
         {/* Left rail */}
         <SidebarNav
           tab={tab}
-          setTab={setTab}
+          setTab={navigateToTab}
           userType={userType}
           icdCode={icdCode}
           icfCode={icfCode}
@@ -335,8 +399,8 @@ useEffect(() => {
           <TopToolbar
             showProfileMenu={showProfileMenu}
             toggleProfileMenu={toggleProfileMenu}
-            onBook={() => setTab("BOOK_APPOINTMENT")}
-            onOrder={() => setTab("ORDER_INVESTIGATIONS")}
+            onBook={() => navigateToTab("BOOK_APPOINTMENT")}
+            onOrder={() => navigateToTab("ORDER_INVESTIGATIONS")}
             onSaveAll={saveEverything}
           />
 
@@ -511,9 +575,9 @@ useEffect(() => {
             <NewAssessmentTab />
           </section>
           <section
-            style={{ display: tab === "RAPFINAL" ? "block" : "none" }}
+            style={{ display: tab === "RAPFINAL" || mode === "rap-case" ? "block" : "none" }}
           >
-            <RAPFinal />
+            <RAPCaseDashboardView />
           </section>
           {/* SUMMARY */}
           <section style={{ display: tab === "SUMMARY" ? "block" : "none" }}>
@@ -694,6 +758,9 @@ export function MainContent({
     case "Physiotherapy":
       return <GenericDepartmentDashboard departmentName="Physiotherapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
+    case "Integrated Rehab":
+      return <GenericDepartmentDashboard departmentName="Integrated Rehab Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
     case "Occupational Therapy":
       return <GenericDepartmentDashboard departmentName="Occupational Therapy Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
@@ -716,7 +783,7 @@ export function MainContent({
       return <GenericDepartmentDashboard departmentName="Dietetics Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Audiology":
-      return <GenericDepartmentDashboard departmentName="Audiology Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+      return <GenericDepartmentDashboard departmentName="Audiology Department" patients={patients} PatientsComponent={AudiologyPatients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "Doctor":
       return <GenericDepartmentDashboard departmentName="Doctor Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;

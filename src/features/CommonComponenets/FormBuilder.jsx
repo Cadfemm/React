@@ -456,7 +456,7 @@ export default function CommonFormBuilder({
                                 {field.type === "radio" && !field.inRow && field.labelAbove ? (
                                   <div style={{ marginBottom: 16 }}>
                                     {(field.label || field.info) && (
-                                      <label style={styles.label}>
+                                     <label style={{...styles.label, whiteSpace: "pre-line"}}>
                                         {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                         {field.info && <InfoTooltip info={field.info} />}
                                       </label>
@@ -640,6 +640,148 @@ function InfoTooltip({ info, children, showIcon = true }) {
     </span>
   );
 }
+
+function ImageModal({ src, alt, onClose }) {
+  if (!src) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+        padding: 20,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          position: "relative",
+          maxWidth: "90%",
+          maxHeight: "90%",
+          backgroundColor: "#fff",
+          borderRadius: 8,
+          padding: 20,
+          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            background: "#ef4444",
+            color: "#fff",
+            border: "none",
+            borderRadius: "50%",
+            width: 32,
+            height: 32,
+            fontSize: 18,
+            fontWeight: "bold",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1,
+          }}
+        >
+          ×
+        </button>
+        <img
+          src={src}
+          alt={alt || "Reference Image"}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "80vh",
+            objectFit: "contain",
+            display: "block",
+          }}
+        />
+        {alt && (
+          <div
+            style={{
+              marginTop: 12,
+              textAlign: "center",
+              fontSize: 14,
+              color: "#6b7280",
+              fontWeight: 500,
+            }}
+          >
+            {alt}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SubheadingWithImage({ field, languageConfig }) {
+  const [showImageModal, setShowImageModal] = React.useState(false);
+
+  return (
+    <>
+      <div style={{
+        ...styles.subheading,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+      }}>
+        {t(
+          field.label,
+          languageConfig?.enabled ? languageConfig.lang : "en"
+        )}
+        {field.info?.type === "image" && (
+          <span
+            onClick={() => setShowImageModal(true)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
+              backgroundColor: "#3b82f6",
+              color: "#fff",
+              fontSize: 16,
+              fontWeight: "bold",
+              cursor: "pointer",
+              userSelect: "none",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#2563eb";
+              e.currentTarget.style.transform = "scale(1.1)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#3b82f6";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+            title="Click to view IDDSI reference chart"
+          >
+            ℹ
+          </span>
+        )}
+      </div>
+      {showImageModal && field.info?.type === "image" && (
+        <ImageModal
+          src={field.info.src}
+          alt={field.info.alt}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
+    </>
+  );
+}
+
 
 
 const t = (text, lang) => {
@@ -945,6 +1087,9 @@ function AssessmentLauncher({
     return opt.regions.some(r => selectedRegions.includes(r));
   });
 
+  // Remarks key per active assessment button
+  const remarksKey = active ? `${field.name}_${active}_remarks` : null;
+
   return (
     <div>
       {!field.autoOpen && (
@@ -975,6 +1120,31 @@ function AssessmentLauncher({
           <ActiveComponent values={values} onChange={onChange} layout="nested" />
         </div>
       ) : null}
+
+      {/* Remarks textarea — shown per active assessment */}
+      {active && remarksKey && !field.hideRemarks &&(
+        <div style={{ marginTop: 12 }}>
+          <label style={{ display: "block", fontWeight: 600, fontSize: 13, marginBottom: 6, color: "#374151" }}>
+            Remarks
+          </label>
+          <textarea
+            rows={3}
+            placeholder={`Remarks for ${visibleOptions.find(o => o.value === active)?.label || active}...`}
+            value={values[remarksKey] || ""}
+            onChange={e => onChange(remarksKey, e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px 12px",
+              border: "1px solid #d1d5db",
+              borderRadius: 8,
+              fontSize: 13,
+              resize: "vertical",
+              boxSizing: "border-box",
+              fontFamily: "inherit"
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -1649,9 +1819,10 @@ function renderField(
 
     case "info-text":
       return (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A" }}>
+        <div
+          style={{ fontSize: 13, lineHeight: 1.6, color: "#0F172A", whiteSpace: "pre-line" }}>
           {Array.isArray(field.text)
-            ? field.text.map((t, i) => <div key={i}>{t}</div>)
+            ? field.text.map((txt, i) => (<div key={i} style={{ marginBottom: 10 }}>{txt} </div>))
             : field.text}
         </div>
       );
@@ -2494,6 +2665,23 @@ if (typeof col === "object" && col.type === "radio") {
       );
 
 
+    case "select":
+      return (
+        <select
+          style={{ ...styles.input, cursor: "pointer", background: "#fff" }}
+          value={value || ""}
+          disabled={readOnly}
+          onChange={e => !readOnly && onChange(field.name, e.target.value)}
+        >
+          <option value="">{field.placeholder || "— Select —"}</option>
+          {(field.options || []).map(opt => {
+            const val = typeof opt === "string" ? opt : opt.value;
+            const lbl = typeof opt === "string" ? opt : opt.label;
+            return <option key={val} value={val}>{lbl}</option>;
+          })}
+        </select>
+      );
+
     case "textarea":
       return (
         <textarea
@@ -2816,6 +3004,12 @@ if (typeof col === "object" && col.type === "radio") {
     return null;
   }
 
+  // If field has image info, use the SubheadingWithImage component
+  if (field.info?.type === "image") {
+    return <SubheadingWithImage field={field} languageConfig={languageConfig} />;
+  }
+
+  // Otherwise, render simple subheading
   return (
     <div style={styles.subheading}>
       {t(
@@ -3129,7 +3323,9 @@ if (typeof col === "object" && col.type === "radio") {
 
 
     case "refraction-12col": {
-      const rows = field.rows || [];
+      const rows = typeof field.rows === "function"
+        ? field.rows(values)
+        : field.rows;
       const groups = field.groups || [];
       const cornerLabel = field.cornerLabel || "";
       const cornerLikeGroupHeader = field.cornerLikeGroupHeader === true;
@@ -3146,17 +3342,21 @@ if (typeof col === "object" && col.type === "radio") {
             <div style={cornerLikeGroupHeader ? { ...styles.vaGroupHeader, borderRight: "1px solid #eef2f7" } : styles.vaCorner}>
               {cornerLabel}
             </div>
-            {groups.map((g, i) => (
-              <div
-                key={i}
-                style={{
-                  ...styles.vaGroupHeader,
-                  gridColumn: `span ${g.columns.length}`
-                }}
-              >
-                {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
-              </div>
-            ))}
+            {groups.map((g, i) => {
+              const allDisabled = g.columns.length > 0 && g.columns.every(c => c.disabled);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    ...styles.vaGroupHeader,
+                    gridColumn: `span ${g.columns.length}`,
+                    ...(allDisabled ? { background: "#f0f0f0", color: "#aaa" } : {})
+                  }}
+                >
+                  {languageConfig?.enabled ? t(g.label, languageConfig.lang) : g.label}
+                </div>
+              );
+            })}
           </div>
 
           {showColumnHeaders && (
@@ -3173,6 +3373,9 @@ if (typeof col === "object" && col.type === "radio") {
 
           <div style={{ overflowX: "auto" }}>
             {rows.map(r => {
+              // Skip row if its showIf condition is not met
+              if (r.showIf && !evaluateShowIf(r.showIf, values)) return null;
+
               const rowCols = r.columns || flatCols;
 
               return (
@@ -3199,9 +3402,16 @@ if (typeof col === "object" && col.type === "radio") {
                     rowCols.map((col, i) => {
                       const key = `${field.name}_${r.value}_${i}`;
                       const v = values[key] || "";
+                      const isDisabled = col.disabled === true;
+                      const disabledStyle = isDisabled ? {
+                        background: "#f0f0f0",
+                        opacity: 0.5,
+                        pointerEvents: "none",
+                        cursor: "not-allowed"
+                      } : {};
 
                       return (
-                        <div key={key} style={styles.vaCell}>
+                        <div key={key} style={{ ...styles.vaCell, ...disabledStyle }}>
                           {col.type === "static" ? (
                             <div style={styles.vaStaticCell}>
                               {col.value || ""}
@@ -3209,10 +3419,11 @@ if (typeof col === "object" && col.type === "radio") {
                           ) : col.type === "select" ? (
                             <select
                               value={v}
-                              onChange={e => onChange(key, e.target.value)}
-                              style={styles.vaSelect}
+                              disabled={isDisabled}
+                              onChange={e => !isDisabled && onChange(key, e.target.value)}
+                              style={{ ...styles.vaSelect, ...(isDisabled ? { background: "#f0f0f0", color: "#aaa" } : {}) }}
                             >
-                              <option value="">Select</option>
+                              <option value="">—</option>
                               {(col.options || []).map((o, i) => {
                                 const val = typeof o === "object" && o !== null && "value" in o ? o.value : o;
                                 const label = typeof o === "object" && o !== null && "label" in o ? o.label : o;
@@ -3229,15 +3440,17 @@ if (typeof col === "object" && col.type === "radio") {
                                 name={`${field.name}_${r.value}`}
                                 value={col.value ?? col.key ?? i}
                                 checked={v === (col.value ?? col.key ?? i)}
-                                onChange={() => onChange(key, col.value ?? col.key ?? i)}
-                                style={{ cursor: "pointer" }}
+                                disabled={isDisabled}
+                                onChange={() => !isDisabled && onChange(key, col.value ?? col.key ?? i)}
+                                style={{ cursor: isDisabled ? "not-allowed" : "pointer" }}
                               />
                             </div>
                           ) : (
                             <input
                               value={v}
-                              onChange={e => onChange(key, e.target.value)}
-                              style={styles.vaInput}
+                              disabled={isDisabled}
+                              onChange={e => !isDisabled && onChange(key, e.target.value)}
+                              style={{ ...styles.vaInput, ...(isDisabled ? { background: "#f0f0f0", color: "#aaa" } : {}) }}
                             />
                           )}
                         </div>
@@ -4396,7 +4609,17 @@ function FilePreview({ file, field, onChange, previewSize }) {
 }
 
 function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
-  const { min, max, step = 1, ranges = [], showValue } = field;
+  const {
+    min,
+    max,
+    step = 1,
+    ranges = [],
+    showValue,
+    tickMajorValues,     // optional: e.g. [0,5,10,15,20,22]
+    tickMinorStep,       // optional: e.g. 1
+    showMinorTicks = true,
+    showMinorLabels = false
+  } = field;
   const span = max - min;
 
   // support both {from,to} and {min,max} range shapes
@@ -4438,12 +4661,77 @@ function ScaleSlider({ field, value = field.min, onChange, readOnly }) {
         </div>
       )}
 
-      {/* Number ticks */}
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#64748b", marginBottom: 2 }}>
-        {Array.from({ length: Math.floor(span / step) + 1 }, (_, i) => min + i * step).map(n => (
-          <span key={n} style={{ fontWeight: Number(value) === n ? 700 : 400, color: activeRange?.color || "#64748b" }}>{n}</span>
-        ))}
-      </div>
+      {/* Tick marks */}
+      {(() => {
+        if (span <= 0) return null;
+
+        const pctOf = (n) => Math.max(0, Math.min(100, ((n - min) / span) * 100));
+
+        const majorTicks = Array.isArray(tickMajorValues) && tickMajorValues.length > 0
+          ? [...new Set(tickMajorValues)].filter(n => n >= min && n <= max).sort((a, b) => a - b)
+          : (normalised.length > 0
+              ? [...new Set([min, ...normalised.flatMap(r => [r.from, r.to]), max])]
+                  .sort((a, b) => a - b)
+              : null);
+
+        const majorTickSet = new Set(majorTicks || []);
+
+        const minorStep = Number.isFinite(tickMinorStep) ? tickMinorStep : (step || 1);
+        const minorTicks = showMinorTicks && minorStep > 0
+          ? Array.from(
+              { length: Math.floor((max - min) / minorStep) + 1 },
+              (_, i) => min + i * minorStep
+            ).filter(n => n >= min && n <= max)
+          : [];
+
+        return (
+          <div style={{ position: "relative", width: "100%", height: 22, marginBottom: 2 }}>
+            {/* Minor ticks */}
+            {showMinorTicks && minorTicks.map(n => {
+              const isMajor = majorTickSet.has(n);
+              const isActive = Number(value) === n;
+              const color = isMajor ? (activeRange?.color || "#64748b") : "#94a3b8";
+              return (
+                <div
+                  key={`minor-${n}`}
+                  style={{
+                    position: "absolute",
+                    left: `${pctOf(n)}%`,
+                    top: 0,
+                    transform: "translateX(-50%)",
+                    width: 1,
+                    height: isMajor ? 12 : 7,
+                    background: isActive ? (activeRange?.color || "#0ea5e9") : color,
+                    borderRadius: 1,
+                  }}
+                />
+              );
+            })}
+
+            {/* Major tick labels */}
+            {(majorTicks || []).map(n => {
+              const isActive = Number(value) === n;
+              return (
+                <div
+                  key={`label-${n}`}
+                  style={{
+                    position: "absolute",
+                    left: `${pctOf(n)}%`,
+                    top: 13,
+                    transform: "translateX(-50%)",
+                    fontSize: 11,
+                    color: isActive ? (activeRange?.color || "#0f172a") : "#64748b",
+                    fontWeight: isActive ? 800 : 600,
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  {n}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Slider track */}
       <div style={{ position: "relative" }}>

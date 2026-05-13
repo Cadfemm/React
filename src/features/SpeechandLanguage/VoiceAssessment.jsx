@@ -1,3 +1,4 @@
+
 import { useState,useEffect } from "react";
 import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
@@ -58,10 +59,57 @@ export default function VoiceAssessment({mode = "objective"}) {
   const [values, setValues] = useState({});
 
   const handleChange = (name, value) => {
-    setValues(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setValues(prev => {
+      const updated = { ...prev, [name]: value };
+
+      // Auto-calculate MPT (longest of 3 /a/ trials)
+      if (["a_trial1", "a_trial2", "a_trial3"].includes(name)) {
+        const trials = [
+          parseFloat(updated.a_trial1) || 0,
+          parseFloat(updated.a_trial2) || 0,
+          parseFloat(updated.a_trial3) || 0
+        ];
+        const longest = Math.max(...trials);
+        updated.mpt = longest > 0 ? longest.toFixed(1) : "";
+      }
+
+      // Auto-calculate S/Z ratio (longest s / longest z)
+      if (["s_trial1","s_trial2","s_trial3","z_trial1","z_trial2","z_trial3"].includes(name)) {
+        const sTrials = [
+          parseFloat(updated.s_trial1) || 0,
+          parseFloat(updated.s_trial2) || 0,
+          parseFloat(updated.s_trial3) || 0
+        ];
+        const zTrials = [
+          parseFloat(updated.z_trial1) || 0,
+          parseFloat(updated.z_trial2) || 0,
+          parseFloat(updated.z_trial3) || 0
+        ];
+        const longestS = Math.max(...sTrials);
+        const longestZ = Math.max(...zTrials);
+        if (longestS > 0 && longestZ > 0) {
+          updated.sz_ratio = (longestS / longestZ).toFixed(2);
+        } else {
+          updated.sz_ratio = "";
+        }
+      }
+
+      // Auto-calculate GRBASI final score string e.g. G1R2B1A0S1I0
+      const grbasiFields = ["grbasi_grade","grbasi_roughness","grbasi_breathiness","grbasi_asthenia","grbasi_strain","grbasi_instability"];
+      if (grbasiFields.includes(name)) {
+        const g = updated.grbasi_grade       ?? "";
+        const r = updated.grbasi_roughness   ?? "";
+        const b = updated.grbasi_breathiness ?? "";
+        const a = updated.grbasi_asthenia    ?? "";
+        const s = updated.grbasi_strain      ?? "";
+        const i = updated.grbasi_instability ?? "";
+        if ([g,r,b,a,s,i].every(v => v !== "")) {
+          updated.grbasi_score = `G${g}R${r}B${b}A${a}S${s}I${i}`;
+        }
+      }
+
+      return updated;
+    });
   };
 
   const createImpairment = (name, label) => ({
@@ -136,7 +184,7 @@ useEffect(() => {
   const SCHEMA_SUBJECTIVE = {
     sections: [
       {
-        title: "Voice Assessment",
+        title: "Voice History",
         fields: [
 
           /* ===== MEDICAL HISTORY ===== */
@@ -185,8 +233,8 @@ useEffect(() => {
     },
     {
       name: "onset_duration",
-      label: "Date",
-      type: "date"
+      label: "Date or duration",
+      type: "input"
     }
   ]
 },
@@ -235,7 +283,7 @@ useEffect(() => {
           {
             name: "smoking_packs",
             label: "Packs/day",
-            type: "textarea",
+            type: "input",
             showIf: { field: "smoking", equals: "YES" }
           },
           {
@@ -256,11 +304,21 @@ useEffect(() => {
             type: "checkbox-group",
             options: HYDRATION_OPTIONS
           },
+          // {
+          //   name: "diet_intake",
+          //   label: "Diet intake",
+          //   type: "textarea"
+          // },
           {
-            name: "diet_intake",
-            label: "Diet intake",
-            type: "textarea"
-          },
+  type: "subheading",
+  label: "Diet Intake"
+},
+{
+  name: "diet_intake",
+  label: "Enter Diet Intake Details",
+  type: "textarea",
+  placeholder: "Type diet intake information here..."
+},
           {
             name: "alcohol",
             label: "Alcohol",
@@ -370,7 +428,7 @@ useEffect(() => {
 
 {
   name: "neck_shoulder_tension",
-  label: "Neck/shoulder tension",
+  label: "Neck / shoulder tension",
   type: "radio",
   options: YES_NO_OPTIONS
 }
@@ -936,136 +994,225 @@ const SCHEMA_OBJECTIVE = {
       ]
     },
 
-    /* ================= B. OBJECTIVE ================= */
+    /* ================= B. OBJECTIVE VOICE MEASURES ================= */
     {
       title: "B. Objective Voice Measures",
       fields: [
+        // --- MPT ---
+        { type: "subheading", label: "Maximum Phonation Time (MPT)  –  auto-populate longest /a/" },
         {
-          type: "input",
-          label: "Maximum Phonation Time (MPT)",
+          type: "row",
           fields: [
-            { name: "a1", label: "/a/ Trial 1 (s)", type: "number" },
-            { name: "a2", label: "/a/ Trial 2 (s)", type: "number" },
-            { name: "a3", label: "/a/ Trial 3 (s)", type: "number" },
-            {
-              name: "mpt",
-              label: "MPT (Longest)",
-              type: "input",
-              readOnly: true
-            }
+            { name: "a_trial1", label: "/a/ Trial 1 (s)", type: "input" },
+            { name: "a_trial2", label: "/a/ Trial 2 (s)", type: "input" },
+            { name: "a_trial3", label: "/a/ Trial 3 (s)", type: "input" },
+            { name: "mpt", label: "MPT – Longest (s)", type: "input", readOnly: true }
           ]
         },
 
+        // --- S/Z Ratio ---
+        { type: "subheading", label: "S/Z Ratio  (longest s ÷ longest z)  –  Normal reference ≈ 1.0" },
+        
         {
-          type: "radio",
-          label: "S/Z Ratio",
+          type: "row",
           fields: [
-            { name: "s1", label: "/s/ Trial 1", type: "input" },
-            { name: "s2", label: "/s/ Trial 2", type: "input" },
-            { name: "s3", label: "/s/ Trial 3", type: "input" },
-
-            { name: "z1", label: "/z/ Trial 1", type: "input" },
-            { name: "z2", label: "/z/ Trial 2", type: "input" },
-            { name: "z3", label: "/z/ Trial 3", type: "input" },
-
-            {
-              name: "sz_ratio",
-              label: "S/Z Ratio",
-              type: "input",
-              readOnly: true,
-              helperText:
-                "Normal ≈ 1.0 | >1.4 inefficiency | <0.8 phonation issue"
-            }
+            { name: "s_trial1", label: "/s/ Trial 1 (s)", type: "input" },
+            { name: "s_trial2", label: "/s/ Trial 2 (s)", type: "input" },
+            { name: "s_trial3", label: "/s/ Trial 3 (s)", type: "input" }
           ]
-        }
-      ]
-    },
-
-    /* ================= PRAAT ================= */
-    {
-      title: "Acoustic Analysis (Praat)",
-      fields: [
-        {
-          type: "radio",
-          label: "Sustained /a/ (best of 3 trials)"
         },
-        { name: "f0", label: "F0 Mean (Hz)", type: "input" },
-        { name: "jitter", label: "Jitter (%)", type: "input" },
-        { name: "shimmer", label: "Shimmer (%)", type: "input" },
-        { name: "hnr", label: "HNR / CPP (dB)", type: "input" },
-        { name: "intensity", label: "Intensity Range (dB)", type: "input" },
-
+        {
+          type: "row",
+          fields: [
+            { name: "z_trial1", label: "/z/ Trial 1 (s)", type: "input" },
+            { name: "z_trial2", label: "/z/ Trial 2 (s)", type: "input" },
+            { name: "z_trial3", label: "/z/ Trial 3 (s)", type: "input" }
+          ]
+        },
+        { name: "sz_ratio", label: "S/Z Ratio (auto-calculated)", type: "input", readOnly: true },
+        {
+          type: "info-text",
+          text: "Elevated ratio (>1.4) → possible vocal fold inefficiency | Low ratio (<0.8) → phonation difficulties possible"
+        },
+        // --- Acoustic Analysis (Praat) ---
+        { type: "subheading", label: "Acoustic Analysis (Praat)  –  Task: Sustained /a/ for 3 trials (best trial analysed)" },
+        {
+          type: "row",
+          fields: [
+            { name: "f0_mean", label: "F0 Mean (Hz)", type: "input" },
+            { name: "jitter", label: "Jitter (%)", type: "input" }
+          ]
+        },
+        {
+          type: "row",
+          fields: [
+            { name: "shimmer", label: "Shimmer (%)", type: "input" },
+            { name: "hnr_cpp", label: "HNR / CPP (dB)", type: "input" }
+          ]
+        },
+        { name: "intensity_range", label: "Intensity Range (dB)", type: "input" },
         {
           type: "note",
-          label:
-            "Typical Range: Jitter <1% | Shimmer <3–4% | HNR >12 dB | CPP >13–14 dB"
+          label: "Typical Range:  Jitter <1%  |  Shimmer <3–4%  |  HNR >12 dB  |  CPP >13–14 dB (sustained vowel)"
         }
       ]
     },
 
-    /* ================= GRBASI ================= */
+    /* ================= C. PERCEPTUAL VOICE MEASURES ================= */
     {
-      title: "C. Perceptual Voice Measures (GRBASI)",
+      title: "C. Perceptual Voice Measures",
       fields: [
+        // --- GRBASI ---
+        { type: "subheading", label: "GRBASI Scale  – GxRxBxAxSxIx" },
+        { name: "grbasi_grade",       label: "Grade",       type: "radio",  options: scoreOptions },
+        { name: "grbasi_roughness",   label: "Roughness",   type: "radio", options: scoreOptions },
+        { name: "grbasi_breathiness", label: "Breathiness", type: "radio", options: scoreOptions },
+        { name: "grbasi_asthenia",    label: "Asthenia",    type: "radio", options: scoreOptions },
+        { name: "grbasi_strain",      label: "Strain",      type: "radio",  options: scoreOptions },
+        { name: "grbasi_instability", label: "Instability", type: "radio", options: scoreOptions },
+        { name: "grbasi_score", label: "GRBASI Final Score", type: "input", readOnly: true },
+
+        // --- CAPE-V ---
+        { type: "subheading", label: "CAPE-V Overall Severity" },
+
+        // { name: "cape_overall", label: "Overall Severity", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+        //   ranges: [
+        //     { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+        //     { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+        //     { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+        //     { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+        //   ]
+        // },
         {
-          name: "grade",
-          label: "Grade",
+          name: "overall_severity",
+          label: "Overall Severity",
           type: "radio",
-          options: scoreOptions
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_overall", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
         },
         {
-          name: "roughness",
+          name: "overall_roughness",
           label: "Roughness",
           type: "radio",
-          options: scoreOptions
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_roughness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
         },
         {
-          name: "breathiness",
+          name: "overall_breathiness",
           label: "Breathiness",
           type: "radio",
-          options: scoreOptions
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_breathiness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
         },
         {
-          name: "asthenia",
-          label: "Asthenia",
-          type: "radio",
-          options: scoreOptions
-        },
-        {
-          name: "strain",
+          name: "overall_strain",
           label: "Strain",
           type: "radio",
-          options: scoreOptions
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_strain", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
         },
         {
-          name: "instability",
-          label: "Instability",
+          name: "overall_pitch",
+          label: "Pitch",
           type: "radio",
-          options: scoreOptions
-        }
-      ]
-    },
-
-    /* ================= CAPE-V ================= */
-    {
-      title: "CAPE-V (0–100 scale)",
-      fields: [
-        {
-          type: "note",
-          // label:
-          //   "0–100 scale (0 normal, 100 severe) | Normal (0-10) / Mild (11-30) / Moderate (31-60) / Severe (61-100)"
-                    label:"CAPE-V"
-
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
         },
-
-        { name: "cape_roughness", label: "Roughness", type: "input", min: 0, max: 100 },
-        { name: "cape_breathiness", label: "Breathiness", type: "input", min: 0, max: 100 },
-        { name: "cape_strain", label: "Strain", type: "input", min: 0, max: 100 },
-        { name: "cape_pitch", label: "Pitch", type: "input", min: 0, max: 100 },
-        { name: "cape_loudness", label: "Loudness", type: "input", min: 0, max: 100 },
-        { name: "cape_resonance", label: "Resonance", type: "input", min: 0, max: 100 },
-        { name: "cape_overall", label: "Overall Severity", type: "input", min: 0, max: 100 },
-
+        { name: "cape_pitch", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
+        },
+        {
+          name: "overall_loudness",
+          label: "Loudness",
+          type: "radio",
+          options: [
+            { label: "Consistent", value: "consistent" },
+            { label: "Intermittent", value: "intermittent" }
+          ]
+        },
+        { name: "cape_loudness", label: "", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
+        },
+        {
+          name: "overall_resonance",
+          label: " Resonance",
+          type: "radio",
+          options: [
+            { label: "Normal", value: "normal" },
+            { label: "Other", value: "other" }
+          ],
+        },
+        {
+          name: "overall_resonance_other",
+          label: "Specify",
+          type: "textarea",
+          showIf: { field: "overall_resonance", equals: "other" }
+        },
+        // Resonance — Yes/No toggle, scale only shows when Yes
+        // { name: "cape_resonance_applicable", label: "Resonance (if applicable)", type: "radio",
+        //   options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]
+        // },
+        { name: "cape_resonance", label: "Resonance", type: "scale-slider", min: 0, max: 100, step: 1, showValue: true,
+          showIf: { field: "cape_resonance_applicable", equals: "yes" },
+          ranges: [
+            { from: 0,  to: 10, label: "Normal",            color: "#22c55e" },
+            { from: 11, to: 30, label: "Mild deviation",    color: "#84cc16" },
+            { from: 31, to: 60, label: "Moderate deviation",color: "#f59e0b" },
+            { from: 61, to: 100,label: "Severe deviation",  color: "#ef4444" }
+          ]
+        }
       ]
     }
   ]
@@ -1073,35 +1220,36 @@ const SCHEMA_OBJECTIVE = {
   const SCHEMA_ASSESSMENT = {
   sections: [
     {
-      title: "Voice Assessment",
+      title: "Clinical Impression",
       fields: [
         {
-          name: "voice_functional_limits",
+          name: "voice_status",
           label: "Voice Status",
-          type: "checkbox-group",
+          type: "radio",
           options: [
-            {
-              label: "Voice is within functional limits",
-              value: "voice_normal"
-            }
+            { label: "Voice is within functional limits", value: "voice_normal" },
+            { label: "The patient presents with voice disorders", value: "presents_with" }
           ]
         },
 
-        {
-          type: "subheading",
-          label: "The patient presents with"
-        },
+        // {
+        //   type: "subheading",
+        //   label: "The patient presents with",
+        //   showIf: { field: "voice_status", equals: "presents_with" }
+        // },
 
         {
           name: "voice_diagnosis",
+          label: "The patient presents with",
           type: "checkbox-group",
+          showIf: { field: "voice_status", equals: "presents_with" },
           options: [
             {
               label: "Dysphonia",
               value: "dysphonia"
             },
             {
-              label: "Aphonia ",
+              label: "Aphonia",
               value: "aphonia"
             },
             {
@@ -1115,14 +1263,18 @@ const SCHEMA_OBJECTIVE = {
           ]
         },
 
-        {
-          type: "subheading",
-          label: "Characteristics"
-        },
+        // {
+        //   type: "subheading",
+        //   label: "Characteristics",
+        //   showIf: { field: "voice_status", equals: "presents_with" }
+        // },
 
         {
           name: "voice_characteristics",
+          label: "Characteristics",
+
           type: "checkbox-group",
+          showIf: { field: "voice_status", equals: "presents_with" },
           options: [
             {
               label: "Breathy dysphonia",
@@ -1151,80 +1303,93 @@ const SCHEMA_PLAN = {
     {
       title: "Plan",
       fields: [
+
+        // Therapy
+        {
+          type: "subheading",
+          label: "Therapy"
+        },
         {
           name: "voice_therapy",
-          label: "Therapy",
+          label: "",
           type: "checkbox-group",
           options: [
             {
-              label: "JUB.PH.ZZ Training of voice functions",
+              label: "Training of voice functions",
               value: "training_voice_functions"
             },
             {
-              label: "JUB.PM.ZZ Education about voice functions",
+              label: "Education about voice functions",
               value: "education_voice_functions"
             },
             {
-              label: "JUB.PN.ZZ Advising about voice functions",
+              label: "Advising about voice functions",
               value: "advising_voice_functions"
             }
           ]
         },
 
-        // ✅ separate field
+        // Voice Exercises
         {
           name: "voice_exercises",
           label: "Voice exercises",
           type: "textarea",
-          placeholder: "Enter voice exercises..."
         },
 
-        // ✅ FIX: checkbox-group needs options
+        // Other Management
         {
-          name: "referral_medical",
-          label: "Referral for medical management",
+          type: "subheading",
+          label: "Other Management"
+        },
+        {
+          name: "other_management",
+          label: "",
           type: "checkbox-group",
           options: [
-            { label: "Yes", value: "yes" }
+            {
+              label: "Referral for medical management",
+              value: "medical_referral"
+            },
+            {
+              label: "Further Assessment",
+              value: "further_assessment"
+            }
           ]
         },
 
-        // ✅ separate field
-                  { type: "subheading", label: "further_assessment" },
-
+        // Further Assessment Options
         {
           name: "further_assessment",
-          
-          type: "radio",
+          label: "",
+          type: "checkbox-group",
+          showIf: {
+            field: "other_management",
+            includes: "further_assessment"
+          },
           options: [
             {
-              label: "SE1.AA.ZZ Assessment of communication, unspecified",
+              label: "Assessment of communication, unspecified",
               value: "assessment"
             },
             {
-              label: "SE1.AC.ZZ Test of communication, unspecified",
+              label: "Test of communication, unspecified",
               value: "test"
             },
             {
-              label: "SE1.AM.ZZ Observation of communication, unspecified",
+              label: "Observation of communication, unspecified",
               value: "observation"
             },
             {
-              label: "SE1.AN.ZZ Interview in relation to communication, unspecified",
+              label: "Interview in relation to communication, unspecified",
               value: "interview"
             }
           ]
         }
+
       ]
     }
   ]
 };
-
-
-
-
-
-
 
 const FORM_SCHEMAS = {
   subjective: SCHEMA_SUBJECTIVE,

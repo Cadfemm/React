@@ -1,140 +1,132 @@
 import React from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 
-/* ===================== MMT OPTIONS (numbers as column headers) ===================== */
-
-const MMT_OPTIONS = [
-  { label: "0", value: "0" },
-  { label: "1", value: "1" },
-  { label: "2-", value: "2-" },
-  { label: "2", value: "2" },
-  { label: "2+", value: "2+" },
-  { label: "3-", value: "3-" },
-  { label: "3", value: "3" },
-  { label: "3+", value: "3+" },
-  { label: "4", value: "4" },
-  { label: "4+", value: "4+" },
-  { label: "5", value: "5" }
+const MMT_GRADE_OPTIONS = [
+  { label: "0 – No Movement", value: "0" },
+  { label: "1 – Flickering of contraction", value: "1" },
+  { label: "2 – Full ROM with eliminating gravity", value: "2" },
+  { label: "3 – Full ROM against gravity", value: "3" },
+  { label: "4 – Full ROM against gravity with min resistance", value: "4" },
+  { label: "5 – Full ROM against gravity with max resistance", value: "5" },
 ];
 
-const MMT_INFO = {
-  title: "MMT Scale",
-  content: [
-    "0 – Nothing, no muscle contraction",
-    "1 – Flicker (palpable contraction, no movement)",
-    "2− – Part ROM with gravity counterbalanced",
-    "2 – Full ROM with gravity counterbalanced",
-    "2+ – Full ROM with gravity counterbalanced and a little resistance, no antigravity moment",
-    "3− – Antigravity movement through part (most of range)",
-    "3 – Full range antigravity movement",
-    "3+ – Full antigravity ROM with some resistance through part of range",
-    "4 – Full antigravity ROM with some resistance through the whole range",
-    "4+ – Full antigravity ROM with normal power in part of range",
-    "5 – Full ROM with full normal resistance throughout range"
-  ]
+const MMT_GROUPS = [
+  { label: "Right", columns: [{ key: "", type: "select", options: MMT_GRADE_OPTIONS }] },
+  { label: "Left",  columns: [{ key: "", type: "select", options: MMT_GRADE_OPTIONS }] },
+];
+
+/** Build a single mmt-table row */
+const r = (value, label) => ({
+  value,
+  label,
+  columns: [
+    { type: "select", options: MMT_GRADE_OPTIONS },
+    { type: "select", options: MMT_GRADE_OPTIONS },
+  ],
+});
+
+const MMT_SECTIONS = {
+  Shoulder: [
+    r("sh_flex",  "Flexion"),
+    r("sh_ext",   "Extension"),
+    r("sh_abd",   "Abduction"),
+    r("sh_add",   "Adduction"),
+    r("sh_ir",    "Internal Rotation"),
+    r("sh_er",    "External Rotation"),
+  ],
+  Elbow: [
+    r("el_flex",  "Flexion"),
+    r("el_ext",   "Extension"),
+    r("el_pro",   "Pronation"),
+    r("el_sup",   "Supination"),
+  ],
+  Wrist: [
+    r("wr_flex",  "Flexion"),
+    r("wr_ext",   "Extension"),
+    r("wr_rad",   "Radial Deviation"),
+    r("wr_uln",   "Ulnar Deviation"),
+  ],
+  Hip: [
+    r("hip_flex", "Flexion"),
+    r("hip_ext",  "Extension"),
+    r("hip_abd",  "Abduction"),
+    r("hip_add",  "Adduction"),
+    r("hip_ir",   "Internal Rotation"),
+    r("hip_er",   "External Rotation"),
+  ],
+  Knee: [
+    r("kn_flex",  "Flexion"),
+    r("kn_ext",   "Extension"),
+  ],
+  Ankle: [
+    r("ank_df",   "Dorsiflexion"),
+    r("ank_pf",   "Plantarflexion"),
+    r("ank_inv",  "Inversion"),
+    r("ank_evr",  "Eversion"),
+  ],
 };
 
-const mmt = (name, label) => ({ type: "radio-matrix", name, label, options: MMT_OPTIONS, info: MMT_INFO, showInfoInRow: false });
+const ALL_SECTION_ORDER = ["Shoulder", "Elbow", "Wrist", "Hip", "Knee", "Ankle"];
 
-/** Split fields into groups by `subheading` (same idea as ROM sections). */
-export function splitMmtGroupsBySubheading(fields) {
-  const groups = [];
-  let current = null;
-  (fields || []).forEach((f) => {
-    if (f?.type === "subheading") {
-      current = { label: f.label, children: [] };
-      groups.push(current);
-    } else if (current) {
-      current.children.push(f);
-    }
+/**
+ * Build MMT accordion fields.
+ * @param {string[]|null} filterSections - which joint sections to include (null = all)
+ * @param {Object} sectionSides - optional per-section side override
+ *   e.g. { Ankle: { right: true, left: false } }
+ *   If omitted, both sides shown for all sections.
+ */
+export function buildMmtAccordionFields(filterSections, sectionSides = {}) {
+  const sections = filterSections
+    ? ALL_SECTION_ORDER.filter(s => filterSections.includes(s))
+    : ALL_SECTION_ORDER;
+
+  return sections.map((label, idx) => {
+    const sides = sectionSides[label] || { right: true, left: true };
+
+    // Build groups — always keep both Right and Left, mark disabled when needed
+    const groups = [
+      { label: "Right", columns: [{ key: "", type: "select", options: MMT_GRADE_OPTIONS, disabled: !sides.right }] },
+      { label: "Left",  columns: [{ key: "", type: "select", options: MMT_GRADE_OPTIONS, disabled: !sides.left  }] },
+    ];
+
+    // Build rows with both columns, marking disabled ones
+    const rows = (MMT_SECTIONS[label] || []).map(row => ({
+      ...row,
+      columns: [
+        { type: "select", options: MMT_GRADE_OPTIONS, disabled: !sides.right },
+        { type: "select", options: MMT_GRADE_OPTIONS, disabled: !sides.left  },
+      ],
+    }));
+
+    return {
+      type: "accordion",
+      name: `mmt_section_${label.toLowerCase()}`,
+      label,
+      defaultOpen: idx === 0,
+      children: [
+        {
+          type: "refraction-12col",
+          name: `mmt_${label.toLowerCase()}`,
+          cornerLabel: "Movement",
+          cornerLikeGroupHeader: true,
+          showColumnHeaders: true,
+          groups,
+          rows,
+        },
+      ],
+    };
   });
-  return groups;
 }
 
-export function buildMmtAccordionFields(filterSections) {
-  const upperFields = [
-    { type: "subheading", label: "Shoulder" },
-    mmt("mmt_sh_flex_l", "Shoulder Flexion Left"),
-    mmt("mmt_sh_flex_r", "Shoulder Flexion Right"),
-    mmt("mmt_se_flex_l", "Shoulder Extension Left"),
-    mmt("mmt_se_flex_r", "Shoulder Extension Right"),
-    mmt("mmt_sa_flex_l", "Shoulder Abduction Left"),
-    mmt("mmt_sa_flex_r", "Shoulder Abduction Right"),
-    mmt("mmt_sad_flex_l", "Shoulder Adduction Left"),
-    mmt("mmt_sad_flex_r", "Shoulder Adduction Right"),
-    mmt("mmt_ir_flex_l", "Internal rotation Left"),
-    mmt("mmt_ir_flex_r", "Internal rotation Right"),
-    mmt("mmt_er_flex_l", "External rotation Left"),
-    mmt("mmt_er_flex_r", "External rotation Right"),
-    { type: "subheading", label: "Elbow" },
-    mmt("mmt_el_flex_l", "Elbow Flexion Left"),
-    mmt("mmt_el_flex_r", "Elbow Flexion Right"),
-    mmt("mmt_el_ext_l", "Elbow Extension Left"),
-    mmt("mmt_el_ext_r", "Elbow Extension Right"),
-    { type: "subheading", label: "Wrist" },
-    mmt("mmt_wr_flex_l", "Wrist Flexion Left"),
-    mmt("mmt_wr_flex_r", "Wrist Flexion Right"),
-    mmt("mmt_wr_ext_l", "Wrist Extension Left"),
-    mmt("mmt_wr_ext_r", "Wrist Extension Right"),
-  ];
+export default function MMTForm({ values, onChange, filterSections, sectionSides }) {
+  const schema = {
+    title: "Manual Muscle Testing (MMT)",
+    fields: buildMmtAccordionFields(filterSections ?? undefined, sectionSides ?? {}),
+  };
 
-  const lowerFields = [
-    { type: "subheading", label: "Hip" },
-    mmt("mmt_hip_flex_l", "Hip Flexion Left"),
-    mmt("mmt_hip_flex_r", "Hip Flexion Right"),
-    mmt("mmt_hip_ext_l", "Hip Extension Left"),
-    mmt("mmt_hip_ext_r", "Hip Extension Right"),
-    mmt("mmt_hip_abd_l", "Hip Abduction Left"),
-    mmt("mmt_hip_abd_r", "Hip Abduction Right"),
-    mmt("mmt_hip_add_l", "Hip Adduction Left"),
-    mmt("mmt_hip_add_r", "Hip Adduction Right"),
-    mmt("mmt_hir_add_l", "Hip Internal rotation Left"),
-    mmt("mmt_hir_add_r", "Hip Internal rotation Right"),
-    mmt("mmt_her_add_l", "Hip External rotation Left"),
-    mmt("mmt_her_add_r", "Hip External rotation Right"),
-    { type: "subheading", label: "Knee" },
-    mmt("mmt_knee_flex_l", "Knee Flexion Left"),
-    mmt("mmt_knee_flex_r", "Knee Flexion Right"),
-    mmt("mmt_knee_ext_l", "Knee Extension Left"),
-    mmt("mmt_knee_ext_r", "Knee Extension Right"),
-    { type: "subheading", label: "Ankle" },
-    mmt("mmt_ank_df_l", "Ankle Dorsiflexion Left"),
-    mmt("mmt_ank_df_r", "Ankle Dorsiflexion Right"),
-    mmt("mmt_ank_pf_l", "Ankle Plantarflexion Left"),
-    mmt("mmt_ank_pf_r", "Ankle Plantarflexion Right"),
-    mmt("mmt_ank_inv_l", "Ankle Inversion Left"),
-    mmt("mmt_ank_inv_r", "Ankle Inversion Right"),
-    mmt("mmt_ank_evr_l", "Ankle Eversion Left"),
-    mmt("mmt_ank_evr_r", "Ankle Eversion Right"),
-  ];
-
-  const allGroups = [
-    ...splitMmtGroupsBySubheading(upperFields),
-    ...splitMmtGroupsBySubheading(lowerFields),
-  ].filter(g => !filterSections || filterSections.includes(g.label));
-
-  return allGroups.map((g, idx) => ({
-    type: "accordion",
-    name: `mmt_section_${String(g.label).replace(/[^a-z0-9]+/gi, "_").toLowerCase()}_${idx}`,
-    label: g.label,
-    defaultOpen: idx === 0,
-    children: g.children,
-  }));
-}
-
-/* ===================== SCHEMA ===================== */
-
-const MMT_SCHEMA = {
-  title: "Manual Muscle Testing (MMT)",
-  fields: buildMmtAccordionFields(),
-};
-
-/* ===================== COMPONENT ===================== */
-
-export default function MMTForm({ values, onChange }) {
   return (
     <CommonFormBuilder
-      schema={MMT_SCHEMA}
+      schema={schema}
       values={values}
       onChange={onChange}
       layout="nested"

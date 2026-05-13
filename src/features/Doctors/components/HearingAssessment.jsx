@@ -6,6 +6,19 @@ export default function HearingAssessment() {
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
+    // If "No issue" is selected in Hearing Issue, clear all other selections
+    if (name === "hearing_issue") {
+      const next = Array.isArray(value) ? value : [];
+      const hasNoIssue = next.includes("no_issue");
+      const sanitized = hasNoIssue ? ["no_issue"] : next.filter(v => v !== "no_issue");
+      setValues(v => ({
+        ...v,
+        [name]: sanitized,
+        ...(hasNoIssue ? { hearing_issue_notes: "" } : null)
+      }));
+      return;
+    }
+
     setValues(v => ({ ...v, [name]: value }));
   };
 const HEARING_SECTIONS = [
@@ -45,27 +58,12 @@ const HEARING_SECTIONS = [
             { label: "Deformity", value: "deformity" }
           ]
         },
-              ...[
-  "ear_pain",
-  "hearing_loss",
-  "tinnitus",
-  "fullness",
-  "ear_discharge",
-  "dizziness",
-  "vertigo",
-  "nausea",
-  "itching",
-  "hyperacusis",
-  "deformity"
-].map(issue => ({
-  type: "input",
-  name: `hearing_issue_${issue}_notes`,
-  label: `Elaboration – ${issue.replace(/_/g, " ")}`,
-  showIf: {
-    field: "hearing_issue",
-    includes: issue
-  }
-}))
+        {
+          type: "input",
+          name: "hearing_issue_notes",
+          label: "Specify",
+          showIf: { field: "hearing_issue", notEmpty: true }
+        }
       ]
     },
 

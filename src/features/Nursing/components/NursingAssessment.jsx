@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, createContext, useContext } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import BarthelIndexForm from "./BarthelIndexForm";
@@ -26,6 +27,13 @@ import SeizureChart from "./SeizureChart";
 import NursingSwallowScreener from "./NursingSwallowScreener";
 import WaterSwallowTest from "./WaterSwallowTest";
 import RepositioningSkinChart from "./RepositioningSkinChart";
+import PatientCard from "../../../shared/cards/PatientCard";
+import SpasmSpasticity from "../../Doctors/components/SpasmSpasticity";
+import BladderAssessment from "../../Doctors/components/BladderAssessment";
+import BowelAssessmentForm from "../../Doctors/components/BowelAssessment";
+import PainAssessmentForm from "../../Doctors/components/PainAssessmentForm";
+import BristolChartAssessment  from "../../Doctors/components/BowelAssessment";
+import WoundAssessment from "../pages/WoundAssessment";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -111,6 +119,30 @@ function BradenScaleAdapter({ values, onChange }) {
   return <BradenScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
 }
 
+function WoundAssessmentAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+
+  const handleSubmit = (payload) => {
+    if (payload?.values) {
+      Object.keys(payload.values).forEach((key) => {
+        onChange(`wound_assessment_${key}`, payload.values[key]);
+      });
+    }
+  };
+
+  const handleBack = () => {
+    onChange("nursing_assessments_active", null);
+  };
+
+  return (
+    <WoundAssessment
+      patient={patient}
+      onSubmit={handleSubmit}
+      onBack={handleBack}
+    />
+  );
+}
+
 function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
   const patient = useContext(PatientContext);
   const handleSubmit = (payload) => {
@@ -129,6 +161,7 @@ function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
 
 function NumericPainRatingScaleAdapter({ values, onChange }) {
   const patient = useContext(PatientContext);
+  
   const handleSubmit = (payload) => {
     if (payload && payload.values) {
       Object.keys(payload.values).forEach(key => {
@@ -136,11 +169,20 @@ function NumericPainRatingScaleAdapter({ values, onChange }) {
       });
     }
   };
+  
   const handleBack = () => {
     const activeKey = "nursing_assessments_active";
     onChange(activeKey, null);
   };
-  return <NumericPainRatingScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+  
+  return (
+    <NumericPainRatingScaleForm 
+      patient={patient} 
+      onSubmit={handleSubmit} 
+      onBack={handleBack}
+      onChange={onChange}
+    />
+  );
 }
 
 function DiabeticFootAssessmentAdapter({ values, onChange }) {
@@ -351,6 +393,17 @@ export const NURSING_ASSESSMENT_REGISTRY = {
   swallow_screener: SwallowScreenerAdapter,
   water_swallow_test: WaterSwallowTestAdapter,
   repositioning_skin_chart: RepositioningSkinChartAdapter,
+  spasticity_assessment: SpasmSpasticity,
+  spasm_assessment: SpasmSpasticity,
+  pain_assessment: PainAssessmentForm,
+  bristol_chart: BristolChartAssessment,
+  wound_assessment: WoundAssessmentAdapter,
+  bladder_issue: (props) => (
+  <BladderAssessment {...props} department="nursing" />
+  ),
+  bowel_assessment: (props) => (
+    <BowelAssessmentForm {...props} department="nursing" />
+  ),
 };
 
 /* ===================== COMPONENT ===================== */
@@ -359,11 +412,31 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+    const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: "",
+    past_family_history: "",
+    alerts_and_allergies: ""
+  });
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
     ? `nursing_assessment_draft_${patient.id}`
     : null;
+   useEffect(() => {
+    if (!storageKey) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) setValues(JSON.parse(saved).values || {});
+  }, [storageKey]);
+
+
+ useEffect(() => {
+        if (!patient) return;
+        setPatientHistory({
+          past_medical_history: patient.medical_history || "",
+          past_family_history: patient.family_medical_history || "",
+          alerts_and_allergies: patient.alerts_and_allergies_history || ""
+        });
+      }, [patient]);
 
   useEffect(() => {
     if (!storageKey) return;
@@ -399,6 +472,10 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         const w = parseFloat(name === "obj_weight" ? value : v.obj_weight);
         if (h > 0 && w > 0) next.obj_bmi = (w / Math.pow(h / 100, 2)).toFixed(1);
       }
+      if (name === "numeric_pain_scale_current_pain") {
+        const painValue = parseFloat(value);
+        next.show_motor_pain_assessment = Number.isFinite(painValue) && painValue > 1;
+    }
       // Show Cardiac Assessment launcher when subjective cardio-respiratory symptoms are present
       const cardiacSubjectiveNames = ["chest_pain", "dyspnea", "palpitations"];
       if (cardiacSubjectiveNames.includes(name)) {
@@ -459,6 +536,102 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
     onSubmit?.(values);
     alert("Nursing assessment submitted");
   };
+function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+        <div><b>Accommodation:</b> {safe(patient.accommodation)}</div>
+        <div><b>Attending Case Manager:</b> {safe(patient.attending_case_manager)}</div>
+        <div><b>Doctor Incharge for Initial Assessment:</b> {safe(patient.doctor_incharge_initial_assessment)}</div>
+        <div><b>Attending Therapist:</b> {safe(patient.attending_therapist)}</div>
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <textarea
+                      style={textarea}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   /* ===================== SCHEMAS ===================== */
 
@@ -479,85 +652,14 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           { name: "past_family_medical_history ", label: "Past Family Medical History ", type: "textarea" }
         ]
       },
-      {
-        title: "Pain Assessment",
-        fields: [
-          { name: "pain_present", label: "Pain present", type: "radio", options: YES_NO_OPTIONS },
-          { type: "subheading", label: "Full pain panel (OPQRST)", showIf: { field: "pain_present", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "pain_onset", label: "O — Onset", type: "date" },
-            { name: "pain_provocation", label: "P — Provocation/Palliation", type: "radio", options: [
-              { label: "With movement", value: "with_movement" },
-              { label: "At rest", value: "at_rest" },
-              { label: "Both", value: "both" },
-              { label: "Relieved by", value: "relieved_by" }
-            ]}
-          ], showIf: { field: "pain_present", equals: "yes" } },
-          { name: "pain_provocation_relieved_by", label: "Specify relieved by", type: "input", showIf: { field: "pain_provocation", equals: "relieved_by" } },
-          { type: "row", fields: [
-            { name: "pain_quality", label: "Q — Quality", type: "input" },
-            { name: "pain_region", label: "R — Region/Radiation", type: "input" }
-          ], showIf: { field: "pain_present", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "pain_severity_at_rest", label: "S — Severity At rest (0–10)", type: "single-select", options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) },
-            { name: "pain_severity_with_movement", label: "S — Severity With movement (0–10)", type: "single-select", options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) }
-          ], showIf: { field: "pain_present", equals: "yes" }},
-          { name: "pain_assessment_form", label: "", type: "assessment-launcher", options: [{ label: "Numeric Rating Scale", value: "numeric_pain_rating_scale" }], showIf: { field: "pain_present", equals: "yes" } },
-          { name: "pain_timing", label: "T — Timing", type: "input", showIf: { field: "pain_present", equals: "yes" } },
-          { name: "aggravating_factors", label: "Aggravating Factors", type: "radio", options: YES_NO_OPTIONS, showIf: { field: "pain_present", equals: "yes" } },
-          { name: "aggravating_factors_detail", label: "Aggravating Factors — Details", type: "input", showIf: { field: "aggravating_factors", equals: "yes" } },
-          { name: "relieving_factors", label: "Relieving Factors", type: "radio", options: YES_NO_OPTIONS, showIf: { field: "pain_present", equals: "yes" } },
-          { name: "relieving_factors_detail", label: "Relieving Factors — Details", type: "input", showIf: { field: "relieving_factors", equals: "yes" } },
-          { name: "pain_type", label: "Pain Type", type: "checkbox-group", options: [
-            { label: "Burning", value: "burning" },
-            { label: "Tingling", value: "tingling" },
-            { label: "Numbness", value: "numbness" },
-            { label: "Sharp", value: "sharp" },
-            { label: "Cramping", value: "cramping" }
-          ], showIf: { field: "pain_present", equals: "yes" }},
-          { name: "pain_at_rest_night", label: "Pain at Rest/ Night Pain", type: "radio", options: YES_NO_OPTIONS, showIf: { field: "pain_present", equals: "yes" } },
-          { name: "pain_free_text", label: "Specify", type: "textarea", showIf: { field: "pain_present", equals: "yes" } }
-        ]
-      },
-      {
-        title: "Functional Status",
-        fields: [
-          { name: "difficulty_mobility_transfers", label: "Difficulty with mobility/transfers", type: "radio", options: YES_NO_OPTIONS },
-          { name: "adl_limitations", label: "ADL limitations", type: "radio", options: YES_NO_OPTIONS },
-          { name: "sleep_pattern", label: "Sleep pattern", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Disturbed", value: "disturbed" }] },
-          { name: "appetite_functional", label: "Appetite", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Decreased", value: "decreased" }, { label: "Increased", value: "increased" }] },
-          { name: "fatigue_reduced_endurance", label: "Fatigue/reduced endurance", type: "radio", options: YES_NO_OPTIONS },
-          { name: "functional_status_specify", label: "Specify", type: "textarea" }
-        ]
-      },
-      {
-        title: "Medication Reconciliation",
-        fields: [
-          { name: "current_prescription_meds", label: "Current prescription medications", type: "radio", options: YES_NO_OPTIONS },
-          { name: "current_prescription_meds_specify", label: "Specify", type: "input", showIf: { field: "current_prescription_meds", equals: "yes" } },
-          { name: "otc_herbal_supplements", label: "OTC/herbal supplements", type: "radio", options: YES_NO_OPTIONS },
-          { name: "otc_herbal_supplements_specify", label: "Specify", type: "input", showIf: { field: "otc_herbal_supplements", equals: "yes" } },
-          { name: "medication_adherence_issues", label: "Medication adherence issues", type: "radio", options: YES_NO_OPTIONS },
-          { name: "medication_adherence_specify", label: "Specify", type: "input", showIf: { field: "medication_adherence_issues", equals: "yes" } },
-          { name: "recent_medication_changes", label: "Recent medication changes", type: "radio", options: YES_NO_OPTIONS },
-          { name: "recent_medication_changes_specify", label: "Specify", type: "input", showIf: { field: "recent_medication_changes", equals: "yes" } },
-          { name: "high_risk_meds", label: "High-risk meds", type: "checkbox-group", options: [
-            { label: "Insulin", value: "insulin" },
-            { label: "Anticoagulants", value: "anticoagulants" },
-            { label: "Opioids", value: "opioids" },
-            { label: "Sedatives", value: "sedatives" },
-            { label: "Steroids", value: "steroids" }
-          ]}
-        ]
-      },
-      {
+            {
         title: "Allergies & Alerts",
         fields: [
           { name: "drug_allergies", label: "Drug allergies", type: "radio", options: YES_NO_OPTIONS },
           { name: "drug_allergies_specify", label: "Specify", type: "input", showIf: { field: "drug_allergies", equals: "yes" } },
           { name: "food_allergies", label: "Food allergies", type: "radio", options: YES_NO_OPTIONS },
           { name: "food_allergies_specify", label: "Specify", type: "input", showIf: { field: "food_allergies", equals: "yes" } },
-          { name: "latex_allergy", label: "Latex allergy", type: "radio", options: YES_NO_OPTIONS },
+          { name: "latex_allergy", label: "Other allergy", type: "radio", options: YES_NO_OPTIONS },
           { name: "latex_allergy_specify", label: "Specify", type: "input", showIf: { field: "latex_allergy", equals: "yes" } },
           { name: "environmental_allergies", label: "Environmental allergies", type: "radio", options: YES_NO_OPTIONS },
           { name: "environmental_allergies_specify", label: "Specify", type: "input", showIf: { field: "environmental_allergies", equals: "yes" } },
@@ -572,73 +674,307 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         ]
       },
       {
-        title: "Psychosocial & Emotional Status",
+        title: "Pain Assessment",
         fields: [
-          { name: "mood_emotional_status", label: "Mood/emotional status", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Abnormal", value: "abnormal" }] },
-          { name: "anxiety_stress_depression", label: "Anxiety/stress/depression symptoms", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "restlessness_pacing", label: "Restlessness/pacing", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "family_social_support", label: "Family/social support available", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "aggression", label: "Aggression (verbal/physical)", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "hallucinations_delusions", label: "Hallucinations/delusions reported", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "suicidal_ideation", label: "Suicidal ideation/self-harm thoughts", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "psychiatric_diagnosis_history", label: "Current psychiatric diagnosis/history", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "psychiatric_diagnosis_specify", label: "Specify", type: "textarea", showIf: { field: "psychiatric_diagnosis_history", equals: "yes" } },
-          { name: "medications_for_behavior", label: "Medications for Behavior", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "psychosocial_specify", label: "Specify", type: "textarea" }
+          { name: "pain_present", label: "Pain present", type: "radio", options: YES_NO_OPTIONS },
+          { type: "subheading", label: "Full pain panel (OPQRST)", showIf: { field: "pain_present", equals: "yes" } },
+          { type: "row", fields: [
+            { name: "pain_onset", label: "O — Onset", type: "date" },
+            {
+              type: "subheading",
+              label: "P — Provocation/Palliation",
+              showIf: {
+                field: "pain_present",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "pain_provocation",
+              label: "Provocation",
+              type: "input",
+              showIf: {
+                field: "pain_present",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "pain_palliation",
+              label: "Palliation",
+              type: "input",
+              showIf: {
+                field: "pain_present",
+                equals: "yes"
+              }
+            }
+          ], showIf: { field: "pain_present", equals: "yes" } },
+          { name: "pain_provocation_relieved_by", label: "Specify relieved by", type: "input", showIf: { field: "pain_provocation", equals: "relieved_by" } },
+          { type: "row", fields: [
+            { name: "pain_quality", label: "Q — Quality", type: "input" },
+            { name: "pain_region", label: "R — Region/Radiation", type: "input" }
+          ], showIf: { field: "pain_present", equals: "yes" } },
+          { type: "row", fields: [
+            { name: "pain_severity_at_rest", label: "S — Severity At rest (0–10)", type: "single-select", options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) },
+            { name: "pain_severity_with_movement", label: "S — Severity With movement (0–10)", type: "single-select", options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) }
+          ], showIf: { field: "pain_present", equals: "yes" }},
+          { name: "pain_assessment_form", label: "", type: "assessment-launcher", options: [{ label: "Numeric Rating Scale", value: "numeric_pain_rating_scale" }], showIf: { field: "pain_present", equals: "yes" } },
+          { name: "pain_timing", label: "T — Timing", type: "input", showIf: { field: "pain_present", equals: "yes" } },
+         {
+            name: "pain_type",
+            label: "Pain Type",
+            type: "checkbox-group",
+            options: [
+              { label: "Burning", value: "burning" },
+              { label: "Tingling", value: "tingling" },
+              { label: "Numbness", value: "numbness" },
+              { label: "Sharp", value: "sharp" },
+              { label: "Cramping", value: "cramping" },
+              { label: "Others", value: "others" }
+            ],
+            showIf: {
+              field: "pain_present",
+              equals: "yes"
+            }
+          },
+
+          {
+            type: "input",
+            name: "pain_type_other",
+            label: "Specify",
+            showIf: {
+              field: "pain_type",
+              includes: "others"
+            }
+          },
+          
+          { name: "pain_at_rest_night", label: "Pain at Rest/ Night Pain", type: "radio", options: YES_NO_OPTIONS, showIf: { field: "pain_present", equals: "yes" } },
+          { name: "pain_free_text", label: "Specify", type: "textarea", showIf: { field: "pain_present", equals: "yes" } }
         ]
       },
+                // ---------------- EMOTIONAL STATUS ----------------
       {
-        title: "Bowel and Bladder",
+        title: "Emotional Status",
         fields: [
-          { name: "bowel_pattern", label: "Bowel pattern", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Abnormal", value: "abnormal" }] },
-          { name: "bladder_pattern", label: "Bladder pattern", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Abnormal", value: "abnormal" }] },
-          { name: "incontinence_present", label: "Incontinence present", type: "radio", options: YES_NO_OPTIONS },
-          { name: "bowel_bladder_specify", label: "Specify", type: "textarea" }
+          {
+            name: "mood_status",
+            label: "Mood Status",
+            type: "radio",
+            options: [
+              { label: "Euthymic", value: "euthymic" },
+              { label: "Depressed", value: "depressed" },
+              { label: "Anxious", value: "anxious" },
+              { label: "Irritable", value: "irritable" },
+              { label: "Other", value: "other" }
+            ]
+          },
+
+          {
+            name: "mood_status_other",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "mood_status",
+              equals: "other"
+            }
+          },
+
+          {
+            name: "emotional_status",
+            label: "Emotional Status",
+            type: "radio",
+            options: [
+              { label: "Good", value: "good" },
+              { label: "Mild emotional distress", value: "mild_distress" },
+              { label: "Moderate emotional distress", value: "moderate_distress" },
+              { label: "Severe emotional distress", value: "severe_distress" }
+            ]
+          },
+
+          // ---------------- CONDITIONAL QUESTIONS ----------------
+
+          {
+            type: "subheading",
+            label: "Mental Health Screening",
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "anxiety_stress_depression",
+            label: "Anxiety/stress/depression symptoms",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "restlessness_pacing",
+            label: "Restlessness/pacing",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "aggression",
+            label: "Aggression (verbal/physical)",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "hallucinations_delusions",
+            label: "Hallucinations/delusions reported",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "suicidal_ideation",
+            label: "Suicidal ideation/self-harm thoughts",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "psychiatric_diagnosis_history",
+            label: "Current psychiatric diagnosis/history",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "psychiatric_diagnosis_specify",
+            label: "Specify",
+            type: "textarea",
+            showIf: {
+              field: "psychiatric_diagnosis_history",
+              equals: "yes"
+            }
+          },
         ]
       },
       {
         title: "Nutrition & Hydration",
         fields: [
           { name: "appetite_level", label: "Appetite level", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Poor", value: "poor" }, { label: "Increased", value: "increased" }] },
-          { name: "dietary_intake_adequate", label: "Dietary intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
+          { name: "dietary_intake_adequate", label: "Food intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
           { name: "swallowing_difficulty", label: "Swallowing difficulty", type: "radio-matrix", options: YES_NO_OPTIONS },
           { name: "daily_fluid_intake_adequate", label: "Daily fluid intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
           { name: "significant_weight_change", label: "Significant weight change in past year", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "weight_change_specify", label: "Specify", type: "textarea", showIf: { field: "significant_weight_change", equals: "yes" } },
+          // { name: "weight_change_specify", label: "Specify", type: "textarea", showIf: { field: "significant_weight_change", equals: "yes" } },
           { name: "nutrition_hydration_specify", label: "Specify", type: "textarea" }
         ]
       },
-      {
-        title: "Safety & Comfort Concerns",
-        fields: [
-          { name: "history_of_falls", label: "History of falls/near-falls", type: "radio", options: YES_NO_OPTIONS },
-          { name: "morse_fall_scale_launcher", label: "", type: "assessment-launcher", options: [{ label: "Morse Fall Scale", value: "morse_fall_scale" }], showIf: { field: "history_of_falls", equals: "yes" } },
-          { name: "dizziness_balance_issues", label: "Dizziness/balance issues", type: "radio", options: YES_NO_OPTIONS },
-          { type: "subheading", label: "Orthostatic vitals", showIf: { field: "dizziness_balance_issues", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "ortho_supine_bp", label: "Supine: BP", type: "input" },
-            { name: "ortho_supine_hr", label: "Supine: HR", type: "input" }
-          ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "ortho_sitting_bp", label: "Sitting: BP", type: "input" },
-            { name: "ortho_sitting_hr", label: "Sitting: HR", type: "input" }
-          ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "ortho_stand1_bp", label: "Standing (1 min): BP", type: "input" },
-            { name: "ortho_stand1_hr", label: "Standing (1 min): HR", type: "input" }
-          ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
-          { type: "row", fields: [
-            { name: "ortho_stand3_bp", label: "Standing (3 min): BP", type: "input" },
-            { name: "ortho_stand3_hr", label: "Standing (3 min): HR", type: "input" }
-          ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
-          { name: "pain_with_movement", label: "Pain with movement/positioning", type: "radio", options: YES_NO_OPTIONS },
-          { name: "fear_hesitation_mobility", label: "Fear/hesitation with mobility", type: "radio", options: YES_NO_OPTIONS },
-          { name: "safety_comfort_specify", label: "Specify", type: "textarea" }
-        ]
-      },
-      {
+            {
         title: "Cardiorespiratory & Autonomic Symptoms",
         fields: [
+          {
+            name: "activity_tolerance",
+            label: "Activity Tolerance",
+            type: "radio",
+            options: [
+              { label: "Full", value: "full" },
+              { label: "Mild limitation", value: "mild_limitation" },
+              { label: "Moderate limitation", value: "moderate_limitation" },
+              { label: "Severe", value: "severe" },
+              { label: "Unable", value: "unable" }
+            ]
+          },
+
+          {
+            name: "adl_performance",
+            label: "ADL Performance",
+            type: "radio",
+            options: [
+              { label: "Independent", value: "independent" },
+              { label: "Pacing required", value: "pacing_required" },
+              { label: "Rest breaks", value: "rest_breaks" },
+              { label: "Assistance needed", value: "assistance_needed" },
+              { label: "Dependent", value: "dependent" }
+            ]
+          },
           { name: "chest_pain", label: "Chest pain", type: "radio", options: YES_NO_OPTIONS },
           { name: "dyspnea", label: "Dyspnea at rest/exertion", type: "radio", options: YES_NO_OPTIONS },
           { name: "palpitations", label: "Palpitations", type: "radio", options: YES_NO_OPTIONS },
@@ -655,6 +991,306 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           { name: "cardiorespiratory_specify", label: "Specify", type: "textarea" }
         ]
       },
+            {
+        title: "Bowel and Bladder",
+        fields: [
+
+          {
+            name: "bowel_pattern",
+            label: "Bowel pattern",
+            type: "radio",
+            options: [
+              { label: "Continence", value: "continence" },
+              { label: "Incontinence", value: "incontinence" }
+            ]
+          },
+
+          {
+            type: "assessment-launcher",
+            name: "bowel_assessment_inline",
+            autoOpen: true,
+            hideRemarks: true,
+            showIf: {
+              field: "bowel_pattern",
+              equals: "incontinence"
+            },
+            options: [
+              {
+                label: "Bowel Assessment",
+                value: "bowel_assessment"
+              }
+            ]
+          },
+
+          {
+            name: "bladder_pattern",
+            label: "Bladder pattern",
+            type: "radio",
+            options: [
+              { label: "Continence", value: "continence" },
+              { label: "Incontinence", value: "incontinence" }
+            ]
+          },
+
+          {
+            type: "assessment-launcher",
+            name: "bladder_assessment_inline",
+            autoOpen: true,
+            hideRemarks: true,
+            showIf: {
+              field: "bladder_pattern",
+              equals: "incontinence"
+            },
+            options: [
+              {
+                label: "Bladder Issue",
+                value: "bladder_issue"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        title: "Functional Status",
+        fields: [
+              {
+                name: "difficulty_mobility_transfers",
+                label: "Difficulty with mobility/transfers",
+                type: "radio",
+                options: YES_NO_OPTIONS
+              },
+
+              {
+                type: "row",
+                fields: [
+                  {
+                    name: "mobility_short_distance",
+                    label: "Short Distance",
+                    type: "input"
+                  },
+                  {
+                    name: "mobility_long_distance",
+                    label: "Long Distance",
+                    type: "input"
+                  }
+                ],
+                showIf: {
+                  field: "difficulty_mobility_transfers",
+                  equals: "yes"
+                }
+              },     
+               {
+              name: "history_of_falls",
+              label: "History of falls/near-falls",
+              type: "radio",
+              options: YES_NO_OPTIONS
+            },
+
+            {
+              type: "subheading",
+              label: "History of Fall (Within 3 Months)",
+              showIf: {
+                field: "history_of_falls",
+                equals: "yes"
+              }
+            },
+
+            {
+              type: "row",
+              cols: 3,
+              fields: [
+                {
+                  name: "last_fall",
+                  label: "Last Fall",
+                  type: "input"
+                },
+                {
+                  name: "mechanism_of_fall",
+                  label: "Mechanism of Fall",
+                  type: "input"
+                },
+                {
+                  name: "fall_impact",
+                  label: "Fall Impact",
+                  type: "input"
+                }
+              ],
+              showIf: {
+                field: "history_of_falls",
+                equals: "yes"
+              }
+            },   
+            {
+              name: "adl_limitations",
+              label: "ADL limitations",
+              type: "radio",
+              options: YES_NO_OPTIONS
+            },
+
+            {
+              name: "time_same_position",
+              label: "Time in same position",
+              type: "radio",
+              options: [
+                { label: "< 2 hours", value: "lt_2_hours" },
+                { label: "≥ 2 hours", value: "gte_2_hours" }
+              ],
+              showIf: {
+                field: "adl_limitations",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "pressure_areas",
+              label: "Pressure areas (sacrum, coccyx, heels, elbows)",
+              type: "radio",
+              options: [
+                { label: "Intact", value: "intact" },
+                { label: "Reddened", value: "reddened" },
+                { label: "Breakdown", value: "breakdown" }
+              ],
+              showIf: {
+                field: "adl_limitations",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "pressure_areas_stage",
+              label: "Stage",
+              type: "input",
+              showIf: {
+                field: "pressure_areas",
+                equals: "breakdown"
+              }
+            },
+
+            {
+              name: "skin_moisture",
+              label: "Skin moisture",
+              type: "radio",
+              options: [
+                { label: "Dry", value: "dry" },
+                { label: "Occasionally moist", value: "occasionally_moist" },
+                { label: "Frequently moist", value: "frequently_moist" },
+                { label: "Constantly moist", value: "constantly_moist" }
+              ],
+              showIf: {
+                field: "adl_limitations",
+                equals: "yes"
+              }
+            },
+            {
+              name: "functional_status_other",
+              label: "Others",
+              type: "radio",
+              options: YES_NO_OPTIONS
+            },
+
+            {
+              name: "sleep_pattern",
+              label: "Sleep pattern",
+              type: "radio",
+              options: [
+                { label: "Normal", value: "normal" },
+                { label: "Disturbed", value: "disturbed" }
+              ],
+              showIf: {
+                field: "functional_status_other",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "appetite_functional",
+              label: "Appetite",
+              type: "radio",
+              options: [
+                { label: "Normal", value: "normal" },
+                { label: "Decreased", value: "decreased" },
+                { label: "Increased", value: "increased" }
+              ],
+              showIf: {
+                field: "functional_status_other",
+                equals: "yes"
+              }
+            },
+
+            {
+              name: "fatigue_reduced_endurance",
+              label: "Fatigue/reduced endurance",
+              type: "radio",
+              options: YES_NO_OPTIONS,
+              showIf: {
+                field: "functional_status_other",
+                equals: "yes"
+              }
+            },
+          { name: "functional_status_specify", label: "Specify", type: "textarea" }
+        ]
+      },
+            {
+        title: "Safety & Comfort Concerns",
+        fields: [
+          { name: "morse_fall_scale_launcher", label: "", type: "assessment-launcher", options: [{ label: "Morse Fall Scale", value: "morse_fall_scale" }], showIf: { field: "history_of_falls", equals: "yes" } },
+          {
+            name: "dizziness_balance_issues",
+            label: "Dizziness/balance issues",
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+
+          {
+            name: "dizziness_type",
+            label: "",
+            type: "radio",
+            options: [
+              { label: "Continuous", value: "continuous" },
+              { label: "Upon change of postures", value: "change_of_postures" },
+              { label: "Others", value: "others" }
+            ],
+            showIf: {
+              field: "dizziness_balance_issues",
+              equals: "yes"
+            }
+          },
+
+          {
+            name: "dizziness_type_other",
+            label: "Others",
+            type: "input",
+            showIf: {
+              field: "dizziness_balance_issues",
+              equals: "yes",
+              and: {
+                field: "dizziness_type",
+                equals: "others"
+              }
+            }
+          },
+          // { type: "subheading", label: "Orthostatic vitals", showIf: { field: "dizziness_balance_issues", equals: "yes" } },
+          // { type: "row", fields: [
+          //   { name: "ortho_supine_bp", label: "Supine: BP", type: "input" },
+          //   { name: "ortho_supine_hr", label: "Supine: HR", type: "input" }
+          // ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
+          // { type: "row", fields: [
+          //   { name: "ortho_sitting_bp", label: "Sitting: BP", type: "input" },
+          //   { name: "ortho_sitting_hr", label: "Sitting: HR", type: "input" }
+          // ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
+          // { type: "row", fields: [
+          //   { name: "ortho_stand1_bp", label: "Standing (1 min): BP", type: "input" },
+          //   { name: "ortho_stand1_hr", label: "Standing (1 min): HR", type: "input" }
+          // ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
+          // { type: "row", fields: [
+          //   { name: "ortho_stand3_bp", label: "Standing (3 min): BP", type: "input" },
+          //   { name: "ortho_stand3_hr", label: "Standing (3 min): HR", type: "input" }
+          // ], showIf: { field: "dizziness_balance_issues", equals: "yes" } },
+          { name: "pain_with_movement", label: "Pain with movement/positioning", type: "radio", options: YES_NO_OPTIONS },
+          { name: "fear_hesitation_mobility", label: "Fear/hesitation with mobility", type: "radio", options: YES_NO_OPTIONS },
+          { name: "safety_comfort_specify", label: "Specify", type: "textarea" }
+        ]
+      },
       {
         title: "Infection Risk & Exposure Screening",
         fields: [
@@ -666,6 +1302,25 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           { name: "mrsa_vre_mdro_specify", label: "Specify", type: "input", showIf: { field: "mrsa_vre_mdro_history", equals: "yes" } },
           { name: "recent_international_travel", label: "Recent international travel", type: "radio", options: YES_NO_OPTIONS },
           { name: "recent_travel_specify", label: "Specify", type: "input", showIf: { field: "recent_international_travel", equals: "yes" } }
+        ]
+      },
+            {
+        title: "Psychosocial",
+        fields: [
+          // ---------------- PSYCHOSOCIAL ----------------
+          {
+            name: "family_social_support",
+            label: "Family/social support available",
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+        ]
+      },
+      {
+        title: "Medication Reconciliation",
+        fields: [
+          { name: "recent_medication_changes", label: "Recent medication changes", type: "radio", options: YES_NO_OPTIONS },
+          { name: "recent_medication_changes_specify", label: "Specify", type: "input", showIf: { field: "recent_medication_changes", equals: "yes" } },
         ]
       },
       {
@@ -681,7 +1336,49 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             { label: "None", value: "none" }
           ]}
         ]
-      }
+      },
+      {
+        title: "Endocrine / Metabolic",
+        fields: [
+          {
+            name: "hypoglycemia_symptoms",
+            label: "Hypoglycemia symptoms",
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+
+          {
+            name: "hyperglycemia_symptoms",
+            label: "Hyperglycemia symptoms",
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+
+          {
+            name: "steroid_therapy",
+            label: "Steroid therapy",
+            type: "radio",
+            options: YES_NO_OPTIONS
+          }
+        ]
+      },
+      {
+        title: "Spasticity / Spasm",
+        fields: [
+          {
+            type: "assessment-launcher",
+            name: "spasticity_inline",
+            autoOpen: true,
+            hideRemarks: true,
+            options: [
+              {
+                label: "Spasticity Assessment",
+                value: "spasticity_assessment"
+              }
+            ]
+          },
+        ]
+      },
     ]
   };
 
@@ -700,6 +1397,62 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             { name: "obj_bp", label: "Blood Pressure (mmHg)", type: "input", placeholder: "e.g. 120/80" },
             { name: "obj_spo2", label: "Oxygen Saturation (SpO₂) (%)", type: "input", placeholder: "%" }
           ]},
+          {
+            name: "objective_pain_assessment_form",
+            label: "",
+            type: "assessment-launcher",
+            options: [
+              {
+                label: "Numeric Rating Scale",
+                value: "numeric_pain_rating_scale"
+              }
+            ]
+          },
+          {
+              name: "wound_location_pins", label: "Mark Wound Location on Body Diagram",
+              type: "wound-location-marker",
+              views: [
+                { key: "body",  label: "Body (Front/Back)", src: "/body_high.png" },
+                { key: "feet",  label: "Feet",             src: "/feet_high.png" },
+                { key: "handsfeet", label: "Hands",              src: "/hands_high.png" }
+              ],
+            showIf: { 
+              field: "show_motor_pain_assessment", 
+              equals: true
+            },
+          },
+          {
+          name: "wound_location_notes",
+          label: "Wound Location Notes",
+          type: "textarea",
+          placeholder: "Enter wound location details...",
+          showIf: {
+            field: "show_motor_pain_assessment",
+            equals: true
+          }
+        },
+          // {
+          //   name: "motor_pain_assessment",
+          //   label: "",
+          //   type: "assessment-launcher",
+          //   autoOpen: true,
+          //   options: [{ label: "Pain Assessment", value: "pain_assessment" }],
+          //   showIf: { 
+          //     field: "show_motor_pain_assessment", 
+          //     equals: true
+          //   },
+          // },
+          {
+            type: "subheading",
+            label: "Glucose Monitoring"
+          },
+
+          {
+            name: "glucose_monitoring",
+            label: "",
+            type: "input",
+            placeholder: "To include CGM report if present"
+          },
           {
             name: "cardiac_assessment_launcher",
             label: "",
@@ -1159,6 +1912,15 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
           },
           { type: "subheading", label: "Abdomen / Gastrointestinal System" },
           {
+            type: "assessment-launcher",
+            name: "gi_bowel_assessments_launcher",
+            label: "Related Assessments",
+            options: [
+              { label: "Bladder Diary", value: "bladder_diary" },
+              { label: "Bristol Chart", value: "bristol_chart" }
+            ]
+          },
+          {
             name: "gi_inspection",
             label: "Inspection",
             type: "radio",
@@ -1381,43 +2143,43 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             showIf: { field: "gu_bladder_function", equals: "full_dependent" }
           },
 
-          { type: "subheading", label: "Endocrine / Metabolic" },
-          {
-            name: "endo_diabetes",
-            label: "Diabetes",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Type 1", value: "type1" },
-              { label: "Type 2", value: "type2" },
-              { label: "Gestational", value: "gestational" }
-            ]
-          },
-          {
-            name: "endo_hypoglycemia_symptoms",
-            label: "Hypoglycemia symptoms",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_hyperglycemia_symptoms",
-            label: "Hyperglycemia symptoms",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_steroid_therapy",
-            label: "Steroid therapy",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_hba1c",
-            label: "HbA1c (if available)",
-            type: "input"
-          },
+          // { type: "subheading", label: "Endocrine / Metabolic" },
+          // {
+          //   name: "endo_diabetes",
+          //   label: "Diabetes",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Type 1", value: "type1" },
+          //     { label: "Type 2", value: "type2" },
+          //     { label: "Gestational", value: "gestational" }
+          //   ]
+          // },
+          // {
+          //   name: "endo_hypoglycemia_symptoms",
+          //   label: "Hypoglycemia symptoms",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_hyperglycemia_symptoms",
+          //   label: "Hyperglycemia symptoms",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_steroid_therapy",
+          //   label: "Steroid therapy",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_hba1c",
+          //   label: "HbA1c (if available)",
+          //   type: "input"
+          // },
 
-          { type: "subheading", label: "Nutrition / Tissue Perfusion Risk" },
+          { type: "subheading", label: "Nutrition & Hydration" },
           {
             name: "nut_oral_intake",
             label: "Oral intake",
@@ -1464,6 +2226,55 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "",
+            showIf: { field: "nut_swallow_difficulty", equals: "yes" }
+          },
+          {
+            name: "swallow_assessment_launcher",
+            label: "",
+            type: "assessment-launcher",
+            options: [
+              { label: "Swallow Screener", value: "swallow_screener" },
+              { label: "Water Swallow Test", value: "water_swallow_test" }
+            ],
+            showIf: { field: "nut_swallow_difficulty", equals: "yes" }
+          },
+
+          // Replace the conditional block with this (for testing):
+
+          { type: "subheading", label: "Safety & Comfort Concerns" },
+          { type: "subheading", label: "Orthostatic vitals" },
+
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_supine_bp", label: "Supine: BP", type: "input" },
+              { name: "ortho_supine_hr", label: "Supine: HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_sitting_bp", label: "Sitting: BP", type: "input" },
+              { name: "ortho_sitting_hr", label: "Sitting: HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_stand1_bp", label: "Standing (1 min): BP", type: "input" },
+              { name: "ortho_stand1_hr", label: "Standing (1 min): HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_stand3_bp", label: "Standing (3 min): BP", type: "input" },
+              { name: "ortho_stand3_hr", label: "Standing (3 min): HR", type: "input" }
             ]
           },
 
@@ -1609,84 +2420,6 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "Fissures", value: "fissures" }
             ]
           },
-
-          { type: "subheading", label: "Wounds / Pressure Injury" },
-          {
-            name: "pi_ulcer_wound_present",
-            label: "Ulcer / wound present",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "pi_braden_scale",
-            label: "",
-            type: "assessment-launcher",
-            options: [{ label: "Braden Scale", value: "braden_scale" }],
-            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
-          },
-          {
-            name: "pi_wound_assessment",
-            label: "Wound Assessment (WATFS)",
-            type: "wound-assessment-inline",
-            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
-          },
-          {
-            name: "pi_drainage",
-            label: "Drainage",
-            type: "radio",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Serous", value: "serous" },
-              { label: "Purulent", value: "purulent" },
-              { label: "Bloody", value: "bloody" }
-            ]
-          },
-          {
-            name: "pi_dressing_status",
-            label: "Dressing status",
-            type: "radio",
-            options: [
-              { label: "Clean/dry/intact", value: "clean_dry_intact" },
-              { label: "Soiled", value: "soiled" },
-              { label: "Loose", value: "loose" }
-            ]
-          },
-
-          { type: "subheading", label: "Mobility / Activity" },
-          {
-            name: "pi_position_tolerance",
-            label: "Current position tolerance",
-            type: "radio",
-            labelAbove: true,
-            options: [
-              { label: "Independent repositioning", value: "independent_repositioning" },
-              { label: "Requires assistance to reposition", value: "requires_assistance" },
-              { label: "Bedbound / Chairbound", value: "bedbound_chairbound" }
-            ]
-          },
-          {
-            name: "pi_transfers",
-            label: "Transfers",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "One assist", value: "one_assist" },
-              { label: "Two assist / mechanical lift", value: "two_assist_mech_lift" }
-            ]
-          },
-          {
-            name: "pi_ambulation",
-            label: "Ambulation",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "With assistive device", value: "assistive_device" },
-              { label: "Unable to ambulate", value: "unable" }
-            ]
-          },
           {
             name: "pi_time_same_position",
             label: "Time in same position",
@@ -1753,8 +2486,265 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
               { label: "Yes", value: "yes" }
             ]
           },
+          { type: "subheading", label: "Wounds / Pressure Injury" },
+          {
+            name: "pi_ulcer_wound_present",
+            label: "Ulcer / wound present",
+            type: "radio",
+            options: [
+              { label: "No", value: "no" },
+              { label: "Yes", value: "yes" }
+            ]
+          },
+          {
+            name: "pi_braden_scale",
+            label: "",
+            type: "assessment-launcher",
+            options: [{ label: "Braden Scale", value: "braden_scale" }],
+            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
+          },
+          {
+            name: "pi_wound_assessment",
+            label: "Wound Assessment (WATFS)",
+            type: "assessment-launcher",
+            autoOpen: false,
+            hideRemarks: true,
+            showIf: {
+              field: "pi_ulcer_wound_present",
+              equals: "yes"
+            },
+            options: [
+              {
+                label: "Wound Assessment (WATFS)",
+                value: "wound_assessment"
+              }
+            ]
+          },
+          {
+            name: "pi_drainage",
+            label: "Drainage",
+            type: "radio",
+            options: [
+              { label: "None", value: "none" },
+              { label: "Serous", value: "serous" },
+              { label: "Purulent", value: "purulent" },
+              { label: "Bloody", value: "bloody" }
+            ]
+          },
+          {
+            name: "pi_dressing_status",
+            label: "Dressing status",
+            type: "radio",
+            options: [
+              { label: "Clean/dry/intact", value: "clean_dry_intact" },
+              { label: "Soiled", value: "soiled" },
+              { label: "Loose", value: "loose" }
+            ]
+          },
 
-          { type: "subheading", label: "Behavioral / Mental Status Observation" },
+          { type: "subheading", label: "Functional Status" },
+          {
+            name: "pi_position_tolerance",
+            label: "Current position tolerance",
+            type: "radio",
+            labelAbove: true,
+            options: [
+              { label: "Independent repositioning", value: "independent_repositioning" },
+              { label: "Requires assistance to reposition", value: "requires_assistance" },
+              { label: "Bedbound / Chairbound", value: "bedbound_chairbound" }
+            ]
+          },
+          {
+            name: "pi_transfers",
+            label: "Transfers",
+            type: "radio",
+            options: [
+              { label: "Independent", value: "independent" },
+              { label: "One assist", value: "one_assist" },
+              { label: "Two assist / mechanical lift", value: "two_assist_mech_lift" }
+            ]
+          },
+
+
+    // ---------------- WALKING AID ----------------
+
+    {
+      type: "subheading",
+      label: "Mobility Aid"
+    },
+
+    {
+      name: "walking_aid_type",
+      label: "Walking Aid Type",
+      type: "radio",
+      options: [
+        { label: "Walking stick/cane", value: "walking_stick" },
+        { label: "Elbow crutches (single/bilateral)", value: "elbow_crutches" },
+        { label: "Axillary crutches (single/bilateral)", value: "axillary_crutches" },
+        { label: "Platform crutches (single/bilateral)", value: "platform_crutches" },
+        { label: "Quadripod", value: "quadripod" },
+        { label: "Walking Frame", value: "walking_frame" },
+        { label: "Wheeled Walker", value: "wheeled_walker" },
+        { label: "Rollator / Reverse Rollator", value: "rollator" }
+      ]
+    },
+
+        {
+          name: "walking_aid_assistance",
+          label: "Assistance Level",
+          type: "radio",
+          options: [
+            { label: "Independent", value: "independent" },
+            { label: "Minimal Assistance", value: "minimal_assistance" },
+            { label: "Moderate Assistance", value: "moderate_assistance" },
+            { label: "Maximum Assistance", value: "maximum_assistance" },
+            { label: "Total Dependent", value: "total_dependent" }
+          ]
+        },
+
+        {
+          name: "walking_aid_distance",
+          label: "Distance",
+          type: "radio",
+          options: [
+            { label: "Short Distance", value: "short_distance" },
+            { label: "Long Distance", value: "long_distance" }
+          ]
+        },
+      
+
+    // ---------------- WHEELCHAIR ----------------
+
+    // {
+    //   type: "subheading",
+    //   label: "Wheelchair"
+    // },
+
+    {
+      name: "wheelchair_type",
+      label: "Wheelchair Type",
+      type: "radio",
+      options: [
+        { label: "Manual Wheelchair", value: "manual_wheelchair" },
+        { label: "Electrical Wheelchair", value: "electrical_wheelchair" }
+      ]
+    },
+
+   
+        {
+          name: "wheelchair_assistance",
+          label: "Assistance Level",
+          type: "radio",
+          options: [
+            { label: "Independent", value: "independent" },
+            { label: "Minimal Assistance", value: "minimal_assistance" },
+            { label: "Moderate Assistance", value: "moderate_assistance" },
+            { label: "Maximum Assistance", value: "maximum_assistance" },
+            { label: "Total Dependent", value: "total_dependent" }
+          ]
+        },
+
+        {
+          name: "wheelchair_distance",
+          label: "Distance",
+          type: "radio",
+          options: [
+            { label: "Short Distance", value: "short_distance" },
+            { label: "Long Distance", value: "long_distance" }
+          ]
+        },
+     
+
+    // ---------------- OTHERS ----------------
+
+    {
+      type: "subheading",
+      label: "Others"
+    },
+
+    {
+      name: "mobility_aid_other",
+      label: "Specify",
+      type: "textarea"
+    },
+          // {
+          //   name: "pi_ambulation",
+          //   label: "Ambulation",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Independent", value: "independent" },
+          //     { label: "With assistive device", value: "assistive_device" },
+          //     { label: "Unable to ambulate", value: "unable" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_time_same_position",
+          //   label: "Time in same position",
+          //   type: "radio",
+          //   options: [
+          //     { label: "<2 hours", value: "lt_2h" },
+          //     { label: "≥2 hours", value: "gte_2h" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_pressure_areas",
+          //   label: "Pressure areas (sacrum, coccyx, heels, elbows)",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Intact", value: "intact" },
+          //     { label: "Reddened", value: "reddened" },
+          //     { label: "Breakdown (stage ___)", value: "breakdown" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_breakdown_stage",
+          //   label: "Breakdown stage",
+          //   type: "input",
+          //   placeholder: "Stage",
+          //   showIf: { field: "pi_pressure_areas", equals: "breakdown" }
+          // },
+          // {
+          //   name: "pi_skin_moisture",
+          //   label: "Skin moisture",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Dry", value: "dry" },
+          //     { label: "Occasionally moist", value: "occasionally_moist" },
+          //     { label: "Frequently moist", value: "frequently_moist" },
+          //     { label: "Constantly moist", value: "constantly_moist" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_incontinence_type",
+          //   label: "Incontinence",
+          //   type: "radio",
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "Urinary", value: "urinary" },
+          //     { label: "Fecal", value: "fecal" },
+          //     { label: "Dual", value: "dual" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_perspiration",
+          //   label: "Perspiration / diaphoresis",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_devices_moisture",
+          //   label: "Devices causing moisture (diapers, catheters, drains)",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+
+          { type: "subheading", label: "Psychosocial  & Emotional Status" },
           {
             name: "beh_appearance",
             label: "Appearance",
@@ -2083,38 +3073,38 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   };
 
   const NURSING_PATIENT_INFO_SCHEMA = {
-    title: "Patient Information",
+    // title: "Patient Information",
     sections: [
       {
         fields: [
-          { type: "row", fields: [
-            { name: "patient_name", label: "Name", type: "input", readOnly: true },
-            { name: "patient_ic", label: "IC", type: "input", readOnly: true },
-            { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
-            { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
-          ]},
-          { type: "subheading", label: "Diagnosis" },
-          { type: "row", fields: [
-            { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
-            { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
-          ]},
-          { type: "subheading", label: "Allergies" },
-          { name: "allergy_drug", label: "Drug", type: "input" },
-          { name: "allergy_food", label: "Food", type: "input" },
-          { name: "allergy_environmental", label: "Environmental", type: "input" },
-          { type: "subheading", label: "General Information" },
-          { type: "row", fields: [
-            { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
-            { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
-          ]},
-          { type: "row", fields: [
-            { name: "occupation", label: "Occupation", type: "input", readOnly: true },
-            { name: "education_background", label: "Education Background", type: "input", readOnly: true }
-          ]},
-          { type: "row", fields: [
-            { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
-            { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
-          ]},
+          // { type: "row", fields: [
+          //   { name: "patient_name", label: "Name", type: "input", readOnly: true },
+          //   { name: "patient_ic", label: "IC", type: "input", readOnly: true },
+          //   { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
+          //   { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
+          // ]},
+          // { type: "subheading", label: "Diagnosis" },
+          // { type: "row", fields: [
+          //   { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
+          //   { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
+          // ]},
+          // { type: "subheading", label: "Allergies" },
+          // { name: "allergy_drug", label: "Drug", type: "input" },
+          // { name: "allergy_food", label: "Food", type: "input" },
+          // { name: "allergy_environmental", label: "Environmental", type: "input" },
+          // { type: "subheading", label: "General Information" },
+          // { type: "row", fields: [
+          //   { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
+          //   { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
+          // ]},
+          // { type: "row", fields: [
+          //   { name: "occupation", label: "Occupation", type: "input", readOnly: true },
+          //   { name: "education_background", label: "Education Background", type: "input", readOnly: true }
+          // ]},
+          // { type: "row", fields: [
+          //   { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
+          //   { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
+          // ]},
           { type: "subheading", label: "Biological Status" },
           { name: "biological_status", type: "checkbox-group", options: [
             { label: "Comorbidities & Medical history", value: "comorbidities" },
@@ -2181,6 +3171,22 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
   return (
     <PatientContext.Provider value={patient}>
       <div style={mainContent}>
+        <CommonFormBuilder
+          schema={{ title: "Patient Information", sections: [] }}
+          values={{}}
+          onChange={() => {}}
+        >
+          <PatientInformationBlock
+            patient={patient}
+            patientHistory={patientHistory}
+            setPatientHistory={setPatientHistory}
+          />
+        
+          <button style={doctorsReportBtn}>
+            Doctors Reports
+          </button>
+        </CommonFormBuilder>
+
         {/* ===== PATIENT INFORMATION CARD ===== */}
         <CommonFormBuilder
           schema={NURSING_PATIENT_INFO_SCHEMA}
@@ -2290,4 +3296,27 @@ const doctorsReportBtn = {
   fontWeight: 600,
   cursor: "pointer",
   marginTop: 8
+};
+
+
+const textarea = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
 };

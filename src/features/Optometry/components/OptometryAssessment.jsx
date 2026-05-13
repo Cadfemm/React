@@ -1,6 +1,6 @@
 import {
   lazy, Suspense,
-  useEffect, useState, useCallback, useMemo,
+  useEffect, useState, useCallback, useMemo, useRef,
   createContext, useContext, memo
 } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
@@ -28,34 +28,242 @@ const LowVisionAssessment         = lazy(() => import("../LowVisionAssessment"))
 const AssessmentFallback = <ShimmerForm rows={6} />;
 
 // ── Context ────────────────────────────────────────────────────────────────
+// Carries patient + the questionaire FormData ID map + save helper
 const PatientContext = createContext(null);
 
+// Registry key → exact name as returned in assessment_ids from the backend
+const REGISTRY_KEY_TO_NAME = {
+  BINOCULAR_VISION:      "Binocular Vision",
+  REFRACTION:            "Refraction Assessment",
+  VISION_DRIVING:        "Vision for Driving",
+  OCULAR_HEALTH:         "Ocular Health / Structure",
+  SPECIAL_DIAGNOSTIC:    "Special Diagnostic",
+  LOW_VISION_ASSESSMENT: "Low Vision Assessment",
+  VISUAL_FUNCTION:       "Visual Function Questionnaire",
+  LVQOL:                 "Low Vision Quality of Life Questionnaire (LVQoL)",
+  BRAIN_VISION:          "Brain Injury Vision Symptoms Survey (BIVSS)",
+  BVDQ:                  "Binocular Vision Dysfunction Questionnaire (BVDQ)",
+  BV_QUESTIONNAIRE: "Binocular Vision Questionnaire",
+};
+
+const BV_QUESTIONNAIRE_SCHEMA = {
+  title: "Binocular Vision Questionnaire",
+
+  sections: [
+    {
+      fields: [
+        {
+          type: "subheading",
+          label: "Binocular Vision"
+        },
+
+        {
+          type: "radio",
+          name: "bv_onset",
+          label: "Onset",
+          options: [
+            { label: "Sudden", value: "sudden" },
+            { label: "Gradual", value: "gradual" }
+          ]
+        },
+
+        {
+          type: "radio",
+          name: "bv_frequency",
+          label: "Frequency",
+          options: [
+            { label: "Constant", value: "constant" },
+            { label: "Intermittent", value: "intermittent" },
+            { label: "Alternating", value: "alternating" }
+          ]
+        },
+
+        {
+          type: "radio",
+          name: "bv_was_he_been",
+          label: "Neurological disease",
+          options: [
+            { label: "Yes", value: "yes" },
+            { label: "No", value: "no" }
+          ]
+        },
+
+        {
+          type: "input",
+          name: "bv_was_he_been_specify",
+          label: "Neurological – specify",
+          showIf: {
+            field: "bv_was_he_been",
+            equals: "yes"
+          }
+        },
+
+        {
+          type: "row",
+          fields: [
+            {
+              type: "input",
+              name: "bv_type_of_birth",
+              label: "Type of Birth"
+            },
+            {
+              type: "input",
+              name: "bv_birth_term",
+              label: "Birth Term"
+            }
+          ]
+        },
+
+        {
+          type: "input",
+          name: "bv_previous_treatment",
+          label: "Previous Treatment"
+        },
+
+        {
+          type: "input",
+          name: "bv_subjective_Remarks",
+          label: "Remarks"
+        },
+
+        {
+          type: "multi-select-dropdown",
+          name: "bv_ocular_signs",
+          label: "Ocular Signs",
+          options: [
+            { label: "Squint / turn of eyes", value: "Squint" },
+            { label: "Defective eye movement", value: "Defective eye movement" },
+            { label: "Nystagmus (wobbling eyes)", value: "Nystagmus" },
+            { label: "Visual inattention / neglect", value: "Visual inattention" },
+            { label: "Closing one eye", value: "Closing one eye" },
+            { label: "Suspected visual problem", value: "Suspected visual problem" },
+            { label: "Ptosis (lid drop)", value: "Ptosis" },
+            { label: "Abnormal pupils", value: "Abnormal pupils" },
+            { label: "Head turn", value: "Head turn" },
+            { label: "Family concern", value: "Family concern" },
+            { label: "Misjudging distance", value: "Misjudging distance" },
+            { label: "Other (Specify)", value: "Other" }
+          ]
+        },
+
+        {
+          type: "input",
+          name: "bv_ocular_signs_other",
+          label: "Other – Specify",
+          showIf: {
+            field: "bv_ocular_signs",
+            includes: "Other"
+          }
+        }
+      ]
+    }
+  ]
+};
+const BVQuestionnaire = memo(function BVQuestionnaire({
+  values,
+  onChange,
+  onBack,
+  layout = "root"
+}) {
+  const [submitted, setSubmitted] = useState(false);
+
+  const onAction = useCallback((type) => {
+    if (type === "submit") setSubmitted(true);
+    if (type === "back") onBack?.();
+  }, [onBack]);
+
+  return (
+    <CommonFormBuilder
+      schema={BV_QUESTIONNAIRE_SCHEMA}
+      values={values}
+      onChange={onChange}
+      submitted={submitted}
+      onAction={onAction}
+      layout={layout}
+    />
+  );
+});
 // ── Adapter factory ────────────────────────────────────────────────────────
-// Sub-assessment components each have their own internal schema — no schema prop needed.
-function makeAdapter(Component, activeKey) {
-  const Adapter = memo(function Adapter({ onChange, layout }) {
-    const patient = useContext(PatientContext);
-    const handleBack = useCallback(() => { onChange(activeKey, null); }, [onChange]);
+// Each adapter: reads its FormData ID from context, loads existing data,
+// auto-saves on every field change (1 s debounce).
+function makeAdapter(Component, activeKey, registryKey) {
+  const Adapter = memo(function Adapter({ onChange: outerOnChange, layout }) {
+    const ctx = useContext(PatientContext);
+    const patient          = ctx?.patient   ?? ctx;   // backward-compat
+    const questionaireIds  = ctx?.questionaireIds ?? {};
+    const formDataId       = questionaireIds[registryKey] ?? null;
+
+    const [values,  setValues]  = useState({});
+    const [loading, setLoading] = useState(false);
+    const saveTimer = useRef(null);
+
+    // Load existing data when the sub-assessment opens
+    useEffect(() => {
+      if (!formDataId) return;
+      setLoading(true);
+      api.get(API_URL.ASSESSMENT + `data/${formDataId}/`)
+        .then(res => {
+          const existing = res.data?.data;
+          if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
+            setValues(existing);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }, [formDataId]);
+
+    const handleChange = useCallback((name, value) => {
+      setValues(v => {
+        const next = { ...v, [name]: value };
+        // Debounced PATCH
+        if (saveTimer.current) clearTimeout(saveTimer.current);
+        saveTimer.current = setTimeout(() => {
+          if (formDataId) {
+            api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
+              .catch(() => {});
+          }
+        }, 1000);
+        return next;
+      });
+    }, [formDataId]);
+
+    const handleBack = useCallback(() => {
+      outerOnChange(activeKey, null);
+    }, [outerOnChange]);
+
+    if (loading) return <ShimmerForm rows={5} />;
+
     return (
       <Suspense fallback={AssessmentFallback}>
-        <Component patient={patient} onBack={handleBack} layout={layout} />
+        <Component
+          patient={patient}
+          values={values}
+          onChange={handleChange}
+          onBack={handleBack}
+          layout={layout}
+        />
       </Suspense>
     );
   });
   return Adapter;
 }
 
-const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active");
-const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active");
-const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active");
-const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active");
-const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active");
-const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active");
-const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active");
-const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active");
-const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active");
-const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active");
-
+const BinocularVisionAdapter    = makeAdapter(BinocularVisionAssessment,  "optometry_assessments_active", "BINOCULAR_VISION");
+const RefractionAdapter         = makeAdapter(RefractionAssessment,        "optometry_assessments_active", "REFRACTION");
+const VisionAdapter             = makeAdapter(VisionAssessment,            "optometry_assessments_active", "VISION_DRIVING");
+const OcularHealthAdapter       = makeAdapter(OcularHealthAssessment,      "optometry_assessments_active", "OCULAR_HEALTH");
+const SpecialDiagnosticAdapter  = makeAdapter(SpecialDiagnosticAssessment, "optometry_assessments_active", "SPECIAL_DIAGNOSTIC");
+const LVQoLAdapter              = makeAdapter(LVQoLForm,                   "optometry_assessments_active", "LVQOL");
+const BrainVisionAdapter        = makeAdapter(BrainVisionInjury,           "optometry_assessments_active", "BRAIN_VISION");
+const VisualFunctionAdapter     = makeAdapter(VisualFunctionForm,          "optometry_assessments_active", "VISUAL_FUNCTION");
+const BVDQAdapter               = makeAdapter(BVDAssessment,               "optometry_assessments_active", "BVDQ");
+const LowVisionAdapter          = makeAdapter(LowVisionAssessment,         "low_vision_assessment_active", "LOW_VISION_ASSESSMENT");
+const BVQuestionnaireAdapter =
+  makeAdapter(
+    BVQuestionnaire,
+    "optometry_assessments_active",
+    "BV_QUESTIONNAIRE"
+  );
 
 export const OPTOMETRY_ASSESSMENT_REGISTRY = {
   BINOCULAR_VISION:      BinocularVisionAdapter,
@@ -68,6 +276,7 @@ export const OPTOMETRY_ASSESSMENT_REGISTRY = {
   VISUAL_FUNCTION:       VisualFunctionAdapter,
   BVDQ:                  BVDQAdapter,
   LOW_VISION_ASSESSMENT: LowVisionAdapter,
+  BV_QUESTIONNAIRE: BVQuestionnaireAdapter,
 };
 
 const ACTIONS_PLAN_ONLY = [
@@ -98,7 +307,7 @@ const TAB_META = {
 
 
 // ── Patient Header Card (light blue hospital grade) ────────────────────────
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup }) {
+const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId, onCopyLink }) {
   if (!patient) return null;
   const initial = (patient.name || patient.email || "P")[0].toUpperCase();
   const fields = [
@@ -147,11 +356,29 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
         <div style={PI.headerActions}>
           <button
             style={PI.reportBtn}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.65)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.45)"}
+            onMouseEnter={e => e.currentTarget.style.background = "#0369a1"}
+            onMouseLeave={e => e.currentTarget.style.background = "#0284c7"}
             onClick={() => alert("Report will be generating soon")}
           >
             Doctors Report
+          </button>
+          {/* ── Start button ── */}
+          <button
+            style={{
+              ...PI.startBtn,
+              opacity: starting ? 0.7 : 1,
+              cursor: starting ? "not-allowed" : "pointer",
+              background: assessmentId ? "rgba(255,255,255,0.20)" : "rgba(255,255,255,0.92)",
+              color: assessmentId ? "#fff" : "#0369a1",
+              border: assessmentId ? "1.5px solid rgba(255,255,255,0.5)" : "none",
+            }}
+            onMouseEnter={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255, 255, 255, 0.75)"; }}
+            onMouseLeave={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255,255,255,0.92)"; }}
+            onClick={!assessmentId && !starting ? onStart : undefined}
+            disabled={starting || !!assessmentId}
+            title={assessmentId ? `Session active: ${assessmentId}` : "Start a new assessment session"}
+          >
+            {starting ? "Starting…" : assessmentId ? "✓ Started" : "Start"}
           </button>
           <button
             style={PI.referralBtn}
@@ -163,6 +390,49 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
           </button>
         </div>
       </div>
+
+      {/* ── Session ID banner (shown only after Start) ── */}
+      {assessmentId && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10,
+          padding: "6px 20px",
+          background: "#f0fdf4",
+          borderBottom: "1px solid #bbf7d0",
+          flexWrap: "wrap",
+        }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            Session ID
+          </span>
+          <span style={{
+            fontFamily: "monospace", fontSize: 12, fontWeight: 600,
+            color: "#166534", background: "#dcfce7",
+            border: "1px solid #bbf7d0", borderRadius: 4,
+            padding: "2px 8px", letterSpacing: "0.3px",
+            userSelect: "all",
+          }}>
+            {assessmentId}
+          </span>
+          <button
+            title="Copy shareable link with your token — recipient opens directly without login"
+            style={{
+              marginLeft: 4,
+              padding: "2px 10px", borderRadius: 4,
+              background: "#16a34a", color: "#fff",
+              border: "none", fontSize: 11, fontWeight: 700,
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              const token     = localStorage.getItem("access_token") || "";
+              const patientId = patient?.id || "";
+              const url = `${window.location.origin}/optometry/assessment/${assessmentId}?patient_id=${patientId}&token=${token}`;
+              navigator.clipboard.writeText(url).then(() => onCopyLink?.());
+            }}
+          >
+            Copy Link
+          </button>
+          <span style={{ fontSize: 11, color: "#86efac" }}>— share this link; recipient opens directly</span>
+        </div>
+      )}
 
       <div style={PI.grid}>
         {fields.map((f, i) => (
@@ -189,20 +459,48 @@ export default function OptometryAssessment({
   patient,
   onSubmit,
   onBack,
-  savedValues = null,
-  readOnly    = false,
-  mode        = "initial",
+  savedValues          = null,
+  readOnly             = false,
+  mode                 = "initial",
+  initialSessionId     = null,   // pre-seeded when opened via direct link
+  initialAssessmentIds = [],     // pre-seeded assessment_ids array
 }) {
-  const [values,       setValues]       = useState(readOnly && savedValues ? savedValues : {});
-  const [submitted,    setSubmitted]    = useState(readOnly);
-  const [activeTab,    setActiveTab]    = useState("subjective");
-  const [forms,        setForms]        = useState([]);  // kept for future API integration
-  const [formsLoading, setFormsLoading] = useState(false);
-  const [formsError,   setFormsError]   = useState(false);
-  const [showConfirm,  setShowConfirm]  = useState(false);
-  const [isDirty,      setIsDirty]      = useState(false);
-  const [toast,        setToast]        = useState(null);
-  const [showReferral, setShowReferral] = useState(false);
+  const [values,        setValues]        = useState(readOnly && savedValues ? savedValues : {});
+  const [submitted,     setSubmitted]     = useState(readOnly);
+  const [activeTab,     setActiveTab]     = useState("subjective");
+  const [forms,         setForms]         = useState([]);  // kept for future API integration
+  const [formsLoading,  setFormsLoading]  = useState(false);
+  const [formsError,    setFormsError]    = useState(false);
+  const [showConfirm,   setShowConfirm]   = useState(false);
+  const [isDirty,       setIsDirty]       = useState(false);
+  const [toast,         setToast]         = useState(null);
+  const [showReferral,  setShowReferral]  = useState(false);
+  const [assessmentId,  setAssessmentId]  = useState(initialSessionId);
+  const [formDataIds,   setFormDataIds]   = useState(() => {
+    const idMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'INITIAL') {
+        const key = (fd.type || '').toLowerCase();
+        if (key) idMap[key] = fd.id;
+      }
+    });
+    return idMap;
+  });
+  const [questionaireIds, setQuestionaireIds] = useState(() => {
+    const qMap = {};
+    (initialAssessmentIds || []).forEach(fd => {
+      if ((fd.form_type || '').toUpperCase() === 'QUESTIONNAIRE' || (fd.form_type || '').toUpperCase() === 'QUESTIONAIRE') {
+        const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+          k => REGISTRY_KEY_TO_NAME[k] === fd.name
+        );
+        if (regKey) qMap[regKey] = fd.id;
+      }
+    });
+    return qMap;
+  });
+  const [starting,      setStarting]      = useState(false);
+  const [tabLoading,    setTabLoading]    = useState(false);
+  const autoSaveTimer = useRef(null);
 
   const isFollowup = mode === "followup";
 
@@ -229,6 +527,23 @@ export default function OptometryAssessment({
       allergies_from_registration:      patient.allergies         || "No data available",
     }));
   }, [patient, readOnly]);
+
+  // ── Fetch FormData for the active tab whenever the session is active ──────
+  useEffect(() => {
+    const formDataId = formDataIds[activeTab];
+    if (!formDataId || !assessmentId) return;
+
+    setTabLoading(true);
+    api.get(API_URL.ASSESSMENT + `data/${formDataId}/`)
+      .then(res => {
+        const existing = res.data?.data;
+        if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
+          setValues(v => ({ ...v, ...existing }));
+        }
+      })
+      .catch(() => {/* silently ignore — form stays editable */})
+      .finally(() => setTabLoading(false));
+  }, [activeTab, formDataIds, assessmentId]);
 
   const sectionShowIf = (key) => (isFollowup ? { field: "general_questions", includes: key } : undefined);
   const sectionShowIfAnd = (key, andCond) =>
@@ -265,6 +580,112 @@ export default function OptometryAssessment({
               }
             ]
             : []),
+            {
+            type: "subheading",
+            label: "Presenting Symptoms",
+          },
+                    // External Eye Symptoms Section
+          {
+            type: "subheading",
+            label: "External Eye Symptoms",
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+          {
+            name: "external_eye_symptoms_checkboxes",
+            type: "checkbox-group",
+            options: [
+              { label: "Grittiness", value: "grittiness" },
+              { label: "Burning", value: "burning" },
+              { label: "Itchiness", value: "itchiness" },
+              { label: "Dryness", value: "dryness" },
+              { label: "Tearing", value: "tearing" },
+              { label: "Infection", value: "infection" },
+              { label: "Others", value: "other_external_eye_symptoms" }
+            ],
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+
+          {
+            type: "input",
+            name: "external_eye_symptoms_specify",
+            label: "Specify",
+            showIf: {
+              ...(sectionShowIf("external_eye_symptoms") || {}),
+              and: {
+                field: "external_eye_symptoms_checkboxes",
+                includes: "other_external_eye_symptoms"
+              }
+            }
+          },
+          {
+            type: "subheading",
+            label: "Visual Symptoms",
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+          {
+            name: "visual_ocular_symptoms",
+            type: "checkbox-group",
+            options: [
+              { label: "Vision screening", value: "vision_screening" },
+              { label: "Blurry vision", value: "blurry_vision" },
+              { label: "Double vision (Diplopia)", value: "double_vision" },
+              { label: "Night vision difficulty", value: "night_vision" },
+              { label: "Flash of light", value: "flash_light" },
+              { label: "Floaters/spots in vision", value: "floaters" },
+              { label: "Eye pain", value: "eye_pain" },
+              { label: "Headaches", value: "headaches" },
+              { label: "Squinting", value: "squinting" },
+              { label: "Emmetropia (Normal Vision)", value: "emmetropia" },
+              { label: "Others", value: "other_visual_ocular_symptoms" }
+            ],
+            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
+          },
+
+          {
+            type: "input",
+            name: "refraction_questions_specify",
+            label: "Specify",
+            showIf: {
+              ...(sectionShowIf("external_eye_symptoms") || {}),
+              and: {
+                field: "visual_ocular_symptoms",
+                includes: "other_visual_ocular_symptoms"
+              }
+            }
+          },
+          {
+            type: "subheading",
+            label: "Ocular Symptoms",
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+          },
+          {
+            name: "ocular_symptoms",
+            type: "checkbox-group",
+            options: [
+              { label: "Grittiness", value: "grittiness" },
+              { label: "Burning", value: "burning" },
+              { label: "Itchiness", value: "itchiness" },
+              { label: "Dryness", value: "dryness" },
+              { label: "Tearing", value: "tearing" },
+              { label: "Infection", value: "infection" },
+              { label: "Eye pain", value: "eye_pain" },
+              { label: "Others", value: "other_ocular_symptoms" }
+            ],
+            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+          },
+
+          {
+            type: "input",
+            name: "ocular_symptoms_specify",
+            label: "Specify",
+            showIf: {
+              ...(sectionShowIf("ocular_history") || {}),
+              and: {
+                field: "ocular_symptoms",
+                includes: "other_ocular_symptoms"
+              }
+            }
+          },
           // Patient Vision & Case History (always visible in IA; in follow-up only when selected)
           {
             type: "subheading",
@@ -366,505 +787,17 @@ export default function OptometryAssessment({
             readOnly: true,
             ...(sectionShowIf("patient_vision_case") && { showIf: sectionShowIf("patient_vision_case") })
           },
-          // Binocular Vision Section (follow-up: content till Ocular Signs)
-          {
-            type: "subheading",
-            label: "Binocular Vision",
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "radio",
-            name: "bv_onset",
-            label: "Onset",
-            options: [
-              { label: "Sudden", value: "sudden" },
-              { label: "Gradual", value: "gradual" }
-            ],
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "radio",
-            name: "bv_frequency",
-            label: "Frequency",
-            options: [
-              { label: "Constant", value: "constant" },
-              { label: "Intermittent", value: "intermittent" },
-              { label: "Alternating", value: "alternating" }
-            ],
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "radio",
-            name: "bv_was_he_been",
-            label: "Neurological disease",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ],
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "input",
-            name: "bv_was_he_been_specify",
-            label: "Neurological – specify",
-            showIf: { field: "bv_was_he_been", equals: "yes" }
-          },
-          {
-            type: "row",
-            fields: [
-              { type: "input", name: "bv_type_of_birth", label: "Type of Birth" },
-              { type: "input", name: "bv_birth_term", label: "Birth Term" }
-            ],
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "input",
-            name: "bv_previous_treatment",
-            label: "Previous Treatment",
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "input",
-            name: "bv_subjective_Remarks",
-            label: "Remarks",
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "multi-select-dropdown",
-            name: "bv_ocular_signs",
-            label: "Ocular Signs",
-            options: [
-              { label: "Squint / turn of eyes", value: "Squint" },
-              { label: "Defective eye movement", value: "Defective eye movement" },
-              { label: "Nystagmus (wobbling eyes)", value: "Nystagmus" },
-              { label: "Visual inattention / neglect", value: "Visual inattention" },
-              { label: "Closing one eye", value: "Closing one eye" },
-              { label: "Suspected visual problem", value: "Suspected visual problem" },
-              { label: "Ptosis (lid drop)", value: "Ptosis" },
-              { label: "Abnormal pupils", value: "Abnormal pupils" },
-              { label: "Head turn", value: "Head turn" },
-              { label: "Family concern", value: "Family concern" },
-              { label: "Misjudging distance", value: "Misjudging distance" },
-              { label: "Other (Specify)", value: "Other" }
-            ],
-            ...(sectionShowIf("binocular_vision") && { showIf: sectionShowIf("binocular_vision") })
-          },
-          {
-            type: "input",
-            name: "bv_ocular_signs_other",
-            label: "Other – Specify",
-            showIf: { field: "bv_ocular_signs", includes: "Other" }
-          },
-          // External Eye Symptoms Section
-          {
-            type: "subheading",
-            label: "External Eye Symptoms",
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
-          {
-            name: "external_eye_symptoms_checkboxes",
-            type: "checkbox-group",
-            options: [
-              { label: "Grittiness", value: "grittiness" },
-              { label: "Burning", value: "burning" },
-              { label: "Itchiness", value: "itchiness" },
-              { label: "Dryness", value: "dryness" },
-              { label: "Tearing", value: "tearing" },
-              { label: "Infection", value: "infection" }
-            ],
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
-          {
-            type: "radio",
-            name: "ext_grittiness_location",
-            label: "Grittiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "grittiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_burning_location",
-            label: "Burning - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "burning"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_itchiness_location",
-            label: "Itchiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "itchiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_dryness_location",
-            label: "Dryness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "dryness"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_tearing_location",
-            label: "Tearing - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "tearing"
-            }
-          },
-          {
-            type: "radio",
-            name: "ext_infection_location",
-            label: "Infection - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "external_eye_symptoms_checkboxes",
-              includes: "infection"
-            }
-          },
-          {
-            type: "input",
-            name: "external_eye_symptoms_specify",
-            label: "Specify",
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
-          // Refraction Section (below External Eye Symptoms; in follow-up shown when External Eye Symptoms is selected)
-          {
-            type: "subheading",
-            label: "Visual Symptoms",
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
-          {
-            name: "visual_ocular_symptoms",
-            type: "checkbox-group",
-            options: [
-              { label: "Vision screening", value: "vision_screening" },
-              { label: "Blurry vision", value: "blurry_vision" },
-              { label: "Double vision (Diplopia)", value: "double_vision" },
-              { label: "Night vision difficulty", value: "night_vision" },
-              { label: "Flash of light", value: "flash_light" },
-              { label: "Floaters/spots in vision", value: "floaters" },
-              { label: "Eye pain", value: "eye_pain" },
-              { label: "Headaches", value: "headaches" },
-              { label: "Squinting", value: "squinting" },
-              { label: "Emmetropia (Normal Vision)", value: "emmetropia" }
-            ],
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
-          {
-            type: "radio",
-            name: "vision_screening_location",
-            label: "Vision screening - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "vision_screening"
-            }
-          },
-          {
-            type: "radio",
-            name: "blurry_vision_location",
-            label: "Blurry vision - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "blurry_vision"
-            }
-          },
-          {
-            type: "radio",
-            name: "double_vision_location",
-            label: "Double vision (Diplopia) - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "double_vision"
-            }
-          },
-          {
-            type: "radio",
-            name: "night_vision_location",
-            label: "Night vision difficulty - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "night_vision"
-            }
-          },
-          {
-            type: "radio",
-            name: "flash_light_location",
-            label: "Flash of light - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "flash_light"
-            }
-          },
-          {
-            type: "radio",
-            name: "floaters_location",
-            label: "Floaters/spots in vision - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "floaters"
-            }
-          },
-          {
-            type: "radio",
-            name: "eye_pain_location",
-            label: "Eye pain - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "eye_pain"
-            }
-          },
-          {
-            type: "radio",
-            name: "headaches_location",
-            label: "Headaches - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "headaches"
-            }
-          },
-          {
-            type: "radio",
-            name: "squinting_location",
-            label: "Squinting - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "squinting"
-            }
-          },
-          {
-            type: "radio",
-            name: "emmetropia_location",
-            label: "Emmetropia (Normal Vision) - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "visual_ocular_symptoms",
-              includes: "emmetropia"
-            }
-          },
-          {
-            type: "input",
-            name: "refraction_questions_specify",
-            label: "Specify",
-            ...(sectionShowIf("external_eye_symptoms") && { showIf: sectionShowIf("external_eye_symptoms") })
-          },
+          // Binocular Vision Section (follow-up: content till Ocular Signs)          
           // OCULAR HISTORY & EYE CONDITIONS Section
           {
             type: "subheading",
             label: "Ocular History & Eye Conditions",
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
+          
           {
             type: "subheading",
-            label: "A. Ocular Symptoms",
-            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
-          },
-          {
-            name: "ocular_symptoms",
-            type: "checkbox-group",
-            options: [
-              { label: "Grittiness", value: "grittiness" },
-              { label: "Burning", value: "burning" },
-              { label: "Itchiness", value: "itchiness" },
-              { label: "Dryness", value: "dryness" },
-              { label: "Tearing", value: "tearing" },
-              { label: "Infection", value: "infection" },
-              { label: "Eye pain", value: "eye_pain" }
-            ],
-            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
-          },
-          {
-            type: "radio",
-            name: "grittiness_location",
-            label: "Grittiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "grittiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "burning_location",
-            label: "Burning - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "burning"
-            }
-          },
-          {
-            type: "radio",
-            name: "itchiness_location",
-            label: "Itchiness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "itchiness"
-            }
-          },
-          {
-            type: "radio",
-            name: "dryness_location",
-            label: "Dryness - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "dryness"
-            }
-          },
-          {
-            type: "radio",
-            name: "tearing_location",
-            label: "Tearing - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "tearing"
-            }
-          },
-          {
-            type: "radio",
-            name: "infection_location",
-            label: "Infection - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "infection"
-            }
-          },
-          {
-            type: "radio",
-            name: "eye_pain_location",
-            label: "Eye pain - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "ocular_symptoms",
-              includes: "eye_pain_location"
-            }
-          },
-          {
-            type: "input",
-            name: "ocular_symptoms_specify",
-            label: "Specify",
-            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
-          },
-          {
-            type: "subheading",
-            label: "B. Past Ocular History",
+            label: "Past Ocular History",
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
@@ -882,196 +815,25 @@ export default function OptometryAssessment({
               { label: "Macular degeneration", value: "macular_degeneration" },
               { label: "Retinal defect/hole/tear", value: "retinal_defect" },
               { label: "Retinal detachment", value: "retinal_detachment" },
-              { label: "Other eye disease", value: "other_eye_disease" }
+              { label: "Others", value: "other_eye_disease" }
             ],
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
-          },
-          {
-            type: "radio",
-            name: "cataract_location",
-            label: "Cataract - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "cataract"
-            }
-          },
-          {
-            type: "radio",
-            name: "corneal_abrasion_location",
-            label: "Corneal abrasion - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "corneal_abrasion"
-            }
-          },
-          {
-            type: "radio",
-            name: "dry_eye_location",
-            label: "Dry eye - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "dry_eye"
-            }
-          },
-          {
-            type: "radio",
-            name: "eye_turn_location",
-            label: "Eye turn - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "eye_turn"
-            }
-          },
-          {
-            type: "radio",
-            name: "glaucoma_location",
-            label: "Glaucoma - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "glaucoma"
-            }
-          },
-          {
-            type: "radio",
-            name: "injury_location",
-            label: "Injury - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "injury"
-            }
-          },
-          {
-            type: "radio",
-            name: "iritis_location",
-            label: "Iritis/Uveitis - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "iritis"
-            }
-          },
-          {
-            type: "radio",
-            name: "lazy_eye_location",
-            label: "Lazy eye - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "lazy_eye"
-            }
-          },
-          {
-            type: "radio",
-            name: "macular_degeneration_location",
-            label: "Macular degeneration - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "macular_degeneration"
-            }
-          },
-          {
-            type: "radio",
-            name: "retinal_defect_location",
-            label: "Retinal defect/hole/tear - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "retinal_defect"
-            }
-          },
-          {
-            type: "radio",
-            name: "retinal_detachment_location",
-            label: "Retinal detachment - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "retinal_detachment"
-            }
-          },
-          {
-            type: "input",
-            name: "other_eye_disease_specify",
-            label: "Other eye disease (specify)",
-            showIf: {
-              field: "past_ocular_history",
-              includes: "other_eye_disease"
-            }
-          },
-          {
-            type: "radio",
-            name: "other_eye_disease_location",
-            label: "Other eye disease - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "past_ocular_history",
-              includes: "other_eye_disease"
-            }
           },
           {
             type: "input",
             name: "past_ocular_history_specify",
             label: "Specify",
-            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+            showIf: {
+              ...(sectionShowIf("ocular_history") || {}),
+              and: {
+                field: "past_ocular_history",
+                includes: "other_eye_disease"
+              }
+            }
           },
           {
             type: "subheading",
-            label: "C. Family Ocular History",
+            label: "Family Ocular History",
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
           },
           {
@@ -1087,164 +849,21 @@ export default function OptometryAssessment({
               { label: "Retinal detachment", value: "retinal_detachment" },
               { label: "Retinitis pigmentosa", value: "retinitis_pigmentosa" },
               { label: "Colour vision defect", value: "colour_vision" },
-              { label: "Other eye disease", value: "other_family_eye_disease" }
+              { label: "Others", value: "other_family_eye_disease" }
             ],
             ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
-          },
-          {
-            type: "radio",
-            name: "family_cataracts_location",
-            label: "Cataract - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "cataracts"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_eye_turn_location",
-            label: "Eye turn - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "eye_turn"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_glaucoma_location",
-            label: "Glaucoma - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "glaucoma"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_iritis_location",
-            label: "Iritis/Uveitis - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "iritis"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_lazy_eye_location",
-            label: "Lazy eye - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "lazy_eye"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_macular_degeneration_location",
-            label: "Macular degeneration - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "macular_degeneration"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_retinal_detachment_location",
-            label: "Retinal detachment - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "retinal_detachment"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_retinitis_pigmentosa_location",
-            label: "Retinitis pigmentosa - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "retinitis_pigmentosa"
-            }
-          },
-          {
-            type: "radio",
-            name: "family_colour_vision_location",
-            label: "Colour vision defect - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "colour_vision"
-            }
-          },
-          {
-            type: "input",
-            name: "other_family_eye_disease_specify",
-            label: "Other eye disease (specify)",
-            showIf: {
-              field: "family_ocular_history",
-              includes: "other_family_eye_disease"
-            }
-          },
-          {
-            type: "radio",
-            name: "other_family_eye_disease_location",
-            label: "Other eye disease - Location",
-            options: [
-              { label: "Right (R)", value: "right" },
-              { label: "Left (L)", value: "left" },
-              { label: "Bilateral", value: "bilateral" }
-            ],
-            showIf: {
-              field: "family_ocular_history",
-              includes: "other_family_eye_disease"
-            }
           },
           {
             type: "input",
             name: "family_ocular_history_specify",
             label: "Specify",
-            ...(sectionShowIf("ocular_history") && { showIf: sectionShowIf("ocular_history") })
+            showIf: {
+              ...(sectionShowIf("ocular_history") || {}),
+              and: {
+                field: "family_ocular_history",
+                includes: "other_family_eye_disease"
+              }
+            }
           },
           // In follow-up: form buttons show directly when "Questionnaires" checkbox is selected. In IA: button toggles the launcher.
           ...(!isFollowup
@@ -1267,7 +886,8 @@ export default function OptometryAssessment({
               { label: "Visual Function Questionnaire", value: "VISUAL_FUNCTION" },
               { label: "Low Vision Quality of Life Questionnaire (LVQoL)", value: "LVQOL" },
               { label: "Brain Injury Vision Symptoms Survey (BIVSS)", value: "BRAIN_VISION" },
-              { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" }
+              { label: "Binocular Vision Dysfunction Questionnaire (BVDQ)", value: "BVDQ" },
+              { label: "Binocular Vision Questionnaire",value: "BV_QUESTIONNAIRE"},
             ]
           }
         ]
@@ -1280,18 +900,6 @@ export default function OptometryAssessment({
     sections: [
       {
         fields: [
-          {
-            type: "assessment-launcher",
-            name: "optometry_assessments",
-            options: [
-              { label: "Binocular Vision", value: "BINOCULAR_VISION" },
-              { label: "Refraction Assessment", value: "REFRACTION" },
-              { label: "Vision For Driving", value: "VISION_DRIVING" },
-              { label: "Ocular Health / Structure", value: "OCULAR_HEALTH" },
-              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
-              { label: "Low Vision Assessment", value: "LOW_VISION_ASSESSMENT"}
-            ]
-          },
           {
             type: "input",
             name: "general_observation",
@@ -1750,7 +1358,19 @@ export default function OptometryAssessment({
             ]
           },
           { type: "input", name: "additional_test", label: "Additional Test" },
-          { type: "input", name: "analysis_remark", label: "Remark" }
+          { type: "input", name: "analysis_remark", label: "Remark" },
+                    {
+            type: "assessment-launcher",
+            name: "optometry_assessments",
+            options: [
+              { label: "Binocular Vision Profile", value: "BINOCULAR_VISION" },
+              { label: "Refraction Analysis", value: "REFRACTION" },
+              { label: "Vision For Driving", value: "VISION_DRIVING" },
+              { label: "Ocular Health Profile", value: "OCULAR_HEALTH" },
+              { label: "Special Diagnostic", value: "SPECIAL_DIAGNOSTIC" },
+              { label: "Low Vision/Blind Profile", value: "LOW_VISION_ASSESSMENT"}
+            ]
+          },
         ]
       }
     ]
@@ -1766,13 +1386,40 @@ export default function OptometryAssessment({
             name: "clinical_impression",
             label: "Clinical Impression"
           },
+          { 
+            type: "subheading",
+            label: "Problem Listing"
+          },
+
+          {
+            name: "problem_listing",
+            type: "checkbox-group",
+            options: [
+              { label: "Ammetropia", value: "ammetropia" },
+              { label: "Emmetropia", value: "emmetropia" },
+              { label: "Presbyopia", value: "presbyopia" },
+              { label: "Others", value: "others" },
+              ]
+            },
+
+            {
+              name: "problem_listing_others",
+              label: "Specify",
+              type: "input",
+              showIf: {
+                field: "problem_listing",
+                includes: "others"
+              }
+            },
           {
             type: "radio",
             name: "functional_vision_status",
             label: "Functional Vision Status",
             options: [
+              { label: "Within normal limit(s)", value: "within_normal_limits" },
+              { label: "Red-flag", value: "red_flag" },
               { label: "Normal", value: "normal" },
-              { label: "Abnormal", value: "abnormal" }
+              { label: "Abnormal", value: "abnormal" },
             ]
           },
           {
@@ -1794,28 +1441,11 @@ export default function OptometryAssessment({
     sections: [
       {
         fields: [
-          {
-            type: "input",
-            name: "short_term_goals",
-            label: "Short Term Goals"
-          },
-          {
-            type: "date",
-            name: "short_term_goals_date",
-            label: "Target Date (Short Term)",
-            format: "DD/MM/YYYY"
-          },
-          {
-            type: "input",
-            name: "long_term_goals",
-            label: "Long Term Goals"
-          },
-          {
-            type: "date",
-            name: "long_term_goals_date",
-            label: "Target Date (Long Term)",
-            format: "DD/MM/YYYY"
-          },
+        { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
+        { type: "dynamic-goals", name: "short_term_goals" },
+        
+        { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
+        { type: "dynamic-goals", name: "long_term_goals" },
           {
             type: "textarea",
             name: "intervention_plan",
@@ -1851,8 +1481,20 @@ export default function OptometryAssessment({
               "Visual Field Assessment",
               "Microperimeter",
               "Neuroptix Pupillometer",
-              "Color Vision Test"
+              "Color Vision Test",
+              "Binocular Vision Assessment",
+              "Low Vision Assessment",
+              "Others"
             ].map(v => ({ label: v, value: v }))
+          },
+          {
+            type: "input",
+            name: "assessment_list_other",
+            label: "Specify Other Assessment",
+            showIf: {
+              field: "assessment_list",
+              includes: "Others"
+            }
           },
           {
             type: "date",
@@ -1900,8 +1542,87 @@ export default function OptometryAssessment({
   const onChange = useCallback((name, value) => {
     if (readOnly) return;
     setIsDirty(true);
-    setValues(v => ({ ...v, [name]: value }));
-  }, [readOnly]);
+    setValues(v => {
+      const next = { ...v, [name]: value };
+
+      // Debounced auto-save to API (1.5 s after last keystroke)
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+      autoSaveTimer.current = setTimeout(() => {
+        const formDataId = formDataIds[activeTab];
+        if (formDataId && assessmentId) {
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
+            .catch(() => {/* silent — user can still hit Save manually */});
+        }
+        // Always persist draft locally too
+        if (storageKey) {
+          localStorage.setItem(storageKey, JSON.stringify({ values: next, updatedAt: new Date() }));
+        }
+      }, 1500);
+
+      return next;
+    });
+  }, [readOnly, activeTab, formDataIds, assessmentId, storageKey]);
+
+  // ── Start assessment session ──────────────────────────────────────────────
+  const handleStart = useCallback(async () => {
+    if (!patient) return;
+
+    // Get the logged-in doctor's id from localStorage
+    let doctorId = null;
+    try {
+      const me = JSON.parse(localStorage.getItem("user") || "{}");
+      doctorId = me.id || null;
+    } catch {}
+
+    if (!doctorId) {
+      setToast({ message: 'Could not identify logged-in doctor. Please re-login.', variant: 'error' });
+      return;
+    }
+
+    setStarting(true);
+    try {
+      const res = await api.post(
+        API_URL.ASSESSMENT + 'optometry/start',
+        {
+          doctor:       doctorId,
+          patient:      patient.id,
+          visit_type:   mode === 'followup' ? 'FOLLOW_UP' : 'INITIAL',
+          is_completed: false,
+          total_score:  0,
+        }
+      );
+      const data = res.data;
+      setAssessmentId(data.id);
+
+      // Map FormData ids — only INITIAL form_type gives one record per SOAP tab
+      const idMap = {};
+      const qMap  = {};   // QUESTIONAIRE sub-assessments keyed by registry key
+      (data.assessment_ids || []).forEach(fd => {
+        const ft = (fd.form_type || '').toUpperCase();
+        if (ft === 'INITIAL') {
+          const key = (fd.type || '').toLowerCase();
+          if (key) idMap[key] = fd.id;
+        } else if (ft === 'QUESTIONNAIRE' || ft === 'QUESTIONAIRE') {
+          // Match by name to registry key
+          const regKey = Object.keys(REGISTRY_KEY_TO_NAME).find(
+            k => REGISTRY_KEY_TO_NAME[k] === fd.name
+          );
+          if (regKey) qMap[regKey] = fd.id;
+        }
+      });
+      setFormDataIds(idMap);
+      setQuestionaireIds(qMap);
+      setToast({ message: 'Assessment session started', variant: 'success' });
+    } catch (err) {
+      const detail = err?.response?.data;
+      const msg = typeof detail === 'object'
+        ? Object.values(detail).flat().join(' ')
+        : 'Failed to start assessment. Please try again.';
+      setToast({ message: msg, variant: 'error' });
+    } finally {
+      setStarting(false);
+    }
+  }, [patient, mode]);
 
   const handleAction = useCallback((type) => {
     if (type === "back") { onBack?.(); return; }
@@ -1913,27 +1634,46 @@ export default function OptometryAssessment({
     }
     if (type === "clear") { setValues({}); setSubmitted(false); localStorage.removeItem(storageKey); }
     if (type === "save") {
+      // Persist draft locally
       localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
-      setToast({ message: "Draft saved successfully", variant: "success" });
+
+      // Push to API immediately on explicit Save click
+      if (assessmentId) {
+        const formDataId = formDataIds[activeTab];
+        if (formDataId) {
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values })
+            .then(() => setToast({ message: 'Saved successfully', variant: 'success' }))
+            .catch(() => setToast({ message: 'Save failed. Draft kept locally.', variant: 'error' }));
+        } else {
+          setToast({ message: 'Draft saved locally', variant: 'success' });
+        }
+      } else {
+        setToast({ message: 'Draft saved locally (start a session to sync)', variant: 'success' });
+      }
     }
-  }, [readOnly, activeTab, storageKey, values, onBack]);
+  }, [readOnly, activeTab, storageKey, values, onBack, assessmentId, formDataIds]);
 
   const handleConfirmedSubmit = useCallback(async () => {
     setShowConfirm(false);
-    try {
-      // const res = await api.post(API_URL.FORM + forms[0].id + "/assessment/", {
-      //   patient: patient.id, visit_type: "IN",
-      //   data: values || {}, score: values?.score || {}, total_score: values?.total_score || 0,
-      // });
-      setToast({ message: "Assessment submitted successfully", variant: "success" });
-    } catch {
-      setToast({ message: "Submission failed. Please try again.", variant: "error" });
-    }
     if (readOnly) return;
+
+    // End the session if one is active
+    if (assessmentId) {
+      try {
+        await api.patch(API_URL.ASSESSMENT + `session/${assessmentId}/end/`);
+        setToast({ message: "Assessment submitted and session ended", variant: "success" });
+      } catch {
+        setToast({ message: "Submission failed. Please try again.", variant: "error" });
+        return;
+      }
+    } else {
+      setToast({ message: "Assessment submitted (no active session)", variant: "success" });
+    }
+
     setSubmitted(true);
     setIsDirty(false);
     onSubmit?.(values);
-  }, [readOnly, values, onSubmit]);
+  }, [readOnly, values, onSubmit, assessmentId]);
 
   // const schemaMap = useMemo(() => {
   //   const map = {};
@@ -1970,7 +1710,7 @@ export default function OptometryAssessment({
 
   /* ===================== RENDER ===================== */
   return (
-    <PatientContext.Provider value={patient}>
+    <PatientContext.Provider value={{ patient, questionaireIds }}>
       {showReferral && (
         <ReferralModal patient={patient} onSubmit={handleReferralSubmit} onClose={() => setShowReferral(false)} />
       )}
@@ -2001,7 +1741,15 @@ export default function OptometryAssessment({
       <div style={S.page}>
         {/* Patient header */}
         <div style={S.patientCardWrap}>
-          <OptometryPatientInfo patient={patient} onReferral={() => setShowReferral(true)} isFollowup={isFollowup} />
+          <OptometryPatientInfo
+            patient={patient}
+            onReferral={() => setShowReferral(true)}
+            isFollowup={isFollowup}
+            onStart={handleStart}
+            starting={starting}
+            assessmentId={assessmentId}
+            onCopyLink={() => setToast({ message: "Shareable link copied to clipboard", variant: "success" })}
+          />
         </div>
 
         {/* SOAP tab shell */}
@@ -2009,8 +1757,9 @@ export default function OptometryAssessment({
           {/* Tab bar — full width equal columns */}
           <div style={S.tabBar}>
             {TAB_ORDER.map((tab, idx) => {
-              const isActive = activeTab === tab;
-              const isDone   = idx < activeTabIdx;
+              const isActive  = activeTab === tab;
+              const isDone    = idx < activeTabIdx;
+              const hasData   = !!formDataIds[tab];   // linked to a FormData record
               return (
                 <button
                   key={tab}
@@ -2018,6 +1767,13 @@ export default function OptometryAssessment({
                   onClick={() => setActiveTab(tab)}
                 >
                   {TAB_META[tab].label}
+                  {hasData && (
+                    <span style={{
+                      marginLeft: 6, width: 7, height: 7, borderRadius: "50%",
+                      background: isActive ? "#2563eb" : "#10b981",
+                      display: "inline-block", flexShrink: 0,
+                    }} title="FormData linked" />
+                  )}
                 </button>
               );
             })}
@@ -2025,7 +1781,9 @@ export default function OptometryAssessment({
 
           {/* Tab content — full width */}
           <div style={S.tabContent}>
-            {formsLoading ? (
+            {tabLoading ? (
+              <div style={S.contentPad}><ShimmerForm rows={6} /></div>
+            ) : formsLoading ? (
               <div style={S.contentPad}><ShimmerForm rows={6} /></div>
             ) : formsError ? (
               <div style={S.contentPad}>
@@ -2267,15 +2025,25 @@ const PI = {
   reportBtn: {
     display: "inline-flex",
     alignItems: "center",
-    background: "#fff",
-    border: "1px solid #bae6fd",
-    color: "#0369a1",
+    background: "#0284c7",
+    border: "1.5px solid rgba(255,255,255,0.6)",
+    color: "#fff",
     borderRadius: 6,
     padding: "6px 14px",
     fontSize: 12,
     fontWeight: 600,
     cursor: "pointer",
     transition: "background .15s",
+  },
+  startBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 5,
+    borderRadius: 6,
+    padding: "6px 16px",
+    fontSize: 12,
+    fontWeight: 700,
+    transition: "background .15s, opacity .15s",
   },
   referralBtn: {
     display: "inline-flex",

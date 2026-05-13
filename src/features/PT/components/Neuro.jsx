@@ -136,25 +136,25 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "equipment_perkeso",
           label: "PERKESO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "perkeso" }
         },
         {
           name: "equipment_ngo",
           label: "NGO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "ngo" }
         },
         {
           name: "equipment_self",
           label: "Self-purchased Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "self" }
         },
         {
           name: "equipment_others",
           label: "Other Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "others" }
         }
         ,
@@ -168,7 +168,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "referral_reasons",
           label: "Referral Reasons",
-          type: "textarea",
+          type: "input",
           readOnly: true
         }
       ]
@@ -184,6 +184,19 @@ export default function NeuroAssessment({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
+  const [patientHistory, setPatientHistory] = useState({
+      past_medical_history: "",
+      past_family_history: "",
+      alerts_and_allergies: ""
+    });
+    useEffect(() => {
+          if (!patient) return;
+          setPatientHistory({
+            past_medical_history: patient.medical_history || "",
+            past_family_history: patient.family_medical_history || "",
+            alerts_and_allergies: patient.alerts_and_allergies_history || ""
+          });
+        }, [patient])
  
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -253,7 +266,7 @@ fields: [
   {
     name: "chief_complaint",
     label: "Chief Complaint",
-    type: "textarea"
+    type: "input"
   },
 
   /* =========================
@@ -369,7 +382,7 @@ fields: [
   {
     name: "plof_remarks",
     label: "Remarks",
-    type: "textarea"
+    type: "input"
   },
 
   /* =========================
@@ -390,11 +403,11 @@ fields: [
   /* =========================
      WORK HISTORY
   ========================= */
-  {
-    name: "work_history",
-    label: "Work History",
-    type: "textarea"
-  },
+  // {
+  //   name: "work_history",
+  //   label: "Work History",
+  //   type: "textarea"
+  // },
 
   /* =========================
      RETURN TO WORK
@@ -416,7 +429,7 @@ fields: [
   {
     name: "client_expectations",
     label: "Client Expectations",
-    type: "textarea"
+    type: "input"
   },
 
   /* =========================
@@ -442,7 +455,7 @@ fields: [
   {
     name: "subjective_remark",
     label: "Remarks",
-    type: "textarea"
+    type: "input"
   },
 
   /* =========================
@@ -949,28 +962,65 @@ title:"Functional and Mobility Status",
 
     actions: SUBJECTIVE_SCHEMA.actions,
     fields: [
-      { name: "problem_list", label: "Problem Listing", type: "textarea" },
-      {name:"functional_limitations", label:"Functional Limitations",type:"checkbox-group",
-        options: [
-    { label: "Gait Impairment", value: "gaitimpairment" },
-    { label: "Unsafe Transfers", value: "unsafetransfers" },
-    { label: "Reduced Endurance", value: "reducedendurance" },
-    { label: "Balance Deficit", value: "balancedeficit" },
-    { label: "ADL Dependency", value: "adldependency" },
-    { label: "No Functional Limitations", value: "nofunctionallimitations" },
-    { label: "Others", value: "others" }
-  ]
-      },
+             {
+  type: "subheading",
+  label: "Problem List"
+},
+     
       {
-          name: "functional_limitations_others",
-          label: "Specify Others",
-          type: "input",
-          showIf: { field: "functional_limitations", includes: "others" }
-        },
+  name: "problem_list",
+  type: "checkbox-group",
+  options: [
+    { label: "Reduced muscle strength", value: "reduced_muscle_strength" },
+    { label: "Reduced muscle endurance", value: "reduced_muscle_endurance" },
+    { label: "Reduced cardiovascular endurance", value: "reduced_cardiovascular_endurance" },
+    { label: "Reduced ROM", value: "reduced_rom" },
+    { label: "Poor wheelchair skills", value: "poor_wheelchair_skills" },
+    { label: "Reduced standing balance", value: "reduced_standing_balance" },
+    { label: "Reduced sitting balance", value: "reduced_sitting_balance" },
+    { label: "Poor trunk control", value: "poor_trunk_control" },
+    { label: "Unable to walk", value: "unable_to_walk" },
+    { label: "Poor walking endurance", value: "poor_walking_endurance" },
+    { label: "Poor wheelchair endurance", value: "poor_wheelchair_endurance" },
+    { label: "Others", value: "other" }
+  ]
+},
+{
+  name: "problem_list_other_text",
+  label: "Other Problem (Specify)",
+  type: "input",
+  placeholder: "Enter additional problems...",
+  showIf: {
+    field: "problem_list",
+    includes: "other"
+  }
+},
+//              {
+//   type: "subheading",
+//   label: "Functional Limitations"
+// },
+
+//       {name:"functional_limitations", type:"checkbox-group",
+//         options: [
+//     { label: "Gait Impairment", value: "gaitimpairment" },
+//     { label: "Unsafe Transfers", value: "unsafetransfers" },
+//     { label: "Reduced Endurance", value: "reducedendurance" },
+//     { label: "Balance Deficit", value: "balancedeficit" },
+//     { label: "ADL Dependency", value: "adldependency" },
+//     { label: "No Functional Limitations", value: "nofunctionallimitations" },
+//     { label: "Others", value: "others" }
+//   ]
+//       },
+//       {
+//           name: "functional_limitations_others",
+//           label: "Specify Others",
+//           type: "input",
+//           showIf: { field: "functional_limitations", includes: "others" }
+//         },
       {
         name: "clinical_impression",
         label: "Clinical Impression",
-        type: "textarea"
+        type: "input"
       },
       {
         name: "prognosis",
@@ -989,56 +1039,29 @@ title:"Functional and Mobility Status",
  
        {
   type: "subheading",
-  label: "Short Term Goals"
+  label: "Short-Term Goals (2–4 weeks)"
 },
- {
-      type: "dynamic-section",
-      name: "shortterm_blocks",
-      fields: [
-        {name: "shorttermgoals", label: "Goals (Functional Task)", type: "input"},
-       {name: "shorttermassistlevel", label: "Assist Level", type: "radio",labelAbove:true,options:[
-        { label: "Independent", value: "shorttermindependent" },
-         { label: "Supervision", value: "shorttermsupervision" },
-          { label: "Stand-by Assist", value: "shorttermsba" },
-           { label: "Contact Guard Assist", value: "shorttermcga"},
-          { label: "Minimal Assist", value: "shorttermmina"},
-          { label: "Moderate Assist", value: "shorttermmoda"},
-          { label: "Maximum Assist", value: "shorttermmaxa"},
-       ]},
-           {name: "shorttermdevice", label: "Device/Prosthesis Used", type: "input"},
-          {name: "shorttermcontext", label: "Context(Where/Condition)", type: "input"},
-             {name: "shorttermtarget", label: "Measurable Target", type: "input"},
-               {name: "shorttermtarget_date", label: "Target Date", type: "date"},
-        ]},
+{
+  type: "dynamic-goals",
+  name: "shortterm_blocks"
+},
 
                {
   type: "subheading",
-  label: "Long Term Goals"
+  label: "Long-Term Goals (6–12 weeks)"
 },
- {
-      type: "dynamic-section",
-      name: "longterm_blocks",
-      fields: [
-        {name: "longtermgoals", label: "Goals (Functional Task)", type: "input"},
-       {name: "longtermassistlevel", label: "Assist Level", type: "radio",labelAbove:true,options:[
-        { label: "Independent", value: "longtermindependent" },
-         { label: "Supervision", value: "longtermsupervision" },
-          { label: "Stand-by Assist", value: "longtermsba" },
-           { label: "Contact Guard Assist", value: "longtermcga"},
-          { label: "Minimal Assist", value: "longtermmina"},
-          { label: "Moderate Assist", value: "longtermmoda"},
-          { label: "Maximum Assist", value: "longtermmaxa"},
-       ]},
-           {name: "longtermdevice", label: "Device/Prosthesis Used", type: "input"},
-          {name: "longtermcontext", label: "Context(Where/Condition)", type: "input"},
-             {name: "longtermtarget", label: "Measurable Target", type: "input"},
-               {name: "longtermtarget_date", label: "Target Date", type: "date"},
-        ]},
-
+{
+  type: "dynamic-goals",
+  name: "longterm_blocks"
+},
+        {
+  type: "subheading",
+  label: "Intervention Plan"
+},
       
              {
         name: "intervention_plan",
-        label: "Intervention Plan",
+        
         type: "checkbox-group",
         options: [
           { label: "Bed mobility training", value: "bed_mobility" },
@@ -1063,11 +1086,90 @@ title:"Functional and Mobility Status",
           type: "textarea",
           showIf: { field: "intervention_plan", includes: "others" }
         },
+        {
+  type: "subheading",
+  label: "HEP (Home Exercise Program)"
+},
 
-                {
-          name: "home_exercise-program",
-          label: "Home Exercise Program",
-          type: "textarea"},
+{
+  name: "home_exercise_program",
+  label: "Home Exercise Program",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Strengthening exercises",
+      value: "strengthening_exercises"
+    },
+    {
+      label: "Stretching exercises",
+      value: "stretching_exercises"
+    },
+    {
+      label: "Standing / Sitting balance training",
+      value: "balance_training"
+    },
+    {
+      label: "Endurance training",
+      value: "endurance_training"
+    },
+    {
+      label: "Fitness regime",
+      value: "fitness_regime"
+    },
+    {
+      label: "Mobilization",
+      value: "mobilization"
+    },
+    {
+      label: "ROM exercise",
+      value: "rom_exercise"
+    },
+    {
+      label: "Patient & Carer education",
+      value: "patient_carer_education"
+    },
+    {
+      label: "Others",
+      value: "other"
+    }
+  ]
+},
+
+{
+  name: "home_exercise_program_other",
+  label: "Specify Other HEP",
+  type: "input",
+  placeholder: "Enter other home exercise program",
+  showIf: {
+    field: "home_exercise_program",
+    includes: "other"
+  }
+},
+{
+  type: "subheading",
+  label: "Follow-up Plan"
+},
+
+{
+  name: "follow_up_plan",
+  label: "Follow-up Plan",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Reassessment scheduled in 2–4 weeks",
+      value: "reassessment_2_4_weeks"
+    },
+    {
+      label: "Track progress via Outcome measures",
+      value: "track_progress_outcome_measures"
+    }
+  ]
+},
+
+          //       {
+          // name: "home_exercise-program",
+          // label: "Home Exercise Program",
+          // type: "textarea"},
 
 
                        {
@@ -1118,128 +1220,100 @@ const schemaMap = {
     plan: PLAN_SCHEMA
   };
 
-        const [patientHistory, setPatientHistory] = useState({
-        past_medical_history: patient?.medical_history || "",
-        past_family_history: patient?.family_medical_history || "",
-        alerts_and_allergies: patient?.alerts_and_allergies_history || ""
-      });
-      function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-        if (!patient) return null;
-      
-        const formatDate = (dateStr) => {
-          if (!dateStr) return "-";
-          try {
-            return new Date(dateStr).toLocaleDateString();
-          } catch {
-            return "-";
-          }
-        };
-      
-        return (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 12,
-              fontSize: 14
-            }}>
-              <div><b>Name:</b> {patient.name}</div>
-              <div><b>IC:</b> {patient.id}</div>
-              <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-      
-              <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-              <div><b>ICD:</b> {patient.icd}</div>
-              <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
-      
-              <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-              <div><b>Duration of Diagnosis:</b> -</div>
-              <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-      
-              <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-              <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-              <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-      
-              <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-              <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-              <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-      
-              <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-              <div><b>Marital Status:</b> {patient.marital_status || "-"}</div>
-      
-              {/* ===== HISTORY ===== */}
-              <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-                <h3>Patient History</h3>
-      
-                <div>
-                  <b>Past Medical History</b>
-                  <textarea
-                    style={textarea}
-                    value={patientHistory.past_medical_history}
-                    onChange={(e) =>
-                      setPatientHistory(prev => ({
-                        ...prev,
-                        past_medical_history: e.target.value
-                      }))
-                    }
-                  />
-                </div>
-      
-                <div>
-                  <b>Family History</b>
-                  <textarea
-                    style={textarea}
-                    value={patientHistory.past_family_history}
-                    onChange={(e) =>
-                      setPatientHistory(prev => ({
-                        ...prev,
-                        past_family_history: e.target.value
-                      }))
-                    }
-                  />
-                </div>
-      
-                <div>
-                  <b>Allergies</b>
-                  <textarea
-                    style={textarea}
-                    value={patientHistory.alerts_and_allergies}
-                    onChange={(e) =>
-                      setPatientHistory(prev => ({
-                        ...prev,
-                        alerts_and_allergies: e.target.value
-                      }))
-                    }
-                  />
-                </div>
-      
-                <button style={alertBtn}>🚨 Alerts</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-      const textarea = {
-        width: "100%",
-        minHeight: 90,
-        marginTop: 6,
-        marginBottom: 12,
-        padding: "10px 12px",
-        borderRadius: 6,
-        border: "1px solid #d1d5db",
-        fontSize: 14,
-        resize: "vertical"
-      };
-      
-      const alertBtn = {
-        marginTop: 10,
-        padding: "10px 20px",
-        borderRadius: 6,
-        border: "1.5px solid #007bff",
-        background: "#007bff",
-        color: "#fff",
-        fontWeight: 600,
-        cursor: "pointer"
-      };
+        function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <input
+                      style={input}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+     
   return (
 <div style={mainContent}>
  
@@ -1249,7 +1323,16 @@ const schemaMap = {
       values={{}}
       onChange={() => {}}
     >
-      <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/>
+      <PatientInformationBlock
+                  patient={patient}
+                  patientHistory={patientHistory}
+                  setPatientHistory={setPatientHistory}
+                />
+              
+                <button style={doctorsReportBtn}>
+                  Doctors Reports
+                </button>
+      {/* <PatientInformationBlock patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory}/> */}
     </CommonFormBuilder>
 
     {/* ===== CONSENT & REFERRAL (above Patient Environment) ===== */}
@@ -1434,4 +1517,31 @@ const th = {
 const td = {
   border: "1px solid #ccc",
   padding: 10
+};
+
+const input = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
+};
+const doctorsReportBtn = {
+  padding: "10px 20px", background: "#2563EB", color: "#fff",
+  border: "none", borderRadius: 6, fontSize: 14,
+  fontWeight: 600, cursor: "pointer", marginTop: 8
 };

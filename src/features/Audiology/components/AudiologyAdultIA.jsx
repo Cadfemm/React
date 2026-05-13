@@ -6,7 +6,8 @@ import { TinnitusAdvancedForm,TinnitusAdvancedFormObj } from "../tinnitusassessm
 import { HyperacusisAdvancedForm, HyperacusisAdvancedFormObj } from "../hyperacusisassessment";
 import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassessment";
 import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
-
+import { Hearingaidtrial } from "../hearingaidtrial";
+import { IndustrialAudiometry } from "../industrialaudiometry";
 /* ===================== OPTIONS ===================== */
 
 const INTACT_IMPAIRED = [
@@ -32,11 +33,56 @@ const IMPAIRED_LOCATION = [
 
 /* ===================== COMPONENT ===================== */
 
-export default function AudiologyDepartmentAdultPage({ patient, mode, onSubmit, onBack }) {
+export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient, mode, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
   const [processingOCR, setProcessingOCR] = useState(false);
+
+  /* --------- Patient History State --------- */
+  const [patientHistory, setPatientHistory] = useState({
+    past_medical_history: patient?.medical_history || "",
+    past_family_history: patient?.family_medical_history || "",
+    alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+  });
+
+  useEffect(() => {
+    setPatientHistory({
+      past_medical_history: patient?.medical_history || "",
+      past_family_history: patient?.family_medical_history || "",
+      alerts_and_allergies: patient?.alerts_and_allergies_history || ""
+    });
+  }, [patient?.id]);
+
+  useEffect(() => {
+    if (!patient) return;
+    const updated = {
+      ...patient,
+      medical_history: patientHistory.past_medical_history,
+      family_medical_history: patientHistory.past_family_history,
+      alerts_and_allergies_history: patientHistory.alerts_and_allergies
+    };
+    localStorage.setItem("patient_" + patient.id, JSON.stringify(updated));
+    onUpdatePatient?.(updated);
+  }, [patient?.id, patientHistory.past_medical_history, patientHistory.past_family_history, patientHistory.alerts_and_allergies]);
+
+  const today = new Date();
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try { return new Date(dateStr).toLocaleDateString(); } catch { return "-"; }
+  };
+  const calculateDuration = (onset) => {
+    if (!onset) return "-";
+    const onsetDate = new Date(onset);
+    if (isNaN(onsetDate)) return "-";
+    const diff = today - onsetDate;
+    const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30.44));
+    if (months < 1) return "< 1 month";
+    if (months < 12) return `${months} month${months > 1 ? "s" : ""}`;
+    const years = Math.floor(months / 12);
+    const rem = months % 12;
+    return rem > 0 ? `${years}y ${rem}m` : `${years} year${years > 1 ? "s" : ""}`;
+  };
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
@@ -696,7 +742,9 @@ export default function AudiologyDepartmentAdultPage({ patient, mode, onSubmit, 
     tinnitus_form_obj: TinnitusAdvancedAdapterObj,
     loudness_form_obj: HyperacusisAdvancedAdapterObj,
     hearing_form_obj: AuditoryAdvancedAdapterObj,
-    vestibular_form_obj: VestibularAdvancedAdapterObj
+    vestibular_form_obj: VestibularAdvancedAdapterObj,
+    hearingaidtrial_form_obj: HearingAidTrialAdapter,
+    industrial_form_obj:IndusTrialAdapter,
   };
 function TinnitusAdvancedAdapter({ onChange }) {
   return (
@@ -768,6 +816,25 @@ function VestibularAdvancedAdapterObj({ onChange }) {
     />
   );
 }
+
+function HearingAidTrialAdapter({ onChange }) {
+  return (
+    <Hearingaidtrial
+    mode={mode}
+      onBack={() => onChange("hearingaidtrial_launcher_obj", null)}
+    />
+  );
+}
+
+function IndusTrialAdapter({ onChange }) {
+  return (
+    <IndustrialAudiometry
+    mode={mode}
+      onBack={() => onChange("industrial_launcher_obj", null)}
+    />
+  );
+}
+
   /* ===================== SCHEMAS ===================== */
 
 const SUBJECTIVE_SCHEMA = {
@@ -792,11 +859,11 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "ear_infection_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "ear_infection", 
-            oneOf: ["right", "left", "bilateral"] 
+            oneOf: ["right", "left", "bilateral","none"] 
           }
         },
 
@@ -811,20 +878,31 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "ear_fullness_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "ear_fullness", 
             oneOf: ["right", "left", "bilateral"] 
           }
         },
-
         {
           name: "head_neck_injury",
           label: "Head or Neck Injury",
-          type: "textarea"
+          type: "radio",
+          options: [
+            { label: "Yes", value: "1"},
+            { label: "No", value: "0"}
+          ]
         },
-
+        {
+          name: "head_neck_notes",
+          label: "Specify",
+          type: "textarea",
+          showIf: {
+            field: "head_neck_injury",
+            equals: "1"
+          }
+        },
         {
           name: "ear_pain",
           label: "Otalgia",
@@ -836,11 +914,11 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "ear_pain_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "ear_pain", 
-            oneOf: ["right", "left", "bilateral"] 
+            oneOf: ["right", "left", "bilateral","none"] 
           }
         },
 
@@ -855,11 +933,11 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "otorrhea_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "otorrhea", 
-            oneOf: ["right", "left", "bilateral"] 
+            oneOf: ["right", "left", "bilateral","none"] 
           }
         },
 
@@ -889,7 +967,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "tinnitus_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "tinnitus", 
@@ -908,7 +986,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "loudness_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "loudness_discomfort", 
@@ -927,14 +1005,31 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "hearing_difficulties_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "hearing_difficulties", 
             oneOf: ["right", "left", "bilateral"] 
           }
         },
-
+        {
+          name: "better_hearing",
+          label: "Better Hearing",
+          type: "radio",
+          options: [
+            // { label: "No", value: "none" },
+            ...IMPAIRED_LOCATION
+          ]
+        },
+        {
+          name: "better_hearing_notes",
+          label: "Specify",
+          type: "textarea",
+          showIf: { 
+            field: "better_hearing", 
+            oneOf: ["right", "left", "bilateral"] 
+          }
+        },
         {
           name: "communication_difficulties",
           label: "Communication Difficulties",
@@ -949,7 +1044,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "communication_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "communication_difficulties", 
@@ -960,7 +1055,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "exposure_loud_sounds",
           label: "Exposure to Loud Sounds",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "none" },
             { label: "Occupational", value: "occupational" },
@@ -969,7 +1064,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "exposure_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { 
             field: "exposure_loud_sounds", 
@@ -988,6 +1083,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "family_history_notes",
+          label: "Specify",
           type: "textarea",
           showIf: {
             field: "family_social_from_registration",
@@ -1009,7 +1105,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "psychosocial_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
           showIf: { field: "psychosocial_impact", oneOf: ["1", "2", "3", "4"] }
         },
@@ -1017,7 +1113,7 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "environmental_context",
           label: "Environmental Context",
-          type: "radio",
+          type: "checkbox-group",
           options: [
             { label: "No", value: "0" },
             { label: "Noisy environment", value: "1" },
@@ -1027,9 +1123,12 @@ const SUBJECTIVE_SCHEMA = {
         },
         {
           name: "environmental_notes",
-          label: "",
+          label: "Specify",
           type: "textarea",
-          showIf: { field: "environmental_context", exists: true }
+          showIf: { 
+            field: "environmental_context", 
+            oneOf: ["1", "2", "3"] 
+          }
         },
 
         {
@@ -1046,6 +1145,11 @@ const SUBJECTIVE_SCHEMA = {
           label: "",
           type: "textarea",
           showIf: { field: "presence_amplification", equals: "1" }
+        },
+        {
+          name: "others",
+          label: "Others",
+          type: "textarea"
         },
         {
           name: "hearing_assessments_launcher",
@@ -1129,63 +1233,6 @@ const SUBJECTIVE_SCHEMA = {
         }
       ]
     },
-        {
-      title: "Audiometry",
-      fields: [
-         {
-      name: "audifile",
-      label: "Upload Audiometry File",
-      type: "file-upload-modal",
-    },
-        { type: "audiogram-graph", name: "audiogram_graph"},
-        {
-          type: "row",
-          fields: [
-            {
-              name: "impression_r",
-              label: "Impression – Right Ear",
-              type: "textarea"
-            },
-            {
-              name: "impression_l",
-              label: "Impression – Left Ear",
-              type: "textarea"
-            },
-          ]
-        },
-        {
-          name: "audiometry_type",
-          label: "Type of Audiometry",
-          type: "radio",
-          options: [
-            { label: "Screening", value: "screening" },
-            { label: "Diagnostic Pure Tone", value: "pta" },
-            { label: "Play", value: "play" },
-            { label: "Visual Reinforcement (VR)", value: "vra" }
-          ]
-        },
-
-        {
-          name: "masking",
-          label: "Masking",
-          type: "radio",
-          options: [
-            { label: "Unmasked", value: "unmasked" },
-            { label: "Masking", value: "masked" }
-          ]
-        },
-        {
-          name: "reliability",
-          label: "Reliability",
-          type: "radio",
-          options: [
-            { label: "Good", value: "Good" },
-            { label: "Fair", value: "Fair" },
-            { label: "Poor", value: "Poor" }
-          ]
-        },
-      ]
-    }
   ]
 };
 
@@ -1226,7 +1273,158 @@ const AUDIO_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const OBJECTIVE_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
-             {
+     {
+      title: "General Audiology Assessment",
+      fields: [
+
+        /* ===================== OTOSCOPY ===================== */
+        {
+          type: "accordion",
+          name: "otoscopy_section",
+          label: "Otoscopic Examination",
+          defaultOpen: false,
+          children: [
+            {
+              type: "row",
+              columns: 2,
+              fields: [
+                {
+                  type: "attach-file",
+                  name: "otoscopic_examination_right",
+                  accept: "application/pdf,image/*",
+                  title: "Otoscopic Examination - Right",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                },
+                {
+                  type: "attach-file",
+                  name: "otoscopic_examination_left",
+                  accept: "application/pdf,image/*",
+                  title: "Otoscopic Examination - Left",
+                  multiple: false,
+                  previewSize: { width: 400, height: 400 },
+                  hideInputAfterSelect: true
+                }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "external_canal_r", title: "External Ear Canal – Right" },
+              left: { name: "external_canal_l", title: "External Ear Canal – Left" },
+              options: [
+                { label: "Clear", value: "clear" },
+                { label: "Inflamed", value: "inflamed" },
+                { label: "Minimal cerumen", value: "minimal_cerumen" },
+                { label: "Impacted cerumen", value: "impacted_cerumen" },
+                { label: "Discharge present", value: "discharge" },
+                { label: "Swelling", value: "swelling" }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
+              left: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
+              options: [
+                { label: "Intact", value: "intact" },
+                { label: "Perforated", value: "perforated" },
+                { label: "Dull", value: "dull" },
+                { label: "Retracted", value: "retracted" },
+                { label: "Bulging", value: "bulging" },
+                { label: "Opaque", value: "opaque" }
+              ]
+            },
+            {
+              type: "paired-select",
+              right: { name: "tm_colour_r", title: "TM Colour – Right" },
+              left: { name: "tm_colour_l", title: "TM Colour – Left" },
+              options: [
+                { label: "Pearly grey", value: "pearly_grey" },
+                { label: "Reddened", value: "red" },
+                { label: "Yellowish", value: "yellow" },
+                { label: "Bluish", value: "blue" },
+                { label: "White patches", value: "white_patches" }
+              ]
+            },
+            {
+              type: "paired-text",
+              pairs: [
+                { name: "otoscopy_other_r", title: "Other Findings – Right" },
+                { name: "otoscopy_other_l", title: "Other Findings – Left" }
+              ]
+            }
+          ]
+        },
+
+        /* ===================== AUDIOMETRY ===================== */
+        {
+          type: "accordion",
+          name: "audiometry_section",
+          label: "Audiometry",
+          defaultOpen: false,
+          children: [
+            {
+              name: "audifile",
+              type: "attach-file",
+              accept: "application/pdf,image/*",
+              title: "Upload Audiometry File",
+              multiple: false,
+              previewSize: { width: 400, height: 400 },
+              hideInputAfterSelect: true
+            },
+            // { type: "audiogram-graph", name: "audiogram_graph" },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "impression_r",
+                  label: "Impression – Right Ear",
+                  type: "textarea"
+                },
+                {
+                  name: "impression_l",
+                  label: "Impression – Left Ear",
+                  type: "textarea"
+                }
+              ]
+            },
+            {
+              name: "audiometry_type",
+              label: "Type of Audiometry",
+              type: "radio",
+              options: [
+                { label: "Screening", value: "screening" },
+                { label: "Diagnostic Pure Tone", value: "pta" },
+                { label: "Play", value: "play" },
+                { label: "Visual Reinforcement (VR)", value: "vra" },
+                { label: "Free field Audiometry", value: "free_field"},
+                { label: "Aided Response", value: "aided"}
+              ]
+            },
+            {
+              name: "masking",
+              label: "Masking",
+              type: "radio",
+              options: [
+                { label: "Unmasked", value: "unmasked" },
+                { label: "Masking", value: "masked" }
+              ]
+            },
+            {
+              name: "reliability",
+              label: "Reliability",
+              type: "radio",
+              options: [
+                { label: "Good", value: "Good" },
+                { label: "Fair", value: "Fair" },
+                { label: "Poor", value: "Poor" }
+              ]
+            }
+          ]
+        },
+   ]
+  },
+    {
       title: "",
       fields: [
         {
@@ -1234,306 +1432,16 @@ const OBJECTIVE_SCHEMA = {
           label: "",
           type: "assessment-launcher",
           options: [
-            { label: "Auditory", value: "hearing_form_obj" },
-            { label: "Tinnitus", value: "tinnitus_form_obj" },
-            { label: "Hyperacusis", value: "loudness_form_obj" },
-            { label: "Vestibular", value: "vestibular_form_obj" },
+            { label: "Auditory Profile", value: "hearing_form_obj" },
+            { label: "Tinnitus Profile", value: "tinnitus_form_obj" },
+            { label: "Hyperacusis Profile", value: "loudness_form_obj" },
+            { label: "Vestibular Profile", value: "vestibular_form_obj" },
+            { label: "Industrial Audiometry", value: "industrial_form_obj" },
           ]
         }
       ]
     },
-    /* ===================== OTOSCOPIC EXAMINATION ===================== */
-    {
-      title: "Otoscopic Examination",
-      fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "otoscopic_examination_right",
-              accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            },
-            {
-              type: "attach-file",
-              name: "otoscopic_examination_left",
-              accept: "application/pdf,image/*",
-              title: "Otoscopic Examination - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            }
-          ]
-        }, 
-        {
-          type: "paired-select",
-          right: { name: "external_canal_r", title: "External Ear Canal – Right" },
-          left: { name: "external_canal_l", title: "External Ear Canal – Left" },
-          options: [
-            { label: "Clear", value: "clear" },
-            { label: "Inflamed", value: "inflamed" },
-            { label: "Minimal cerumen", value: "minimal_cerumen" },
-            { label: "Impacted cerumen", value: "impacted_cerumen" },
-            { label: "Discharge present", value: "discharge" },
-            { label: "Swelling", value: "swelling" }
-          ]
-        },
-
-        {
-          type: "paired-select",
-          right: { name: "tm_appearance_r", title: "Tympanic Membrane (TM) Appearance – Right" },
-          left: { name: "tm_appearance_l", title: "Tympanic Membrane (TM) Appearance – Left" },
-          options: [
-            { label: "Intact", value: "intact" },
-            { label: "Perforated", value: "perforated" },
-            { label: "Dull", value: "dull" },
-            { label: "Retracted", value: "retracted" },
-            { label: "Bulging", value: "bulging" },
-            { label: "Opaque", value: "opaque" }
-          ]
-        },
-
-        {
-          type: "paired-select",
-          right: { name: "tm_colour_r", title: "TM Colour – Right" },
-          left: { name: "tm_colour_l", title: "TM Colour – Left" },
-          options: [
-            { label: "Pearly grey", value: "pearly_grey" },
-            { label: "Reddened", value: "red" },
-            { label: "Yellowish", value: "yellow" },
-            { label: "Bluish", value: "blue" },
-            { label: "White patches", value: "white_patches" }
-          ]
-        },
-
-        {
-          type: "paired-text",
-          pairs: [
-            { name: "otoscopy_other_r", title: "Other Findings – Right" },
-            { name: "otoscopy_other_l", title: "Other Findings – Left" }
-          ]
-        }
-      ]
-    },
-
-    /* ===================== TYMPANOMETRY ===================== */
-    {
-      title: "Tympanometry",
-      fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "tympanometry_report_right",
-              accept: "application/pdf,image/*",
-              title: "Tympanometry - Right",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            },
-            {
-              type: "attach-file",
-              name: "tympanometry_report_left",
-              accept: "application/pdf,image/*",
-              title: "Tympanometry - Left",
-              multiple: false,
-              previewSize: { width: 400, height: 400 },
-              hideInputAfterSelect: true
-            }
-          ]
-        },
-        {
-          type: "paired-select",
-          right: { name: "tymp_type_r", title: "Right Ear" },
-          left: { name: "tymp_type_l", title: "Left Ear" },
-
-          options: [
-            { label: "Type A", value: "A" },
-            { label: "Type As", value: "As" },
-            { label: "Type Ad", value: "Ad" },
-            { label: "Type B (Normal ECV)", value: "B_normal" },
-            { label: "Type B (Small ECV)", value: "B_small" },
-            { label: "Type B (Large ECV)", value: "B_large" },
-            { label: "Type C", value: "C" }
-          ]
-        },
-
-        {
-          type: "paired-text",
-          name: "peak_pressure",
-          pairs: [
-          { name: "peak_pressure_r", title: "Peak Pressure (daPa) – Right" },
-          { name: "peak_pressure_l", title: "Peak Pressure (daPa) – Left" }
-      ]},
-
-        {
-          type: "paired-text",
-          name: "static_compliance",
-          pairs: [
-          { name: "static_compliance_r", title: "Static Compliance (ml / cm³) – Right" },
-        { name: "static_compliance_l", title: "Static Compliance (ml / cm³) – Left" }]
-        },
-
-        {
-          type: "paired-text",
-          name: "ecv",
-          pairs: [
-            { name: "ecv_r", title: "Ear Canal Volume (ml / cm³) – Right" },
-          { name: "ecv_l", title: "Ear Canal Volume (ml / cm³) – Left" }]
-        }
-      ]
-    },
-
-    /* ===================== OAE ===================== */
-    {
-      title: "OAE Screening",
-      fields: [
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "oae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "OAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "oae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "OAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "oae_right",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "oae_left",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            }
-          ]
-        },
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "dpoae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "DPOAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "dpoae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "DPOAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "dpoae_right",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "dpoae_left",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            }
-          ]
-        },
-        {
-          type: "row",
-          columns: 2,
-          fields: [
-            {
-              type: "attach-file",
-              name: "teoae_right_upload",
-              accept: "application/pdf,image/*",
-              title: "TEOAE – Right Ear",
-              multiple: false
-            },
-            {
-              type: "attach-file",
-              name: "teoae_left_upload",
-              accept: "application/pdf,image/*",
-              title: "TEOAE – Left Ear",
-              multiple: false
-            }
-          ]
-        },
-        {
-          type: "row",
-          fields: [
-            {
-              name: "teoae_right",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            },
-            {
-              name: "teoae_left",
-              label: "",
-              type: "radio",
-              options: [
-                { label: "Pass", value: "pass" },
-                { label: "Refer", value: "refer" },
-                { label: "Could Not test", value: "could_not_test" }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-
-  ]
+ ]
 };
 
 
@@ -1556,30 +1464,33 @@ const OBJECTIVE_SCHEMA = {
   const PLAN_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     fields: [
-      {
-        name: "plan_short_term_goals",
-        label: "Short Term Goals",
-        type: "textarea"
-      },
-      {
-        name: "plan_target_date_short_term",
-        label: "Target Date (Short Term)",
-        type: "date"
-      },
-      {
-        name: "plan_long_term_goals",
-        label: "Long Term Goals",
-        type: "textarea"
-      },
-      {
-        name: "plan_target_date_long_term",
-        label: "Target Date (Long Term)",
-        type: "date"
-      },
-      {
-        name: "plan_list",
-        label: "Intervention Plan",
-        type: "textarea"
+        { type: "subheading", label: "Short Term Goals (2–4 Weeks)" },
+        { type: "dynamic-goals", name: "short_term_goals" },
+        
+        { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
+        { type: "dynamic-goals", name: "long_term_goals" },
+        {
+          name: "intervention_plan",
+          label: "Intervention Plan",
+          type: "checkbox-group",
+          options: [
+            { label: "Monitoring", value: "monitoring" },
+            { label: "Amplification", value: "amplification" },
+            { label: "Medical referral", value: "medical_referral" },
+            { label: "Further assessment", value: "further_assessment" },
+            { label: "Auditory training", value: "auditory_training" },
+            { label: "Tinnitus management", value: "tinnitus_management" },
+            { label: "Hyperacusis management", value: "hyperacusis_management" },
+            { label: "Vestibular management", value: "vestibular_management" },
+            { label: "Prevention program", value: "prevention_program" },
+            { label: "Others", value: "other" }
+          ]
+        },
+        {
+          name: "intervention_plan_details",
+          label: "Specify",
+          type: "textarea",
+          showIf: { field: "intervention_plan", includes: "other" }
       },
       {
         name: "plan_options",
@@ -1601,8 +1512,40 @@ const OBJECTIVE_SCHEMA = {
           { label: "Tinnitus", value: "tinnitus" },
           { label: "Hyperacusis", value: "hyperacusis" },
           { label: "Vestibular", value: "vestibular" },
-          { label: "Speech Test", value: "speech_test" }
+          { label: "Speech Test", value: "speech_test" },
+
+          // ✅ ADDED MISSING ONES BELOW
+
+          { label: "Videonystagmography", value: "vng" },
+          { label: "Optokinetic Test", value: "optokinetic" },
+          { label: "Spontaneous Nystagmus", value: "spontaneous_nystagmus" },
+          { label: "High Frequency Head Shake", value: "head_shake" },
+          { label: "Gaze Test", value: "gaze_test" },
+          { label: "Subjective Visual Vertical", value: "svv" },
+          { label: "Positional Test", value: "positional_test" },
+          { label: "Dynamic Visual Acuity (DVA)", value: "dva" },
+          { label: "Gaze Stabilization", value: "gaze_stabilization" },
+          { label: "Video Head Impulse Test (vHIT)", value: "vhit" },
+          { label: "Posturography", value: "posturography" },
+          { label: "Functional Gait Assessment", value: "fga" },
+          { label: "Sensory Organization Performance", value: "sop" },
+          { label: "VEMP", value: "vemp" },
+
+          { label: "Hearing Device Orientation", value: "hearing_device_orientation" },
+          { label: "Hearing Device Trial", value: "hearing_device_trial" },
+          { label: "Hearing Device Fitting", value: "hearing_device_fitting" },
+          { label: "Hearing Device Verification", value: "hearing_device_verification" },
+          { label: "Hearing Device Validation", value: "hearing_device_validation" },
+          { label: "Fine Tuning of Hearing Device", value: "hearing_device_finetuning" },
+
+          { label: "Others", value: "other" }
         ]
+      },
+      {
+        name: "plan_options_details",
+        label: "Specify",
+        type: "textarea",
+        showIf: { field: "plan_options", includes: "other" }
       },
       {
         name: "plan_tinnitus_options",
@@ -1693,29 +1636,72 @@ const OBJECTIVE_SCHEMA = {
     sections: []
   };
 
-  function AudioPatientInfo({ patient }) {
+  function AudioPatientInfo({ patient, patientHistory, setPatientHistory }) {
     if (!patient) return null;
-
-    const handleDoctorsReport = () => {
-      alert("Report will be generating soon");
-    };
 
     return (
       <div style={section}>
         <div style={patientGrid}>
           <div><b>Name:</b> {patient.name}</div>
           <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
+          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
           <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+          <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
+          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
           <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
-          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-          <div style={{ gridColumn: "1 / -1" }}>
-            <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
-              Doctors Reports
-            </button>
+          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+
+          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+              <textarea
+                value={patientHistory.past_medical_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+              <textarea
+                value={patientHistory.past_family_history}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+              <textarea
+                value={patientHistory.alerts_and_allergies}
+                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ marginBottom: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button
+                type="button"
+                onClick={() => console.log("Alerts button clicked!")}
+                style={{ marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0,123,255)", background: "rgb(0,123,255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
+              >
+                🚨 Alerts
+              </button>
+              <button
+                type="button"
+                onClick={() => alert("Report will be generating soon")}
+                style={{ ...doctorsReportBtn, marginTop: 10 }}
+              >
+                Doctors Reports
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1815,7 +1801,7 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
     values={{}}
     onChange={() => {}}
   >
-    <AudioPatientInfo patient={patient} />
+    <AudioPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
   </CommonFormBuilder>
 
   {/* ===== TABS ===== */}

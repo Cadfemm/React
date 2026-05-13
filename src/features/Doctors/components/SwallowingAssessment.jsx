@@ -286,24 +286,48 @@ export default function SwallowingAndSpeechAssessment() {
             ]
           },
           {
-            name: "fees_date",
-            label: "FEES date",
-            type: "date",
+            type: "row",
+            cols: 2,
             showIf: {
               field: "swallowing_difficulty",
               equals: "Impaired",
               and: { field: "previous_swallowing_procedures", equals: "fees" }
-            }
+            },
+            fields: [
+              {
+                name: "fees_date",
+                label: "FEES date",
+                type: "date"
+              },
+              {
+                name: "fees_result",
+                label: "FEES Result",
+                type: "input",
+                placeholder: "Enter FEES result"
+              }
+            ]
           },
           {
-            name: "vfss_date",
-            label: "VFSS date",
-            type: "date",
+            type: "row",
+            cols: 2,
             showIf: {
               field: "swallowing_difficulty",
               equals: "Impaired",
               and: { field: "previous_swallowing_procedures", equals: "vfss" }
-            }
+            },
+            fields: [
+              {
+                name: "vfss_date",
+                label: "VFSS date",
+                type: "date"
+              },
+              {
+                name: "vfss_result",
+                label: "VFSS Result",
+                type: "input",
+                placeholder: "Enter VFSS result"
+              }
+            ]
           },
 
           {

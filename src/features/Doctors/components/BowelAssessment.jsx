@@ -8,8 +8,8 @@ import stoolType5 from "../../../assets/stool_type5.png";
 import stoolType6 from "../../../assets/stool_type6.png";
 import stoolType7 from "../../../assets/stool_type7.png";
 
-export default function BowelAssessmentForm({ onChange: onParentChange }) {
-  const [values, setValues] = useState({});
+export default function BowelAssessmentForm({ onChange: onParentChange, department }) {
+  const [values, setValues] = useState({ __department: department});
   const [submitted, setSubmitted] = useState(false);
 
   const onChange = (name, value) => {
@@ -235,10 +235,17 @@ export default function BowelAssessmentForm({ onChange: onParentChange }) {
             type: "textarea",
             placeholder: "Enter goals"
           },
-          { type: "heading", label: "Plan" },
+          { type: "heading", label: "Plan", showIf: {
+            field: "__department",
+            equals: "doctors"
+          }},
           {
             type: "checkbox-group",
             name: "plan_options",
+            showIf: {
+            field: "__department",
+            equals: "doctors"
+          },
             label: "",
             options: [
               { label: "Imaging: abdominal x ray", value: "imaging_abdominal_xray" },
@@ -324,7 +331,7 @@ const absentPresent = (name, label) => ({
   ]
 });
 
-function BristolChartAssessment({ values = {}, onChange }) {
+export function BristolChartAssessment({ values = {}, onChange }) {
   const rows = [
     {
       key: "1",

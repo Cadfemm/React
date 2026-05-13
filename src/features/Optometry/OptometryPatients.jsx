@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
 import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
+import OptometryProgressAssessment from "./components/OptometryProgressAssessment";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
 import EmptyState from "../../shared/ui/EmptyState";
 import api from "../../shared/api/apiClient";
@@ -64,32 +65,48 @@ export default function OptometryPatients({ onBack, loading = false }) {
   const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient,      setSelectedPatient]      = useState(null);
   const [assessmentView,       setAssessmentView]       = useState(null);
-  const [followupStage,        setFollowupStage]        = useState("dashboard"); // "dashboard" | "soap"
   const [submittedAssessments, setSubmittedAssessments] = useState({});
   const [submittedFollowups,   setSubmittedFollowups]   = useState({});
   const [search,               setSearch]               = useState("");
+  const [patients,             setPatients]             = useState([]);
 
-  const [patients, setPatients] = useState([]);
-
-  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); setFollowupStage("dashboard"); }, []);
-  const handleBackToCards    = useCallback(() => { setAssessmentView(null); setFollowupStage("dashboard"); }, []);
+  const handleBackToPatients = useCallback(() => { setSelectedPatient(null); setAssessmentView(null); }, []);
+  const handleBackToCards    = useCallback(() => { setAssessmentView(null); }, []);
   const handleInitialSubmit  = useCallback((v) => setSubmittedAssessments(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
   const handleFollowupSubmit = useCallback((v) => setSubmittedFollowups(p => ({ ...p, [selectedPatient.id]: v })), [selectedPatient]);
 
   /* Fetch patients department wise */
   React.useEffect(() => {
     const fetchPatients = async () => {
-      try{
+      try {
         const res = await api.get(
-          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=Optometry`:'')
-        )
-        setPatients(res.data.results);
-      } catch(e){
+          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole) ? `?department=Optometry` : '')
+        );
+        setPatients(res.data.results || []);
+      } catch (e) {
         setPatients([]);
       }
-    }
+    };
     fetchPatients();
-  }, [])
+  }, []);
+
+  /* Deep-link: auto-select patient once list is loaded */
+  React.useEffect(() => {
+    if (!patients.length) return;                          // wait for list
+    if (selectedPatient) return;                           // already selected
+
+    const params     = new URLSearchParams(window.location.search);
+    const patientId  = params.get("patient_id");
+    const assessment = params.get("assessment") || "initial";
+
+    if (!patientId) return;
+
+    const found = patients.find(p => p.id === patientId);
+    if (found) {
+      setSelectedPatient(found);
+      setAssessmentView(assessment);
+    }
+  }, [patients]);                                          // runs whenever patients loads
 
   /* hooks must be before early returns */
   const filtered = useMemo(() => patients.filter(p => {
@@ -103,26 +120,38 @@ export default function OptometryPatients({ onBack, loading = false }) {
     return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
   }
   if (selectedPatient && assessmentView === "followup") {
-    // Stage 1: show follow-up dashboard with previous visit summary
-    if (followupStage === "dashboard") {
-      return (
-        <OptometryFollowUpDashboard
-          patient={selectedPatient}
-          onBack={handleBackToCards}
-          onStartSOAP={() => setFollowupStage("soap")}
-        />
-      );
-    }
-    // Stage 2: SOAP form
     const saved = submittedFollowups[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={() => setFollowupStage("dashboard")} />;
+    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
   }
-  if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
-    const card = OPTION_CARDS.find(c => c.id === assessmentView);
+  if (selectedPatient && assessmentView === "progress") {
+    return (
+      <OptometryProgressAssessment
+        patient={selectedPatient}
+        onSubmit={handleFollowupSubmit}
+        onBack={handleBackToCards}
+      />
+    );
+  }
+
+  if (selectedPatient && assessmentView === "group") {
+    const card = OPTION_CARDS.find(c => c.id === "group");
     return (
       <div style={S.page}>
-        <PageHeader title={card.title} sub={`Patient: ${selectedPatient.name || selectedPatient.email}`} onBack={handleBackToCards} backLabel="← Back" />
-        <EmptyState icon={card.icon} title={`${card.title} — Coming Soon`} message="This module is under development." action={{ label: "← Back to Options", onClick: handleBackToCards }} />
+        <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>{card.icon}</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#374151", marginBottom: 6 }}>
+            {card.title} — Coming Soon
+          </div>
+          <div style={{ fontSize: 14, color: "#6B7280", marginBottom: 24 }}>
+            This module is under development for Optometry.
+          </div>
+          <button
+            onClick={handleBackToCards}
+            style={{ padding: "9px 22px", borderRadius: 8, border: "1px solid #2563eb", background: "#fff", color: "#2563eb", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+          >
+            ← Back to Options
+          </button>
+        </div>
       </div>
     );
   }
@@ -244,7 +273,7 @@ export default function OptometryPatients({ onBack, loading = false }) {
               key={p.id}
               patient={p}
               idx={idx}
-              onStart={() => { setSelectedPatient(p); setAssessmentView("initial"); }}
+              onStart={() => setSelectedPatient(p)}
             />
           ))
         )}

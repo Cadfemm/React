@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import PsychologyAssessment from "./PsychologyAssessment";
 import PsychologyFollowUpAssessment from "./PsychologyFollowupAssessment";
+import PediatricPsychologyAssessment from "./PediatricPsychologyAssessment";
+
+/** Returns true when the patient's age is strictly below 20. */
+function isPediatric(patient) {
+  if (!patient) return false;
+  const raw = patient.age;
+  if (raw === undefined || raw === null || raw === "") return false;
+  const num = parseFloat(String(raw));
+  return !isNaN(num) && num < 20;
+}
 
 /** Same visit-type card pattern as Optometry (`OptometryPatients.jsx`). */
 const OPTION_CARDS = [
@@ -40,6 +50,15 @@ export default function PsychologyPatients({ Patients, onBack }) {
   const patients = Patients || [];
 
   if (selectedPatient && assessmentView === "initial") {
+    if (isPediatric(selectedPatient)) {
+      return (
+        <PediatricPsychologyAssessment
+          patient={selectedPatient}
+          onSubmit={(values) => { console.log("Pediatric psychology initial assessment submitted:", values); }}
+          onBack={() => setAssessmentView(null)}
+        />
+      );
+    }
     return (
       <PsychologyAssessment
         patient={selectedPatient}
@@ -61,6 +80,15 @@ export default function PsychologyPatients({ Patients, onBack }) {
   }
 
   if (selectedPatient && (assessmentView === "progress" || assessmentView === "group")) {
+    if (isPediatric(selectedPatient)) {
+      return (
+        <PediatricPsychologyAssessment
+          patient={selectedPatient}
+          onSubmit={(values) => { console.log("Pediatric psychology assessment submitted:", values); }}
+          onBack={() => setAssessmentView(null)}
+        />
+      );
+    }
     return (
       <PsychologyAssessment
         patient={selectedPatient}

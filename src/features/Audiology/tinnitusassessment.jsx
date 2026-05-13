@@ -3,6 +3,9 @@ import CommonFormBuilder from "../CommonComponenets/FormBuilder";
 
 export function TinnitusAdvancedForm({ onBack, mode }) {
   const [values, setValues] = useState({});
+  const [vasScoresVisible, setVasScoresVisible] = useState(true);
+  const [thiScoresVisible, setThiScoresVisible] = useState(true);
+  const [tfiScoresVisible, setTfiScoresVisible] = useState(true);
 
   const THI_QUESTIONS = [
     "Because of your tinnitus, is it difficult for you to concentrate?",
@@ -161,7 +164,13 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
   // ✅ HANDLE CHANGE (AUTO COMPUTE)
   const handleChange = (name, value) => {
     setValues((prev) => {
-      const updated = { ...prev, [name]: value };
+    const updated = {
+      ...prev,
+      [name]:
+        name === "tinnitus_type" || name === "associated_symptoms"
+          ? (Array.isArray(value) ? value : value ? [value] : [])
+          : value
+    };
 
       const thi = computeTHI(updated);
       const tfi = computeTFI(updated);
@@ -191,14 +200,16 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
     });
   };
 
-  const schema = {
+  // ══════════════════════════════════════════════════════════
+  // MAIN SCHEMA — title + Back button, case history, scale selectors,
+  // lifestyle & counseling (no Doctor View toggle here)
+  // ══════════════════════════════════════════════════════════
+  const mainSchema = {
     title: "Additional Tinnitus Profile",
     actions: [{ type: "back", label: "Back" }],
-
     sections: [
       {
-        // ✅ SINGLE UNIFIED SECTION - all fields grouped together
-        title: null, // No section title, uses main form title
+        title: null,
         fields: [
           // ══════════════════════════════════════════════════════════
           // CASE HISTORY
@@ -209,10 +220,22 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           { name: "duration", label: "Duration", type: "input" },
 
           {
-            name: "type",
+            name: "tinnitus_type",
             label: "Type",
-            type: "radio",
-            options: ["Constant", "Intermittent", "Pulsatile", "Noise", "Tonal"]
+            type: "checkbox-group",
+            options: [
+              { label: "Constant", value: "constant" },
+              { label: "Intermittent", value: "intermittent" },
+              { label: "Pulsatile", value: "pulsatile" },
+              { label: "Noise-like", value: "noise" },
+              { label: "Tonal", value: "tonal" }
+            ]
+          },
+          {
+            name: "tinnitus_type_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "tinnitus_type", notEmpty: true }
           },
 
           {
@@ -220,10 +243,7 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
             label: "Ears affected",
             type: "radio",
             options: ["Right", "Left", "Bilateral", "In head"],
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
+            showIf: { field: "mode", equals: "followup" }
           },
 
           {
@@ -242,22 +262,22 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           {
             name: "associated_symptoms",
             label: "Associated symptoms",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              { label: "Hearing loss", value: "0" },
-              { label: "Vertigo", value: "1" },
-              { label: "Ear fullness", value: "2" },
-              { label: "Otalgia", value: "3" },
-              { label: "Hyperacusis", value: "4" },
-              { label: "Other", value: "5" }
+              { label: "None", value: "associated_none" },
+              { label: "Hearing loss", value: "hearing_loss" },
+              { label: "Vertigo", value: "vertigo" },
+              { label: "Ear fullness", value: "ear_fullness" },
+              { label: "Otalgia", value: "otalgia" },
+              { label: "Hyperacusis", value: "hyperacusis" },
+              { label: "Other", value: "other" }
             ]
           },
-
           {
-            name: "associated_symptoms_other",
-            label: "If Other, specify",
+            name: "associated_symptoms_details",
+            label: "Specify",
             type: "textarea",
-            showIf: { field: "associated_symptoms", equals: "5" }
+            showIf: { field: "associated_symptoms", notEmpty: true }
           },
 
           { name: "previous_treatment", label: "Previous treatment / intervention", type: "input" },
@@ -265,94 +285,131 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           {
             name: "noise_exposure",
             label: "Noise exposure history",
-            type: "radio",
+            type: "checkbox-group",
             options: [
-              { label: "None", value: "0" },
-              { label: "Recreational", value: "1" },
-              { label: "Occupational", value: "2" }
+              { label: "None", value: "none" },
+              { label: "Recreational", value: "recreational" },
+              { label: "Occupational", value: "occupational" }
             ]
+          },
+          {
+            name: "noise_exposure_details",
+            label: "Specify",
+            type: "textarea",
+            showIf: { field: "noise_exposure", notEmpty: true }
           },
 
           { name: "ototoxic_drugs", label: "Ototoxic drug use", type: "input" },
           { name: "family_history", label: "Family history", type: "input" },
 
           // ══════════════════════════════════════════════════════════
-          // SUBJECTIVE RATING SCALES
+          // SUBJECTIVE RATING SCALES — selectors only
           // ══════════════════════════════════════════════════════════
           { type: "subheading", label: "Subjective Rating Scales For Tinnitus" },
 
           { name: "enable_vas", label: "Tinnitus Visual Analog Scale (VAS)", type: "radio", options: ["Yes", "No"] },
           { name: "enable_thi", label: "Tinnitus Handicap Inventory (THI)", type: "radio", options: ["Yes", "No"] },
-          { name: "enable_tfi", label: "Tinnitus Functional Index (TFI)", type: "radio", options: ["Yes", "No"] },
+          { name: "enable_tfi", label: "Tinnitus Functional Index (TFI)", type: "radio", options: ["Yes", "No"] }
+        ]
+      }
+    ]
+  };
 
-          // ══════════════════════════════════════════════════════════
-          // VAS SECTION
-          // ══════════════════════════════════════════════════════════
-          { type: "subheading", label: "Tinnitus Visual Analog Scale (VAS)", showIf: { field: "enable_vas", equals: "Yes" } },
+  // ══════════════════════════════════════════════════════════
+  // VAS SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const vasSchema = {
+    title: "Tinnitus Visual Analog Scale (VAS)",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [
+      {
+        title: null,
+        fields: [
+          { type: "info-text", text: "0 = none, 10 = worst possible" },
 
-          {
-            type: "info-text",
-            text: "0 = none, 10 = worst possible",
-            showIf: { field: "enable_vas", equals: "Yes" }
-          },
+          { name: "vas_loudness", label: "Tinnitus Loudness - How loud is your tinnitus most of the time?", type: "scale-slider", min: 0, max: 10 },
+          ...(vasScoresVisible ? [{ name: "vas_loudness_severity", label: "Loudness Severity", type: "score-box" }] : []),
 
-          { name: "vas_loudness", label: "Tinnitus Loudness - How loud is your tinnitus most of the time?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_loudness_severity", label: "Loudness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_annoyance", label: "Tinnitus Annoyance - How annoying or bothersome is your tinnitus?", type: "scale-slider", min: 0, max: 10 },
+          ...(vasScoresVisible ? [{ name: "vas_annoyance_severity", label: "Annoyance Severity", type: "score-box" }] : []),
 
-          { name: "vas_annoyance", label: "Tinnitus Annoyance - How annoying or bothersome is your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_annoyance_severity", label: "Annoyance Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
+          { name: "vas_awareness", label: "Tinnitus Awareness - How much of the time are you aware of your tinnitus?", type: "scale-slider", min: 0, max: 10 },
+          ...(vasScoresVisible ? [{ name: "vas_awareness_severity", label: "Awareness Severity", type: "score-box" }] : [])
+        ]
+      }
+    ]
+  };
 
-          { name: "vas_awareness", label: "Tinnitus Awareness - How much of the time are you aware of your tinnitus?", type: "scale-slider", min: 0, max: 10, showIf: { field: "enable_vas", equals: "Yes" } },
-          { name: "vas_awareness_severity", label: "Awareness Severity", type: "score-box", showIf: { field: "enable_vas", equals: "Yes" } },
-
-          // ══════════════════════════════════════════════════════════
-          // THI SECTION
-          // ══════════════════════════════════════════════════════════
-          { type: "subheading", label: "THI", showIf: { field: "enable_thi", equals: "Yes" } },
-
+  // ══════════════════════════════════════════════════════════
+  // THI SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const thiSchema = {
+    title: "THI",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [
+      {
+        title: null,
+        fields: [
           ...THI_QUESTIONS.map((q, i) => ({
             name: `thi_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "radio-matrix",
-            options: [
-              { label: "No (0)", value: "0" },
-              { label: "Sometimes (2)", value: "2" },
-              { label: "Yes (4)", value: "4" }
-            ],
-            showIf: { field: "enable_thi", equals: "Yes" }
+            options: thiScoresVisible
+              ? [{ label: "No (0)", value: "0" }, { label: "Sometimes (2)", value: "2" }, { label: "Yes (4)", value: "4" }]
+              : [{ label: "No", value: "0" }, { label: "Sometimes", value: "2" }, { label: "Yes", value: "4" }]
           })),
 
-          {
-            type: "info-text",
-            text: "Scoring: No = 0, Sometimes = 2, Yes = 4",
-            showIf: { field: "enable_thi", equals: "Yes" }
-          },
+          { type: "info-text", text: "Scoring: No = 0, Sometimes = 2, Yes = 4" },
 
-          { name: "thi_score", label: "THI Score", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
-          { name: "thi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_thi", equals: "Yes" } },
+          ...(thiScoresVisible ? [
+            { name: "thi_score", label: "THI Score", type: "score-box" },
+            { name: "thi_interpretation", label: "Interpretation", type: "score-box" }
+          ] : [])
+        ]
+      }
+    ]
+  };
 
-          // ══════════════════════════════════════════════════════════
-          // TFI SECTION
-          // ══════════════════════════════════════════════════════════
-          { type: "subheading", label: "TFI", showIf: { field: "enable_tfi", equals: "Yes" } },
-
+  // ══════════════════════════════════════════════════════════
+  // TFI SCHEMA — own Doctor View toggle
+  // ══════════════════════════════════════════════════════════
+  const tfiSchema = {
+    title: "TFI",
+    enableScoreToggle: true,
+    actions: [{ type: "toggle-show-scores" }],
+    sections: [
+      {
+        title: null,
+        fields: [
+          { type: "info-text", text: "0 = none, 10 = worst possible" },
           ...TFI_QUESTIONS.map((q, i) => ({
             name: `tfi_${i + 1}`,
             label: `${i + 1}. ${q}`,
             type: "scale-slider",
             min: 0,
-            max: 10,
-            showIf: { field: "enable_tfi", equals: "Yes" }
+            max: 10
           })),
 
-          { name: "tfi_score", label: "TFI Score", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
-          { name: "tfi_severity_level", label: "Severity Level", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },          
-          { name: "tfi_interpretation", label: "Interpretation", type: "score-box", showIf: { field: "enable_tfi", equals: "Yes" } },
+          ...(tfiScoresVisible ? [
+            { name: "tfi_score", label: "TFI Score", type: "score-box" },
+            { name: "tfi_severity_level", label: "Severity Level", type: "score-box" },
+            { name: "tfi_interpretation", label: "Interpretation", type: "score-box" }
+          ] : [])
+        ]
+      }
+    ]
+  };
 
-
-          // ══════════════════════════════════════════════════════════
-          // LIFESTYLE & FUNCTIONAL IMPACT
-          // ══════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
+  // LIFESTYLE & COUNSELING SCHEMA — no toggle
+  // ══════════════════════════════════════════════════════════
+  const lifestyleSchema = {
+    sections: [
+      {
+        title: null,
+        fields: [
           { type: "subheading", label: "Lifestyle & Functional Impact (Tinnitus)" },
 
           { name: "sleep", label: "Sleep Quality", type: "input" },
@@ -361,50 +418,79 @@ export function TinnitusAdvancedForm({ onBack, mode }) {
           { name: "functioning", label: "Daily Functioning", type: "input" },
           { name: "sound", label: "Use of Hearing Aids / Sound Therapy", type: "input" },
 
-          // ══════════════════════════════════════════════════════════
-          // COUNSELING SUMMARY
-          // ══════════════════════════════════════════════════════════
-          {
-            type: "subheading",
-            label: "Counseling Summary",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          },
-
-          {
-            name: "understanding",
-            label: "Client's Understanding Of Tinnitus",
-            type: "input",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          },
-
-          {
-            name: "recommendations",
-            label: "Recommendations",
-            type: "input",
-            showIf: {
-              field: "mode",
-              equals: "followup"
-            }
-          }
+          { type: "subheading", label: "Counseling Summary", showIf: { field: "mode", equals: "followup" } },
+          { name: "understanding", label: "Client's Understanding Of Tinnitus", type: "input", showIf: { field: "mode", equals: "followup" } },
+          { name: "recommendations", label: "Recommendations", type: "input", showIf: { field: "mode", equals: "followup" } }
         ]
       }
     ]
   };
 
+  const allValues = { ...values, mode };
+
   return (
-    <CommonFormBuilder
-      schema={schema}
-      values={{ ...values, mode }}
-      onChange={handleChange}
-      layout="nested"
-      onAction={(type) => type === "back" && onBack()}
-    />
+    <div>
+      {/* Main form: title + Back button + case history + scale selectors */}
+      <CommonFormBuilder
+        schema={mainSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+        onAction={(type) => {
+          if (type === "back") onBack();
+        }}
+      />
+
+      {/* VAS — only when enabled, with its own Doctor View toggle */}
+      {values.enable_vas === "Yes" && (
+        <CommonFormBuilder
+          schema={vasSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={vasScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setVasScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* THI — only when enabled, with its own Doctor View toggle */}
+      {values.enable_thi === "Yes" && (
+        <CommonFormBuilder
+          schema={thiSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={thiScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setThiScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* TFI — only when enabled, with its own Doctor View toggle */}
+      {values.enable_tfi === "Yes" && (
+        <CommonFormBuilder
+          schema={tfiSchema}
+          values={allValues}
+          onChange={handleChange}
+          layout="nested"
+          showScores={tfiScoresVisible}
+          onAction={(type) => {
+            if (type === "toggle-show-scores") setTfiScoresVisible(v => !v);
+          }}
+        />
+      )}
+
+      {/* Lifestyle & Counseling — no toggle */}
+      <CommonFormBuilder
+        schema={lifestyleSchema}
+        values={allValues}
+        onChange={handleChange}
+        layout="nested"
+      />
+    </div>
   );
 }
 
@@ -416,72 +502,184 @@ export function TinnitusAdvancedFormObj({ onBack }) {
     actions: [{ type: "back", label: "Back" }],
 
     sections: [
-      {
-        title: "Tinnitus Psychoacoustic Measurements",
-        fields: [
-          {
-            type: "subheading",
-            label: "Pitch Matching(Hz)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "pitch_r", label: "Right Ear", type: "input" },
-              { name: "pitch_l", label: "Left Ear", type: "input" }
-            ]
-          },
+     {
+      title: null,
+      fields: [
+        {
+          type: "accordion",
+          name: "tinnitus_section",
+          label: "Tinnitus Psychoacoustic Measurements",
+          defaultOpen: false,
 
-          {
-            type: "subheading",
-            label: "Loudness Matching (dB HL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "loudness_r", label: "Right Ear", type: "input" },
-              { name: "loudness_l", label: "Left Ear", type: "input" }
-            ]
-          },
+          children: [
+            // ✅ ADD THIS SELECTOR
+            {
+              name: "psychoacoustic_fields",
+              label: "Select Measurements",
+              type: "checkbox-group",
+              options: [
+                { label: "Pitch Matching", value: "pitch" },
+                { label: "Loudness Matching", value: "loudness" },
+                { label: "Minimum Masking Level (MML)", value: "mml" },
+                { label: "Residual Inhibition", value: "ri" },
+                { label: "Loudness Discomfort Level (LDL)", value: "ldl" }
+              ]
+            },
 
-          {
-            type: "subheading",
-            label: "Minimum Masking Level (MML) (dBHL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "mml_r", label: "Right Ear", type: "input" },
-              { name: "mml_l", label: "Left Ear", type: "input" }
-            ]
-          },
+            {
+              type: "refraction-12col",
+              name: "tinnitus_matrix",
 
-          {
-            type: "subheading",
-            label: "Residual Inhibition"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "ri_r", label: "Right Ear", type: "input" },
-              { name: "ri_l", label: "Left Ear", type: "input" }
-            ]
-          },
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
 
-          {
-            type: "subheading",
-            label: "Loudness Discomfort Level (LDL)"
-          },
-          {
-            type: "row",
-            fields: [
-              { name: "ldl_r", label: "Right Ear", type: "input" },
-              { name: "ldl_l", label: "Left Ear", type: "input" }
-            ]
-          }
-        ]
-      }
-    ]
-  };
+              groups: [
+                {
+                  label: "",
+                  columns: [
+                    { key: "Right Ear" },
+                    { key: "Left Ear" }
+                  ]
+                }
+              ],
+
+              // ✅ FILTER ROWS BASED ON SELECTION
+              rows: (values) => {
+                const selected = values.psychoacoustic_fields || [];
+
+                const allRows = [
+                  {
+                    value: "pitch",
+                    label: "Pitch Matching (Hz)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "loudness",
+                    label: "Loudness Matching (dB HL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "mml",
+                    label: "Minimum Masking Level (MML) (dB HL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "ri",
+                    label: "Residual Inhibition",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  },
+                  {
+                    value: "ldl",
+                    label: "Loudness Discomfort Level (LDL)",
+                    columns: [{ type: "input" }, { type: "input" }]
+                  }
+                ];
+
+                return allRows.filter(row => selected.includes(row.value));
+              }
+            }
+          ]
+        },
+        {
+          type: "subheading",
+          label: "Special Test"
+        },
+        {
+          name: "special_test",
+          label: "Details",
+          type: "input"
+        },
+        {
+          type: "accordion",
+          name: "intervention_section",
+          label: "Interventions",
+          defaultOpen: false,
+
+          children: [
+            {
+              type: "refraction-12col",
+              name: "intervention_matrix",
+
+              cornerLabel: "",
+              cornerLikeGroupHeader: false,
+              showColumnHeaders: true,
+
+              groups: [
+                {
+                  label: "",
+                  columns: [
+                    { key: "Yes / No" },
+                    { key: "Remarks" }
+                  ]
+                }
+              ],
+
+              rows: [
+                {
+                  value: "trt",
+                  label: "Tinnitus Retraining Therapy",
+                  columns: [
+                    {
+                      type: "select",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "sound",
+                  label: "Sound Therapy",
+                  columns: [
+                    {
+                      type: "select",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "hearing_aid",
+                  label: "Hearing Aids / Assistive Devices",
+                  columns: [
+                    {
+                      type: "select",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input" }
+                  ]
+                },
+                {
+                  value: "counselling",
+                  label: "Counselling",
+                  columns: [
+                    {
+                      type: "select",
+                      options: [
+                        { label: "No", value: 0 },
+                        { label: "Yes", value: 1 }
+                      ]
+                    },
+                    { type: "input" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+      ]
+    }
+  ]
+};
 
   return (
     <CommonFormBuilder

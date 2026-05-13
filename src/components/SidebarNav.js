@@ -6,7 +6,7 @@ import {
 
 const DEPARTMENTS = [
   "Customer Service", "Nursing", "Medical Assistant", "Doctor",
-  "Physiotherapy", "Work & Vocational Rehab", "Occupational Therapy",
+  "Physiotherapy", "Integrated Rehab", "Work & Vocational Rehab", "Occupational Therapy",
   "Optometry", "Prosthetics & Orthotics", "Audiology",
   "Dietetics", "Speech & Language Therapy", "Psychology",
 ];

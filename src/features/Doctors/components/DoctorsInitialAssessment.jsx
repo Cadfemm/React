@@ -335,7 +335,6 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
     "Functional",
     "Social History",
     "Work History",
-    "Procedure",
     "Medication"
   ];
 
@@ -722,11 +721,17 @@ const handleSubmitReferral = () => {
                 tabs[activeTab] === "Functional" ? (
           <FunctionalAssessment onChange={setFunctionalAssessmentData} />
         ) :
- tabs[activeTab] === "Bowel Issue" ? (
-          <BowelAssessment onChange={setBowelAssessmentData} />
+        tabs[activeTab] === "Bowel Issue" ? (
+          <BowelAssessment
+            onChange={setBowelAssessmentData}
+            department="doctors"
+          />
         ) :
          tabs[activeTab] === "Bladder Issue" ? (
-          <BladderAssessment onChange={setBladderAssessmentData} />
+          <BladderAssessment
+          onChange={setBladderAssessmentData}
+          department="doctors"
+        />
         ) :
          tabs[activeTab] === "Sexual" ? (
           <SexualAssessment patient={patient} />
