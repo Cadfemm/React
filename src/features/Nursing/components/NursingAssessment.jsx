@@ -31,6 +31,9 @@ import PatientCard from "../../../shared/cards/PatientCard";
 import SpasmSpasticity from "../../Doctors/components/SpasmSpasticity";
 import BladderAssessment from "../../Doctors/components/BladderAssessment";
 import BowelAssessmentForm from "../../Doctors/components/BowelAssessment";
+import PainAssessmentForm from "../../Doctors/components/PainAssessmentForm";
+import BristolChartAssessment  from "../../Doctors/components/BowelAssessment";
+import WoundAssessment from "../pages/WoundAssessment";
 
 // Create context to pass patient to assessment components
 const PatientContext = createContext(null);
@@ -116,6 +119,30 @@ function BradenScaleAdapter({ values, onChange }) {
   return <BradenScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
 }
 
+function WoundAssessmentAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+
+  const handleSubmit = (payload) => {
+    if (payload?.values) {
+      Object.keys(payload.values).forEach((key) => {
+        onChange(`wound_assessment_${key}`, payload.values[key]);
+      });
+    }
+  };
+
+  const handleBack = () => {
+    onChange("nursing_assessments_active", null);
+  };
+
+  return (
+    <WoundAssessment
+      patient={patient}
+      onSubmit={handleSubmit}
+      onBack={handleBack}
+    />
+  );
+}
+
 function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
   const patient = useContext(PatientContext);
   const handleSubmit = (payload) => {
@@ -134,6 +161,7 @@ function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
 
 function NumericPainRatingScaleAdapter({ values, onChange }) {
   const patient = useContext(PatientContext);
+  
   const handleSubmit = (payload) => {
     if (payload && payload.values) {
       Object.keys(payload.values).forEach(key => {
@@ -141,11 +169,20 @@ function NumericPainRatingScaleAdapter({ values, onChange }) {
       });
     }
   };
+  
   const handleBack = () => {
     const activeKey = "nursing_assessments_active";
     onChange(activeKey, null);
   };
-  return <NumericPainRatingScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+  
+  return (
+    <NumericPainRatingScaleForm 
+      patient={patient} 
+      onSubmit={handleSubmit} 
+      onBack={handleBack}
+      onChange={onChange}
+    />
+  );
 }
 
 function DiabeticFootAssessmentAdapter({ values, onChange }) {
@@ -358,6 +395,9 @@ export const NURSING_ASSESSMENT_REGISTRY = {
   repositioning_skin_chart: RepositioningSkinChartAdapter,
   spasticity_assessment: SpasmSpasticity,
   spasm_assessment: SpasmSpasticity,
+  pain_assessment: PainAssessmentForm,
+  bristol_chart: BristolChartAssessment,
+  wound_assessment: WoundAssessmentAdapter,
   bladder_issue: (props) => (
   <BladderAssessment {...props} department="nursing" />
   ),
@@ -432,6 +472,10 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         const w = parseFloat(name === "obj_weight" ? value : v.obj_weight);
         if (h > 0 && w > 0) next.obj_bmi = (w / Math.pow(h / 100, 2)).toFixed(1);
       }
+      if (name === "numeric_pain_scale_current_pain") {
+        const painValue = parseFloat(value);
+        next.show_motor_pain_assessment = Number.isFinite(painValue) && painValue > 1;
+    }
       // Show Cardiac Assessment launcher when subjective cardio-respiratory symptoms are present
       const cardiacSubjectiveNames = ["chest_pain", "dyspnea", "palpitations"];
       if (cardiacSubjectiveNames.includes(name)) {
@@ -1354,6 +1398,62 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
             { name: "obj_spo2", label: "Oxygen Saturation (SpO₂) (%)", type: "input", placeholder: "%" }
           ]},
           {
+            name: "objective_pain_assessment_form",
+            label: "",
+            type: "assessment-launcher",
+            options: [
+              {
+                label: "Numeric Rating Scale",
+                value: "numeric_pain_rating_scale"
+              }
+            ]
+          },
+          {
+              name: "wound_location_pins", label: "Mark Wound Location on Body Diagram",
+              type: "wound-location-marker",
+              views: [
+                { key: "body",  label: "Body (Front/Back)", src: "/body_high.png" },
+                { key: "feet",  label: "Feet",             src: "/feet_high.png" },
+                { key: "handsfeet", label: "Hands",              src: "/hands_high.png" }
+              ],
+            showIf: { 
+              field: "show_motor_pain_assessment", 
+              equals: true
+            },
+          },
+          {
+          name: "wound_location_notes",
+          label: "Wound Location Notes",
+          type: "textarea",
+          placeholder: "Enter wound location details...",
+          showIf: {
+            field: "show_motor_pain_assessment",
+            equals: true
+          }
+        },
+          // {
+          //   name: "motor_pain_assessment",
+          //   label: "",
+          //   type: "assessment-launcher",
+          //   autoOpen: true,
+          //   options: [{ label: "Pain Assessment", value: "pain_assessment" }],
+          //   showIf: { 
+          //     field: "show_motor_pain_assessment", 
+          //     equals: true
+          //   },
+          // },
+          {
+            type: "subheading",
+            label: "Glucose Monitoring"
+          },
+
+          {
+            name: "glucose_monitoring",
+            label: "",
+            type: "input",
+            placeholder: "To include CGM report if present"
+          },
+          {
             name: "cardiac_assessment_launcher",
             label: "",
             type: "assessment-launcher",
@@ -1812,6 +1912,15 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           },
           { type: "subheading", label: "Abdomen / Gastrointestinal System" },
           {
+            type: "assessment-launcher",
+            name: "gi_bowel_assessments_launcher",
+            label: "Related Assessments",
+            options: [
+              { label: "Bladder Diary", value: "bladder_diary" },
+              { label: "Bristol Chart", value: "bristol_chart" }
+            ]
+          },
+          {
             name: "gi_inspection",
             label: "Inspection",
             type: "radio",
@@ -2034,43 +2143,43 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
             showIf: { field: "gu_bladder_function", equals: "full_dependent" }
           },
 
-          { type: "subheading", label: "Endocrine / Metabolic" },
-          {
-            name: "endo_diabetes",
-            label: "Diabetes",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Type 1", value: "type1" },
-              { label: "Type 2", value: "type2" },
-              { label: "Gestational", value: "gestational" }
-            ]
-          },
-          {
-            name: "endo_hypoglycemia_symptoms",
-            label: "Hypoglycemia symptoms",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_hyperglycemia_symptoms",
-            label: "Hyperglycemia symptoms",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_steroid_therapy",
-            label: "Steroid therapy",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "endo_hba1c",
-            label: "HbA1c (if available)",
-            type: "input"
-          },
+          // { type: "subheading", label: "Endocrine / Metabolic" },
+          // {
+          //   name: "endo_diabetes",
+          //   label: "Diabetes",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Type 1", value: "type1" },
+          //     { label: "Type 2", value: "type2" },
+          //     { label: "Gestational", value: "gestational" }
+          //   ]
+          // },
+          // {
+          //   name: "endo_hypoglycemia_symptoms",
+          //   label: "Hypoglycemia symptoms",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_hyperglycemia_symptoms",
+          //   label: "Hyperglycemia symptoms",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_steroid_therapy",
+          //   label: "Steroid therapy",
+          //   type: "radio",
+          //   options: YES_NO_OPTIONS
+          // },
+          // {
+          //   name: "endo_hba1c",
+          //   label: "HbA1c (if available)",
+          //   type: "input"
+          // },
 
-          { type: "subheading", label: "Nutrition / Tissue Perfusion Risk" },
+          { type: "subheading", label: "Nutrition & Hydration" },
           {
             name: "nut_oral_intake",
             label: "Oral intake",
@@ -2117,6 +2226,55 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
             options: [
               { label: "No", value: "no" },
               { label: "Yes", value: "yes" }
+            ]
+          },
+          {
+            type: "subheading",
+            label: "",
+            showIf: { field: "nut_swallow_difficulty", equals: "yes" }
+          },
+          {
+            name: "swallow_assessment_launcher",
+            label: "",
+            type: "assessment-launcher",
+            options: [
+              { label: "Swallow Screener", value: "swallow_screener" },
+              { label: "Water Swallow Test", value: "water_swallow_test" }
+            ],
+            showIf: { field: "nut_swallow_difficulty", equals: "yes" }
+          },
+
+          // Replace the conditional block with this (for testing):
+
+          { type: "subheading", label: "Safety & Comfort Concerns" },
+          { type: "subheading", label: "Orthostatic vitals" },
+
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_supine_bp", label: "Supine: BP", type: "input" },
+              { name: "ortho_supine_hr", label: "Supine: HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_sitting_bp", label: "Sitting: BP", type: "input" },
+              { name: "ortho_sitting_hr", label: "Sitting: HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_stand1_bp", label: "Standing (1 min): BP", type: "input" },
+              { name: "ortho_stand1_hr", label: "Standing (1 min): HR", type: "input" }
+            ]
+          },
+          { 
+            type: "row", 
+            fields: [
+              { name: "ortho_stand3_bp", label: "Standing (3 min): BP", type: "input" },
+              { name: "ortho_stand3_hr", label: "Standing (3 min): HR", type: "input" }
             ]
           },
 
@@ -2262,84 +2420,6 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
               { label: "Fissures", value: "fissures" }
             ]
           },
-
-          { type: "subheading", label: "Wounds / Pressure Injury" },
-          {
-            name: "pi_ulcer_wound_present",
-            label: "Ulcer / wound present",
-            type: "radio",
-            options: [
-              { label: "No", value: "no" },
-              { label: "Yes", value: "yes" }
-            ]
-          },
-          {
-            name: "pi_braden_scale",
-            label: "",
-            type: "assessment-launcher",
-            options: [{ label: "Braden Scale", value: "braden_scale" }],
-            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
-          },
-          {
-            name: "pi_wound_assessment",
-            label: "Wound Assessment (WATFS)",
-            type: "wound-assessment-inline",
-            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
-          },
-          {
-            name: "pi_drainage",
-            label: "Drainage",
-            type: "radio",
-            options: [
-              { label: "None", value: "none" },
-              { label: "Serous", value: "serous" },
-              { label: "Purulent", value: "purulent" },
-              { label: "Bloody", value: "bloody" }
-            ]
-          },
-          {
-            name: "pi_dressing_status",
-            label: "Dressing status",
-            type: "radio",
-            options: [
-              { label: "Clean/dry/intact", value: "clean_dry_intact" },
-              { label: "Soiled", value: "soiled" },
-              { label: "Loose", value: "loose" }
-            ]
-          },
-
-          { type: "subheading", label: "Mobility / Activity" },
-          {
-            name: "pi_position_tolerance",
-            label: "Current position tolerance",
-            type: "radio",
-            labelAbove: true,
-            options: [
-              { label: "Independent repositioning", value: "independent_repositioning" },
-              { label: "Requires assistance to reposition", value: "requires_assistance" },
-              { label: "Bedbound / Chairbound", value: "bedbound_chairbound" }
-            ]
-          },
-          {
-            name: "pi_transfers",
-            label: "Transfers",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "One assist", value: "one_assist" },
-              { label: "Two assist / mechanical lift", value: "two_assist_mech_lift" }
-            ]
-          },
-          {
-            name: "pi_ambulation",
-            label: "Ambulation",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "With assistive device", value: "assistive_device" },
-              { label: "Unable to ambulate", value: "unable" }
-            ]
-          },
           {
             name: "pi_time_same_position",
             label: "Time in same position",
@@ -2406,8 +2486,265 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
               { label: "Yes", value: "yes" }
             ]
           },
+          { type: "subheading", label: "Wounds / Pressure Injury" },
+          {
+            name: "pi_ulcer_wound_present",
+            label: "Ulcer / wound present",
+            type: "radio",
+            options: [
+              { label: "No", value: "no" },
+              { label: "Yes", value: "yes" }
+            ]
+          },
+          {
+            name: "pi_braden_scale",
+            label: "",
+            type: "assessment-launcher",
+            options: [{ label: "Braden Scale", value: "braden_scale" }],
+            showIf: { field: "pi_ulcer_wound_present", equals: "yes" }
+          },
+          {
+            name: "pi_wound_assessment",
+            label: "Wound Assessment (WATFS)",
+            type: "assessment-launcher",
+            autoOpen: false,
+            hideRemarks: true,
+            showIf: {
+              field: "pi_ulcer_wound_present",
+              equals: "yes"
+            },
+            options: [
+              {
+                label: "Wound Assessment (WATFS)",
+                value: "wound_assessment"
+              }
+            ]
+          },
+          {
+            name: "pi_drainage",
+            label: "Drainage",
+            type: "radio",
+            options: [
+              { label: "None", value: "none" },
+              { label: "Serous", value: "serous" },
+              { label: "Purulent", value: "purulent" },
+              { label: "Bloody", value: "bloody" }
+            ]
+          },
+          {
+            name: "pi_dressing_status",
+            label: "Dressing status",
+            type: "radio",
+            options: [
+              { label: "Clean/dry/intact", value: "clean_dry_intact" },
+              { label: "Soiled", value: "soiled" },
+              { label: "Loose", value: "loose" }
+            ]
+          },
 
-          { type: "subheading", label: "Behavioral / Mental Status Observation" },
+          { type: "subheading", label: "Functional Status" },
+          {
+            name: "pi_position_tolerance",
+            label: "Current position tolerance",
+            type: "radio",
+            labelAbove: true,
+            options: [
+              { label: "Independent repositioning", value: "independent_repositioning" },
+              { label: "Requires assistance to reposition", value: "requires_assistance" },
+              { label: "Bedbound / Chairbound", value: "bedbound_chairbound" }
+            ]
+          },
+          {
+            name: "pi_transfers",
+            label: "Transfers",
+            type: "radio",
+            options: [
+              { label: "Independent", value: "independent" },
+              { label: "One assist", value: "one_assist" },
+              { label: "Two assist / mechanical lift", value: "two_assist_mech_lift" }
+            ]
+          },
+
+
+    // ---------------- WALKING AID ----------------
+
+    {
+      type: "subheading",
+      label: "Mobility Aid"
+    },
+
+    {
+      name: "walking_aid_type",
+      label: "Walking Aid Type",
+      type: "radio",
+      options: [
+        { label: "Walking stick/cane", value: "walking_stick" },
+        { label: "Elbow crutches (single/bilateral)", value: "elbow_crutches" },
+        { label: "Axillary crutches (single/bilateral)", value: "axillary_crutches" },
+        { label: "Platform crutches (single/bilateral)", value: "platform_crutches" },
+        { label: "Quadripod", value: "quadripod" },
+        { label: "Walking Frame", value: "walking_frame" },
+        { label: "Wheeled Walker", value: "wheeled_walker" },
+        { label: "Rollator / Reverse Rollator", value: "rollator" }
+      ]
+    },
+
+        {
+          name: "walking_aid_assistance",
+          label: "Assistance Level",
+          type: "radio",
+          options: [
+            { label: "Independent", value: "independent" },
+            { label: "Minimal Assistance", value: "minimal_assistance" },
+            { label: "Moderate Assistance", value: "moderate_assistance" },
+            { label: "Maximum Assistance", value: "maximum_assistance" },
+            { label: "Total Dependent", value: "total_dependent" }
+          ]
+        },
+
+        {
+          name: "walking_aid_distance",
+          label: "Distance",
+          type: "radio",
+          options: [
+            { label: "Short Distance", value: "short_distance" },
+            { label: "Long Distance", value: "long_distance" }
+          ]
+        },
+      
+
+    // ---------------- WHEELCHAIR ----------------
+
+    // {
+    //   type: "subheading",
+    //   label: "Wheelchair"
+    // },
+
+    {
+      name: "wheelchair_type",
+      label: "Wheelchair Type",
+      type: "radio",
+      options: [
+        { label: "Manual Wheelchair", value: "manual_wheelchair" },
+        { label: "Electrical Wheelchair", value: "electrical_wheelchair" }
+      ]
+    },
+
+   
+        {
+          name: "wheelchair_assistance",
+          label: "Assistance Level",
+          type: "radio",
+          options: [
+            { label: "Independent", value: "independent" },
+            { label: "Minimal Assistance", value: "minimal_assistance" },
+            { label: "Moderate Assistance", value: "moderate_assistance" },
+            { label: "Maximum Assistance", value: "maximum_assistance" },
+            { label: "Total Dependent", value: "total_dependent" }
+          ]
+        },
+
+        {
+          name: "wheelchair_distance",
+          label: "Distance",
+          type: "radio",
+          options: [
+            { label: "Short Distance", value: "short_distance" },
+            { label: "Long Distance", value: "long_distance" }
+          ]
+        },
+     
+
+    // ---------------- OTHERS ----------------
+
+    {
+      type: "subheading",
+      label: "Others"
+    },
+
+    {
+      name: "mobility_aid_other",
+      label: "Specify",
+      type: "textarea"
+    },
+          // {
+          //   name: "pi_ambulation",
+          //   label: "Ambulation",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Independent", value: "independent" },
+          //     { label: "With assistive device", value: "assistive_device" },
+          //     { label: "Unable to ambulate", value: "unable" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_time_same_position",
+          //   label: "Time in same position",
+          //   type: "radio",
+          //   options: [
+          //     { label: "<2 hours", value: "lt_2h" },
+          //     { label: "≥2 hours", value: "gte_2h" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_pressure_areas",
+          //   label: "Pressure areas (sacrum, coccyx, heels, elbows)",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Intact", value: "intact" },
+          //     { label: "Reddened", value: "reddened" },
+          //     { label: "Breakdown (stage ___)", value: "breakdown" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_breakdown_stage",
+          //   label: "Breakdown stage",
+          //   type: "input",
+          //   placeholder: "Stage",
+          //   showIf: { field: "pi_pressure_areas", equals: "breakdown" }
+          // },
+          // {
+          //   name: "pi_skin_moisture",
+          //   label: "Skin moisture",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Dry", value: "dry" },
+          //     { label: "Occasionally moist", value: "occasionally_moist" },
+          //     { label: "Frequently moist", value: "frequently_moist" },
+          //     { label: "Constantly moist", value: "constantly_moist" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_incontinence_type",
+          //   label: "Incontinence",
+          //   type: "radio",
+          //   options: [
+          //     { label: "None", value: "none" },
+          //     { label: "Urinary", value: "urinary" },
+          //     { label: "Fecal", value: "fecal" },
+          //     { label: "Dual", value: "dual" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_perspiration",
+          //   label: "Perspiration / diaphoresis",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+          // {
+          //   name: "pi_devices_moisture",
+          //   label: "Devices causing moisture (diapers, catheters, drains)",
+          //   type: "radio",
+          //   options: [
+          //     { label: "No", value: "no" },
+          //     { label: "Yes", value: "yes" }
+          //   ]
+          // },
+
+          { type: "subheading", label: "Psychosocial  & Emotional Status" },
           {
             name: "beh_appearance",
             label: "Appearance",
