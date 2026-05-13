@@ -608,6 +608,27 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           { name: "past_family_medical_history ", label: "Past Family Medical History ", type: "textarea" }
         ]
       },
+            {
+        title: "Allergies & Alerts",
+        fields: [
+          { name: "drug_allergies", label: "Drug allergies", type: "radio", options: YES_NO_OPTIONS },
+          { name: "drug_allergies_specify", label: "Specify", type: "input", showIf: { field: "drug_allergies", equals: "yes" } },
+          { name: "food_allergies", label: "Food allergies", type: "radio", options: YES_NO_OPTIONS },
+          { name: "food_allergies_specify", label: "Specify", type: "input", showIf: { field: "food_allergies", equals: "yes" } },
+          { name: "latex_allergy", label: "Other allergy", type: "radio", options: YES_NO_OPTIONS },
+          { name: "latex_allergy_specify", label: "Specify", type: "input", showIf: { field: "latex_allergy", equals: "yes" } },
+          { name: "environmental_allergies", label: "Environmental allergies", type: "radio", options: YES_NO_OPTIONS },
+          { name: "environmental_allergies_specify", label: "Specify", type: "input", showIf: { field: "environmental_allergies", equals: "yes" } },
+          { name: "reaction_type", label: "Reaction type", type: "checkbox-group", options: [
+            { label: "Rash", value: "rash" },
+            { label: "Anaphylaxis", value: "anaphylaxis" },
+            { label: "GI upset", value: "gi_upset" },
+            { label: "Respiratory", value: "respiratory" },
+            { label: "Other", value: "other" }
+          ]},
+          { name: "reaction_type_other", label: "Specify", type: "input", showIf: { field: "reaction_type", includes: "other" } }
+        ]
+      },
       {
         title: "Pain Assessment",
         fields: [
@@ -685,6 +706,304 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           
           { name: "pain_at_rest_night", label: "Pain at Rest/ Night Pain", type: "radio", options: YES_NO_OPTIONS, showIf: { field: "pain_present", equals: "yes" } },
           { name: "pain_free_text", label: "Specify", type: "textarea", showIf: { field: "pain_present", equals: "yes" } }
+        ]
+      },
+                // ---------------- EMOTIONAL STATUS ----------------
+      {
+        title: "Emotional Status",
+        fields: [
+          {
+            name: "mood_status",
+            label: "Mood Status",
+            type: "radio",
+            options: [
+              { label: "Euthymic", value: "euthymic" },
+              { label: "Depressed", value: "depressed" },
+              { label: "Anxious", value: "anxious" },
+              { label: "Irritable", value: "irritable" },
+              { label: "Other", value: "other" }
+            ]
+          },
+
+          {
+            name: "mood_status_other",
+            label: "Specify",
+            type: "input",
+            showIf: {
+              field: "mood_status",
+              equals: "other"
+            }
+          },
+
+          {
+            name: "emotional_status",
+            label: "Emotional Status",
+            type: "radio",
+            options: [
+              { label: "Good", value: "good" },
+              { label: "Mild emotional distress", value: "mild_distress" },
+              { label: "Moderate emotional distress", value: "moderate_distress" },
+              { label: "Severe emotional distress", value: "severe_distress" }
+            ]
+          },
+
+          // ---------------- CONDITIONAL QUESTIONS ----------------
+
+          {
+            type: "subheading",
+            label: "Mental Health Screening",
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "anxiety_stress_depression",
+            label: "Anxiety/stress/depression symptoms",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "restlessness_pacing",
+            label: "Restlessness/pacing",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "aggression",
+            label: "Aggression (verbal/physical)",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "hallucinations_delusions",
+            label: "Hallucinations/delusions reported",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "suicidal_ideation",
+            label: "Suicidal ideation/self-harm thoughts",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "psychiatric_diagnosis_history",
+            label: "Current psychiatric diagnosis/history",
+            type: "radio",
+            options: YES_NO_OPTIONS,
+            showIf: {
+              or: [
+                {
+                  field: "mood_status",
+                  oneOf: ["depressed", "anxious", "irritable", "other"]
+                },
+                {
+                  field: "emotional_status",
+                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
+                }
+              ]
+            }
+          },
+
+          {
+            name: "psychiatric_diagnosis_specify",
+            label: "Specify",
+            type: "textarea",
+            showIf: {
+              field: "psychiatric_diagnosis_history",
+              equals: "yes"
+            }
+          },
+        ]
+      },
+      {
+        title: "Nutrition & Hydration",
+        fields: [
+          { name: "appetite_level", label: "Appetite level", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Poor", value: "poor" }, { label: "Increased", value: "increased" }] },
+          { name: "dietary_intake_adequate", label: "Food intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
+          { name: "swallowing_difficulty", label: "Swallowing difficulty", type: "radio-matrix", options: YES_NO_OPTIONS },
+          { name: "daily_fluid_intake_adequate", label: "Daily fluid intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
+          { name: "significant_weight_change", label: "Significant weight change in past year", type: "radio-matrix", options: YES_NO_OPTIONS },
+          // { name: "weight_change_specify", label: "Specify", type: "textarea", showIf: { field: "significant_weight_change", equals: "yes" } },
+          { name: "nutrition_hydration_specify", label: "Specify", type: "textarea" }
+        ]
+      },
+            {
+        title: "Cardiorespiratory & Autonomic Symptoms",
+        fields: [
+          {
+            name: "activity_tolerance",
+            label: "Activity Tolerance",
+            type: "radio",
+            options: [
+              { label: "Full", value: "full" },
+              { label: "Mild limitation", value: "mild_limitation" },
+              { label: "Moderate limitation", value: "moderate_limitation" },
+              { label: "Severe", value: "severe" },
+              { label: "Unable", value: "unable" }
+            ]
+          },
+
+          {
+            name: "adl_performance",
+            label: "ADL Performance",
+            type: "radio",
+            options: [
+              { label: "Independent", value: "independent" },
+              { label: "Pacing required", value: "pacing_required" },
+              { label: "Rest breaks", value: "rest_breaks" },
+              { label: "Assistance needed", value: "assistance_needed" },
+              { label: "Dependent", value: "dependent" }
+            ]
+          },
+          { name: "chest_pain", label: "Chest pain", type: "radio", options: YES_NO_OPTIONS },
+          { name: "dyspnea", label: "Dyspnea at rest/exertion", type: "radio", options: YES_NO_OPTIONS },
+          { name: "palpitations", label: "Palpitations", type: "radio", options: YES_NO_OPTIONS },
+          {
+            name: "cardiac_assessment_launcher_subjective",
+            label: "",
+            type: "assessment-launcher",
+            options: [{ label: "Cardiac Assessment", value: "cardiac_assessment" }],
+            showIf: { field: "show_cardiac_launcher", equals: true }
+          },
+          { name: "dizziness_syncope", label: "Dizziness/syncope", type: "radio", options: YES_NO_OPTIONS },
+          { name: "orthostatic_symptoms", label: "Orthostatic symptoms", type: "radio", options: YES_NO_OPTIONS },
+          { name: "exercise_intolerance", label: "Exercise intolerance/fatigue", type: "radio", options: YES_NO_OPTIONS },
+          { name: "cardiorespiratory_specify", label: "Specify", type: "textarea" }
+        ]
+      },
+            {
+        title: "Bowel and Bladder",
+        fields: [
+
+          {
+            name: "bowel_pattern",
+            label: "Bowel pattern",
+            type: "radio",
+            options: [
+              { label: "Continence", value: "continence" },
+              { label: "Incontinence", value: "incontinence" }
+            ]
+          },
+
+          {
+            type: "assessment-launcher",
+            name: "bowel_assessment_inline",
+            autoOpen: true,
+            hideRemarks: true,
+            showIf: {
+              field: "bowel_pattern",
+              equals: "incontinence"
+            },
+            options: [
+              {
+                label: "Bowel Assessment",
+                value: "bowel_assessment"
+              }
+            ]
+          },
+
+          {
+            name: "bladder_pattern",
+            label: "Bladder pattern",
+            type: "radio",
+            options: [
+              { label: "Continence", value: "continence" },
+              { label: "Incontinence", value: "incontinence" }
+            ]
+          },
+
+          {
+            type: "assessment-launcher",
+            name: "bladder_assessment_inline",
+            autoOpen: true,
+            hideRemarks: true,
+            showIf: {
+              field: "bladder_pattern",
+              equals: "incontinence"
+            },
+            options: [
+              {
+                label: "Bladder Issue",
+                value: "bladder_issue"
+              }
+            ]
+          }
         ]
       },
       {
@@ -867,310 +1186,7 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           { name: "functional_status_specify", label: "Specify", type: "textarea" }
         ]
       },
-      {
-        title: "Medication Reconciliation",
-        fields: [
-          { name: "recent_medication_changes", label: "Recent medication changes", type: "radio", options: YES_NO_OPTIONS },
-          { name: "recent_medication_changes_specify", label: "Specify", type: "input", showIf: { field: "recent_medication_changes", equals: "yes" } },
-        ]
-      },
-      {
-        title: "Allergies & Alerts",
-        fields: [
-          { name: "drug_allergies", label: "Drug allergies", type: "radio", options: YES_NO_OPTIONS },
-          { name: "drug_allergies_specify", label: "Specify", type: "input", showIf: { field: "drug_allergies", equals: "yes" } },
-          { name: "food_allergies", label: "Food allergies", type: "radio", options: YES_NO_OPTIONS },
-          { name: "food_allergies_specify", label: "Specify", type: "input", showIf: { field: "food_allergies", equals: "yes" } },
-          { name: "latex_allergy", label: "Other allergy", type: "radio", options: YES_NO_OPTIONS },
-          { name: "latex_allergy_specify", label: "Specify", type: "input", showIf: { field: "latex_allergy", equals: "yes" } },
-          { name: "environmental_allergies", label: "Environmental allergies", type: "radio", options: YES_NO_OPTIONS },
-          { name: "environmental_allergies_specify", label: "Specify", type: "input", showIf: { field: "environmental_allergies", equals: "yes" } },
-          { name: "reaction_type", label: "Reaction type", type: "checkbox-group", options: [
-            { label: "Rash", value: "rash" },
-            { label: "Anaphylaxis", value: "anaphylaxis" },
-            { label: "GI upset", value: "gi_upset" },
-            { label: "Respiratory", value: "respiratory" },
-            { label: "Other", value: "other" }
-          ]},
-          { name: "reaction_type_other", label: "Specify", type: "input", showIf: { field: "reaction_type", includes: "other" } }
-        ]
-      },
-      {
-        title: "Psychosocial & Emotional Status",
-        fields: [
-
-          // ---------------- PSYCHOSOCIAL ----------------
-
-          {
-            type: "subheading",
-            label: "Psychosocial"
-          },
-
-          {
-            name: "family_social_support",
-            label: "Family/social support available",
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-
-          // ---------------- EMOTIONAL STATUS ----------------
-
-          {
-            type: "subheading",
-            label: "Emotional Status"
-          },
-
-          {
-            name: "mood_status",
-            label: "Mood Status",
-            type: "radio",
-            options: [
-              { label: "Euthymic", value: "euthymic" },
-              { label: "Depressed", value: "depressed" },
-              { label: "Anxious", value: "anxious" },
-              { label: "Irritable", value: "irritable" },
-              { label: "Other", value: "other" }
-            ]
-          },
-
-          {
-            name: "mood_status_other",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "mood_status",
-              equals: "other"
-            }
-          },
-
-          {
-            name: "emotional_status",
-            label: "Emotional Status",
-            type: "radio",
-            options: [
-              { label: "Good", value: "good" },
-              { label: "Mild emotional distress", value: "mild_distress" },
-              { label: "Moderate emotional distress", value: "moderate_distress" },
-              { label: "Severe emotional distress", value: "severe_distress" }
-            ]
-          },
-
-          // ---------------- CONDITIONAL QUESTIONS ----------------
-
-          {
-            type: "subheading",
-            label: "Mental Health Screening",
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "anxiety_stress_depression",
-            label: "Anxiety/stress/depression symptoms",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "restlessness_pacing",
-            label: "Restlessness/pacing",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "aggression",
-            label: "Aggression (verbal/physical)",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "hallucinations_delusions",
-            label: "Hallucinations/delusions reported",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "suicidal_ideation",
-            label: "Suicidal ideation/self-harm thoughts",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "psychiatric_diagnosis_history",
-            label: "Current psychiatric diagnosis/history",
-            type: "radio",
-            options: YES_NO_OPTIONS,
-            showIf: {
-              or: [
-                {
-                  field: "mood_status",
-                  oneOf: ["depressed", "anxious", "irritable", "other"]
-                },
-                {
-                  field: "emotional_status",
-                  oneOf: ["mild_distress", "moderate_distress", "severe_distress"]
-                }
-              ]
-            }
-          },
-
-          {
-            name: "psychiatric_diagnosis_specify",
-            label: "Specify",
-            type: "textarea",
-            showIf: {
-              field: "psychiatric_diagnosis_history",
-              equals: "yes"
-            }
-          }
-        ]
-      },
-      {
-        title: "Bowel and Bladder",
-        fields: [
-
-          {
-            name: "bowel_pattern",
-            label: "Bowel pattern",
-            type: "radio",
-            options: [
-              { label: "Continence", value: "continence" },
-              { label: "Incontinence", value: "incontinence" }
-            ]
-          },
-
-          {
-            type: "assessment-launcher",
-            name: "bowel_assessment_inline",
-            autoOpen: true,
-            hideRemarks: true,
-            showIf: {
-              field: "bowel_pattern",
-              equals: "incontinence"
-            },
-            options: [
-              {
-                label: "Bowel Assessment",
-                value: "bowel_assessment"
-              }
-            ]
-          },
-
-          {
-            name: "bladder_pattern",
-            label: "Bladder pattern",
-            type: "radio",
-            options: [
-              { label: "Continence", value: "continence" },
-              { label: "Incontinence", value: "incontinence" }
-            ]
-          },
-
-          {
-            type: "assessment-launcher",
-            name: "bladder_assessment_inline",
-            autoOpen: true,
-            hideRemarks: true,
-            showIf: {
-              field: "bladder_pattern",
-              equals: "incontinence"
-            },
-            options: [
-              {
-                label: "Bladder Issue",
-                value: "bladder_issue"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        title: "Nutrition & Hydration",
-        fields: [
-          { name: "appetite_level", label: "Appetite level", type: "radio", options: [{ label: "Normal", value: "normal" }, { label: "Poor", value: "poor" }, { label: "Increased", value: "increased" }] },
-          { name: "dietary_intake_adequate", label: "Food intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "swallowing_difficulty", label: "Swallowing difficulty", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "daily_fluid_intake_adequate", label: "Daily fluid intake adequate", type: "radio-matrix", options: YES_NO_OPTIONS },
-          { name: "significant_weight_change", label: "Significant weight change in past year", type: "radio-matrix", options: YES_NO_OPTIONS },
-          // { name: "weight_change_specify", label: "Specify", type: "textarea", showIf: { field: "significant_weight_change", equals: "yes" } },
-          { name: "nutrition_hydration_specify", label: "Specify", type: "textarea" }
-        ]
-      },
-      {
+            {
         title: "Safety & Comfort Concerns",
         fields: [
           { name: "morse_fall_scale_launcher", label: "", type: "assessment-launcher", options: [{ label: "Morse Fall Scale", value: "morse_fall_scale" }], showIf: { field: "history_of_falls", equals: "yes" } },
@@ -1232,47 +1248,49 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
         ]
       },
       {
-        title: "Cardiorespiratory & Autonomic Symptoms",
+        title: "Infection Risk & Exposure Screening",
         fields: [
+          { name: "fever_infection_14days", label: "Fever/infection in past 14 days", type: "radio", options: YES_NO_OPTIONS },
+          { name: "fever_infection_specify", label: "Specify", type: "input", showIf: { field: "fever_infection_14days", equals: "yes" } },
+          { name: "tb_exposure_history", label: "TB exposure/history", type: "radio", options: YES_NO_OPTIONS },
+          { name: "tb_exposure_specify", label: "Specify", type: "input", showIf: { field: "tb_exposure_history", equals: "yes" } },
+          { name: "mrsa_vre_mdro_history", label: "MRSA/VRE/MDRO history", type: "radio", options: YES_NO_OPTIONS },
+          { name: "mrsa_vre_mdro_specify", label: "Specify", type: "input", showIf: { field: "mrsa_vre_mdro_history", equals: "yes" } },
+          { name: "recent_international_travel", label: "Recent international travel", type: "radio", options: YES_NO_OPTIONS },
+          { name: "recent_travel_specify", label: "Specify", type: "input", showIf: { field: "recent_international_travel", equals: "yes" } }
+        ]
+      },
+            {
+        title: "Psychosocial",
+        fields: [
+          // ---------------- PSYCHOSOCIAL ----------------
           {
-            name: "activity_tolerance",
-            label: "Activity Tolerance",
+            name: "family_social_support",
+            label: "Family/social support available",
             type: "radio",
-            options: [
-              { label: "Full", value: "full" },
-              { label: "Mild limitation", value: "mild_limitation" },
-              { label: "Moderate limitation", value: "moderate_limitation" },
-              { label: "Severe", value: "severe" },
-              { label: "Unable", value: "unable" }
-            ]
+            options: YES_NO_OPTIONS
           },
-
-          {
-            name: "adl_performance",
-            label: "ADL Performance",
-            type: "radio",
-            options: [
-              { label: "Independent", value: "independent" },
-              { label: "Pacing required", value: "pacing_required" },
-              { label: "Rest breaks", value: "rest_breaks" },
-              { label: "Assistance needed", value: "assistance_needed" },
-              { label: "Dependent", value: "dependent" }
-            ]
-          },
-          { name: "chest_pain", label: "Chest pain", type: "radio", options: YES_NO_OPTIONS },
-          { name: "dyspnea", label: "Dyspnea at rest/exertion", type: "radio", options: YES_NO_OPTIONS },
-          { name: "palpitations", label: "Palpitations", type: "radio", options: YES_NO_OPTIONS },
-          {
-            name: "cardiac_assessment_launcher_subjective",
-            label: "",
-            type: "assessment-launcher",
-            options: [{ label: "Cardiac Assessment", value: "cardiac_assessment" }],
-            showIf: { field: "show_cardiac_launcher", equals: true }
-          },
-          { name: "dizziness_syncope", label: "Dizziness/syncope", type: "radio", options: YES_NO_OPTIONS },
-          { name: "orthostatic_symptoms", label: "Orthostatic symptoms", type: "radio", options: YES_NO_OPTIONS },
-          { name: "exercise_intolerance", label: "Exercise intolerance/fatigue", type: "radio", options: YES_NO_OPTIONS },
-          { name: "cardiorespiratory_specify", label: "Specify", type: "textarea" }
+        ]
+      },
+      {
+        title: "Medication Reconciliation",
+        fields: [
+          { name: "recent_medication_changes", label: "Recent medication changes", type: "radio", options: YES_NO_OPTIONS },
+          { name: "recent_medication_changes_specify", label: "Specify", type: "input", showIf: { field: "recent_medication_changes", equals: "yes" } },
+        ]
+      },
+      {
+        title: "Discharge Readiness",
+        fields: [
+          { name: "caregiver_available_discharge", label: "Caregiver available at discharge", type: "radio", options: YES_NO_OPTIONS },
+          { name: "home_environment_safe", label: "Home environment safe", type: "radio", options: YES_NO_OPTIONS },
+          { name: "barriers_to_discharge", label: "Barriers to discharge", type: "checkbox-group", options: [
+            { label: "Financial", value: "financial" },
+            { label: "Mobility", value: "mobility" },
+            { label: "Housing", value: "housing" },
+            { label: "Transport", value: "transport" },
+            { label: "None", value: "none" }
+          ]}
         ]
       },
       {
@@ -1317,33 +1335,6 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           },
         ]
       },
-      {
-        title: "Infection Risk & Exposure Screening",
-        fields: [
-          { name: "fever_infection_14days", label: "Fever/infection in past 14 days", type: "radio", options: YES_NO_OPTIONS },
-          { name: "fever_infection_specify", label: "Specify", type: "input", showIf: { field: "fever_infection_14days", equals: "yes" } },
-          { name: "tb_exposure_history", label: "TB exposure/history", type: "radio", options: YES_NO_OPTIONS },
-          { name: "tb_exposure_specify", label: "Specify", type: "input", showIf: { field: "tb_exposure_history", equals: "yes" } },
-          { name: "mrsa_vre_mdro_history", label: "MRSA/VRE/MDRO history", type: "radio", options: YES_NO_OPTIONS },
-          { name: "mrsa_vre_mdro_specify", label: "Specify", type: "input", showIf: { field: "mrsa_vre_mdro_history", equals: "yes" } },
-          { name: "recent_international_travel", label: "Recent international travel", type: "radio", options: YES_NO_OPTIONS },
-          { name: "recent_travel_specify", label: "Specify", type: "input", showIf: { field: "recent_international_travel", equals: "yes" } }
-        ]
-      },
-      {
-        title: "Discharge Readiness",
-        fields: [
-          { name: "caregiver_available_discharge", label: "Caregiver available at discharge", type: "radio", options: YES_NO_OPTIONS },
-          { name: "home_environment_safe", label: "Home environment safe", type: "radio", options: YES_NO_OPTIONS },
-          { name: "barriers_to_discharge", label: "Barriers to discharge", type: "checkbox-group", options: [
-            { label: "Financial", value: "financial" },
-            { label: "Mobility", value: "mobility" },
-            { label: "Housing", value: "housing" },
-            { label: "Transport", value: "transport" },
-            { label: "None", value: "none" }
-          ]}
-        ]
-      }
     ]
   };
 
