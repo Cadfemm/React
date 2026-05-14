@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { BristolChartAssessment } from "../../Doctors/components/BowelAssessment";
+
 
 function Sec({ title, expanded, onToggle, children }) {
   return (
@@ -284,6 +286,10 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
         next.braden_total = t;
         next.braden_risk = t <= 9 ? "Very High" : t <= 12 ? "High" : t <= 14 ? "Moderate" : t <= 18 ? "Mild" : "Low";
       }
+      // Auto-compute GCS total
+      if (["gcs_eye","gcs_verbal","gcs_motor"].includes(name)) {
+        next.gcs_total = (Number(next.gcs_eye) || 0) + (Number(next.gcs_verbal) || 0) + (Number(next.gcs_motor) || 0);
+      }
       return next;
     });
   };
@@ -402,134 +408,1267 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
 
         {/* ── Pain Assessment ── */}
         <Sec title="Pain Assessment (NRS)" expanded={exp.s2} onToggle={() => tog("s2")}>
-          <F label={`Pain at Rest — NRS 0–10 (${v.pain_at_rest ?? 0})`}><NRS name="pain_at_rest" v={v} set={set} /></F>
-          <F label={`Pain on Movement — NRS 0–10 (${v.pain_on_movement ?? 0})`}><NRS name="pain_on_movement" v={v} set={set} /></F>
-          <div style={st.g2}>
-            <F label="Pain Location"><Inp name="pain_location" v={v} set={set} /></F>
-            <F label="Pain Character"><Sel name="pain_character" opts={["Aching","Burning","Sharp","Throbbing","Radiating","Cramping","Pressure"]} v={v} set={set} /></F>
-            <F label="Aggravating Factors"><Inp name="aggravating_factors" v={v} set={set} /></F>
-            <F label="Relieving Factors"><Inp name="relieving_factors" v={v} set={set} /></F>
+
+          {/* Pain Present Inline */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px",
+                marginBottom: 0
+              }}
+            >
+              Pain Present?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.has_pain === "Yes"}
+                onChange={() => set("has_pain", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.has_pain === "No"}
+                onChange={() => set("has_pain", "No")}
+              />
+              No
+            </label>
+
           </div>
-          <F label="Intervention Given">
-            <Checks name="pain_intervention" opts={["Analgesic administered (per MAR)","Non-pharmacological measure","Repositioning / elevation","Ice / heat therapy","Referral to doctor / pain team","Patient declined","None required"]} v={v} set={set} />
-          </F>
-          <F label={`Pain Reassessment post-intervention — NRS 0–10 (${v.pain_reassessment ?? 0})`}><NRS name="pain_reassessment" v={v} set={set} /></F>
-          <F label="Time of Reassessment"><Inp name="pain_reassessment_time" type="time" v={v} set={set} /></F>
+
+          {/* YES → Full Assessment */}
+          {v.has_pain === "Yes" && (
+            <>
+              <F label={`Pain at Rest — NRS 0–10 (${v.pain_at_rest ?? 0})`}>
+                <NRS name="pain_at_rest" v={v} set={set} />
+              </F>
+
+              <F label={`Pain on Movement — NRS 0–10 (${v.pain_on_movement ?? 0})`}>
+                <NRS name="pain_on_movement" v={v} set={set} />
+              </F>
+
+              <div style={st.g2}>
+                <F label="Pain Location">
+                  <Inp name="pain_location" v={v} set={set} />
+                </F>
+
+                <F label="Pain Character">
+                  <Sel
+                    name="pain_character"
+                    opts={[
+                      "Aching",
+                      "Burning",
+                      "Sharp",
+                      "Throbbing",
+                      "Radiating",
+                      "Cramping",
+                      "Pressure"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Aggravating Factors">
+                  <Inp name="aggravating_factors" v={v} set={set} />
+                </F>
+
+                <F label="Relieving Factors">
+                  <Inp name="relieving_factors" v={v} set={set} />
+                </F>
+              </div>
+                <F label="Intervention Given">
+                  <Checks
+                    name="pain_intervention"
+                    opts={[
+                      "Analgesic administered (per MAR)",
+                      "Non-pharmacological measure",
+                      "Repositioning / elevation",
+                      "Ice / heat therapy",
+                      "Referral to doctor / pain team",
+                      { label: "Patient declined", value: "patient_declined" },
+                      "None required"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                {/* Show free text when Patient Declined checked */}
+                {(v.pain_intervention || []).includes("patient_declined") && (
+                  <F label="Reason for Declining">
+                    <Txt
+                      name="pain_declined_reason"
+                      rows={3}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+                )}
+
+              <F label={`Pain Reassessment post-intervention — NRS 0–10 (${v.pain_reassessment ?? 0})`}>
+                <NRS name="pain_reassessment" v={v} set={set} />
+              </F>
+
+              <F label="Time of Reassessment">
+                <Inp
+                  name="pain_reassessment_time"
+                  type="time"
+                  v={v}
+                  set={set}
+                />
+              </F>
+            </>
+          )}
+
+          {/* NO → Free Text */}
+          {v.has_pain === "No" && (
+            <F label="Specify">
+              <Txt
+                name="pain_free_text"
+                rows={3}
+                v={v}
+                set={set}
+              />
+            </F>
+          )}
+
         </Sec>
 
         {/* ── Neurological ── */}
         <Sec title="Neurological & Cognitive Status" expanded={exp.s3} onToggle={() => tog("s3")}>
-          <div style={st.g2}>
-            <F label="Level of Consciousness">
-              <Sel name="level_of_consciousness" opts={["Alert & orientated ×3","Alert, confused","Drowsy — responsive to voice","Responsive to pain only","Unresponsive"]} v={v} set={set} />
-            </F>
-            <div>
-              <div style={st.label}>GCS Score (E / V / M)</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
-                <Sel name="gcs_eyes"   opts={["1","2","3","4"]}       v={v} set={set} />
-                <Sel name="gcs_verbal" opts={["1","2","3","4","5"]}   v={v} set={set} />
-                <Sel name="gcs_motor"  opts={["1","2","3","4","5","6"]} v={v} set={set} />
+
+          {/* Neuro Assessment Present */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px",
+                marginBottom: 0
+              }}
+            >
+              Neuro Assessment Required?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.neuro_required === "Yes"}
+                onChange={() => set("neuro_required", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.neuro_required === "No"}
+                onChange={() => set("neuro_required", "No")}
+              />
+              No
+            </label>
+
+          </div>
+
+          {/* YES → Full Neuro Assessment */}
+          {v.neuro_required === "Yes" && (
+            <>
+              <div style={st.g2}>
+                <F label="Level of Consciousness">
+                  <Sel
+                    name="level_of_consciousness"
+                    opts={[
+                      "Alert & orientated ×3",
+                      "Alert, confused",
+                      "Drowsy — responsive to voice",
+                      "Responsive to pain only",
+                      "Unresponsive"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <div>
+                  <div style={st.label}>GCS Score (E / V / M)</div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
+                    <Sel name="gcs_eyes" opts={["1","2","3","4"]} v={v} set={set} />
+                    <Sel name="gcs_verbal" opts={["1","2","3","4","5"]} v={v} set={set} />
+                    <Sel name="gcs_motor" opts={["1","2","3","4","5","6"]} v={v} set={set} />
+                  </div>
+                </div>
+              </div>
+
+              <div style={st.g2}>
+                <F label="Orientation">
+                  <Checks
+                    name="orientation"
+                    opts={["Person","Place","Time","Situation","Disoriented"]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Behaviour / Mood">
+                  <Checks
+                    name="behaviour_mood"
+                    opts={[
+                      "Cooperative",
+                      "Anxious",
+                      "Agitated",
+                      "Depressed",
+                      "Withdrawn",
+                      "Disinhibited"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Motor Function (affected side)">
+                  <Sel
+                    name="motor_function"
+                    opts={[
+                      "Full strength bilaterally",
+                      "Mild weakness (4/5)",
+                      "Moderate weakness (3/5)",
+                      "Severe weakness (≤2/5)",
+                      "Plegia",
+                      "N/A"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Sensory Status">
+                  <Sel
+                    name="sensory_status"
+                    opts={[
+                      "Intact",
+                      "Reduced light touch",
+                      "Absent sensation",
+                      "Hyperaesthesia",
+                      "N/A"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Pupils">
+                  <Checks
+                    name="pupils"
+                    opts={[
+                      "Equal & reactive",
+                      "Unequal",
+                      "Sluggish",
+                      "Fixed — escalate"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Headache / Nausea / Vomiting">
+                  <Checks
+                    name="headache_nausea"
+                    opts={[
+                      "None",
+                      "Headache",
+                      "Nausea",
+                      "Vomiting"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+              </div>
+
+              <F label="Neuro Nursing Notes">
+                <Txt name="neuro_notes" v={v} set={set} />
+              </F>
+
+              {/* 3A — TBI / Stroke */}
+              <div style={st.condModule}>
+                <div style={st.condModuleTitle}>
+                  3A — TBI / Stroke Neuro Checks
+                  <span style={st.condModuleBadge}>TBI / Stroke patients only</span>
+                </div>
+
+                <F label={`Agitated Behaviour Scale (ABS) — Score: ${v.abs_score ?? 14}`}>
+                  <input
+                    type="range"
+                    min={14}
+                    max={70}
+                    value={v.abs_score ?? 14}
+                    style={{ width: "100%", accentColor: "#1d4ed8", marginBottom: 4 }}
+                    onChange={e => set("abs_score", Number(e.target.value))}
+                  />
+
+                  <div style={st.scaleHint}>
+                    ≤21 none · 22–28 mild · 29–35 moderate · &gt;35 severe
+                  </div>
+                </F>
+
+                <div style={st.g2}>
+                  <F label="Neuro Obs Frequency">
+                    <Radios
+                      name="neuro_obs_frequency"
+                      opts={["Hourly","2-hourly","4-hourly","Per doctor's order"]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Dysphagia Risk">
+                    <Radios
+                      name="dysphagia_risk"
+                      opts={[
+                        "No concern",
+                        "Suspected — SLT referral made",
+                        "Modified diet / fluids in place"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="IDDSI Level (if modified diet)">
+                    <Sel
+                      name="iddsi_level"
+                      opts={[
+                        "N/A",
+                        "0 — Thin",
+                        "1 — Slightly thick",
+                        "2 — Mildly thick",
+                        "3 — Liquidised",
+                        "4 — Pureed",
+                        "5 — Minced & moist",
+                        "6 — Soft & bite-sized",
+                        "7 — Regular"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Neuro Deterioration This Shift?">
+                    <Radios
+                      name="neuro_deterioration"
+                      opts={["No","Yes — escalated"]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+                </div>
+
+                <div style={st.g3}>
+                  <F label="Aphasia">
+                    <Sel
+                      name="aphasia"
+                      opts={["None","Expressive","Receptive","Global"]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Spasticity">
+                    <Sel
+                      name="spasticity"
+                      opts={["None","Upper limb","Lower limb","Bilateral"]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Shoulder Subluxation">
+                    <Sel
+                      name="shoulder_subluxation"
+                      opts={["None","Present — sling in use","Refer PT"]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+                </div>
+              </div>
+
+              {/* 3B — SCI */}
+              <div style={st.condModule}>
+                <div style={st.condModuleTitle}>
+                  3B — Spinal Cord Injury Checks
+                  <span style={st.condModuleBadge}>SCI patients only</span>
+                </div>
+
+                <div style={st.g2}>
+                  <F label="Level of Injury">
+                    <Inp name="sci_level_of_injury" v={v} set={set} />
+                  </F>
+
+                  <F label="ASIA Grade">
+                    <Sel
+                      name="asia_grade"
+                      opts={[
+                        "A — Complete",
+                        "B — Sensory incomplete",
+                        "C — Motor incomplete",
+                        "D — Motor incomplete",
+                        "E — Normal"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Spinal Precautions">
+                    <Sel
+                      name="spinal_precautions"
+                      opts={[
+                        "N/A",
+                        "Log roll required",
+                        "Hard collar in situ",
+                        "TLSO brace worn",
+                        "Halo traction"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Positioning">
+                    <Radios
+                      name="sci_positioning"
+                      opts={[
+                        "Supine",
+                        "Left lateral",
+                        "Right lateral",
+                        "Semi-Fowler",
+                        "Prone"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+                </div>
+
+                <F label="Autonomic Dysreflexia Signs">
+                  <Checks
+                    name="autonomic_dysreflexia"
+                    opts={[
+                      "None",
+                      "Sudden BP rise",
+                      "Bradycardia",
+                      "Severe headache",
+                      "Sweating above injury",
+                      "Protocol initiated"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <SCIBowelBladder v={v} set={set} />
+              </div>
+            </>
+          )}
+
+          {/* NO → Glasgow Coma Scale (GCS) */}
+          {v.neuro_required === "No" && (
+            <div style={{ marginTop: 8 }}>
+              <div style={{ fontWeight: 700, fontSize: 13, color: "#1e40af", marginBottom: 12 }}>
+                Glasgow Coma Scale (GCS)
+              </div>
+
+              <div style={st.g3}>
+                <F label="Eye Opening">
+                  <select
+                    value={v.gcs_eye ?? ""}
+                    style={st.select}
+                    onChange={e => set("gcs_eye", e.target.value === "" ? "" : Number(e.target.value))}
+                  >
+                    <option value="">Select...</option>
+                    <option value={1}>1 — None</option>
+                    <option value={2}>2 — To Pressure</option>
+                    <option value={3}>3 — To Sound</option>
+                    <option value={4}>4 — Spontaneous</option>
+                  </select>
+                </F>
+
+                <F label="Verbal Response">
+                  <select
+                    value={v.gcs_verbal ?? ""}
+                    style={st.select}
+                    onChange={e => set("gcs_verbal", e.target.value === "" ? "" : Number(e.target.value))}
+                  >
+                    <option value="">Select...</option>
+                    <option value={1}>1 — None</option>
+                    <option value={2}>2 — Sounds</option>
+                    <option value={3}>3 — Words</option>
+                    <option value={4}>4 — Confused</option>
+                    <option value={5}>5 — Orientated</option>
+                  </select>
+                </F>
+
+                <F label="Motor Response">
+                  <select
+                    value={v.gcs_motor ?? ""}
+                    style={st.select}
+                    onChange={e => set("gcs_motor", e.target.value === "" ? "" : Number(e.target.value))}
+                  >
+                    <option value="">Select...</option>
+                    <option value={1}>1 — None</option>
+                    <option value={2}>2 — Extension</option>
+                    <option value={3}>3 — Abnormal flexion</option>
+                    <option value={4}>4 — Normal flexion</option>
+                    <option value={5}>5 — Localising</option>
+                    <option value={6}>6 — Obey commands</option>
+                  </select>
+                </F>
+              </div>
+
+              {/* TOTAL */}
+              <div style={{ marginTop: 12, fontWeight: 600 }}>
+                Total GCS Score:{" "}
+                {(Number(v.gcs_eye) || 0) +
+                  (Number(v.gcs_verbal) || 0) +
+                  (Number(v.gcs_motor) || 0)}
+              </div>
+
+              <div style={{ marginTop: 16 }}>
+                <F label="Neuro Nursing Notes">
+                  <Txt name="neuro_notes" v={v} set={set} />
+                </F>
               </div>
             </div>
-          </div>
-          <div style={st.g2}>
-            <F label="Orientation"><Checks name="orientation" opts={["Person","Place","Time","Situation","Disoriented"]} v={v} set={set} /></F>
-            <F label="Behaviour / Mood"><Checks name="behaviour_mood" opts={["Cooperative","Anxious","Agitated","Depressed","Withdrawn","Disinhibited"]} v={v} set={set} /></F>
-            <F label="Motor Function (affected side)"><Sel name="motor_function" opts={["Full strength bilaterally","Mild weakness (4/5)","Moderate weakness (3/5)","Severe weakness (≤2/5)","Plegia","N/A"]} v={v} set={set} /></F>
-            <F label="Sensory Status"><Sel name="sensory_status" opts={["Intact","Reduced light touch","Absent sensation","Hyperaesthesia","N/A"]} v={v} set={set} /></F>
-            <F label="Pupils"><Checks name="pupils" opts={["Equal & reactive","Unequal","Sluggish","Fixed — escalate"]} v={v} set={set} /></F>
-            <F label="Headache / Nausea / Vomiting"><Checks name="headache_nausea" opts={["None","Headache","Nausea","Vomiting"]} v={v} set={set} /></F>
-          </div>
-          <F label="Neuro Nursing Notes"><Txt name="neuro_notes" v={v} set={set} /></F>
+          )}
 
-          {/* 3A — TBI / Stroke */}
-          <div style={st.condModule}>
-            <div style={st.condModuleTitle}>3A — TBI / Stroke Neuro Checks <span style={st.condModuleBadge}>TBI / Stroke patients only</span></div>
-            <F label={`Agitated Behaviour Scale (ABS) — Score: ${v.abs_score ?? 14}`}>
-              <input type="range" min={14} max={70} value={v.abs_score ?? 14} style={{ width: "100%", accentColor: "#1d4ed8", marginBottom: 4 }} onChange={e => set("abs_score", Number(e.target.value))} />
-              <div style={st.scaleHint}>≤21 none · 22–28 mild · 29–35 moderate · &gt;35 severe</div>
-            </F>
-            <div style={st.g2}>
-              <F label="Neuro Obs Frequency"><Radios name="neuro_obs_frequency" opts={["Hourly","2-hourly","4-hourly","Per doctor's order"]} v={v} set={set} /></F>
-              <F label="Dysphagia Risk"><Radios name="dysphagia_risk" opts={["No concern","Suspected — SLT referral made","Modified diet / fluids in place"]} v={v} set={set} /></F>
-              <F label="IDDSI Level (if modified diet)"><Sel name="iddsi_level" opts={["N/A","0 — Thin","1 — Slightly thick","2 — Mildly thick","3 — Liquidised","4 — Pureed","5 — Minced & moist","6 — Soft & bite-sized","7 — Regular"]} v={v} set={set} /></F>
-              <F label="Neuro Deterioration This Shift?"><Radios name="neuro_deterioration" opts={["No","Yes — escalated"]} v={v} set={set} /></F>
-            </div>
-            <div style={st.g3}>
-              <F label="Aphasia"><Sel name="aphasia" opts={["None","Expressive","Receptive","Global"]} v={v} set={set} /></F>
-              <F label="Spasticity"><Sel name="spasticity" opts={["None","Upper limb","Lower limb","Bilateral"]} v={v} set={set} /></F>
-              <F label="Shoulder Subluxation"><Sel name="shoulder_subluxation" opts={["None","Present — sling in use","Refer PT"]} v={v} set={set} /></F>
-            </div>
-          </div>
-
-          {/* 3B — SCI */}
-          <div style={st.condModule}>
-            <div style={st.condModuleTitle}>3B — Spinal Cord Injury Checks <span style={st.condModuleBadge}>SCI patients only</span></div>
-            <div style={st.g2}>
-              <F label="Level of Injury"><Inp name="sci_level_of_injury" v={v} set={set} /></F>
-              <F label="ASIA Grade"><Sel name="asia_grade" opts={["A — Complete","B — Sensory incomplete","C — Motor incomplete","D — Motor incomplete","E — Normal"]} v={v} set={set} /></F>
-              <F label="Spinal Precautions"><Sel name="spinal_precautions" opts={["N/A","Log roll required","Hard collar in situ","TLSO brace worn","Halo traction"]} v={v} set={set} /></F>
-              <F label="Positioning"><Radios name="sci_positioning" opts={["Supine","Left lateral","Right lateral","Semi-Fowler","Prone"]} v={v} set={set} /></F>
-            </div>
-            <F label="Autonomic Dysreflexia Signs">
-              <Checks name="autonomic_dysreflexia" opts={["None","Sudden BP rise","Bradycardia","Severe headache","Sweating above injury","Protocol initiated"]} v={v} set={set} />
-            </F>
-            <SCIBowelBladder v={v} set={set} />
-          </div>
         </Sec>
 
         {/* ── Respiratory ── */}
         <Sec title="Respiratory Assessment" expanded={exp.s4} onToggle={() => tog("s4")}>
-          <div style={st.g2}>
-            <F label="Respiratory Effort"><Checks name="respiratory_effort" opts={["Effortless","Mild effort","Laboured","Accessory muscles","Paradoxical"]} v={v} set={set} /></F>
-            <F label="Breath Sounds"><Checks name="breath_sounds" opts={["Clear bilaterally","Crackles (R)","Crackles (L)","Wheeze","Reduced air entry","Absent"]} v={v} set={set} /></F>
-            <F label="Cough"><Checks name="cough" opts={["None","Dry","Productive (clear)","Productive (coloured)"]} v={v} set={set} /></F>
-            <F label="Airway Management"><Checks name="airway_management" opts={["N/A","Suction (oropharyngeal)","Suction (tracheostomy)","Nebuliser","Chest physiotherapy"]} v={v} set={set} /></F>
+
+          {/* Respiratory Assessment Required */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px"
+              }}
+            >
+              Respiratory Assessment Required?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.respiratory_required === "Yes"}
+                onChange={() => set("respiratory_required", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.respiratory_required === "No"}
+                onChange={() => set("respiratory_required", "No")}
+              />
+              No
+            </label>
+
           </div>
+
+          {/* YES → Full Respiratory Assessment */}
+          {v.respiratory_required === "Yes" && (
+            <>
+              <div style={st.g2}>
+
+                <F label="Respiratory Effort">
+                  <Checks
+                    name="respiratory_effort"
+                    opts={[
+                      "Effortless",
+                      "Mild effort",
+                      "Laboured",
+                      "Accessory muscles",
+                      "Paradoxical"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Breath Sounds">
+                  <Checks
+                    name="breath_sounds"
+                    opts={[
+                      "Clear bilaterally",
+                      "Crackles (R)",
+                      "Crackles (L)",
+                      "Wheeze",
+                      "Reduced air entry",
+                      "Absent"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Cough">
+                  <Checks
+                    name="cough"
+                    opts={[
+                      "None",
+                      "Dry",
+                      "Productive (clear)",
+                      "Productive (coloured)"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Amount">
+                  <Radios
+                    name="resp_amount"
+                    opts={[
+                      "Minimal",
+                      "Moderate",
+                      "Large"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Airway Management">
+                  <Checks
+                    name="airway_management"
+                    opts={[
+                      "Suction (oropharyngeal)",
+                      "Suction (tracheostomy)",
+                      "Nebuliser",
+                      "Chest physiotherapy",
+                       "N/A",
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Secretion Amount">
+                  <Sel
+                    name="secretion_amount"
+                    opts={[
+                      "Minimal",
+                      "Moderate",
+                      "Large"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+              </div>
+
+              {/* Sputum */}
+              <div style={{ marginTop: 18 }}>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 10 }}>
+
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: "#4b5563",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.4px"
+                    }}
+                  >
+                    Sputum
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <input
+                      type="radio"
+                      checked={v.sputum_present === "Yes"}
+                      onChange={() => set("sputum_present", "Yes")}
+                    />
+                    Yes
+                  </label>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <input
+                      type="radio"
+                      checked={v.sputum_present === "No"}
+                      onChange={() => set("sputum_present", "No")}
+                    />
+                    No
+                  </label>
+
+                </div>
+
+                {/* YES → Additional Sputum Questions */}
+                {v.sputum_present === "Yes" && (
+                  <div style={st.g2}>
+
+                    <F label="Evaluate color">
+                    <Radios
+                      name="sputum_colour"
+                      opts={[
+                        "White / Clear",
+                        "Gray",
+                        "Yellowish",
+                        "Greenish",
+                        "Blood stained"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label=" Evaluate consistency">
+                    <Radios
+                      name="sputum_consistency"
+                      opts={[
+                        "Thin",
+                        "Frothy",
+                        "Mucoid",
+                        "Mucopurulent",
+                        "Sticky"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  </div>
+                )}
+
+              </div>
+            </>
+          )}
+
+        {/* NO → Nursing Notes */}
+        {v.respiratory_required === "No" && (
+          <div style={{ marginTop: 18 }}>
+            <F label="Respiratory Nursing Notes">
+              <Txt
+                name="respiratory_notes"
+                rows={4}
+                v={v}
+                set={set}
+              />
+            </F>
+          </div>
+        )}
+
         </Sec>
 
         {/* ── Mobility & ADL ── */}
         <Sec title="Mobility & Activities of Daily Living (ADL)" expanded={exp.s5} onToggle={() => tog("s5")}>
-          <div style={st.g2}>
-            <F label="Bed Mobility"><Sel name="bed_mobility" opts={["Independent","Supervision only","Minimal assist (25%)","Moderate assist (50%)","Maximal assist (75%)","Total dependence"]} v={v} set={set} /></F>
-            <F label="Transfers (Bed ↔ Chair)"><Sel name="transfers" opts={["Independent","Supervision","1-person assist","2-person assist","Hoist required","Contraindicated"]} v={v} set={set} /></F>
-            <F label="Ambulation Level"><Sel name="ambulation_level" opts={["Walks independently","Aid — unsupervised","Aid + supervision","Aid + 1-person assist","Sitting balance only","Bedbound"]} v={v} set={set} /></F>
-            <F label="Assistive Device"><Checks name="assistive_device" opts={["None","Walking frame","Quad cane","Standard cane","Crutches","Wheelchair","Hoist / sling","Air vest"]} v={v} set={set} /></F>
-          </div>
-          <div style={st.tableLabel}>ADL Assessment</div>
-          <ADLTable v={v} set={set} />
-          <F label="ADL Nursing Notes"><Txt name="adl_nursing_notes" v={v} set={set} /></F>
-        </Sec>
 
-        {/* ── Fluid I/O ── */}
+        <div style={st.g2}>
+          <F label="Bed Mobility">
+            <Sel
+              name="bed_mobility"
+              opts={[
+                "Independent",
+                "Supervision only",
+                "Minimal assist (25%)",
+                "Moderate assist (50%)",
+                "Maximal assist (75%)",
+                "Total dependence"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Transfers (Bed ↔ Chair)">
+            <Sel
+              name="transfers"
+              opts={[
+                "Independent",
+                "Supervision",
+                "1-person assist",
+                "2-person assist",
+                "Hoist required",
+                "Contraindicated"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Ambulation Level">
+            <Sel
+              name="ambulation_level"
+              opts={[
+                "Walks independently",
+                "Aid — unsupervised",
+                "Aid + supervision",
+                "Aid + 1-person assist",
+                "Sitting balance only",
+                "Bedbound"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Assistive Device">
+            <Checks
+              name="assistive_device"
+              opts={[
+                "None",
+                "Walking frame",
+                "Quad cane",
+                "Standard cane",
+                "Crutches",
+                "Wheelchair",
+                "Hoist / sling",
+                "Air vest"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+        </div>
+
+        {/* ── Mobility Aid ── */}
+        <div style={st.subheading}>Mobility Aid</div>
+
+        <div style={st.g2}>
+
+          <F label="Walking aid type">
+            <Radios
+              name="walking_aid_type"
+              opts={[
+                "Walking stick/cane",
+                "Elbow crutches (single/bilateral)",
+                "Axillary crutches (single/bilateral)",
+                "Platform crutches (single/bilateral)",
+                "Quadripod",
+                "Walking Frame",
+                "Wheeled Walker",
+                "Rollator / Reverse Rollator"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Assistance level">
+            <Radios
+              name="walking_aid_assistance"
+              opts={[
+                "Independent",
+                "Minimal Assistance",
+                "Moderate Assistance",
+                "Maximum Assistance",
+                "Total Dependent"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Distance">
+            <Radios
+              name="walking_aid_distance"
+              opts={[
+                "Short Distance",
+                "Long Distance"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+        </div>
+
+        {/* ── Wheelchair ── */}
+        <div style={st.subheading}>Wheelchair</div>
+
+        <div style={st.g2}>
+
+          <F label="Wheelchair type">
+            <Radios
+              name="wheelchair_type"
+              opts={[
+                "Manual Wheelchair",
+                "Electrical Wheelchair"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Assistance level">
+            <Radios
+              name="wheelchair_assistance"
+              opts={[
+                "Independent",
+                "Minimal Assistance",
+                "Moderate Assistance",
+                "Maximum Assistance",
+                "Total Dependent"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Distance">
+            <Radios
+              name="wheelchair_distance"
+              opts={[
+                "Short Distance",
+                "Long Distance"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+        </div>
+        {/* ── Transfer Using Assistive Devices ── */}
+        <div style={st.subheading}>Transfer Using Assistive Devices</div>
+
+        <div style={st.g2}>
+
+         <F label="">
+            <Radios
+              name="transfer_assistive_device"
+              opts={[
+                "Transfer lifter",
+                "Hoist"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          <F label="Other assistive transfer devices">
+            <Txt
+              name="other_transfer_devices"
+              rows={3}
+              v={v}
+              set={set}
+            />
+          </F>
+
+        </div>
+        {/* ── Others ── */}
+        <F label="Others">
+          <Txt
+            name="other_mobility_aids"
+            rows={3}
+            v={v}
+            set={set}
+          />
+        </F>
+
+        {/* <div style={st.tableLabel}>ADL Assessment</div>
+        <ADLTable v={v} set={set} /> */}
+
+        {/* <F label="ADL Nursing Notes">
+          <Txt name="adl_nursing_notes" v={v} set={set} />
+        </F> */}
+
+      </Sec>
+
+        {/* ── Fluid Intake & Output ── */}
         <Sec title="Fluid Intake & Output" expanded={exp.s6} onToggle={() => tog("s6")}>
-          <div style={st.fluidGrid}>
-            {[["Oral Intake (mL)","oral_intake"],["IV Intake (mL)","iv_intake"],["NGT/PEG Intake (mL)","ngt_peg_intake"],["Total Intake (mL)","total_intake"],
-              ["Urine Output (mL)","urine_output"],["Other Output (mL)","other_output"],["Total Output (mL)","total_output"],["Fluid Balance (mL)","fluid_balance"]].map(([lbl, name]) => (
-              <div key={name} style={st.fluidCell}>
-                <div style={st.fluidCellLabel}>{lbl}</div>
-                <input type="number" value={v[name] ?? ""} style={st.fluidInput} onChange={e => set(name, e.target.value === "" ? "" : Number(e.target.value))} />
+
+          {/* Fluid Assessment Required */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px"
+              }}
+            >
+              Fluid Intake & Output Assessment Required?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.fluid_io_required === "Yes"}
+                onChange={() => set("fluid_io_required", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.fluid_io_required === "No"}
+                onChange={() => set("fluid_io_required", "No")}
+              />
+              No
+            </label>
+
+          </div>
+
+          {/* YES → Full Assessment */}
+          {v.fluid_io_required === "Yes" && (
+            <>
+              <div style={st.fluidGrid}>
+                {[
+                  ["Oral Intake (mL)", "oral_intake"],
+                  ["IV Intake (mL)", "iv_intake"],
+                  ["NGT/PEG Intake (mL)", "ngt_peg_intake"],
+                  ["Total Intake (mL)", "total_intake"],
+                  ["Urine Output (mL)", "urine_output"],
+                  ["Other Output (mL)", "other_output"],
+                  ["Total Output (mL)", "total_output"],
+                  ["Fluid Balance (mL)", "fluid_balance"]
+                ].map(([lbl, name]) => (
+                  <div key={name} style={st.fluidCell}>
+                    <div style={st.fluidCellLabel}>{lbl}</div>
+
+                    <input
+                      type="number"
+                      value={v[name] ?? ""}
+                      style={st.fluidInput}
+                      onChange={e =>
+                        set(
+                          name,
+                          e.target.value === ""
+                            ? ""
+                            : Number(e.target.value)
+                        )
+                      }
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div style={st.g2}>
-            <F label="Diet / Appetite"><Checks name="diet_appetite" opts={["Full meal taken","Half meal","Poor intake (<25%)","Nil by mouth","NGT fed","PEG fed"]} v={v} set={set} /></F>
-            <F label="Bladder Management"><Checks name="bladder_management" opts={["Continent","IDC in-situ","Incontinence pad","Intermittent catheterisation"]} v={v} set={set} /></F>
-            <F label="Stool / Bowel"><Checks name="stool_bowel" opts={["None","Formed (normal)","Loose","Liquid / diarrhoea","Constipated","Pad soiled"]} v={v} set={set} /></F>
-            <F label="Swallowing Concern"><Checks name="swallowing_concern" opts={["No concern","Coughing on fluids","Coughing on solids","SLT referral made"]} v={v} set={set} /></F>
-          </div>
-          <div style={st.condModule}>
-            <div style={st.condModuleTitle}>6A — Nutrition Assessment</div>
+
             <div style={st.g2}>
-              <F label="Nutritional Risk Screen"><Sel name="nutritional_risk" opts={["Low risk","Moderate — dietitian referral","High — urgent dietitian review"]} v={v} set={set} /></F>
-              <F label="BMI (if known)"><Inp name="bmi" type="number" step="0.1" v={v} set={set} /></F>
-              <F label="Enteral / Parenteral Nutrition"><Sel name="enteral_parenteral" opts={["None","NGT enteral","PEG enteral","TPN","Supplementary oral feeds"]} v={v} set={set} /></F>
-              <F label="Last Dietitian Review"><Inp name="last_dietitian_review" type="date" v={v} set={set} /></F>
+
+              <F label="Diet / Appetite">
+                <Checks
+                  name="diet_appetite"
+                  opts={[
+                    "Full meal taken",
+                    "Half meal",
+                    "Poor intake (<25%)",
+                    "Nil by mouth",
+                    "NGT fed",
+                    "PEG fed"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Bladder Management">
+                <Checks
+                  name="bladder_management"
+                  opts={[
+                    "Continent",
+                    "IDC in-situ",
+                    "Incontinence pad",
+                    "Intermittent catheterisation"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Stool / Bowel">
+                <Checks
+                  name="stool_bowel"
+                  opts={[
+                    "None",
+                    "Formed (normal)",
+                    "Loose",
+                    "Liquid / diarrhoea",
+                    "Constipated",
+                    "Pad soiled"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Swallowing Concern">
+                <Checks
+                  name="swallowing_concern"
+                  opts={[
+                    "No concern",
+                    "Coughing on fluids",
+                    "Coughing on solids",
+                    "SLT referral made"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
             </div>
-            <F label="Nutrition Concerns This Shift">
-              <Checks name="nutrition_concerns" opts={["None","Weight loss noted","Refusal to eat","Aspiration risk","Tube feed intolerance"]} v={v} set={set} />
-            </F>
-          </div>
+
+            {/* Bristol Stool Chart */}
+            <div style={{ marginTop: 18 }}>
+
+              <div style={st.label}>
+                Stool consistency
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  set("show_bristol_chart", !v.show_bristol_chart)
+                }
+                style={{
+                  border: "2px solid #1f2937",
+                  borderRadius: 999,
+                  padding: "10px 22px",
+                  background: "#fff",
+                  color: "#111827",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: "pointer"
+                }}
+              >
+                Bristol Chart
+              </button>
+
+              {v.show_bristol_chart && (
+                <div
+                  style={{
+                    marginTop: 16,
+                    border: "1px solid #dbeafe",
+                    borderRadius: 12,
+                    padding: 14,
+                    background: "#f8fbff"
+                  }}
+                >
+                  <BristolChartAssessment
+                    values={v}
+                    onChange={set}
+                  />
+                </div>
+              )}
+
+            </div>
+
+              {/* Nutrition Assessment */}
+              {/* <div style={st.condModule}>
+
+                <div style={st.condModuleTitle}>
+                  6A — Nutrition Assessment
+                </div>
+
+                <div style={st.g2}>
+
+                  <F label="Nutritional Risk Screen">
+                    <Sel
+                      name="nutritional_risk"
+                      opts={[
+                        "Low risk",
+                        "Moderate — dietitian referral",
+                        "High — urgent dietitian review"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="BMI (if known)">
+                    <Inp
+                      name="bmi"
+                      type="number"
+                      step="0.1"
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Enteral / Parenteral Nutrition">
+                    <Sel
+                      name="enteral_parenteral"
+                      opts={[
+                        "None",
+                        "NGT enteral",
+                        "PEG enteral",
+                        "TPN",
+                        "Supplementary oral feeds"
+                      ]}
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                  <F label="Last Dietitian Review">
+                    <Inp
+                      name="last_dietitian_review"
+                      type="date"
+                      v={v}
+                      set={set}
+                    />
+                  </F>
+
+                </div>
+
+                <F label="Nutrition Concerns This Shift">
+                  <Checks
+                    name="nutrition_concerns"
+                    opts={[
+                      "None",
+                      "Weight loss noted",
+                      "Refusal to eat",
+                      "Aspiration risk",
+                      "Tube feed intolerance"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+              </div> */}
+            </>
+          )}
+
+          {/* NO → Nursing Notes */}
+          {v.fluid_io_required === "No" && (
+            <div style={{ marginTop: 18 }}>
+              <F label="Fluid Intake & Output Nursing Notes">
+                <Txt
+                  name="fluid_io_notes"
+                  rows={4}
+                  v={v}
+                  set={set}
+                />
+              </F>
+            </div>
+          )}
+
         </Sec>
 
         {/* ── Skin & Wound ── */}
@@ -584,7 +1723,7 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
         {/* ── Fall Risk ── */}
         <Sec title="Safety & Fall Risk Assessment" expanded={exp.s8} onToggle={() => tog("s8")}>
           <div style={st.condModule}>
-            <div style={st.condModuleTitle}>Morse Fall Scale Score</div>
+            <div style={st.condModuleTitle}>Morse Fall Chart</div>
             <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
               {[["Low (0–24)", "#3b82f6"], ["Moderate (25–44)", "#f59e0b"], ["High (≥45)", "#ef4444"]].map(([lbl, c]) => (
                 <span key={lbl} style={{ fontSize: 12, fontWeight: 600, color: "#fff", background: c, borderRadius: 20, padding: "3px 12px" }}>{lbl}</span>
@@ -629,19 +1768,177 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
 
         {/* ── Incident ── */}
         <Sec title="Incident Documentation" expanded={exp.s9} onToggle={() => tog("s9")}>
-          <div style={st.infoNote}>Complete if any incident occurred this shift. All incidents require a separate Incident Report Form to be filed.</div>
-          <F label="Incident Type"><Checks name="incident_type" opts={["Fall","Near-miss fall","Syncope / collapse","Acute clinical deterioration","Medication error","Skin tear / injury","Other"]} v={v} set={set} /></F>
-          <div style={st.g2}>
-            <F label="Time of Incident"><Inp name="incident_time" type="time" v={v} set={set} /></F>
-            <F label="Location"><Inp name="incident_location" v={v} set={set} /></F>
-            <F label="Witnesses"><Inp name="incident_witnesses" v={v} set={set} /></F>
-            <F label="Doctor Notified"><Radios name="doctor_notified" opts={["Yes","No"]} v={v} set={set} /></F>
-            <F label="Patient Status Pre-Incident"><Checks name="patient_status_pre_incident" opts={["Ambulatory","In bed","In chair","Transferring","In bathroom"]} v={v} set={set} /></F>
-            <F label="Supervision at Time of Incident"><Radios name="supervision_at_incident" opts={["Unsupervised","Supervised","1:1 care"]} v={v} set={set} /></F>
+
+          {/* Incident Present */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px"
+              }}
+            >
+              Any incident?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.incident_present === "Yes"}
+                onChange={() => set("incident_present", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.incident_present === "No"}
+                onChange={() => set("incident_present", "No")}
+              />
+              No
+            </label>
+
           </div>
-          <F label="Injuries Sustained"><Checks name="injuries_sustained" opts={["No injury","Minor skin tear","Haematoma","Laceration","Suspected fracture — escalate","Head injury — CT ordered"]} v={v} set={set} /></F>
-          <F label="Post-Incident Monitoring Initiated"><Checks name="post_incident_monitoring" opts={["Neuro obs initiated","Vital signs monitored","Pain assessed","X-ray ordered","CT ordered","Family notified","Incident report filed"]} v={v} set={set} /></F>
-          <F label="Incident Narrative"><Txt name="incident_narrative" rows={4} v={v} set={set} /></F>
+
+          {/* YES → Incident Form */}
+          {v.incident_present === "Yes" && (
+            <>
+              <div style={st.infoNote}>
+                Complete if any incident occurred this shift.
+                All incidents require a separate Incident Report Form to be filed.
+              </div>
+
+              <F label="Incident Type">
+                <Checks
+                  name="incident_type"
+                  opts={[
+                    "Fall",
+                    "Near-miss fall",
+                    "Syncope / collapse",
+                    "Acute clinical deterioration",
+                    "Medication error",
+                    "Skin tear / injury",
+                    "Other"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <div style={st.g2}>
+
+                <F label="Time of Incident">
+                  <Inp
+                    name="incident_time"
+                    type="time"
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Location">
+                  <Inp
+                    name="incident_location"
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Witnesses">
+                  <Inp
+                    name="incident_witnesses"
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Doctor Notified">
+                  <Radios
+                    name="doctor_notified"
+                    opts={["Yes", "No"]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Patient Status Pre-Incident">
+                  <Checks
+                    name="patient_status_pre_incident"
+                    opts={[
+                      "Ambulatory",
+                      "In bed",
+                      "In chair",
+                      "Transferring",
+                      "In bathroom"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Supervision at Time of Incident">
+                  <Radios
+                    name="supervision_at_incident"
+                    opts={[
+                      "Unsupervised",
+                      "Supervised",
+                      "1:1 care"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+              </div>
+
+              <F label="Injuries Sustained">
+                <Checks
+                  name="injuries_sustained"
+                  opts={[
+                    "No injury",
+                    "Minor skin tear",
+                    "Haematoma",
+                    "Laceration",
+                    "Suspected fracture — escalate",
+                    "Head injury — CT ordered"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Post-Incident Monitoring Initiated">
+                <Checks
+                  name="post_incident_monitoring"
+                  opts={[
+                    "Neuro obs initiated",
+                    "Vital signs monitored",
+                    "Pain assessed",
+                    "X-ray ordered",
+                    "CT ordered",
+                    "Family notified",
+                    "Incident report filed"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Incident Narrative">
+                <Txt
+                  name="incident_narrative"
+                  rows={4}
+                  v={v}
+                  set={set}
+                />
+              </F>
+            </>
+          )}
+
         </Sec>
 
         {/* ── Therapy ── */}
@@ -652,11 +1949,206 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
 
         {/* ── Nursing Care ── */}
         <Sec title="Nursing Care & Interventions" expanded={exp.s11} onToggle={() => tog("s11")}>
+
           <div style={st.g2}>
-            <F label="Personal Care Completed"><Checks name="personal_care" opts={["Bed bath","Shower (assisted)","Oral hygiene","Hair care","Shaving","Nail care"]} v={v} set={set} /></F>
-            <F label="Medications & IV Management"><Checks name="medications_iv" opts={["All regular meds given","PRN administered (per MAR)","Medication withheld — reason documented","IV infusion maintained","PIV patent — site reviewed","PICC flushed — dressing intact","Central line bundle care done","IV site changed this shift"]} v={v} set={set} /></F>
+
+            <F label="Personal Care Completed">
+              <Checks
+                name="personal_care"
+                opts={[
+                  "Bed bath",
+                  "Shower (assisted)",
+                  "Oral hygiene",
+                  "Hair care",
+                  "Shaving",
+                  "Nail care"
+                ]}
+                v={v}
+                set={set}
+              />
+            </F>
+
+            <F label="Medications & IV Management">
+              <Checks
+                name="medications_iv"
+                opts={[
+                  "All regular meds given",
+                  "PRN administered (per MAR)",
+                  "Medication withheld — reason documented",
+                  "IV infusion maintained",
+                  "PIV patent — site reviewed",
+                  "PICC flushed — dressing intact",
+                  "Central line bundle care done",
+                  "IV site changed this shift"
+                ]}
+                v={v}
+                set={set}
+              />
+            </F>
+
           </div>
-          <F label="Additional Nursing Interventions"><Txt name="additional_interventions" v={v} set={set} /></F>
+
+          {/* ── Simple Procedures ── */}
+          <div style={st.subheading}>Simple Procedures</div>
+
+          <F label="">
+            <Checks
+              name="simple_procedures"
+              opts={[
+                "Eye irrigation",
+                "Ear irrigation",
+                "Vital Sign",
+                "Glucose Monitoring",
+                "Ryle’s Tube Insertion",
+                "Ryle’s tube feeding",
+                "Suture Removing",
+                "Tracheostomy dressing",
+                "Tracheostomy suctioning",
+                "Electrocardiogram (ECG)",
+                "PEG cleaning",
+                "PEG Feeding",
+                "IV Cannulation Insertion",
+                "Blood taking",
+                "Wound dressing",
+                "Suprapubic dressing",
+                "Bladder Scan",
+                "CBD Insertion",
+                "CIC Insertion",
+                "Digital Rectal Stimulation",
+                "Manual evacuation",
+                "Serial Casting",
+                "Others"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          {(v.simple_procedures || []).includes("Others") && (
+            <F label="Other Procedure">
+              <Txt
+                name="other_procedure"
+                rows={2}
+                v={v}
+                set={set}
+              />
+            </F>
+          )}
+
+          {/* ── Therapeutic Exercise ── */}
+          <div style={st.subheading}>Therapeutic Exercise</div>
+
+          <F label="">
+            <Checks
+              name="therapeutic_exercise"
+              opts={[
+                "Chattanooga",
+                "Fitmi Music",
+                "Hand cycling",
+                "LEGA (Chest Percussion)",
+                "Magnethoterapy",
+                "Motomed",
+                "Saebo stim",
+                "Tilt table",
+                "High Frequency Chest Wall Oscillation",
+                "Others"
+              ]}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          {(v.therapeutic_exercise || []).includes("Others") && (
+            <F label="Other Therapeutic Exercise">
+              <Txt
+                name="other_therapeutic_exercise"
+                rows={2}
+                v={v}
+                set={set}
+              />
+            </F>
+          )}
+
+          {/* ── Observation During Procedure ── */}
+          <F label="Observation During Procedure">
+            <Txt
+              name="procedure_observation"
+              rows={4}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          {/* ── Adverse Reaction ── */}
+          <div style={{ marginTop: 18 }}>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 10 }}>
+
+              <label
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "#4b5563",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.4px"
+                }}
+              >
+                Adverse Reaction
+              </label>
+
+              <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <input
+                  type="radio"
+                  checked={v.adverse_reaction === "Yes"}
+                  onChange={() => set("adverse_reaction", "Yes")}
+                />
+                Yes
+              </label>
+
+              <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <input
+                  type="radio"
+                  checked={v.adverse_reaction === "No"}
+                  onChange={() => set("adverse_reaction", "No")}
+                />
+                No
+              </label>
+
+            </div>
+
+            {v.adverse_reaction === "Yes" && (
+              <F label="Adverse Reaction Details">
+                <Txt
+                  name="adverse_reaction_details"
+                  rows={2}
+                  v={v}
+                  set={set}
+                />
+              </F>
+            )}
+
+          </div>
+
+          {/* ── Plan ── */}
+          <F label="Plan">
+            <Txt
+              name="nursing_plan"
+              rows={4}
+              v={v}
+              set={set}
+            />
+          </F>
+
+          {/* ── Additional Nursing Interventions ── */}
+          <F label="Additional Nursing Interventions">
+            <Txt
+              name="additional_interventions"
+              rows={4}
+              v={v}
+              set={set}
+            />
+          </F>
+
         </Sec>
 
         {/* ── Carer & Family ── */}
@@ -707,21 +2199,166 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
 
         {/* ── Discharge Planning ── */}
         <Sec title="Discharge Planning & Goal Tracking" expanded={exp.s14} onToggle={() => tog("s14")}>
-          <div style={st.infoNote}>Update at each shift. Coordinate with multidisciplinary team. Discharge plan to be initiated at admission.</div>
-          <div style={st.g2}>
-            <F label="Planned Discharge Date"><Inp name="planned_discharge_date" type="date" v={v} set={set} /></F>
-            <F label="Discharge Destination"><Sel name="discharge_destination" opts={["Home","Home + community support","Hostel / supported living","Nursing home","Inpatient transfer"]} v={v} set={set} /></F>
-            <F label="Hostel Availability"><Sel name="hostel_availability" opts={["N/A","Awaiting placement","Confirmed"]} v={v} set={set} /></F>
-            <F label="Transport Arranged"><Radios name="transport_arranged" opts={["N/A","Pending","Confirmed"]} v={v} set={set} /></F>
-            <F label="Home Environment Assessed"><Checks name="home_environment" opts={["N/A","OT home visit completed","Modifications identified","Modifications completed"]} v={v} set={set} /></F>
-            <F label="Inter-Facility Transfer Request"><Radios name="inter_facility_transfer" opts={["N/A","Pending","Submitted — awaiting","Confirmed"]} v={v} set={set} /></F>
+
+          {/* Discharge Planning Required */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 14 }}>
+
+            <label
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#4b5563",
+                textTransform: "uppercase",
+                letterSpacing: "0.4px"
+              }}
+            >
+              Plan Discharge Available?
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.discharge_planning_required === "Yes"}
+                onChange={() => set("discharge_planning_required", "Yes")}
+              />
+              Yes
+            </label>
+
+            <label style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="radio"
+                checked={v.discharge_planning_required === "No"}
+                onChange={() => set("discharge_planning_required", "No")}
+              />
+              No
+            </label>
+
           </div>
-          <div style={st.tableLabel}>Rehabilitation Goals Progress Tracking</div>
-          <RehabGoals v={v} set={set} />
-          <F label="Patient & Family Education Completed This Shift">
-            <Checks name="patient_family_education" opts={["Diagnosis & rehab process explained","Medication purpose & side-effects","Falls prevention strategies","Pressure injury prevention","Home exercise programme issued","Assistive device use demonstrated","Community services / referrals","Discharge instructions reviewed"]} v={v} set={set} />
-          </F>
-          <F label="Discharge Planning Notes"><Txt name="discharge_planning_notes" v={v} set={set} /></F>
+
+          {/* YES → Full Section */}
+          {v.discharge_planning_required === "Yes" && (
+            <>
+              <div style={st.infoNote}>
+                Update at each shift. Coordinate with multidisciplinary team.
+                Discharge plan to be initiated at admission.
+              </div>
+
+              <div style={st.g2}>
+
+                <F label="Planned Discharge Date">
+                  <Inp
+                    name="planned_discharge_date"
+                    type="date"
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Discharge Destination">
+                  <Sel
+                    name="discharge_destination"
+                    opts={[
+                      "Home",
+                      "Home + community support",
+                      "Hostel / supported living",
+                      "Nursing home",
+                      "Inpatient transfer"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Hostel Availability">
+                  <Sel
+                    name="hostel_availability"
+                    opts={[
+                      "N/A",
+                      "Awaiting placement",
+                      "Confirmed"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Transport Arranged">
+                  <Radios
+                    name="transport_arranged"
+                    opts={[
+                      "N/A",
+                      "Pending",
+                      "Confirmed"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Home Environment Assessed">
+                  <Checks
+                    name="home_environment"
+                    opts={[
+                      "N/A",
+                      "OT home visit completed",
+                      "Modifications identified",
+                      "Modifications completed"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+                <F label="Inter-Facility Transfer Request">
+                  <Radios
+                    name="inter_facility_transfer"
+                    opts={[
+                      "N/A",
+                      "Pending",
+                      "Submitted — awaiting",
+                      "Confirmed"
+                    ]}
+                    v={v}
+                    set={set}
+                  />
+                </F>
+
+              </div>
+
+              <div style={st.tableLabel}>
+                Rehabilitation Goals Progress Tracking
+              </div>
+
+              <RehabGoals v={v} set={set} />
+
+              <F label="Patient & Family Education Completed This Shift">
+                <Checks
+                  name="patient_family_education"
+                  opts={[
+                    "Diagnosis & rehab process explained",
+                    "Medication purpose & side-effects",
+                    "Falls prevention strategies",
+                    "Pressure injury prevention",
+                    "Home exercise programme issued",
+                    "Assistive device use demonstrated",
+                    "Community services / referrals",
+                    "Discharge instructions reviewed"
+                  ]}
+                  v={v}
+                  set={set}
+                />
+              </F>
+
+              <F label="Discharge Reasons">
+                <Txt
+                  name="discharge_planning_notes"
+                  v={v}
+                  set={set}
+                />
+              </F>
+            </>
+          )}
+
         </Sec>
 
         {/* ── Sign-off ── */}
