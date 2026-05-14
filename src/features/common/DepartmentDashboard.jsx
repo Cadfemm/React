@@ -39,7 +39,7 @@ function KpiCard({ label, value, sub, icon, accent, trend, trendVal, onClick }) 
         <div className="flex-1 min-w-0">
           <div className="text-[11px] font-medium uppercase tracking-wide text-gray-500 mb-1">{label}</div>
           <div className="text-[22px] font-extrabold text-gray-900 leading-tight">{value}</div>
-          {sub && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
+          {sub && <div className="text-[11px] text-muted mt-0.5">{sub}</div>}
         </div>
         <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-3"
           style={{ background: accent + "18", color: accent }}>
@@ -54,7 +54,7 @@ function KpiCard({ label, value, sub, icon, accent, trend, trendVal, onClick }) 
           <span className={`text-[11px] font-semibold ${trend === "up" ? "text-emerald-500" : "text-red-500"}`}>
             {trendVal}
           </span>
-          <span className="text-[11px] text-gray-400">vs yesterday</span>
+          <span className="text-[11px] text-muted">vs yesterday</span>
         </div>
       )}
     </div>
@@ -111,7 +111,7 @@ function DonutCard({ title, total, segments, footer }) {
         </svg>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
           <div className="text-2xl font-extrabold text-gray-900 leading-none">{total}</div>
-          <div className="text-[12px] text-gray-400 mt-0.5">Patients</div>
+          <div className="text-[12px] text-muted mt-0.5">Patients</div>
         </div>
         {tip && (
           <div className="absolute pointer-events-none whitespace-nowrap text-[12px] text-white px-2 py-1 rounded-md"
@@ -129,7 +129,7 @@ function DonutCard({ title, total, segments, footer }) {
           </div>
         ))}
       </div>
-      {footer && <div className="text-[12px] text-gray-400 text-center mt-2">{footer}</div>}
+      {footer && <div className="text-[12px] text-muted text-center mt-2">{footer}</div>}
     </div>
   );
 }
@@ -151,7 +151,7 @@ function AppointmentTable({ appointments, onViewAll }) {
         <thead>
           <tr>
             {["Time", "Patient", "Examination Type", "Status", "VA"].map(h => (
-              <th key={h} className="text-left px-2.5 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wide border-b-2 border-gray-100 bg-gray-50">
+              <th key={h} className="text-left px-2.5 py-2 text-[11px] font-semibold text-muted uppercase tracking-wide border-b-2 border-gray-100 bg-gray-50">
                 {h}
               </th>
             ))}
@@ -232,7 +232,7 @@ function ReferralCard({ incoming, outgoing }) {
       <SectionHeader title="Referral Summary" />
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted uppercase tracking-wide mb-2">
             <FaInbox size={11} /> Incoming
           </div>
           {incoming.map((r, i) => (
@@ -243,7 +243,7 @@ function ReferralCard({ incoming, outgoing }) {
           ))}
         </div>
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted uppercase tracking-wide mb-2">
             <FaShareSquare size={11} /> Outgoing
           </div>
           {outgoing.map((r, i) => (
@@ -293,10 +293,10 @@ function RecordingCard({ count }) {
           </div>
           <div>
             <div className="text-3xl font-extrabold text-gray-900 leading-none">{count}</div>
-            <div className="text-[12px] text-gray-400 mt-0.5">Total recordings this month</div>
+            <div className="text-[12px] text-muted mt-0.5">Total recordings this month</div>
           </div>
         </div>
-        <div className="text-[12px] text-gray-400 bg-gray-50 rounded-lg px-3 py-2">
+        <div className="text-[12px] text-muted bg-gray-50 rounded-lg px-3 py-2">
           Audio recordings are encrypted and stored securely per HIPAA guidelines.
         </div>
         <button onClick={() => setOpen(true)}
@@ -310,7 +310,7 @@ function RecordingCard({ count }) {
           <div className="bg-white rounded-2xl p-6 w-[440px] shadow-modal">
             <div className="flex justify-between items-center mb-4">
               <span className="text-[16px] font-bold text-gray-900">New Session Recording</span>
-              <button onClick={() => setOpen(false)} className="text-gray-400 text-2xl leading-none bg-transparent border-0 cursor-pointer">×</button>
+              <button onClick={() => setOpen(false)} className="text-muted text-2xl leading-none bg-transparent border-0 cursor-pointer">×</button>
             </div>
             <input placeholder="Patient name" value={patient} onChange={e => setPatient(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-[14px] outline-none" />
@@ -357,7 +357,7 @@ function MonthlyStats({ stats }) {
             </div>
             <div>
               <div className="text-[16px] font-bold text-gray-900">{m.value}</div>
-              <div className="text-[11px] text-gray-400 leading-tight">{m.label}</div>
+              <div className="text-[11px] text-muted leading-tight">{m.label}</div>
             </div>
           </div>
         ))}
@@ -398,7 +398,7 @@ export default function DepartmentDashboard({
       <div className="flex justify-between items-center">
         <div>
           <div className="text-xl font-bold text-gray-900">{departmentName}</div>
-          <div className="text-[12px] text-gray-400 mt-0.5">{today}</div>
+          <div className="text-[12px] text-muted mt-0.5">{today}</div>
         </div>
         <div className="flex gap-2.5">
           {onViewAllPatients && (

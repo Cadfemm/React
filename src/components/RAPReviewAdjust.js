@@ -91,7 +91,7 @@ export default function ReviewAdjust() {
 
       {/* ---------------------- BUDGET & AUTHORISATION ---------------------- */}
       <section className="review-section">
-        <h2 style={{color:"#3A3FAD"}}className="patient-header-light">Budget & Authorisation</h2>
+        <h2 style={{color:"#000"}}className="patient-header-light">Budget & Authorisation</h2>
 
         <div className="review-actions">
           <button className="primary-btn">Benefit Caps & Tariff</button>
