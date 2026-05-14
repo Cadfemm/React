@@ -35,7 +35,7 @@
   --color-text-disabled:  #cbd5e1;
 
   /* Typography */
-  --font-family:          'Inter', system-ui, -apple-system, sans-serif;
+  --font-family:    'Inter', 'Roboto', sans-serif;
   --font-size-xs:         10px;
   --font-size-sm:         12px;
   --font-size-base:       13px;

@@ -33,7 +33,7 @@ export default function PatientList({ selectedPatientId }) {
                 style={{
                   backgroundColor: "#F1F1F1",
                   border:'1px solid #353333ff',
-                  color: "#3A3FAD",
+                  color: "#000",
                   textAlign: "center",
                   padding: "10px",
                 }}

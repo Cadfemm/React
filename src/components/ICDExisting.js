@@ -29,7 +29,7 @@ export default function ICDExisting() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: "20px" }}>
       {/* Patient ICD Summary Section */}
       {!showPatientDetails && (
         <>
@@ -65,7 +65,7 @@ export default function ICDExisting() {
                       style={{
                         border: "none",
                         backgroundColor: "#3a40ad00",
-                        color: "#3A3FAD",
+                        color: "#000",
                         padding: "6px 12px",
                         cursor: "pointer",
                         borderRadius: "5px",
