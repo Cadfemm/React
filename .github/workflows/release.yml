@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Vercel preview deploy
-        uses: vercel/action@v3
+        uses: vercel/action-deploy-preview@v2
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -55,7 +55,7 @@ jobs:
         run: npm ci
 
       - name: Vercel production deploy
-        uses: vercel/action@v3
+        uses: vercel/action@v1
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
