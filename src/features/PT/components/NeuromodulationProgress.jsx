@@ -4709,7 +4709,7 @@ const SCHEMA_MAP = {
 /* ══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════ */
-export default function NeuroroticProgress({ patient, onBack }) {
+export default function NeuromodulationProgress({ patient, onBack }) {
   const [values, setValues]       = useState({});
   const [activeTab, setActiveTab] = useState("subjective");
    const [submitted, setSubmitted] = useState(false);

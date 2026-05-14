@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import PatientCard from "../../../shared/cards/PatientCard";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
@@ -13,8 +14,12 @@ const ACTIONS   = [
 ];
 
 const SUBJECTIVE_SCHEMA = {
-  actions: ACTIONS,
-  sections: [{
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+      sections: [{
     fields: [
       {
         name: "consent_type",
@@ -36,15 +41,25 @@ const SUBJECTIVE_SCHEMA = {
           { label: "Bouldering Wall", value: "bouldering_wall" },
         ],
       },
+      { name: "mc_chief_complaint_obj", label: "Chief Complaint",     type: "input" },
+      {
+            name: "hpi",
+            label: "History of Presenting Illness (HPI)",
+            type: "input"
+          }
     ],
   }],
 };
 
 const OBJECTIVE_SCHEMA = {
-  actions: ACTIONS,
-  sections: [{
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+      sections: [{
     fields: [
-      { type: "subheading", label: "1) Overall Climbing Performance" },
+      { type: "subheading", label: "Overall Climbing Performance" },
       { name: "overall_performance", label: "Performance", type: "radio",
         options: [
           { label: "Pass",                              value: "pass"     },
@@ -54,37 +69,63 @@ const OBJECTIVE_SCHEMA = {
       },
       { name: "time_min", label: "Time (minutes)", type: "input" },
       { name: "time_sec", label: "Time (seconds)", type: "input" },
-      { type: "subheading", label: "2) Strength and Power" },
+      { type: "subheading", label: "Strength and Power" },
       { name: "grip_strength",    label: "Grip Strength",            type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "upper_body_power", label: "Upper Body Pulling Power", type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
-      { type: "subheading", label: "3) Core Stability and Tension" },
+      { type: "subheading", label: "Core Stability and Tension" },
       { name: "body_tension",     label: "Body Tension",    type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "core_endurance",   label: "Core Endurance",  type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "postural_control", label: "Postural Control",type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
-      { type: "subheading", label: "4) Lower Body and Footwork" },
+      { type: "subheading", label: "Lower Body and Footwork" },
       { name: "foot_precision",      label: "Foot Precision",     type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "lower_limb_strength", label: "Lower Limb Strength",type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "hip_mobility",        label: "Hip Flexibility",    type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
-      { type: "subheading", label: "5) Mobility and Movement Efficiency" },
+      { type: "subheading", label: "Mobility and Movement Efficiency" },
       { name: "hip_shoulder_flexibility", label: "Hip & Shoulder Flexibility", type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "movement_coordination",    label: "Movement Coordination",     type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
       { name: "weight_transfer",          label: "Weight Transfer",           type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
-      { type: "subheading", label: "6) Endurance" },
+      { type: "subheading", label: "Endurance" },
       { name: "endurance", label: "Endurance", type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
-      { type: "subheading", label: "7) Attention & Concentration" },
+      { type: "subheading", label: "Attention & Concentration" },
       { name: "attention", label: "Attention & Concentration", type: "radio", options: ["Good","Fair","Poor"].map(v=>({label:v,value:v.toLowerCase()})) },
     ],
   }],
 };
 
 const ASSESSMENT_SCHEMA = {
-  actions: ACTIONS,
-  sections: [{ fields: [{ name: "clinical_impression", label: "Clinical Impression", type: "textarea" }] }],
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+      sections: [{ fields: [{ name: "clinical_impression", label: "Clinical Impression", type: "input" }] }],
 };
 
 const PLAN_SCHEMA = {
-  actions: ACTIONS,
-  sections: [{ fields: [{ name: "plan", label: "Plan", type: "textarea" }] }],
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+    
+      sections: [{ fields: [
+           {
+  type: "subheading",
+  label: "Short-Term Goals (2–4 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "shortterm_blocks"
+},
+
+               {
+  type: "subheading",
+  label: "Long-Term Goals (6–12 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "longterm_blocks"
+},{ name: "plan", label: "Plan", type: "input" }] }],
 };
 
 const SCHEMA_MAP = { subjective: SUBJECTIVE_SCHEMA, objective: OBJECTIVE_SCHEMA, assessment: ASSESSMENT_SCHEMA, plan: PLAN_SCHEMA };
@@ -95,10 +136,12 @@ const SCHEMA_MAP = { subjective: SUBJECTIVE_SCHEMA, objective: OBJECTIVE_SCHEMA,
    are passed from AdvanceFitnessWithSubTabs so ATV state
    is shared between Wall Climbing and Dry Needling tabs.
 ══════════════════════════════════════════════════════════ */
-export default function WallClimbingAssessment({ patient, sharedAtvValues = {}, sharedAtvSubmitted = false, onAtvSubmit }) {
+export default function WallClimbingAssessment({ patient, sharedAtvValues = {}, sharedAtvSubmitted = false, onAtvSubmit, onBack }) {
   const [values, setValues]       = useState({});
   const [activeTab, setActiveTab] = useState("subjective");
   const [openConsent, setOpenConsent] = useState(null);
+     const [submitted, setSubmitted] = useState(false);
+
 
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: patient?.medical_history || "",
@@ -124,12 +167,31 @@ export default function WallClimbingAssessment({ patient, sharedAtvValues = {}, 
       setOpenConsent(value);
     }
   };
+ const tabOrder = ["subjective", "objective", "assessment", "plan"];
+  const activeTabIdx = tabOrder.indexOf(activeTab);
+    const storageKey = patient ? `amputee_progress_${patient.id}` : null;
 
-  const handleAction = (type) => {
-    if (type === "clear") setValues({});
-    if (type === "save")  alert("Wall Climbing Assessment draft saved");
+     const handleAction = (type) => {
+    if (type === "back") onBack?.();
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+      localStorage.removeItem(storageKey);
+    }
+    if (type === "save") {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ values, updatedAt: new Date() })
+      );
+      alert("Spinal draft saved");
+    }
   };
 
+  const handleSubmit = () => {
+    setSubmitted(true);
+    console.log("Submitted:", values);
+    alert("Assessment submitted");
+  };
   const closeModal = () => {
     setOpenConsent(null);
     setValues(prev => ({ ...prev, consent_type: "" }));
@@ -152,7 +214,7 @@ export default function WallClimbingAssessment({ patient, sharedAtvValues = {}, 
           ].map(({ key, label }) => (
             <div key={key} style={{ marginBottom: 10 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>{label}</div>
-              <textarea value={patientHistory[key]} onChange={e => setPatientHistory(p => ({ ...p, [key]: e.target.value }))} style={historyTextarea} />
+              <input value={patientHistory[key]} onChange={e => setPatientHistory(p => ({ ...p, [key]: e.target.value }))} style={historyTextarea} />
             </div>
           ))}
           <button type="button" style={alertBtn}>🚨 Alerts</button>
@@ -247,6 +309,17 @@ export default function WallClimbingAssessment({ patient, sharedAtvValues = {}, 
           <ModalFooter onClose={closeModal} />
         </ConsentModal>
       )}
+       <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
+              Next
+            </button>
+          ) : (
+            <button style={submitBtn} onClick={handleSubmit}>
+              Submit Assessment
+            </button>
+          )}
+        </div>
     </div>
   );
 }
@@ -327,3 +400,20 @@ const alertBtn      = { marginTop: 10, padding: "10px 20px", borderRadius: 6, bo
 const doctorsReportBtn = { padding: "10px 20px", background: "#2563EB", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 8 };
 const consentStatusBar = { display: "flex", gap: 10, flexWrap: "wrap", padding: "10px 16px", margin: "0 0 8px", background: "#f0fdf4", border: "1px solid #86efac", borderRadius: 8 };
 const savedBadge    = { display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 20, background: "#dcfce7", border: "1px solid #86efac", color: "#166534", fontWeight: 600, fontSize: 12 };
+
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 16
+};
+
+const submitBtn = {
+  padding: "12px 32px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 8,
+  fontWeight: 600,
+  fontSize: 15,
+  cursor: "pointer"
+};

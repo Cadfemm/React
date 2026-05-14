@@ -509,11 +509,11 @@ const NEURO_CONTAINER_SCHEMA = {
   ]
 };
   const OBJECTIVE_SCHEMA = {
-title:"Functional and Mobility Status",
     actions: SUBJECTIVE_SCHEMA.actions,
      sections: [
       {
     fields: [
+       { type: "subheading", label: "Functional and Mobility Status" },
                 { type: "subheading", label: "Vital Signs" },
           { type: "row", fields: [
             { name: "obj_body_temp", label: "Body Temperature (°C)", type: "input", placeholder: "°C" },

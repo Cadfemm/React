@@ -13,7 +13,7 @@ const ACTIONS = [
 ══════════════════════════════════════════════════════════ */
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Progress Note",
+ 
   actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -30,7 +30,7 @@ const SUBJECTIVE_SCHEMA = {
 
 
 const OBJECTIVE_SCHEMA = {
-  title: "Objective",
+ 
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -2458,7 +2458,7 @@ actions: [
   ]
 };
 const ASSESSMENT_SCHEMA = {
-  title: "Assessment & Response",
+ 
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -2476,7 +2476,7 @@ actions: [
 };
 
 const PLAN_SCHEMA = {
-  title: "Plan",
+  
   actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -2496,7 +2496,7 @@ const PLAN_SCHEMA = {
           },  
           {
   type: "subheading",
-  label: "P – Plan"
+  label: "Plan"
 },
 
 // =========================
@@ -2707,7 +2707,7 @@ export default function SpinalcordInjuryProgress({ patient, onBack }) {
   //     alert("Progress & Intervention saved.");
   //   }
   // };
-    const handleAction = (type) => {
+      const handleAction = (type) => {
     if (type === "back") onBack?.();
     if (type === "clear") {
       setValues({});
@@ -2722,6 +2722,7 @@ export default function SpinalcordInjuryProgress({ patient, onBack }) {
       alert("Spinal draft saved");
     }
   };
+
 function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
   if (!patient) return null;
 

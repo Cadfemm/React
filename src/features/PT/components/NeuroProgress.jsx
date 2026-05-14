@@ -13,7 +13,7 @@ const ACTIONS = [
 ══════════════════════════════════════════════════════════ */
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Progress Note",
+  
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -28,7 +28,7 @@ actions: [
 };
 
 const OBJECTIVE_SCHEMA = {
-  title: "Objective",
+  
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -2249,237 +2249,9 @@ actions: [
     }
   ]
 };
-// const OBJECTIVE_SCHEMA = {
-//   title: "Intervention",
-//   actions: ACTIONS,
-//   sections: [
-//     {
-//       fields: [
-//          {
-//       title: "1. Therapeutic Exercises",
-//       fields: [
 
-//         // =========================
-//         // ROM Exercise
-//         // =========================
-//         {
-//           name: "therapeutic_exercises",
-//           label: "Select Therapeutic Exercises",
-//           type: "checkbox",
-//           options: [
-//             {
-//               label: "ROM exercise",
-//               value: "rom_exercise"
-//             },
-//             {
-//               label: "Strengthening exercise",
-//               value: "strengthening_exercise"
-//             },
-//             {
-//               label: "Gait training",
-//               value: "gait_training"
-//             },
-//             {
-//               label: "Weight-bearing exercise",
-//               value: "weight_bearing_exercise"
-//             },
-//             {
-//               label: "Balance training",
-//               value: "balance_training"
-//             },
-//             {
-//               label: "Mat Activity",
-//               value: "mat_activity"
-//             },
-//             {
-//               label: "Postural control training",
-//               value: "postural_control_training"
-//             },
-//             {
-//               label: "Coordination",
-//               value: "coordination"
-//             }
-//           ]
-//         },
-
-//         {
-//           name: "rom_exercise_type",
-//           label: "ROM Exercise Type",
-//           type: "checkbox",
-//           options: [
-//             { label: "Passive", value: "passive" },
-//             { label: "Active", value: "active" },
-//             { label: "Assisted", value: "assisted" }
-//           ],
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "rom_exercise"
-//           }
-//         },
-//         {
-//           name: "rom_exercise_remarks",
-//           label: "ROM Exercise Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "rom_exercise"
-//           }
-//         },
-
-//         // =========================
-//         // Strengthening Exercise
-//         // =========================
-//         {
-//           name: "strengthening_exercise_type",
-//           label: "Strengthening Exercise",
-//           type: "checkbox",
-//           options: [
-//             { label: "UL", value: "ul" },
-//             { label: "LL", value: "ll" }
-//           ],
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "strengthening_exercise"
-//           }
-//         },
-//         {
-//           name: "strengthening_exercise_remarks",
-//           label: "Strengthening Exercise Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "strengthening_exercise"
-//           }
-//         },
-
-//         // =========================
-//         // Gait Training
-//         // =========================
-//         {
-//           name: "gait_training_type",
-//           label: "Gait Training Type",
-//           type: "radio",
-//           options: [
-//             { label: "With BWS", value: "with_bws" },
-//             { label: "Without BWS", value: "without_bws" },
-//             { label: "Parallel Bar", value: "parallel_bar" }
-//           ],
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "gait_training"
-//           }
-//         },
-//         {
-//           name: "gait_training_remarks",
-//           label: "Gait Training Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "gait_training"
-//           }
-//         },
-
-//         // =========================
-//         // Weight-bearing Exercise
-//         // =========================
-//         {
-//           name: "weight_bearing_exercise_remarks",
-//           label: "Weight-bearing Exercise Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "weight_bearing_exercise"
-//           }
-//         },
-
-//         // =========================
-//         // Balance Training
-//         // =========================
-//         {
-//           name: "balance_training_type",
-//           label: "Balance Training Type",
-//           type: "checkbox",
-//           options: [
-//             { label: "Static", value: "static" },
-//             { label: "Dynamic", value: "dynamic" }
-//           ],
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "balance_training"
-//           }
-//         },
-//         {
-//           name: "balance_training_remarks",
-//           label: "Balance Training Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "balance_training"
-//           }
-//         },
-
-//         // =========================
-//         // Mat Activity
-//         // =========================
-//         {
-//           name: "mat_activity_remarks",
-//           label: "Mat Activity Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "mat_activity"
-//           }
-//         },
-
-//         // =========================
-//         // Postural Control Training
-//         // =========================
-//         {
-//           name: "postural_control_training_remarks",
-//           label: "Postural Control Training Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "postural_control_training"
-//           }
-//         },
-
-//         // =========================
-//         // Coordination
-//         // =========================
-//         {
-//           name: "coordination_remarks",
-//           label: "Coordination Remarks",
-//           type: "input",
-//           rows: 3,
-//           showIf: {
-//             field: "therapeutic_exercises",
-//             includes: "coordination"
-//           }
-//         }
-
-//       ]
-//     },
-
-//         /* =========================
-//            Therapeutic Interventions Main Selection
-//         ========================= */
-
-        
-
-//       ]
-//     }
-//   ]
-// };
 const ASSESSMENT_SCHEMA = {
-  title: "Assessment & Response",
+ 
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -2496,7 +2268,7 @@ actions: [
 };
 
 const PLAN_SCHEMA = {
-  title: "Plan",
+ 
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },

@@ -99,7 +99,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
   /* ===================== SCHEMAS ===================== */
 
   const SUBJECTIVE_SCHEMA = {
-    title: "Subjective",
+   
     sections: [
 
       /* ===================================================== */
@@ -107,7 +107,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
       /* ===================================================== */
 
       {
-        title: "Patient History",
+       
         fields: [
 
           {
@@ -120,11 +120,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
             name: "history_present_illness",
             label: "History of Present Illness"
           },
-          // {
-          //   type: "textarea",
-          //   name: "patient_goals",
-          //   label: "Patient's Goals / Expectations"
-          // },
+         
           {
         name: "patient_goals",
         label: "Patient Goals",
@@ -373,7 +369,7 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
   };
 
   const OBJECTIVE_SCHEMA = {
-    title: "Objective",
+   
     sections: [
        {
         title: "",
@@ -514,83 +510,10 @@ export default function Conditioning({ patient, onSubmit, onBack }) {
     ]
   };
 
-//   const ASSESSMENT_SCHEMA = {
 
-//     actions: SUBJECTIVE_SCHEMA.actions,
-//     fields: [
-//              {
-//   type: "subheading",
-//   label: "Problem List"
-// },
-//       // { name: "problem_list", label: "Problem Listing", type: "textarea" },
-//       {
-//   name: "problem_list",
-//   type: "checkbox-group",
-//   options: [
-//     { label: "Reduced muscle strength", value: "reduced_muscle_strength" },
-//     { label: "Reduced muscle endurance", value: "reduced_muscle_endurance" },
-//     { label: "Reduced cardiovascular endurance", value: "reduced_cardiovascular_endurance" },
-//     { label: "Reduced ROM", value: "reduced_rom" },
-//     { label: "Poor wheelchair skills", value: "poor_wheelchair_skills" },
-//     { label: "Reduced standing balance", value: "reduced_standing_balance" },
-//     { label: "Reduced sitting balance", value: "reduced_sitting_balance" },
-//     { label: "Poor trunk control", value: "poor_trunk_control" },
-//     { label: "Unable to walk", value: "unable_to_walk" },
-//     { label: "Poor walking endurance", value: "poor_walking_endurance" },
-//     { label: "Poor wheelchair endurance", value: "poor_wheelchair_endurance" },
-//     { label: "Others", value: "other" }
-//   ]
-// },
-// {
-//   name: "problem_list_other_text",
-//   label: "Other Problem (Specify)",
-//   type: "input",
-//   placeholder: "Enter additional problems...",
-//   showIf: {
-//     field: "problem_list",
-//     includes: "other"
-//   }
-// },
-//              {
-//   type: "subheading",
-//   label: "Functional Limitations"
-// },
-
-//       {name:"functional_limitations", type:"checkbox-group",
-//         options: [
-//     { label: "Gait Impairment", value: "gaitimpairment" },
-//     { label: "Unsafe Transfers", value: "unsafetransfers" },
-//     { label: "Reduced Endurance", value: "reducedendurance" },
-//     { label: "Balance Deficit", value: "balancedeficit" },
-//     { label: "ADL Dependency", value: "adldependency" },
-//     { label: "No Functional Limitations", value: "nofunctionallimitations" },
-//     { label: "Others", value: "others" }
-//   ]
-//       },
-//       {
-//           name: "functional_limitations_others",
-//           label: "Specify Others",
-//           type: "input",
-//           showIf: { field: "functional_limitations", includes: "others" }
-//         },
-//       {
-//         name: "clinical_impression",
-//         label: "Clinical Impression",
-//         type: "textarea"
-//       },
-//       {
-//         name: "prognosis",
-//         label: "Rehab Prognosis",
-//         type: "radio",
-//         options: PROGNOSIS_OPTIONS
-//       },
-
- 
-//     ]
-//   };
 
 const ASSESSMENT_SCHEMA = {
-  title: "ASSESSMENT",
+ 
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
@@ -665,7 +588,7 @@ const ASSESSMENT_SCHEMA = {
   ]
 };
   const PLAN_SCHEMA = {
-    title: "Plan",
+   
     sections: [
       {
         fields: [
@@ -825,22 +748,7 @@ const ASSESSMENT_SCHEMA = {
 
           { type: "input", name: "balance_notes", label: "Balance Notes" },
 
-          // { type: "subheading", label: "Home Program" },
-          // {
-          //   type: "checkbox-group",
-          //   name: "home_program_exercises",
-          //   label: "Select Home Exercises",
-          //   options: [
-          //     { label: "Heel Raises × 15 reps × 3 sets", value: "heel_raises" },
-          //     { label: "Sit-to-Stand × 10 reps × 3 sets", value: "sit_to_stand" },
-          //     { label: "15 min Walking Daily", value: "walking" },
-          //     { label: "Stair Climbing (If Available)", value: "stairs" },
-          //     { label: "Quadriceps Sets × 15 reps × 3 sets", value: "quad_sets" },
-          //     { label: "Gluteal Sets × 15 reps × 3 sets", value: "glute_sets" }
-          //   ]
-          // },
-
-          // { type: "textarea", name: "home_instructions", label: "Home Program Instructions" },
+         
 
           { type: "input", name: "home_frequency", label: "Frequency (e.g., 3×/week)" },
           {
@@ -894,11 +802,6 @@ const ASSESSMENT_SCHEMA = {
     plan: PLAN_SCHEMA
   };
 
-    //   const [patientHistory, setPatientHistory] = useState({
-    //   past_medical_history: patient?.medical_history || "",
-    //   past_family_history: patient?.family_medical_history || "",
-    //   alerts_and_allergies: patient?.alerts_and_allergies_history || ""
-    // });
      function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
   if (!patient) return null;
 
