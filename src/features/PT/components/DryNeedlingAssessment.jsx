@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from "react";
 import PatientCard, { DIET_FIELDS } from "../../../shared/cards/PatientCard";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
@@ -16,17 +17,27 @@ const ACTIONS = [
 ];
 
 const SUBJECTIVE_SCHEMA = {
-  actions: ACTIONS,
-  sections: [
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],  
+    sections: [
     {
       fields: [
-        { type: "subheading", label: "Subjective" },
+      
         {
           name: "chief_complaint",
           label: "Chief Complaint",
-          type: "textarea",
+          type: "input",
           placeholder: "Enter patient complaint..."
         },
+        
+      {
+            name: "hpi",
+            label: "History of Presenting Illness (HPI)",
+            type: "input"
+          },
         {
         name: "consent_type",
         label: " Consent",
@@ -40,37 +51,27 @@ const SUBJECTIVE_SCHEMA = {
         {
           name: "aggravating_factors",
           label: "Aggravating Factors",
-          type: "textarea",
+          type: "input",
           placeholder: "What increases the pain?"
         },
         {
           name: "relieving_factors",
           label: "Relieving Factors",
-          type: "textarea",
+          type: "input",
           placeholder: "What reduces the pain?"
         }
       ]
     }
   ]
 };
-// const SUBJECTIVE_SCHEMA = {
-//   actions: ACTIONS,
-//   sections: [{
-//     fields: [
-//       { name: "chief_complaint",   label: "Chief Complaint",                    type: "textarea" },
-//       { name: "pain_location",     label: "Pain / Tightness Location",          type: "input"    },
-//       { name: "pain_score",        label: "Pain Score (0–10)",                  type: "single-select",
-//         options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) },
-//       { name: "duration",          label: "Duration of Symptoms",               type: "input"    },
-//       { name: "aggravating",       label: "Aggravating Factors",                type: "textarea" },
-//       { name: "relieving",         label: "Relieving Factors",                  type: "textarea" },
-//       { name: "previous_treatment",label: "Previous Treatment",                 type: "textarea" },
-//     ]
-//   }]
-// };
+
 const OBJECTIVE_SCHEMA= {
-  actions: ACTIONS,
-  sections: [
+actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
+      sections: [
     {
       fields: [
         { type: "subheading", label: "Objective — Trigger Points" },
@@ -137,60 +138,18 @@ const OBJECTIVE_SCHEMA= {
   ]
 };
 
-// const OBJECTIVE_SCHEMA = {
-//   actions: ACTIONS,
-//   sections: [{
-//     fields: [
-//       { type: "subheading", label: "Muscle Assessment" },
-//       { name: "target_muscle",     label: "Target Muscle(s)",                   type: "input"    },
-//       { name: "trigger_points",    label: "Trigger Points Identified",          type: "radio",
-//         options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }] },
-//       { name: "trigger_point_location", label: "Trigger Point Location(s)",    type: "textarea",
-//         showIf: { field: "trigger_points", equals: "yes" } },
-//       { name: "muscle_tone",       label: "Muscle Tone",                        type: "radio",
-//         options: [{ label: "Normal", value: "normal" }, { label: "Hypertonic", value: "hypertonic" }, { label: "Hypotonic", value: "hypotonic" }] },
-//       { name: "range_of_motion",   label: "Range of Motion",                   type: "radio",
-//         options: [{ label: "Full", value: "full" }, { label: "Limited", value: "limited" }] },
-//       { type: "subheading", label: "Needling Details" },
-//       { name: "needle_gauge",      label: "Needle Gauge",                       type: "input", placeholder: "e.g. 0.25 × 40 mm" },
-//       { name: "needle_depth",      label: "Needle Depth (mm)",                  type: "input"    },
-//       { name: "number_of_needles", label: "Number of Needles",                  type: "input"    },
-//       { name: "technique",         label: "Technique",                          type: "radio",
-//         options: [
-//           { label: "Static",          value: "static"          },
-//           { label: "Pistoning",       value: "pistoning"       },
-//           { label: "Electrical Stim", value: "electrical_stim" },
-//         ]
-//       },
-//       { name: "dwell_time",        label: "Dwell Time (min)",                   type: "input"    },
-//       { name: "local_twitch",      label: "Local Twitch Response",              type: "radio",
-//         options: [{ label: "Yes", value: "yes" }, { label: "No", value: "no" }] },
-//       { name: "patient_response",  label: "Patient Response During Needling",   type: "textarea" },
-//     ]
-//   }]
-// };
 
-// const ASSESSMENT_SCHEMA = {
-//   actions: ACTIONS,
-//   sections: [{
-//     fields: [
-//       { name: "post_pain_score",   label: "Post-Treatment Pain Score (0–10)",   type: "single-select",
-//         options: [0,1,2,3,4,5,6,7,8,9,10].map(n => ({ label: String(n), value: String(n) })) },
-//       { name: "clinical_impression", label: "Clinical Impression",              type: "textarea" },
-//       { name: "adverse_effects",   label: "Adverse Effects / Complications",    type: "radio",
-//         options: [{ label: "None", value: "none" }, { label: "Present (specify)", value: "present" }] },
-//       { name: "adverse_effects_detail", label: "Specify",                       type: "textarea",
-//         showIf: { field: "adverse_effects", equals: "present" } },
-//     ]
-//   }]
-// };
 const ASSESSMENT_SCHEMA = {
-  actions: ACTIONS,
+ actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
   sections: [
     {
       fields: [
-        { type: "subheading", label: "Assessment" },
-
+       
+{ name: "clinical_impression", label: "Clinical Impression", type: "input" },
         {
           name: "assessment_diagnosis",
           label: "Diagnosis",
@@ -220,18 +179,39 @@ const ASSESSMENT_SCHEMA = {
 //     fields: [
 //       { name: "next_session",      label: "Next Session Date",                  type: "date"     },
 //       { name: "frequency",         label: "Frequency",                          type: "input", placeholder: "e.g. 2× per week" },
-//       { name: "home_advice",       label: "Home Advice / Self-Care",            type: "textarea" },
-//       { name: "referral",          label: "Referral / Further Investigation",   type: "textarea" },
-//       { name: "goals",             label: "Short-Term Goals",                   type: "textarea" },
+//       { name: "home_advice",       label: "Home Advice / Self-Care",            type: "input" },
+//       { name: "referral",          label: "Referral / Further Investigation",   type: "input" },
+//       { name: "goals",             label: "Short-Term Goals",                   type: "input" },
 //     ]
 //   }]
 // };
 
 const PLAN_SCHEMA = {
-  actions: ACTIONS,
+  actions: [
+      { type: "back", label: "Back" },
+      { type: "clear", label: "Clear" },
+      { type: "save", label: "Save" }
+    ],
   sections: [
     {
       fields: [
+           {
+  type: "subheading",
+  label: "Short-Term Goals (2–4 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "shortterm_blocks"
+},
+
+               {
+  type: "subheading",
+  label: "Long-Term Goals (6–12 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "longterm_blocks"
+},
         { type: "subheading", label: "Plan" },
         {
           name: "treatment_plan",
@@ -266,12 +246,12 @@ const PLAN_SCHEMA = {
           ]
         },
         { type: "subheading", label: "Reassessment / Review" },
-        { name: "progress",          label: "Progress",          type: "textarea", placeholder: "Describe patient progress..." },
-        { name: "remaining_issues",  label: "Remaining Issues",  type: "textarea", placeholder: "Enter remaining problems or concerns..." },
-        { name: "next_session_plan", label: "Plan Next Session", type: "textarea", placeholder: "Outline next session plan..." },
+        { name: "progress",          label: "Progress",          type: "input", placeholder: "Describe patient progress..." },
+        { name: "remaining_issues",  label: "Remaining Issues",  type: "input", placeholder: "Enter remaining problems or concerns..." },
+        { name: "next_session_plan", label: "Plan Next Session", type: "input", placeholder: "Outline next session plan..." },
         {
   name: "post_treatment_advice",
-  label: "Psot-Treatment Advice",
+  label: "Post-Treatment Advice",
   type: "checkbox-group",
   options: [
     { label: "Soreness 24–48 hours is normal", value: "soreness" },
@@ -329,17 +309,24 @@ const SCHEMA_MAP = {
   plan:        PLAN_SCHEMA,
 };
 
-export default function DryNeedlingAssessment({ patient, sharedAtvValues = {}, sharedAtvSubmitted = false, onAtvSubmit }) {
+export default function DryNeedlingAssessment({ patient, sharedAtvValues = {}, sharedAtvSubmitted = false, onAtvSubmit, onBack }) {
   const [values, setValues]       = useState({});
   const [activeTab, setActiveTab] = useState("subjective");
   const [openConsent, setOpenConsent] = useState(null);
+   const [submitted, setSubmitted] = useState(false);
 
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: patient?.medical_history || "",
     past_family_history:  patient?.family_medical_history || "",
     alerts_and_allergies: patient?.alerts_and_allergies_history || "",
   });
-
+   const tabOrder = ["subjective", "objective", "assessment", "plan"];
+  const activeTabIdx = tabOrder.indexOf(activeTab);
+  const handleSubmit = () => {
+    setSubmitted(true);
+    console.log("Submitted:", values);
+    alert("Assessment submitted");
+  };
   const dryNeedlingRef = useRef({});
 
   useEffect(() => {
@@ -358,10 +345,25 @@ export default function DryNeedlingAssessment({ patient, sharedAtvValues = {}, s
       setOpenConsent(value);
     }
   };
+  const storageKey = patient
+  ? `dry_needling_assessment_${patient.id}`
+  : "dry_needling_assessment";
+  // const storageKey = patient ? `amputee_progress_${patient.id}` : null;
 
-  const handleAction = (type) => {
-    if (type === "clear") setValues({});
-    if (type === "save")  alert("Dry Needling draft saved");
+const handleAction = (type) => {
+    if (type === "back") onBack?.();
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+      localStorage.removeItem(storageKey);
+    }
+    if (type === "save") {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ values, updatedAt: new Date() })
+      );
+      alert("Spinal draft saved");
+    }
   };
 
   const closeModal = () => {
@@ -389,10 +391,10 @@ export default function DryNeedlingAssessment({ patient, sharedAtvValues = {}, s
           ].map(({ key, label }) => (
             <div key={key} style={{ marginBottom: 10 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>{label}</div>
-              <textarea
+              <input
                 value={patientHistory[key]}
                 onChange={e => setPatientHistory(p => ({ ...p, [key]: e.target.value }))}
-                style={historyTextarea}
+                style={historyinput}
               />
             </div>
           ))}
@@ -447,6 +449,17 @@ export default function DryNeedlingAssessment({ patient, sharedAtvValues = {}, s
           />
         </div>
       )}
+       <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
+              Next
+            </button>
+          ) : (
+            <button style={submitBtn} onClick={handleSubmit}>
+              Submit Assessment
+            </button>
+          )}
+        </div>
 
       {/* ===== CONSENT MODALS ===== */}
 
@@ -529,7 +542,7 @@ const tabBar = {
 const tabBtn    = { padding: "10px 22px", fontWeight: 600, cursor: "pointer", color: "#0f172a" };
 const tabActive = { ...tabBtn, borderBottom: "3px solid #2451b3", color: "#2451b3" };
 
-const historyTextarea = {
+const historyinput = {
   width: "100%", minHeight: 90, padding: "10px 12px",
   borderRadius: 6, border: "1px solid #d1d5db",
   fontSize: 14, fontFamily: "inherit", resize: "vertical",
@@ -1353,6 +1366,7 @@ function ConsentModal({ title, children, onClose }) {
         }}
         onClick={e => e.stopPropagation()}
       >
+        
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "16px 22px", borderBottom: "1px solid #e5e7eb", flexShrink: 0,
@@ -1366,8 +1380,11 @@ function ConsentModal({ title, children, onClose }) {
         <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
           {children}
         </div>
+        
       </div>
+      
     </div>
+    
   );
 }
 
@@ -1392,4 +1409,20 @@ const closeBtnStyle = {
   padding: "9px 24px", borderRadius: 6,
   background: "#2563eb", color: "#fff",
   border: "none", fontSize: 14, fontWeight: 700, cursor: "pointer",
+};
+const submitRow = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: 16
+};
+
+const submitBtn = {
+  padding: "12px 32px",
+  background: "#2563EB",
+  color: "#fff",
+  border: "none",
+  borderRadius: 8,
+  fontWeight: 600,
+  fontSize: 15,
+  cursor: "pointer"
 };

@@ -388,7 +388,7 @@ const AMBULATORY_OPTIONS = [
 ];
 
 const OBJECTIVE_SCHEMA = {
-  title: "OBJECTIVE",
+ 
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
@@ -709,42 +709,9 @@ const ASSESSMENT_SCHEMA = {
     ]
   };
 
-// const ASSESSMENT_SCHEMA = {
-
-//   title: "ASSESSMENT",
-//   actions: SUBJECTIVE_SCHEMA.actions,
-//   sections: [
-//     {
-//       fields: [
-//         {
-//           name: "msk_problem_list",
-//           label: "Problem list",
-//           type: "textarea"
-//         },
-//         {
-//           name: "msk_clinical_impression",
-//           label: "Clinical Impression",
-//           type: "textarea"
-//         },
-//         {
-//           name: "msk_rehab_potential",
-//           label: "Rehab Prognosis",
-//           type: "radio",
-//           options: [
-//             { label: "Excellent", value: "excellent" },
-//             { label: "Good", value: "good" },
-//             { label: "Fair", value: "fair" },
-//             { label: "Guarded", value: "guarded" },
-//             { label: "Poor", value: "poor" }
-//           ]
-//         }
-//       ]
-//     }
-//   ]
-// };
 
 const PLAN_SCHEMA = {
-  title: "PLAN",
+  
   actions: SUBJECTIVE_SCHEMA.actions,
   sections: [
     {
@@ -761,12 +728,6 @@ const PLAN_SCHEMA = {
    
   ]
 },
-// {
-//   name: "long_term_goals_remarks",
-//   label: "Clinician Remarks",
-//   type: "input",
-//   placeholder: "Enter detailed notes..."
-// },
 
 
 
@@ -784,12 +745,7 @@ const PLAN_SCHEMA = {
   ]
 },
 
-// {
-//   name: "long_term_goals_remarks",
-//   label: "Clinician Remarks",
-//   type: "input",
-//   placeholder: "Enter detailed notes..."
-// },
+
         { type: "dynamic-goals", name: "msk_long_term_goals" },
          { type: "subheading", label: "Physiotherapy Plan " },
         {

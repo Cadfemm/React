@@ -108,7 +108,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
 /* ===================== DUMMY HYDRO SCHEMAS ===================== */
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Subjective",
+ 
   actions: [
     { type: "clear", label: "Clear" },
     { type: "save", label: "Save" }

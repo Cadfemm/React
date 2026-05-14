@@ -33,7 +33,7 @@ function sf(prefix, { weather = false, coins = false } = {}) {
   ];
   if (coins)   fields.push({ name: `${prefix}_coins`,   label: "Coins Collected",  type: "input",         placeholder: "e.g. 5" });
   if (weather) fields.push({ name: `${prefix}_weather`, label: "Weather Selected", type: "single-select", options: WEATHER });
-  fields.push({ name: `${prefix}_remarks`, label: "Remarks", type: "textarea", placeholder: "Free text..." });
+  fields.push({ name: `${prefix}_remarks`, label: "Remarks", type: "input", placeholder: "Free text..." });
   return fields;
 }
 
@@ -62,12 +62,22 @@ const INDICATION_SCHEMA = {
 
 const SUBJECTIVE_SCHEMA = {
   // title: "Subjective",
-  actions: ACTIONS,
+  // actions: ACTIONS,
+   actions: [
+    { type: "back",  label: "Back"  },
+    { type: "clear", label: "Clear" },
+    { type: "save",  label: "Save"  }
+  ],
   sections: [{
     fields: [
       { type: "subheading", label: "Chief Complaint" },
-      { name: "chief_complaint", label: "", type: "textarea", placeholder: "Free text..." },
+      { name: "chief_complaint", label: "", type: "input", placeholder: "Free text..." },
 
+      {
+            name: "hpi",
+            label: "History of Presenting Illness (HPI)",
+            type: "input"
+          },
       { type: "subheading", label: "Pain Assessment" },
       {
         name: "vas_score",
@@ -82,7 +92,7 @@ const SUBJECTIVE_SCHEMA = {
           { from: 9, to: 10, color: "#ef4444", label: "Worst Pain" },
         ],
       },
-      { name: "pain_remarks", label: "Pain Remarks", type: "textarea", placeholder: "Free text..." },
+      { name: "pain_remarks", label: "Pain Remarks", type: "input", placeholder: "Free text..." },
 
       { type: "subheading", label: "Functional Limitations" },
       {
@@ -146,7 +156,12 @@ const SUBJECTIVE_SCHEMA = {
 
 const OBJECTIVE_SCHEMA = {
   // title: "O – Objective",
-  actions: ACTIONS,
+  // actions: ACTIONS,
+   actions: [
+    { type: "back",  label: "Back"  },
+    { type: "clear", label: "Clear" },
+    { type: "save",  label: "Save"  }
+  ],
   sections: [{
     fields: [
       /* 1. Motion Sickness */
@@ -249,20 +264,20 @@ const OBJECTIVE_SCHEMA = {
 
       /* ── Cognitive ── */
       { type: "subheading", label: "Cognitive — a. Grocery",     showIf: { field: "scenario_types", includes: "cognitive" } },
-      { name: "cognitive_grocery",     label: "Remarks", type: "textarea", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "cognitive" } },
+      { name: "cognitive_grocery",     label: "Remarks", type: "input", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "cognitive" } },
       { type: "subheading", label: "Cognitive — b. Food Market", showIf: { field: "scenario_types", includes: "cognitive" } },
-      { name: "cognitive_food_market", label: "Remarks", type: "textarea", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "cognitive" } },
+      { name: "cognitive_food_market", label: "Remarks", type: "input", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "cognitive" } },
 
       /* ── Psychological ── */
       { type: "subheading", label: "Psychological — a. Glass Trestle", showIf: { field: "scenario_types", includes: "psychological" } },
-      { name: "psych_glass_trestle", label: "Remarks", type: "textarea", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "psychological" } },
+      { name: "psych_glass_trestle", label: "Remarks", type: "input", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "psychological" } },
       { type: "subheading", label: "Psychological — b. Earthquake",    showIf: { field: "scenario_types", includes: "psychological" } },
-      { name: "psych_earthquake",    label: "Remarks", type: "textarea", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "psychological" } },
+      { name: "psych_earthquake",    label: "Remarks", type: "input", placeholder: "Free text...", showIf: { field: "scenario_types", includes: "psychological" } },
 
       /* 4. Galileo Report */
       { type: "subheading", label: "4. MetaMotus Galileo Evaluation Report" },
       { name: "gait_pdf",     label: "Upload Gait Parameter PDF", type: "file-upload" },
-      { name: "gait_remarks", label: "Remarks",                   type: "textarea",   placeholder: "Free text..." },
+      { name: "gait_remarks", label: "Remarks",                   type: "input",   placeholder: "Free text..." },
     { type: "subheading", label: " Vital Signs" },
       {
         type: "row",
@@ -282,7 +297,12 @@ const OBJECTIVE_SCHEMA = {
 
 const ASSESSMENT_SCHEMA = {
   // title: "A – Analysis",
-  actions: ACTIONS,
+  // actions: ACTIONS,
+   actions: [
+    { type: "back",  label: "Back"  },
+    { type: "clear", label: "Clear" },
+    { type: "save",  label: "Save"  }
+  ],
   sections: [{
     fields: [
       {
@@ -326,16 +346,38 @@ const ASSESSMENT_SCHEMA = {
         showIf: { field: "problems", includes: "others" },
       },
       { type: "subheading", label: "Clinical Reasoning" },
-      { name: "clinical_reasoning", label: "", type: "textarea", placeholder: "Free text..." },
+      { name: "clinical_reasoning", label: "", type: "input", placeholder: "Free text..." },
     ],
   }],
 };
 
 const PLAN_SCHEMA = {
   // title: "P/I – Plan & Intervention",
-  actions: ACTIONS,
+  // actions: ACTIONS,
+   actions: [
+    { type: "back",  label: "Back"  },
+    { type: "clear", label: "Clear" },
+    { type: "save",  label: "Save"  }
+  ],
   sections: [{
     fields: [
+         {
+  type: "subheading",
+  label: "Short-Term Goals (2–4 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "shortterm_blocks"
+},
+
+               {
+  type: "subheading",
+  label: "Long-Term Goals (6–12 weeks)"
+},
+{
+  type: "dynamic-goals",
+  name: "longterm_blocks"
+},
       { type: "subheading", label: "Training Components" },
       {
         name: "training_components",
@@ -387,7 +429,7 @@ const PLAN_SCHEMA = {
       {
         name: "adverse_details",
         label: "Describe Adverse Effects",
-        type: "textarea",
+        type: "input",
         placeholder: "Free text...",
         showIf: { field: "post_session", equals: "adverse" },
       },
@@ -412,15 +454,35 @@ const SCHEMA_MAP = {
 /* ══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════ */
-export default function MetaMotusGalileoAssessment({ patient }) {
+export default function MetaMotusGalileoAssessment({ patient,onBack }) {
   const [values, setValues]       = useState({});
   const [activeTab, setActiveTab] = useState("subjective");
+  const [submitted, setSubmitted] = useState(false);
+  
 
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: "",
     past_family_history:  "",
     alerts_and_allergies: "",
   });
+  const storageKey = patient
+    ? `Metamotus_assessment_draft_${patient.id}`
+    : null;
+   const handleAction = (type) => {
+    if (type === "back") onBack?.();
+    if (type === "clear") {
+      setValues({});
+      setSubmitted(false);
+      localStorage.removeItem(storageKey);
+    }
+    if (type === "save") {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ values, updatedAt: new Date() })
+      );
+      alert("amputee draft saved");
+    }
+  };
 
   useEffect(() => {
     if (!patient) return;
@@ -433,10 +495,10 @@ export default function MetaMotusGalileoAssessment({ patient }) {
 
   const onChange = (name, value) => setValues(prev => ({ ...prev, [name]: value }));
 
-  const handleAction = (type) => {
-    if (type === "clear") setValues({});
-    if (type === "save")  alert("MetaMotus Galileo assessment saved.");
-  };
+  // const handleAction = (type) => {
+  //   if (type === "clear") setValues({});
+  //   if (type === "save")  alert("MetaMotus Galileo assessment saved.");
+  // };
 
   return (
     <div>
@@ -456,7 +518,7 @@ export default function MetaMotusGalileoAssessment({ patient }) {
           ].map(({ key, label }) => (
             <div key={key} style={{ marginBottom: 10 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>{label}</div>
-              <textarea
+              <input
                 value={patientHistory[key]}
                 onChange={e => setPatientHistory(p => ({ ...p, [key]: e.target.value }))}
                 style={historyTextarea}
