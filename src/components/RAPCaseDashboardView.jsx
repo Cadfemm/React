@@ -311,7 +311,7 @@ export default function RAPCaseDashboardView() {
     <div
       style={{
         padding: 14,
-        background: "#f5f7fa",
+     
         minHeight: "100%",
         height: "100%",
         overflowY: "auto",
@@ -325,7 +325,7 @@ export default function RAPCaseDashboardView() {
           position: "sticky",
           top: 0,
           zIndex: 2,
-          background: "#f5f7fa",
+        
           padding: "8px 0 10px",
           fontWeight: 900,
           color: "#2563eb",

@@ -1353,9 +1353,9 @@ function DateTriple({form, onChange, pfx, days, months, years}) {
 function StyleBlock() {
   return (
     <style>{`
-      :root { --bg:#f6fbff; --ink:#0d2b52; --ink2:#5a6b85; --stroke:#e6eef7; --focus:#2563eb; }
+      :root { --ink:#0d2b52; --ink2:#5a6b85; --stroke:#e6eef7; --focus:#2563eb; }
       * { box-sizing:border-box; }
-      body { margin:0; background:var(--bg); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+      body { margin:0 }
       .page { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
       .rail { background:linear-gradient(180deg,#0e1726 0%,#0a1320 100%); color:#cbd5e1; border-right:1px solid rgba(255,255,255,.06);
               padding:18px 14px; position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:12px; }

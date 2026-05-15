@@ -252,7 +252,7 @@ function SidebarNav({ tab, setTab, username }) {
         initial={false}
         animate={{ width: railWidth }}
         transition={{ type: "spring", stiffness: 400, damping: 36 }}
-        className="relative z-30 hidden h-screen shrink-0 flex-col border-r border-gray-200 bg-white md:flex"
+        className="relative z-30 hidden h-screen shrink-0 flex-col border-end bg-white md:flex"
       >
         <MainMenuBar collapsed={collapsed} onToggleCollapse={toggleCollapse} />
         <div className="custom-scrollbar flex-1 overflow-y-auto overflow-x-hidden">

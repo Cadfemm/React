@@ -956,7 +956,7 @@ function saveProgressReport() {
       <head>
         <title>Patient Summary - ${patient.name || "Patient"}</title>
         <style>
-          body { font-family: Arial, Helvetica, sans-serif; padding: 24px; color: #111 }
+          body {  padding: 24px; color: #111 }
           h1 { margin-top:0; }
           .section { margin-bottom: 18px; }
           table { width:100%; border-collapse: collapse; margin-top:8px; }
