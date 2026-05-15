@@ -241,25 +241,19 @@ export default function CommonFormBuilder({
   const supportsLanguage = schema?.enableLanguageToggle;
 
   return (
-    <div style={styles.page}>
-      <div style={styles.content}>
-        <div
-          style={
-            layout === "root"
-              ? styles.card
-              : styles.nestedContainer
-          }
-        >
+    <div className="fb-page">
+      <div className="fb-content">
+        <div className={layout === "root" ? "fb-card" : "fb-nested"}>
 
 
-          <div style={styles.header}>
-            <div>
-              <div style={styles.title}>
+          <div className="fb-header">
+            <div className="min-w-0 flex-1">
+              <div className="fb-title">
                 {t(schema.title, schema?.enableLanguageToggle ? (language || "en") : "en")}
                 {schema.titleInfo && <InfoTooltip info={schema.titleInfo} />}
               </div>
               {schema.subtitle && (
-                <div style={styles.subtitle}>
+                <div className="fb-subtitle">
                   {t(schema.subtitle, schema?.enableLanguageToggle ? (language || "en") : "en")}
                 </div>
               )}
@@ -267,10 +261,10 @@ export default function CommonFormBuilder({
             </div>
 
             {schema.actions?.length > 0 && (
-              <div style={styles.actionsBar}>
+              <div className="fb-actions-bar">
 
                 {/* LEFT: Special controls (toggles, switches) */}
-                <div style={styles.actionControls}>
+                <div className="fb-actions-left">
                   {schema.actions.map(action => {
                     if (
                       action.type === "toggle-language" &&
@@ -301,14 +295,15 @@ export default function CommonFormBuilder({
                 </div>
 
                 {/* RIGHT: Normal buttons (Save, Clear, Back, etc.) */}
-                <div style={styles.actionButtons}>
+                <div className="fb-actions-right">
                   {schema.actions
                     .filter(a => a.type !== "toggle-language" && a.type !== "toggle-show-scores")
                     .filter(a => !formReadOnly || a.type === "back")
                     .map(action => (
                       <button
                         key={action.type}
-                        style={styles.mstBtn}
+                        type="button"
+                        className="fb-btn-ghost"
                         onClick={() => onAction?.(action.type)}
                       >
                         {t(action.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
@@ -321,7 +316,7 @@ export default function CommonFormBuilder({
 
           </div>
 
-          <div style={styles.body}>
+          <div className="fb-body">
             {sections.map((section, sIdx) => {
 
               /* ===== SECTION-LEVEL VISIBILITY ===== */
@@ -330,15 +325,11 @@ export default function CommonFormBuilder({
               return (
                 <div
                   key={sIdx}
-                  style={
-                    layout === "root"
-                      ? styles.sectionCard
-                      : styles.nestedSection
-                  }
+                  className={layout === "root" ? "fb-section" : "fb-section-nested"}
                 >
 
                   {section.title && (
-                    <div style={styles.sectionTitle}>
+                    <div className="fb-section-title">
                       {t(section.title, supportsLanguage ? (language || "en") : "en")}
                     </div>
                   )}
@@ -378,7 +369,7 @@ export default function CommonFormBuilder({
                       };
                       return (
                         <div key={`scale-${idx}`} style={headerStyle}>
-                          <div style={styles.matrixLabel}>
+                          <div className="form-label form-label--matrix">
                             {nextMatrix.matrixHeaderLabel || "Scale"}
                             {nextMatrix.info && (showScores !== false) && <InfoTooltip info={nextMatrix.info} />}
                           </div>
@@ -425,7 +416,7 @@ export default function CommonFormBuilder({
                                 };
                                 return (
                                   <div style={headerStyle}>
-                                    <div style={styles.matrixLabel}>
+                                    <div className="form-label form-label--matrix">
                                       {field.matrixHeaderLabel || "Scale"}
                                       {field.info && (showScores !== false) && <InfoTooltip info={field.info} />}
                                     </div>
@@ -440,14 +431,10 @@ export default function CommonFormBuilder({
                                 );
                               })()}
                               <div
-                                style={{
-                                  ...styles.field,
-                                  marginBottom: field.compact
-                                    ? 4
-                                    : layout === "nested"
-                                      ? 10
-                                      : 18
-                                }}
+                                className={[
+                                  "fb-field",
+                                  field.compact ? "mb-1" : layout === "nested" ? "mb-2.5" : "mb-[18px]",
+                                ].join(" ")}
                               >
 
 
@@ -456,7 +443,7 @@ export default function CommonFormBuilder({
                                 {field.type === "radio" && !field.inRow && field.labelAbove ? (
                                   <div style={{ marginBottom: 16 }}>
                                     {(field.label || field.info) && (
-                                     <label style={{...styles.label, whiteSpace: "pre-line"}}>
+                                     <label className="form-label whitespace-pre-line">
                                         {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                         {field.info && <InfoTooltip info={field.info} />}
                                       </label>
@@ -478,9 +465,9 @@ export default function CommonFormBuilder({
                                     </div>
                                   </div>
                                 ) : field.type === "radio" && !field.inRow ? (
-                                  <div style={styles.radioRow}>
+                                  <div className="fb-radio-row">
                                     {(field.label || field.info) && (
-                                      <div style={styles.radioLabel}>
+                                      <div className="form-label mb-0">
                                         {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                         {field.info && <InfoTooltip info={field.info} />}
                                       </div>
@@ -535,7 +522,7 @@ export default function CommonFormBuilder({
                                       {!["button", "subheading", "optional-section-toggle", "radio-matrix", "score-box", "inline-input", "grid-row", "grid-header", "accordion"].includes(field.type)
                                         && field.type !== "checkbox-group"
                                         && (
-                                          <label style={styles.label}>
+                                          <label className="form-label">
                                             {t(field.label, schema?.enableLanguageToggle ? (language || "en") : "en")}
                                           </label>
                                         )}
@@ -559,13 +546,7 @@ export default function CommonFormBuilder({
                                     </>
 
                                     {field.helper && (
-                                      <div
-                                        style={{
-                                          fontSize: 12,
-                                          color: "#6b7280",
-                                          marginTop: 4
-                                        }}
-                                      >
+                                      <div className="fb-helper">
                                         {field.helper}
                                       </div>
                                     )}
@@ -576,7 +557,7 @@ export default function CommonFormBuilder({
                                 )}
 
                                 {error && (
-                                  <div style={styles.error}>{error}</div>
+                                  <div className="fb-error">{error}</div>
                                 )}
 
                               </div>
@@ -594,7 +575,7 @@ export default function CommonFormBuilder({
 
 
           {/* ================= FOOTER ================= */}
-          {children && <div style={styles.footer}>{children}</div>}
+          {children && <div className="fb-footer">{children}</div>}
 
         </div>
       </div>
@@ -729,12 +710,7 @@ function SubheadingWithImage({ field, languageConfig }) {
 
   return (
     <>
-      <div style={{
-        ...styles.subheading,
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-      }}>
+      <div className="fb-subheading flex items-center gap-2">
         {t(
           field.label,
           languageConfig?.enabled ? languageConfig.lang : "en"
@@ -921,7 +897,7 @@ function MultiSelectDropdown({ field, value, onChange, languageConfig }) {
       {open && (
         <div style={styles.multiSelectMenu}>
           {field.options.map(opt => (
-            <label key={opt.value} style={styles.multiSelectItem}>
+            <label key={opt.value} className="form-check-label form-check" style={styles.multiSelectItem}>
               <input
                 type="checkbox"
                 checked={selected.includes(opt.value)}
@@ -1107,15 +1083,12 @@ function AssessmentLauncher({
   return (
     <div>
       {!field.autoOpen && (
-        <div style={styles.inlineGroup}>
+        <div className="fb-inline-group">
           {visibleOptions.map(opt => (
             <button
               key={opt.value}
-              style={{
-                ...styles.btnOutline,
-                background: active === opt.value ? "#2563EB" : "#fff",
-                color: active === opt.value ? "#fff" : "#111827"
-              }}
+              type="button"
+              className={`fb-btn-outline ${active === opt.value ? "!border-primary-600 !bg-primary-600 !text-white" : ""}`}
               onClick={() =>
                 onChange(
                   activeKey,
@@ -1138,7 +1111,7 @@ function AssessmentLauncher({
       {/* Remarks textarea — shown per active assessment */}
       {active && remarksKey && !field.hideRemarks &&(
         <div style={{ marginTop: 12 }}>
-          <label style={{ display: "block", fontWeight: 600, fontSize: 13, marginBottom: 6, color: "#374151" }}>
+          <label className="form-label">
             Remarks
           </label>
           <textarea
@@ -1174,7 +1147,7 @@ function RadioMatrixRow({ field, value, onChange, columnWidth, showScores, langu
 
   return (
     <div style={rowStyle}>
-      <div style={styles.matrixLabel}>
+      <div className="form-label form-label--matrix">
         {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
         {field.showInfoInRow !== false && (
           <>
@@ -1188,7 +1161,7 @@ function RadioMatrixRow({ field, value, onChange, columnWidth, showScores, langu
 
       <div style={styles.matrixOptions}>
         {field.options.map((opt) => (
-          <label key={opt.value} style={styles.matrixCell}>
+          <label key={opt.value} className="form-check-label form-check" style={styles.matrixCell}>
             <input
               type="radio"
               name={field.name}
@@ -1225,7 +1198,6 @@ export const DynamicInput = ({
   onChange, 
   field, 
   readOnly, 
-  styles, 
   t, 
   languageConfig 
 }) => {
@@ -1279,11 +1251,7 @@ export const DynamicInput = ({
     return (
       <textarea
         ref={inputRef}
-        style={{
-          ...styles.input,
-          whiteSpace: 'pre-wrap', // Ensures new lines render correctly
-          overflowY: 'auto'
-        }}
+        className="fb-textarea min-h-[5rem] whitespace-pre-wrap overflow-y-auto"
         value={currentValue}
         readOnly={readOnly}
         placeholder={placeholder}
@@ -1297,7 +1265,7 @@ export const DynamicInput = ({
   return (
     <input
       ref={inputRef}
-      style={styles.input}
+      className="form-control form-sm rounded-md shadow-none "
       value={currentValue}
       readOnly={readOnly}
       placeholder={placeholder}
@@ -1327,7 +1295,6 @@ function renderField(
           onChange={onChange}
           field={field}
           readOnly={readOnly}
-          styles={styles}
           t={t}
           languageConfig={languageConfig}
         />
@@ -1345,7 +1312,7 @@ function renderField(
     case "milestone-grid":
       return (
         <div>
-          <div style={styles.subheading}>{t(field.heading, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
+          <div className="fb-subheading">{t(field.heading, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
           {field.rows.map((row, idx) => (
             <div
@@ -1359,9 +1326,9 @@ function renderField(
             >
               {/* LEFT */}
               <div>
-                <div style={styles.milestoneLabel}>{t(row.left.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
+                <div className="form-label">{t(row.left.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
                 <input
-                  style={styles.input}
+                  className="form-control form-sm rounded-md shadow-none "
                   value={values[row.left.name] || ""}
                   placeholder={languageConfig?.enabled ? t(row.left.placeholder, languageConfig.lang) || "" : (row.left.placeholder || "")}
                   onChange={e =>
@@ -1373,9 +1340,9 @@ function renderField(
               {/* RIGHT (only if present) */}
               {row.right && (
                 <div>
-                  <div style={styles.milestoneLabel}>{languageConfig?.enabled ? t(row.right.label, languageConfig.lang) : row.right.label}</div>
+                  <div className="form-label">{languageConfig?.enabled ? t(row.right.label, languageConfig.lang) : row.right.label}</div>
                   <input
-                    style={styles.input}
+                    className="form-control form-sm rounded-md shadow-none "
                     value={values[row.right.name] || ""}
                     placeholder={t(row.right.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
                     onChange={e =>
@@ -1605,7 +1572,7 @@ function renderField(
                 return (
                   <div key={child.name} style={{ marginBottom: 14 }}>
                     {child.label && child.type !== "subheading" && child.type !== "checkbox-group" && (
-                      <label style={styles.label}>
+                      <label className="form-label">
                         {child.label}
                       </label>
                     )}
@@ -2142,18 +2109,12 @@ case "grid-table-advanced": {
         <div style={{ marginTop: 12 }}>
           {selected.map(option => (
             <div key={option} style={{ marginBottom: 14 }}>
-              <label
-                style={{
-                  display: "block",
-                  fontWeight: 600,
-                  marginBottom: 6
-                }}
-              >
+              <label className="form-label">
                 {field.labelPrefix} {option}
               </label>
 
               <input
-                style={styles.textarea}
+                className="form-control form-sm rounded-md shadow-none "
                 value={values[`${field.namePrefix}_${option}`] || ""}
                 onChange={e =>
                   onChange(
@@ -2216,7 +2177,7 @@ case "grid-table-advanced": {
                 };
                 return (
                   <div key={`acc-header-${idx}`} style={headerStyle}>
-                    <div style={styles.matrixLabel}>{c.matrixHeaderLabel || "Scale"}</div>
+                    <div className="form-label form-label--matrix">{c.matrixHeaderLabel || "Scale"}</div>
                     <div style={styles.matrixOptions}>
                       {c.options?.map(opt => (
                         <div key={opt.value} style={styles.matrixHeaderCell}>{opt.label}</div>
@@ -2235,7 +2196,7 @@ case "grid-table-advanced": {
                       "optional-section-toggle","score-box","accordion","custom","row",
                       "grid-header","grid-row","scale-slider","dynamic-goals","dynamic-section",
                       "dynamic-simple-goals","assessment-launcher","refraction-12col"].includes(c?.type) && (
-                      <label style={{ display: "block", fontWeight: 600, marginBottom: 6, fontSize: 14, color: "#0f172a" }}>
+                      <label className="form-label">
                         {c.label}
                       </label>
                     )}
@@ -2288,7 +2249,7 @@ case "grid-table-advanced": {
             return (
               <div key={f.name || fi} style={rowAllButtons ? { flex: "0 0 auto" } : undefined}>
                 {f.label && !["button", "checkbox-group", "score-box", "subheading", "accordion"].includes(f.type) && (
-                  <label style={{ display: "block", fontWeight: 600, marginBottom: 6, color: "#0f172a" }}>
+                  <label className="form-label">
                     {languageConfig?.enabled ? t(f.label, languageConfig.lang) : f.label}
                   </label>
                 )}
@@ -2308,11 +2269,11 @@ case "grid-table-advanced": {
         <div style={{ display: "grid", gap: 12 }}>
           {selected.map(val => (
             <div key={val}>
-              <label style={{ fontWeight: 600, display: "block", marginBottom: 4 }}>
+              <label className="form-label">
                 {val} – Notes
               </label>
               <textarea
-                style={styles.textarea}
+                className="fb-textarea"
                 value={(value || {})[val] || ""}
                 onChange={e =>
                   onChange(field.name, {
@@ -2344,11 +2305,11 @@ case "grid-table-advanced": {
       );
 
       return (
-        <div style={styles.scoreBox}>
-          <div style={styles.scoreLabel}>
+        <div className="fb-score-box">
+          <div className="form-label mb-0">
             {renderedLabel}
           </div>
-          <div style={styles.scoreValue}>
+          <div className="fb-score-value">
             {value ?? 0}
           </div>
         </div>
@@ -2418,7 +2379,7 @@ case "grid-table-advanced": {
 
       return (
         <div style={{ ...styles.gridRow, gridTemplateColumns: template }}>
-          <div style={styles.gridLabel}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
+          <div className="form-label mb-0">{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
           {field.cols.map((col, idx) => {
             const fieldKey = (typeof col === "object" && col.name) ? col.name : `${field.name}_${idx}`;
 
@@ -2557,7 +2518,7 @@ if (typeof col === "object" && col.type === "radio") {
                       min={field.min}
                       max={field.max}
                       type="number"
-                      style={styles.input}
+                      className="form-control form-sm rounded-md shadow-none "
                       value={values[fieldKey] || ""}
                       readOnly={readOnly}
                       placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
@@ -2586,7 +2547,7 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <input
-            style={{ ...styles.input, flex: 1, maxWidth: 80 }}
+            className="form-control form-sm rounded-md shadow-none  max-w-[80px] flex-1 min-w-0"
             type="number"
             min="0"
             max="59"
@@ -2600,7 +2561,7 @@ if (typeof col === "object" && col.type === "radio") {
           />
           <span style={{ fontWeight: 600, color: "#6b7280" }}>:</span>
           <input
-            style={{ ...styles.input, flex: 1, maxWidth: 80 }}
+            className="form-control form-sm rounded-md shadow-none  max-w-[80px] flex-1 min-w-0"
             type="number"
             min="0"
             max="59"
@@ -2646,7 +2607,7 @@ if (typeof col === "object" && col.type === "radio") {
           {/* ROW 2: DROPDOWNS */}
           <div style={styles.pairedInputs}>
             <select
-              style={styles.select}
+              className="form-select form-sm rounded-md shadow-none "
               value={values[field.right.name] || ""}
               onChange={e =>
                 onChange(field.right.name, e.target.value)
@@ -2661,7 +2622,7 @@ if (typeof col === "object" && col.type === "radio") {
             </select>
 
             <select
-              style={styles.select}
+              className="form-select form-sm rounded-md shadow-none "
               value={values[field.left.name] || ""}
               onChange={e =>
                 onChange(field.left.name, e.target.value)
@@ -2682,7 +2643,7 @@ if (typeof col === "object" && col.type === "radio") {
     case "select":
       return (
         <select
-          style={{ ...styles.input, cursor: "pointer", background: "#fff" }}
+          className="form-select form-sm rounded-md shadow-none  bg-white"
           value={value || ""}
           disabled={readOnly}
           onChange={e => !readOnly && onChange(field.name, e.target.value)}
@@ -2699,7 +2660,7 @@ if (typeof col === "object" && col.type === "radio") {
     case "textarea":
       return (
         <textarea
-          style={styles.textarea}
+          className="fb-textarea"
           value={value || ""}
           readOnly={readOnly}
           onChange={e =>
@@ -2711,7 +2672,7 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <input
           type="date"
-          style={styles.input}
+          className="form-control form-sm rounded-md shadow-none "
           value={value || ""}
           readOnly={readOnly}
           disabled={readOnly}
@@ -2723,7 +2684,7 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <input
           type="datetime-local"
-          style={styles.input}
+          className="form-control form-sm rounded-md shadow-none "
           value={value || ""}
           onChange={(e) => onChange(field.name, e.target.value)}
         />
@@ -2732,7 +2693,7 @@ if (typeof col === "object" && col.type === "radio") {
     case "single-select":
       return (
         <select
-          style={styles.select}
+          className="form-select form-sm rounded-md shadow-none "
           value={value ?? ""}
           disabled={readOnly}
           onChange={e => !readOnly && onChange(field.name, e.target.value)}
@@ -2760,7 +2721,7 @@ if (typeof col === "object" && col.type === "radio") {
       const opts = field.options || [];
       return (
         <div style={{ marginTop: 6 }}>
-          <div style={styles.inlineGroup}>
+          <div className="fb-inline-group">
             {opts.map((opt, idx) => {
               const optVal = typeof opt === "object" && opt !== null ? opt.value : opt;
               const optLabel = typeof opt === "object" && opt !== null ? opt.label : opt;
@@ -2786,7 +2747,7 @@ if (typeof col === "object" && col.type === "radio") {
                 labelText
               );
               return (
-                <label key={`${field.name}-${idx}`} style={styles.inlineItem}>
+                <label key={`${field.name}-${idx}`} className="form-check-label form-check">
                   <input
                     type="radio"
                     name={field.name}
@@ -2809,12 +2770,12 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <div style={{ marginBottom: 0 }}>
           {/* LABEL */}
-          <label style={styles.label}>
+          <label className="form-label">
             {t(field.title, languageConfig?.enabled ? languageConfig.lang : "en")}
             {field.required && <span style={{ color: "red" }}> *</span>}
           </label>
 
-          <div style={styles.inlineGroup}>
+          <div className="fb-inline-group">
 
             {/* FILE INPUT */}
             {(!value || !field.hideInputAfterSelect) && (
@@ -2829,7 +2790,7 @@ if (typeof col === "object" && col.type === "radio") {
 
                   onChange(field.name, selectedFiles);
                 }}
-                style={styles.fileInput}
+                className="fb-file-input"
               />
             )}
 
@@ -2877,8 +2838,8 @@ if (typeof col === "object" && col.type === "radio") {
       const pairs = field.pairs || [];
 
       return (
-        <div style={styles.field}>
-          <label style={styles.label}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
+        <div className="fb-field mb-[18px]">
+          <label className="form-label">{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
 
           <div style={{ display: "flex", gap: 12 }}>
             {pairs.map(pair => (
@@ -2896,7 +2857,7 @@ if (typeof col === "object" && col.type === "radio") {
                       [pair.name]: e.target.value
                     })
                   }
-                  style={styles.input}
+                  className="form-control form-sm rounded-md shadow-none "
                 />
               </div>
             ))}
@@ -2933,7 +2894,7 @@ if (typeof col === "object" && col.type === "radio") {
             }}
           >
             {/* LABEL */}
-            <label style={styles.label}>
+            <label className="form-label">
               {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
             </label>
 
@@ -2946,7 +2907,7 @@ if (typeof col === "object" && col.type === "radio") {
               }}
             >
               {(field.options || []).map(opt => (
-                <label key={opt.value} style={styles.inlineItem}>
+                <label key={opt.value} className="form-check-label form-check">
                   <input
                     type="checkbox"
                     checked={(value || []).includes(opt.value)}
@@ -2977,12 +2938,12 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {field.label ? (
-            <label style={styles.label}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
+            <label className="form-label">{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</label>
           ) : null}
 
-          <div style={styles.inlineGroup}>
+          <div className="fb-inline-group">
             {(field.options || []).map((opt) => (
-              <label key={opt.value} style={styles.inlineItem}>
+              <label key={opt.value} className="form-check-label form-check">
                 <input
                   type="checkbox"
                   checked={(value || []).includes(opt.value)}
@@ -3025,7 +2986,7 @@ if (typeof col === "object" && col.type === "radio") {
 
   // Otherwise, render simple subheading
   return (
-    <div style={styles.subheading}>
+    <div className="fb-subheading">
       {t(
         field.label,
         languageConfig?.enabled ? languageConfig.lang : "en"
@@ -3035,8 +2996,8 @@ if (typeof col === "object" && col.type === "radio") {
 
     case "optional-section-toggle":
       return (
-        <div style={styles.optionalSectionToggle}>
-          <label style={styles.optionalSectionLabel}>
+        <div className="fb-optional-toggle">
+          <label className="form-label form-label--toggle">
             <input
               type="checkbox"
               checked={!!value}
@@ -3060,7 +3021,7 @@ if (typeof col === "object" && col.type === "radio") {
     case "inline-input":
       return (
         <div style={styles.inlineRow}>
-          <div style={styles.inlineLabel}>{t(field.inlineLabel, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
+          <div className="form-label mb-0">{t(field.inlineLabel, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
           <input
             style={styles.inlineInput}
             value={value || ""}
@@ -3078,12 +3039,12 @@ if (typeof col === "object" && col.type === "radio") {
           alignItems: "center",
           gap: 16
         }}>
-          <div style={{ fontWeight: 600, color: "#0f172a" }}>{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
+          <div className="form-label mb-0">{t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}</div>
 
           {/* Right Ear */}
-          <div style={styles.inlineGroup}>
+          <div className="fb-inline-group">
             {["yes", "no"].map(v => (
-              <label key={v} style={styles.inlineItem}>
+              <label key={v} className="form-check-label form-check">
                 <input
                   type="radio"
                   name={field.rightName}
@@ -3098,9 +3059,9 @@ if (typeof col === "object" && col.type === "radio") {
           </div>
 
           {/* Left Ear */}
-          <div style={styles.inlineGroup}>
+          <div className="fb-inline-group">
             {["yes", "no"].map(v => (
-              <label key={v} style={styles.inlineItem}>
+              <label key={v} className="form-check-label form-check">
                 <input
                   type="radio"
                   name={field.leftName}
@@ -3128,7 +3089,7 @@ if (typeof col === "object" && col.type === "radio") {
       return (
         <button
           type="button"
-          style={styles.btnOutline}
+          className="fb-btn-outline"
           onClick={handleButtonClick}
         >
           {t(field.label, languageConfig?.enabled ? languageConfig.lang : "en")}
@@ -3570,7 +3531,7 @@ if (typeof col === "object" && col.type === "radio") {
           min={field.min}
           max={field.max}
           type="number"
-          style={styles.input}
+          className="form-control form-sm rounded-md shadow-none "
           value={value || ""}
           readOnly={readOnly}
           placeholder={t(field.placeholder, languageConfig?.enabled ? languageConfig.lang : "en") || ""}
@@ -4909,47 +4870,6 @@ function VisualFieldInteractive() {
 }
 
 const styles = {
-  actionsBar: {
-    display: "flex",
-    alignItems: "center",
-    gap: 16
-  },
-
-  actionControls: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12
-  },
-
-  actionButtons: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8
-  },
-  page: {
-    minHeight: "auto",
-    fontFamily: "Inter, system-ui"
-  },
-  milestoneLabel: {
-    fontSize: 14,
-    fontWeight: 600,
-    marginBottom: 6,
-    color: "#0F172A"
-  },
-
-  content: {
-    display: "flex",
-    justifyContent: "center"
-  },
-
-  card: {
-    width: "100%",
-    background: "#fff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    padding: 24,
-    boxShadow: "0 4px 14px rgba(15,23,42,0.04)"
-  },
   gridHeaderRow: {
     display: "grid",
     alignItems: "center",
@@ -5081,46 +5001,9 @@ const styles = {
   },
 
 
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
-    paddingBottom: 16,
-    borderBottom: "1px solid #e5e7eb"
-  },
-
-  title: {
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827"
-  },
-
-  subtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginTop: 4
-  },
-
-  actions: {
-    display: "flex",
-    gap: 8
-  },
-  scoreBox: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "10px 14px",
-    borderRadius: 8,
-    margin: "20px 0px 5px 0px",
-    border: "1px solid #e5e7eb",
-    background: "#f9fafb",
-    fontWeight: 600,
-    fontSize: 14
-  },
-
-  scoreLabel: {
-    color: "#0F172A"
+  multiSelectWrap: {
+    position: "relative",
+    width: "100%"
   },
 
   th: {
@@ -5145,142 +5028,6 @@ const styles = {
     border: "1px solid #CBD5E1",
     textAlign: "center",
     padding: 8
-  },
-
-  scoreValue: {
-    minWidth: 48,
-    textAlign: "right",
-    fontSize: 16,
-    fontWeight: 700,
-    color: "#111827"
-  },
-
-  mstBtn: {
-    background: "#fff",
-    border: "1.5px solid #111827",
-    color: "#0f172A",
-    padding: "8px 14px",
-    borderRadius: 999,
-    fontWeight: 600,
-    cursor: "pointer",
-    color: "#111827"
-  },
-
-  body: {
-    marginTop: 10
-  },
-
-  sectionCard: {
-    border: "1px solid #e5e7eb",
-    borderRadius: 10,
-    padding: 18,
-    marginBottom: 20,
-    background: "#fafafa"
-  },
-
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    marginBottom: 16,
-    color: "#111827",
-    paddingBottom: 8,
-    borderBottom: "2px solid #e5e7eb"
-  },
-
-  field: {
-    marginBottom: 18
-  },
-
-  label: {
-    fontWeight: 600,
-    marginBottom: 8,
-    display: "block",
-    color: "#0F172A",
-    fontSize: 14
-  },
-
-  input: {
-    width: "100%",
-    padding: "10px 12px",
-    borderRadius: 6,
-    border: "1px solid #d1d5db",
-    fontSize: 14,
-    fontFamily: "inherit"
-  },
-
-  textarea: {
-    width: "100%",
-    minHeight: 100,
-    padding: "10px 12px",
-    borderRadius: 6,
-    border: "1px solid #d1d5db",
-    fontSize: 14,
-    fontFamily: "inherit",
-    resize: "vertical"
-  },
-
-  select: {
-    width: "100%",
-    padding: "10px 12px",
-    borderRadius: 6,
-    border: "1px solid #d1d5db",
-    fontSize: 14,
-    fontFamily: "inherit",
-    lineHeight: "1.5"
-  },
-
-  inlineGroup: {
-    display: "flex",
-    gap: 16,
-    flexWrap: "wrap"
-  },
-  radiofield: {
-    marginBottom: 18,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-
-  radioRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 24
-  },
-
-  radioLabel: {
-    fontWeight: 600,
-    fontSize: 14,
-    color: "#0F172A"
-  },
-  subheading: {
-    marginTop: 24,
-    marginBottom: 14,
-    fontWeight: 700,
-    fontSize: 15,
-    color: "#0F172A",
-    borderBottom: "2px solid #e5e7eb",
-    paddingBottom: 8
-  },
-
-  optionalSectionToggle: {
-    marginTop: 16,
-    marginBottom: 10
-  },
-
-  optionalSectionLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    cursor: "pointer",
-    fontWeight: 600,
-    fontSize: 14,
-    color: "#0F172A"
-  },
-
-  multiSelectWrap: {
-    position: "relative",
-    width: "100%"
   },
 
   multiSelectControl: {
@@ -5341,18 +5088,6 @@ const styles = {
     overflowWrap: "break-word",
     wordBreak: "break-word",
     minWidth: 0  // lets the cell shrink so wrapping can occur
-  },
-  nestedContainer: {
-    border: "1px solid #e5e7eb",
-    borderRadius: "10px",
-    padding: "16px",
-    width: "100%",
-    background: " #fff"
-  },
-  nestedSection: {
-    border: "none",
-    padding: 0,
-    marginBottom: 8
   },
   pairedBlock: {
     display: "grid",
@@ -5428,45 +5163,6 @@ const styles = {
     alignItems: "center"
   },
 
-  inlineItem: {
-    display: "flex",
-    gap: 6,
-    alignItems: "center",
-    color: "#0f172a"
-  },
-
-  helper: {
-    fontSize: 12,
-    color: "#6b7280",
-    marginTop: 4
-  },
-
-  error: {
-    fontSize: 12,
-    color: "#dc2626",
-    marginTop: 4
-  },
-  fileInput: {
-    fontSize: 14,
-    padding: "6px 0"
-  },
-  btnOutline: {
-    padding: "10px 16px",
-    borderRadius: 999,
-    border: "1.5px solid #111827",
-    background: "#fff",
-    fontWeight: 600,
-    fontSize: 14,
-    cursor: "pointer",
-    color: "#0F172A",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    minWidth: 140,
-    lineHeight: 1.3,
-    boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
-  },
   pairedRow: {
     display: "grid",
     gridTemplateColumns: "200px 1fr",
@@ -5500,9 +5196,6 @@ const styles = {
     color: "#6b7280"
   },
 
-  footer: {
-    marginTop: 20
-  },
   infoWrapper: {
     position: "relative",
     marginLeft: 6,
