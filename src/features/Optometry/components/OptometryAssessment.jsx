@@ -540,8 +540,6 @@ export default function OptometryAssessment({
   const sectionShowIfAnd = (key, andCond) =>
   isFollowup ? { field: "general_questions", includes: key, and: andCond } : (andCond || undefined);
 
-  console.log(values)
-
   const SUBJECTIVE_SCHEMA = {
     actions: ACTIONS_WITH_NEXT,
     sections: [
