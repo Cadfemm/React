@@ -756,7 +756,6 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
     }
   };
 
-  console.log(values, '2222222222')
   const handleSubmit = () => {
     setSubmitted(true);
     const mergedValues = Object.values(values).reduce((acc, tab) => ({ ...acc, ...tab }), {});
