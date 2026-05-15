@@ -68,7 +68,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "current_diagnosis_other",
           label: "Other Diagnosis (specify)",
-          type: "textarea",
+          type: "input",
           showIf: { field: "current_diagnosis", includes: "others" }
         },
         {
@@ -219,7 +219,7 @@ const SUBJECTIVE_SCHEMA = {
       },
       {
         name: "care_giver",
-        label: "Care Giver",
+        label: "Caregiver",
         type: "radio",
         options: [
           { label: "Live Alone", value: "live_alone" },
@@ -235,39 +235,82 @@ const SUBJECTIVE_SCHEMA = {
           { label: "Unemployed", value: "unemployed" }
         ]
       },
-      {
-        name: "patient_goals",
-        label: "Patient Goals",
-        type: "subheading"
-      },
-      {
-        name: "short_term_goals",
-        label: "Short Term Goals",
+      // {
+      //   name: "patient_goals",
+      //   label: "Patient Goals",
+      //   type: "subheading"
+      // },
+      // {
+      //   name: "short_term_goals",
+      //   label: "Short Term Goals",
+      //   type: "input"
+      // },
+      // {
+      //   name: "long_term_goals",
+      //   label: "Long Term Goals",
+      //   type: "input"
+      // },
+      // {
+      //   name: "bowel",
+      //   label: "Bowel",
+      //   type: "radio",
+      //   options: [
+      //     { label: "Continence", value: "continence" },
+      //     { label: "Incontinence", value: "incontinence" }
+      //   ]
+      // },
+      // {
+      //   name: "bladder",
+      //   label: "Bladder",
+      //   type: "radio",
+      //   options: [
+      //     { label: "Continence", value: "continence" },
+      //     { label: "Incontinence", value: "incontinence" }
+      //   ]
+      // },
+       {
+        name: "Patient-Reported Functional Goals",
+        label: "Patient Reported Functional Goals",
         type: "input"
       },
       {
-        name: "long_term_goals",
-        label: "Long Term Goals",
-        type: "input"
-      },
-      {
-        name: "bowel",
-        label: "Bowel",
+        name: "bowel_control",
+        label: "Bowel control",
         type: "radio",
         options: [
           { label: "Continence", value: "continence" },
           { label: "Incontinence", value: "incontinence" }
         ]
       },
+      {
+  name: "bowel_control_details",
+  label: "Bowel Incontinence Details",
+  type: "input",
+  placeholder: "Enter bowel incontinence details",
+  showIf: {
+    field: "bowel_control",
+    equals: "incontinence"
+  }
+},
       {
         name: "bladder",
-        label: "Bladder",
+        label: "Bladder control",
         type: "radio",
         options: [
           { label: "Continence", value: "continence" },
           { label: "Incontinence", value: "incontinence" }
         ]
       },
+      {
+  name: "bladder_details",
+  label: "Bladder Incontinence Details",
+  type: "input",
+  placeholder: "Enter bladder incontinence details",
+  showIf: {
+    field: "bladder",
+    equals: "incontinence"
+  }
+},
     ]
 }
 
@@ -281,7 +324,7 @@ const OBJECTIVE_SCHEMA = {
         {
           name: "body_size",
           label: "Body Size",
-          type: "single-select",
+          type: "radio",
           options: [
             { label: "Ectomorph",  value: "ectomorph"  },
             { label: "Mesomorph",  value: "mesomorph"  },
@@ -291,7 +334,7 @@ const OBJECTIVE_SCHEMA = {
         {
           name: "ambulation",
           label: "Ambulation",
-          type: "single-select",
+          type: "radio",
           options: [
             { label: "Wheelchair (self propel)",      value: "wheelchair_self"   },
             { label: "Wheelchair (motorized)",        value: "wheelchair_motor"  },
@@ -310,7 +353,7 @@ const OBJECTIVE_SCHEMA = {
         {
           name: "accompanied_by",
           label: "Accompanied By",
-          type: "single-select",
+          type: "radio",
           options: [
             { label: "With carer",    value: "with_carer"    },
             { label: "Without carer", value: "without_carer" },
@@ -338,7 +381,7 @@ const OBJECTIVE_SCHEMA = {
           label: "Scales / Outcome Measures"
         },
         {
-          name: "spinal_scales",
+          name: "spinal_scales_launcher",
           type: "assessment-launcher",
           options: [
             { label: "Range of Motion (ROM)", value: "rom" },
@@ -354,6 +397,36 @@ const OBJECTIVE_SCHEMA = {
             { label: "Modified Functional Reach Test", value: "mfrt"}
           ]
         },
+          {
+          name: "spinal_scales",
+          type: "multi-select-dropdown",
+          label: "Select Outcome Measures",
+          options: [
+            { label: "Range of Motion (ROM)",                    value: "rom"     },
+            { label: "Manual Muscle Test (MMT)",                 value: "mmt"     },
+            { label: "Muscle Tone (MAS)",                        value: "mas"     },
+            { label: "10 Meter Walk Test",                       value: "tenmwt"  },
+            { label: "Berg Balance Scale (BBS)",                 value: "bbs"     },
+            { label: "Timed Up and Go (TUG)",                    value: "tug"     },
+            { label: "6 Minutes Walk Test (6MWT)",               value: "sixmwt"  },
+            { label: "6 Minutes Wheelchair Push Test",           value: "sixmwpt" },
+            { label: "Wheelchair Skills Test",                   value: "wst"     },
+            { label: "Walking Index for Spinal Cord Injury",     value: "wisci"   },
+            { label: "Modified Functional Reach Test",           value: "mfrt"    },
+          ]
+        },
+        /* Free-text parameter field for each selected scale */
+        { name: "rom_params",     label: "ROM — Parameters / Notes",                        type: "input", showIf: { field: "spinal_scales", includes: "rom"     } },
+        { name: "mmt_params",     label: "MMT — Parameters / Notes",                        type: "input", showIf: { field: "spinal_scales", includes: "mmt"     } },
+        { name: "mas_params",     label: "MAS — Parameters / Notes",                        type: "input", showIf: { field: "spinal_scales", includes: "mas"     } },
+        { name: "tenmwt_params",  label: "10 Meter Walk Test — Parameters / Notes",         type: "input", showIf: { field: "spinal_scales", includes: "tenmwt"  } },
+        { name: "bbs_params",     label: "Berg Balance Scale — Parameters / Notes",         type: "input", showIf: { field: "spinal_scales", includes: "bbs"     } },
+        { name: "tug_params",     label: "TUG — Parameters / Notes",                        type: "input", showIf: { field: "spinal_scales", includes: "tug"     } },
+        { name: "sixmwt_params",  label: "6MWT — Parameters / Notes",                       type: "input", showIf: { field: "spinal_scales", includes: "sixmwt"  } },
+        { name: "sixmwpt_params", label: "6 Min Wheelchair Push Test — Parameters / Notes", type: "input", showIf: { field: "spinal_scales", includes: "sixmwpt" } },
+        { name: "wst_params",     label: "Wheelchair Skills Test — Parameters / Notes",     type: "input", showIf: { field: "spinal_scales", includes: "wst"     } },
+        { name: "wisci_params",   label: "WISCI — Parameters / Notes",                      type: "input", showIf: { field: "spinal_scales", includes: "wisci"   } },
+        { name: "mfrt_params",    label: "MFRT — Parameters / Notes",                       type: "input", showIf: { field: "spinal_scales", includes: "mfrt"    } },
 
       ]
     }
@@ -452,8 +525,225 @@ const PLAN_SCHEMA = {
             type: "dynamic-goals",
             name: "long_term_goals"
           }, 
-           { type: "subheading", label: "Interventions and Plan" },     
-          {
+           { type: "subheading", label: "Interventions and Plan" },  
+             { type: "subheading", label: "Treatment Plan" },
+
+        {
+  name: "intervention_plan",
+ 
+  type: "checkbox-group",
+  options: [
+    { label: "Stretching", value: "stretching" },
+    { label: "Strengthening", value: "strengthening" },
+    { label: "Sitting Balance Training", value: "sitting_balance_training" },
+    { label: "Standing Balance Training", value: "standing_balance_training" },
+    { label: "Endurance Training", value: "endurance_training" },
+    { label: "Gait Training", value: "gait_training" },
+    { label: "Transfer Training", value: "transfer_training" },
+    { label: "Wheelchair Skills Training", value: "wheelchair_skills_training" },
+    { label: "Walking Aids Prescription", value: "walking_aids_prescription" }
+  ]
+},
+
+// Stretching
+{
+  name: "stretching_frequency",
+  label: "Stretching - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "stretching"
+  }
+},
+{
+  name: "stretching_duration",
+  label: "Stretching - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "stretching"
+  }
+},
+
+// Strengthening
+{
+  name: "strengthening_frequency",
+  label: "Strengthening - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "strengthening"
+  }
+},
+{
+  name: "strengthening_duration",
+  label: "Strengthening - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "strengthening"
+  }
+},
+
+// Sitting Balance Training
+{
+  name: "sitting_balance_training_frequency",
+  label: "Sitting Balance Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "sitting_balance_training"
+  }
+},
+{
+  name: "sitting_balance_training_duration",
+  label: "Sitting Balance Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "sitting_balance_training"
+  }
+},
+
+// Standing Balance Training
+{
+  name: "standing_balance_training_frequency",
+  label: "Standing Balance Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "standing_balance_training"
+  }
+},
+{
+  name: "standing_balance_training_duration",
+  label: "Standing Balance Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "standing_balance_training"
+  }
+},
+
+// Endurance Training
+{
+  name: "endurance_training_frequency",
+  label: "Endurance Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "endurance_training"
+  }
+},
+{
+  name: "endurance_training_duration",
+  label: "Endurance Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "endurance_training"
+  }
+},
+
+// Gait Training
+{
+  name: "gait_training_frequency",
+  label: "Gait Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "gait_training"
+  }
+},
+{
+  name: "gait_training_duration",
+  label: "Gait Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "gait_training"
+  }
+},
+
+// Transfer Training
+{
+  name: "transfer_training_frequency",
+  label: "Transfer Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "transfer_training"
+  }
+},
+{
+  name: "transfer_training_duration",
+  label: "Transfer Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "transfer_training"
+  }
+},
+
+// Wheelchair Skills Training
+{
+  name: "wheelchair_skills_training_frequency",
+  label: "Wheelchair Skills Training - Frequency",
+  type: "input",
+  placeholder: "e.g. 3 times per week",
+  showIf: {
+    field: "intervention_plan",
+    includes: "wheelchair_skills_training"
+  }
+},
+{
+  name: "wheelchair_skills_training_duration",
+  label: "Wheelchair Skills Training - Duration",
+  type: "input",
+  placeholder: "e.g. 6 weeks",
+  showIf: {
+    field: "intervention_plan",
+    includes: "wheelchair_skills_training"
+  }
+},
+
+// Walking Aids Prescription
+{
+  name: "walking_aids_prescription_frequency",
+  label: "Walking Aids Prescription - Frequency",
+  type: "input",
+  placeholder: "e.g. Once during treatment",
+  showIf: {
+    field: "intervention_plan",
+    includes: "walking_aids_prescription"
+  }
+},
+{
+  name: "walking_aids_prescription_duration",
+  label: "Walking Aids Prescription - Duration",
+  type: "input",
+  placeholder: "e.g. 1 session",
+  showIf: {
+    field: "intervention_plan",
+    includes: "walking_aids_prescription"
+  }
+},     
+ { type: "subheading", label: "Interventions Plan" },       
+{
   name: "interventions_plan",
   type: "checkbox-group",
   options: [
@@ -485,7 +775,7 @@ const PLAN_SCHEMA = {
         // {
         //   name: "home_exercise-program",
         //   label: "Home Exercise Program",
-        //   type: "textarea"
+        //   type: "input"
         // },
         { type: "subheading", label: "HEP (home exercise program)" },
         {
@@ -531,7 +821,7 @@ const PLAN_SCHEMA = {
 //         {
 //           name: "remarks",
 //           label: "Remarks",
-//           type: "textarea"
+//           type: "input"
 //         }
       ]
     }
