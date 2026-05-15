@@ -455,8 +455,8 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
 
 /* ===================== MAIN COMPONENT ===================== */
 
-/** Initial optometry SOAP assessment only (follow-up uses OptometryFollowUpAssessment.jsx). */
-export default function OptometryAssessment({
+/** Follow-up optometry SOAP assessment (conditional sections vs initial). */
+export default function OptometryFollowUpAssessment({
   patient,
   onSubmit,
   onBack,
@@ -502,11 +502,11 @@ export default function OptometryAssessment({
   const [tabLoading,    setTabLoading]    = useState(false);
   const autoSaveTimer = useRef(null);
 
-  const isFollowup = false;
+  const isFollowup = true;
 
   const storageKey = useMemo(() => {
     if (!patient || readOnly) return null;
-    return `optometry_assessment_draft_${patient.id}`;
+    return `optometry_followup_draft_${patient.id}`;
   }, [patient, readOnly]);
 
   useEffect(() => {
@@ -1584,7 +1584,7 @@ export default function OptometryAssessment({
         {
           doctor:       doctorId,
           patient:      patient.id,
-          visit_type:   'INITIAL',
+          visit_type:   'FOLLOW_UP',
           is_completed: false,
           total_score:  0,
         }
