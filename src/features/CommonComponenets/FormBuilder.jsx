@@ -889,18 +889,20 @@ function MultiSelectDropdown({ field, value, onChange, languageConfig }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const selected = Array.isArray(value) ? value : [];
+
   const toggleValue = (val) => {
-    const next = value.includes(val)
-      ? value.filter(v => v !== val)
-      : [...value, val];
+    const next = selected.includes(val)
+      ? selected.filter(v => v !== val)
+      : [...selected, val];
     onChange(field.name, next);
   };
 
   const selectedLabels =
-    value.length === 0
+    selected.length === 0
       ? "Select"
       : field.options
-        .filter(o => value.includes(o.value))
+        .filter(o => selected.includes(o.value))
         .map(o => t(o.label, languageConfig?.enabled ? languageConfig.lang : "en"))
         .join(", ");
 
@@ -910,7 +912,7 @@ function MultiSelectDropdown({ field, value, onChange, languageConfig }) {
         style={styles.multiSelectControl}
         onClick={() => setOpen(o => !o)}
       >
-        <span style={{ color: value.length ? "#111827" : "#9ca3af" }}>
+        <span style={{ color: selected.length ? "#111827" : "#9ca3af" }}>
           {selectedLabels}
         </span>
         <span style={styles.caret}>▾</span>
@@ -922,7 +924,7 @@ function MultiSelectDropdown({ field, value, onChange, languageConfig }) {
             <label key={opt.value} style={styles.multiSelectItem}>
               <input
                 type="checkbox"
-                checked={value.includes(opt.value)}
+                checked={selected.includes(opt.value)}
                 onChange={() => toggleValue(opt.value)}
               />
               {languageConfig?.enabled ? t(opt.label, languageConfig.lang) : opt.label}
@@ -1067,16 +1069,14 @@ function AssessmentLauncher({
 }) {
   const activeKey = `${field.name}_active`;
   const defaultValue = field.options?.[0]?.value || null;
-  const active = values[activeKey] || (field.autoOpen ? defaultValue : null);
-  let component = active ? assessmentRegistry?.[active] : null;
-  const ActiveComponent = component?.default || component;
+  const storedActive = values[activeKey] || (field.autoOpen ? defaultValue : null);
 
   // Filter options by region if filterByRegionField is set
   const selectedRegions = field.filterByRegionField
     ? (values[field.filterByRegionField] || [])
     : null;
 
-  const visibleOptions = (field.options || []).filter(opt => {
+  let visibleOptions = (field.options || []).filter(opt => {
     // per-option condition: { field, equals }
     if (opt.visibleIf) {
       const depVal = values[opt.visibleIf.field];
@@ -1086,6 +1086,20 @@ function AssessmentLauncher({
     if (!opt.regions || opt.regions.length === 0) return true; // regions:[] = all
     return opt.regions.some(r => selectedRegions.includes(r));
   });
+
+  const filterIncludedField = field.filterByIncludedValues;
+  const includedVals = filterIncludedField ? values[filterIncludedField] : null;
+  if (Array.isArray(includedVals) && includedVals.length > 0) {
+    visibleOptions = visibleOptions.filter(opt => includedVals.includes(opt.value));
+  }
+
+  const active =
+    storedActive != null && visibleOptions.some(o => o.value === storedActive)
+      ? storedActive
+      : null;
+
+  let component = active ? assessmentRegistry?.[active] : null;
+  const ActiveComponent = component?.default || component;
 
   // Remarks key per active assessment button
   const remarksKey = active ? `${field.name}_${active}_remarks` : null;
@@ -1105,7 +1119,7 @@ function AssessmentLauncher({
               onClick={() =>
                 onChange(
                   activeKey,
-                  active === opt.value ? null : opt.value
+                  values[activeKey] === opt.value ? null : opt.value
                 )
               }
             >

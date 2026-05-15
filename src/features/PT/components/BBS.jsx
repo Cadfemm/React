@@ -62,7 +62,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_3",
-          label: "3. Sitting with No Back Support (Feet Supported)",
+          label: "3. Sitting with No Back Support. Feet Supported",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -94,7 +94,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_5",
-          label: "5. Pivot Transfers",
+          label: "5. Pivot Transfers(Chair to chair or chair to bed)",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -110,7 +110,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_6",
-          label: "6. Standing Unsupported – Eyes Closed",
+          label: "6. Standing Unsupported Eyes Closed",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -126,7 +126,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_7",
-          label: "7. Standing Unsupported – Feet Together",
+          label: "7. Standing Unsupported Feet Together",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -142,7 +142,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_8",
-          label: "8. Reaching Forward with Outstretched Arm",
+          label: "8. Reaching Forward with Outstretched Arm While Standing",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -174,7 +174,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_10",
-          label: "10. Turn to Look Over Shoulders",
+          label: "10. Turn Look Over Shoulders Standing",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -206,7 +206,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_12",
-          label: "12. Place Foot on Stool",
+          label: "12. Place Foot on Stool While Standing Unsupported",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
@@ -222,7 +222,7 @@ const BBS_SCHEMA = {
         },
         {
           name: "bbs_13",
-          label: "13. Standing Unsupported – One Foot in Front",
+          label: "13. Standing Unsupported One Foot in Front",
           type: "radio-matrix",
           options: BBS_SCALE,
           info: {
