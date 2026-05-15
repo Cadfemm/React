@@ -31,10 +31,20 @@ const IMPAIRED_LOCATION = [
   { label: "Bilateral", value: "bilateral" }
 ];
 
+const TAB_INITIAL_VALUES = {
+  subjective: {},
+  objective: {},
+  assessment: {},
+  plan: {}
+};
+
 /* ===================== COMPONENT ===================== */
 
 export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient, mode, onSubmit, onBack }) {
-  const [values, setValues] = useState({});
+  const [values,        setValues]        = useState(() => {
+    const initial = { subjective: {}, objective: {}, assessment: {}, plan: {} };
+    return initial;
+  });
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
   const [processingOCR, setProcessingOCR] = useState(false);
@@ -98,10 +108,6 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
     if (patient) {
       setValues({
         ...savedValues,
-        pmh_from_registration:
-          patient.medical_history || "No data available",
-        family_social_from_registration:
-          patient.diagnosis_history || "No data available"
       });
     } else {
       setValues(savedValues);
@@ -593,7 +599,14 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
           if (Object.keys(updates).length > 0) {
             console.log('Updating values:', updates);
             console.log('Current values before update:', v);
-            const newValues = { ...v, ...updates };
+            const currentTab = v[activeTab] || {};
+            const newValues = {
+              ...v,
+              [activeTab]: {
+                ...currentTab,
+                ...updates
+              }
+            };
             console.log('New values after update:', newValues);
             
             // Show success message
@@ -669,9 +682,7 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
     return withoutAuto.join('\n').trim();
   };
 
-  const onChange = async (name, value) => {
-    console.log('onChange called:', { name, value, isFile: value instanceof File, type: value?.type, constructor: value?.constructor?.name });
-    
+  const onChange = async (name, value) => {   
     // Check if this is a tympanometry file upload
     // Handle both image files and check the name pattern
     const isRightTympanometry = name === 'tympanometry_report_right';
@@ -684,14 +695,24 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
       
       console.log('Tympanometry upload detected:', { name, isFile, isImage, fileType: value?.type, fileName: value?.name });
       
+      const patchActiveTab = (nextFieldValues) => {
+        setValues(v => ({
+          ...v,
+          [activeTab]: {
+            ...(v[activeTab] || {}),
+            ...nextFieldValues
+          }
+        }));
+      };
+      
       if (isFile && isImage) {
         const earSide = isRightTympanometry ? 'right' : 'left';
         console.log(`Processing ${earSide} tympanometry image...`);
-        setValues(v => ({ ...v, [name]: value }));
+        patchActiveTab({ [name]: value });
         await processTympanometryImage(value, earSide);
       } else {
         // Still save the file even if it's not an image (could be PDF)
-        setValues(v => ({ ...v, [name]: value }));
+        patchActiveTab({ [name]: value });
       }
     } else {
       const problemListFields = [
@@ -701,11 +722,18 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
         'impression_r', 'impression_l', 'reliability'
       ];
       setValues(v => {
-        const next = { ...v, [name]: value };
+        const currentTab = v[activeTab] || {};
+        const nextTab = {
+          ...currentTab,
+          [name]: value
+        };
         if (problemListFields.includes(name)) {
-          next.problem_list = updateProblemListFromFormValues(v.problem_list, next);
+          nextTab.problem_list = updateProblemListFromFormValues(currentTab.problem_list, nextTab);
         }
-        return next;
+        return {
+          ...v,
+          [activeTab]: nextTab
+        };
       });
     }
   };
@@ -714,7 +742,7 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
     if (type === "back") onBack?.();
 
     if (type === "clear") {
-      setValues({});
+      setValues({ ...TAB_INITIAL_VALUES });
       setSubmitted(false);
       localStorage.removeItem(storageKey);
     }
@@ -730,7 +758,8 @@ export default function AudiologyDepartmentAdultPage({ patient, onUpdatePatient,
 
   const handleSubmit = () => {
     setSubmitted(true);
-    onSubmit?.(values);
+    const mergedValues = Object.values(values).reduce((acc, tab) => ({ ...acc, ...tab }), {});
+    onSubmit?.(mergedValues);
     alert("Audiology assessment submitted");
   };
 
@@ -1834,7 +1863,7 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
   )}
   <CommonFormBuilder
     schema={schemaMap[activeTab]}
-    values={values}
+    values={values[activeTab] || {}}
     onChange={onChange}
     submitted={submitted}
     onAction={handleAction}
