@@ -25,11 +25,20 @@ const YES_NO = [
 
 const FULLTERM_PRETERM = [
   { label: "Full term", value: "0" },
-  { label: "Pre-term", value: "1" }];
+  { label: "Pre-term", value: "1" }
+];
+
+const TAB_INITIAL_VALUES = {
+  subjective: {},
+  objective: {},
+  assessment: {},
+  plan: {}
+};
+
 /* ===================== COMPONENT ===================== */
 
 export default function AudiologyDepartmentPediatricPage({ patient, onUpdatePatient, onSubmit, onBack }) {
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(() => ({ ...TAB_INITIAL_VALUES }));
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
 
@@ -87,7 +96,13 @@ export default function AudiologyDepartmentPediatricPage({ patient, onUpdatePati
     if (!storageKey) return;
     const saved = localStorage.getItem(storageKey);
     if (saved) {
-      setValues(JSON.parse(saved).values || {});
+      const loaded = JSON.parse(saved).values || {};
+      const normalized =
+        loaded && typeof loaded === "object" &&
+        ("subjective" in loaded || "objective" in loaded || "assessment" in loaded || "plan" in loaded)
+          ? { ...TAB_INITIAL_VALUES, ...loaded }
+          : { ...TAB_INITIAL_VALUES, subjective: loaded };
+      setValues(normalized);
     }
   }, [storageKey]);
 
@@ -96,22 +111,31 @@ export default function AudiologyDepartmentPediatricPage({ patient, onUpdatePati
 
     setValues(v => ({
       ...v,
-      pmh_from_registration:
-        patient.medical_history || "No data available",
-      family_social_from_registration:
-        patient.diagnosis_history || "No data available"
+      subjective: {
+        ...v.subjective,
+        pmh_from_registration:
+          patient.medical_history || "No data available",
+        family_social_from_registration:
+          patient.diagnosis_history || "No data available"
+      }
     }));
   }, [patient]);
 
   const onChange = (name, value) => {
-    setValues(v => ({ ...v, [name]: value }));
+    setValues(v => ({
+      ...v,
+      [activeTab]: {
+        ...(v[activeTab] || {}),
+        [name]: value
+      }
+    }));
   };
 
   const handleAction = (type) => {
     if (type === "back") onBack?.();
 
     if (type === "clear") {
-      setValues({});
+      setValues({ ...TAB_INITIAL_VALUES });
       setSubmitted(false);
       localStorage.removeItem(storageKey);
     }
@@ -127,7 +151,8 @@ export default function AudiologyDepartmentPediatricPage({ patient, onUpdatePati
 
   const handleSubmit = () => {
     setSubmitted(true);
-    onSubmit?.(values);
+    const mergedValues = Object.values(values).reduce((acc, tabData) => ({ ...acc, ...tabData }), {});
+    onSubmit?.(mergedValues);
     alert("Audiology assessment submitted");
   };
 
@@ -1311,7 +1336,7 @@ const OBJECTIVE_SCHEMA = {
   {/* ===== TAB CONTENT ===== */}
   <CommonFormBuilder
     schema={schemaMap[activeTab]}
-    values={values}
+    values={values[activeTab] || {}}
     onChange={onChange}
     submitted={submitted}
     onAction={handleAction}
