@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-/* ── Initial / Follow-up / Group assessment components ── */
+/* ── Initial / Re-assessment / Group assessment components ── */
 import Neuro             from "./Neuro";
 import SpinalCordInjury  from "./SpinalcordInjury";
 import Hydro             from "./Hydro";
@@ -30,9 +30,7 @@ const TABS = [
 
 const TYPE_LABELS = {
   initial:  "Initial Assessment",
-  // followup: "Follow-up Visit",
-    followup: "Re-Assessments",
-
+  followup: "Re-assessment",
   progress: "Progress Intervention",
   group:    "Group Intervention",
 };
@@ -68,7 +66,7 @@ export default function ProgramTabsWithContent({ patient, assessmentType, mode, 
       }
     }
 
-    /* ── Initial / Follow-up / Group → standard assessment pages ── */
+    /* ── Initial / Re-assessment / Group → standard assessment pages ── */
     switch (activeTab) {
       case "sci":          return <SpinalCordInjury  {...sharedProps} />;
       case "neuro":        return <Neuro             {...sharedProps} />;

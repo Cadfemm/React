@@ -272,40 +272,41 @@ fields: [
   /* =========================
      HISTORY OF PRESENT ILLNESS
   ========================= */
+  // {
+  //   type: "subheading",
+  //   label: "History of Present Illness"
+  // },
   {
-    type: "subheading",
+    name: "history_of_illness",
     label: "History of Present Illness"
-  },
-  {
-    name: "mechanism_of_injury",
-    label: "Mechanism of injury / Event",
+,
     type: "input"
   },
-  {
-    name: "hpi_progression",
-    label: "Progression",
-    type: "radio",
-    options: [
-      { label: "Improving", value: "improving" },
-      { label: "Static", value: "static" },
-      { label: "Worsening", value: "worsening" }
-    ]
-  },
-  {
-    name: "previous_treatment",
-    label: "Previous treatment received",
-    type: "radio",
-    options: [
-      { label: "Yes", value: "yes" },
-      { label: "No", value: "no" }
-    ]
-  },
-  {
-    name: "previous_treatment_details",
-    label: "If yes, specify",
-    type: "textarea",
-    showIf: { field: "previous_treatment", equals: "yes" }
-  },
+  // {
+  //   name: "hpi_progression",
+  //   label: "Progression",
+  //   type: "radio",
+  //   options: [
+  //     { label: "Improving", value: "improving" },
+  //     { label: "Static", value: "static" },
+  //     { label: "Worsening", value: "worsening" }
+  //   ]
+  // },
+  // {
+  //   name: "previous_treatment",
+  //   label: "Previous treatment received",
+  //   type: "radio",
+  //   options: [
+  //     { label: "Yes", value: "yes" },
+  //     { label: "No", value: "no" }
+  //   ]
+  // },
+  // {
+  //   name: "previous_treatment_details",
+  //   label: "If yes, specify",
+  //   type: "textarea",
+  //   showIf: { field: "previous_treatment", equals: "yes" }
+  // },
 
   /* =========================
      PRIOR LEVEL OF FUNCTION (PLOF)

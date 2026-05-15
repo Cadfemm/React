@@ -8,6 +8,13 @@ import ShiftAssessment from "../Nursing/components/ShiftAssessment";
 
 /* ── Assessment type cards ─────────────────────────────── */
 
+/** Departments where the follow-up visit card reads "Re-assessment" (matches sidebar → GenericDepartmentDashboard `department` prop). */
+const DEPTS_FOLLOWUP_AS_REASSESSMENT = new Set([
+  "Physiotherapy",
+  "Integrated Rehab",
+  "Occupational Therapy",
+]);
+
 // Default cards shown to all departments
 const ASSESSMENT_CARDS = [
   { id: "initial",   title: "Initial Assessment",    desc: "Comprehensive assessment for new patient visit",   icon: "📋", accent: "#1D4ED8", tag: "New Patient",    tagBg: "#dbeafe", tagColor: "#1d4ed8" },
@@ -31,7 +38,25 @@ const NURSING_CARDS = [
 // Returns the correct card set for a given department
 function getCardsForDept(department) {
   if (department === "Nursing") return NURSING_CARDS;
-  return ASSESSMENT_CARDS.filter(c => !c.depts || c.depts.includes(department));
+  const cards = ASSESSMENT_CARDS.filter(c => !c.depts || c.depts.includes(department));
+  if (!DEPTS_FOLLOWUP_AS_REASSESSMENT.has(department)) return cards;
+  return cards.map(c =>
+    c.id === "followup"
+      ? {
+          ...c,
+          title: "Re-assessment",
+          desc: "Reassess progress and update the treatment plan",
+        }
+      : c
+  );
+}
+
+function assessmentViewTitle(assessmentView, department) {
+  if (assessmentView === "initial") return "Initial Assessment";
+  if (assessmentView === "followup") {
+    return DEPTS_FOLLOWUP_AS_REASSESSMENT.has(department) ? "Re-assessment" : "Follow-up Visit";
+  }
+  return "Intervention";
 }
 
 /* ── Status palette ────────────────────────────────────── */
@@ -188,7 +213,7 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
     return (
       <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>
         <div style={{ fontSize: 40, marginBottom: 12 }}>🚧</div>
-        <div style={{ fontSize: 16, fontWeight: 600, color: "#374151" }}>{assessmentView === "initial" ? "Initial Assessment" : assessmentView === "followup" ? "Follow-up Visit" : "Intervention"} — Coming Soon</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: "#374151" }}>{assessmentViewTitle(assessmentView, department)} — Coming Soon</div>
         <div style={{ fontSize: 13, marginTop: 6 }}>This module is under development for {department}.</div>
         <button onClick={handleBackToCards} style={{ marginTop: 20, padding: "9px 20px", borderRadius: 8, border: "1px solid #2563eb", background: "#fff", color: "#2563eb", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>← Back</button>
       </div>

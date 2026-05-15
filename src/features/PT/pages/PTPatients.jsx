@@ -4,7 +4,7 @@ import PTPatientDetails from "../components/PatientDetails";
 /* ── Assessment type cards ── */
 const ASSESSMENT_TYPES = [
   { id: "initial",  title: "Initial Assessment",   desc: "Comprehensive assessment for new patient visit",  icon: "📋", accent: "#1D4ED8", tag: "New Patient",   tagBg: "#dbeafe", tagColor: "#1d4ed8" },
-  { id: "followup", title: "Follow-up Visit",       desc: "Review progress and adjust treatment plan",       icon: "🔄", accent: "#059669", tag: "Returning",     tagBg: "#d1fae5", tagColor: "#065f46" },
+  { id: "followup", title: "Re-assessment",         desc: "Reassess progress and update the treatment plan", icon: "🔄", accent: "#059669", tag: "Returning",     tagBg: "#d1fae5", tagColor: "#065f46" },
   { id: "progress", title: "Progress Intervention", desc: "Document interventions and track outcomes",       icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",  tagBg: "#ede9fe", tagColor: "#5b21b6" },
   { id: "group",    title: "Group Intervention",    desc: "Record group session and multi-patient notes",    icon: "👥", accent: "#DC2626", tag: "Group Session", tagBg: "#fee2e2", tagColor: "#991b1b" },
 ];
@@ -100,7 +100,7 @@ function PatientRow({ patient: p, idx, onStart }) {
    MAIN COMPONENT
    Flow:
    1. Patient list → click "Begin assessment"
-   2. Select Assessment Type (Initial / Follow-up / Progress / Group)
+   2. Select Assessment Type (Initial / Re-assessment / Progress / Group)
    3. PTPatientDetails opens with condition tabs
       (Spinal Cord Injury | Neurology | Hydrotherapy | MSK | Conditioning | Cardio | Amputee)
       Each tab shows the assessment in the selected mode
