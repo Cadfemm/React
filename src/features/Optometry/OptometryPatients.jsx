@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
+import OptometryFollowUpAssessment from "./components/OptometryFollowUpAssessment";
 import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
 import OptometryProgressAssessment from "./components/OptometryProgressAssessment";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
@@ -117,11 +118,27 @@ export default function OptometryPatients({ onBack, loading = false }) {
   /* ── Assessment views ── */
   if (selectedPatient && assessmentView === "initial") {
     const saved = submittedAssessments[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
+    return (
+      <OptometryAssessment
+        patient={selectedPatient}
+        savedValues={saved}
+        readOnly={!!saved}
+        onSubmit={handleInitialSubmit}
+        onBack={handleBackToCards}
+      />
+    );
   }
   if (selectedPatient && assessmentView === "followup") {
     const saved = submittedFollowups[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+    return (
+      <OptometryFollowUpAssessment
+        patient={selectedPatient}
+        savedValues={saved}
+        readOnly={!!saved}
+        onSubmit={handleFollowupSubmit}
+        onBack={handleBackToCards}
+      />
+    );
   }
   if (selectedPatient && assessmentView === "progress") {
     return (
