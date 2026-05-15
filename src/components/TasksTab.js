@@ -17,7 +17,7 @@ const TasksTab = () => {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: '20px' }}>
       <h2 style={{ marginBottom: '15px', fontSize: '2rem', color: 'rgb(42, 101, 146)' }}>Task List</h2>
 
       <table

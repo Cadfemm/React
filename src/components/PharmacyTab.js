@@ -22,7 +22,7 @@ const PharmacyTab = () => {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: '20px' }}>
       <h2 style={{ marginBottom: '15px', fontSize: '2rem', color: 'rgb(42, 101, 146)' }}>Pharmacy Schedule</h2>
 
       <table
@@ -78,7 +78,7 @@ const PharmacyTab = () => {
 const tableHeaderStyles = {
   backgroundColor: '#F1F1F1',
   border: '1px solid #000',
-  color: '#3A3FAD',
+  color: '#000',
   padding: '12px',
   fontWeight: 'bold',
 };

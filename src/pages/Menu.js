@@ -27,7 +27,6 @@ import ICDNormal from "../components/ICDNormal";
 import ICFNormal from "../components/ICFNormal";
 import PharmacyDetailsCaptureTab from "../components/PharmacyDetailsCaptureTab";
 import ICHITab from "../components/ICHITab";
-import TopToolbar from "../components/TopToolbar";
 import ICDInfinite from "../components/ICDInfinite";
 import RAPFinal from "../components/RAPFinal"
 import RAPCaseDashboardView from "../components/RAPCaseDashboardView";
@@ -379,7 +378,7 @@ useEffect(() => {
       <StyleBlock />
       {/* Home interface when no user is selected */}
 
-      <div className="page">
+      <div className="page page--app-shell">
         {/* Left rail */}
         <SidebarNav
           tab={tab}
@@ -393,16 +392,10 @@ useEffect(() => {
         />
 
         {/* Main area */}
-        <main className="main">
+        <main className="main min-w-0 flex-1 pt-14 md:pt-0">
           {/* /* Global toolbar */}
 
-          <TopToolbar
-            showProfileMenu={showProfileMenu}
-            toggleProfileMenu={toggleProfileMenu}
-            onBook={() => navigateToTab("BOOK_APPOINTMENT")}
-            onOrder={() => navigateToTab("ORDER_INVESTIGATIONS")}
-            onSaveAll={saveEverything}
-          />
+
 
 
 

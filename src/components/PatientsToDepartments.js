@@ -16,7 +16,7 @@ export default function PatientsToDepartments({ setTab }) {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: "20px"}}>
       <h2 style={{ fontSize: "24px", marginBottom: "20px" }}>
         Existing Patients Data
       </h2>

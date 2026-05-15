@@ -99,7 +99,7 @@ export default function NewAppointment({ patientId }) {
           onClick={handleBookAppointment}
           disabled={loading}
           style={{
-            backgroundColor: "#3A3FAD",
+            backgroundColor: "#000",
             color: "#fff",
             padding: "6px 6px",
             cursor: "pointer",

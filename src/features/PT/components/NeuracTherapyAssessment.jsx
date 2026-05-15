@@ -46,7 +46,7 @@ const SUBJECTIVE_SCHEMA = {
 };
 
 const OBJECTIVE_SCHEMA = {
-  title: "OBJECTIVE",
+  
   actions: ACTIONS,
   sections: [{
     fields: [
@@ -64,61 +64,8 @@ const OBJECTIVE_SCHEMA = {
       {
    name: "others",
       label: "Others",
-      type: "textarea",
+      type: "input",
 },
-//          {
-//           type: "subheading",
-//           label: "Perform+ Test"
-//         },
-
-//       {
-//   name: "core_brace",
-//   label: "Core Brace",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "abduction",
-//   label: "Abduction",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "heel_raise",
-//   label: "Heel raise",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "scapula_assist",
-//   label: "Scapula assist",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "scapula_retraction",
-//   label: "Scapula Retraction",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "scapula_stabilization",
-//   label: "Scapula stabilization",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-//     {
-//   name: "msk_functional_limitation",
-//   label: "Core Brace",
-//   type: "radio",
-//   options: POS_NEG_OPTIONS 
-// },
-// {
-//    name: "others",
-//       label: "Others",
-//       type: "textarea",
-// }
-
 
 
     ],
@@ -126,20 +73,20 @@ const OBJECTIVE_SCHEMA = {
 };
 
 const ASSESSMENT_SCHEMA = {
-  title: "ASSESSMENT",
+ 
   actions: ACTIONS,
   sections: [{
     fields: [{
       name: "clinical_impression",
       label: "Clinical Impression",
-      type: "textarea",
+      type: "input",
       placeholder: "Enter clinical findings and summary...",
     }],
   }],
 };
 
 const PLAN_SCHEMA = {
-  title: "",
+ 
   actions: ACTIONS,
   sections: [{
     fields: [
@@ -148,7 +95,7 @@ const PLAN_SCHEMA = {
       { type: "subheading",    label: "Long-Term Goals (6–12 weeks)" },
       { type: "dynamic-goals", name: "long_term_goals"               },
       { name: "Interventions", label: "Interventions", type: "input"   },
-      { name: "plan",          label: "Plan",          type: "textarea" },
+      { name: "plan",          label: "Plan",          type: "input" },
     ],
   }],
 };
@@ -413,8 +360,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           ].map(({ key, label }) => (
             <div key={key}>
               <b>{label}</b>
-              <textarea
-                style={textarea}
+              <input
+                style={input}
                 value={patientHistory[key]}
                 onChange={e => setPatientHistory(prev => ({ ...prev, [key]: e.target.value }))}
               />
@@ -436,6 +383,6 @@ const tabBtn       = { padding: "10px 22px", fontWeight: 600, cursor: "pointer",
 const tabActive    = { ...tabBtn, borderBottom: "3px solid #2451b3", color: "#2451b3" };
 const submitRow    = { display: "flex", justifyContent: "flex-end", marginTop: 20 };
 const submitBtn    = { padding: "12px 32px", background: "#2563EB", color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700 };
-const textarea     = { width: "100%", minHeight: 90, marginTop: 6, marginBottom: 12, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, resize: "vertical" };
+const input     = { width: "100%", minHeight: 90, marginTop: 6, marginBottom: 12, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, resize: "vertical" };
 const alertBtn     = { marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid #007bff", background: "#007bff", color: "#fff", fontWeight: 600, cursor: "pointer" };
 const doctorsReportBtn = { padding: "10px 20px", background: "#2563EB", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 8 };

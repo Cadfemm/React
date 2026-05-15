@@ -7,6 +7,8 @@ function StyleBlock() {
       * { box-sizing:border-box; }
       body { margin:0; background:var(--bg); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
       .page { display:grid; grid-template-columns:260px 1fr; min-height:100vh;background-color:#F1F4F4 !important; }
+      /* Menu + responsive sidebar: flex so rail width can animate (Tailwind + Framer Motion) */
+      .page.page--app-shell { display:flex; align-items:stretch; min-height:100vh; background-color:#F1F4F4 !important; }
       .rail { background:#fff; border-right:1px solid #dee2e6; color:#212529; gap:0;
                position:sticky; top:0; padding-top:45px; height:100vh; display:flex; flex-direction:column; overflow:visible; }
       .tabs { display:flex; flex-direction:column; padding:4px 0; }
@@ -407,7 +409,7 @@ padding: 5px 15px;
 /* audit trail */
 .timeline { margin: 10px 25px; position:relative; padding-left:16px; }
 .t-item { display:flex; gap:12px; margin:14px 0; }
-.t-dot { width:10px; height:10px; background:#3A3FAD; border-radius:50%; margin-top:6px; }
+.t-dot { width:10px; height:10px; background:#000; border-radius:50%; margin-top:6px; }
 .t-body { }
 .t-date { font-weight:600; color:#000332; margin-bottom:4px; }
 .t-text { color:#334155; }

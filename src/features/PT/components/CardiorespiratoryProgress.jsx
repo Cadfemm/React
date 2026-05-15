@@ -13,7 +13,7 @@ const ACTIONS = [
 ══════════════════════════════════════════════════════════ */
 
 const SUBJECTIVE_SCHEMA = {
-  title: "Progress Note",
+ 
 actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -29,7 +29,7 @@ actions: [
 
 
 const OBJECTIVE_SCHEMA = {
-  title: "Objective",
+ 
   actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -197,7 +197,6 @@ const OBJECTIVE_SCHEMA = {
   ]
 };
 const ASSESSMENT_SCHEMA = {
-  title: "Assessment & Response",
  actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },
@@ -215,7 +214,7 @@ const ASSESSMENT_SCHEMA = {
 };
 
 const PLAN_SCHEMA = {
-  title: "Plan",
+ 
  actions: [
       { type: "back", label: "Back" },
       { type: "clear", label: "Clear" },

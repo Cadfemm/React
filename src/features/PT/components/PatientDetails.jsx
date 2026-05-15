@@ -30,7 +30,9 @@ const TABS = [
 
 const TYPE_LABELS = {
   initial:  "Initial Assessment",
-  followup: "Follow-up Visit",
+  // followup: "Follow-up Visit",
+    followup: "Re-Assessments",
+
   progress: "Progress Intervention",
   group:    "Group Intervention",
 };

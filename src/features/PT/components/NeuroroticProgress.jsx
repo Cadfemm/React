@@ -72,7 +72,7 @@ actions: [
 {
   name: "gait_training_remarks",
   label: "Gait Training Remarks",
-  type: "textarea",
+  type: "input",
   rows: 3,
   showIf: {
     field: "conventional_exercise",
@@ -89,76 +89,37 @@ actions: [
     includes: "others"
   }
 },
-
-{
-  name: "conventional_exercise_other_remarks",
-  label: "Others Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "conventional_exercise",
-    includes: "others"
-  }
-},
 {
   type: "subheading",
-  label: "Modalities Exercise"
+  label: "Cybernics Interventions"
 },
-
 {
-  name: "modalities_exercise",
-  label: "Modalities Exercise",
+  name: "cybernics_interventions",
+  
   type: "checkbox-group",
   options: [
-    { label: "Cyberdyne HAL LL", value: "cyberdyne_hal_ll" },
-    { label: "Cyberdyne HAL SJ", value: "cyberdyne_hal_sj" },
-    { label: "Cyberdyne HAL Lumbar", value: "cyberdyne_hal_lumbar" },
-    { label: "Luna EMG", value: "luna_emg" },
-    { label: "Stella Bio", value: "stella_bio" },
-    { label: "Meissa OT", value: "meissa_ot" },
-    { label: "Sidra LEG", value: "sidra_leg" },
-    { label: "FESIA Walk", value: "fesia_walk" },
-    { label: "FESIA Grasp", value: "fesia_grasp" },
-    { label: "FESIA Bike", value: "fesia_bike" },
-    { label: "Arm Motus EMU", value: "arm_motus_emu" },
-    { label: "Arm Motus M2 Pro", value: "arm_motus_m2_pro" },
-    { label: "Exo Motus", value: "exo_motus" },
-    { label: "Ankle Motus", value: "ankle_motus" },
-    { label: "Pelma Motus", value: "pelma_motus" },
-    { label: "Wrist Motus", value: "wrist_motus" },
-    { label: "Cycle Motus", value: "cycle_motus" },
-    { label: "MyndMove", value: "myndmove" },
-    { label: "Vibramoov", value: "vibramoov" },
-    { label: "ROBERT", value: "robert" },
-    { label: "Tymo", value: "tymo" },
-    { label: "Pablo", value: "pablo" },
-    { label: "BWS Walker", value: "bws_walker" },
-    { label: "Syrebo", value: "syrebo" },
-    { label: "Chattanooga", value: "chattanooga" },
     {
-      label: "Brain Computer Interface (BCI)",
-      value: "brain_computer_interface"
+      label: "Cyberdyne HAL Lower Limb",
+      value: "cyberdyne_hal_lower_limb"
     },
-    { label: "Others", value: "others" }
+    {
+      label: "Cyberdyne HAL SJ",
+      value: "cyberdyne_hal_sj"
+    },
+    {
+      label: "Cyberdyne HAL Lumbar",
+      value: "cyberdyne_hal_lumbar"
+    }
   ]
 },
 
-// ======================================================
-// Cyberdyne HAL LL
-// ======================================================
+// =====================================================
+// 1. CYBERDYNE HAL LOWER LIMB
+// =====================================================
 
 {
-  type: "subheading",
-  label: "Cyberdyne HAL LL",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_ll"
-  }
-},
-
-{
-  name: "hal_ll_equipment",
-  label: "Equipment",
+  name: "hal_lower_limb_training_modality",
+  label: "Training Modality",
   type: "radio",
   options: [
     { label: "Treadmill", value: "treadmill" },
@@ -166,128 +127,433 @@ actions: [
     { label: "Ceiling Hoist", value: "ceiling_hoist" }
   ],
   showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_ll"
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
   }
 },
-
 {
-  name: "hal_ll_region",
-  label: "Region",
-  type: "input",
+  type: "subheading",
+  label: "Parameter",
   showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_ll"
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
   }
 },
-
 {
-  name: "hal_ll_duration",
-  label: "Duration",
-  type: "input",
+  name: "hal_lower_limb_side",
+  label: "Side",
+  type: "radio",
+  options: [
+    { label: "Left", value: "left" },
+    { label: "Right", value: "right" },
+    { label: "Bilateral", value: "bilateral" }
+  ],
   showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_ll"
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
   }
 },
 
 {
-  name: "hal_ll_remarks",
+  name: "hal_lower_limb_mode",
+  label: "Mode",
+  type: "radio",
+  options: [
+    { label: "CVC", value: "cvc" },
+    { label: "CAC", value: "cac" },
+    { label: "CVC + CAC", value: "cvc_cac" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
+  }
+},
+
+// Sensitivity Levels
+{
+  name: "hal_lower_limb_lh_sensitivity",
+  label: "LH Sensitivity Level",
+  type: "single-select",
+  options: [
+    { label: "A1", value: "A1" },
+    { label: "A2", value: "A2" },
+    { label: "A5", value: "A5" },
+    { label: "A10", value: "A10" },
+    { label: "B1", value: "B1" },
+    { label: "B2", value: "B2" },
+    { label: "B5", value: "B5" },
+    { label: "B10", value: "B10" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
+  }
+},
+{
+  name: "hal_lower_limb_rh_sensitivity",
+  label: "RH Sensitivity Level",
+  type: "single-select",
+  options: [
+    { label: "A1", value: "A1" },
+    { label: "A2", value: "A2" },
+    { label: "A5", value: "A5" },
+    { label: "A10", value: "A10" },
+    { label: "B1", value: "B1" },
+    { label: "B2", value: "B2" },
+    { label: "B5", value: "B5" },
+    { label: "B10", value: "B10" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
+  }
+},
+{
+  name: "hal_lower_limb_lk_sensitivity",
+  label: "LK Sensitivity Level",
+  type: "single-select",
+  options: [
+    { label: "A1", value: "A1" },
+    { label: "A2", value: "A2" },
+    { label: "A5", value: "A5" },
+    { label: "A10", value: "A10" },
+    { label: "B1", value: "B1" },
+    { label: "B2", value: "B2" },
+    { label: "B5", value: "B5" },
+    { label: "B10", value: "B10" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
+  }
+},
+{
+  name: "hal_lower_limb_rk_sensitivity",
+  label: "RK Sensitivity Level",
+  type: "single-select",
+  options: [
+    { label: "A1", value: "A1" },
+    { label: "A2", value: "A2" },
+    { label: "A5", value: "A5" },
+    { label: "A10", value: "A10" },
+    { label: "B1", value: "B1" },
+    { label: "B2", value: "B2" },
+    { label: "B5", value: "B5" },
+    { label: "B10", value: "B10" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
+  }
+},
+
+
+{
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_lower_limb" },
+  fields: [
+    {
+      name: "hal_lower_limb_lh_torque",
+      label: "LH Torque",
+      type: "input",
+      placeholder: "Enter LH torque"
+    },
+    {
+      name: "hal_lower_limb_rh_torque",
+      label: "RH Torque",
+      type: "input",
+      placeholder: "Enter RH torque"
+    }
+  ]
+},
+{
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_lower_limb" },
+  fields: [
+    {
+      name: "hal_lower_limb_lk_torque",
+      label: "LK Torque",
+      type: "input",
+      placeholder: "Enter LK torque"
+    },
+    {
+      name: "hal_lower_limb_rk_torque",
+      label: "RK Torque",
+      type: "input",
+      placeholder: "Enter RK torque"
+    }
+  ]
+},
+{
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_lower_limb" },
+  fields: [
+    {
+      name: "hal_lower_limb_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration"
+    },
+    {
+      name: "hal_lower_limb_steps",
+      label: "Steps",
+      type: "input",
+      placeholder: "Enter steps"
+    }
+  ]
+},
+{
+  name: "hal_lower_limb_remarks",
   label: "Remarks",
-  type: "textarea",
+  type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_ll"
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lower_limb"
   }
 },
 
-// ======================================================
-// Cyberdyne HAL SJ
-// ======================================================
+
+{
+  name: "hal_sj_body_parts",
+  label: "Body Parts",
+  type: "checkbox-group",
+  options: [
+    { label: "Elbow", value: "elbow" },
+    { label: "Knee", value: "knee" },
+    { label: "Wrist", value: "wrist" },
+    { label: "Ankle", value: "ankle" },
+    { label: "Shoulder", value: "shoulder" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_sj"
+  }
+},
 
 {
   type: "subheading",
-  label: "Cyberdyne HAL SJ",
+  label: "Parameters",
   showIf: {
-    field: "modalities_exercise",
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_sj"
+  }
+},
+{
+  name: "hal_sj_mode",
+  label: "Mode",
+  type: "radio",
+  options: [
+    { label: "Standard", value: "standard" },
+    { label: "Gentle", value: "gentle" },
+    { label: "Auto-Ext", value: "auto_ext" },
+    { label: "Auto-Flex", value: "auto_flex" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
     includes: "cyberdyne_hal_sj"
   }
 },
 
 {
-  name: "hal_sj_region",
-  label: "Region",
+  name: "hal_sj_exercises",
+  label: "Types of Exercise / Movements",
   type: "input",
+  placeholder: "Enter exercises or movements",
   showIf: {
-    field: "modalities_exercise",
+    field: "cybernics_interventions",
     includes: "cyberdyne_hal_sj"
   }
 },
 
 {
-  name: "hal_sj_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_sj"
-  }
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_sj" },
+  fields: [
+    {
+      name: "hal_sj_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration"
+    },
+    {
+      name: "hal_sj_repetitions",
+      label: "Repetitions",
+      type: "input",
+      placeholder: "Enter repetitions"
+    }
+  ]
 },
-
 {
-  name: "hal_sj_remarks",
-  label: "Remarks",
-  type: "textarea",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_sj"
-  }
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_sj" },
+  fields: [
+    {
+      name: "hal_sj_sets",
+      label: "Sets",
+      type: "input",
+      placeholder: "Enter sets"
+    },
+    {
+      name: "hal_sj_remarks",
+      label: "Remarks",
+      type: "input",
+      placeholder: "Enter remarks"
+    }
+  ]
 },
 
-// ======================================================
-// Cyberdyne HAL Lumbar
-// ======================================================
-
+// =====================================================
+// 3. CYBERDYNE HAL LUMBAR
+// =====================================================
 {
   type: "subheading",
-  label: "Cyberdyne HAL Lumbar",
+  label: "Parameter",
   showIf: {
-    field: "modalities_exercise",
+    field: "cybernics_interventions",
+    includes: "cyberdyne_hal_lumbar"
+  }
+},
+{
+  name: "hal_lumbar_mode",
+  label: "Mode",
+  type: "radio",
+  options: [
+    { label: "CVC", value: "cvc" },
+    { label: "CAC", value: "cac" },
+    { label: "CVC + CAC", value: "cvc_cac" }
+  ],
+  showIf: {
+    field: "cybernics_interventions",
     includes: "cyberdyne_hal_lumbar"
   }
 },
 
-{
-  name: "hal_lumbar_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_lumbar"
-  }
-},
+// {
+//   name: "hal_lumbar_exercises",
+//   label: "Types of Exercise / Movements",
+//   type: "input",
+//   placeholder: "Enter exercises or movements",
+//   showIf: {
+//     field: "cybernics_interventions",
+//     includes: "cyberdyne_hal_lumbar"
+//   }
+// },
 
 {
+  type: "row",
+  showIf: { field: "cybernics_interventions", includes: "cyberdyne_hal_lumbar" },
+  fields: [
+    {
+  name: "hal_lumbar_exercises",
+  label: "Types of Exercise / Movements",
+  type: "input",
+  placeholder: "Enter exercises or movements",},
+    {
+      name: "hal_lumbar_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration"
+    },
+    {
+      name: "hal_lumbar_repetitions",
+      label: "Repetitions",
+      type: "input",
+      placeholder: "Enter repetitions"
+    },
+    {
+  name: "hal_lumbar_sets",
+  label: "Sets",
+  type: "input",
+  placeholder: "Enter sets"},
+  {
   name: "hal_lumbar_remarks",
   label: "Remarks",
-  type: "textarea",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "cyberdyne_hal_lumbar"
-  }
+  type: "input",
+  placeholder: "Enter remarks"},
+  ]
 },
-// ======================================================
-// LUNA EMG
-// ======================================================
-
+// {
+//   name: "hal_lumbar_sets",
+//   label: "Sets",
+//   type: "input",
+//   placeholder: "Enter sets",
+//   showIf: {
+//     field: "cybernics_interventions",
+//     includes: "cyberdyne_hal_lumbar"
+//   }
+// },
+// {
+//   name: "hal_lumbar_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "cybernics_interventions",
+//     includes: "cyberdyne_hal_lumbar"
+//   }
+// },
 {
   type: "subheading",
+  label: "Neuro-Robotics and Neuromodulation Interventions"
+},
+{
+  name: "neuro_robotics_neuromodulation_interventions",
+  
+  type: "checkbox-group",
+  options: [
+    
+    { label: "Luna EMG", value: "luna_emg" },
+    { label: "Stella Bio", value: "stella_bio" },
+    { label: "Meissa OT", value: "meissa_ot" },
+    { label: "Sidra LEG", value: "sidra_leg" },
+    { label: "FESIA Walk", value: "fesia_walk" },
+    { label: "FESIA Grasp", value: "fesia_grasp" },
+    { label: "FESIA Bike", value: "fesia_bike" },
+    { label: "MyndMove", value: "myndmove" },
+    { label: "Vibramoov", value: "vibramoov" },
+    { label: "ROBERT", value: "robert" },
+    { label: "Arm Motus EMU", value: "arm_motus_emu" },
+    { label: "Arm Motus M2 Pro", value: "arm_motus_m2_pro" },
+    { label: "Exo Motus", value: "exo_motus" },
+    { label: "Ankle Motus", value: "ankle_motus" },
+    { label: "Pelma Motus", value: "pelma_motus" },
+    { label: "Wrist Motus", value: "wrist_motus" },
+    { label: "Cycle Motus", value: "cycle_motus" },
+    { label: "Tymo", value: "tymo" },
+    { label: "Pablo", value: "pablo" },
+    { label: "BWS Walker", value: "bws_walker" },
+    { label: "Syrebo", value: "syrebo" },
+    { label: "LIFESCAPE Medical BCI", value: "lifescape_medical_bci" },
+    {
+      label: "RecoveriX Brain Computer Interface (BCI)",
+      value: "recoverix_bci"
+    },
+    { label: "Others", value: "others" }
+  ]
+},
+{
+  name: "Luna_EMG_subheading",
   label: "Luna EMG",
+  type: "subheading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "luna_emg"
   }
 },
+{
+  name: "neuro_robotics_neuromodulation_others",
+  label: "Others",
+  type: "input",
+  placeholder: "Enter other interventions",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "others"
+  }
+},
+// =====================================================
+// LUNA EMG
+// =====================================================
 
 {
   name: "luna_emg_region",
@@ -302,85 +568,848 @@ actions: [
     { label: "Ankle", value: "ankle" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "luna_emg"
   }
 },
 
-// ======================================================
-// ORTHOPEDIC MODE
-// ======================================================
+{
+  type: "subheading",
+  label: "Mode Selection",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "luna_emg"
+  }
+},
 
 {
-  name: "luna_emg_ortho_mode",
-  label: "Orthopedic Mode",
+  name: "luna_emg_mode",
+  label: "Mode",
+  type: "radio",
+  options: [
+    { label: "Orthopedic", value: "orthopedic" },
+    { label: "Neurologic", value: "neurologic" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "luna_emg"
+  }
+},
+
+// =====================================================
+// ORTHOPEDIC MODE
+// =====================================================
+
+{
+  name: "luna_emg_orthopedic_programs",
+  label: "Orthopedic Programs",
   type: "checkbox-group",
   options: [
-    { label: "CPM (Exercise Time / Speed / Max Torque)", value: "cpm" },
+    { label: "CPM", value: "cpm" },
     { label: "Elastic Resistance", value: "elastic_resistance" },
-    { label: "Joint Position Sense - Visible Position", value: "jps_visible" },
-    { label: "Joint Position Sense - Hidden Position", value: "jps_hidden" },
+    {
+      label: "Joint Position Sense - Visible Position",
+      value: "joint_position_visible"
+    },
+    {
+      label: "Joint Position Sense - Hidden Position",
+      value: "joint_position_hidden"
+    },
     { label: "Weight Lifting", value: "weight_lifting" },
     { label: "Dynamic Reversal", value: "dynamic_reversal" },
     { label: "Progressive CPM", value: "progressive_cpm" }
   ],
   showIf: {
-    field: "modalities_exercise",
-    includes: "luna_emg"
+    field: "luna_emg_mode",
+    equals: "orthopedic"
+  }
+},
+// =====================================================
+// LUNA EMG - CPM PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_cpm_subheading",
+  label: "CPM Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "cpm"
   }
 },
 
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "cpm" },
+  fields: [
+    {
+      name: "luna_emg_cpm_exs_time",
+      label: "Exercise Time",
+      type: "input",
+      placeholder: "Enter exercise time"
+    },
+    {
+      name: "luna_emg_cpm_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+  name: "luna_emg_cpm_max_torque",
+  label: "Max Torque",
+  type: "input"},
+  {
+  name: "luna_emg_cpm_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  },
+  ]
+},
 
-// ======================================================
-// NEUROLOGIC MODE
-// ======================================================
+// {
+//   name: "luna_emg_cpm_max_torque",
+//   label: "Max Torque",
+//   type: "input",
+//   placeholder: "Enter maximum torque",
+//   showIf: {
+//     field: "luna_emg_orthopedic_programs",
+//     includes: "cpm"
+//   }
+// },
+
+// {
+//   name: "luna_emg_cpm_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "luna_emg_orthopedic_programs",
+//     includes: "cpm"
+//   }
+// },
+// =====================================================
+// LUNA EMG - ELASTIC RESISTANCE PARAMETERS
+// =====================================================
 
 {
-  name: "luna_emg_neuro_mode",
-  label: "Neurologic Mode",
-  type: "radio",
+  name: "luna_emg_elastic_resistance_subheading",
+  label: "Elastic Resistance Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "elastic_resistance"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "elastic_resistance" },
+  fields: [
+    {
+      name: "luna_emg_elastic_resistance_multiplier",
+      label: "Multiplier",
+      type: "input",
+      placeholder: "Enter multiplier"
+    },
+    {
+      name: "luna_emg_elastic_resistance_max_torque",
+      label: "Max Torque",
+      type: "input",
+      placeholder: "Enter maximum torque"
+    },
+    {
+  name: "luna_emg_elastic_resistance_connection_point",
+  label: "Connection Point",
+  type: "input",
+  placeholder: "Enter connection point"},
+  {
+  name: "luna_emg_elastic_resistance_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks"},
+  ]
+},
+
+// {
+//   name: "luna_emg_elastic_resistance_connection_point",
+//   label: "Connection Point",
+//   type: "input",
+//   placeholder: "Enter connection point",
+//   showIf: {
+//     field: "luna_emg_orthopedic_programs",
+//     includes: "elastic_resistance"
+//   }
+// },
+
+// {
+//   name: "luna_emg_elastic_resistance_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "luna_emg_orthopedic_programs",
+//     includes: "elastic_resistance"
+//   }
+// },
+
+// =====================================================
+// LUNA EMG - JOINT POSITION SENSE (VISIBLE POSITION)
+// =====================================================
+
+{
+  name: "luna_emg_joint_position_visible_subheading",
+  label: "Joint Position Sense - Visible Position Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "joint_position_visible"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "joint_position_visible" },
+  fields: [
+    {
+      name: "luna_emg_joint_position_visible_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+      name: "luna_emg_joint_position_visible_insensitivity",
+      label: "Insensitivity",
+      type: "input",
+      placeholder: "Enter insensitivity"
+    }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "joint_position_visible" },
+  fields: [
+    {
+      name: "luna_emg_joint_position_visible_position_keep_time",
+      label: "Position Keep Time",
+      type: "input",
+      placeholder: "Enter position keep time"
+    },
+    {
+      name: "luna_emg_joint_position_visible_goal_position_size",
+      label: "Goal Position Size",
+      type: "input",
+      placeholder: "Enter goal position size"
+    }
+  ]
+},
+
+{
+  name: "luna_emg_joint_position_visible_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "joint_position_visible"
+  }
+},
+
+// =====================================================
+// LUNA EMG - JOINT POSITION SENSE (HIDDEN POSITION)
+// =====================================================
+
+{
+  name: "luna_emg_joint_position_hidden_subheading",
+  label: "Joint Position Sense - Hidden Position Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "joint_position_hidden"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "joint_position_hidden" },
+  fields: [
+    {
+      name: "luna_emg_joint_position_hidden_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+      name: "luna_emg_joint_position_hidden_insensitivity",
+      label: "Insensitivity",
+      type: "input",
+      placeholder: "Enter insensitivity"
+    }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "joint_position_hidden" },
+  fields: [
+    {
+      name: "luna_emg_joint_position_hidden_position_keep_time",
+      label: "Position Keep Time",
+      type: "input",
+      placeholder: "Enter position keep time"
+    },
+    {
+      name: "luna_emg_joint_position_hidden_goal_position_size",
+      label: "Goal Position Size",
+      type: "input",
+      placeholder: "Enter goal position size"
+    }
+  ]
+},
+
+{
+  name: "luna_emg_joint_position_hidden_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "joint_position_hidden"
+  }
+},
+
+// =====================================================
+// LUNA EMG - WEIGHT LIFTING PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_weight_lifting_subheading",
+  label: "Weight Lifting Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "weight_lifting"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "weight_lifting" },
+  fields: [
+    {
+      name: "luna_emg_weight_lifting_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+      name: "luna_emg_weight_lifting_insensitivity",
+      label: "Insensitivity",
+      type: "input",
+      placeholder: "Enter insensitivity"
+    }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "weight_lifting" },
+  fields: [
+    {
+      name: "luna_emg_weight_lifting_max_torque",
+      label: "Max Torque",
+      type: "input",
+      placeholder: "Enter maximum torque"
+    },
+    {
+      name: "luna_emg_weight_lifting_centre_of_gravity",
+      label: "Centre of Gravity",
+      type: "input",
+      placeholder: "Enter centre of gravity"
+    }
+  ]
+},
+
+{
+  name: "luna_emg_weight_lifting_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "weight_lifting"
+  }
+},
+
+// =====================================================
+// LUNA EMG - DYNAMIC REVERSAL PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_dynamic_reversal_subheading",
+  label: "Dynamic Reversal Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "dynamic_reversal"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "dynamic_reversal" },
+  fields: [
+    {
+      name: "luna_emg_dynamic_reversal_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+      name: "luna_emg_dynamic_reversal_exs_time",
+      label: "Exercise Time",
+      type: "input",
+      placeholder: "Enter exercise time"
+    }
+  ]
+},
+
+{
+  name: "luna_emg_dynamic_reversal_insensitivity",
+  label: "Insensitivity",
+  type: "input",
+  placeholder: "Enter insensitivity",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "dynamic_reversal"
+  }
+},
+
+{
+  name: "luna_emg_dynamic_reversal_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "dynamic_reversal"
+  }
+},
+
+// =====================================================
+// LUNA EMG - PROGRESSIVE CPM PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_progressive_cpm_subheading",
+  label: "Progressive CPM Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "progressive_cpm"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "progressive_cpm" },
+  fields: [
+    {
+      name: "luna_emg_progressive_cpm_speed",
+      label: "Speed",
+      type: "input",
+      placeholder: "Enter speed"
+    },
+    {
+      name: "luna_emg_progressive_cpm_max_torque",
+      label: "Max Torque",
+      type: "input",
+      placeholder: "Enter maximum torque"
+    }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "progressive_cpm" },
+  fields: [
+    {
+      name: "luna_emg_progressive_cpm_angle_increment",
+      label: "Angle Increment",
+      type: "input",
+      placeholder: "Enter angle increment"
+    },
+    {
+      name: "luna_emg_progressive_cpm_increment_every_reps",
+      label: "Increment Every (Reps)",
+      type: "input",
+      placeholder: "Enter repetitions"
+    }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_orthopedic_programs", includes: "progressive_cpm" },
+  fields: [
+    {
+      name: "luna_emg_progressive_cpm_pause_min_rom",
+      label: "Pause in Minimum ROM (sec)",
+      type: "input",
+      placeholder: "Enter pause duration"
+    },
+    {
+      name: "luna_emg_progressive_cpm_pause_max_rom",
+      label: "Pause in Maximum ROM (sec)",
+      type: "input",
+      placeholder: "Enter pause duration"
+    }
+  ]
+},
+
+{
+  name: "luna_emg_progressive_cpm_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_orthopedic_programs",
+    includes: "progressive_cpm"
+  }
+},
+// =====================================================
+// NEUROLOGIC MODE
+// =====================================================
+
+{
+  name: "luna_emg_neurologic_programs",
+  label: "Neurologic Programs",
+  type: "checkbox-group",
   options: [
-    { label: "Advanced EMG Biofeedback", value: "adv_emg_biofeedback" },
-    { label: "EMG Biofeedback", value: "emg_biofeedback" },
-    { label: "Reactive EMG T&H", value: "reactive_emg_th" },
-    { label: "Reactive EMG T&R", value: "reactive_emg_tr" }
+    {
+      label: "Advanced EMG Biofeedback",
+      value: "advanced_emg_biofeedback"
+    },
+    {
+      label: "EMG Biofeedback",
+      value: "emg_biofeedback"
+    },
+    {
+      label: "Reactive EMG T&H",
+      value: "reactive_emg_th"
+    },
+    {
+      label: "Reactive EMG T&R",
+      value: "reactive_emg_tr"
+    }
   ],
   showIf: {
-    field: "modalities_exercise",
-    includes: "luna_emg"
+    field: "luna_emg_mode",
+    equals: "neurologic"
   }
 },
-
-// ======================================================
-// COMMON PARAMETERS
-// ======================================================
+// =====================================================
+// LUNA EMG - ADVANCED EMG BIOFEEDBACK PARAMETERS
+// =====================================================
 
 {
-  name: "luna_emg_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "luna_emg"
-  }
-},
-{
+  name: "luna_emg_advanced_emg_biofeedback_subheading",
+  label: "Advanced EMG Biofeedback Parameters",
   type: "subheading",
-  label: "Stella Bio",
   showIf: {
-    field: "modalities_exercise",
+    field: "luna_emg_neurologic_programs",
+    includes: "advanced_emg_biofeedback"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "advanced_emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_advanced_emg_biofeedback_duration", label: "Duration", type: "input", placeholder: "Enter duration" },
+    { name: "luna_emg_advanced_emg_biofeedback_rom", label: "ROM", type: "input", placeholder: "Enter ROM" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "advanced_emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_advanced_emg_biofeedback_average_torque", label: "Average Torque", type: "input", placeholder: "Enter average torque" },
+    { name: "luna_emg_advanced_emg_biofeedback_peak_torque", label: "Peak Torque", type: "input", placeholder: "Enter peak torque" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "advanced_emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_advanced_emg_biofeedback_speed", label: "Speed", type: "input", placeholder: "Enter speed" },
+    { name: "luna_emg_advanced_emg_biofeedback_repetition", label: "Repetition", type: "input", placeholder: "Enter repetitions" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "advanced_emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_advanced_emg_biofeedback_minimum_uv", label: "Minimum μV", type: "input", placeholder: "Enter minimum μV" },
+    { name: "luna_emg_advanced_emg_biofeedback_maximum_uv", label: "Maximum μV", type: "input", placeholder: "Enter maximum μV" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "advanced_emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_advanced_emg_biofeedback_average_uv", label: "Average μV", type: "input", placeholder: "Enter average μV" },
+    { name: "luna_emg_advanced_emg_biofeedback_muscle_tone", label: "Muscle Tone", type: "input", placeholder: "Enter muscle tone" }
+  ]
+},
+
+{
+  name: "luna_emg_advanced_emg_biofeedback_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "advanced_emg_biofeedback"
+  }
+},
+// =====================================================
+// LUNA EMG - EMG BIOFEEDBACK PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_emg_biofeedback_subheading",
+  label: "EMG Biofeedback Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "emg_biofeedback"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_emg_biofeedback_duration", label: "Duration", type: "input", placeholder: "Enter duration" },
+    { name: "luna_emg_emg_biofeedback_rom", label: "ROM", type: "input", placeholder: "Enter ROM" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_emg_biofeedback_average_torque", label: "Average Torque", type: "input", placeholder: "Enter average torque" },
+    { name: "luna_emg_emg_biofeedback_peak_torque", label: "Peak Torque", type: "input", placeholder: "Enter peak torque" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_emg_biofeedback_speed", label: "Speed", type: "input", placeholder: "Enter speed" },
+    { name: "luna_emg_emg_biofeedback_repetition", label: "Repetition", type: "input", placeholder: "Enter repetitions" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_emg_biofeedback_minimum_uv", label: "Minimum μV", type: "input", placeholder: "Enter minimum μV" },
+    { name: "luna_emg_emg_biofeedback_maximum_uv", label: "Maximum μV", type: "input", placeholder: "Enter maximum μV" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "emg_biofeedback" },
+  fields: [
+    { name: "luna_emg_emg_biofeedback_average_uv", label: "Average μV", type: "input", placeholder: "Enter average μV" },
+    { name: "luna_emg_emg_biofeedback_muscle_tone", label: "Muscle Tone", type: "input", placeholder: "Enter muscle tone" }
+  ]
+},
+
+{
+  name: "luna_emg_emg_biofeedback_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "emg_biofeedback"
+  }
+},
+
+// =====================================================
+// LUNA EMG - REACTIVE EMG T&H PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_reactive_emg_th_subheading",
+  label: "Reactive EMG T&H Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "reactive_emg_th"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_th" },
+  fields: [
+    { name: "luna_emg_reactive_emg_th_duration", label: "Duration", type: "input", placeholder: "Enter duration" },
+    { name: "luna_emg_reactive_emg_th_rom", label: "ROM", type: "input", placeholder: "Enter ROM" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_th" },
+  fields: [
+    { name: "luna_emg_reactive_emg_th_average_torque", label: "Average Torque", type: "input", placeholder: "Enter average torque" },
+    { name: "luna_emg_reactive_emg_th_peak_torque", label: "Peak Torque", type: "input", placeholder: "Enter peak torque" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_th" },
+  fields: [
+    { name: "luna_emg_reactive_emg_th_speed", label: "Speed", type: "input", placeholder: "Enter speed" },
+    { name: "luna_emg_reactive_emg_th_repetition", label: "Repetition", type: "input", placeholder: "Enter repetitions" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_th" },
+  fields: [
+    { name: "luna_emg_reactive_emg_th_minimum_uv", label: "Minimum μV", type: "input", placeholder: "Enter minimum μV" },
+    { name: "luna_emg_reactive_emg_th_maximum_uv", label: "Maximum μV", type: "input", placeholder: "Enter maximum μV" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_th" },
+  fields: [
+    { name: "luna_emg_reactive_emg_th_average_uv", label: "Average μV", type: "input", placeholder: "Enter average μV" },
+    { name: "luna_emg_reactive_emg_th_muscle_tone", label: "Muscle Tone", type: "input", placeholder: "Enter muscle tone" }
+  ]
+},
+
+{
+  name: "luna_emg_reactive_emg_th_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "reactive_emg_th"
+  }
+},
+
+// =====================================================
+// LUNA EMG - REACTIVE EMG T&R PARAMETERS
+// =====================================================
+
+{
+  name: "luna_emg_reactive_emg_tr_subheading",
+  label: "Reactive EMG T&R Parameters",
+  type: "subheading",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "reactive_emg_tr"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_tr" },
+  fields: [
+    { name: "luna_emg_reactive_emg_tr_duration", label: "Duration", type: "input", placeholder: "Enter duration" },
+    { name: "luna_emg_reactive_emg_tr_rom", label: "ROM", type: "input", placeholder: "Enter ROM" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_tr" },
+  fields: [
+    { name: "luna_emg_reactive_emg_tr_average_torque", label: "Average Torque", type: "input", placeholder: "Enter average torque" },
+    { name: "luna_emg_reactive_emg_tr_peak_torque", label: "Peak Torque", type: "input", placeholder: "Enter peak torque" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_tr" },
+  fields: [
+    { name: "luna_emg_reactive_emg_tr_speed", label: "Speed", type: "input", placeholder: "Enter speed" },
+    { name: "luna_emg_reactive_emg_tr_repetition", label: "Repetition", type: "input", placeholder: "Enter repetitions" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_tr" },
+  fields: [
+    { name: "luna_emg_reactive_emg_tr_minimum_uv", label: "Minimum μV", type: "input", placeholder: "Enter minimum μV" },
+    { name: "luna_emg_reactive_emg_tr_maximum_uv", label: "Maximum μV", type: "input", placeholder: "Enter maximum μV" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "luna_emg_neurologic_programs", includes: "reactive_emg_tr" },
+  fields: [
+    { name: "luna_emg_reactive_emg_tr_average_uv", label: "Average μV", type: "input", placeholder: "Enter average μV" },
+    { name: "luna_emg_reactive_emg_tr_muscle_tone", label: "Muscle Tone", type: "input", placeholder: "Enter muscle tone" }
+  ]
+},
+
+{
+  name: "luna_emg_reactive_emg_tr_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "luna_emg_neurologic_programs",
+    includes: "reactive_emg_tr"
+  }
+},
+// =====================================================
+// COMMON PARAMETER FIELDS FOR SELECTED PROGRAM
+// =====================================================
+
+
+// =====================================================
+// STELLA BIO
+// =====================================================
+
+{
+  name: "stella_bio_subheading",
+  label: "Stella Bio",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "stella_bio"
   }
 },
 
-// ======================================================
-// SELECTION EXERCISE
-// ======================================================
-
 {
-  name: "stella_bio_selection_exercise",
-  label: "Selection Exercise",
-  type: "radio",
+  name: "stella_bio_therapy_condition",
+  label: "Therapy Condition Selection",
+  type: "checkbox-group",
   options: [
     { label: "Neuro", value: "neuro" },
     { label: "Ortho", value: "ortho" },
@@ -389,103 +1418,159 @@ actions: [
     { label: "Sport", value: "sport" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "stella_bio"
   }
 },
 
-// ======================================================
-// NEURO MODE
-// ======================================================
+{
+  name: "stella_bio_neuro_mode_heading",
+  label: "Therapy Mode Selection",
+  type: "subheading",
+  showIf: {
+    field: "stella_bio_therapy_condition",
+    equals: "neuro"
+  }
+},
 
 {
-  name: "stella_bio_neuro_ems_mode",
-  label: "NEURO - EMS Mode Exercise",
+  name: "stella_bio_neuro_therapy_mode",
+  label: "Therapy Mode",
+  type: "checkbox-group",
+  options: [
+    { label: "EMS", value: "ems" },
+    { label: "EMS + EMG", value: "ems_emg" },
+    { label: "EMG", value: "emg" },
+    { label: "EMG Games", value: "emg_games" }
+  ],
+  showIf: {
+    field: "stella_bio_therapy_condition",
+    equals: "neuro"
+  }
+},
+{
+  name: "stella_bio_neuro_ems_exercise_mode",
+  label: "EMS Exercise Modes",
   type: "checkbox-group",
   options: [
     { label: "Mild Atrophy", value: "mild_atrophy" },
     { label: "Severe Atrophy", value: "severe_atrophy" },
-    { label: "Muscle Spasm Relaxation", value: "muscle_spasm_relaxation" },
-    { label: "Grasp and Release", value: "grasp_release" },
+    {
+      label: "Muscle Spasm Relaxation",
+      value: "muscle_spasm_relaxation"
+    },
+    { label: "Grasp and Release", value: "grasp_and_release" },
     { label: "Open & Close", value: "open_close" },
-    { label: "Arm Extension/Support", value: "arm_extension_support" },
+    {
+      label: "Arm Extension / Support",
+      value: "arm_extension_support"
+    },
     { label: "Hand to Mouth", value: "hand_to_mouth" },
     { label: "EMS User Program", value: "ems_user_program" }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "neuro"
+    field: "stella_bio_neuro_therapy_mode",
+    includes: "ems"
   }
 },
-
 {
-  name: "stella_bio_neuro_ems_emg_mode",
-  label: "NEURO - EMS + EMG Mode Exercise",
+  name: "stella_bio_neuro_ems_emg_exercise_mode",
+  label: "EMS + EMG Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Grasp and Release (EMG triggered)", value: "grasp_release_emg" },
-    { label: "Open & Close (EMG triggered)", value: "open_close_emg" },
-    { label: "Arm Extension/Support (EMG triggered)", value: "arm_extension_support_emg" },
-    { label: "Hand to Mouth (EMG triggered)", value: "hand_to_mouth_emg" },
-    { label: "EMG Triggered (1 channel)", value: "emg_triggered_1ch" }
+    {
+      label: "Grasp and Release (EMG Triggered)",
+      value: "grasp_and_release_emg_triggered"
+    },
+    {
+      label: "Open & Close (EMG Triggered)",
+      value: "open_close_emg_triggered"
+    },
+    {
+      label: "Arm Extension / Support (EMG Triggered)",
+      value: "arm_extension_support_emg_triggered"
+    },
+    {
+      label: "Hand to Mouth (EMG Triggered)",
+      value: "hand_to_mouth_emg_triggered"
+    },
+    {
+      label: "EMG Triggered (1 Channel)",
+      value: "emg_triggered_1_channel"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "neuro"
+    field: "stella_bio_neuro_therapy_mode",
+    includes: "ems_emg"
   }
 },
 
 {
-  name: "stella_bio_neuro_emg_mode",
-  label: "NEURO - EMG Mode Exercise",
+  name: "stella_bio_neuro_emg_exercise_mode",
+  label: "EMG Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "5s Work – 5s Rest", value: "5_5" },
-    { label: "10s Work – 10s Rest", value: "10_10" },
+    { label: "5s Work – 5s Rest", value: "5s_work_5s_rest" },
+    { label: "10s Work – 10s Rest", value: "10s_work_10s_rest" },
     { label: "Quick Flicks", value: "quick_flicks" },
-    { label: "EMG Endurance Training", value: "emg_endurance" },
+    {
+      label: "EMG Endurance Training",
+      value: "emg_endurance_training"
+    },
     { label: "EMG Biofeedback", value: "emg_biofeedback" },
     { label: "EMG View", value: "emg_view" },
-    { label: "EMG View with MVC", value: "emg_view_mvc" },
-    { label: "Relaxation Analysis", value: "relaxation_analysis" }
+    { label: "EMG View with MVC", value: "emg_view_with_mvc" },
+    {
+      label: "Relaxation Analysis",
+      value: "relaxation_analysis"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "neuro"
+    field: "stella_bio_neuro_therapy_mode",
+    includes: "emg"
   }
 },
 
 {
-  name: "stella_bio_neuro_emg_games",
-  label: "NEURO - EMG Games",
+  name: "stella_bio_neuro_emg_games_exercise_mode",
+  label: "EMG Games Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Cosmic Mission", value: "cosmic_mission" },
-    { label: "Others", value: "others" }
+    { label: "Cosmic Mission", value: "cosmic_mission" }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "neuro"
+    field: "stella_bio_neuro_therapy_mode",
+    includes: "emg_games"
   }
 },
-
 {
-  name: "stella_bio_neuro_emg_games_others",
-  label: "NEURO - EMG Games Others",
-  type: "input",
+  name: "stella_bio_ortho_mode_heading",
+  label: "Therapy Mode Selection",
+  type: "subheading",
   showIf: {
-    field: "stella_bio_neuro_emg_games",
-    includes: "others"
+    field: "stella_bio_therapy_condition",
+    equals: "ortho"
   }
 },
 
-// ======================================================
-// ORTHO MODE (sample structure)
-// ======================================================
+{
+  name: "stella_bio_ortho_therapy_mode",
+  label: "Therapy Mode",
+  type: "checkbox-group",
+  options: [
+    { label: "EMS", value: "ems" },
+    { label: "EMG", value: "emg" },
+    { label: "EMG Games", value: "emg_games" }
+  ],
+  showIf: {
+    field: "stella_bio_therapy_condition",
+    equals: "ortho"
+  }
+},
 
 {
-  name: "stella_bio_ortho_ems_mode",
-  label: "ORTHO - EMS Mode Exercise",
+  name: "stella_bio_ortho_ems_exercise_mode",
+  label: "EMS Exercise Modes",
   type: "checkbox-group",
   options: [
     { label: "Muscle Atrophy", value: "muscle_atrophy" },
@@ -493,171 +1578,382 @@ actions: [
     { label: "Circulation", value: "circulation" }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "ortho"
+    field: "stella_bio_ortho_therapy_mode",
+    includes: "ems"
   }
 },
 
 {
-  name: "stella_bio_ortho_emg_mode",
-  label: "ORTHO - EMG Mode Exercise",
+  name: "stella_bio_ortho_emg_exercise_mode",
+  label: "EMG Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "5s Work – 5s Rest", value: "5_5" },
-    { label: "10s Work – 10s Rest", value: "10_10" },
+    { label: "5s Work – 5s Rest", value: "5s_work_5s_rest" },
+    { label: "10s Work – 10s Rest", value: "10s_work_10s_rest" },
     { label: "Quick Flicks", value: "quick_flicks" },
-    { label: "EMG Endurance Training", value: "emg_endurance" },
+    {
+      label: "EMG Endurance Training",
+      value: "emg_endurance_training"
+    },
     { label: "EMG Biofeedback", value: "emg_biofeedback" },
     { label: "EMG View", value: "emg_view" },
-    { label: "EMG View with MVC", value: "emg_view_mvc" },
-    { label: "Relaxation Analysis", value: "relaxation_analysis" },
+    { label: "EMG View with MVC", value: "emg_view_with_mvc" },
+    {
+      label: "Relaxation Analysis",
+      value: "relaxation_analysis"
+    },
     { label: "Low Back Pain Test", value: "low_back_pain_test" },
     { label: "Sorensen Test", value: "sorensen_test" }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "ortho"
+    field: "stella_bio_ortho_therapy_mode",
+    includes: "emg"
   }
 },
 
-// ======================================================
-// PAIN MODE
-// ======================================================
-
 {
-  name: "stella_bio_pain_tens_mode",
-  label: "PAIN - TENS Mode Exercise",
+  name: "stella_bio_ortho_emg_games_exercise_mode",
+  label: "EMG Games Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Conventional", value: "conventional" },
-    { label: "Frequency Modulated", value: "frequency_modulated" },
-    { label: "Acupuncture", value: "acupuncture" },
-    { label: "Burst", value: "burst" },
-    { label: "User Program", value: "user_program" }
+    { label: "Cosmic Mission", value: "cosmic_mission" }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
+    field: "stella_bio_ortho_therapy_mode",
+    includes: "emg_games"
+  }
+},
+// =====================================================
+// STELLA BIO - PAIN CONDITION
+// =====================================================
+
+{
+  name: "stella_bio_pain_therapy_mode",
+  label: "Therapy Mode",
+  type: "checkbox-group",
+  options: [
+    { label: "TENS", value: "tens" }
+  ],
+  showIf: {
+    field: "stella_bio_therapy_condition",
     equals: "pain"
   }
 },
 
-// ======================================================
-// PELVIC MODE (sample)
-// ======================================================
-
 {
-  name: "stella_bio_pelvic_ems_mode",
-  label: "PELVIC - EMS Mode Exercise",
+  name: "stella_bio_pain_tens_exercise_modes",
+  label: "Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Fecal Incontinence", value: "fecal_incontinence" },
-    { label: "Mixed Incontinence", value: "mixed_incontinence" },
-    { label: "Urge Incontinence", value: "urge_incontinence" },
-    { label: "Stress Incontinence", value: "stress_incontinence" },
-    { label: "Relaxation", value: "relaxation" },
-    { label: "Relaxation Plus", value: "relaxation_plus" },
-    { label: "EMS Pelvic User Program", value: "ems_pelvic_user_program" }
+    {
+      label: "TENS Conventional",
+      value: "tens_conventional"
+    },
+    {
+      label: "TENS Frequency Modulated",
+      value: "tens_frequency_modulated"
+    },
+    {
+      label: "TENS Acupuncture",
+      value: "tens_acupuncture"
+    },
+    {
+      label: "TENS Burst",
+      value: "tens_burst"
+    },
+    {
+      label: "TENS User Program",
+      value: "tens_user_program"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
+    field: "stella_bio_pain_therapy_mode",
+    includes: "tens"
+  }
+},
+
+// =====================================================
+// STELLA BIO - PELVIC CONDITION
+// =====================================================
+
+{
+  name: "stella_bio_pelvic_therapy_mode",
+  label: "Therapy Mode",
+  type: "checkbox-group",
+  options: [
+    { label: "EMS", value: "ems" },
+    {
+      label: "EMG Triggered Electrical Stimulation",
+      value: "emg_triggered_electrical_stimulation"
+    },
+    { label: "EMG", value: "emg" },
+    { label: "EMG Games", value: "emg_games" }
+  ],
+  showIf: {
+    field: "stella_bio_therapy_condition",
     equals: "pelvic"
   }
 },
 
+// PELVIC - EMS Exercise Modes
 {
-  name: "stella_bio_pelvic_emg_games",
-  label: "PELVIC - EMG Games",
+  name: "stella_bio_pelvic_ems_exercise_modes",
+  label: "Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Cosmic Mission", value: "cosmic_mission" },
-    { label: "Others", value: "others" }
+    {
+      label: "Fecal Incontinence",
+      value: "fecal_incontinence"
+    },
+    {
+      label: "Incontinence Mixed",
+      value: "incontinence_mixed"
+    },
+    {
+      label: "Incontinence Urge",
+      value: "incontinence_urge"
+    },
+    {
+      label: "Incontinence Stress",
+      value: "incontinence_stress"
+    },
+    {
+      label: "Relaxation",
+      value: "relaxation"
+    },
+    {
+      label: "Relaxation Plus",
+      value: "relaxation_plus"
+    },
+    {
+      label: "EMS Pelvic User Program",
+      value: "ems_pelvic_user_program"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "pelvic"
+    field: "stella_bio_pelvic_therapy_mode",
+    includes: "ems"
   }
 },
 
+// PELVIC - EMG Triggered Electrical Stimulation
 {
-  name: "stella_bio_pelvic_emg_games_others",
-  label: "PELVIC - EMG Games Others",
-  type: "input",
-  showIf: {
-    field: "stella_bio_pelvic_emg_games",
-    includes: "others"
-  }
-},
-// ======================================================
-// SPORT MODE
-// ======================================================
-
-{
-  name: "stella_bio_sport_ems_mode",
-  label: "SPORT - EMS Mode Exercise",
+  name: "stella_bio_pelvic_emg_triggered_exercise_modes",
+  label: "Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "Agonist / Antagonist", value: "agonist_antagonist" },
-    { label: "Power Training", value: "power_training" },
-    { label: "Muscle Strengthening", value: "muscle_strengthening" },
-    { label: "Exercise Prep", value: "exercise_prep" },
-    { label: "Active Recovery", value: "active_recovery" },
-    { label: "Massage", value: "massage" },
-    { label: "Endurance Training", value: "endurance_training" }
+    {
+      label: "Fecal Incontinence (EMG Triggered)",
+      value: "fecal_incontinence_emg_triggered"
+    },
+    {
+      label: "Incontinence (EMG Triggered)",
+      value: "incontinence_emg_triggered"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
+    field: "stella_bio_pelvic_therapy_mode",
+    includes: "emg_triggered_electrical_stimulation"
+  }
+},
+
+// PELVIC - EMG Exercise Modes
+{
+  name: "stella_bio_pelvic_emg_exercise_modes",
+  label: "Exercise Modes",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "5s Work – 5s Rest",
+      value: "5s_work_5s_rest"
+    },
+    {
+      label: "10s Work – 10s Rest",
+      value: "10s_work_10s_rest"
+    },
+    {
+      label: "Quick Flicks",
+      value: "quick_flicks"
+    },
+    {
+      label: "EMG Endurance Training",
+      value: "emg_endurance_training"
+    },
+    {
+      label: "EMG Biofeedback",
+      value: "emg_biofeedback"
+    },
+    {
+      label: "EMG View",
+      value: "emg_view"
+    },
+    {
+      label: "EMG View with MVC",
+      value: "emg_view_with_mvc"
+    },
+    {
+      label: "Relaxation Analysis",
+      value: "relaxation_analysis"
+    },
+    {
+      label: "Glazer Protocol",
+      value: "glazer_protocol"
+    }
+  ],
+  showIf: {
+    field: "stella_bio_pelvic_therapy_mode",
+    includes: "emg"
+  }
+},
+
+// PELVIC - EMG Games
+{
+  name: "stella_bio_pelvic_emg_games_exercise_modes",
+  label: "Exercise Modes",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Cosmic Mission",
+      value: "cosmic_mission"
+    }
+  ],
+  showIf: {
+    field: "stella_bio_pelvic_therapy_mode",
+    includes: "emg_games"
+  }
+},
+// =====================================================
+// STELLA BIO - SPORT CONDITION
+// =====================================================
+
+{
+  name: "stella_bio_sport_therapy_mode",
+  label: "Therapy Mode",
+  type: "checkbox-group",
+  options: [
+    { label: "EMS", value: "ems" },
+    { label: "EMG", value: "emg" },
+    { label: "EMG Games", value: "emg_games" }
+  ],
+  showIf: {
+    field: "stella_bio_therapy_condition",
     equals: "sport"
   }
 },
 
+// SPORT - EMS Exercise Modes
 {
-  name: "stella_bio_sport_emg_mode",
-  label: "SPORT - EMG Mode Exercise",
+  name: "stella_bio_sport_ems_exercise_modes",
+  label: "Exercise Modes",
   type: "checkbox-group",
   options: [
-    { label: "5s Work – 5s Rest", value: "5_5" },
-    { label: "10s Work – 10s Rest", value: "10_10" },
-    { label: "Quick Flicks", value: "quick_flicks" },
-    { label: "EMG Endurance Training", value: "emg_endurance_training" },
-    { label: "EMG Biofeedback", value: "emg_biofeedback" },
-    { label: "EMG View", value: "emg_view" },
-    { label: "EMG View with MVC", value: "emg_view_mvc" },
-    { label: "Relaxation Analysis", value: "relaxation_analysis" }
+    {
+      label: "Agonist / Antagonist",
+      value: "agonist_antagonist"
+    },
+    {
+      label: "Power Training",
+      value: "power_training"
+    },
+    {
+      label: "Muscle Strengthening",
+      value: "muscle_strengthening"
+    },
+    {
+      label: "Exercise Prep",
+      value: "exercise_prep"
+    },
+    {
+      label: "Active Recovery",
+      value: "active_recovery"
+    },
+    {
+      label: "Massage",
+      value: "massage"
+    },
+    {
+      label: "Endurance Training",
+      value: "endurance_training"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "sport"
+    field: "stella_bio_sport_therapy_mode",
+    includes: "ems"
   }
 },
 
+// SPORT - EMG Exercise Modes
 {
-  name: "stella_bio_sport_emg_games",
-  label: "SPORT - EMG Games",
-  type: "radio",
+  name: "stella_bio_sport_emg_exercise_modes",
+  label: "Exercise Modes",
+  type: "checkbox-group",
   options: [
-    { label: "Cosmic Mission", value: "cosmic_mission" },
-    { label: "Others", value: "others" }
+    {
+      label: "5s Work – 5s Rest",
+      value: "5s_work_5s_rest"
+    },
+    {
+      label: "10s Work – 10s Rest",
+      value: "10s_work_10s_rest"
+    },
+    {
+      label: "Quick Flicks",
+      value: "quick_flicks"
+    },
+    {
+      label: "EMG Endurance Training",
+      value: "emg_endurance_training"
+    },
+    {
+      label: "EMG Biofeedback",
+      value: "emg_biofeedback"
+    },
+    {
+      label: "EMG View",
+      value: "emg_view"
+    },
+    {
+      label: "EMG View with MVC",
+      value: "emg_view_with_mvc"
+    },
+    {
+      label: "Relaxation Analysis",
+      value: "relaxation_analysis"
+    }
   ],
   showIf: {
-    field: "stella_bio_selection_exercise",
-    equals: "sport"
+    field: "stella_bio_sport_therapy_mode",
+    includes: "emg"
   }
 },
 
+// SPORT - EMG Games Exercise Modes
 {
-  name: "stella_bio_sport_emg_games_others",
-  label: "SPORT - EMG Games Others",
-  type: "input",
+  name: "stella_bio_sport_emg_games_exercise_modes",
+  label: "Exercise Modes",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Cosmic Mission",
+      value: "cosmic_mission"
+    }
+  ],
   showIf: {
-    field: "stella_bio_sport_emg_games",
-    includes: "others"
+    field: "stella_bio_sport_therapy_mode",
+    includes: "emg_games"
   }
 },
+
+// =====================================================
+// MEISSA OT
+// =====================================================
+
 {
-  type: "subheading",
+  name: "meissa_ot_subheading",
   label: "Meissa OT",
+  type: "subheading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "meissa_ot"
   }
 },
@@ -681,15 +1977,16 @@ actions: [
     { label: "Others", value: "others" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "meissa_ot"
   }
 },
 
 {
-  name: "meissa_ot_others",
-  label: "Others (Free Text)",
+  name: "meissa_ot_other_training_type",
+  label: "Other Training Type",
   type: "input",
+  placeholder: "Specify other training type",
   showIf: {
     field: "meissa_ot_training_type",
     includes: "others"
@@ -697,13 +1994,22 @@ actions: [
 },
 
 {
-  name: "meissa_ot_time_repetition",
-  label: "Time / Repetition",
-  type: "input",
+  name: "meissa_ot_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "meissa_ot"
   }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "meissa_ot" },
+  fields: [
+    { name: "meissa_ot_time", label: "Time", type: "input", placeholder: "Enter time" },
+    { name: "meissa_ot_repetitions", label: "Repetitions", type: "input", placeholder: "Enter repetitions" }
+  ]
 },
 
 {
@@ -715,7 +2021,7 @@ actions: [
     { label: "Right", value: "right" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "meissa_ot"
   }
 },
@@ -723,22 +2029,24 @@ actions: [
 {
   name: "meissa_ot_remarks",
   label: "Remarks",
-  type: "textarea",
+  type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "meissa_ot"
   }
 },
 
-// ======================================================
+// =====================================================
 // SIDRA LEG
-// ======================================================
+// =====================================================
 
 {
-  type: "subheading",
+  name: "sidra_leg_subheading",
   label: "Sidra LEG",
+  type: "subheading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "sidra_leg"
   }
 },
@@ -750,41 +2058,66 @@ actions: [
   options: [
     { label: "CPM Knee", value: "cpm_knee" },
     { label: "CPM Ankle", value: "cpm_ankle" },
-    { label: "CPM Knee with Synced Ankle", value: "cpm_knee_synced_ankle" },
-    { label: "CPM Knee Progressive", value: "cpm_knee_progressive" },
-    { label: "CPM Ankle Progressive", value: "cpm_ankle_progressive" },
-    { label: "CPM Knee with Synced Ankle Progressive", value: "cpm_knee_synced_ankle_progressive" },
+    {
+      label: "CPM Knee with Synced Ankle",
+      value: "cpm_knee_synced_ankle"
+    },
+    {
+      label: "CPM Knee Progressive",
+      value: "cpm_knee_progressive"
+    },
+    {
+      label: "CPM Ankle Progressive",
+      value: "cpm_ankle_progressive"
+    },
+    {
+      label: "CPM Knee with Synced Ankle Progressive",
+      value: "cpm_knee_synced_ankle_progressive"
+    },
     { label: "CPM + EMG Knee", value: "cpm_emg_knee" },
-    { label: "CPM EMG + Ankle", value: "cpm_emg_ankle" },
-    { label: "CPM EMG Knee with Synced Ankle", value: "cpm_emg_knee_synced_ankle" },
+    { label: "CPM + EMG Ankle", value: "cpm_emg_ankle" },
+    {
+      label: "CPM + EMG Knee with Synced Ankle",
+      value: "cpm_emg_knee_synced_ankle"
+    },
     { label: "CPM + EMS Knee", value: "cpm_ems_knee" },
     { label: "CPM + EMS Ankle", value: "cpm_ems_ankle" },
     { label: "Others", value: "others" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "sidra_leg"
   }
 },
 
 {
-  name: "sidra_leg_others",
-  label: "Others (Free Text)",
+  name: "sidra_leg_other_training_type",
+  label: "Other Training Type",
   type: "input",
+  placeholder: "Specify other training type",
   showIf: {
-    field: "sidra_leg_training_type",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "others"
   }
 },
 
 {
-  name: "sidra_leg_time_repetition",
-  label: "Time / Repetition",
-  type: "input",
+  name: "sidra_leg_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "sidra_leg"
   }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "sidra_leg" },
+  fields: [
+    { name: "sidra_leg_time", label: "Time", type: "input", placeholder: "Enter time" },
+    { name: "sidra_leg_repetitions", label: "Repetitions", type: "input", placeholder: "Enter repetitions" }
+  ]
 },
 
 {
@@ -796,7 +2129,7 @@ actions: [
     { label: "Right", value: "right" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "sidra_leg"
   }
 },
@@ -804,17 +2137,33 @@ actions: [
 {
   name: "sidra_leg_remarks",
   label: "Remarks",
-  type: "textarea",
+  type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "sidra_leg"
   }
 },
+// =====================================================
+// FESIA WALK
+// =====================================================
+
 {
-  type: "subheading",
+  name: "fesia_walk_heading",
   label: "FESIA Walk",
+  type: "heading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "fesia_walk"
+  }
+},
+
+{
+  name: "fesia_walk_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_walk"
   }
 },
@@ -832,7 +2181,7 @@ actions: [
     { label: "External Assistance", value: "external_assistance" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_walk"
   }
 },
@@ -847,30 +2196,60 @@ actions: [
     { label: "Bilateral", value: "bilateral" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_walk"
   }
 },
 
 {
-  name: "fesia_walk_duration",
-  label: "Duration",
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_walk" },
+  fields: [
+    { name: "fesia_walk_duration", label: "Duration (Minutes)", type: "input", placeholder: "Enter duration in minutes" },
+    { name: "fesia_walk_frequency", label: "Frequency (Hz)", type: "input", placeholder: "Enter frequency in Hz" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_walk" },
+  fields: [
+    { name: "fesia_walk_pulse_width", label: "Pulse Width (μs)", type: "input", placeholder: "Enter pulse width in microseconds" },
+    { name: "fesia_walk_amplitude", label: "Amplitude (mA)", type: "input", placeholder: "Enter amplitude in mA" }
+  ]
+},
+
+{
+  name: "fesia_walk_remarks",
+  label: "Remarks",
   type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_walk"
   }
 },
 
-// ======================================================
+// =====================================================
 // FESIA GRASP
-// ======================================================
+// =====================================================
 
 {
-  type: "subheading",
+  name: "fesia_grasp_heading",
   label: "FESIA Grasp",
+  type: "heading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "fesia_grasp"
+  }
+},
+
+{
+  name: "fesia_grasp_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_grasp"
   }
 },
@@ -883,11 +2262,11 @@ actions: [
     { label: "Habituation", value: "habituation" },
     { label: "Tone Reduction", value: "tone_reduction" },
     { label: "Repetitive Task Training", value: "repetitive_task_training" },
-    { label: "Sensory Motion Trigger Stimulation", value: "sensory_motion_trigger_stimulation" },
+    { label: "Sensorimotor Trigger Stimulation", value: "sensorimotor_trigger_stimulation" },
     { label: "ADLs Training", value: "adls_training" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_grasp"
   }
 },
@@ -901,30 +2280,60 @@ actions: [
     { label: "Right", value: "right" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_grasp"
   }
 },
 
 {
-  name: "fesia_grasp_duration",
-  label: "Duration",
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_grasp" },
+  fields: [
+    { name: "fesia_grasp_duration", label: "Duration (Minutes)", type: "input", placeholder: "Enter duration in minutes" },
+    { name: "fesia_grasp_frequency", label: "Frequency (Hz)", type: "input", placeholder: "Enter frequency in Hz" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_grasp" },
+  fields: [
+    { name: "fesia_grasp_pulse_width", label: "Pulse Width (μs)", type: "input", placeholder: "Enter pulse width in microseconds" },
+    { name: "fesia_grasp_amplitude", label: "Amplitude (mA)", type: "input", placeholder: "Enter amplitude in mA" }
+  ]
+},
+
+{
+  name: "fesia_grasp_remarks",
+  label: "Remarks",
   type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_grasp"
   }
 },
 
-// ======================================================
+// =====================================================
 // FESIA BIKE
-// ======================================================
+// =====================================================
 
 {
-  type: "subheading",
+  name: "fesia_bike_heading",
   label: "FESIA Bike",
+  type: "heading",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "fesia_bike"
+  }
+},
+
+{
+  name: "fesia_bike_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_bike"
   }
 },
@@ -939,37 +2348,731 @@ actions: [
     { label: "Bilateral", value: "bilateral" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_bike"
   }
 },
 
 {
-  name: "fesia_bike_duration",
-  label: "Duration",
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_bike" },
+  fields: [
+    { name: "fesia_bike_duration", label: "Duration (Minutes)", type: "input", placeholder: "Enter duration in minutes" },
+    { name: "fesia_bike_frequency", label: "Frequency (Hz)", type: "input", placeholder: "Enter frequency in Hz" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "fesia_bike" },
+  fields: [
+    { name: "fesia_bike_pulse_width", label: "Pulse Width (μs)", type: "input", placeholder: "Enter pulse width in microseconds" },
+    { name: "fesia_bike_amplitude", label: "Amplitude (mA)", type: "input", placeholder: "Enter amplitude in mA" }
+  ]
+},
+
+{
+  name: "fesia_bike_remarks",
+  label: "Remarks",
   type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "fesia_bike"
+  }
+},
+// =====================================================
+// MYNDMOVE
+// =====================================================
+
+{
+  name: "myndmove_heading",
+  label: "MyndMove",
+  type: "heading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "myndmove"
+  }
+},
+
+// -----------------------------------------------------
+// PARAMETERS
+// -----------------------------------------------------
+{
+  name: "myndmove_parameters_heading",
+  label: "Parameters",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "myndmove"
+  }
+},
+
+{
+  name: "myndmove_protocols",
+  label: "Protocols",
+  type: "input",
+  placeholder: "Enter protocol details",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "myndmove"
+  }
+},
+
+{
+  name: "myndmove_side",
+  label: "Side",
+  type: "radio",
+  options: [
+    { label: "Left", value: "left" },
+    { label: "Right", value: "right" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "myndmove"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "myndmove" },
+  fields: [
+    { name: "myndmove_duration", label: "Duration (Minutes)", type: "input", placeholder: "Enter duration in minutes" },
+    { name: "myndmove_frequency", label: "Frequency (Hz)", type: "input", placeholder: "Enter frequency in Hz" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "myndmove" },
+  fields: [
+    { name: "myndmove_pulse_width", label: "Pulse Width (μs)", type: "input", placeholder: "Enter pulse width in microseconds" },
+    { name: "myndmove_amplitude", label: "Amplitude (mA)", type: "input", placeholder: "Enter amplitude in mA" }
+  ]
+},
+
+{
+  name: "myndmove_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "myndmove"
   }
 },
 {
   type: "subheading",
+  label: "Vibramoov",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "vibramoov"
+  }
+},
+{
+  name: "vibramoov_mode",
+  label: "Mode",
+  type: "radio",
+  options: [
+    {
+      label: "Functional Proprioceptive Stimulations (FPS)",
+      value: "fps"
+    },
+    {
+      label: "Focal Vibration (FV)",
+      value: "fv"
+    }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "vibramoov"
+  }
+},
+
+// =========================
+// FPS Mode - Body Parts
+// =========================
+{
+  name: "vibramoov_body_parts",
+  label: "Body Parts",
+  type: "radio",
+  options: [
+    {
+      label: "Legs",
+      value: "legs"
+    },
+    {
+      label: "Arms",
+      value: "arms"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fps"
+  }
+},
+
+// =========================
+// FPS - Legs
+// =========================
+{
+  type: "subheading",
+  label: "FPS Mode - Legs",
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "legs"
+  }
+},
+{
+  name: "vibramoov_legs_position",
+  label: "Position",
+  type: "radio",
+  options: [
+    {
+      label: "Lying Down",
+      value: "lying_down"
+    },
+    {
+      label: "Verticalized",
+      value: "verticalized"
+    },
+    {
+      label: "Standing",
+      value: "standing"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "legs"
+  }
+},
+{
+  name: "vibramoov_legs_exercises",
+  label: "Exercises",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Multi Activity",
+      value: "multi_activity"
+    },
+    {
+      label: "Gait",
+      value: "gait"
+    },
+    {
+      label: "Flexions",
+      value: "flexions"
+    },
+    {
+      label: "Stairs",
+      value: "stairs"
+    },
+    {
+      label: "Postural Control",
+      value: "postural_control"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "legs"
+  }
+},
+{
+  name: "vibramoov_legs_intensity",
+  label: "Intensity",
+  type: "radio",
+  options: [
+    {
+      label: "Low",
+      value: "low"
+    },
+    {
+      label: "Medium",
+      value: "medium"
+    },
+    {
+      label: "High",
+      value: "high"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "legs"
+  }
+},
+{
+  type: "row",
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "legs"
+  },
+  fields: [
+    {
+      name: "vibramoov_legs_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      inputType: "number",
+      min: 0
+    },
+    {
+      name: "vibramoov_legs_remarks",
+      label: "Remarks",
+      type: "input",
+      rows: 3
+    }
+  ]
+},
+
+// =========================
+// FPS - Arms
+// =========================
+{
+  type: "subheading",
+  label: "FPS Mode - Arms",
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "arms"
+  }
+},
+{
+  name: "vibramoov_arms_side",
+  label: "Side",
+  type: "radio",
+  options: [
+    {
+      label: "Bilateral",
+      value: "bilateral"
+    },
+    {
+      label: "Left",
+      value: "left"
+    },
+    {
+      label: "Right",
+      value: "right"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "arms"
+  }
+},
+{
+  name: "vibramoov_arms_exercises",
+  label: "Exercises",
+  type: "checkbox-group",
+  options: [
+    {
+      label: "Multi Activity",
+      value: "multi_activity"
+    },
+    {
+      label: "Reaching-pointing",
+      value: "reaching_pointing"
+    },
+    {
+      label: "Writing-Drawing",
+      value: "writing_drawing"
+    },
+    {
+      label: "ADL",
+      value: "adl"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "arms"
+  }
+},
+{
+  name: "vibramoov_arms_intensity",
+  label: "Intensity",
+  type: "radio",
+  options: [
+    {
+      label: "Low",
+      value: "low"
+    },
+    {
+      label: "Medium",
+      value: "medium"
+    },
+    {
+      label: "High",
+      value: "high"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "arms"
+  }
+},
+{
+  type: "row",
+  showIf: {
+    field: "vibramoov_body_parts",
+    equals: "arms"
+  },
+  fields: [
+    {
+      name: "vibramoov_arms_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      inputType: "number",
+      min: 0
+    },
+    {
+      name: "vibramoov_arms_remarks",
+      label: "Remarks",
+      type: "input",
+      rows: 3
+    }
+  ]
+},
+
+// =========================
+// Focal Vibration (FV)
+// =========================
+{
+  type: "subheading",
+  label: "Focal Vibration (FV)",
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fv"
+  }
+},
+{
+  name: "vibramoov_fv_level",
+  label: "Level",
+  type: "radio",
+  options: [
+    {
+      label: "Severe",
+      value: "severe"
+    },
+    {
+      label: "Moderate",
+      value: "moderate"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fv"
+  }
+},
+{
+  name: "vibramoov_fv_intensity",
+  label: "Intensity",
+  type: "radio",
+  options: [
+    {
+      label: "Long",
+      value: "long"
+    },
+    {
+      label: "Short",
+      value: "short"
+    }
+  ],
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fv"
+  }
+},
+{
+  name: "vibramoov_fv_duration",
+  label: "Duration (Minutes)",
+  type: "number",
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fv"
+  }
+},
+{
+  name: "vibramoov_fv_remarks",
+  label: "Remarks",
+  type: "input",
+  rows: 3,
+  showIf: {
+    field: "vibramoov_mode",
+    equals: "fv"
+  }
+},
+// =====================================================
+// ROBERT
+// =====================================================
+
+// Section Heading
+{
+  name: "robert_heading",
+  label: "ROBERT",
+  type: "heading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+// -----------------------------------------------------
+// LOWER EXTREMITY
+// -----------------------------------------------------
+{
+  name: "robert_lower_extremity_heading",
+  label: "Lower Extremity",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_primary_joint",
+  label: "Primary Joint",
+  type: "radio",
+  options: [
+    { label: "Hip", value: "hip" },
+    { label: "Knee", value: "knee" },
+    { label: "Ankle", value: "ankle" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_side",
+  label: "Side",
+  type: "radio",
+  options: [
+    { label: "Left", value: "left" },
+    { label: "Right", value: "right" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_position",
+  label: "Position",
+  type: "radio",
+  options: [
+    { label: "Supine", value: "supine" },
+    { label: "Lateral", value: "lateral" },
+    { label: "Seated", value: "seated" },
+    { label: "Prone", value: "prone" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_movement",
+  label: "Movement",
+  type: "checkbox-group",
+  options: [
+    { label: "Flexion", value: "flexion" },
+    { label: "Extension", value: "extension" },
+    { label: "Abduction", value: "abduction" },
+    { label: "Adduction", value: "adduction" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_motion_setup",
+  label: "Motion Setup",
+  type: "radio",
+  options: [
+    { label: "Active", value: "active" },
+    { label: "Guided", value: "guided" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "robert" },
+  fields: [
+    { name: "robert_lower_repetitions", label: "Repetitions", type: "input", placeholder: "Enter repetitions" },
+    { name: "robert_lower_resistance", label: "Resistance", type: "input", placeholder: "Enter resistance" }
+  ]
+},
+
+{
+  name: "robert_lower_sas",
+  label: "SAS",
+  type: "radio",
+  options: [
+    { label: "Yes", value: "yes" },
+    { label: "No", value: "no" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_lower_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+// -----------------------------------------------------
+// UPPER EXTREMITY
+// -----------------------------------------------------
+{
+  name: "robert_upper_extremity_heading",
+  label: "Upper Extremity",
+  type: "subheading",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_upper_primary_joint",
+  label: "Primary Joint",
+  type: "radio",
+  options: [
+    { label: "Shoulder", value: "shoulder" },
+    { label: "Elbow", value: "elbow" },
+    { label: "Wrist", value: "wrist" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_upper_position",
+  label: "Position",
+  type: "radio",
+  options: [
+    { label: "Supine", value: "supine" },
+    { label: "Seated", value: "seated" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_upper_movement",
+  label: "Movement",
+  type: "checkbox-group",
+  options: [
+    { label: "Shoulder Internal Rotation", value: "shoulder_internal_rotation" },
+    { label: "Shoulder External Rotation", value: "shoulder_external_rotation" },
+    { label: "Shoulder Flexion", value: "shoulder_flexion" },
+    { label: "Shoulder Extension", value: "shoulder_extension" },
+    { label: "Shoulder Abduction", value: "shoulder_abduction" },
+    { label: "Shoulder Adduction", value: "shoulder_adduction" },
+    { label: "Elbow Flexion", value: "elbow_flexion" },
+    { label: "Elbow Extension", value: "elbow_extension" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_upper_motion_setup",
+  label: "Motion Setup",
+  type: "radio",
+  options: [
+    { label: "Active", value: "active" },
+    { label: "Guided", value: "guided" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "robert" },
+  fields: [
+    { name: "robert_upper_repetitions", label: "Repetitions", type: "input", placeholder: "Enter repetitions" },
+    { name: "robert_upper_resistance", label: "Resistance", type: "input", placeholder: "Enter resistance" }
+  ]
+},
+
+{
+  name: "robert_upper_sas",
+  label: "SAS",
+  type: "radio",
+  options: [
+    { label: "Yes", value: "yes" },
+    { label: "No", value: "no" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+
+{
+  name: "robert_upper_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "robert"
+  }
+},
+// =====================================================
+// ARM MOTUS EMU
+// =====================================================
+
+{
+  type: "subheading",
   label: "Arm Motus EMU",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
-// ======================================================
-// MOTOR COORDINATION
-// ======================================================
+// -------------------------
+// Motor Coordination
+// -------------------------
+{
+  type: "subheading",
+  label: "Motor Coordination",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_emu"
+  }
+},
 
 {
   name: "arm_motus_emu_motor_coordination_mode",
-  label: "Motor Coordination - Training Mode",
-  type: "checkbox-group",
+  label: "Training Mode",
+  type: "radio",
   options: [
     { label: "Musical Note", value: "musical_note" },
     { label: "Go Fishing", value: "go_fishing" },
@@ -979,14 +3082,14 @@ actions: [
     { label: "Botanical Garden", value: "botanical_garden" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
 {
   name: "arm_motus_emu_motor_coordination_type",
-  label: "Motor Coordination - Type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" },
@@ -995,42 +3098,51 @@ actions: [
     { label: "Assisted", value: "assisted" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
 {
   name: "arm_motus_emu_motor_coordination_duration",
-  label: "Motor Coordination Duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
-// ======================================================
-// COGNITIVE TRAINING
-// ======================================================
+// -------------------------
+// Cognitive Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Cognitive Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_emu"
+  }
+},
 
 {
-  name: "arm_motus_emu_cognitive_mode",
-  label: "Cognitive Training - Mode",
+  name: "arm_motus_emu_cognitive_training_mode",
+  label: "Training Mode",
   type: "radio",
   options: [
     { label: "Happy Restaurant", value: "happy_restaurant" },
     { label: "Clever Mind", value: "clever_mind" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
 {
-  name: "arm_motus_emu_cognitive_type",
-  label: "Cognitive Training - Type",
+  name: "arm_motus_emu_cognitive_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Assisted", value: "assisted" },
@@ -1038,39 +3150,53 @@ actions: [
     { label: "Resistance", value: "resistance" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
 
 {
-  name: "arm_motus_emu_cognitive_duration",
-  label: "Cognitive Training Duration",
+  name: "arm_motus_emu_cognitive_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_emu"
   }
 },
+
+// =====================================================
+// ARM MOTUS M2 PRO
+// =====================================================
+
 {
   type: "subheading",
   label: "Arm Motus M2 Pro",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
-// ======================================================
-// MOTOR COORDINATION
-// ======================================================
+// -------------------------
+// Motor Coordination
+// -------------------------
+{
+  type: "subheading",
+  label: "Motor Coordination",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_m2_pro"
+  }
+},
 
 {
-  name: "arm_motus_m2_motor_coordination_mode",
-  label: "Motor Coordination - Training Mode",
+  name: "arm_motus_m2_pro_motor_coordination_mode",
+  label: "Training Mode",
   type: "checkbox-group",
   options: [
-    { label: "Zoo & Friends", value: "zoo_friends" },
+    { label: "Zoo & Friends", value: "zoo_and_friends" },
     { label: "Herbal Garden", value: "herbal_garden" },
     { label: "Ball", value: "ball" },
     { label: "Defend Base", value: "defend_base" },
@@ -1083,14 +3209,14 @@ actions: [
     { label: "Table Tennis", value: "table_tennis" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
 {
-  name: "arm_motus_m2_motor_coordination_type",
-  label: "Motor Coordination - Type",
+  name: "arm_motus_m2_pro_motor_coordination_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" },
@@ -1099,44 +3225,53 @@ actions: [
     { label: "Assisted", value: "assisted" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
 {
-  name: "arm_motus_m2_motor_coordination_duration",
-  label: "Motor Coordination - Duration",
+  name: "arm_motus_m2_pro_motor_coordination_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
-// ======================================================
-// COGNITIVE TRAINING
-// ======================================================
+// -------------------------
+// Cognitive Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Cognitive Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_m2_pro"
+  }
+},
 
 {
-  name: "arm_motus_m2_cognitive_mode",
-  label: "Cognitive Training - Mode",
+  name: "arm_motus_m2_pro_cognitive_training_mode",
+  label: "Training Mode",
   type: "radio",
   options: [
-    { label: "Wrack A Mole", value: "whack_a_mole" },
+    { label: "Wrack A Mole", value: "wrack_a_mole" },
     { label: "Find Treasure", value: "find_treasure" },
     { label: "Happy Restaurant", value: "happy_restaurant" },
     { label: "Clever Mind", value: "clever_mind" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
 {
-  name: "arm_motus_m2_cognitive_type",
-  label: "Cognitive Training - Type",
+  name: "arm_motus_m2_pro_cognitive_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Passive", value: "passive" },
@@ -1145,104 +3280,152 @@ actions: [
     { label: "Resistance", value: "resistance" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
 {
-  name: "arm_motus_m2_cognitive_duration",
-  label: "Cognitive Duration",
+  name: "arm_motus_m2_pro_cognitive_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
-// ======================================================
-// ISOMETRIC TRAINING
-// ======================================================
+// -------------------------
+// Isometric Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Isometric Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_m2_pro"
+  }
+},
 
 {
-  name: "arm_motus_m2_isometric_type",
-  label: "Isometric Training Type",
+  name: "arm_motus_m2_pro_isometric_training_mode",
+  label: "Training Mode",
+  type: "radio",
+  options: [
+    { label: "Air Gunner", value: "air_gunner" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "arm_motus_m2_pro"
+  }
+},
+
+{
+  name: "arm_motus_m2_pro_isometric_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
 
 {
-  name: "arm_motus_m2_isometric_duration",
-  label: "Isometric Duration",
+  name: "arm_motus_m2_pro_isometric_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "arm_motus_m2_pro"
   }
 },
+// =====================================================
+// EXO MOTUS
+// =====================================================
+
 {
   type: "subheading",
   label: "Exo Motus",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
-// ======================================================
-// PASSIVE MODE
-// ======================================================
+// -------------------------
+// Passive Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Passive Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "exo_motus"
+  }
+},
 
 {
-  name: "exo_motus_passive_mode",
-  label: "Training Mode (Passive)",
+  name: "exo_motus_passive_training_mode",
+  label: "Training Mode",
   type: "radio",
   options: [
     { label: "Walking", value: "walking" },
     { label: "Stepping", value: "stepping" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "exo_motus"
+  }
+},
+
+{
+  name: "exo_motus_passive_training_type",
+  label: "Training Type",
+  type: "radio",
+  options: [
+    { label: "Passive", value: "passive" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
 {
   name: "exo_motus_passive_speed",
-  label: "Speed (Level)",
+  label: "Speed",
   type: "radio",
   options: [
-    { label: "Level 1", value: "1" },
-    { label: "Level 2", value: "2" },
-    { label: "Level 3", value: "3" },
-    { label: "Level 4", value: "4" },
-    { label: "Level 5", value: "5" },
-    { label: "Level 6", value: "6" }
+    { label: "Level 1", value: "level_1" },
+    { label: "Level 2", value: "level_2" },
+    { label: "Level 3", value: "level_3" },
+    { label: "Level 4", value: "level_4" },
+    { label: "Level 5", value: "level_5" },
+    { label: "Level 6", value: "level_6" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
 {
   name: "exo_motus_passive_step_length",
-  label: "Step Length (Level)",
+  label: "Step Length",
   type: "radio",
   options: [
-    { label: "Level 1", value: "1" },
-    { label: "Level 2", value: "2" },
-    { label: "Level 3", value: "3" },
-    { label: "Level 4", value: "4" }
+    { label: "Level 1", value: "level_1" },
+    { label: "Level 2", value: "level_2" },
+    { label: "Level 3", value: "level_3" },
+    { label: "Level 4", value: "level_4" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
@@ -1251,57 +3434,79 @@ actions: [
   name: "exo_motus_passive_duration",
   label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
-// ======================================================
-// ASSISTED MODE
-// ======================================================
+// -------------------------
+// Assisted Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Assisted Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "exo_motus"
+  }
+},
 
 {
-  name: "exo_motus_assisted_mode",
-  label: "Training Mode (Assisted)",
+  name: "exo_motus_assisted_training_mode",
+  label: "Training Mode",
   type: "radio",
   options: [
     { label: "Walking", value: "walking" },
     { label: "Stepping", value: "stepping" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "exo_motus"
+  }
+},
+
+{
+  name: "exo_motus_assisted_training_type",
+  label: "Training Type",
+  type: "radio",
+  options: [
+    { label: "Assisted", value: "assisted" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
 {
   name: "exo_motus_assisted_guidance_force",
-  label: "Guidance Force (Level)",
+  label: "Guidance Force",
   type: "radio",
   options: [
-    { label: "Level 1", value: "1" },
-    { label: "Level 2", value: "2" },
-    { label: "Level 3", value: "3" }
+    { label: "Level 1", value: "level_1" },
+    { label: "Level 2", value: "level_2" },
+    { label: "Level 3", value: "level_3" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
 
 {
   name: "exo_motus_assisted_step_length",
-  label: "Step Length (Level)",
+  label: "Step Length",
   type: "radio",
   options: [
-    { label: "Level 1", value: "1" },
-    { label: "Level 2", value: "2" },
-    { label: "Level 3", value: "3" },
-    { label: "Level 4", value: "4" }
+    { label: "Level 1", value: "level_1" },
+    { label: "Level 2", value: "level_2" },
+    { label: "Level 3", value: "level_3" },
+    { label: "Level 4", value: "level_4" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
@@ -1310,28 +3515,42 @@ actions: [
   name: "exo_motus_assisted_duration",
   label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "exo_motus"
   }
 },
+
+// =====================================================
+// ANKLE MOTUS
+// =====================================================
+
 {
   type: "subheading",
   label: "Ankle Motus",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
-// ======================================================
-// MOTOR COORDINATION
-// ======================================================
+// -------------------------
+// Motor Coordination
+// -------------------------
+{
+  type: "subheading",
+  label: "Motor Coordination",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
 
 {
   name: "ankle_motus_motor_coordination_mode",
-  label: "Motor Coordination - Training Mode",
-  type: "checkbox-group",
+  label: "Training Mode",
+  type: "radio",
   options: [
     { label: "Botanical Garden", value: "botanical_garden" },
     { label: "Spring Pong", value: "spring_pong" },
@@ -1342,14 +3561,14 @@ actions: [
     { label: "Cube War", value: "cube_war" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
 {
   name: "ankle_motus_motor_coordination_type",
-  label: "Motor Coordination - Training Type",
+  label: "Training Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" },
@@ -1358,28 +3577,50 @@ actions: [
     { label: "Assisted", value: "assisted" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
 {
   name: "ankle_motus_motor_coordination_duration",
-  label: "Motor Coordination Duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
-// ======================================================
-// COGNITIVE TRAINING
-// ======================================================
+// -------------------------
+// Cognitive Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Cognitive Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
 
 {
-  name: "ankle_motus_cognitive_type",
-  label: "Cognitive Training Type",
+  name: "ankle_motus_cognitive_training_mode",
+  label: "Training Mode",
+  type: "radio",
+  options: [
+    { label: "Clever Mind", value: "clever_mind" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
+
+{
+  name: "ankle_motus_cognitive_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Assisted", value: "assisted" },
@@ -1387,64 +3628,135 @@ actions: [
     { label: "Resistance", value: "resistance" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
 {
-  name: "ankle_motus_cognitive_duration",
-  label: "Cognitive Training Duration",
+  name: "ankle_motus_cognitive_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
-// ======================================================
-// ISOMETRIC TRAINING
-// ======================================================
+// -------------------------
+// Isometric Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Isometric Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
 
 {
-  name: "ankle_motus_isometric_duration",
-  label: "Isometric Training (Air Gunner) Duration",
-  type: "input",
+  name: "ankle_motus_isometric_training_mode",
+  label: "Training Mode",
+  type: "radio",
+  options: [
+    { label: "Air Gunner", value: "air_gunner" }
+  ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
-// ======================================================
-// STRETCHING
-// ======================================================
+{
+  name: "ankle_motus_isometric_training_type",
+  label: "Type",
+  type: "radio",
+  options: [
+    { label: "Active", value: "active" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
+
+{
+  name: "ankle_motus_isometric_training_duration",
+  label: "Duration",
+  type: "input",
+  placeholder: "Enter duration",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
+
+// -------------------------
+// Stretching
+// -------------------------
+{
+  type: "subheading",
+  label: "Stretching",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
+
+{
+  name: "ankle_motus_stretching_mode",
+  label: "Training Mode",
+  type: "radio",
+  options: [
+    { label: "Stretching", value: "stretching" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
+
+{
+  name: "ankle_motus_stretching_type",
+  label: "Type",
+  type: "radio",
+  options: [
+    { label: "Passive", value: "passive" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "ankle_motus"
+  }
+},
 
 {
   name: "ankle_motus_stretching_duration",
-  label: "Stretching Duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "ankle_motus"
   }
 },
 
-// ======================================================
+// =====================================================
 // PELMA MOTUS
-// ======================================================
+// =====================================================
 
 {
   type: "subheading",
   label: "Pelma Motus",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pelma_motus"
   }
 },
 
 {
-  name: "pelma_motus_trajectory",
+  name: "pelma_motus_training_trajectory",
   label: "Training Trajectory",
   type: "radio",
   options: [
@@ -1456,13 +3768,13 @@ actions: [
     { label: "Right", value: "right" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pelma_motus"
   }
 },
 
 {
-  name: "pelma_motus_scene",
+  name: "pelma_motus_type_scene",
   label: "Type Scene",
   type: "radio",
   options: [
@@ -1471,7 +3783,7 @@ actions: [
     { label: "Shoes", value: "shoes" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pelma_motus"
   }
 },
@@ -1486,7 +3798,7 @@ actions: [
     { label: "Hard", value: "hard" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pelma_motus"
   }
 },
@@ -1495,28 +3807,41 @@ actions: [
   name: "pelma_motus_duration",
   label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pelma_motus"
   }
 },
+// =====================================================
+// WRIST MOTUS
+// =====================================================
+
 {
   type: "subheading",
   label: "Wrist Motus",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
-// ======================================================
-// MOTOR COORDINATION
-// ======================================================
+// -------------------------
+// Motor Coordination
+// -------------------------
+{
+  type: "subheading",
+  label: "Motor Coordination",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "wrist_motus"
+  }
+},
 
 {
   name: "wrist_motus_motor_coordination_mode",
-  label: "Motor Coordination - Training Mode",
-  type: "checkbox-group",
+  label: "Training Mode",
+  type: "single-select",
   options: [
     { label: "Botanical Garden", value: "botanical_garden" },
     { label: "Spring Pong", value: "spring_pong" },
@@ -1526,14 +3851,14 @@ actions: [
     { label: "Table Tennis", value: "table_tennis" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
 {
   name: "wrist_motus_motor_coordination_type",
-  label: "Motor Coordination - Training Type",
+  label: "Training Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" },
@@ -1542,28 +3867,50 @@ actions: [
     { label: "Assisted", value: "assisted" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
 {
   name: "wrist_motus_motor_coordination_duration",
-  label: "Motor Coordination - Duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
-// ======================================================
-// COGNITIVE TRAINING
-// ======================================================
+// -------------------------
+// Cognitive Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Cognitive Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "wrist_motus"
+  }
+},
 
 {
-  name: "wrist_motus_cognitive_type",
-  label: "Cognitive Training Type",
+  name: "wrist_motus_cognitive_training_mode",
+  label: "Training Mode",
+  type: "single-select",
+  options: [
+    { label: "Clever Mind", value: "clever_mind" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "wrist_motus"
+  }
+},
+
+{
+  name: "wrist_motus_cognitive_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Assisted", value: "assisted" },
@@ -1571,52 +3918,90 @@ actions: [
     { label: "Resistance", value: "resistance" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
 {
-  name: "wrist_motus_cognitive_duration",
-  label: "Cognitive Training Duration",
+  name: "wrist_motus_cognitive_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
-// ======================================================
-// ISOMETRIC TRAINING
-// ======================================================
+// -------------------------
+// Isometric Training
+// -------------------------
+{
+  type: "subheading",
+  label: "Isometric Training",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "wrist_motus"
+  }
+},
 
 {
-  name: "wrist_motus_isometric_type",
-  label: "Isometric Training Type",
+  name: "wrist_motus_isometric_training_mode",
+  label: "Training Mode",
+  type: "single-select",
+  options: [
+    { label: "Air Gunner", value: "air_gunner" }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "wrist_motus"
+  }
+},
+
+{
+  name: "wrist_motus_isometric_training_type",
+  label: "Type",
   type: "radio",
   options: [
     { label: "Active", value: "active" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
 
 {
-  name: "wrist_motus_isometric_duration",
-  label: "Isometric Training Duration",
+  name: "wrist_motus_isometric_training_duration",
+  label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "wrist_motus"
   }
 },
+
+{
+  name: "luna_emg_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "luna_emg"
+  }
+},
+// =====================================================
+// CYCLE MOTUS
+// =====================================================
+
 {
   type: "subheading",
   label: "Cycle Motus",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "cycle_motus"
   }
 },
@@ -1632,7 +4017,7 @@ actions: [
     { label: "Leg Trainer", value: "leg_trainer" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "cycle_motus"
   }
 },
@@ -1647,7 +4032,7 @@ actions: [
     { label: "Passive", value: "passive" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "cycle_motus"
   }
 },
@@ -1656,485 +4041,29 @@ actions: [
   name: "cycle_motus_duration",
   label: "Duration",
   type: "input",
+  placeholder: "Enter duration",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "cycle_motus"
   }
 },
 
-// ======================================================
-// MYNDMOVE
-// ======================================================
+// =====================================================
+// TYMO
+// =====================================================
 
-{
-  type: "subheading",
-  label: "MyndMove",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "myndmove"
-  }
-},
-
-{
-  name: "myndmove_protocols",
-  label: "Protocols",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "modalities_exercise",
-    includes: "myndmove"
-  }
-},
-
-{
-  name: "myndmove_side",
-  label: "Side",
-  type: "radio",
-  options: [
-    { label: "Left", value: "left" },
-    { label: "Right", value: "right" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "myndmove"
-  }
-},
-
-{
-  name: "myndmove_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "myndmove"
-  }
-},
-{
-  type: "subheading",
-  label: "Vibramoov",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "vibramoov"
-  }
-},
-
-// ======================================================
-// MOBILITY FPS - LEGS
-// ======================================================
-
-{
-  name: "vibramoov_mode",
-  label: "Mode",
-  type: "radio",
-  options: [
-    { label: "Protocol Treatment - Mobility FPS", value: "mobility_fps" },
-    { label: "Hypertonia Focal Vibration", value: "hypertonia_focal_vibration" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "vibramoov"
-  }
-},
-
-{
-  name: "vibramoov_body_part_legs",
-  label: "Body Part (Legs)",
-  type: "radio",
-  options: [
-    { label: "Legs", value: "legs" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_position_legs",
-  label: "Position (Legs)",
-  type: "radio",
-  options: [
-    { label: "Lying Down", value: "lying_down" },
-    { label: "Verticalized", value: "verticalized" },
-    { label: "Standing", value: "standing" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_activity_legs",
-  label: "Activity (Legs)",
-  type: "checkbox-group",
-  options: [
-    { label: "Multi Activity", value: "multi_activity" },
-    { label: "Gait", value: "gait" },
-    { label: "Flexions", value: "flexions" },
-    { label: "Stairs", value: "stairs" },
-    { label: "Postural Control", value: "postural_control" },
-    { label: "Gait (Manual or Automatic)", value: "gait_manual_automatic" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_intensity_legs",
-  label: "Intensity (Legs)",
-  type: "radio",
-  options: [
-    { label: "Low", value: "low" },
-    { label: "Medium", value: "medium" },
-    { label: "High", value: "high" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_duration_legs",
-  label: "Duration (Legs)",
-  type: "input",
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-// ======================================================
-// ARMS
-// ======================================================
-
-{
-  name: "vibramoov_body_part_arms",
-  label: "Body Parts (Arms)",
-  type: "radio",
-  options: [
-    { label: "Bilateral", value: "bilateral" },
-    { label: "Left Arm", value: "left_arm" },
-    { label: "Right Arm", value: "right_arm" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_activity_arms",
-  label: "Activity (Arms)",
-  type: "checkbox-group",
-  options: [
-    { label: "Multi Activity", value: "multi_activity" },
-    { label: "Reaching / Pointing", value: "reaching_pointing" },
-    { label: "Writing / Drawing", value: "writing_drawing" },
-    { label: "Activities of Daily Living", value: "adl" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_intensity_arms",
-  label: "Intensity (Arms)",
-  type: "radio",
-  options: [
-    { label: "Low", value: "low" },
-    { label: "Medium", value: "medium" },
-    { label: "High", value: "high" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-{
-  name: "vibramoov_duration_arms",
-  label: "Duration (Arms)",
-  type: "input",
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "mobility_fps"
-  }
-},
-
-// ======================================================
-// HYPERTONIA FOCAL VIBRATION
-// ======================================================
-
-{
-  name: "vibramoov_hypertonia_intensity",
-  label: "Intensity",
-  type: "radio",
-  options: [
-    { label: "Severe", value: "severe" },
-    { label: "Moderate", value: "moderate" }
-  ],
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "hypertonia_focal_vibration"
-  }
-},
-
-{
-  name: "vibramoov_hypertonia_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "vibramoov_mode",
-    equals: "hypertonia_focal_vibration"
-  }
-},
-
-{
-  name: "vibramoov_remarks",
-  label: "Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "modalities_exercise",
-    includes: "vibramoov"
-  }
-},
-{
-  type: "subheading",
-  label: "ROBERT",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-// ======================================================
-// LOWER EXTREMITY
-// ======================================================
-
-{
-  name: "robert_primary_joint_lower",
-  label: "Primary Joint (Lower Extremity)",
-  type: "radio",
-  options: [
-    { label: "Hip", value: "hip" },
-    { label: "Knee", value: "knee" },
-    { label: "Ankle", value: "ankle" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_side_lower",
-  label: "Side",
-  type: "radio",
-  options: [
-    { label: "Left", value: "left" },
-    { label: "Right", value: "right" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_position_lower",
-  label: "Position",
-  type: "radio",
-  options: [
-    { label: "Supine", value: "supine" },
-    { label: "Lateral", value: "lateral" },
-    { label: "Seated", value: "seated" },
-    { label: "Prone", value: "prone" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_movement_lower",
-  label: "Movement",
-  type: "checkbox-group",
-  options: [
-    { label: "Flexion", value: "flexion" },
-    { label: "Extension", value: "extension" },
-    { label: "Abduction", value: "abduction" },
-    { label: "Adduction", value: "adduction" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_motion_setup_lower",
-  label: "Motion Setup",
-  type: "radio",
-  options: [
-    { label: "Active", value: "active" },
-    { label: "Guided", value: "guided" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_repetition_lower",
-  label: "Repetition",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_resistance_lower",
-  label: "Resistance",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_sas_lower",
-  label: "SAS",
-  type: "radio",
-  options: [
-    { label: "Yes", value: "yes" },
-    { label: "No", value: "no" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-// ======================================================
-// UPPER EXTREMITY
-// ======================================================
-
-{
-  name: "robert_primary_joint_upper",
-  label: "Primary Joint (Upper Extremity)",
-  type: "radio",
-  options: [
-    { label: "Shoulder", value: "shoulder" },
-    { label: "Elbow", value: "elbow" },
-    { label: "Wrist", value: "wrist" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_position_upper",
-  label: "Position",
-  type: "radio",
-  options: [
-    { label: "Supine", value: "supine" },
-    { label: "Seated", value: "seated" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_movement_upper",
-  label: "Movement",
-  type: "checkbox-group",
-  options: [
-    { label: "Shoulder Internal & External Rotation", value: "shoulder_rotation" },
-    { label: "Shoulder Flexion & Extension", value: "shoulder_flex_ext" },
-    { label: "Shoulder Abduction & Adduction", value: "shoulder_abd_add" },
-    { label: "Elbow Flexion & Extension", value: "elbow_flex_ext" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_motion_setup_upper",
-  label: "Motion Setup",
-  type: "radio",
-  options: [
-    { label: "Active", value: "active" },
-    { label: "Guided", value: "guided" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_repetition_upper",
-  label: "Repetition",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_resistance_upper",
-  label: "Resistance",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
-
-{
-  name: "robert_sas_upper",
-  label: "SAS",
-  type: "radio",
-  options: [
-    { label: "Yes", value: "yes" },
-    { label: "No", value: "no" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "robert"
-  }
-},
 {
   type: "subheading",
   label: "Tymo",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "tymo"
   }
 },
 
 {
-  name: "tymo_therapy_programs",
-  label: "Therapy Programs",
+  name: "tymo_therapy_program",
+  label: "Therapy Program",
   type: "radio",
   options: [
     { label: "1D Accuracy", value: "1d_accuracy" },
@@ -2143,53 +4072,95 @@ actions: [
     { label: "2D Cognition", value: "2d_cognition" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "tymo"
   }
 },
 
+// {
+//   name: "tymo_types_of_exercise",
+//   label: "Types of Exercise",
+//   type: "input",
+//   placeholder: "Enter types of exercise",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "tymo"
+//   }
+// },
+
+// {
+//   name: "tymo_duration",
+//   label: "Duration",
+//   type: "input",
+//   placeholder: "Enter duration",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "tymo"
+//   }
+// },
+
+// {
+//   name: "tymo_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "tymo"
+//   }
+// },
 {
-  name: "tymo_exercise_type",
-  label: "Types of Exercise",
-  type: "input",
+  type: "subheading",
+  label: "Parameters",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "tymo"
   }
+},
+{
+  type: "row",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "tymo"
+  },
+  fields: [
+    {
+      name: "tymo_types_of_exercise",
+      label: "Types of Exercise",
+      type: "input",
+      placeholder: "Enter types of exercise"
+    },
+    {
+      name: "tymo_duration",
+      label: "Duration",
+      type: "input",
+      placeholder: "Enter duration"
+    },
+    {
+      name: "tymo_remarks",
+      label: "Remarks",
+      type: "input",
+      placeholder: "Enter remarks"
+    }
+  ]
 },
 
-{
-  name: "tymo_duration",
-  label: "Duration",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "tymo"
-  }
-},
+// =====================================================
+// PABLO
+// =====================================================
 
-{
-  name: "tymo_remarks",
-  label: "Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "modalities_exercise",
-    includes: "tymo"
-  }
-},
 {
   type: "subheading",
   label: "Pablo",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pablo"
   }
 },
 
 {
-  name: "pablo_therapy_programs",
-  label: "Therapy Programs",
+  name: "pablo_therapy_program",
+  label: "Therapy Program",
   type: "radio",
   options: [
     { label: "1D Accuracy", value: "1d_accuracy" },
@@ -2198,51 +4169,87 @@ actions: [
     { label: "2D Cognition", value: "2d_cognition" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pablo"
   }
 },
 
+// {
+//   name: "pablo_types_of_exercise",
+//   label: "Types of Exercise",
+//   type: "input",
+//   placeholder: "Enter types of exercise",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "pablo"
+//   }
+// },
+
+// {
+//   name: "pablo_duration",
+//   label: "Duration",
+//   type: "input",
+//   placeholder: "Enter duration",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "pablo"
+//   }
+// },
+
+// {
+//   name: "pablo_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "pablo"
+//   }
+// },
 {
-  name: "pablo_exercise_type",
-  label: "Types of Exercise",
-  type: "input",
+  type: "subheading",
+  label: "Parameters",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pablo"
   }
 },
-
 {
-  name: "pablo_duration",
-  label: "Duration",
-  type: "input",
+  type: "row",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "pablo"
-  }
+  },
+  fields: [
+    {
+      name: "pablo_types_of_exercise",
+      label: "Types of Exercise",
+      type: "input",
+      placeholder: "Enter types of exercise"
+    },
+    {
+      name: "pablo_duration",
+      label: "Duration",
+      type: "input",
+      placeholder: "Enter duration"
+    },
+    {
+      name: "pablo_remarks",
+      label: "Remarks",
+      type: "input",
+      placeholder: "Enter remarks"
+    }
+  ]
 },
-
-{
-  name: "pablo_remarks",
-  label: "Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "modalities_exercise",
-    includes: "pablo"
-  }
-},
-
-// ======================================================
-// BWS Walker
-// ======================================================
+// =====================================================
+// BWS WALKER
+// =====================================================
 
 {
   type: "subheading",
   label: "BWS Walker",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "bws_walker"
   }
 },
@@ -2250,40 +4257,49 @@ actions: [
 {
   name: "bws_walker_remarks",
   label: "Remarks",
-  type: "textarea",
-  rows: 3,
+  type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "bws_walker"
   }
 },
+
+// =====================================================
+// SYREBO
+// =====================================================
+
 {
   type: "subheading",
   label: "Syrebo",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "syrebo"
   }
 },
 
 {
   name: "syrebo_training_mode",
-  label: "Training",
+  label: "Training Mode",
   type: "radio",
   options: [
     { label: "Group Mode", value: "group_mode" },
     { label: "Refined Mode", value: "refined_mode" }
   ],
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "syrebo"
   }
 },
 
+// =====================================================
+// GROUP MODE
+// =====================================================
+
 {
-  name: "syrebo_group_mode",
-  label: "Group Mode",
-  type: "radio",
+  name: "syrebo_group_mode_training",
+  label: "Group Mode Training",
+  type: "checkbox-group",
   options: [
     { label: "Passive Training", value: "passive_training" },
     { label: "Master Slave", value: "master_slave" },
@@ -2296,10 +4312,14 @@ actions: [
   }
 },
 
+// =====================================================
+// REFINED MODE
+// =====================================================
+
 {
-  name: "syrebo_refined_mode",
-  label: "Refined Mode",
-  type: "radio",
+  name: "syrebo_refined_mode_training",
+  label: "Refined Mode Training",
+  type: "checkbox-group",
   options: [
     { label: "Passive Training", value: "passive_training" },
     { label: "Action Library", value: "action_library" },
@@ -2312,262 +4332,208 @@ actions: [
   }
 },
 
+// =====================================================
+// PARAMETERS
+// =====================================================
+
 {
-  name: "syrebo_training_time",
-  label: "Training Time",
-  type: "input",
+  type: "subheading",
+  label: "Parameters",
   showIf: {
-    field: "modalities_exercise",
+    field: "neuro_robotics_neuromodulation_interventions",
     includes: "syrebo"
   }
 },
+
+// {
+//   name: "syrebo_training_time",
+//   label: "Training Time",
+//   type: "input",
+//   placeholder: "Enter training time",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "syrebo"
+//   }
+// },
+
+// {
+//   name: "syrebo_remarks",
+//   label: "Remarks",
+//   type: "input",
+//   placeholder: "Enter remarks",
+//   showIf: {
+//     field: "neuro_robotics_neuromodulation_interventions",
+//     includes: "syrebo"
+//   }
+// },
+{
+  type: "row",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "syrebo"
+  },
+  fields: [
+    {
+      name: "syrebo_training_time",
+      label: "Training Time",
+      type: "input",
+      placeholder: "Enter training time"
+    },
+    {
+      name: "syrebo_remarks",
+      label: "Remarks",
+      type: "input",
+      placeholder: "Enter remarks"
+    }
+  ]
+},
+// =====================================================
+// LIFESCAPE MEDICAL BCI
+// =====================================================
+
 {
   type: "subheading",
-  label: "Chattanooga",
+  label: "LIFESCAPE Medical BCI",
   showIf: {
-    field: "modalities_exercise",
-    includes: "chattanooga"
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "lifescape_medical_bci"
   }
 },
 
 {
-  name: "chattanooga_region",
-  label: "Region",
+  name: "lifescape_medical_bci_movements",
+  label: "Movements",
   type: "input",
+  placeholder: "Enter movements",
   showIf: {
-    field: "modalities_exercise",
-    includes: "chattanooga"
-  }
-},
-
-{
-  name: "chattanooga_side",
-  label: "Side",
-  type: "radio",
-  options: [
-    { label: "Left", value: "left" },
-    { label: "Right", value: "right" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "chattanooga"
-  }
-},
-{
-  type: "subheading",
-  label: "Brain Computer Interface (BCI)",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_region",
-  label: "Region",
-  type: "radio",
-  options: [
-    { label: "Right Wrist, Left Wrist", value: "right_wrist_left_wrist" },
-    { label: "Right Wrist, Left Ankle", value: "right_wrist_left_ankle" },
-    { label: "Left Wrist, Right Ankle", value: "left_wrist_right_ankle" }
-  ],
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_intensity",
-  label: "Intensity (mA)",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_total_set",
-  label: "Total Set",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "lifescape_medical_bci"
   }
 },
 
 {
   type: "subheading",
-  label: "Total Time",
+  label: "Parameters",
   showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "lifescape_medical_bci"
   }
 },
 
 {
-  name: "bci_total_time_1",
-  label: "Total Time 1",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_total_time_2",
-  label: "Total Time 2",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_total_time_3",
-  label: "Total Time 3",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  type: "subheading",
-  label: "Scoring",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_scoring_1",
-  label: "Scoring 1 (%)",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_scoring_2",
-  label: "Scoring 2 (%)",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-
-{
-  name: "bci_scoring_3",
-  label: "Scoring 3 (%)",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "brain_computer_interface"
-  }
-},
-{
-  name: "modalities_exercise_other",
-  label: "Others",
-  type: "input",
-  showIf: {
-    field: "modalities_exercise",
-    includes: "others"
-  }
-},
-
-{
-  name: "modalities_exercise_other_remarks",
-  label: "Others Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "modalities_exercise",
-    includes: "others"
-  }
-},
-// ======================================================
-// PAIN MANAGEMENT
-// ======================================================
-
-{
-  type: "subheading",
-  label: "Pain Management"
-},
-
-{
-  name: "pain_management",
-  
-  type: "checkbox-group",
-  options: [
-    { label: "Cold Therapy", value: "cold_therapy" },
-    { label: "Hot Therapy", value: "hot_therapy" },
-    { label: "Laser", value: "laser" },
-    { label: "Other", value: "other" }
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "lifescape_medical_bci" },
+  fields: [
+    { name: "lifescape_medical_bci_intensity", label: "Intensity (mA)", type: "input", placeholder: "Enter intensity in mA" },
+    { name: "lifescape_medical_bci_repetitions", label: "Repetitions (reps)", type: "input", placeholder: "Enter repetitions" }
   ]
 },
 
 {
-  name: "cold_therapy_remarks",
-  label: "Cold Therapy Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "pain_management",
-    includes: "cold_therapy"
-  }
-},
-
-{
-  name: "hot_therapy_remarks",
-  label: "Hot Therapy Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "pain_management",
-    includes: "hot_therapy"
-  }
-},
-
-{
-  name: "laser_remarks",
-  label: "Laser Remarks",
-  type: "textarea",
-  rows: 3,
-  showIf: {
-    field: "pain_management",
-    includes: "laser"
-  }
-},
-
-{
-  name: "other_pain_management",
-  label: "Other",
+  name: "lifescape_medical_bci_duration",
+  label: "Duration (minutes)",
   type: "input",
+  placeholder: "Enter duration in minutes",
   showIf: {
-    field: "pain_management",
-    includes: "other"
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "lifescape_medical_bci"
   }
 },
 
 {
-  name: "other_pain_management_remarks",
-  label: "Other Remarks",
-  type: "textarea",
-  rows: 3,
+  name: "lifescape_medical_bci_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
   showIf: {
-    field: "pain_management",
-    includes: "other"
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "lifescape_medical_bci"
   }
 },
+// =====================================================
+// RECOVERIX BRAIN COMPUTER INTERFACE (BCI)
+// =====================================================
+
+{
+  type: "subheading",
+  label: "RecoveriX Brain Computer Interface (BCI)",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "recoverix_bci"
+  }
+},
+
+{
+  name: "recoverix_bci_region",
+  label: "Region",
+  type: "radio",
+  options: [
+    {
+      label: "Right Wrist + Left Wrist",
+      value: "right_wrist_left_wrist"
+    },
+    {
+      label: "Right Wrist + Left Ankle",
+      value: "right_wrist_left_ankle"
+    },
+    {
+      label: "Left Wrist + Right Ankle",
+      value: "left_wrist_right_ankle"
+    }
+  ],
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "recoverix_bci"
+  }
+},
+
+{
+  type: "subheading",
+  label: "Parameters",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "recoverix_bci"
+  }
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "recoverix_bci" },
+  fields: [
+    { name: "recoverix_bci_intensity", label: "Intensity (mA)", type: "input", placeholder: "Enter intensity in mA" },
+    { name: "recoverix_bci_total_set", label: "Total Set", type: "input", placeholder: "Enter total number of sets" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "recoverix_bci" },
+  fields: [
+    { name: "recoverix_bci_total_time", label: "Total Time", type: "input", placeholder: "Enter total time" },
+    { name: "recoverix_bci_scoring_1", label: "Scoring 1 (%)", type: "input", placeholder: "Enter first score percentage" }
+  ]
+},
+
+{
+  type: "row",
+  showIf: { field: "neuro_robotics_neuromodulation_interventions", includes: "recoverix_bci" },
+  fields: [
+    { name: "recoverix_bci_scoring_2", label: "Scoring 2 (%)", type: "input", placeholder: "Enter second score percentage" },
+    { name: "recoverix_bci_scoring_3", label: "Scoring 3 (%)", type: "input", placeholder: "Enter third score percentage" }
+  ]
+},
+
+{
+  name: "recoverix_bci_remarks",
+  label: "Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "neuro_robotics_neuromodulation_interventions",
+    includes: "recoverix_bci"
+  }
+},
+
 
 
       ]
@@ -2592,7 +4558,7 @@ actions: [
     ],  sections: [{
     fields: [
     
-      { name: "assessment_notes", label: "Clinical Impression / Notes", type: "textarea", placeholder: "Therapist assessment..." },
+      { name: "assessment_notes", label: "Clinical Impression / Notes", type: "input", placeholder: "Therapist assessment..." },
 
 
       
@@ -2609,7 +4575,7 @@ actions: [
     ],
   sections: [
     {
-      title: "Therapist Notes",
+     
       fields: [
         { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
         {
@@ -2628,7 +4594,6 @@ actions: [
 
 {
   name: "plan_therapist_notes",
-  label: "Therapist Notes",
   type: "checkbox-group",
   options: [
     {
@@ -2661,7 +4626,7 @@ actions: [
 {
   name: "plan_modify_parameters",
   label: "Modify Parameters (if any)",
-  type: "textarea",
+  type: "input",
   rows: 3,
   showIf: {
     field: "plan_therapist_notes",
@@ -2672,7 +4637,7 @@ actions: [
 {
   name: "plan_progress_exercises_to",
   label: "Progress Exercises To",
-  type: "textarea",
+  type: "input",
   rows: 3,
   showIf: {
     field: "plan_therapist_notes",
@@ -2693,7 +4658,7 @@ actions: [
 {
   name: "plan_reassessment_plan",
   label: "Reassessment Plan",
-  type: "textarea",
+  type: "input",
   rows: 3,
   showIf: {
     field: "plan_therapist_notes",
@@ -2704,7 +4669,7 @@ actions: [
 {
   name: "plan_remarks",
   label: "Remarks",
-  type: "textarea",
+  type: "input",
   rows: 4,
   showIf: {
     field: "plan_therapist_notes",
@@ -2803,7 +4768,7 @@ const handleSubmit = () => {
   //     alert("Progress & Intervention saved.");
   //   }
   // };
-    const handleAction = (type) => {
+       const handleAction = (type) => {
     if (type === "back") onBack?.();
     if (type === "clear") {
       setValues({});
@@ -2815,10 +4780,9 @@ const handleSubmit = () => {
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Spinal draft saved");
+      alert("Neuromodulation draft saved");
     }
-  };
-function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  };function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
   if (!patient) return null;
 
   const safe = (v) => v ?? "-";
@@ -2863,8 +4827,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
         
                   <div>
                     <b>Past Medical History</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.past_medical_history}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -2878,8 +4842,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           
           <div>
                     <b>Family History</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.past_family_history}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -2893,8 +4857,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
         
            <div>
                     <b>Allergies</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.alerts_and_allergies}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -2972,7 +4936,7 @@ const tabBar    = { display: "flex", gap: 12, justifyContent: "center", borderBo
 const tabBtn    = { padding: "10px 22px", fontWeight: 600, cursor: "pointer", color: "#0f172a" };
 const tabActive = { ...tabBtn, borderBottom: "3px solid #2451b3", color: "#2451b3" };
 const backBtn   = { marginTop: 10, padding: "8px 18px", borderRadius: 6, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer" };
-const textarea = {
+const input = {
           width: "100%",
           minHeight: 90,
           marginTop: 6,

@@ -396,7 +396,7 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
   };
 
   const OBJECTIVE_SCHEMA = {
-    title: "OBJECTIVE",
+    
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
@@ -773,7 +773,7 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
   };
 
   const ASSESSMENT_SCHEMA = {
-    title: "ASSESSMENT",
+   
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
@@ -927,7 +927,7 @@ export default function Cardiorespiratory({ patient, onSubmit, onBack }) {
   };
 
   const PLAN_SCHEMA = {
-    title: "PLAN",
+   
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
