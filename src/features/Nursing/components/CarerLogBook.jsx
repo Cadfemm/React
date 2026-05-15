@@ -24,7 +24,7 @@ const C = {
   borderMd:   "#BDBDBD",
 
   /* Page */
-  pageBg:     "#F5F7FA",
+
 
   /* Text */
   text:       "#212121",

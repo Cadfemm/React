@@ -352,7 +352,7 @@ function AssessmentCard({ card, onClick }) {
 
 /* ── Styles ── */
 const S = {
-  page: { padding: "28px 28px 32px", background: "#F2F6FB", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" },
+  page: { padding: "28px 28px 32px", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" },
   headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, marginBottom: 20 },
   pageTitle: { fontSize: 24, fontWeight: 800, color: "#0F172A", margin: "0 0 4px 0" },
   pageSub:   { fontSize: 13, color: "#475569", margin: 0 },
@@ -381,7 +381,7 @@ const S = {
   emptyState: { padding: "48px 20px", textAlign: "center", color: "#64748B" },
 
   /* selection page */
-  selectionPage: { display: "flex", flexDirection: "column", minHeight: "100vh", background: "#F5F7FA" },
+  selectionPage: { display: "flex", flexDirection: "column", minHeight: "100vh"},
   banner: { background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "16px 28px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" },
   patientName: { fontSize: 17, fontWeight: 700, color: "#0F172A" },
   patientMeta: { fontSize: 12, color: "#6B7280", marginTop: 3 },

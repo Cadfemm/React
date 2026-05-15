@@ -158,7 +158,7 @@ export default function ProstheticsAndOrthoticsPatients({ selectedCard, onBack }
     const avatarBg = AVATAR_COLORS[initials.charCodeAt(0) % AVATAR_COLORS.length];
 
     return (
-      <div style={{ minHeight: "100vh", background: "#F5F7FA" }}>
+      <div style={{ minHeight: "100vh" }}>
         {/* Patient banner */}
         <div style={{
           background: "#fff", borderBottom: "1px solid #E5E7EB",

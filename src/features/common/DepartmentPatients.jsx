@@ -224,7 +224,7 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
   if (selectedPatient) {
     const initials = ((selectedPatient.name || selectedPatient.email || "P").split(" ").map(w => w[0]).join("").slice(0, 2)).toUpperCase();
     return (
-      <div style={{ minHeight: "100%", background: "#f5f7fa", fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div style={{ minHeight: "100%" }}>
         {/* Patient banner */}
         <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 28px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -255,7 +255,7 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
 
   /* ── Patient list ── */
   return (
-    <div style={{ padding: "28px 28px 32px", background: "#F2F6FB", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" }}>
+    <div style={{ padding: "28px 28px 32px", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
