@@ -5,6 +5,7 @@ import { ShimmerRow } from "../../shared/ui/Shimmer";
 import { API_URL } from "../../platform/config/api.config";
 import ProcedureAssessment from "../Doctors/components/ProcedureAssessment";
 import ShiftAssessment from "../Nursing/components/ShiftAssessment";
+import RAPPatientAssessmentsList from "../../components/RAPPatientAssessmentsList";
 
 /* ── Assessment type cards ─────────────────────────────── */
 
@@ -101,29 +102,73 @@ function AssessmentCard({ card, onClick }) {
 
 const AVATAR_COLORS = ["#DBEAFE", "#D1FAE5", "#FEF3C7", "#FCE7F3", "#EDE9FE", "#FFEDD5"];
 
-function PatientRow({ patient: p, idx, onStart }) {
+function PatientRow({ patient: p, idx, onStart, listOnly, onPatientClick, selectable }) {
   const [hovered, setHovered] = useState(false);
-  const initial = ((p.name || p.email || "P")[0] || "P").toUpperCase();
+  const displayName = p.name || p.patient_name || p.email || "—";
+  const initial = (displayName[0] || "P").toUpperCase();
+  const deptLabel = Array.isArray(p.departments)
+    ? p.departments.join(", ")
+    : p.departments || "—";
+
+  const handleRowClick = () => {
+    if (selectable && onPatientClick) onPatientClick(p);
+  };
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "2.5fr 1.8fr 1.2fr 1fr", padding: "14px 20px", alignItems: "center", borderBottom: "1px solid #F1F5F9", background: hovered ? "#F8FAFF" : idx % 2 === 0 ? "#fff" : "#FAFBFC", transition: "background .15s" }}
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <div
+      role={selectable ? "button" : undefined}
+      tabIndex={selectable ? 0 : undefined}
+      onClick={selectable ? handleRowClick : undefined}
+      onKeyDown={
+        selectable
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleRowClick();
+              }
+            }
+          : undefined
+      }
+      style={{
+        display: "grid",
+        gridTemplateColumns: listOnly ? "2.5fr 1.8fr 1.2fr 2fr" : "2.5fr 1.8fr 1.2fr 1fr",
+        padding: "14px 20px",
+        alignItems: "center",
+        borderBottom: "1px solid #F1F5F9",
+        background: hovered ? "#F8FAFF" : idx % 2 === 0 ? "#fff" : "#FAFBFC",
+        transition: "background .15s",
+        cursor: selectable ? "pointer" : undefined,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ width: 32, height: 32, borderRadius: "50%", background: AVATAR_COLORS[initial.charCodeAt(0) % AVATAR_COLORS.length], display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#1E40AF", flexShrink: 0 }}>{initial}</div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>{p.name || p.email}</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>{displayName}</div>
           {(p.age || p.gender) && <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{[p.age && `${p.age} yrs`, p.gender].filter(Boolean).join(" · ")}</div>}
         </div>
       </div>
-      <div style={{ fontSize: 13, color: "#6B7280", fontFamily: "monospace" }}>{p.mrn || p.icd || "—"}</div>
+      <div style={{ fontSize: 13, color: "#6B7280", fontFamily: "monospace" }}>{p.mrn || p.icd || p.patient_id || "—"}</div>
       <div><StatusPill status={p.status} /></div>
-      <div style={{ textAlign: "right" }}>
-        <button onClick={onStart}
-          onMouseEnter={e => { e.currentTarget.style.background = "#0058FF"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#0058FF"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.color = "#0058FF"; e.currentTarget.style.borderColor = "#BFDBFE"; }}
-          style={{ background: "#fff", border: "1px solid #2563EB", color: "#2563EB", borderRadius: 999, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all .18s" }}>
-          Begin assessment
-        </button>
-      </div>
+      {listOnly ? (
+        <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.4 }}>
+          {selectable ? (
+            <span style={{ color: "#2563EB", fontWeight: 600 }}>View assessments →</span>
+          ) : (
+            deptLabel
+          )}
+        </div>
+      ) : (
+        <div style={{ textAlign: "right" }}>
+          <button type="button" onClick={(e) => { e.stopPropagation(); onStart?.(); }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#0058FF"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#0058FF"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.color = "#0058FF"; e.currentTarget.style.borderColor = "#BFDBFE"; }}
+            style={{ background: "#fff", border: "1px solid #2563EB", color: "#2563EB", borderRadius: 999, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all .18s" }}>
+            Begin assessment
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -138,48 +183,164 @@ function PatientRow({ patient: p, idx, onStart }) {
  *   AssessmentComponent - the department's assessment component (receives { patient, mode, onBack })
  *   loading         - optional bool
  */
-export default function DepartmentPatients({ department, onBack, AssessmentComponent, loading = false }) {
+function normalizePatientList(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.data?.results)) return data.data.results;
+  return [];
+}
+
+/** Same departments as sidebar — used to load full registry for Admin/Staff */
+const ALL_CLINICAL_DEPARTMENTS = [
+  "Nursing",
+  "Medical Assistant",
+  "Doctor",
+  "Physiotherapy",
+  "Integrated Rehab",
+  "Work & Vocational Rehab",
+  "Occupational Therapy",
+  "Optometry",
+  "Prosthetics & Orthotics",
+  "Audiology",
+  "Dietetics",
+  "Speech & Language Therapy",
+  "Psychology",
+];
+
+function mergePatientsById(lists) {
+  const byKey = new Map();
+  for (const p of lists.flat()) {
+    const key = p?.id ?? p?.patient_id ?? p?.mrn;
+    if (key != null) byKey.set(String(key), p);
+    else if (p) byKey.set(`${p.name || p.patient_name}-${p.email}`, p);
+  }
+  return Array.from(byKey.values());
+}
+
+async function fetchAllPatientsRegistry(userRole) {
+  const isScopedUser = ["Admin", "Staff"].includes(userRole);
+
+  if (!isScopedUser) {
+    const res = await api.get(API_URL.PATIENT);
+    return normalizePatientList(res.data);
+  }
+
+  const batches = await Promise.all(
+    ALL_CLINICAL_DEPARTMENTS.map((dept) =>
+      api
+        .get(`${API_URL.PATIENT}?department=${encodeURIComponent(dept)}`)
+        .then((res) => normalizePatientList(res.data))
+        .catch(() => [])
+    )
+  );
+  return mergePatientsById(batches);
+}
+
+export default function DepartmentPatients({
+  department,
+  onBack,
+  AssessmentComponent,
+  loading: loadingProp = false,
+  showAllPatients = false,
+  hideBack = false,
+  listOnly = false,
+  title,
+  patientsFromApp,
+}) {
   const userRole = localStorage.getItem("userRole") || "";
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [assessmentView, setAssessmentView] = useState(null);
   const [search, setSearch] = useState("");
-  const [patients, setPatients] = useState([])
-  
-
-  const deptPatients = useMemo(() =>
-    patients.filter(p => !department || (Array.isArray(p.departments) ? p.departments.includes(department) : true)),
-    [patients, department]
+  const [patients, setPatients] = useState(() =>
+    showAllPatients ? normalizePatientList(patientsFromApp) : []
   );
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const loading = loadingProp || fetchLoading;
 
-  /* Fetch patients department wise */
+  /* RAP / all-patients: no department filter — entire registry */
+  const deptPatients = useMemo(() => {
+    if (showAllPatients) return patients;
+    return patients.filter(
+      (p) =>
+        !department ||
+        (Array.isArray(p.departments) ? p.departments.includes(department) : true)
+    );
+  }, [patients, department, showAllPatients]);
+
+  const pageTitle = title || (showAllPatients ? "RAP" : `${department} Patients`);
+  const pageSubtitle = showAllPatients
+    ? "All patients across every department"
+    : `Patient queue for ${department}`;
+
   React.useEffect(() => {
+    if (!showAllPatients) return;
+    const fromApp = normalizePatientList(patientsFromApp);
+    if (fromApp.length > 0) setPatients(fromApp);
+  }, [showAllPatients, patientsFromApp]);
+
+  /* Fetch patients */
+  React.useEffect(() => {
+    let cancelled = false;
+
     const fetchPatients = async () => {
-      try{
-        const res = await api.get(
-          API_URL.PATIENT + (['Admin', 'Staff'].includes(userRole)? `?department=${encodeURIComponent(department)}`:'')
-        )
-        setPatients(res.data.results);
-      } catch(e){
-        setPatients([]);
+      setFetchLoading(true);
+      try {
+        if (showAllPatients) {
+          const list = await fetchAllPatientsRegistry(userRole);
+          if (cancelled) return;
+          const fallback = normalizePatientList(patientsFromApp);
+          setPatients(list.length > 0 ? list : fallback);
+          return;
+        }
+        const url = ["Admin", "Staff"].includes(userRole)
+          ? API_URL.PATIENT + `?department=${encodeURIComponent(department)}`
+          : API_URL.PATIENT;
+        const res = await api.get(url);
+        if (!cancelled) setPatients(normalizePatientList(res.data));
+      } catch (e) {
+        if (!cancelled) {
+          setPatients(
+            showAllPatients ? normalizePatientList(patientsFromApp) : []
+          );
+        }
+      } finally {
+        if (!cancelled) setFetchLoading(false);
       }
-    }
+    };
+
     fetchPatients();
-  }, [])
+    return () => {
+      cancelled = true;
+    };
+  }, [department, showAllPatients, userRole, patientsFromApp]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return !q ? deptPatients : deptPatients.filter(p =>
-      (p.name || "").toLowerCase().includes(q) ||
+      (p.name || p.patient_name || "").toLowerCase().includes(q) ||
       (p.email || "").toLowerCase().includes(q) ||
-      (p.mrn || "").toLowerCase().includes(q)
+      (p.mrn || "").toLowerCase().includes(q) ||
+      String(p.patient_id || "").toLowerCase().includes(q)
     );
   }, [deptPatients, search]);
 
   const handleBack = () => { setAssessmentView(null); setSelectedPatient(null); };
   const handleBackToCards = () => setAssessmentView(null);
+  const rapPatientPicker = showAllPatients && listOnly;
+
+  /* ── RAP: patient assessments from API ── */
+  if (rapPatientPicker && selectedPatient) {
+    return (
+      <RAPPatientAssessmentsList
+        patient={selectedPatient}
+        onBack={() => setSelectedPatient(null)}
+      />
+    );
+  }
 
   /* ── Assessment view ── */
-  if (selectedPatient && assessmentView) {
+  if (!listOnly && selectedPatient && assessmentView) {
     // Procedure Assessment — only for Doctor department
     if (assessmentView === "procedure") {
       return (
@@ -221,7 +382,7 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
   }
 
   /* ── Assessment type selection ── */
-  if (selectedPatient) {
+  if (!listOnly && selectedPatient) {
     const initials = ((selectedPatient.name || selectedPatient.email || "P").split(" ").map(w => w[0]).join("").slice(0, 2)).toUpperCase();
     return (
       <div style={{ minHeight: "100%" }}>
@@ -259,10 +420,12 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button onClick={onBack} className="dash-btn-outline" style={{ padding: "8px 14px", borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: "pointer", boxShadow: "0 8px 20px rgba(15,23,42,0.08)" }}>← Back</button>
+          {!hideBack && onBack && (
+            <button onClick={onBack} className="dash-btn-outline" style={{ padding: "8px 14px", borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: "pointer", boxShadow: "0 8px 20px rgba(15,23,42,0.08)" }}>← Back</button>
+          )}
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: "#0F172A", margin: "0 0 4px 0" }}>{department} Patients</h1>
-            <p style={{ fontSize: 13, color: "#475569", margin: 0 }}>Patient queue for {department}</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: "#0F172A", margin: "0 0 4px 0" }}>{pageTitle}</h1>
+            <p style={{ fontSize: 13, color: "#475569", margin: 0 }}>{pageSubtitle}</p>
           </div>
         </div>
         <div style={{ width: "100%", maxWidth: 520, position: "relative", display: "flex", alignItems: "center", background: "#fff", border: "1px solid #D1D5DB", borderRadius: 16, boxShadow: "0 10px 30px rgba(15,23,42,0.08)" }}>
@@ -278,16 +441,29 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
 
       {/* Table */}
       <div style={{ background: "#fff", borderRadius: 28, border: "1px solid #E5E7EB", overflow: "hidden", boxShadow: "0 24px 80px rgba(15,23,42,0.08)" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2.5fr 2fr 1.2fr 1fr", padding: "18px 24px", background: "#F8FAFC", borderBottom: "1px solid #E6E8F0" }}>
-          {["Patient", "MRN / ICD", "Status", "Action"].map(h => (
+        <div style={{ display: "grid", gridTemplateColumns: listOnly ? "2.5fr 1.8fr 1.2fr 2fr" : "2.5fr 2fr 1.2fr 1fr", padding: "18px 24px", background: "#F8FAFC", borderBottom: "1px solid #E6E8F0" }}>
+          {(listOnly
+            ? ["Patient", "MRN / ID", "Status", rapPatientPicker ? "Action" : "Departments"]
+            : ["Patient", "MRN / ICD", "Status", "Action"]
+          ).map(h => (
             <div key={h} style={{ fontSize: 11, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.18em" }}>{h}</div>
           ))}
         </div>
         {loading ? Array.from({ length: 5 }, (_, i) => <ShimmerRow key={i} />) :
           filtered.length === 0 ? (
-            <EmptyState icon="🧑‍⚕️" title={search ? "No patients match your search" : "No patients assigned"} message={search ? "Try a different name or MRN." : `Patients assigned to ${department} will appear here.`} />
+            <EmptyState icon="🧑‍⚕️" title={search ? "No patients match your search" : "No patients found"} message={search ? "Try a different name or MRN." : showAllPatients ? "All registered patients from every department will appear here." : `Patients assigned to ${department} will appear here.`} />
           ) : (
-            filtered.map((p, idx) => <PatientRow key={p.id} patient={p} idx={idx} onStart={() => setSelectedPatient(p)} />)
+            filtered.map((p, idx) => (
+              <PatientRow
+                key={p.id || p.patient_id || idx}
+                patient={p}
+                idx={idx}
+                listOnly={listOnly}
+                selectable={rapPatientPicker}
+                onPatientClick={rapPatientPicker ? setSelectedPatient : undefined}
+                onStart={listOnly ? undefined : () => setSelectedPatient(p)}
+              />
+            ))
           )
         }
       </div>
@@ -299,3 +475,4 @@ export default function DepartmentPatients({ department, onBack, AssessmentCompo
     </div>
   );
 }
+
