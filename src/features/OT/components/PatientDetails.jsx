@@ -1,112 +1,136 @@
 import React, { useState } from "react";
-/* ===== Import department components ===== */
-import Neuro from "./Neuro";
+
+/* ── Standard assessment components ── */
+import Neuro            from "./Neuro";
 import SpinalCordInjury from "./SpinalcordInjury";
-import Hydro from "./Hydro";
-import Musculoskeletal from "./Musculoskeletal";
-import Conditioning from "./Conditioning";
-import Cardiorespiratory from "./Cardiorespiratory";
-import Amputee from "./Amputee";
-import DrivingRehab from "./DrivingRehab";
-import HomeAssessment from "./HomeAssessment";
+import Musculoskeletal  from "./Musculoskeletal";
+import Conditioning     from "./Conditioning";
+import Amputee          from "./Amputee";
+import DrivingRehab     from "./DrivingRehab";
+import HomeAssessment   from "./HomeAssessment";
 
-export default function ProgramTabsWithContent({ patient }) {
-  const tabs = [
-    { key: "conditioning",   label: "Cognitive"          },
-    { key: "neuro",          label: "Neurology"          },
-    { key: "msk",            label: "Musculoskeletal"    },
-    { key: "sci",            label: "Spinal Cord Injury" },
-    { key: "amputee",        label: "Amputee"            },
-    { key: "driving_rehab",  label: "Driving Rehab"      },
-    { key: "home_assessment", label: "Home Assessment"   },
-  ];
+/* ── Progress components ── */
+// import NeuroProgress           from "../../../features/PT/components/NeuroProgress";
+// import SpinalcordInjuryProgress from "../../../features/PT/components/SpinalcordInjuryProgress";
+// import MSDProgress             from "../../../features/PT/components/MSDProgress";
+// import AmputeeProgress         from "../../../features/PT/components/AmputeeProgress";
+import CognitiveProgress       from "./CognitiveProgress";
+import AmputeeProgress       from "./AmputeProgress";
+import MSDProgress from "./MSDProgress";
+import SpinalcordinjuryProgress from "./SpinalcordinjuryProgress";
+import NeuroProgress from './NeuroProgress';
 
-  const [activeTab, setActiveTab] = useState("sci");
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "neuro":
-        return <Neuro patient={patient} />;
+/* ── Assessment type cards ── */
+const ASSESSMENT_TYPES = [
+  { id: "initial",  title: "Initial Assessment",   desc: "Comprehensive assessment for new patient visit",  icon: "📋", accent: "#1D4ED8", tag: "New Patient",   tagBg: "#dbeafe", tagColor: "#1d4ed8" },
+  { id: "followup", title: "Re-Assessment",         desc: "Review progress and adjust treatment plan",       icon: "🔄", accent: "#059669", tag: "Returning",     tagBg: "#d1fae5", tagColor: "#065f46" },
+  { id: "progress", title: "Progress Intervention", desc: "Document interventions and track outcomes",       icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",  tagBg: "#ede9fe", tagColor: "#5b21b6" },
+  { id: "group",    title: "Group Intervention",    desc: "Record group session and multi-patient notes",    icon: "👥", accent: "#DC2626", tag: "Group Session", tagBg: "#fee2e2", tagColor: "#991b1b" },
+];
 
-      case "sci":
-        return <SpinalCordInjury  patient={patient}/>;
-
-      case "hydro":
-        return <Hydro />;
-
-      case "msk":
-        return <Musculoskeletal patient={patient}/>;
-
-      case "conditioning":
-        return <Conditioning patient={patient}/>;
-
-      case "cardio":
-        return <Cardiorespiratory  patient={patient}/>;
-
-      case "amputee":
-        return <Amputee patient={patient}/>;
-
-      case "driving_rehab":
-        return <DrivingRehab patient={patient} />;
-
-      case "home_assessment":
-        return <HomeAssessment patient={patient} />;
-
-      default:
-        return null;
-    }
-  };
-
+function AssessmentCard({ item, onClick }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div>
-      {/* ================= TABS ================= */}
-      <div style={tabRow}>
-        {tabs.map(tab => (
-          <div
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            style={{
-              ...tabItem,
-              ...(activeTab === tab.key ? activeTabStyle : {})
-            }}
-          >
-            {tab.label}
-          </div>
-        ))}
+    <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ background: "#fff", borderRadius: 14, border: "1px solid #e9ecef", borderTop: `3px solid ${item.accent}`, padding: "22px 22px 18px", cursor: "pointer", transition: "box-shadow .2s, transform .2s", display: "flex", flexDirection: "column", minHeight: 190, boxShadow: hovered ? `0 12px 32px ${item.accent}22` : "0 2px 8px rgba(0,0,0,0.06)", transform: hovered ? "translateY(-3px)" : "none" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 10, background: item.accent + "12", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{item.icon}</div>
+        <span style={{ background: item.tagBg, color: item.tagColor, borderRadius: 999, padding: "3px 10px", fontSize: 11, fontWeight: 700 }}>{item.tag}</span>
       </div>
-
-      {/* ================= CONTENT ================= */}
-      <div style={contentContainer}>
-        {renderContent()}
+      <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>{item.title}</div>
+      <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6, flex: 1 }}>{item.desc}</div>
+      <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: item.accent }}>Open Assessment</span>
+        <div style={{ width: 28, height: 28, borderRadius: "50%", background: item.accent, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 16, fontWeight: 700 }}>›</div>
       </div>
     </div>
   );
 }
 
-/* ================= STYLES ================= */
+const TABS = [
+  { key: "conditioning",    label: "Cognitive"          },
+  { key: "neuro",           label: "Neurology"          },
+  { key: "msk",             label: "Musculoskeletal"    },
+  { key: "sci",             label: "Spinal Cord Injury" },
+  { key: "amputee",         label: "Amputee"            },
+  { key: "driving_rehab",   label: "Driving Rehab"      },
+  { key: "home_assessment", label: "Home Assessment"    },
+];
 
-const tabRow = {
-  display: "flex",
-  gap: 40,
-  padding: "12px 12px 0px 12px",
-  borderBottom: "1px solid #e5e7eb",
-  background: "#f9fafb"
-};
+const TYPE_COLORS = { initial: { bg: "#dbeafe", color: "#1d4ed8" }, followup: { bg: "#d1fae5", color: "#065f46" }, progress: { bg: "#ede9fe", color: "#5b21b6" }, group: { bg: "#fee2e2", color: "#991b1b" } };
+const TYPE_LABELS = { initial: "Initial Assessment", followup: "Re-Assessment", progress: "Progress Intervention", group: "Group Intervention" };
 
-const tabItem = {
-  paddingBottom: 8,
-  fontSize: 15,
-  fontWeight: 600,
-  cursor: "pointer",
-  color: "#111827",
-  borderBottom: "3px solid transparent"
-};
+export default function ProgramTabsWithContent({ patient, mode, onBack }) {
+  const [assessmentType, setAssessmentType] = useState(mode || null);
+  const [activeTab, setActiveTab]           = useState("sci");
 
-const activeTabStyle = {
-  color: "#2563eb",
-  borderBottom: "3px solid #2563eb"
-};
+  /* ── STEP 1: Select Assessment Type ── */
+  if (!assessmentType) {
+    return (
+      <div style={{ padding: "40px 28px", fontFamily: "Inter, system-ui", background: "#f8fafc", minHeight: "100vh" }}>
+        {onBack && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}><button onClick={onBack} style={backBtnStyle}>← Back to Patients</button></div>}
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#111827" }}>Select Assessment Type</h1>
+          <p style={{ margin: "8px 0 0", fontSize: 14, color: "#6b7280" }}>Choose the appropriate assessment for this patient visit</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 860, margin: "0 auto" }}>
+          {ASSESSMENT_TYPES.map(item => <AssessmentCard key={item.id} item={item} onClick={() => setAssessmentType(item.id)} />)}
+        </div>
+      </div>
+    );
+  }
 
-const contentContainer = {
-  padding: 16
-};
+  /* ── STEP 2: Tabs with content ── */
+  const renderContent = () => {
+    if (assessmentType === "progress") {
+      switch (activeTab) {
+        case "conditioning":    return <CognitiveProgress         patient={patient} onBack={() => setAssessmentType(null)} />;
+        case "neuro":           return <NeuroProgress             patient={patient} onBack={() => setAssessmentType(null)} />;
+        case "msk":             return <MSDProgress               patient={patient} onBack={() => setAssessmentType(null)} />;
+        case "sci":             return <SpinalcordinjuryProgress  patient={patient} onBack={() => setAssessmentType(null)} />;
+        case "amputee":         return <AmputeeProgress           patient={patient} onBack={() => setAssessmentType(null)} />;
+        case "driving_rehab":   return <DrivingRehab              patient={patient} />;
+        case "home_assessment": return <HomeAssessment            patient={patient} />;
+        default: return null;
+      }
+    }
+    switch (activeTab) {
+      case "conditioning":    return <Conditioning     patient={patient} />;
+      case "neuro":           return <Neuro            patient={patient} />;
+      case "msk":             return <Musculoskeletal  patient={patient} />;
+      case "sci":             return <SpinalCordInjury patient={patient} />;
+      case "amputee":         return <Amputee          patient={patient} />;
+      case "driving_rehab":   return <DrivingRehab     patient={patient} />;
+      case "home_assessment": return <HomeAssessment   patient={patient} />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+        <button onClick={() => setAssessmentType(null)} style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>← Back</button>
+        <span style={{ padding: "4px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700, background: TYPE_COLORS[assessmentType]?.bg || "#f1f5f9", color: TYPE_COLORS[assessmentType]?.color || "#374151" }}>
+          {TYPE_LABELS[assessmentType] || assessmentType}
+        </span>
+      </div>
+      {/* Tabs */}
+      <div style={tabRow}>
+        {TABS.map(tab => (
+          <div key={tab.key} onClick={() => setActiveTab(tab.key)} style={{ ...tabItem, ...(activeTab === tab.key ? activeTabStyle : {}) }}>
+            {tab.label}
+          </div>
+        ))}
+      </div>
+      <div style={contentContainer}>{renderContent()}</div>
+    </div>
+  );
+}
+
+const backBtnStyle = { background: "none", border: "1px solid #d1d5db", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, color: "#374151", cursor: "pointer" };
+const tabRow = { display: "flex", gap: 0, padding: "0 12px", borderBottom: "1px solid #e5e7eb", background: "#f9fafb", flexWrap: "nowrap", overflowX: "auto" };
+const tabItem = { padding: "12px 20px 10px", fontSize: 14, fontWeight: 600, cursor: "pointer", color: "#111827", borderBottom: "3px solid transparent", whiteSpace: "nowrap", flexShrink: 0 };
+const activeTabStyle = { color: "#2563eb", borderBottom: "3px solid #2563eb" };
+const contentContainer = { padding: 16 };
