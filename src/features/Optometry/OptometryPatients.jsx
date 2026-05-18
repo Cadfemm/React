@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import OptometryAssessment from "./components/OptometryAssessment";
+import OptometryFollowUpAssessment from "./components/OptometryFollowUpAssessment";
 import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
 import OptometryProgressAssessment from "./components/OptometryProgressAssessment";
 import { ShimmerRow } from "../../shared/ui/Shimmer";
@@ -117,11 +118,27 @@ export default function OptometryPatients({ onBack, loading = false }) {
   /* ── Assessment views ── */
   if (selectedPatient && assessmentView === "initial") {
     const saved = submittedAssessments[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="initial" savedValues={saved} readOnly={!!saved} onSubmit={handleInitialSubmit} onBack={handleBackToCards} />;
+    return (
+      <OptometryAssessment
+        patient={selectedPatient}
+        savedValues={saved}
+        readOnly={!!saved}
+        onSubmit={handleInitialSubmit}
+        onBack={handleBackToCards}
+      />
+    );
   }
   if (selectedPatient && assessmentView === "followup") {
     const saved = submittedFollowups[selectedPatient.id] ?? null;
-    return <OptometryAssessment patient={selectedPatient} mode="followup" savedValues={saved} readOnly={!!saved} onSubmit={handleFollowupSubmit} onBack={handleBackToCards} />;
+    return (
+      <OptometryFollowUpAssessment
+        patient={selectedPatient}
+        savedValues={saved}
+        readOnly={!!saved}
+        onSubmit={handleFollowupSubmit}
+        onBack={handleBackToCards}
+      />
+    );
   }
   if (selectedPatient && assessmentView === "progress") {
     return (
@@ -411,7 +428,7 @@ const AVATAR_COLORS = ["#DBEAFE", "#D1FAE5", "#FEF3C7", "#FCE7F3", "#EDE9FE", "#
 
 /* ── Styles ─────────────────────────────────────────────────────────────── */
 const S = {
-  page:       { padding: "28px 28px 32px", background: "#F2F6FB", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" },
+  page:       { padding: "28px 28px 32px", minHeight: "100vh", fontFamily: "Inter, Roboto, sans-serif" },
 
   pageHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 22 },
   pageTitle:  { fontSize: 24, fontWeight: 800, color: "#0F172A", margin: "0 0 4px 0", lineHeight: 1.12 },
@@ -520,7 +537,7 @@ const S = {
     flexDirection: "column",
     width: "100%",
     minHeight: "calc(100vh - 56px)",
-    background: "#f5f7fa",
+  
   },
   patientBanner: {
     display: "flex",

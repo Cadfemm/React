@@ -14,6 +14,10 @@ const API_URL = {
 
     // Assessment apis
     ASSESSMENT: BASE_API + 'assessment/',
+    patientAssessments: (patientId) =>
+        BASE_API + `assessment/patient/${encodeURIComponent(patientId)}/`,
+    assessmentFormData: (formDataId) =>
+        BASE_API + `assessment/data/${encodeURIComponent(formDataId)}/`,
 
     // Patients apis
     PATIENT: BASE_API + 'patient/',

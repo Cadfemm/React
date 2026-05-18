@@ -3,12 +3,12 @@ import React from "react";
 function StyleBlock() {
   return (
     <style>{`
-      :root { --bg:#f6fbff; --ink:#000332; --ink2:#5a6b85; --stroke:#e6eef7; --focus:#2563eb; }
+      :root {  --ink:#000332; --ink2:#5a6b85; --stroke:#e6eef7; --focus:#2563eb; }
       * { box-sizing:border-box; }
-      body { margin:0; background:var(--bg); font-family:system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-      .page { display:grid; grid-template-columns:260px 1fr; min-height:100vh;background-color:#F1F4F4 !important; }
+      body { margin:0 }
+      .page { display:grid; grid-template-columns:260px 1fr; min-height:100vh;background-color:#fafafb !important; }
       /* Menu + responsive sidebar: flex so rail width can animate (Tailwind + Framer Motion) */
-      .page.page--app-shell { display:flex; align-items:stretch; min-height:100vh; background-color:#F1F4F4 !important; }
+      .page.page--app-shell { display:flex; align-items:stretch; min-height:100vh; background-color:#fafafb !important; }
       .rail { background:#fff; border-right:1px solid #dee2e6; color:#212529; gap:0;
                position:sticky; top:0; padding-top:45px; height:100vh; display:flex; flex-direction:column; overflow:visible; }
       .tabs { display:flex; flex-direction:column; padding:4px 0; }
@@ -148,7 +148,7 @@ function StyleBlock() {
 
 /* --- VITALS UI --- */
 .vitals { --bg:#fbfdff; --bd:#e6eef6; --text:#0f172a; --muted:#6b7a90; --ring:#90b4ff; }
-.vitals .section { background: var(--bg); border: 1px solid var(--bd); border-radius: 12px; padding: 12px 16px; }
+.vitals .section { border: 1px solid var(--bd); border-radius: 12px; padding: 12px 16px; }
 .vitals .grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 10px; }
 .vitals .field { display:flex; flex-direction:column; }
 .vitals .label-sm { font-size:13px; color:#323e4e; margin:2px 0 4px; }

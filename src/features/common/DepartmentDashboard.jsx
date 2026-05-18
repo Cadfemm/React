@@ -392,7 +392,7 @@ export default function DepartmentDashboard({
   });
 
   return (
-    <div className="flex flex-col gap-4 p-5 bg-[#f5f7fa] min-h-full">
+    <div className="flex flex-col gap-4 p-5 ">
 
       {/* ── Page header ── */}
       <div className="flex justify-between items-center">

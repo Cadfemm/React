@@ -24,7 +24,7 @@ const C = {
   borderMd:   "#BDBDBD",
 
   /* Page */
-  pageBg:     "#F5F7FA",
+
 
   /* Text */
   text:       "#212121",
@@ -146,58 +146,143 @@ function EntryCell({ val = {}, onChange, isNA }) {
 
 /* ── Training table ──────────────────────────────────────── */
 function TrainingTable({ sections, values, onChange }) {
+  const [openSections, setOpenSections] = useState({});
+
+  const toggleSection = (cat) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [cat]: !prev[cat],
+    }));
+  };
+
   return (
     <div style={{ overflowX: "auto" }}>
       <table style={S.table}>
         <thead>
           <tr>
-            <th rowSpan={2} style={{ ...S.th, width: 280, background: "#1e6fa5", color: "#fff", textAlign: "left", paddingLeft: 14, fontSize: 12 }}>
+            <th
+              rowSpan={2}
+              style={{
+                ...S.th,
+                width: 280,
+                background: "#1e6fa5",
+                color: "#fff",
+                textAlign: "left",
+                paddingLeft: 14,
+                fontSize: 12,
+              }}
+            >
               Training Item
             </th>
-            <th colSpan={1} style={{ ...S.th, background: "#2589c7", fontSize: 11, color: "#fff" }}>
+
+            <th
+              colSpan={1}
+              style={{
+                ...S.th,
+                background: "#2589c7",
+                fontSize: 11,
+                color: "#fff",
+              }}
+            >
               Nurse / Therapist
             </th>
-            <th colSpan={2} style={{ ...S.th, background: "#2589c7", fontSize: 11, color: "#fff" }}>
+
+            <th
+              colSpan={2}
+              style={{
+                ...S.th,
+                background: "#2589c7",
+                fontSize: 11,
+                color: "#fff",
+              }}
+            >
               Carer
             </th>
           </tr>
+
           <tr>
-            {COLS.map(col => (
-              <th key={col.key} style={{ ...S.th, background: "#d0e9f7", color: "#0c3d5e", width: 200, fontSize: 11, fontWeight: 700 }}>
+            {COLS.map((col) => (
+              <th
+                key={col.key}
+                style={{
+                  ...S.th,
+                  background: "#d0e9f7",
+                  color: "#0c3d5e",
+                  width: 200,
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              >
                 {col.label}
               </th>
             ))}
           </tr>
         </thead>
+
         <tbody>
-          {sections.map((sec, si) => (
-            <React.Fragment key={si}>
-              <tr>
-                <td colSpan={4} style={S.catRow}>
-                  <span style={S.catDot} />
-                  {sec.cat}
-                </td>
-              </tr>
-              {sec.items.map((item, ii) => {
-                const even = ii % 2 === 0;
-                return (
-                  <tr key={ii} style={{ background: even ? C.rowBase : C.rowAlt }}>
-                    <td style={{ ...S.td, paddingLeft: 20, fontSize: 12.5, color: C.text, fontWeight: 500 }}>
-                      {item}
-                    </td>
-                    {COLS.map(col => (
-                      <EntryCell
-                        key={col.key}
-                        isNA={sec.naColumns?.includes(col.key)}
-                        val={values[makeKey(sec.cat, item, ii, col.key)] || {}}
-                        onChange={v => onChange(makeKey(sec.cat, item, ii, col.key), v)}
-                      />
-                    ))}
-                  </tr>
-                );
-              })}
-            </React.Fragment>
-          ))}
+          {sections.map((sec, si) => {
+            const isOpen = openSections[sec.cat];
+
+            return (
+              <React.Fragment key={si}>
+                {/* Category Row */}
+                <tr
+                  onClick={() => toggleSection(sec.cat)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <td colSpan={4} style={S.catRow}>
+                    <span style={S.catDot} />
+                    {isOpen ? "▼" : "▶"} {sec.cat}
+                  </td>
+                </tr>
+
+                {/* Items */}
+                {isOpen &&
+                  sec.items.map((item, ii) => {
+                    const even = ii % 2 === 0;
+
+                    return (
+                      <tr
+                        key={ii}
+                        style={{
+                          background: even ? C.rowBase : C.rowAlt,
+                        }}
+                      >
+                        <td
+                          style={{
+                            ...S.td,
+                            paddingLeft: 20,
+                            fontSize: 12.5,
+                            color: C.text,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {item}
+                        </td>
+
+                        {COLS.map((col) => (
+                          <EntryCell
+                            key={col.key}
+                            isNA={sec.naColumns?.includes(col.key)}
+                            val={
+                              values[
+                                makeKey(sec.cat, item, ii, col.key)
+                              ] || {}
+                            }
+                            onChange={(v) =>
+                              onChange(
+                                makeKey(sec.cat, item, ii, col.key),
+                                v
+                              )
+                            }
+                          />
+                        ))}
+                      </tr>
+                    );
+                  })}
+              </React.Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -282,7 +367,7 @@ export default function CarerLogBook({ patient, onBack }) {
       <div style={S.tabBar}>
         {[
           { k: "nursing",   label: "Nursing Training" },
-          { k: "therapist", label: "Therapist Training" },
+          // { k: "therapist", label: "Therapist Training" },
         ].map(t => (
           <button key={t.k} onClick={() => setTab(t.k)}
             style={tab === t.k ? S.tabActive : S.tabBtn}>

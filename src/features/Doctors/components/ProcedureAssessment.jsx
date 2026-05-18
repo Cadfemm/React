@@ -11,8 +11,8 @@ const SubTab = [
     "BTI",
     "SC",
     "FEES",
-    "RTMS",
-    "TDCS",
+    "rTMS",
+    "tDCS",
     "NESA",
     "EST",
     "Musculoskeletal",
@@ -1509,8 +1509,8 @@ const SCHEMA = {
     BSU: BSU_SCHEMA,
     EST: EST_SCHEMA,
     NESA: NESA_SCHEMA,
-    RTMS: RTMS_SCHEMA,
-    TDCS: TDCS_SCHEMA,
+    rTMS: RTMS_SCHEMA,
+    tDCS: TDCS_SCHEMA,
     FEES: FEES_SCHEMA,
     Musculoskeletal: MUSCU_SCHEMA
 }

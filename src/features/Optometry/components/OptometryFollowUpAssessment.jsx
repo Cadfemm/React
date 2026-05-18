@@ -455,8 +455,8 @@ const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onRef
 
 /* ===================== MAIN COMPONENT ===================== */
 
-/** Initial optometry SOAP assessment only (follow-up uses OptometryFollowUpAssessment.jsx). */
-export default function OptometryAssessment({
+/** Follow-up optometry SOAP assessment (conditional sections vs initial). */
+export default function OptometryFollowUpAssessment({
   patient,
   onSubmit,
   onBack,
@@ -465,10 +465,7 @@ export default function OptometryAssessment({
   initialSessionId     = null,   // pre-seeded when opened via direct link
   initialAssessmentIds = [],     // pre-seeded assessment_ids array
 }) {
-  const [values,        setValues]        = useState(() => {
-    const initial = { subjective: {}, objective: {}, assessment: {}, plan: {} };
-    return readOnly && savedValues ? savedValues : initial;
-  });
+  const [values,        setValues]        = useState(readOnly && savedValues ? savedValues : {});
   const [submitted,     setSubmitted]     = useState(readOnly);
   const [activeTab,     setActiveTab]     = useState("subjective");
   const [forms,         setForms]         = useState([]);  // kept for future API integration
@@ -505,13 +502,31 @@ export default function OptometryAssessment({
   const [tabLoading,    setTabLoading]    = useState(false);
   const autoSaveTimer = useRef(null);
 
-  const isFollowup = false;
+  const isFollowup = true;
 
   const storageKey = useMemo(() => {
     if (!patient || readOnly) return null;
-    return `optometry_assessment_draft_${patient.id}`;
+    return `optometry_followup_draft_${patient.id}`;
   }, [patient, readOnly]);
 
+  useEffect(() => {
+    if (readOnly && savedValues) { setValues(savedValues); setSubmitted(true); return; }
+    if (!storageKey) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) setValues(JSON.parse(saved).values || {});
+  }, [storageKey, readOnly, savedValues]);
+
+  useEffect(() => {
+    if (!patient || readOnly) return;
+    setValues(v => ({
+      ...v,
+      pmh_from_registration:           patient.medical_history   || "No data available",
+      family_history_from_registration: patient.diagnosis_history || "No data available",
+      allergies_from_registration:      patient.allergies         || "No data available",
+    }));
+  }, [patient, readOnly]);
+
+  // ── Fetch FormData for the active tab whenever the session is active ──────
   useEffect(() => {
     const formDataId = formDataIds[activeTab];
     if (!formDataId || !assessmentId) return;
@@ -521,13 +536,7 @@ export default function OptometryAssessment({
       .then(res => {
         const existing = res.data?.data;
         if (existing && typeof existing === 'object' && Object.keys(existing).length > 0) {
-          setValues(v => ({
-            ...v,
-            [activeTab]: {
-              ...v[activeTab],
-              ...existing
-            }
-          }));
+          setValues(v => ({ ...v, ...existing }));
         }
       })
       .catch(() => {/* silently ignore — form stays editable */})
@@ -537,6 +546,7 @@ export default function OptometryAssessment({
   const sectionShowIf = (key) => (isFollowup ? { field: "general_questions", includes: key } : undefined);
   const sectionShowIfAnd = (key, andCond) =>
   isFollowup ? { field: "general_questions", includes: key, and: andCond } : (andCond || undefined);
+
 
   const SUBJECTIVE_SCHEMA = {
     actions: ACTIONS_WITH_NEXT,
@@ -1531,20 +1541,14 @@ export default function OptometryAssessment({
     if (readOnly) return;
     setIsDirty(true);
     setValues(v => {
-      const next = {
-        ...v,
-        [activeTab]: {
-          ...v[activeTab],
-          [name]: value
-        }
-      };
+      const next = { ...v, [name]: value };
 
       // Debounced auto-save to API (1.5 s after last keystroke)
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
       autoSaveTimer.current = setTimeout(() => {
         const formDataId = formDataIds[activeTab];
         if (formDataId && assessmentId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next[activeTab] })
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next })
             .catch(() => {/* silent — user can still hit Save manually */});
         }
         // Always persist draft locally too
@@ -1580,7 +1584,7 @@ export default function OptometryAssessment({
         {
           doctor:       doctorId,
           patient:      patient.id,
-          visit_type:   'INITIAL',
+          visit_type:   'FOLLOW_UP',
           is_completed: false,
           total_score:  0,
         }
@@ -1626,11 +1630,7 @@ export default function OptometryAssessment({
       if (idx < TAB_ORDER.length - 1) setActiveTab(TAB_ORDER[idx + 1]);
       return;
     }
-    if (type === "clear") { 
-      setValues({ subjective: {}, objective: {}, assessment: {}, plan: {} }); 
-      setSubmitted(false); 
-      localStorage.removeItem(storageKey); 
-    }
+    if (type === "clear") { setValues({}); setSubmitted(false); localStorage.removeItem(storageKey); }
     if (type === "save") {
       // Persist draft locally
       localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
@@ -1639,7 +1639,7 @@ export default function OptometryAssessment({
       if (assessmentId) {
         const formDataId = formDataIds[activeTab];
         if (formDataId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values[activeTab] })
+          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values })
             .then(() => setToast({ message: 'Saved successfully', variant: 'success' }))
             .catch(() => setToast({ message: 'Save failed. Draft kept locally.', variant: 'error' }));
         } else {
@@ -1670,9 +1670,7 @@ export default function OptometryAssessment({
 
     setSubmitted(true);
     setIsDirty(false);
-    // Merge all tab values for submission
-    const allValues = Object.values(values).reduce((acc, tab) => ({ ...acc, ...tab }), {});
-    onSubmit?.(allValues);
+    onSubmit?.(values);
   }, [readOnly, values, onSubmit, assessmentId]);
 
   // const schemaMap = useMemo(() => {
@@ -1805,7 +1803,7 @@ export default function OptometryAssessment({
             ) : (
               <CommonFormBuilder
                 schema={schemaMap[activeTab]}
-                values={values[activeTab] || {}}
+                values={values}
                 onChange={onChange}
                 submitted={submitted}
                 onAction={handleAction}

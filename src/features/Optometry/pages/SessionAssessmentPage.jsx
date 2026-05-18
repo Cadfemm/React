@@ -3,6 +3,7 @@ import { useParams, useLocation, useHistory } from "react-router-dom";
 import api, { setAccessToken } from "../../../shared/api/apiClient";
 import { API_URL } from "../../../platform/config/api.config";
 import OptometryAssessment from "../components/OptometryAssessment";
+import OptometryFollowUpAssessment from "../components/OptometryFollowUpAssessment";
 import SidebarNav from "../../../components/SidebarNav";
 import TopToolbar from "../../../components/TopToolbar";
 import StyleBlock from "../../../components/StyleBlock";
@@ -145,13 +146,21 @@ export default function SessionAssessmentPage() {
 
           {/* Assessment */}
           {!loading && !error && session && patient && (
-            <OptometryAssessment
-              patient={patient}
-              mode={session.visit_type === "FOLLOW_UP" ? "followup" : "initial"}
-              initialSessionId={sessionId}
-              initialAssessmentIds={session.assessment_ids || []}
-              onBack={handleBack}
-            />
+            session.visit_type === "FOLLOW_UP" ? (
+              <OptometryFollowUpAssessment
+                patient={patient}
+                initialSessionId={sessionId}
+                initialAssessmentIds={session.assessment_ids || []}
+                onBack={handleBack}
+              />
+            ) : (
+              <OptometryAssessment
+                patient={patient}
+                initialSessionId={sessionId}
+                initialAssessmentIds={session.assessment_ids || []}
+                onBack={handleBack}
+              />
+            )
           )}
         </main>
       </div>
