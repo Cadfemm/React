@@ -6,6 +6,7 @@ import WorkHardeningScreening from "../components/workhardeningscreening";
 import ReadinessReturnToWorkScale from "../components/returntowork";
 import FunctionalCapacityEvaluation from "../components/functioncapacityevaluation";
 import BeckerWorkAdjustmentProfile from "../components/beckerwork";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 export const VOCATIONAL_REHAB_REGISTRY = {
   Part2MainSection,
@@ -15,6 +16,37 @@ export const VOCATIONAL_REHAB_REGISTRY = {
   FunctionalCapacityEvaluation,
   BeckerWorkAdjustmentProfile
 };
+export const TRAINER_OPTIONS = [
+  { label: "Khairunnisa Mokhtar", value: "khairunnisa_mokhtar" },
+  { label: "Muzammer Zakaria", value: "muzammer_zakaria" },
+  { label: "Mohd Rafidy A. Bakar", value: "mohd_rafidy_a_bakar" },
+  { label: "Muhamad Zharif Zainal", value: "muhamad_zharif_zainal" },
+  { label: "Muhammad Syafiq Arshad", value: "muhammad_syafiq_arshad" },
+  { label: "Sabaruddin Mohammad", value: "sabaruddin_mohammad" },
+  { label: "Muhammad Luqmanul Hakiim Zaidi", value: "muhammad_luqmanul_hakiim_zaidi" },
+  { label: "Azzratul Auri Azir", value: "azzratul_auri_azir" },
+  { label: "Muhammad 'Irfan Azman", value: "muhammad_irfan_azman" },
+  { label: "Mohd Zaki Ali", value: "mohd_zaki_ali" },
+  { label: "Irma Shuhada Jhorni", value: "irma_shuhada_jhorni" },
+  { label: "Muhammad Saiful Darus", value: "muhammad_saiful_darus" },
+  { label: "All Trainers", value: "all_trainers" }
+];
+
+export const MODULE_OPTIONS = [
+  { label: "Sewing", value: "sewing" },
+  { label: "Entrepreneurship", value: "entrepreneurship" },
+  { label: "Electric / Electronic", value: "electric_electronic" },
+  { label: "Hairstyling", value: "hairstyling" },
+  { label: "Design", value: "design" },
+  { label: "Office Administration", value: "office_administration" },
+  { label: "Bakery", value: "bakery" },
+  { label: "Culinary", value: "culinary" },
+  { label: "Barista", value: "barista" },
+  { label: "Florist", value: "florist" },
+  { label: "Urban Farming", value: "urban_farming" },
+  { label: "Pre-Vocational", value: "pre_vocational" },
+  { label: "Initial / Screening Assessment", value: "initial_screening_assessment" }
+];
 
 /* ===================== OPTIONS ===================== */
 
@@ -167,9 +199,30 @@ const SUBJECTIVE_SCHEMA = {
   sections: [
     {
       fields: [
+          { name: "History of Present", label: "History of Present Illnes", type: "input" },
+        { type: "subheading", label: "Educational Background" },
+          {
+          name: "highest_education_level",
+          // label: "Highest Education Level",
+          type: "checkbox-group",
+          options: [
+            { label: "PhD Degree", value: "phd_degree" },
+            { label: "Master Degree", value: "master_degree" },
+            { label: "Bachelor Degree", value: "bachelor_degree" },
+            { label: "Professional Certificate", value: "professional_certificate" },
+            { label: "Diploma Kemahiran Malaysia", value: "diploma_kemahiran_malaysia" },
+            { label: "Sijil Kemahiran Malaysia", value: "sijil_kemahiran_malaysia" },
+            { label: "STPM", value: "stpm" },
+            { label: "SPM", value: "spm" },
+            { label: "PMR / PT3", value: "pmr_pt3" },
+            { label: "UPSR", value: "upsr" },
+            { label: "Did not attend formal education", value: "no_formal_education" }
+          ]
+        },
+        { type: "subheading", label: " Driving License" },
         {
           name: "driving_license",
-          label: "Driving License",
+          // label: "Driving License",
           type: "radio",
           labelAbove: true,
           options: [
@@ -193,10 +246,10 @@ const SUBJECTIVE_SCHEMA = {
             }
           ]
         },
-
+{ type: "subheading", label: "Client's Vocational Interests" },
         {
           name: "client_interest",
-          label: "Client Interest",
+          // label: "Client Interest",
           type: "checkbox-group",
           options: [
             { label: "Sewing", value: "sewing" },
@@ -214,38 +267,45 @@ const SUBJECTIVE_SCHEMA = {
             { label: "Culinary", value: "culinary" },
             { label: "Automotive", value: "automotive" },
             { label: "Innovart", value: "innovart" },
-            { label: "Florist", value: "florist" }
+            { label: "Florist", value: "florist" },
+            {label:"Not Sure / Undecided",value:'undecided'}
           ]
         },
+         {
+          name: "client_self_reported_goals_preferences",
+          label: "Client's Self-Reported Goals / Preferences",
+          type: "input",
+          placeholder: "Enter the client's self-reported goals and preferences"
+        },
 
-        {
-          name: "environment_limitation",
-          label: "Environment and Limitation",
-          type: "checkbox-group",
-          options: [
-            { label: "Standing", value: "standing" },
-            { label: "Walking", value: "walking" },
-            { label: "Sitting", value: "sitting" },
-            { label: "Stretching", value: "stretching" },
-            { label: "Squatting or Crouching", value: "squatting_crouching" },
-            { label: "Twisting body or neck", value: "twisting_body_neck" },
-            {
-              label: "Lifting and carrying weight",
-              value: "lifting_carrying_weight"
-            },
-            { label: "Repetitive movement", value: "repetitive_movement" },
-            { label: "Driving", value: "driving" },
-            { label: "Using hand equipment", value: "using_hand_equipment" },
-            { label: "Stooping", value: "stooping" },
-            {
-              label: "Memory of concentration activity",
-              value: "memory_concentration"
-            },
-            { label: "Visual Impaired", value: "visual_impaired" },
-            { label: "Hearing Impaired", value: "hearing_impaired" },
-            { label: "Speech Impaired", value: "speech_impaired" }
-          ]
-        }
+        // {
+        //   name: "environment_limitation",
+        //   label: "Environment and Limitation",
+        //   type: "checkbox-group",
+        //   options: [
+        //     { label: "Standing", value: "standing" },
+        //     { label: "Walking", value: "walking" },
+        //     { label: "Sitting", value: "sitting" },
+        //     { label: "Stretching", value: "stretching" },
+        //     { label: "Squatting or Crouching", value: "squatting_crouching" },
+        //     { label: "Twisting body or neck", value: "twisting_body_neck" },
+        //     {
+        //       label: "Lifting and carrying weight",
+        //       value: "lifting_carrying_weight"
+        //     },
+        //     { label: "Repetitive movement", value: "repetitive_movement" },
+        //     { label: "Driving", value: "driving" },
+        //     { label: "Using hand equipment", value: "using_hand_equipment" },
+        //     { label: "Stooping", value: "stooping" },
+        //     {
+        //       label: "Memory of concentration activity",
+        //       value: "memory_concentration"
+        //     },
+        //     { label: "Visual Impaired", value: "visual_impaired" },
+        //     { label: "Hearing Impaired", value: "hearing_impaired" },
+        //     { label: "Speech Impaired", value: "speech_impaired" }
+        //   ]
+        // }
       ]
     }
   ]
@@ -296,7 +356,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "current_diagnosis_other",
           label: "Other Diagnosis (specify)",
-          type: "textarea",
+          type: "input",
           showIf: { field: "current_diagnosis", includes: "others" }
         },
         {
@@ -313,25 +373,25 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "equipment_perkeso",
           label: "PERKESO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "perkeso" }
         },
         {
           name: "equipment_ngo",
           label: "NGO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "ngo" }
         },
         {
           name: "equipment_self",
           label: "Self-purchased Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "self" }
         },
         {
           name: "equipment_others",
           label: "Other Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "others" }
         }
         ,
@@ -345,7 +405,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "referral_reasons",
           label: "Referral Reasons",
-          type: "textarea",
+          type: "input",
           readOnly: true
         }
       ]
@@ -364,19 +424,47 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
   sections: [
     {
       fields: [
-
-        {
-          name: "vocational_scales",
-          type: "assessment-launcher",
+        { type: "subheading", label: "Environmental & Physical Functional Limitations" },
+ {
+          name: "functional_limitations",
+          // label: "Functional Limitations",
+          type: "checkbox-group",
           options: [
-            // { label: "WORQ", value: "Part2MainSection" },
-            // { label: "WORK HARDENING MODALITIES", value: "WorkHardeningModalities" },
-            // { label: "WORK HARDENING SCREENING TEMPLATE", value: "WorkHardeningScreening" },
-            // { label: "READINESS FOR RETURN-TO-WORK SCALE", value: "ReadinessReturnToWorkScale" },
-            // { label: "FUNCTIONAL CAPACITY EVALUATION", value: "FunctionalCapacityEvaluation" },
-             { label: "BECKER WORK ADJUSTMENT PROFILE", value: "BeckerWorkAdjustmentProfile" },
+            { label: "Standing", value: "standing" },
+            { label: "Walking", value: "walking" },
+            { label: "Sitting", value: "sitting" },
+            { label: "Stretching", value: "stretching" },
+            { label: "Squatting or Crouching", value: "squatting_or_crouching" },
+            { label: "Twisting Body or Neck", value: "twisting_body_or_neck" },
+            { label: "Lifting and Carrying Weight", value: "lifting_and_carrying_weight" },
+            { label: "Repetitive Movement", value: "repetitive_movement" },
+            { label: "Driving", value: "driving" },
+            { label: "Using Hand Equipment", value: "using_hand_equipment" },
+            { label: "Stooping", value: "stooping" },
+            { label: "Memory / Concentration Activity", value: "memory_concentration_activity" },
+            { label: "Visual Impairment", value: "visual_impairment" },
+            { label: "Hearing Impairment", value: "hearing_impairment" },
+            { label: "Speech Impairment", value: "speech_impairment" }
           ]
         },
+        {
+          name: "therapist_objective_observations",
+          label: "Therapist's Objective Observations on Occupational Performance",
+          type: "input",
+          placeholder: "Enter therapist's objective observations on occupational performance"
+        },
+        // {
+        //   name: "vocational_scales",
+        //   type: "assessment-launcher",
+        //   options: [
+        //     // { label: "WORQ", value: "Part2MainSection" },
+        //     // { label: "WORK HARDENING MODALITIES", value: "WorkHardeningModalities" },
+        //     // { label: "WORK HARDENING SCREENING TEMPLATE", value: "WorkHardeningScreening" },
+        //     // { label: "READINESS FOR RETURN-TO-WORK SCALE", value: "ReadinessReturnToWorkScale" },
+        //     // { label: "FUNCTIONAL CAPACITY EVALUATION", value: "FunctionalCapacityEvaluation" },
+        //      { label: "BECKER WORK ADJUSTMENT PROFILE", value: "BeckerWorkAdjustmentProfile" },
+        //   ]
+        // },
       ]
     }
   ]
@@ -385,28 +473,54 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
 const ASSESSMENT_SCHEMA = {
   actions: SUBJECTIVE_SCHEMA.actions,
   fields: [
-      {
-        name: "hydro_clinical_impression",
-        label: "Clinical Impression",
-        type: "textarea"
-      },
-      {
-          type: "textarea",
-          name: "problem_list",
-          label: "Problem List"
+    { type: "subheading", label: "Clinical Interpretation" },
+    {
+          name: "clinical_impression",
+          label: "Clinical Impression",
+          type: "input",
+          placeholder: "Enter clinical impression"
         },
+      {
+          name: "summary_of_findings_clinical_reasoning",
+          label: "Summary of Findings & Clinical Reasoning",
+          type: "input",
+          placeholder: "Enter summary of findings and clinical reasoning"
+        },
+         { type: "subheading", label: "Vocational Potential & Barriers" },
+        {
+          name: "strengths_facilitators",
+          label: "Strengths / Facilitators",
+          type: "input",
+          placeholder: "Enter strengths and facilitators"
+        },
+        {
+          name: "barriers_challenges",
+          label: "Barriers / Challenges",
+          type: "input",
+          placeholder: "Enter barriers and challenges"
+        }
+      // {
+      //   name: "hydro_clinical_impression",
+      //   label: "Clinical Impression",
+      //   type: "input"
+      // },
+      // {
+      //     type: "input",
+      //     name: "problem_list",
+      //     label: "Problem List"
+      //   },
 
-       {
-          type: "radio",
-          name: "vocational_potential",
-          label: "Potential",
-          options: [
-            { label: "Excellent", value: "excellent" },
-            { label: "Good", value: "good" },
-            { label: "Fair", value: "fair" },
-            { label: "Poor", value: "poor" }
-          ]
-        },
+      //  {
+      //     type: "radio",
+      //     name: "vocational_potential",
+      //     label: "Potential",
+      //     options: [
+      //       { label: "Excellent", value: "excellent" },
+      //       { label: "Good", value: "good" },
+      //       { label: "Fair", value: "fair" },
+      //       { label: "Poor", value: "poor" }
+      //     ]
+      //   },
   ]
 };
 
@@ -424,23 +538,79 @@ const PLAN_SCHEMA = {
         { type: "subheading", label: "Long Term Goals (6–12 Weeks)" },
         { type: "dynamic-goals", name: "long_term_goals" },
         
-        {
-          type: "textarea",
-          name: "vocational_intervention",
-          label: "Intervention",
+        // {
+        //   type: "input",
+        //   name: "vocational_intervention",
+        //   label: "Intervention",
+        // },
+        // {
+        //   type: "checkbox-group",
+        //   name: "vocational_plan",
+        //   label: "Plan",
+        //   options: [
+        //     { label: "Splint", value: "splint" },
+        //     { label: "Mobility aid", value: "mobility_aid" },
+        //     { label: "Home modification", value: "home_modification" },
+        //     { label: "Nil", value: "nil" }
+        //   ]
+        // }
+ {
+          name: "plan_therapist_remarks",
+          label: "Plan / Therapist Remarks",
+          type: "input",
+          placeholder: "Enter plan and therapist remarks"
         },
         {
+          name: "suggestions_recommendations",
+          label: "Suggestions & Recommendations",
+          type: "input",
+          placeholder: "Enter suggestions and recommendations"
+        },
+         {
+          name: "functional_assessment_workshop",
+          label: "Functional Assessment & Workshop Referral",
           type: "checkbox-group",
-          name: "vocational_plan",
-          label: "Plan",
           options: [
-            { label: "Splint", value: "splint" },
-            { label: "Mobility aid", value: "mobility_aid" },
-            { label: "Home modification", value: "home_modification" },
-            { label: "Nil", value: "nil" }
+            {
+              label: "Book for Vocational Functional Assessment (auto-booking)",
+              value: "book_vocational_functional_assessment"
+            },
+            {
+              label: "Discharge from Vocational Programme (client not interested / not required)",
+              value: "discharge_from_vocational_programme"
+            },
+            {
+              label: "Refer to Trainer (see reference list below)",
+              value: "refer_to_trainer"
+            },
+            {
+              label: "Refer to Module (see reference list below)",
+              value: "refer_to_module"
+            }
           ]
-        }
-
+        },
+        {
+          name: "referred_trainer",
+          label: "Referred Trainer",
+          type: "select",
+          placeholder: "Select from Trainer List",
+          options: TRAINER_OPTIONS,
+          showIf: {
+            field: "functional_assessment_workshop",
+            includes: "refer_to_trainer"
+          }
+        },
+        {
+          name: "referred_module",
+          label: "Referred Module",
+          type: "select",
+          placeholder: "Select from Module List",
+          options: MODULE_OPTIONS,
+          showIf: {
+            field: "functional_assessment_workshop",
+            includes: "refer_to_module"
+          }
+        },
       ]
     }
   ]
@@ -473,115 +643,207 @@ const PLAN_SCHEMA = {
 
   const tabOrder = ["subjective", "objective", "assessment", "plan"];
 
-  function VocationalRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
-    if (!patient) return null;
+  // function VocationalRehabPatientInfo({ patient, patientHistory, setPatientHistory }) {
+  //   if (!patient) return null;
 
-    return (
-      <div style={section}>
-        <div style={patientGrid}>
-          <div><b>Name:</b> {patient.name}</div>
-          <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-          <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
-          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+  //   return (
+  //     <div style={section}>
+  //       <div style={patientGrid}>
+  //         <div><b>Name:</b> {patient.name}</div>
+  //         <div><b>IC:</b> {patient.id}</div>
+  //         <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+  //         <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+  //         <div><b>ICD:</b> {patient.icd}</div>
+  //         <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+  //         <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+  //         <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
+  //         <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+  //         <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+  //         <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+  //         <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+  //         <div><b>Education Level:</b> {patient.education_background || "-"}</div>
+  //         <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+  //         <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+  //         <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+  //         <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
 
-          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
-              <textarea
-                value={patientHistory.past_medical_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div>
+  //         <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+  //           <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+  //           <div style={{ marginBottom: 10 }}>
+  //             <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+  //             <input
+  //               value={patientHistory.past_medical_history}
+  //               onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+  //               style={{
+  //                 width: "100%",
+  //                 minHeight: 90,
+  //                 padding: "10px 12px",
+  //                 borderRadius: 6,
+  //                 border: "1px solid #d1d5db",
+  //                 fontSize: 14,
+  //                 fontFamily: "inherit",
+  //                 resize: "vertical",
+  //               }}
+  //             />
+  //           </div>
 
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
-              <textarea
-                value={patientHistory.past_family_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
-              <textarea
-                value={patientHistory.alerts_and_allergies}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div> 
-            <div style={{ marginBottom: 10 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  console.log("Alerts button clicked!");
-                }}
-                style={{
-                  marginTop: "10px",
-                  padding: "10px 20px",
-                  borderRadius: 6,
-                  border: "1.5px solid rgb(0, 123, 255)",
-                  background: "rgb(0, 123, 255)",
-                  color: "rgb(255, 255, 255)",
-                  fontWeight: 600,
-                  fontSize: 14,
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
-                }}
-              >
-                🚨 Alerts
-              </button>
-            </div>           
-          </div>
+  //           <div style={{ marginBottom: 10 }}>
+  //             <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+  //             <input
+  //               value={patientHistory.past_family_history}
+  //               onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+  //               style={{
+  //                 width: "100%",
+  //                 minHeight: 90,
+  //                 padding: "10px 12px",
+  //                 borderRadius: 6,
+  //                 border: "1px solid #d1d5db",
+  //                 fontSize: 14,
+  //                 fontFamily: "inherit",
+  //                 resize: "vertical",
+  //               }}
+  //             />
+  //           </div>
+  //           <div style={{ marginBottom: 10 }}>
+  //             <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+  //             <input
+  //               value={patientHistory.alerts_and_allergies}
+  //               onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+  //               style={{
+  //                 width: "100%",
+  //                 minHeight: 90,
+  //                 padding: "10px 12px",
+  //                 borderRadius: 6,
+  //                 border: "1px solid #d1d5db",
+  //                 fontSize: 14,
+  //                 fontFamily: "inherit",
+  //                 resize: "vertical",
+  //               }}
+  //             />
+  //           </div> 
+  //           <div style={{ marginBottom: 10 }}>
+  //             <button
+  //               type="button"
+  //               onClick={() => {
+  //                 console.log("Alerts button clicked!");
+  //               }}
+  //               style={{
+  //                 marginTop: "10px",
+  //                 padding: "10px 20px",
+  //                 borderRadius: 6,
+  //                 border: "1.5px solid rgb(0, 123, 255)",
+  //                 background: "rgb(0, 123, 255)",
+  //                 color: "rgb(255, 255, 255)",
+  //                 fontWeight: 600,
+  //                 fontSize: 14,
+  //                 cursor: "pointer",
+  //                 display: "inline-flex",
+  //                 alignItems: "center",
+  //                 gap: 6,
+  //                 boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
+  //               }}
+  //             >
+  //               🚨 Alerts
+  //             </button>
+  //           </div>           
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+          function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <input
+                      style={input}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
         </div>
       </div>
-    );
-  }
-
+    </div>
+  );
+}
   return (
     <div style={mainContent}>
 
@@ -591,7 +853,16 @@ const PLAN_SCHEMA = {
         values={{}}
         onChange={() => { }}
       >
-        <VocationalRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
+         <PatientInformationBlock
+                  patient={patient}
+                  patientHistory={patientHistory}
+                  setPatientHistory={setPatientHistory}
+                />
+              
+                <button style={doctorsReportBtn}>
+                  Doctors Reports
+                </button>
+        {/* <VocationalRehabPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} /> */}
       </CommonFormBuilder>
 
       {/* ===== NEW ENVIRONMENT CARD ===== */}
@@ -622,7 +893,31 @@ const PLAN_SCHEMA = {
         submitted={submitted}
         onAction={handleAction}
         assessmentRegistry={VOCATIONAL_REHAB_REGISTRY}
+        
       >
+        <div style={submitRow}>
+          {activeTab !== "plan" ? (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={() => {
+                if (activeTab === "subjective") setActiveTab("objective");
+                else if (activeTab === "objective") setActiveTab("assessment");
+                else if (activeTab === "assessment") setActiveTab("plan");
+              }}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="button"
+              style={submitBtn}
+              onClick={handleSubmit}
+            >
+              Submit Spinal Cord Assessment
+            </button>
+          )}
+        </div>
       </CommonFormBuilder>
     </div>
   );
@@ -688,4 +983,30 @@ const th = {
 const td = {
   border: "1px solid #ccc",
   padding: 10
+};
+const input = {
+          width: "100%",
+          minHeight: 90,
+          marginTop: 6,
+          marginBottom: 12,
+          padding: "10px 12px",
+          borderRadius: 6,
+          border: "1px solid #d1d5db",
+          fontSize: 14,
+          resize: "vertical"
+};
+const alertBtn = {
+  marginTop: 10,
+          padding: "10px 20px",
+          borderRadius: 6,
+          border: "1.5px solid #007bff",
+          background: "#007bff",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer"
+};
+const doctorsReportBtn = {
+  padding: "10px 20px", background: "#2563EB", color: "#fff",
+  border: "none", borderRadius: 6, fontSize: 14,
+  fontWeight: 600, cursor: "pointer", marginTop: 8
 };

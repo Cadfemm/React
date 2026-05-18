@@ -87,25 +87,25 @@ const AMBULATORY_OPTIONS = [
 //         {
 //           name: "equipment_perkeso",
 //           label: "PERKESO Equipment Details",
-//           type: "textarea",
+//           type: "input",
 //           showIf: { field: "equipment_owned", includes: "perkeso" }
 //         },
 //         {
 //           name: "equipment_ngo",
 //           label: "NGO Equipment Details",
-//           type: "textarea",
+//           type: "input",
 //  showIf: { field: "equipment_owned", includes: "ngo" }
 //         },
 //         {
 //           name: "equipment_self",
 //           label: "Self-purchased Equipment Details",
-//           type: "textarea",
+//           type: "input",
 //  showIf: { field: "equipment_owned", includes: "self" }
 //         },
 //         {
 //           name: "equipment_others",
 //           label: "Other Equipment Details",
-//           type: "textarea",
+//           type: "input",
 //  showIf: { field: "equipment_owned", includes: "others" }
 //         },
 
@@ -113,7 +113,7 @@ const AMBULATORY_OPTIONS = [
 //         {
 //           name: "home_environment",
 //           label: "Home Environment",
-//           type: "textarea"
+//           type: "input"
 //         },
 
 //         /* ================= TYPE OF HOUSE ================= */
@@ -131,7 +131,7 @@ const AMBULATORY_OPTIONS = [
 //         {
 //           name: "house_type_other",
 //           label: "If Others, specify",
-//           type: "textarea",
+//           type: "input",
 //           showIf: { field: "house_type", equals: "others" }
 //         },
 
@@ -164,7 +164,7 @@ const AMBULATORY_OPTIONS = [
 //         {
 //           name: "education_other",
 //           label: "If Others, specify",
-//           type: "textarea",
+//           type: "input",
 //           showIf: { field: "education_level", equals: "others" }
 //         }
 
@@ -285,7 +285,7 @@ const SUBJECTIVE_SCHEMA = {
         },
         { type: "radio", name: "returned_to_driving", label: "Returned to Drive Post Injury?", options: ["Yes", "No"] },
         {
-          type: "textarea",
+          type: "input",
           name: "driving_duration_distance",
           label: "If Yes – Duration & Distance",
           showIf: { field: "returned_to_driving", equals: "Yes" }
@@ -375,7 +375,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "current_diagnosis_other",
           label: "Other Diagnosis (specify)",
-          type: "textarea",
+          type: "input",
           showIf: { field: "current_diagnosis", includes: "others" }
         },
         {
@@ -392,25 +392,25 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "equipment_perkeso",
           label: "PERKESO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "perkeso" }
         },
         {
           name: "equipment_ngo",
           label: "NGO Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "ngo" }
         },
         {
           name: "equipment_self",
           label: "Self-purchased Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "self" }
         },
         {
           name: "equipment_others",
           label: "Other Equipment Details",
-          type: "textarea",
+          type: "input",
           showIf: { field: "equipment_owned", includes: "others" }
         }
         ,
@@ -424,7 +424,7 @@ const CONSENT_AND_REFERRAL_SCHEMA = {
         {
           name: "referral_reasons",
           label: "Referral Reasons",
-          type: "textarea",
+          type: "input",
           readOnly: true
         }
       ]
@@ -474,7 +474,7 @@ const OBJECTIVE_SCHEMA = {
         { type: "subheading", label: "Stump / Skin Condition" },
         { type: "radio", name: "wound_status", label: "Wound", options: ["Nil", "Present"] },
         {
-          type: "textarea",
+          type: "input",
           name: "wound_details",
           label: "Wound Details",
           showIf: { field: "wound_status", equals: "Present" }
@@ -573,7 +573,7 @@ const OBJECTIVE_SCHEMA = {
         { type: "radio", name: "hypersensitivity", label: "Hypersensitivity", options: ["Nil", "Yes"] },
         { type: "radio", name: "light_touch", label: "Light Touch", options: ["Intact", "Impaired"] },
         { type: "radio", name: "deep_touch", label: "Deep Touch", options: ["Intact", "Impaired"] },
-        { type: "textarea", name: "semmes_weinstein", label: "Semmes Weinstein (if applicable)" },
+        { type: "input", name: "semmes_weinstein", label: "Semmes Weinstein (if applicable)" },
 
         { type: "subheading", label: "Mobility & Ambulation" },
         {
@@ -685,7 +685,7 @@ const ASSESSMENT_SCHEMA = {
     {
       fields: [
         { type: "subheading", label: "Problem List" },
-        { type: "textarea", name: "problem_list", label: "Problem List" },
+        { type: "input", name: "problem_list", label: "Problem List" },
 
         { type: "subheading", label: "Functional Limitations" },
         {
@@ -730,7 +730,7 @@ const ASSESSMENT_SCHEMA = {
         },
 
         { type: "subheading", label: "Clinical Impression" },
-        { type: "textarea", name: "clinical_impression", label: "Clinical Impression" },
+        { type: "input", name: "clinical_impression", label: "Clinical Impression" },
 
         { type: "subheading", label: "Rehabilitation Prognosis" },
         { type: "radio", name: "rehab_prognosis", label: "Select Prognosis", options: ["Excellent", "Good", "Fair", "Poor"] }
@@ -826,7 +826,7 @@ const PLAN_SCHEMA = {
   ]
 },
 {
-  type: "textarea",
+  type: "input",
   name: "assistive_devices_others",
   label: "Please specify",
   showIf: { field: "assistive_devices", includes: "AssistiveOthers" }
@@ -929,8 +929,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
 
           <div>
             <b>Past Medical History</b>
-            <textarea
-              style={textarea}
+            <input
+              style={input}
               value={patientHistory.past_medical_history}
               onChange={(e) =>
                 setPatientHistory(prev => ({
@@ -943,8 +943,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
 
           <div>
             <b>Family History</b>
-            <textarea
-              style={textarea}
+            <input
+              style={input}
               value={patientHistory.past_family_history}
               onChange={(e) =>
                 setPatientHistory(prev => ({
@@ -957,8 +957,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
 
           <div>
             <b>Allergies</b>
-            <textarea
-              style={textarea}
+            <input
+              style={input}
               value={patientHistory.alerts_and_allergies}
               onChange={(e) =>
                 setPatientHistory(prev => ({
@@ -975,7 +975,7 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
     </div>
   );
 }
-const textarea = {
+const input = {
   width: "100%",
   minHeight: 90,
   marginTop: 6,
