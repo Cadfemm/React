@@ -49,7 +49,7 @@ function BarthelIndexAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <BarthelIndexForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -65,7 +65,7 @@ function ADLAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <ADLForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -81,7 +81,7 @@ function PatientHistoryAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <PatientHistoryForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -97,7 +97,7 @@ function MorseFallScaleAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <MorseFallScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -113,7 +113,7 @@ function BradenScaleAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <BradenScaleForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -131,7 +131,7 @@ function WoundAssessmentAdapter({ values, onChange }) {
   };
 
   const handleBack = () => {
-    onChange("nursing_assessments_active", null);
+    onChange("nursing_reassessments_active", null);
   };
 
   return (
@@ -153,7 +153,7 @@ function WoundTreatmentFlowsheetAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <WoundTreatmentFlowsheetForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -171,7 +171,7 @@ function NumericPainRatingScaleAdapter({ values, onChange }) {
   };
   
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   
@@ -195,7 +195,7 @@ function DiabeticFootAssessmentAdapter({ values, onChange }) {
     }
   };
   const handleBack = () => {
-    const activeKey = "nursing_assessments_active";
+    const activeKey = "nursing_reassessments_active";
     onChange(activeKey, null);
   };
   return <DiabeticFootAssessmentForm patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
@@ -309,7 +309,7 @@ function GlucoseMonitorAdapter({ onChange }) {
 
 function RehabChecklistAdapter({ onChange }) {
   const patient = useContext(PatientContext);
-  const handleBack = () => onChange("nursing_assessments_active", null);
+  const handleBack = () => onChange("nursing_reassessments_active", null);
   return <NursingRehabChecklist patient={patient} onBack={handleBack} />;
 }
 
@@ -350,24 +350,24 @@ function shouldShowGiGuLauncher(data = {}) {
 }
 function SwallowScreenerAdapter({ onChange }) {
   const patient = useContext(PatientContext);
-  const handleBack = () => onChange("nursing_assessments_active", null);
+  const handleBack = () => onChange("nursing_reassessments_active", null);
   return <NursingSwallowScreener patient={patient} onBack={handleBack} />;
 }
 
 function WaterSwallowTestAdapter({ onChange }) {
   const patient = useContext(PatientContext);
-  const handleBack = () => onChange("nursing_assessments_active", null);
+  const handleBack = () => onChange("nursing_reassessments_active", null);
   return <WaterSwallowTest patient={patient} onBack={handleBack} />;
 }
 
 function RepositioningSkinChartAdapter({ onChange }) {
   const patient = useContext(PatientContext);
-  const handleBack = () => onChange("nursing_assessments_active", null);
+  const handleBack = () => onChange("nursing_reassessments_active", null);
   return <RepositioningSkinChart patient={patient} onBack={handleBack} />;
 }
 
 // Assessment Registry
-export const NURSING_ASSESSMENT_REGISTRY = {
+export const NURSING_REASSESSMENT_REGISTRY = {
   barthel: BarthelIndexAdapter,
   adl: ADLAdapter,
   patient_history: PatientHistoryAdapter,
@@ -408,7 +408,7 @@ export const NURSING_ASSESSMENT_REGISTRY = {
 
 /* ===================== COMPONENT ===================== */
 
-export default function NursingAssessment({ patient, onSubmit, onBack }) {
+export default function NursingReAssessment({ patient, onSubmit, onBack }) {
   const [values, setValues] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
@@ -420,7 +420,7 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
 
   /* ---------------- STORAGE ---------------- */
   const storageKey = patient
-    ? `nursing_assessment_draft_${patient.id}`
+    ? `nursing_reassessment_draft_${patient.id}`
     : null;
    useEffect(() => {
     if (!storageKey) return;
@@ -527,111 +527,111 @@ export default function NursingAssessment({ patient, onSubmit, onBack }) {
         storageKey,
         JSON.stringify({ values, updatedAt: new Date() })
       );
-      alert("Nursing draft saved");
+      alert("Nursing reassessment draft saved");
     }
   };
 
   const handleSubmit = () => {
     setSubmitted(true);
     onSubmit?.(values);
-    alert("Nursing assessment submitted");
+    alert("Nursing reassessment submitted");
   };
-function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-  if (!patient) return null;
+// function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+//   if (!patient) return null;
 
-  const safe = (v) => v ?? "-";
-  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+//   const safe = (v) => v ?? "-";
+//   const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
 
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: 12,
-        fontSize: 14
-      }}>
-        <div><b>Name:</b> {safe(patient.name)}</div>
-        <div><b>IC:</b> {safe(patient.id)}</div>
-        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+//   return (
+//     <div style={{ marginBottom: 24 }}>
+//       <div style={{
+//         display: "grid",
+//         gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+//         gap: 12,
+//         fontSize: 14
+//       }}>
+//         <div><b>Name:</b> {safe(patient.name)}</div>
+//         <div><b>IC:</b> {safe(patient.id)}</div>
+//         <div><b>DOB:</b> {formatDate(patient.dob)}</div>
 
-        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
-        <div><b>ICD:</b> {safe(patient.icd)}</div>
-        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+//         <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+//         <div><b>ICD:</b> {safe(patient.icd)}</div>
+//         <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
 
-        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-        <div><b>Duration of Diagnosis:</b> -</div>
-        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+//         <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+//         <div><b>Duration of Diagnosis:</b> -</div>
+//         <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
 
-        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
-        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
-        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+//         <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+//         <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+//         <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
 
-        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
-        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
-        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+//         <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+//         <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+//         <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
 
-        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
-        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
-        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
-        <div><b>Accommodation:</b> {safe(patient.accommodation)}</div>
-        <div><b>Attending Case Manager:</b> {safe(patient.attending_case_manager)}</div>
-        <div><b>Doctor Incharge for Initial Assessment:</b> {safe(patient.doctor_incharge_initial_assessment)}</div>
-        <div><b>Attending Therapist:</b> {safe(patient.attending_therapist)}</div>
-        {/* ===== HISTORY ===== */}
-        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+//         <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+//         <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+//         <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+//         <div><b>Accommodation:</b> {safe(patient.accommodation)}</div>
+//         <div><b>Attending Case Manager:</b> {safe(patient.attending_case_manager)}</div>
+//         <div><b>Doctor Incharge for Initial Assessment:</b> {safe(patient.doctor_incharge_initial_assessment)}</div>
+//         <div><b>Attending Therapist:</b> {safe(patient.attending_therapist)}</div>
+//         {/* ===== HISTORY ===== */}
+//         <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
         
-           <h3>Patient History</h3>
+//            <h3>Patient History</h3>
         
-                  <div>
-                    <b>Past Medical History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_medical_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_medical_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
+//                   <div>
+//                     <b>Past Medical History</b>
+//                     <textarea
+//                       style={textarea}
+//                       value={patientHistory.past_medical_history}
+//                       onChange={(e) =>
+//                         setPatientHistory(prev => ({
+//                           ...prev,
+//                           past_medical_history: e.target.value
+//                         }))
+//                       }
+//                     />
+//                   </div>
 
           
-          <div>
-                    <b>Family History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_family_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_family_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
+//           <div>
+//                     <b>Family History</b>
+//                     <textarea
+//                       style={textarea}
+//                       value={patientHistory.past_family_history}
+//                       onChange={(e) =>
+//                         setPatientHistory(prev => ({
+//                           ...prev,
+//                           past_family_history: e.target.value
+//                         }))
+//                       }
+//                     />
+//                   </div>
 
         
-           <div>
-                    <b>Allergies</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.alerts_and_allergies}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          alerts_and_allergies: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
+//            <div>
+//                     <b>Allergies</b>
+//                     <textarea
+//                       style={textarea}
+//                       value={patientHistory.alerts_and_allergies}
+//                       onChange={(e) =>
+//                         setPatientHistory(prev => ({
+//                           ...prev,
+//                           alerts_and_allergies: e.target.value
+//                         }))
+//                       }
+//                     />
+//                   </div>
 
-          <button style={alertBtn}> 🚨 Alerts</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+//           <button style={alertBtn}> 🚨 Alerts</button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
   /* ===================== SCHEMAS ===================== */
 
@@ -644,14 +644,14 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
       { type: "save", label: "Save" }
     ],
     sections: [
-      {
-        fields: [
-          { name: "chief_complaint", label: "Chief Complaint", type: "input" },
-          { name: "history_present_illness", label: "History of Present Illness", type: "input" },
-          { name: "past_medical_surgical", label: "Past Medical/Surgical", type: "textarea" },
-          { name: "past_family_medical_history ", label: "Past Family Medical History ", type: "textarea" }
-        ]
-      },
+    //   {
+    //     fields: [
+    //       { name: "chief_complaint", label: "Chief Complaint", type: "input" },
+    //       { name: "history_present_illness", label: "History of Present Illness", type: "input" },
+    //       { name: "past_medical_surgical", label: "Past Medical/Surgical", type: "textarea" },
+    //       { name: "past_family_medical_history ", label: "Past Family Medical History ", type: "textarea" }
+    //     ]
+    //   },
             {
         title: "Allergies & Alerts",
         fields: [
@@ -3727,75 +3727,75 @@ function NursingPlanPanel({ values, onChange }) {
     plan: PLAN_SCHEMA
   };
 
-  const NURSING_PATIENT_INFO_SCHEMA = {
-    // title: "Patient Information",
-    sections: [
-      {
-        fields: [
-          // { type: "row", fields: [
-          //   { name: "patient_name", label: "Name", type: "input", readOnly: true },
-          //   { name: "patient_ic", label: "IC", type: "input", readOnly: true },
-          //   { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
-          //   { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
-          // ]},
-          // { type: "subheading", label: "Diagnosis" },
-          // { type: "row", fields: [
-          //   { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
-          //   { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
-          // ]},
-          // { type: "subheading", label: "Allergies" },
-          // { name: "allergy_drug", label: "Drug", type: "input" },
-          // { name: "allergy_food", label: "Food", type: "input" },
-          // { name: "allergy_environmental", label: "Environmental", type: "input" },
-          // { type: "subheading", label: "General Information" },
-          // { type: "row", fields: [
-          //   { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
-          //   { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
-          // ]},
-          // { type: "row", fields: [
-          //   { name: "occupation", label: "Occupation", type: "input", readOnly: true },
-          //   { name: "education_background", label: "Education Background", type: "input", readOnly: true }
-          // ]},
-          // { type: "row", fields: [
-          //   { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
-          //   { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
-          // ]},
-          { type: "subheading", label: "Biological Status" },
-          { name: "biological_status", type: "checkbox-group", options: [
-            { label: "Comorbidities & Medical history", value: "comorbidities" },
-            { label: "Physical limitation", value: "physical_limitation" },
-            { label: "Chronic pain / sleep issue", value: "chronic_pain_sleep" }
-          ]},
-          { type: "subheading", label: "Psychological" },
-          { name: "psychological", type: "checkbox-group", options: [
-            { label: "Emotional status (anxiety, depression, coping)", value: "emotional_status" },
-            { label: "Cognitive Function", value: "cognitive_function" },
-            { label: "Stressor", value: "stressor" }
-          ]},
-          { type: "subheading", label: "Social" },
-          { name: "social", type: "checkbox-group", options: [
-            { label: "Family & Caregiver support", value: "family_caregiver" },
-            { label: "Financial / Insurance status", value: "financial_insurance" },
-            { label: "Language/communication barriers", value: "language_barriers" },
-            { label: "Cultural / religious considerations", value: "cultural_religious" }
-          ]},
-          { type: "row", fields: [
-            { name: "unit_ward", label: "Unit/Ward", type: "input" },
-            { name: "attending_physician", label: "Attending Physician", type: "checkbox-group", options: [
-              { label: "Dr. Liyana", value: "Dr.Liyana" },
-              { label: "Mr. Tan", value: "Mr.Tan" },
-              { label: "Dr. Hussain", value: "Dr.Hussain" },
-              { label: "Dr. Naz", value: "Dr.Naz" }
-            ]}
-          ]},
-          { type: "row", fields: [
-            { name: "date_of_admission", label: "Date of Admission", type: "date" },
-            { name: "reason_for_admission", label: "Reason for Admission", type: "input" }
-          ]}
-        ]
-      }
-    ]
-  };
+//   const NURSING_PATIENT_INFO_SCHEMA = {
+//     // title: "Patient Information",
+//     sections: [
+//       {
+//         fields: [
+//           { type: "row", fields: [
+//             { name: "patient_name", label: "Name", type: "input", readOnly: true },
+//             { name: "patient_ic", label: "IC", type: "input", readOnly: true },
+//             { name: "patient_dob", label: "DOB", type: "input", readOnly: true },
+//             { name: "patient_age_gender", label: "Age / Gender", type: "input", readOnly: true }
+//           ]},
+//           { type: "subheading", label: "Diagnosis" },
+//           { type: "row", fields: [
+//             { name: "primary_diagnosis", label: "Primary Diagnosis", type: "input", readOnly: true },
+//             { name: "secondary_diagnosis", label: "Secondary Diagnosis", type: "input", readOnly: true }
+//           ]},
+//           { type: "subheading", label: "Allergies" },
+//           { name: "allergy_drug", label: "Drug", type: "input" },
+//           { name: "allergy_food", label: "Food", type: "input" },
+//           { name: "allergy_environmental", label: "Environmental", type: "input" },
+//           { type: "subheading", label: "General Information" },
+//           { type: "row", fields: [
+//             { name: "marital_status", label: "Marital Status", type: "input", readOnly: true },
+//             { name: "employment_status", label: "Employment Status", type: "input", readOnly: true }
+//           ]},
+//           { type: "row", fields: [
+//             { name: "occupation", label: "Occupation", type: "input", readOnly: true },
+//             { name: "education_background", label: "Education Background", type: "input", readOnly: true }
+//           ]},
+//           { type: "row", fields: [
+//             { name: "living_environment", label: "Living Environment", type: "input", readOnly: true },
+//             { name: "main_caregiver", label: "Main Caregiver", type: "input", readOnly: true }
+//           ]},
+//           { type: "subheading", label: "Biological Status" },
+//           { name: "biological_status", type: "checkbox-group", options: [
+//             { label: "Comorbidities & Medical history", value: "comorbidities" },
+//             { label: "Physical limitation", value: "physical_limitation" },
+//             { label: "Chronic pain / sleep issue", value: "chronic_pain_sleep" }
+//           ]},
+//           { type: "subheading", label: "Psychological" },
+//           { name: "psychological", type: "checkbox-group", options: [
+//             { label: "Emotional status (anxiety, depression, coping)", value: "emotional_status" },
+//             { label: "Cognitive Function", value: "cognitive_function" },
+//             { label: "Stressor", value: "stressor" }
+//           ]},
+//           { type: "subheading", label: "Social" },
+//           { name: "social", type: "checkbox-group", options: [
+//             { label: "Family & Caregiver support", value: "family_caregiver" },
+//             { label: "Financial / Insurance status", value: "financial_insurance" },
+//             { label: "Language/communication barriers", value: "language_barriers" },
+//             { label: "Cultural / religious considerations", value: "cultural_religious" }
+//           ]},
+//           { type: "row", fields: [
+//             { name: "unit_ward", label: "Unit/Ward", type: "input" },
+//             { name: "attending_physician", label: "Attending Physician", type: "checkbox-group", options: [
+//               { label: "Dr. Liyana", value: "Dr.Liyana" },
+//               { label: "Mr. Tan", value: "Mr.Tan" },
+//               { label: "Dr. Hussain", value: "Dr.Hussain" },
+//               { label: "Dr. Naz", value: "Dr.Naz" }
+//             ]}
+//           ]},
+//           { type: "row", fields: [
+//             { name: "date_of_admission", label: "Date of Admission", type: "date" },
+//             { name: "reason_for_admission", label: "Reason for Admission", type: "input" }
+//           ]}
+//         ]
+//       }
+//     ]
+//   };
 
   const nursingPatientInfoValues = {
     ...values,
@@ -3817,9 +3817,9 @@ function NursingPlanPanel({ values, onChange }) {
     main_caregiver: patient?.main_caregiver || "-"
   };
 
-    const handleDoctorsReport = () => {
-      alert("Report will be generating soon");
-    };
+    // const handleDoctorsReport = () => {
+    //   alert("Report will be generating soon");
+    // };
 
   /* ===================== RENDER ===================== */
 
@@ -3827,11 +3827,11 @@ function NursingPlanPanel({ values, onChange }) {
     <PatientContext.Provider value={patient}>
       <div style={mainContent}>
         <CommonFormBuilder
-          schema={{ title: "Patient Information", sections: [] }}
+          schema={{ title: "Re-Assessment", sections: [] }}
           values={{}}
           onChange={() => {}}
         >
-          <PatientInformationBlock
+          {/* <PatientInformationBlock
             patient={patient}
             patientHistory={patientHistory}
             setPatientHistory={setPatientHistory}
@@ -3839,20 +3839,20 @@ function NursingPlanPanel({ values, onChange }) {
         
           <button style={doctorsReportBtn}>
             Doctors Reports
-          </button>
+          </button> */}
         </CommonFormBuilder>
 
         {/* ===== PATIENT INFORMATION CARD ===== */}
         <CommonFormBuilder
-          schema={NURSING_PATIENT_INFO_SCHEMA}
+        //   schema={NURSING_PATIENT_INFO_SCHEMA}
           values={nursingPatientInfoValues}
           onChange={onChange}
         >
-          <div style={{ ...section, marginTop: 16 }}>
+          {/* <div style={{ ...section, marginTop: 16 }}>
             <button style={doctorsReportBtn} onClick={handleDoctorsReport}>
               Doctors Reports
             </button>
-          </div>
+          </div> */}
         </CommonFormBuilder>
 
         {/* ===== TABS ===== */}
@@ -3875,7 +3875,7 @@ function NursingPlanPanel({ values, onChange }) {
           onChange={onChange}
           submitted={submitted}
           onAction={handleAction}
-          assessmentRegistry={NURSING_ASSESSMENT_REGISTRY}
+          assessmentRegistry={NURSING_REASSESSMENT_REGISTRY}
         >
           {/* Submit button */}
           <div style={submitRow}>

@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { BristolChartAssessment } from "../../Doctors/components/BowelAssessment";
+import BarthelIndexForm from "./BarthelIndexForm";
+import AgitatedBehaviourScale from "./AgitatedBehaviourScale";
+import MorseFallScaleForm from "./MorseFallScaleForm";
+import BradenScaleForm from "./BradenScaleForm";
+import PainAssessmentForm from "../../Doctors/components/PainAssessmentForm";
+import WaterSwallowTest from "./WaterSwallowTest";
+import NumericPainRatingScaleForm from "./NumericPainRatingScaleForm";
+import DiabeticFootAssessmentForm from "./DiabeticFootAssessmentForm";
+import GlucoseMonitorChart from "./GlucoseMonitorChart";
+import SeizureChart from "./SeizureChart";
+import NursingSwallowScreener from "./NursingSwallowScreener";
+import BladderDiaryChart from "./BladderDiaryChart";
+import WoundTreatmentFlowsheetForm from "./WoundTreatmentFlowsheetForm";
+import WoundAssessment from "../pages/WoundAssessment";
 
 
 function Sec({ title, expanded, onToggle, children }) {
@@ -249,6 +263,37 @@ function RehabGoals({ v, set }) {
       </div>
       <button onClick={() => set("rehab_goals", [...goals, {}])} style={st.addBtn}>+ Add Goal</button>
     </div>
+  );
+}
+function LauncherCard({ title, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 10,
+        border: active
+          ? "2px solid #2563eb"
+          : "1px solid #d1d5db",
+
+        background: active
+          ? "#eff6ff"
+          : "#fff",
+
+        color: active
+          ? "#2563eb"
+          : "#111827",
+
+        cursor: "pointer",
+        fontWeight: 600,
+        minWidth: 200,
+        textAlign: "left",
+        transition: "0.2s"
+      }}
+    >
+      {title}
+    </button>
   );
 }
 export default function ShiftAssessment({ patient, onSubmit, onBack }) {
@@ -1185,7 +1230,50 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
 
         {/* ── Mobility & ADL ── */}
         <Sec title="Mobility & Activities of Daily Living (ADL)" expanded={exp.s5} onToggle={() => tog("s5")}>
+        <div style={{ marginTop: 18 }}>
 
+          <div style={st.label}>
+            Barthel Index Assessment
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              set("show_barthel_index", !v.show_barthel_index)
+            }
+            style={{
+              border: "2px solid #1f2937",
+              marginBottom:16,
+              borderRadius: 999,
+              padding: "10px 22px",
+              background: "#fff",
+              color: "#111827",
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: "pointer"
+            }}
+          >
+            Barthel Index
+          </button>
+
+          {v.show_barthel_index && (
+            <div
+              style={{
+                marginTop: 16,
+                border: "1px solid #dbeafe",
+                borderRadius: 12,
+                padding: 14,
+                background: "#f8fbff"
+              }}
+            >
+              <BarthelIndexForm
+                values={v}
+                onChange={set}
+              />
+            </div>
+          )}
+
+        </div>
         <div style={st.g2}>
           <F label="Bed Mobility">
             <Sel
@@ -2377,6 +2465,256 @@ export default function ShiftAssessment({ patient, onSubmit, onBack }) {
           <div style={st.legalNote}>
             This document is a legal health record. All entries must be legible, dated, timed, and signed. Corrections must be made by single strikethrough with initials and date — do not erase or use correction fluid. Incomplete assessments must be countersigned by the shift-in-charge nurse.
           </div>
+
+  {/* ================= ASSESSMENT LAUNCHERS ================= */}
+
+  <div style={{ marginBottom: 24 }}>
+    <div style={st.subTitle}>Assessment Tools</div>
+
+    <div style={st.launcherGrid}>
+
+    <LauncherCard
+      title="Barthel Index / MBI"
+      active={v.active_assessment === "barthel"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "barthel"
+            ? ""
+            : "barthel"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Agitated Behaviour Scale"
+      active={v.active_assessment === "agitated_behaviour_scale"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "agitated_behaviour_scale"
+            ? ""
+            : "agitated_behaviour_scale"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Morse Fall Scale"
+      active={v.active_assessment === "morse_fall_scale"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "morse_fall_scale"
+            ? ""
+            : "morse_fall_scale"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Braden Scale"
+      active={v.active_assessment === "braden_scale"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "braden_scale"
+            ? ""
+            : "braden_scale"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Pain Assessment OPQRST"
+      active={v.active_assessment === "pain_assessment"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "pain_assessment"
+            ? ""
+            : "pain_assessment"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Water Swallow Chart"
+      active={v.active_assessment === "water_swallow"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "water_swallow"
+            ? ""
+            : "water_swallow"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Numeric Rating Scale"
+      active={v.active_assessment === "numeric_rating_scale"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "numeric_rating_scale"
+            ? ""
+            : "numeric_rating_scale"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Diabetic Foot Assessment"
+      active={v.active_assessment === "diabetic_foot"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "diabetic_foot"
+            ? ""
+            : "diabetic_foot"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Glucose Monitor"
+      active={v.active_assessment === "glucose_monitor"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "glucose_monitor"
+            ? ""
+            : "glucose_monitor"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Seizure Chart"
+      active={v.active_assessment === "seizure_chart"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "seizure_chart"
+            ? ""
+            : "seizure_chart"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Swallow Screener"
+      active={v.active_assessment === "swallow_screener"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "swallow_screener"
+            ? ""
+            : "swallow_screener"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Bladder Diary"
+      active={v.active_assessment === "bladder_diary"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "bladder_diary"
+            ? ""
+            : "bladder_diary"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="Wound Treatment Flowsheet"
+      active={v.active_assessment === "wound_treatment"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "wound_treatment"
+            ? ""
+            : "wound_treatment"
+        )
+      }
+    />
+
+    <LauncherCard
+      title="WATFS"
+      active={v.active_assessment === "watfs"}
+      onClick={() =>
+        set(
+          "active_assessment",
+          v.active_assessment === "watfs"
+            ? ""
+            : "watfs"
+        )
+      }
+    />
+
+  </div>
+  </div>
+
+  {/* ================= FORMS ================= */}
+
+  {v.active_assessment === "barthel" && (
+    <BarthelIndexForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "agitated_behaviour_scale" && (
+    <AgitatedBehaviourScale values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "morse_fall_scale" && (
+    <MorseFallScaleForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "braden_scale" && (
+    <BradenScaleForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "pain_assessment" && (
+    <PainAssessmentForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "water_swallow" && (
+    <WaterSwallowTest values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "numeric_rating_scale" && (
+    <NumericPainRatingScaleForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "diabetic_foot" && (
+    <DiabeticFootAssessmentForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "glucose_monitor" && (
+    <GlucoseMonitorChart values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "seizure_chart" && (
+    <SeizureChart values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "swallow_screener" && (
+    <NursingSwallowScreener values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "bladder_diary" && (
+    <BladderDiaryChart values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "wound_treatment" && (
+    <WoundTreatmentFlowsheetForm values={v} onChange={set} />
+  )}
+
+  {v.active_assessment === "watfs" && (
+    <WoundAssessment values={v} onChange={set} />
+  )}
         </Sec>
 
       </div>
@@ -2442,4 +2780,19 @@ const st = {
   btnSec:          { background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.35)", padding: "9px 18px", borderRadius: 8, cursor: "pointer", fontSize: 13 },
   inlineInput:     { width: "100%", padding: "5px 7px", border: "1px solid #d1d5db", borderRadius: 5, fontSize: 12, outline: "none", boxSizing: "border-box", background: "#fff" },
   inlineSelect:    { width: "100%", padding: "5px 7px", border: "1px solid #d1d5db", borderRadius: 5, fontSize: 12, background: "#fff", outline: "none", boxSizing: "border-box" },
+  launcherGrid: {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 12,
+  marginTop: 12
+},
+
+subTitle: {
+  fontSize: 13,
+  fontWeight: 700,
+  color: "#1e40af",
+  marginBottom: 10,
+  textTransform: "uppercase",
+  letterSpacing: "0.5px"
+},
 };

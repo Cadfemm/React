@@ -12,7 +12,7 @@ const DOCTOR_ASSESSMENT_CARDS = [
   { id: "followup",  title: "Follow-up Visit",        desc: "Review progress and adjust treatment plan",        icon: "🔄", accent: "#059669", tag: "Returning",      tagBg: "#d1fae5", tagColor: "#065f46" },
   { id: "progress",  title: "Progress Intervention",  desc: "Document interventions and track outcomes",        icon: "📈", accent: "#7C3AED", tag: "Ongoing Care",   tagBg: "#ede9fe", tagColor: "#5b21b6" },
   { id: "group",     title: "Group Intervention",     desc: "Record group session and multi-patient notes",     icon: "👥", accent: "#DC2626", tag: "Group Session",  tagBg: "#fee2e2", tagColor: "#991b1b" },
-  { id: "procedure", title: "Procedure Assessment",   desc: "BTI, FEES, RTMS, TDCS, NESA, EST and more",       icon: "🩺", accent: "#0891B2", tag: "Procedure",      tagBg: "#cffafe", tagColor: "#0e7490" },
+  { id: "procedure", title: "Procedure Assessment",   desc: "BTI, FEES, rTMS, tDCS, NESA, EST and more",       icon: "🩺", accent: "#0891B2", tag: "Procedure",      tagBg: "#cffafe", tagColor: "#0e7490" },
 ];
 
 function DoctorAssessmentCard({ card, onClick }) {

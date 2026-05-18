@@ -692,7 +692,7 @@ const PROSTHETICS_OBJECTIVE_SCHEMA = {
           type: "wound-location-marker",
           views: [
             { key: "body", label: "Body (Front/Back)", src: "/amputation.png" },
-            { key: "hands", label: "Hands", src: "/hands_high.png" },
+            { key: "hands", label: "Hands", src: "/palm.png" },
             { key: "feet", label: "Feet", src: "/feet_high.png" },
           ],
           showIf: {
