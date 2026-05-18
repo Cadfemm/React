@@ -8,6 +8,7 @@ import {
   Briefcase,
   Building2,
   ClipboardList,
+  FileBarChart,
   Ear,
   Eye,
   Hand,
@@ -117,6 +118,39 @@ function MainMenuBar({ collapsed, onToggleCollapse }) {
         )}
       </button>
     </div>
+  );
+}
+
+function RapNavItem({ tab, onSelect, collapsed }) {
+  const active = tab === "RAP";
+  const Icon = FileBarChart;
+
+  return (
+    <nav className="px-2 pb-2" role="navigation" aria-label="All patients">
+
+      <div className="flex flex-col gap-0.5">
+        <motion.li initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}>
+          <div
+            title={collapsed ? "RAP" : undefined}
+            onClick={() => onSelect("RAP")}
+            className={[
+              "group flex cursor-pointer w-full items-center gap-[12px] px-[12px] py-[12px] rounded-[12px] text-left text-[16px] font-medium transition-all duration-200 mb-[6px]",
+              collapsed ? "justify-center px-[10px]" : "",
+              active ? ACTIVE : INACTIVE,
+            ].join(" ")}
+          >
+            <Icon
+              className={`h-5 w-5 shrink-0 ${active ? ACTIVE_ICON : INACTIVE_ICON}`}
+              strokeWidth={1.75}
+              aria-hidden
+            />
+            {!collapsed && (
+              <span className="min-w-0 flex-1 truncate leading-snug">RAP</span>
+            )}
+          </div>
+        </motion.li>
+      </div>
+    </nav>
   );
 }
 
@@ -262,6 +296,8 @@ function SidebarNav({ tab, setTab, username }) {
             onSelect={selectDept}
             collapsed={collapsed}
           />
+          <div className="mx-3 my-2 border-t border-gray-100" role="separator" />
+          <RapNavItem tab={tab} onSelect={selectDept} collapsed={collapsed} />
         </div>
       </motion.aside>
 
@@ -305,6 +341,8 @@ function SidebarNav({ tab, setTab, username }) {
                   onSelect={selectDept}
                   collapsed={false}
                 />
+                <div className="mx-3 my-2 border-t border-gray-100" role="separator" />
+                <RapNavItem tab={tab} onSelect={selectDept} collapsed={false} />
               </div>
             </motion.aside>
           </>

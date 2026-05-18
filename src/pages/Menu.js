@@ -59,6 +59,7 @@ import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage"
 import AudiologyPatients from "../features/Audiology/AudiologyPatients";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 import GenericDepartmentDashboard from "../features/common/GenericDepartmentDashboard";
+import DepartmentPatients from "../features/common/DepartmentPatients";
 import api from "../shared/api/apiClient"
 import { API_URL } from "../platform/config/api.config";
 
@@ -181,10 +182,13 @@ export default function App() {
   useEffect(() => {
     const fetchPatients = async () => {
       try{
-        const res = await api.get(
-          API_URL.PATIENT
-        )
-        setPatients(res.data);
+        const res = await api.get(API_URL.PATIENT);
+        const list = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.results)
+            ? res.data.results
+            : [];
+        setPatients(list);
       } catch(e){
         setPatients([]);
       }
@@ -625,17 +629,6 @@ useEffect(() => {
           <section style={{ display: tab === "PHARMACY" ? "block" : "none" }}>
             <PharmacyDetailsCaptureTab />
           </section>
-          {/* RAP • Case & RTW */}
-          <section style={{ display: tab === "RAP" ? "block" : "none" }}>
-            <RAPTab
-              data={rapData}
-              onChange={setRapData}
-              onSave={() =>
-                addAudit("RAP saved — RTW/Light-Duty proposal updated")
-              }
-            />
-          </section>
-
           {/* Documents */}
           <section style={{ display: tab === "DOCUMENTS" ? "block" : "none" }}>
             <DocumentsTab patientId={patient.patient_id} />
@@ -786,6 +779,18 @@ export function MainContent({
 
     case "Medical Assistant":
       return <GenericDepartmentDashboard departmentName="Medical Assistant Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
+
+    case "RAP":
+      return (
+        <DepartmentPatients
+          patientsFromApp={patients}
+          showAllPatients
+          hideBack
+          listOnly
+          title="RAP"
+          onBack={() => {}}
+        />
+      );
 
     default:
       return <PatientRegister addPatient={addPatient} />;
