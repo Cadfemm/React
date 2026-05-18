@@ -88,7 +88,7 @@ function buildSchema(values) {
       views: [
         { key: "body",  label: "Body (Front/Back)", src: "/body_high.png" },
         { key: "feet",  label: "Feet",             src: "/feet_high.png" },
-        { key: "handsfeet", label: "Hands",              src: "/hands_high.png" }
+        { key: "handsfeet", label: "Hands",              src: "/palm.png" },
       ]
     },
 

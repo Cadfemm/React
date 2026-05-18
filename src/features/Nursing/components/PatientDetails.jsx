@@ -7,12 +7,12 @@ import NursingSwallowScreener from "./NursingSwallowScreener";
 
 const MAIN_TABS = [
   { key: "admission",    label: "Admission Nursing" },
-  { key: "shift",        label: "Shift Assessment" },
+  // { key: "shift",        label: "Shift Assessment" },
   { key: "wound",        label: "Wound Assessment (WATFS)" },
   { key: "carer",        label: "Carer Log Book" },
   // { key: "swallow",      label: "Swallow Screener" },
-  { key: "reassessment", label: "Re Assessment" },
-  { key: "discharge",    label: "Discharge" },
+  // { key: "reassessment", label: "Re Assessment" },
+  // { key: "discharge",    label: "Discharge" },
 ];
 
 export default function PatientDetails({ patient, onBack }) {
