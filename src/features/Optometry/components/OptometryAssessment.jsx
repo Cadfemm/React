@@ -503,7 +503,6 @@ export default function OptometryAssessment({
   });
   const [starting,      setStarting]      = useState(false);
   const [tabLoading,    setTabLoading]    = useState(false);
-  const autoSaveTimer = useRef(null);
 
   const isFollowup = false;
 
@@ -1539,20 +1538,6 @@ export default function OptometryAssessment({
         }
       };
 
-      // Debounced auto-save to API (1.5 s after last keystroke)
-      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
-      autoSaveTimer.current = setTimeout(() => {
-        const formDataId = formDataIds[activeTab];
-        if (formDataId && assessmentId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next[activeTab] })
-            .catch(() => {/* silent — user can still hit Save manually */});
-        }
-        // Always persist draft locally too
-        if (storageKey) {
-          localStorage.setItem(storageKey, JSON.stringify({ values: next, updatedAt: new Date() }));
-        }
-      }, 1500);
-
       return next;
     });
   }, [readOnly, activeTab, formDataIds, assessmentId, storageKey]);
@@ -1619,9 +1604,21 @@ export default function OptometryAssessment({
   }, [patient]);
 
   const handleAction = useCallback((type) => {
+    console.log("Action:", type);
     if (type === "back") { onBack?.(); return; }
     if (readOnly) return;
     if (type === "next") {
+      const formDataId = formDataIds?.[activeTab] ?? null
+      if (assessmentId && formDataId) {
+        api.patch(
+          API_URL.ASSESSMENT + `data/${formDataId}/`,
+          { data: values[activeTab]}
+        ).then(
+          () => setToast({ message: 'Saved', variant: 'success' })
+        ).then(
+          () => ({ message: 'Failed to save', variant: 'error' })
+        )
+      }
       const idx = TAB_ORDER.indexOf(activeTab);
       if (idx < TAB_ORDER.length - 1) setActiveTab(TAB_ORDER[idx + 1]);
       return;
@@ -1630,24 +1627,6 @@ export default function OptometryAssessment({
       setValues({ subjective: {}, objective: {}, assessment: {}, plan: {} }); 
       setSubmitted(false); 
       localStorage.removeItem(storageKey); 
-    }
-    if (type === "save") {
-      // Persist draft locally
-      localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
-
-      // Push to API immediately on explicit Save click
-      if (assessmentId) {
-        const formDataId = formDataIds[activeTab];
-        if (formDataId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values[activeTab] })
-            .then(() => setToast({ message: 'Saved successfully', variant: 'success' }))
-            .catch(() => setToast({ message: 'Save failed. Draft kept locally.', variant: 'error' }));
-        } else {
-          setToast({ message: 'Draft saved locally', variant: 'success' });
-        }
-      } else {
-        setToast({ message: 'Draft saved locally (start a session to sync)', variant: 'success' });
-      }
     }
   }, [readOnly, activeTab, storageKey, values, onBack, assessmentId, formDataIds]);
 
@@ -1830,7 +1809,7 @@ export default function OptometryAssessment({
                       style={S.submitBtn}
                       onMouseEnter={e => e.currentTarget.style.background = "#1d4ed8"}
                       onMouseLeave={e => e.currentTarget.style.background = "#2563eb"}
-                      onClick={() => setShowConfirm(true)}
+                      onClick={() => {handleAction('next'); setShowConfirm(true)}}
                     >
                       {isFollowup ? "Submit Follow-up Visit" : "Submit Assessment"}
                     </button>
