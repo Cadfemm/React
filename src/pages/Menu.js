@@ -665,16 +665,8 @@ export function MainContent({
       return <GenericDepartmentDashboard departmentName="Medical Assistant Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "RAP":
-      return (
-        <RAP
-          patientsFromApp={patients}
-          showAllPatients
-          hideBack
-          listOnly
-          title="RAP"
-        />
-      );
-
+      return <RAP title="RAP" />
+      
     default:
       return <PatientRegister addPatient={addPatient} />;
   }
