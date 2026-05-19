@@ -18,7 +18,16 @@ const SubTab = [
     "Musculoskeletal",
     "BSU"   
 ]
-
+export {
+  FEES_SCHEMA,
+  BTI_SCHEMA,
+  MUSCU_SCHEMA,
+  RTMS_SCHEMA,
+  TDCS_SCHEMA,
+  NESA_SCHEMA,
+  EST_SCHEMA,
+  BSU_SCHEMA
+};
 const MAS_OPTIONS = [
     { label: "0 - No increase in tone", value: "0_no" },
     { label: "1 - Slight increase in tone. Catch/Release at end ROM", value: "1"},

@@ -8,7 +8,8 @@ import ShiftAssessment from "../Nursing/components/ShiftAssessment";
 import NursingReAssessment from "../Nursing/components/Reassessment";
 import RehabilitationDischargeChecklist from "../Nursing/components/Discharge";
 import GroupIntervention from "../Nursing/components/GroupIntervention";
-import Intervention from "../Nursing/components/Intervention"
+import Intervention from "../Nursing/components/Intervention";
+import Procedures from "../Nursing/components/Procedures";
 import RAPPatientAssessmentsList from "../../components/RAPPatientAssessmentsList";
 
 /* ── Assessment type cards ─────────────────────────────── */
@@ -32,7 +33,7 @@ const ASSESSMENT_CARDS = [
 // Nursing-specific cards (replace the default set entirely)
 const NURSING_CARDS = [
   { id: "initial",   title: "Initial Assessment",    desc: "Comprehensive assessment for new patient visit",   icon: "📋", accent: "#1D4ED8", tag: "1",              tagBg: "#dbeafe", tagColor: "#1d4ed8" },
-  { id: "procedure", title: "Procedures",             desc: "Document nursing procedures performed",            icon: "🩺", accent: "#0891B2", tag: "2",              tagBg: "#cffafe", tagColor: "#0e7490" },
+  { id: "nursingprocedure", title: "Procedures",             desc: "Document nursing procedures performed",            icon: "🩺", accent: "#0891B2", tag: "2",              tagBg: "#cffafe", tagColor: "#0e7490" },
   { id: "reassess",  title: "Re-Assessment",          desc: "Reassess patient condition and progress",          icon: "🔁", accent: "#059669", tag: "3",              tagBg: "#d1fae5", tagColor: "#065f46" },
   { id: "interv",    title: "Intervention",           desc: "Record nursing interventions and care",            icon: "💉", accent: "#7C3AED", tag: "4",              tagBg: "#ede9fe", tagColor: "#5b21b6" },
   { id: "shift",     title: "Shift Assessment",       desc: "Shift handover and patient status update",         icon: "🕐", accent: "#F59E0B", tag: "5",              tagBg: "#fef3c7", tagColor: "#92400e" },
@@ -404,7 +405,17 @@ export default function DepartmentPatients({
           onSubmit={handleBackToCards}
         />
       );
-    }           
+    }
+    // Group intervention — Nursing department
+    if (assessmentView === "nursingprocedure") {
+      return (
+        <Procedures
+          patient={selectedPatient}
+          onBack={handleBackToCards}
+          onSubmit={handleBackToCards}
+        />
+      );
+    }                
     if (AssessmentComponent) {
       return (
         <AssessmentComponent

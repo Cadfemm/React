@@ -65,7 +65,89 @@ function formatToday() {
   const d = new Date();
   return d.toISOString().split("T")[0];
 }
-
+ export const EVOKE_SCHEMA = {
+    enableLanguageToggle: true,
+    title: { en: "Evoke Potential Study", ms: "Kajian Potensi Terangsang" },
+    actions: [
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
+    ],
+    sections: [
+      {
+        fields: [
+          {
+            name: "date_of_appointment",
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
+            type: "date",
+            placeholder: { en: "Select Date", ms: "Pilih Tarikh" }
+          },
+          {
+            name: "type_of_study",
+            label: { en: "Type of Study", ms: "Jenis Kajian" },
+            type: "radio",
+            options: TYPE_OF_STUDY_OPTIONS,
+            labelAbove: true
+          },
+          {
+            name: "trace_old_report",
+            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+            name: "mode_selection",
+            label: { en: "Mode Selection", ms: "Pemilihan Mod" },
+            type: "radio",
+            options: MODE_SELECTION_OPTIONS
+          },
+          {
+            name: "sensitivity",
+            label: { en: "Sensitivity", ms: "Kehasilan" },
+            type: "radio",
+            options: SENSITIVITY_OPTIONS
+          },
+          {
+            name: "high_freq_filter",
+            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
+            type: "radio",
+            options: HIGH_FREQ_OPTIONS
+          },
+          {
+            name: "low_freq_filter",
+            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
+            type: "radio",
+            options: LOW_FREQ_OPTIONS
+          },
+          {
+            name: "impedance_check",
+            label: { en: "Impedance Check", ms: "Semakan Impedans" },
+            type: "radio",
+            options: IMPEDANCE_OPTIONS
+          },
+          // {
+          //   name: "emr_technical_report",
+          //   label: { en: "Emr Technical Report By", ms: "Laporan Teknikal Emr Oleh" },
+          //   type: "radio",
+          //   options: EMR_REPORT_OPTIONS,
+          //   labelAbove: true
+          // },
+          {
+            name: "final_report",
+            label: { en: "Final Report", ms: "Laporan Akhir" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
+          {
+            name: "final_report_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", equals: "others" }
+          }
+        ]
+      }
+    ]
+  };
 export default function EvokePotentialForm({ patient, onBack }) {
   const [language, setLanguage] = useState("en");
   const diagnosis = patient?.icd ?? patient?.diagnosis ?? "-";
@@ -218,91 +300,6 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
     </div>
   );
 }
-
-
-  const EVOKE_SCHEMA = {
-    enableLanguageToggle: true,
-    title: { en: "Evoke Potential Study", ms: "Kajian Potensi Terangsang" },
-    actions: [
-      { type: "toggle-language" },
-      { type: "back", label: { en: "Back", ms: "Kembali" } }
-    ],
-    sections: [
-      {
-        fields: [
-          {
-            name: "date_of_appointment",
-            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
-            type: "date",
-            placeholder: { en: "Select Date", ms: "Pilih Tarikh" }
-          },
-          {
-            name: "type_of_study",
-            label: { en: "Type of Study", ms: "Jenis Kajian" },
-            type: "radio",
-            options: TYPE_OF_STUDY_OPTIONS,
-            labelAbove: true
-          },
-          {
-            name: "trace_old_report",
-            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "mode_selection",
-            label: { en: "Mode Selection", ms: "Pemilihan Mod" },
-            type: "radio",
-            options: MODE_SELECTION_OPTIONS
-          },
-          {
-            name: "sensitivity",
-            label: { en: "Sensitivity", ms: "Kehasilan" },
-            type: "radio",
-            options: SENSITIVITY_OPTIONS
-          },
-          {
-            name: "high_freq_filter",
-            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
-            type: "radio",
-            options: HIGH_FREQ_OPTIONS
-          },
-          {
-            name: "low_freq_filter",
-            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
-            type: "radio",
-            options: LOW_FREQ_OPTIONS
-          },
-          {
-            name: "impedance_check",
-            label: { en: "Impedance Check", ms: "Semakan Impedans" },
-            type: "radio",
-            options: IMPEDANCE_OPTIONS
-          },
-          // {
-          //   name: "emr_technical_report",
-          //   label: { en: "Emr Technical Report By", ms: "Laporan Teknikal Emr Oleh" },
-          //   type: "radio",
-          //   options: EMR_REPORT_OPTIONS,
-          //   labelAbove: true
-          // },
-          {
-            name: "final_report",
-            label: { en: "Final Report", ms: "Laporan Akhir" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
-          {
-            name: "final_report_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "others" }
-          }
-        ]
-      }
-    ]
-  };
 
   return (
     <div>
