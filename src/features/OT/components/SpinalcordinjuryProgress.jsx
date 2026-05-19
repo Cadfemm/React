@@ -99,6 +99,10 @@ actions: [
     ],  sections: [
     {
       fields: [
+        {
+  type: "subheading",
+  label: "Interventions Provided"
+},
 {
   type: "subheading",
   label: "Modalities"
@@ -106,7 +110,7 @@ actions: [
 
 {
   name: "modalities",
-  label: "Modalities",
+ 
   type: "checkbox-group",
   options: [
     { label: "Motomed", value: "motomed" },
@@ -156,20 +160,7 @@ actions: [
 /* =========================
    Fesia Grasp
 ========================= */
-// {
-//   name: "fesia_grasp_exercise_type",
-//   label: "Fesia Grasp - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: { field: "modalities", includes: "fesia_grasp" }
-// },
-// {
-//   name: "fesia_grasp_minutes",
-//   label: "Fesia Grasp - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "fesia_grasp" }
-// },
+
 {type:'subheading',label:'Fesia Grasp',showIf:{field:'modalities',includes:'fesia_grasp'}},
 {
   name: "fesia_grasp",
@@ -198,20 +189,7 @@ actions: [
 /* =========================
    Fesia Bike
 ========================= */
-// {
-//   name: "fesia_bike_exercise_type",
-//   label: "Fesia Bike - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: { field: "modalities", includes: "fesia_bike" }
-// },
-// {
-//   name: "fesia_bike_minutes",
-//   label: "Fesia Bike - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "fesia_bike" }
-// },
+
 {type:'subheading',label:'Fesia Bike',showIf:{field:'modalities',includes:'fesia_bike'}},
 {
   name: "fesia_bike",
@@ -239,20 +217,7 @@ actions: [
 /* =========================
    Fesia Gait
 ========================= */
-// {
-//   name: "fesia_gait_exercise_type",
-//   label: "Fesia Gait - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: { field: "modalities", includes: "fesia_gait" }
-// },
-// {
-//   name: "fesia_gait_minutes",
-//   label: "Fesia Gait - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "fesia_gait" }
-// },
+
 {type:'subheading',label:'Fesia Gait',showIf:{field:'modalities',includes:'fesia_gait'}},
 {
   name: "fesia_gait",
@@ -281,23 +246,10 @@ actions: [
 /* =========================
    Robo Hand
 ========================= */
-// {
-//   name: "robo_hand_exercise_type",
-//   label: "Robo Hand - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: { field: "modalities", includes: "robo_hand" }
-// },
-// {
-//   name: "robo_hand_minutes",
-//   label: "Robo Hand - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "robo_hand" }
-// },
+
 {
   type: "subheading",
-  label: "Robo Hand Parameters",
+  label: "Robo Hand",
   showIf: {
     field: "modalities",
     includes: "robo_hand"
@@ -330,23 +282,10 @@ actions: [
 /* =========================
    Fluidotherapy
 ========================= */
-// {
-//   name: "fluidotherapy_temperature",
-//   label: "Fluidotherapy - Temperature",
-//   type: "input",
-//   placeholder: "Enter temperature",
-//   showIf: { field: "modalities", includes: "fluidotherapy" }
-// },
-// {
-//   name: "fluidotherapy_minutes",
-//   label: "Fluidotherapy - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "fluidotherapy" }
-// },
+
 {
   type: "subheading",
-  label: "Fluidotherapy Parameters",
+  label: "Fluidotherapy",
   showIf: {
     field: "modalities",
     includes: "fluidotherapy"
@@ -379,34 +318,7 @@ actions: [
 /* =========================
    Chattanooga
 ========================= */
-// {
-//   name: "chattanooga_body_region",
-//   label: "Chattanooga - Body Region",
-//   type: "input",
-//   placeholder: "Enter body region",
-//   showIf: { field: "modalities", includes: "chattanooga" }
-// },
-// {
-//   name: "chattanooga_hz",
-//   label: "Chattanooga - Hz",
-//   type: "input",
-//   placeholder: "Enter frequency (Hz)",
-//   showIf: { field: "modalities", includes: "chattanooga" }
-// },
-// {
-//   name: "chattanooga_ma",
-//   label: "Chattanooga - mA",
-//   type: "input",
-//   placeholder: "Enter intensity (mA)",
-//   showIf: { field: "modalities", includes: "chattanooga" }
-// },
-// {
-//   name: "chattanooga_minutes",
-//   label: "Chattanooga - Minutes",
-//   type: "input",
-//   placeholder: "Enter minutes",
-//   showIf: { field: "modalities", includes: "chattanooga" }
-// },
+
 {
   type: "subheading",
   label: "Chattanooga",
@@ -488,51 +400,7 @@ actions: [
     }
   ]
 },
-// {
-//   name: "music_glove_region",
-//   label: "Music Glove - Region",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_music_glove"
-//   }
-// },
-// {
-//   name: "music_glove_difficulty",
-//   label: "Difficulty Level / Speed",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_music_glove"
-//   }
-// },
-// {
-//   name: "music_glove_duration",
-//   label: "Duration (Minutes)",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_music_glove"
-//   }
-// },
-// {
-//   name: "saebo_body_region",
-//   label: "Saebo Stim - Body Region",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "saebo_stim"
-//   }
-// },
-// {
-//   name: "saebo_duration",
-//   label: "Duration (Minutes)",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "saebo_stim"
-//   }
-// },
+
 {type: "subheading", label: "Saebo Stim", showIf: {field: "modalities", includes: "saebo_stim"}},
 {
   name: "saebo_stim",
@@ -559,32 +427,7 @@ actions: [
 },
 // {
 
-//   name: "fitmi_exercise_type",
-//   label: "FITMI - Type of Exercise",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_fitmi"
-//   }
-// },
-// {
-//   name: "fitmi_repetition",
-//   label: "FITMI - Repetition",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_fitmi"
-//   }
-// },
-// {
-//   name: "fitmi_duration_minutes",
-//   label: "FITMI - Duration (Minutes)",
-//   type: "input",
-//   showIf: {
-//     field: "modalities",
-//     includes: "flint_rehab_fitmi"
-//   }
-// },
+
 {type: "subheading", label: "FITMI", showIf: {field: "modalities", includes: "flint_rehab_fitmi"}},
 
 {
@@ -619,27 +462,16 @@ actions: [
 /* =========================
    Tilt Table
 ========================= */
-// {
-//   name: "tilt_table_duration",
-//   label: "Tilt Table - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "tilt_table"
-//   }
-// },
-// {
-//   name: "tilt_table_angle",
-//   label: "Tilt Table - Angle (Degrees)",
-//   type: "input",
-//   placeholder: "Enter tilt angle",
-//   showIf: {
-//     field: "modalities",
-//     includes: "tilt_table"
-//   }
-// },
+
+
 {
+  type: "subheading",
+  label: "Tilt Table",
+  showIf: {
+    field: "modalities",
+    includes: "tilt_table"
+  }
+},{
   name: "tilt_table",
   label: "Tilt Table",
   type: "row",
@@ -662,26 +494,7 @@ actions: [
     }
   ]
 },
-// {
-//   name: "galileo_duration",
-//   label: "Galileo - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "galileo"
-//   }
-// },
-// {
-//   name: "galileo_frequency",
-//   label: "Galileo - Frequency",
-//   type: "input",
-//   placeholder: "Enter frequency",
-//   showIf: {
-//     field: "modalities",
-//     includes: "galileo"
-//   }
-// },
+
 {type:'subheading',label:'Galileo',showIf:{field:'modalities',includes:'galileo'}},
 {
   name: "galileo",
@@ -709,26 +522,7 @@ actions: [
 /* =========================
    Recumbent Stepper
 ========================= */
-// {
-//   name: "recumbent_stepper_duration",
-//   label: "Recumbent Stepper - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "recumbent_stepper"
-//   }
-// },
-// {
-//   name: "recumbent_stepper_resistance",
-//   label: "Recumbent Stepper - Difficulty / Resistance",
-//   type: "input",
-//   placeholder: "Enter resistance or difficulty level",
-//   showIf: {
-//     field: "modalities",
-//     includes: "recumbent_stepper"
-//   }
-// },
+{type:'subheading',label:'Recumbent Stepper',showIf:{field:'modalities',includes:'recumbent_stepper'}},
 {
   name: "recumbent_stepper",
   label: "Recumbent Stepper",
@@ -770,26 +564,15 @@ actions: [
 /* =========================
    Treadmill
 ========================= */
-// {
-//   name: "treadmill_duration",
-//   label: "Treadmill - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "treadmill"
-//   }
-// },
-// {
-//   name: "treadmill_speed_difficulty",
-//   label: "Treadmill - Difficulty Level / Speed",
-//   type: "input",
-//   placeholder: "Enter speed or difficulty level",
-//   showIf: {
-//     field: "modalities",
-//     includes: "treadmill"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Treadmill ",
+  showIf: {
+    field: "modalities",
+    includes: "treadmill"
+  }
+},
 {
   name: "treadmill",
   label: "Treadmill - Speed & Duration",
@@ -816,36 +599,15 @@ actions: [
 /* =========================
    Xcite2
 ========================= */
-// {
-//   name: "xcite2_duration",
-//   label: "Xcite2 - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "xcite2"
-//   }
-// },
-// {
-//   name: "xcite2_mode",
-//   label: "Xcite2 - Mode",
-//   type: "input",
-//   placeholder: "Enter mode",
-//   showIf: {
-//     field: "modalities",
-//     includes: "xcite2"
-//   }
-// },
-// {
-//   name: "xcite2_frequency",
-//   label: "Xcite2 - Frequency",
-//   type: "input",
-//   placeholder: "Enter frequency",
-//   showIf: {
-//     field: "modalities",
-//     includes: "xcite2"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Xcite2",
+  showIf: {
+    field: "modalities",
+    includes: "xcite2"
+  }
+},
 {
   name: "xcite2",
   label: "Xcite2",
@@ -875,26 +637,15 @@ actions: [
     }
   ]
 },
-// {
-//   name: "sonopuls_duration",
-//   label: "Sonopuls - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "sonopuls"
-//   }
-// },
-// {
-//   name: "sonopuls_placement",
-//   label: "Sonopuls - Placement",
-//   type: "input",
-//   placeholder: "Enter treatment placement / body area",
-//   showIf: {
-//     field: "modalities",
-//     includes: "sonopuls"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Sonopuls",
+  showIf: {
+    field: "modalities",
+    includes: "sonopuls"
+  }
+},
 {
   name: "sonopuls",
   label: "Sonopuls",
@@ -921,7 +672,14 @@ actions: [
 /* =========================
    Hot Pack
 ========================= */
-
+{
+  type: "subheading",
+  label: "Hot Pack",
+  showIf: {
+    field: "modalities",
+    includes: "hot_pack"
+  }
+},
 {
   name: "hot_pack",
   label: "Hot Pack",
@@ -945,50 +703,19 @@ actions: [
     }
   ]
 },
-// {
-//   name: "hot_pack_duration",
-//   label: "Hot Pack - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "hot_pack"
-//   }
-// },
-// {
-//   name: "hot_pack_placement",
-//   label: "Hot Pack - Placement",
-//   type: "input",
-//   placeholder: "Enter treatment placement / body area",
-//   showIf: {
-//     field: "modalities",
-//     includes: "hot_pack"
-//   }
-// },
 
 /* =========================
    Cryocuff
 ========================= */
-// {
-//   name: "cryocuff_duration",
-//   label: "Cryocuff - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "cryocuff"
-//   }
-// },
-// {
-//   name: "cryocuff_placement",
-//   label: "Cryocuff - Placement",
-//   type: "input",
-//   placeholder: "Enter treatment placement / body area",
-//   showIf: {
-//     field: "modalities",
-//     includes: "cryocuff"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Cryocuff",
+  showIf: {
+    field: "modalities",
+    includes: "cryocuff"
+  }
+},
 {
   name: "cryocuff",
   label: "Cryocuff",
@@ -1018,6 +745,14 @@ actions: [
    Laser
 ========================= */
 {
+  type: "subheading",
+  label: "Laser",
+  showIf: {
+    field: "modalities",
+    includes: "laser"
+  }
+},
+{
   name: "laser",
   label: "Laser",
   type: "row",
@@ -1040,30 +775,19 @@ actions: [
     }
   ]
 },
-// {
-//   name: "laser_duration",
-//   label: "Laser - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "laser"
-//   }
-// },
-// {
-//   name: "laser_frequency",
-//   label: "Laser - Frequency",
-//   type: "input",
-//   placeholder: "Enter frequency",
-//   showIf: {
-//     field: "modalities",
-//     includes: "laser"
-//   }
-// },
+
 
 /* =========================
    Syrebo Robotic Glove
 ========================= */
+{
+  type: "subheading",
+  label: "Syrebo Robotic Glove",
+  showIf: {
+    field: "modalities",
+    includes: "syrebo_robotic_glove"
+  }
+},
 {
   name: "syrebo_robotic_glove",
   label: "Syrebo Robotic Glove",
@@ -1087,60 +811,20 @@ actions: [
     }
   ]
 },
-// {
-//   name: "syrebo_robotic_glove_duration",
-//   label: "Syrebo Robotic Glove - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "syrebo_robotic_glove"
-//   }
-// },
-// {
-//   name: "syrebo_robotic_glove_mode",
-//   label: "Syrebo Robotic Glove - Mode",
-//   type: "input",
-//   placeholder: "Enter mode",
-//   showIf: {
-//     field: "modalities",
-//     includes: "syrebo_robotic_glove"
-//   }
-// },
+
 
 /* =========================
    Stella Bio
 ========================= */
-// {
-//   name: "stella_bio_duration",
-//   label: "Stella Bio - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "stella_bio"
-//   }
-// },
-// {
-//   name: "stella_bio_mode",
-//   label: "Stella Bio - Mode",
-//   type: "input",
-//   placeholder: "Enter mode",
-//   showIf: {
-//     field: "modalities",
-//     includes: "stella_bio"
-//   }
-// },
-// {
-//   name: "stella_bio_frequency",
-//   label: "Stella Bio - Frequency",
-//   type: "input",
-//   placeholder: "Enter frequency",
-//   showIf: {
-//     field: "modalities",
-//     includes: "stella_bio"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Stella Bio",
+  showIf: {
+    field: "modalities",
+    includes: "stella_bio"
+  }
+},
 {
   name: "stella_bio",
   label: "Stella Bio",
@@ -1174,6 +858,14 @@ actions: [
    SCI Fit Step One
 ========================= */
 {
+  type: "subheading",
+  label: "SCI Fit Step One",
+  showIf: {
+    field: "modalities",
+    includes: "sci_fit_step_one"
+  }
+},
+{
   name: "sci_fit_step_one",
   label: "SCI Fit Step One",
   type: "row",
@@ -1196,50 +888,20 @@ actions: [
     }
   ]
 },
-// {
-//   name: "sci_fit_step_one_duration",
-//   label: "SCI Fit Step One - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "sci_fit_step_one"
-//   }
-// },
-// {
-//   name: "sci_fit_step_one_difficulty_resistance",
-//   label: "SCI Fit Step One - Difficulty / Resistance",
-//   type: "input",
-//   placeholder: "Enter difficulty or resistance level",
-//   showIf: {
-//     field: "modalities",
-//     includes: "sci_fit_step_one"
-//   }
-// },
+
 
 /* =========================
    Ankle Motus
 ========================= */
-// {
-//   name: "ankle_motus_duration",
-//   label: "Ankle Motus - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "ankle_motus"
-//   }
-// },
-// {
-//   name: "ankle_motus_mode",
-//   label: "Ankle Motus - Mode",
-//   type: "input",
-//   placeholder: "Enter mode",
-//   showIf: {
-//     field: "modalities",
-//     includes: "ankle_motus"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "Ankle Motus",
+  showIf: {
+    field: "modalities",
+    includes: "ankle_motus"
+  }
+},
 {
   name: "ankle_motus",
   label: "Ankle Motus",
@@ -1267,26 +929,15 @@ actions: [
 /* =========================
    Arm Motus
 ========================= */
-// {
-//   name: "arm_motus_duration",
-//   label: "Arm Motus - Duration (Minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "modalities",
-//     includes: "arm_motus"
-//   }
-// },
-// {
-//   name: "arm_motus_mode",
-//   label: "Arm Motus - Mode",
-//   type: "input",
-//   placeholder: "Enter mode",
-//   showIf: {
-//     field: "modalities",
-//     includes: "arm_motus"
-//   }
-// },
+
+{
+  type: "subheading",
+  label: "ARM Motus",
+  showIf: {
+    field: "modalities",
+    includes: "arm_motus"
+  }
+},
 {
   name: "arm_motus",
   label: "Arm Motus",
@@ -1320,9 +971,9 @@ actions: [
   placeholder: "Specify other modality",
   showIf: { field: "modalities", includes: "others" }
 },
+{type:'subheading',label:'Therapeutic Exercises'},
 {
   name: "therapeutic_exercises",
-  label: "Therapeutic Exercises",
   type: "checkbox-group",
   options: [
     {
@@ -1369,10 +1020,11 @@ actions: [
 },
 
 // Bobath/NDT Therapy sub-options
+{type: "subheading", label: "Bobath/NDT Therapy", showIf: { field: "therapeutic_exercises", includes: "bobath_ndt_therapy" }},
 {
   name: "bobath_ndt_regions",
   label: "Bobath/NDT Therapy - Choose Region",
-  type: "checkbox-group",
+  type: "radio",
   options: [
     {
       label: "Trunk & Pelvis",
@@ -1408,9 +1060,9 @@ actions: [
     includes: "others"
   }
 },
+{type:'subheading',label:'ADL and Functional Training'},
 {
   name: "adl_functional_training",
-  label: "ADL and Functional Training",
   type: "checkbox-group",
   options: [
     {
@@ -1437,6 +1089,7 @@ actions: [
 },
 
 /* ===================== ADL TRAINING ===================== */
+
 {
   name: "adl_training_items",
   label: "ADL Training Activities",
@@ -1525,9 +1178,11 @@ actions: [
     includes: "others"
   }
 },
+
+{type:'subheading',label:'Assistive & Adaptive Devices'},
 {
   name: "assistive_adaptive_devices",
-  label: "Assistive & Adaptive Devices",
+ 
   type: "checkbox-group",
   options: [
     { label: "Splint", value: "splint" },
