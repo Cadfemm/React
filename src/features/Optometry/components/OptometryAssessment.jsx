@@ -1604,7 +1604,6 @@ export default function OptometryAssessment({
   }, [patient]);
 
   const handleAction = useCallback((type) => {
-    console.log("Action:", type);
     if (type === "back") { onBack?.(); return; }
     if (readOnly) return;
     if (type === "next") {
