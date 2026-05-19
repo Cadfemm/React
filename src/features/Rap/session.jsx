@@ -259,6 +259,7 @@ export default function SOAPSession({
     if (selectedSession) {
         return (
             <Assessment
+                patient={patient}
                 sessionData={selectedSession}
                 onBack={() => setSelectedSession(null)}d
             />
