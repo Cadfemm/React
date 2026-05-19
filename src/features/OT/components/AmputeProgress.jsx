@@ -73,14 +73,7 @@ const SUBJECTIVE_SCHEMA = {
   speechToText: true,
   ocr: true
 },
-// {
-//   name: "pain_scale",
-//   label: "Pain Scale (if applicable)",
-//   type: "input",
-//   placeholder: "Example: NRS Pain Score before / during / end of session",
-//   speechToText: true,
-//   ocr: true
-// },
+
 
 
      
@@ -99,29 +92,1033 @@ actions: [
     ],  sections: [
     {
       fields: [
+// {
+//   type: "subheading",
+//   label: "Interventions Provided"
+// },
+// {
+//   type: "subheading",
+//   label: "Pre-Prosthesis Training"
+// },
+// {
+//   name: "pre_prosthesis_therapeutic_exercises",
+//   label: "Therapeutic Exercises",
+//   type: "checkbox-group",
+//   options: [
+//     {
+//       label: "Functional ROM Exercise",
+//       value: "functional_rom_exercise"
+//     },
+//     {
+//       label: "Functional Strengthening Exercise",
+//       value: "functional_strengthening_exercise"
+//     },
+//     {
+//       label: "Functional Mobility Exercise",
+//       value: "functional_mobility_exercise"
+//     },
+//     {
+//       label: "Functional Endurance Exercise",
+//       value: "functional_endurance_exercise"
+//     },
+//     {
+//       label: "Functional Balance Exercise",
+//       value: "functional_balance_exercise"
+//     },
+//     {
+//       label: "Fine Motor and Dexterity Training",
+//       value: "fine_motor_dexterity_training"
+//     },
+//     {
+//       label: "Education on Stump Management",
+//       value: "education_on_stump_management"
+//     },
+//     {
+//       label: "Sensory Desensitization",
+//       value: "sensory_desensitization"
+//     },
+//     {
+//       label: "Wheelchair Training",
+//       value: "wheelchair_training"
+//     },
+//     {
+//       label: "Education",
+//       value: "education_home_program"
+//     }
+//   ]
+// },
+
+// /* Functional ROM Exercise */
+// {
+//   name: "functional_rom_exercise_remarks",
+//   label: "Functional ROM Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter ROM exercise details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_rom_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Strengthening Exercise */
+// {
+//   name: "functional_strengthening_exercise_remarks",
+//   label: "Functional Strengthening Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter strengthening exercise details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_strengthening_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Mobility Exercise */
+// {
+//   name: "functional_mobility_exercise_remarks",
+//   label: "Functional Mobility Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter transfer / walking aids / wheelchair training details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_mobility_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Endurance Exercise */
+// {
+//   name: "functional_endurance_exercise_remarks",
+//   label: "Functional Endurance Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter endurance exercise details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_endurance_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Balance Exercise */
+// {
+//   name: "functional_balance_type",
+//   label: "Balance Type",
+//   type: "radio",
+//   options: [
+//     { label: "Static", value: "static" },
+//     { label: "Dynamic", value: "dynamic" }
+//   ],
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_balance_exercise"
+//   }
+// },
+// {
+//   name: "functional_balance_exercise_remarks",
+//   label: "Functional Balance Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter balance exercise details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "functional_balance_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Fine Motor and Dexterity Training */
+// {
+//   name: "fine_motor_dexterity_training_remarks",
+//   label: "Fine Motor and Dexterity Training Remarks",
+//   type: "input",
+//   placeholder: "Enter fine motor and dexterity training details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "fine_motor_dexterity_training"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Education on Stump Management */
+// {
+//   name: "education_on_stump_management_remarks",
+//   label: "Education on Stump Management Remarks",
+//   type: "input",
+//   placeholder: "Enter stump management education details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "education_on_stump_management"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Sensory Desensitization */
+// {
+//   name: "sensory_desensitization_remarks",
+//   label: "Sensory Desensitization Remarks",
+//   type: "input",
+//   placeholder: "Enter desensitization details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "sensory_desensitization"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Wheelchair Training */
+// {
+//   name: "wheelchair_training_remarks",
+//   label: "Wheelchair Training Remarks",
+//   type: "input",
+//   placeholder: "Enter wheelchair training details (e.g. motorized)",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "wheelchair_training"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Education (Home Program / Exercise) */
+// {
+//   name: "education_home_program_remarks",
+//   label: "Education (Home Program / Exercise) Remarks",
+//   type: "input",
+//   placeholder: "Enter home program or exercise education details",
+//   showIf: {
+//     field: "pre_prosthesis_therapeutic_exercises",
+//     includes: "education_home_program"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+// {
+//   type: "subheading",
+//   label: "Post-Prosthesis Training"
+// },
+// {
+//   name: "post_prosthesis_therapeutic_exercises",
+//   label: "Therapeutic Exercises",
+//   type: "checkbox-group",
+//   options: [
+//     {
+//       label: "Functional ROM Exercise",
+//       value: "functional_rom_exercise"
+//     },
+//     {
+//       label: "Functional Strengthening Exercise",
+//       value: "functional_strengthening_exercise"
+//     },
+//     {
+//       label: "Functional Mobility Exercise",
+//       value: "functional_mobility_exercise"
+//     },
+//     {
+//       label: "Functional Endurance Exercise",
+//       value: "functional_endurance_exercise"
+//     },
+//     {
+//       label: "Functional Balance Exercise",
+//       value: "functional_balance_exercise"
+//     },
+//     {
+//       label: "Fine Motor and Dexterity Training",
+//       value: "fine_motor_dexterity_training"
+//     },
+//     {
+//       label: "Education",
+//       value: "education"
+//     },
+//     {
+//       label: "Others",
+//       value: "others"
+//     }
+//   ]
+// },
+
+// /* Functional ROM Exercise */
+// {
+//   name: "post_functional_rom_exercise_remarks",
+//   label: "Functional ROM Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter ROM exercise details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_rom_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Strengthening Exercise */
+// {
+//   name: "post_functional_strengthening_exercise_remarks",
+//   label: "Functional Strengthening Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter strengthening exercise details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_strengthening_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Mobility Exercise */
+// {
+//   name: "post_functional_mobility_exercise_remarks",
+//   label: "Functional Mobility Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter transfer / walking aids / wheelchair training details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_mobility_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Endurance Exercise */
+// {
+//   name: "post_functional_endurance_exercise_remarks",
+//   label: "Functional Endurance Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter endurance exercise details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_endurance_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Functional Balance Exercise */
+// {
+//   name: "post_functional_balance_type",
+//   label: "Balance Type",
+//   type: "radio",
+//   options: [
+//     { label: "Static", value: "static" },
+//     { label: "Dynamic", value: "dynamic" }
+//   ],
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_balance_exercise"
+//   }
+// },
+// {
+//   name: "post_functional_balance_exercise_remarks",
+//   label: "Functional Balance Exercise Remarks",
+//   type: "input",
+//   placeholder: "Enter balance exercise details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "functional_balance_exercise"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Fine Motor and Dexterity Training */
+// {
+//   name: "post_fine_motor_dexterity_training_remarks",
+//   label: "Fine Motor and Dexterity Training Remarks",
+//   type: "input",
+//   placeholder: "Enter fine motor and dexterity training details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "fine_motor_dexterity_training"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Education */
+// {
+//   name: "post_education_remarks",
+//   label: "Education Remarks",
+//   type: "input",
+//   placeholder: "Enter education details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "education"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
+
+// /* Others */
+// {
+//   name: "post_others_remarks",
+//   label: "Others Remarks",
+//   type: "input",
+//   placeholder: "Enter other intervention details",
+//   showIf: {
+//     field: "post_prosthesis_therapeutic_exercises",
+//     includes: "others"
+//   },
+//   speechToText: true,
+//   ocr: true
+// },
 {
   type: "subheading",
   label: "Interventions Provided"
 },
 {
   type: "subheading",
+  label: "Modalities used"
+},
+
+{
+  name: "functional_exercise_modalities",
+  // label: "Functional Exercise Modalities",
+  type: "checkbox-group",
+  options: [
+    { label: "Chattanooga Wireless Pro", value: "chattanooga_wireless_pro" },
+    { label: "Hot Pack", value: "hot_pack" },
+    { label: "Cold Pack", value: "cold_pack" },
+    { label: "Cryo Cuff", value: "cryo_cuff" },
+    { label: "Light Force (Laser)", value: "light_force_laser" },
+    { label: "Ultrasound", value: "ultrasound" },
+    { label: "Vital Sign Monitor", value: "vital_sign_monitor" },
+    { label: "Bobath Couch", value: "bobath_couch" },
+
+    { label: "Shuttle Recovery", value: "shuttle_recovery" },
+    { label: "Recumbent Bike", value: "recumbent_bike" },
+    { label: "Upright Bike", value: "upright_bike" },
+    { label: "MOTOMED", value: "motomed" },
+    { label: "Rowing", value: "rowing" },
+    { label: "Shoulder Pulley", value: "shoulder_pulley" },
+   
+
+    { label: "Others", value: "others" }
+  ]
+},
+{
+  type: "subheading",
+  label: "Chattanooga Wireless Pro",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "chattanooga_wireless_pro"
+  }
+},
+{
+  name: "chattanooga_wireless_pro",
+  label: "Chattanooga Wireless Pro",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "chattanooga_wireless_pro"
+  },
+  fields: [
+    {
+      name: "chattanooga_wireless_pro_mode",
+      label: "Mode",
+      type: "input",
+      placeholder: "Enter mode"
+    },
+    {
+      name: "chattanooga_wireless_pro_intensity",
+      label: "Intensity",
+      type: "input",
+      placeholder: "Enter intensity"
+    },
+    {
+      name: "chattanooga_wireless_pro_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "chattanooga_wireless_pro_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "Hot Pack",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "hot_pack"
+  }
+},
+{
+  name: "hot_pack",
+  label: "Hot Pack",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "hot_pack"
+  },
+  fields: [
+    {
+      name: "hot_pack_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    },
+    {
+      name: "hot_pack_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "hot_pack_position",
+      label: "Position",
+      type: "input",
+      placeholder: "Enter patient position"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "cold Pack",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "cold_pack"
+  }
+},
+{
+  name: "cold_pack",
+  label: "Cold Pack",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "cold_pack"
+  },
+  fields: [
+    {
+      name: "cold_pack_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    },
+    {
+      name: "cold_pack_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "cold_pack_position",
+      label: "Position",
+      type: "input",
+      placeholder: "Enter patient position"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "Cryo Cuff",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "cryo_cuff"
+  }
+},
+{
+  name: "cryo_cuff",
+  label: "Cryo Cuff",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "cryo_cuff"
+  },
+  fields: [
+    {
+      name: "cryo_cuff_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    },
+    {
+      name: "cryo_cuff_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "cryo_cuff_compression",
+      label: "Compression",
+      type: "input",
+      placeholder: "Enter compression setting"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "Light Force",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "light_force_laser"
+  }
+},
+{
+  name: "light_force_laser",
+  label: "Light Force (Laser)",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "light_force_laser"
+  },
+  fields: [
+    {
+      name: "light_force_laser_mode",
+      label: "Mode",
+      type: "input",
+      placeholder: "Enter mode"
+    },
+    {
+      name: "light_force_laser_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "light_force_laser_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "Ultrasound",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "ultrasound"
+  }
+},
+{
+  name: "ultrasound",
+  label: "Ultrasound",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "ultrasound"
+  },
+  fields: [
+    {
+      name: "ultrasound_frequency",
+      label: "Frequency (MHz)",
+      type: "input",
+      placeholder: "Enter frequency"
+    },
+    {
+      name: "ultrasound_mode",
+      label: "Mode",
+      type: "input",
+      placeholder: "Continuous / Pulsed"
+    },
+    {
+      name: "ultrasound_duration",
+      label: "Duration (Minutes)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "ultrasound_area",
+      label: "Area",
+      type: "input",
+      placeholder: "Enter treatment area"
+    }
+  ]
+},
+{
+  type: "subheading",
+  label: "Vital Sign Monitor",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "vital_sign_monitor"
+  }
+},
+{
+  name: "vital_sign_monitor",
+  label: "Vital Sign Monitor",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "vital_sign_monitor"
+  },
+  fields: [
+    {
+      name: "vital_sign_monitor_pre_bp",
+      label: "Pre BP (mmHg)",
+      type: "input",
+      placeholder: "e.g. 120/80"
+    },
+    {
+      name: "vital_sign_monitor_pre_hr",
+      label: "Pre HR (bpm)",
+      type: "input",
+      placeholder: "Enter heart rate"
+    },
+    {
+      name: "vital_sign_monitor_pre_spo2",
+      label: "Pre SpO₂ (%)",
+      type: "input",
+      placeholder: "Enter oxygen saturation"
+    },
+    {
+      name: "vital_sign_monitor_post_bp",
+      label: "Post BP (mmHg)",
+      type: "input",
+      placeholder: "e.g. 118/78"
+    },
+    {
+      name: "vital_sign_monitor_post_hr",
+      label: "Post HR (bpm)",
+      type: "input",
+      placeholder: "Enter heart rate"
+    },
+    {
+      name: "vital_sign_monitor_post_spo2",
+      label: "Post SpO₂ (%)",
+      type: "input",
+      placeholder: "Enter oxygen saturation"
+    }
+  ]
+},
+/* ───────── Shuttle Recovery ───────── */
+{
+  type: "subheading",
+  label: "Shuttle Recovery",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "shuttle_recovery"
+  }
+},
+{
+  name: "shuttle_recovery",
+  label: "Shuttle Recovery",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "shuttle_recovery"
+  },
+  fields: [
+    {
+      name: "shuttle_recovery_resistance",
+      label: "Resistance",
+      type: "input",
+      placeholder: "Enter resistance"
+    },
+    {
+      name: "shuttle_recovery_sets_reps",
+      label: "Sets / Reps",
+      type: "input",
+      placeholder: "e.g. 3 sets × 10 reps"
+    },
+    
+  ]
+},
+
+/* ───────── Recumbent Bike ───────── */
+{
+  type: "subheading",
+  label: "Recumbent Bike",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "recumbent_bike"
+  }
+},
+{
+  name: "recumbent_bike",
+  label: "Recumbent Bike",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "recumbent_bike"
+  },
+  fields: [
+    {
+      name: "recumbent_bike_resistance_level",
+      label: "Resistance Level",
+      type: "input",
+      placeholder: "Enter resistance level"
+    },
+    {
+      name: "recumbent_bike_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+
+/* ───────── Upright Bike ───────── */
+{
+  type: "subheading",
+  label: "Upright Bike",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "upright_bike"
+  }
+},
+{
+  name: "upright_bike",
+  label: "Upright Bike",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "upright_bike"
+  },
+  fields: [
+    {
+      name: "upright_bike_resistance_level",
+      label: "Resistance Level",
+      type: "input",
+      placeholder: "Enter resistance level"
+    },
+    {
+      name: "upright_bike_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+
+/* ───────── Motomed ───────── */
+{
+  type: "subheading",
+  label: "MOtomed",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "motomed"
+  }
+},
+{
+  name: "motomed",
+  label: "Motomed",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "motomed"
+  },
+  fields: [
+    {
+      name: "motomed_remarks",
+      label: "Mode",
+      type: "input",
+      placeholder: "Enter remarks",
+      speechToText: true,
+      ocr: true
+    },
+    {
+      name: "motomed_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+/* ───────── Rowing ───────── */
+{
+  type: "subheading",
+  label: "Rowing",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "rowing"
+  }
+},
+{
+  name: "rowing",
+  label: "Rowing",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "rowing"
+  },
+  fields: [
+    {
+      name: "rowing_resistance_level",
+      label: "Resistance Level",
+      type: "input",
+      placeholder: "Enter resistance level"
+    },
+    {
+      name: "rowing_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+
+/* ───────── Shoulder Pulley ───────── */
+{
+  type: "subheading",
+  label: "Shoulder Pulley",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "shoulder_pulley"
+  }
+},
+{
+  name: "shoulder_pulley_type",
+  label: "Shoulder Pulley - Type (AAROM / AROM)",
+  type: "radio",
+  options: [
+    { label: "AAROM", value: "aarom" },
+    { label: "AROM", value: "arom" }
+  ],
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "shoulder_pulley"
+  }
+},
+
+{
+  name: "shoulder_pulley",
+  label: "Shoulder Pulley",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "shoulder_pulley"
+  },
+  fields: [
+    {
+      name: "shoulder_pulley_duration",
+      label: "Sets/Reps",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+
+/* ───────── Bobath Couch ───────── */
+{
+  type: "subheading",
+  label: "Bobath Couch",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "bobath_couch"
+  }
+},
+{
+  name: "bobath_couch",
+  label: "Bobath Couch",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "bobath_couch"
+  },
+  fields: [
+    {
+      name: "bobath_couch_exercise_type",
+      label: "Activity",
+      type: "input",
+      placeholder: "Enter exercise type"
+    },
+    {
+      name: "bobath_couch_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    
+  ]
+},
+/* ───────── Fibod Balance Board ───────── */
+
+{
+  name: "fibod_balance_board",
+  label: "Fibod Balance Board",
+  type: "row",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "fibod_balance_board"
+  },
+  fields: [
+    {
+      name: "fibod_balance_board_exercise_type",
+      label: "Type of Exercise",
+      type: "input",
+      placeholder: "Enter exercise type"
+    },
+    {
+      name: "fibod_balance_board_duration",
+      label: "Duration (min)",
+      type: "input",
+      placeholder: "Enter duration in minutes"
+    },
+    {
+      name: "fibod_balance_board_repetition",
+      label: "Repetition",
+      type: "input",
+      placeholder: "Enter repetitions"
+    },
+    {
+      name: "fibod_balance_board_remarks",
+      label: "Remarks",
+      type: "input",
+      placeholder: "Enter remarks",
+      speechToText: true,
+      ocr: true
+    }
+  ]
+},
+/* ───────── Others ───────── */
+{
+  name: "functional_exercise_other_name",
+  label: "Other Exercise",
+  type: "input",
+  placeholder: "Enter exercise name",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "others"
+  }
+},
+{
+  name: "functional_exercise_other_remarks",
+  label: "Other Exercise Remarks",
+  type: "input",
+  placeholder: "Enter remarks",
+  showIf: {
+    field: "functional_exercise_modalities",
+    includes: "others"
+  },
+  speechToText: true,
+  ocr: true
+},
+
+{
+  type: "subheading",
   label: "Pre-Prosthesis Training"
 },
 {
   name: "pre_prosthesis_therapeutic_exercises",
-  label: "Therapeutic Exercises",
+  // label: "Therapeutic Exercises",
   type: "checkbox-group",
   options: [
     {
-      label: "Functional ROM Exercise (Passive / Active / Assisted)",
+      label: "Functional ROM Exercise",
       value: "functional_rom_exercise"
     },
     {
-      label: "Functional Strengthening Exercise (Upper Limb / Lower Limb)",
+      label: "Functional Strengthening Exercise",
       value: "functional_strengthening_exercise"
     },
     {
-      label: "Functional Mobility Exercise (Transfer Training / Walking Aids Training / Wheelchair Training)",
+      label: "Functional Mobility Exercise",
       value: "functional_mobility_exercise"
     },
     {
@@ -145,11 +1142,11 @@ actions: [
       value: "sensory_desensitization"
     },
     {
-      label: "Wheelchair Training (e.g. Motorized)",
+      label: "Wheelchair Training",
       value: "wheelchair_training"
     },
     {
-      label: "Education (Home Program / Exercise)",
+      label: "Education",
       value: "education_home_program"
     }
   ]
@@ -313,19 +1310,19 @@ actions: [
 },
 {
   name: "post_prosthesis_therapeutic_exercises",
-  label: "Therapeutic Exercises",
+  // label: "Therapeutic Exercises",
   type: "checkbox-group",
   options: [
     {
-      label: "Functional ROM Exercise (Passive / Active / Assisted)",
+      label: "Functional ROM Exercise",
       value: "functional_rom_exercise"
     },
     {
-      label: "Functional Strengthening Exercise (Upper Limb / Lower Limb)",
+      label: "Functional Strengthening Exercise",
       value: "functional_strengthening_exercise"
     },
     {
-      label: "Functional Mobility Exercise (Transfer Training / Walking Aids Training / Wheelchair Training)",
+      label: "Functional Mobility Exercise",
       value: "functional_mobility_exercise"
     },
     {
@@ -475,1152 +1472,7 @@ actions: [
   speechToText: true,
   ocr: true
 },
-{
-  type: "subheading",
-  label: "Functional Exercises (Exercise Modalities)"
-},
-{
-  name: "functional_exercise_modalities",
-  // label: "Select Exercise Modalities",
-  type: "checkbox-group",
-  options: [
-    { label: "Shuttle Recovery", value: "shuttle_recovery" },
-    { label: "Recumbent Bike", value: "recumbent_bike" },
-    { label: "Upright Bike", value: "upright_bike" },
-    { label: "Motomed", value: "motomed" },
-    { label: "Rowing", value: "rowing" },
-    { label: "Shoulder Pulley", value: "shoulder_pulley" },
-    { label: "Bobath Couch", value: "bobath_couch" },
-    { label: "Fibod Balance Board", value: "fibod_balance_board" },
-    { label: "Others", value: "others" }
-  ]
-},
 
-/* ───────── Shuttle Recovery ───────── */
-// {
-//   name: "shuttle_recovery_resistance",
-//   label: "Shuttle Recovery - Resistance",
-//   type: "input",
-//   placeholder: "Enter resistance",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "shuttle_recovery"
-//   }
-// },
-// {
-//   name: "shuttle_recovery_sets_reps",
-//   label: "Shuttle Recovery - Sets / Reps",
-//   type: "input",
-//   placeholder: "e.g. 3 sets × 10 reps",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "shuttle_recovery"
-//   }
-// },
-// {
-//   name: "shuttle_recovery_remarks",
-//   label: "Shuttle Recovery Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "shuttle_recovery"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "shuttle_recovery",
-  label: "Shuttle Recovery",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "shuttle_recovery"
-  },
-  fields: [
-    {
-      name: "shuttle_recovery_resistance",
-      label: "Resistance",
-      type: "input",
-      placeholder: "Enter resistance"
-    },
-    {
-      name: "shuttle_recovery_sets_reps",
-      label: "Sets / Reps",
-      type: "input",
-      placeholder: "e.g. 3 sets × 10 reps"
-    },
-    {
-      name: "shuttle_recovery_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-
-/* ───────── Recumbent Bike ───────── */
-// {
-//   name: "recumbent_bike_resistance_level",
-//   label: "Recumbent Bike - Resistance Level",
-//   type: "input",
-//   placeholder: "Enter resistance level",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "recumbent_bike"
-//   }
-// },
-// {
-//   name: "recumbent_bike_duration",
-//   label: "Recumbent Bike - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "recumbent_bike"
-//   }
-// },
-// {
-//   name: "recumbent_bike_remarks",
-//   label: "Recumbent Bike Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "recumbent_bike"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "recumbent_bike",
-  label: "Recumbent Bike",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "recumbent_bike"
-  },
-  fields: [
-    {
-      name: "recumbent_bike_resistance_level",
-      label: "Resistance Level",
-      type: "input",
-      placeholder: "Enter resistance level"
-    },
-    {
-      name: "recumbent_bike_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "recumbent_bike_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-
-/* ───────── Upright Bike ───────── */
-// {
-//   name: "upright_bike_resistance_level",
-//   label: "Upright Bike - Resistance Level",
-//   type: "input",
-//   placeholder: "Enter resistance level",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "upright_bike"
-//   }
-// },
-// {
-//   name: "upright_bike_duration",
-//   label: "Upright Bike - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "upright_bike"
-//   }
-// },
-// {
-//   name: "upright_bike_remarks",
-//   label: "Upright Bike Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "upright_bike"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "upright_bike",
-  label: "Upright Bike",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "upright_bike"
-  },
-  fields: [
-    {
-      name: "upright_bike_resistance_level",
-      label: "Resistance Level",
-      type: "input",
-      placeholder: "Enter resistance level"
-    },
-    {
-      name: "upright_bike_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "upright_bike_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-
-/* ───────── Motomed ───────── */
-{
-  name: "motomed_limbs",
-  label: "Motomed - Upper Limbs / Lower Limbs",
-  type: "radio",
-  options: [
-    { label: "Upper Limbs", value: "upper_limbs" },
-    { label: "Lower Limbs", value: "lower_limbs" }
-  ],
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "motomed"
-  }
-},
-// {
-//   name: "motomed_duration",
-//   label: "Motomed - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "motomed"
-//   }
-// },
-// {
-//   name: "motomed_remarks",
-//   label: "Motomed Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "motomed"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-
-{
-  name: "motomed",
-  label: "Motomed",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "motomed"
-  },
-  fields: [
-    {
-      name: "motomed_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "motomed_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ───────── Rowing ───────── */
-// {
-//   name: "rowing_resistance_level",
-//   label: "Rowing - Resistance Level",
-//   type: "input",
-//   placeholder: "Enter resistance level",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "rowing"
-//   }
-// },
-// {
-//   name: "rowing_duration",
-//   label: "Rowing - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "rowing"
-//   }
-// },
-// {
-//   name: "rowing_remarks",
-//   label: "Rowing Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "rowing"
-//   },
-//   speechToText: true,
-//   ocr: true
-// }
-{
-  name: "rowing",
-  label: "Rowing",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "rowing"
-  },
-  fields: [
-    {
-      name: "rowing_resistance_level",
-      label: "Resistance Level",
-      type: "input",
-      placeholder: "Enter resistance level"
-    },
-    {
-      name: "rowing_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "rowing_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-
-/* ───────── Shoulder Pulley ───────── */
-{
-  name: "shoulder_pulley_type",
-  label: "Shoulder Pulley - Type (AAROM / AROM)",
-  type: "radio",
-  options: [
-    { label: "AAROM", value: "aarom" },
-    { label: "AROM", value: "arom" }
-  ],
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "shoulder_pulley"
-  }
-},
-// {
-//   name: "shoulder_pulley_duration",
-//   label: "Shoulder Pulley - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "shoulder_pulley"
-//   }
-// },
-// {
-//   name: "shoulder_pulley_remarks",
-//   label: "Shoulder Pulley Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "shoulder_pulley"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "shoulder_pulley",
-  label: "Shoulder Pulley",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "shoulder_pulley"
-  },
-  fields: [
-    {
-      name: "shoulder_pulley_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "shoulder_pulley_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-
-/* ───────── Bobath Couch ───────── */
-// {
-//   name: "bobath_couch_exercise_type",
-//   label: "Bobath Couch - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "bobath_couch"
-//   }
-// },
-// {
-//   name: "bobath_couch_duration",
-//   label: "Bobath Couch - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "bobath_couch"
-//   }
-// },
-// {
-//   name: "bobath_couch_remarks",
-//   label: "Bobath Couch Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "bobath_couch"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "bobath_couch",
-  label: "Bobath Couch",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "bobath_couch"
-  },
-  fields: [
-    {
-      name: "bobath_couch_exercise_type",
-      label: "Type of Exercise",
-      type: "input",
-      placeholder: "Enter exercise type"
-    },
-    {
-      name: "bobath_couch_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "bobath_couch_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ───────── Fibod Balance Board ───────── */
-// {
-//   name: "fibod_balance_board_exercise_type",
-//   label: "Fibod Balance Board - Type of Exercise",
-//   type: "input",
-//   placeholder: "Enter exercise type",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "fibod_balance_board"
-//   }
-// },
-// {
-//   name: "fibod_balance_board_duration",
-//   label: "Fibod Balance Board - Duration (min)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "fibod_balance_board"
-//   }
-// },
-// {
-//   name: "fibod_balance_board_repetition",
-//   label: "Fibod Balance Board - Repetition",
-//   type: "input",
-//   placeholder: "Enter repetitions",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "fibod_balance_board"
-//   }
-// },
-// {
-//   name: "fibod_balance_board_remarks",
-//   label: "Fibod Balance Board Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "functional_exercise_modalities",
-//     includes: "fibod_balance_board"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "fibod_balance_board",
-  label: "Fibod Balance Board",
-  type: "row",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "fibod_balance_board"
-  },
-  fields: [
-    {
-      name: "fibod_balance_board_exercise_type",
-      label: "Type of Exercise",
-      type: "input",
-      placeholder: "Enter exercise type"
-    },
-    {
-      name: "fibod_balance_board_duration",
-      label: "Duration (min)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "fibod_balance_board_repetition",
-      label: "Repetition",
-      type: "input",
-      placeholder: "Enter repetitions"
-    },
-    {
-      name: "fibod_balance_board_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ───────── Others ───────── */
-{
-  name: "functional_exercise_other_name",
-  label: "Other Exercise",
-  type: "input",
-  placeholder: "Enter exercise name",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "others"
-  }
-},
-{
-  name: "functional_exercise_other_remarks",
-  label: "Other Exercise Remarks",
-  type: "input",
-  placeholder: "Enter remarks",
-  showIf: {
-    field: "functional_exercise_modalities",
-    includes: "others"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  type: "subheading",
-  label: "Swelling Management"
-},
-{
-  name: "swelling_management_modalities",
- 
-  type: "checkbox-group",
-  options: [
-    { label: "Ice / Cryocuff", value: "ice_cryocuff" },
-    { label: "Laser Therapy (Lightforce Laser)", value: "laser_therapy" },
-    { label: "Others", value: "others" }
-  ]
-},
-
-/* ─────────────────────────────
-   Ice / Cryocuff
-───────────────────────────── */
-// {
-//   name: "ice_cryocuff_body_part",
-//   label: "Ice / Cryocuff - Body Part",
-//   type: "input",
-//   placeholder: "Enter body part",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "ice_cryocuff"
-//   }
-// },
-// {
-//   name: "ice_cryocuff_duration",
-//   label: "Ice / Cryocuff - Duration (minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "ice_cryocuff"
-//   }
-// },
-// {
-//   name: "ice_cryocuff_remarks",
-//   label: "Ice / Cryocuff Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "ice_cryocuff"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-
-{
-  name: "ice_cryocuff",
-  label: "Ice / Cryocuff",
-  type: "row",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "ice_cryocuff"
-  },
-  fields: [
-    {
-      name: "ice_cryocuff_body_part",
-      label: "Body Part",
-      type: "input",
-      placeholder: "Enter body part"
-    },
-    {
-      name: "ice_cryocuff_duration",
-      label: "Duration (minutes)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "ice_cryocuff_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ─────────────────────────────
-   Laser Therapy (Lightforce Laser)
-───────────────────────────── */
-// {
-//   name: "laser_therapy_body_parts",
-//   label: "Laser Therapy - Body Parts",
-//   type: "input",
-//   placeholder: "Enter body parts treated",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "laser_therapy"
-//   }
-// },
-// {
-//   name: "laser_therapy_applicator_type",
-//   label: "Laser Therapy - Type of Applicator",
-//   type: "input",
-//   placeholder: "Enter applicator type",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "laser_therapy"
-//   }
-// },
-// {
-//   name: "laser_therapy_power_watts",
-//   label: "Laser Therapy - Power (Watts)",
-//   type: "input",
-//   placeholder: "Enter power in watts",
-//   showIf: {
-//     field: "swelling_management_modalities",
-//     includes: "laser_therapy"
-//   }
-// },
-{
-  name: "laser_therapy",
-  label: "Laser Therapy",
-  type: "row",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "laser_therapy"
-  },
-  fields: [
-    {
-      name: "laser_therapy_body_parts",
-      label: "Body Parts",
-      type: "input",
-      placeholder: "Enter body parts treated"
-    },
-    {
-      name: "laser_therapy_applicator_type",
-      label: "Type of Applicator",
-      type: "input",
-      placeholder: "Enter applicator type"
-    },
-    {
-      name: "laser_therapy_power_watts",
-      label: "Power (Watts)",
-      type: "input",
-      placeholder: "Enter power in watts"
-    }
-  ]
-},
-{
-  name: "laser_therapy_mode",
-  label: "Laser Therapy - Mode",
-  type: "radio",
-  options: [
-    { label: "Continuous", value: "continuous" },
-    { label: "Pulsed", value: "pulsed" }
-  ],
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "laser_therapy"
-  }
-},
-{
-  name: "laser_therapy_total_energy_joules",
-  label: "Laser Therapy - Total Energy (Joules)",
-  type: "input",
-  placeholder: "Enter total energy in joules",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "laser_therapy"
-  }
-},
-{
-  name: "laser_therapy_remarks",
-  label: "Laser Therapy Remarks",
-  type: "input",
-  placeholder: "Enter remarks",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "laser_therapy"
-  },
-  speechToText: true,
-  ocr: true
-},
-
-/* ─────────────────────────────
-   Others
-───────────────────────────── */
-{
-  name: "swelling_management_other_parameters",
-  label: "Others - Parameters",
-  type: "input",
-  placeholder: "Enter other modality and parameters",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "others"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  name: "swelling_management_other_remarks",
-  label: "Others Remarks",
-  type: "input",
-  placeholder: "Enter remarks",
-  showIf: {
-    field: "swelling_management_modalities",
-    includes: "others"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  type: "subheading",
-  label: "Pain Management"
-},
-{
-  name: "pain_management_modalities",
-  label: "Select Modalities",
-  type: "checkbox-group",
-  options: [
-    { label: "Manual Therapy", value: "manual_therapy" },
-    { label: "Heat Therapy", value: "heat_therapy" },
-    { label: "Ultrasound Therapy", value: "ultrasound_therapy" },
-    { label: "Ice / Cryocuff", value: "ice_cryocuff" },
-    { label: "Chattanooga Wireless Pro", value: "chattanooga_wireless_pro" }
-  ]
-},
-
-/* ─────────────────────────────
-   Manual Therapy
-───────────────────────────── */
-{
-  name: "manual_therapy_remarks",
-  label: "Manual Therapy Remarks",
-  type: "input",
-  placeholder: "Enter manual therapy details and remarks",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "manual_therapy"
-  },
-  speechToText: true,
-  ocr: true
-},
-
-/* ─────────────────────────────
-   Heat Therapy
-───────────────────────────── */
-{
-  name: "heat_therapy",
-  label: "Heat Therapy",
-  type: "row",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "heat_therapy"
-  },
-  fields: [
-    {
-      name: "heat_therapy_body_part",
-      label: "Body Part",
-      type: "input",
-      placeholder: "Enter body part treated"
-    },
-    {
-      name: "heat_therapy_duration",
-      label: "Duration (minutes)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "heat_therapy_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-// {
-//   name: "heat_therapy_body_part",
-//   label: "Heat Therapy - Body Part",
-//   type: "input",
-//   placeholder: "Enter body part treated",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "heat_therapy"
-//   }
-// },
-// {
-//   name: "heat_therapy_duration",
-//   label: "Heat Therapy - Duration (minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "heat_therapy"
-//   }
-// },
-// {
-//   name: "heat_therapy_remarks",
-//   label: "Heat Therapy Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "heat_therapy"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-
-/* ─────────────────────────────
-   Ultrasound Therapy
-───────────────────────────── */
-{
-  name: "ultrasound_body_part",
-  label: "Ultrasound Therapy - Body Part",
-  type: "input",
-  placeholder: "Enter body part treated",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "ultrasound_therapy"
-  }
-},
-{
-  name: "ultrasound_frequency",
-  label: "Ultrasound Therapy - Frequency",
-  type: "radio",
-  options: [
-    { label: "1 MHz", value: "1_mhz" },
-    { label: "3 MHz", value: "3_mhz" }
-  ],
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "ultrasound_therapy"
-  }
-},
-{
-  name: "ultrasound_duty_cycle",
-  label: "Ultrasound Therapy - Duty Cycle",
-  type: "radio",
-  options: [
-    { label: "Continuous", value: "continuous" },
-    { label: "Pulsed", value: "pulsed" }
-  ],
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "ultrasound_therapy"
-  }
-},
-// {
-//   name: "ultrasound_intensity",
-//   label: "Ultrasound Therapy - Intensity (W/cm²)",
-//   type: "input",
-//   placeholder: "Enter intensity",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ultrasound_therapy"
-//   }
-// },
-// {
-//   name: "ultrasound_duration",
-//   label: "Ultrasound Therapy - Duration (minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ultrasound_therapy"
-//   }
-// },
-// {
-//   name: "ultrasound_remarks",
-//   label: "Ultrasound Therapy Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ultrasound_therapy"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "ultrasound_therapy",
-  label: "Ultrasound Therapy",
-  type: "row",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "ultrasound_therapy"
-  },
-  fields: [
-    {
-      name: "ultrasound_intensity",
-      label: "Intensity (W/cm²)",
-      type: "input",
-      placeholder: "Enter intensity"
-    },
-    {
-      name: "ultrasound_duration",
-      label: "Duration (minutes)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "ultrasound_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ─────────────────────────────
-   Ice / Cryocuff
-───────────────────────────── */
-// {
-//   name: "pain_ice_cryocuff_body_part",
-//   label: "Ice / Cryocuff - Body Part",
-//   type: "input",
-//   placeholder: "Enter body part treated",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ice_cryocuff"
-//   }
-// },
-// {
-//   name: "pain_ice_cryocuff_duration",
-//   label: "Ice / Cryocuff - Duration (minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ice_cryocuff"
-//   }
-// },
-// {
-//   name: "pain_ice_cryocuff_remarks",
-//   label: "Ice / Cryocuff Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "ice_cryocuff"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-
-{
-  name: "pain_ice_cryocuff",
-  label: "Ice / Cryocuff",
-  type: "row",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "ice_cryocuff"
-  },
-  fields: [
-    {
-      name: "pain_ice_cryocuff_body_part",
-      label: "Body Part",
-      type: "input",
-      placeholder: "Enter body part treated"
-    },
-    {
-      name: "pain_ice_cryocuff_duration",
-      label: "Duration (minutes)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "pain_ice_cryocuff_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
-/* ─────────────────────────────
-   Chattanooga Wireless Pro
-───────────────────────────── */
-// {
-//   name: "chattanooga_body_part",
-//   label: "Chattanooga Wireless Pro - Body Part",
-//   type: "input",
-//   placeholder: "Enter body part treated",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "chattanooga_wireless_pro"
-//   }
-// },
-// {
-//   name: "chattanooga_modes",
-//   label: "Chattanooga Wireless Pro - Modes",
-//   type: "input",
-//   placeholder: "Enter mode(s)",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "chattanooga_wireless_pro"
-//   }
-// },
-// {
-//   name: "chattanooga_intensity",
-//   label: "Chattanooga Wireless Pro - Intensity",
-//   type: "input",
-//   placeholder: "Enter intensity",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "chattanooga_wireless_pro"
-//   }
-// },
-// {
-//   name: "chattanooga_duration",
-//   label: "Chattanooga Wireless Pro - Duration (minutes)",
-//   type: "input",
-//   placeholder: "Enter duration in minutes",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "chattanooga_wireless_pro"
-//   }
-// },
-// {
-//   name: "chattanooga_remarks",
-//   label: "Chattanooga Wireless Pro Remarks",
-//   type: "input",
-//   placeholder: "Enter remarks",
-//   showIf: {
-//     field: "pain_management_modalities",
-//     includes: "chattanooga_wireless_pro"
-//   },
-//   speechToText: true,
-//   ocr: true
-// },
-{
-  name: "chattanooga_wireless_pro",
-  label: "Chattanooga Wireless Pro",
-  type: "row",
-  showIf: {
-    field: "pain_management_modalities",
-    includes: "chattanooga_wireless_pro"
-  },
-  fields: [
-    {
-      name: "chattanooga_body_part",
-      label: "Body Part",
-      type: "input",
-      placeholder: "Enter body part treated"
-    },
-    {
-      name: "chattanooga_modes",
-      label: "Modes",
-      type: "input",
-      placeholder: "Enter mode(s)"
-    },
-    {
-      name: "chattanooga_intensity",
-      label: "Intensity",
-      type: "input",
-      placeholder: "Enter intensity"
-    },
-    {
-      name: "chattanooga_duration",
-      label: "Duration (minutes)",
-      type: "input",
-      placeholder: "Enter duration in minutes"
-    },
-    {
-      name: "chattanooga_remarks",
-      label: "Remarks",
-      type: "input",
-      placeholder: "Enter remarks",
-      speechToText: true,
-      ocr: true
-    }
-  ]
-},
 {
   type: "subheading",
   label: "ADL and Functional Training"
@@ -1650,7 +1502,7 @@ actions: [
 {
   name: "adl_dressing_type",
   label: "Dressing Type",
-  type: "checkbox-group",
+  type: "radio",
   options: [
     { label: "Upper Garment", value: "upper_garment" },
     { label: "Lower Garment", value: "lower_garment" },
@@ -1662,12 +1514,6 @@ actions: [
   }
 },
 
-{
-  name: "adl_training_remarks",
-  label: "ADL Training Remarks",
-  type: "input",
-  placeholder: "Enter ADL training details"
-},
 
 /* =========================
    ii) IADL Training
@@ -1708,12 +1554,7 @@ actions: [
   ]
 },
 
-{
-  name: "iadl_training_remarks",
-  label: "IADL Training Remarks",
-  type: "input",
-  placeholder: "Enter IADL training details"
-},
+
 
 /* =========================
    Leisure & Recreational Training
@@ -1725,13 +1566,13 @@ actions: [
 
 {
   name: "leisure_training_items",
-  label: "Leisure & Recreational Activities",
+  // label: "Leisure & Recreational Activities",
   type: "checkbox-group",
   options: [
     { label: "Morning Walk", value: "morning_walk" },
     { label: "Indoor Games", value: "indoor_games" },
     { label: "Gardening", value: "gardening" },
-    { label: "Community Reintegration", value: "community_reintegration" },
+    // { label: "Community Reintegration", value: "community_reintegration" },
     { label: "Others", value: "others" }
   ]
 },
@@ -1747,12 +1588,12 @@ actions: [
   }
 },
 
-{
-  name: "leisure_training_remarks",
-  label: "Leisure & Recreational Training Remarks",
-  type: "input",
-  placeholder: "Enter leisure and recreational training details"
-},
+// {
+//   name: "leisure_training_remarks",
+//   label: "Leisure & Recreational Training others",
+//   type: "input",
+//   placeholder: "Enter leisure and recreational training details"
+// },
 
 /* =========================
    Assistive & Adaptive Devices Prescription Plan
@@ -1764,7 +1605,7 @@ actions: [
 
 {
   name: "assistive_devices_prescription",
-  label: "Assistive & Adaptive Devices",
+  // label: "Assistive & Adaptive Devices",
   type: "checkbox-group",
   options: [
     { label: "Splint", value: "splint" },
@@ -1775,7 +1616,7 @@ actions: [
     { label: "Ultralightweight Wheelchair", value: "ultralightweight_wheelchair" },
     { label: "Motorised / Electric Wheelchair", value: "motorised_electric_wheelchair" },
     { label: "Commode", value: "commode" },
-    { label: "Transfer Board", value: "transfer_board" },
+    // { label: "Transfer Board", value: "transfer_board" },
     { label: "Others", value: "others" }
   ]
 },
@@ -1828,27 +1669,11 @@ const ASSESSMENT_SCHEMA = {
     { label: "Decline", value: "decline" },
      { label: "With Prosthesis", value: "with_prosthesis" },
     { label: "Without Prosthesis", value: "without_prosthesis" },
-    // {label:"Targeted Performance Compared to Last Session",value:'Targeted_performance'}
+   
 
   ]
 },
-// {
-//   name: "prosthesis_status",
-//   label: "Performance Observed",
-//   type: "checkbox-group",
-//   options: [
-//     { label: "With Prosthesis", value: "with_prosthesis" },
-//     { label: "Without Prosthesis", value: "without_prosthesis" }
-//   ]
-// },
-// {
-//   name: "targeted_performance_notes",
-//   label: "Targeted Performance Compared to Last Session",
-//   type: "input",
-//   placeholder: "Describe changes in targeted performance",
-//   speechToText: true,
-//   ocr: true
-// },
+
 {
   name: "strengths_client_benefited",
   label: "Strengths / Client Benefited (Increased Independence) Using",
@@ -1896,374 +1721,12 @@ const PLAN_SCHEMA = {
             type: "dynamic-goals",
             name: "long_term_goals"
           },   
+          {type:'input',
+            name:'plan',
+            label:'Plan',
+          }
+          
 
-      {
-  type: "subheading",
-  label: "Therapist Notes"
-},
-{
-  name: "therapist_notes_adl",
-  label: "Activities of Daily Living",
-  type: "checkbox-group",
-  options: [
-    {
-      label: "Improve independent Eating / Feeding",
-      value: "improve_independent_eating_feeding"
-    },
-    {
-      label: "Improve independent Bathing / Showering",
-      value: "improve_independent_bathing_showering"
-    },
-    {
-      label: "Improve independent Dressing (Upper Garment)",
-      value: "improve_independent_dressing_upper_garment"
-    },
-    {
-      label: "Improve independent Dressing (Lower Garment)",
-      value: "improve_independent_dressing_lower_garment"
-    },
-    {
-      label: "Improve independent in Grooming",
-      value: "improve_independent_grooming"
-    },
-    {
-      label: "Improve independent in Toileting",
-      value: "improve_independent_toileting"
-    },
-    {
-      label: "Improve independent in Bed Mobility",
-      value: "improve_independent_bed_mobility"
-    },
-    {
-      label: "Improve independent in Transfers (Bed)",
-      value: "improve_independent_transfers_bed"
-    },
-    {
-      label: "Improve independent in Transfers (Toilet)",
-      value: "improve_independent_transfers_toilet"
-    },
-    {
-      label: "Improve independent in Advanced Transfer (Car)",
-      value: "improve_independent_advanced_transfer_car"
-    },
-    {
-      label: "Improve independent in Advanced Transfer (Different Level)",
-      value: "improve_independent_advanced_transfer_different_level"
-    },
-    {
-      label: "Improve independent in Advanced Transfer (Ground)",
-      value: "improve_independent_advanced_transfer_ground"
-    },
-    {
-      label: "Improve independent in Locomotion / Functional Mobility (Walking)",
-      value: "improve_independent_locomotion_walking"
-    },
-    {
-      label: "Improve independent in Locomotion / Functional Mobility (Wheelchair)",
-      value: "improve_independent_locomotion_wheelchair"
-    },
-    {
-      label: "Improve independent in Stair Management",
-      value: "improve_independent_stair_management"
-    }
-  ]
-},
-{
-  name: "therapist_notes_adl_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter therapist comments",
-  speechToText: true,
-  ocr: true
-},
-{
-  type: "subheading",
-  label: "Instrumental Activities of Daily Living"
-},
-{
-  type: "subheading",
-  label: "Activities of Daily Living "
-},
-{
-  name: "therapist_notes_iadl",
-  // label: "Instrumental Activities of Daily Living",
-  type: "checkbox-group",
-  options: [
-    {
-      label: "Improve independent in Telephone Use",
-      value: "improve_independent_telephone_use"
-    },
-    {
-      label: "Improve independent in Shopping",
-      value: "improve_independent_shopping"
-    },
-    {
-      label: "Improve independent in Food Preparation",
-      value: "improve_independent_food_preparation"
-    },
-    {
-      label: "Improve independent in Housekeeping",
-      value: "improve_independent_housekeeping"
-    },
-    {
-      label: "Improve independent in Laundry",
-      value: "improve_independent_laundry"
-    },
-    {
-      label: "Improve independent in Transportation",
-      value: "improve_independent_transportation"
-    },
-    {
-      label: "Improve independent in Medication Management",
-      value: "improve_independent_medication_management"
-    },
-    {
-      label: "Improve independent in Financial Management",
-      value: "improve_independent_financial_management"
-    }
-  ]
-},
-{
-  name: "therapist_notes_iadl_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter therapist comments",
-  speechToText: true,
-  ocr: true
-},
-/* ─────────────────────────────────────────────────────────────
-   3) Continue Current Therapy Program
-   4) Functional Mobility Training
-   5) Functional Exercises
-   Therapist Notes Schema
-───────────────────────────────────────────────────────────── */
-
-{
-  type: "subheading",
-  label: "Continue Current Therapy Program"
-},
-{
-  name: "continue_current_therapy_program_items",
-  // label: "Select Applicable Items",
-  type: "checkbox-group",
-  options: [
-    
-    {
-      label: "Continue Exercise Program",
-      value: "continue_exercise_program"
-    },
-    {
-      label: "Continue Pain Management",
-      value: "continue_pain_management"
-    },
-    {
-      label: "Continue Swelling Management",
-      value: "continue_swelling_management"
-    },
-    {
-      label: "Continue Desensitization Technique",
-      value: "continue_desensitization_technique"
-    },
-    {
-      label: "Continue Upper Limb Strength",
-      value: "continue_upper_limb_strength"
-    },
-    {
-      label: "Continue Lower Limb Strength",
-      value: "continue_lower_limb_strength"
-    },
-    {
-      label: "Continue ROM Exercise",
-      value: "continue_rom_exercise"
-    },
-    {
-      label: "Continue Balance Exercise",
-      value: "continue_balance_exercise"
-    },
-    {
-      label: "Continue Gait / Ambulation Training",
-      value: "continue_gait_ambulation_training"
-    },
-    {
-      label: "Continue Leisure and Recreational Training",
-      value: "continue_leisure_recreational_training"
-    }
-  ]
-},
-{
-  name: "continue_rom_exercise_details",
-  label: "ROM Exercise Details",
-  type: "input",
-  placeholder: "Enter ROM exercise details",
-  showIf: {
-    field: "continue_current_therapy_program_items",
-    includes: "continue_rom_exercise"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  name: "continue_balance_exercise_details",
-  label: "Balance Exercise Details",
-  type: "input",
-  placeholder: "Enter balance exercise details",
-  showIf: {
-    field: "continue_current_therapy_program_items",
-    includes: "continue_balance_exercise"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  name: "continue_current_therapy_program_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter comments",
-  speechToText: true,
-  ocr: true
-},
-
-/* ───────────────────────────────────────────────────────────── */
-
-{
-  type: "subheading",
-  label: "Functional Mobility Training"
-},
-{
-  name: "functional_mobility_training_items",
-  // label: "Select Applicable Items",
-  type: "checkbox-group",
-  options: [
-    {
-      label: "Improve Transfer",
-      value: "improve_transfer"
-    },
-    {
-      label: "Improve Wheelchair Skills",
-      value: "improve_wheelchair_skills"
-    },
-    {
-      label: "Improve Ambulation With or Without Walking Aid",
-      value: "improve_ambulation_with_or_without_walking_aid"
-    }
-  ]
-},
-{
-  name: "functional_mobility_training_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter comments",
-  speechToText: true,
-  ocr: true
-},
-
-/* ───────────────────────────────────────────────────────────── */
-
-{
-  type: "subheading",
-  label: "Functional Exercises"
-},
-{
-  name: "functional_exercises_items",
-  // label: "Select Applicable Items",
-  type: "checkbox-group",
-  options: [
-    {
-      label: "Continue Functional Exercise Program",
-      value: "continue_functional_exercise_program"
-    },
-    {
-      label: "Functional Exercise Progression (Review of Exercise Modalities)",
-      value: "functional_exercise_progression"
-    }
-  ]
-},
-{
-  name: "functional_exercises_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter comments",
-  speechToText: true,
-  ocr: true
-},
-/* ─────────────────────────────────────────────────────────────
-   6) Driving / Riding (Assessment)
-───────────────────────────────────────────────────────────── */
-{
-  type: "subheading",
-  label: "Driving / Riding (Assessment)"
-},
-{
-  name: "driving_riding_assessment_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter driving / riding assessment comments",
-  speechToText: true,
-  ocr: true
-},
-
-/* ─────────────────────────────────────────────────────────────
-   7) Assistive & Adaptive Devices Prescription
-───────────────────────────────────────────────────────────── */
-{
-  type: "subheading",
-  label: "Assistive & Adaptive Devices Prescription"
-},
-{
-  name: "assistive_adaptive_devices_prescription_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter assistive and adaptive devices prescription comments",
-  speechToText: true,
-  ocr: true
-},
-
-/* ─────────────────────────────────────────────────────────────
-   8) Education
-───────────────────────────────────────────────────────────── */
-{
-  type: "subheading",
-  label: "Education"
-},
-{
-  name: "education_items",
-  
-  type: "checkbox-group",
-  options: [
-    {
-      label: "Patient Education",
-      value: "patient_education"
-    },
-    {
-      label: "Carer Training",
-      value: "carer_training"
-    },
-    {
-      label: "Others",
-      value: "others"
-    }
-  ]
-},
-{
-  name: "education_other_details",
-  label: "Others (Specify)",
-  type: "input",
-  placeholder: "Enter other education details",
-  showIf: {
-    field: "education_items",
-    includes: "others"
-  },
-  speechToText: true,
-  ocr: true
-},
-{
-  name: "education_comments",
-  label: "Comments",
-  type: "input",
-  placeholder: "Enter education comments",
-  speechToText: true,
-  ocr: true
-},
  
     ],
   }],

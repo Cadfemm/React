@@ -17,7 +17,7 @@
     "chart.js": "^3.9.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "framer-motion": "6.5.1",
+    "framer-motion": "^6.5.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.4",
     "lucide-react": "^0.540.0",

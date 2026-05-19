@@ -595,6 +595,10 @@ actions: [
   rows: 3,
   placeholder: "Enter home exercise program or carryover activities"
 },
+{name:'others',
+  label:'Others',
+  type:'input',
+},
 
 
         
