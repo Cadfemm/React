@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 const ACTIONS = [
     { type: "back", label: "Back" },
@@ -18,7 +19,16 @@ const SubTab = [
     "Musculoskeletal",
     "BSU"   
 ]
-
+export {
+  FEES_SCHEMA,
+  BTI_SCHEMA,
+  MUSCU_SCHEMA,
+  RTMS_SCHEMA,
+  TDCS_SCHEMA,
+  NESA_SCHEMA,
+  EST_SCHEMA,
+  BSU_SCHEMA
+};
 const MAS_OPTIONS = [
     { label: "0 - No increase in tone", value: "0_no" },
     { label: "1 - Slight increase in tone. Catch/Release at end ROM", value: "1"},
@@ -1671,77 +1681,13 @@ export default  function ProcedureAssessment({ patient, onUpdatePatient, onSubmi
 
     return (
         <div style={mainContent}>
-            {/* ── Patient Information (matches DoctorsInitialAssessment pattern) ── */}
-            <CommonFormBuilder
-              schema={{ title: "Patient Information", sections: [] }}
-              values={{}}
-              onChange={() => {}}
-            >
-              {patient && (
-                <div style={procedureSection}>
-                  <div style={procedurePatientGrid}>
-                    <div><b>Name:</b> {patient.name}</div>
-                    <div><b>IC:</b> {patient.id}</div>
-                    <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-                    <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-                    <div><b>ICD:</b> {patient.icd}</div>
-                    <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-                    <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-                    <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
-                    <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-                    <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-                    <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-                    <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-                    <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-                    <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-                    <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-                    <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-                    <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
-
-                    <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
-                      <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
-
-                      <div style={{ marginBottom: 10 }}>
-                        <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
-                        <textarea
-                          value={patientHistory.past_medical_history}
-                          onChange={(e) => setPatientHistory(prev => ({ ...prev, past_medical_history: e.target.value }))}
-                          style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-                        />
-                      </div>
-
-                      <div>
-                        <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
-                        <textarea
-                          value={patientHistory.past_family_history}
-                          onChange={(e) => setPatientHistory(prev => ({ ...prev, past_family_history: e.target.value }))}
-                          style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-                        />
-                      </div>
-
-                      <div>
-                        <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
-                        <textarea
-                          value={patientHistory.alerts_and_allergies}
-                          onChange={(e) => setPatientHistory(prev => ({ ...prev, alerts_and_allergies: e.target.value }))}
-                          style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-                        />
-                      </div>
-
-                      <div style={{ marginBottom: 10 }}>
-                        <button
-                          type="button"
-                          onClick={() => console.log("Alerts button clicked!")}
-                          style={{ marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0,123,255)", background: "rgb(0,123,255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
-                        >
-                          🚨 Alerts
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CommonFormBuilder>
+            {/* ── Patient Information ── */}
+            <PatientCard
+              patient={patient}
+              patientHistory={patientHistory}
+              setPatientHistory={setPatientHistory}
+              showDoctorsReport={false}
+            />
 
             <div style={tabBar}>
                 {SubTab.map((tab) => (
@@ -1821,38 +1767,3 @@ const submitBtn = {
 };
 
 /* ── Patient info styles (matches DoctorsInitialAssessment) ── */
-const procedureSection = {
-  marginBottom: 24
-};
-
-const procedurePatientGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12,
-  fontSize: 14
-};
-
-const patientInfoCard = {
-  background: "#fff",
-  borderRadius: 12,
-  border: "1px solid #e5e7eb",
-  padding: "20px 24px",
-  marginBottom: 20,
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-};
-
-const patientInfoTitle = {
-  fontSize: 16,
-  fontWeight: 700,
-  color: "#0f172a",
-  marginBottom: 14,
-  paddingBottom: 10,
-  borderBottom: "1px solid #f1f5f9"
-};
-
-const patientGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12,
-  fontSize: 14
-};

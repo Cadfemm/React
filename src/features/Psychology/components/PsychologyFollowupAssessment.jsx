@@ -1,163 +1,330 @@
-import React, { useEffect, useState, createContext } from "react";
+
+
+import React, { useEffect, useState, createContext, useContext } from "react";
+import { localDateTimeString, calculateDuration } from "../../../shared/utils/dateFormatter";
+
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
-import { localDateTimeString } from "../../../shared/utils/dateFormatter";
-import PatientCard from "../../../shared/cards/PatientCard";
+// Import original assessment components
+import DASSFormBuilder from "./DassForm";
+import PSSFormBuilder from "./PssForm";
+import PHQ9FormBuilder from "./PhqForm";
+import GAD7FormBuilder from "./GadForm";
+import HAMDFormBuilder from "./HamdForm";
+import HAM_A_FormBuilder from "./HamaForm";
+// import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+// import PsychologyFollowUpAssessment from "./PsychologyFollowupAssessment";
+// import PatientCard from "../../../shared/cards/PatientCard";
 
 
 
-/* ---------------- PATIENT CARD ---------------- */
-function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
-  if (!patient) return null;
+// import PediatricPsychologyAssessment from "./PediatricPsychologyAssessment";
+// import PsychologyProgress from "./PsychologyProgress";
 
-  const safe = (v) => v ?? "-";
-  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
 
-  return (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: 12,
-        fontSize: 14
-      }}>
-        <div><b>Name:</b> {safe(patient.name)}</div>
-        <div><b>IC:</b> {safe(patient.id)}</div>
-        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+// Create context to pass patient to assessment components
+const PatientContext = createContext(null);
 
-        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
-        <div><b>ICD:</b> {safe(patient.icd)}</div>
-        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
 
-        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-        <div><b>Duration of Diagnosis:</b> -</div>
-        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
 
-        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
-        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
-        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
-
-        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
-        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
-        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
-
-        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
-        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
-        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
-
-        {/* ===== HISTORY ===== */}
-        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
-        
-           <h3>Patient History</h3>
-        
-                  <div>
-                    <b>Past Medical History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_medical_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_medical_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-
-          
-          <div>
-                    <b>Family History</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.past_family_history}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          past_family_history: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-
-        
-           <div>
-                    <b>Allergies</b>
-                    <textarea
-                      style={textarea}
-                      value={patientHistory.alerts_and_allergies}
-                      onChange={(e) =>
-                        setPatientHistory(prev => ({
-                          ...prev,
-                          alerts_and_allergies: e.target.value
-                        }))
-                      }
-                    />
-                  </div>
-
-          <button style={alertBtn}>🚨 Alerts</button>
-        </div>
-      </div>
-    </div>
-  );
+// Adapter components that bridge values/onChange to patient/onSubmit/onBack
+function DASS21Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    // Store in parent values using namespace
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`dass21_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    // Close the assessment by clearing the active key
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <DASSFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
 }
 
-/* ---------------- MAIN COMPONENT ---------------- */
+
+function PSSAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`pss_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <PSSFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function PHQ9Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`phq9_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <PHQ9FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function GAD7Adapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`gad7_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <GAD7FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function HAMDAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`hamd_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <HAMDFormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+function HAMAAdapter({ values, onChange }) {
+  const patient = useContext(PatientContext);
+  const handleSubmit = (payload) => {
+    if (payload && payload.values) {
+      Object.keys(payload.values).forEach(key => {
+        onChange(`hama_${key}`, payload.values[key]);
+      });
+    }
+  };
+  const handleBack = () => {
+    const activeKey = "psychology_assessments_active";
+    onChange(activeKey, null);
+  };
+  return <HAM_A_FormBuilder patient={patient} onSubmit={handleSubmit} onBack={handleBack} />;
+}
+
+// Assessment Registry - using original components with adapters
+export const PSYCHOLOGY_ASSESSMENT_REGISTRY = {
+  dass21: DASS21Adapter,
+  pss: PSSAdapter,
+  phq9: PHQ9Adapter,
+  gad7: GAD7Adapter,
+  hamd: HAMDAdapter,
+  hama: HAMAAdapter
+};
+
+/* ===================== OPTIONS ===================== */
 
 const YES_NO = [
   { label: "Yes", value: "yes" },
   { label: "No", value: "no" }
 ];
 
+/* ===================== COMPONENT ===================== */
 
-export default function PsychologyFollowUpAssessment({
-  patient,
-  onSubmit,
-  onBack
-}) {
+export default function PsychologyAssessment({ patient, onSubmit, onBack,mode }) {
   const [values, setValues] = useState({});
-  
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("subjective");
-  const PatientContext = createContext(null);
+  const [formData, setFormData] = React.useState({
+  doctor_note: "",
+  medical_drug_history: ""
+});
   const [patientHistory, setPatientHistory] = useState({
     past_medical_history: "",
     past_family_history: "",
     alerts_and_allergies: ""
   });
- 
   
- 
   const storageKey = patient
-    ? `psychology_follow_up_assessment_draft_${patient.id}`
+    ? `psychology_assessment_draft_${patient.id}`
     : null;
 
-  /* LOAD DRAFT */
   useEffect(() => {
     if (!storageKey) return;
     const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      setValues(parsed.values || {});
-    }
+    if (saved) setValues(JSON.parse(saved).values || {});
   }, [storageKey]);
 
-  /* AUTO POPULATE */
- useEffect(() => {
-    if (!patient) return;
+  // useEffect(() => {
+  //   if (!patient) return;
+  //   setValues(v => ({
+  //     ...v,
+  //     psychiatric_history_autogenerated:
+  //       patient.psychiatric_history || patient.medical_history || "No data available",
+  //     family_medical_history_autogenerated:
+  //       patient.family_history || patient.diagnosis_history || "No data available",
+  //     drug_history_autogenerated:
+  //       patient.medications || patient.drug_history || "No data available"
+  //   }));
+  // }, [patient]);
 
-    setValues(v => ({
-      ...v,
-      psychiatric_history_autogenerated:
-        patient.psychiatric_history || patient.medical_history || "No data available",
-      family_medical_history_autogenerated:
-        patient.family_history || patient.diagnosis_history || "No data available",
-      drug_history_autogenerated:
-        patient.medications || patient.drug_history || "No data available"
-    }));
-  }, [patient]);
+  useEffect(() => {
+        if (!patient) return;
+        setPatientHistory({
+          past_medical_history: patient.medical_history || "",
+          past_family_history: patient.family_medical_history || "",
+          alerts_and_allergies: patient.alerts_and_allergies_history || ""
+        });
+      }, [patient]);
+  useEffect(() => {
+      if (!patient) return;
+      setValues(v => ({
+        ...v,
+        psychiatric_history_autogenerated:
+          patient.psychiatric_history || patient.medical_history || "No data available",
+        medical_history_autogenerated:
+          patient.medical_history || "No data available",
+        family_history_autogenerated:
+          patient.family_history || patient.family_medical_history || "No data available",
+        drug_history_autogenerated:
+          patient.medications?.join(", ") || patient.drug_history || "No data available"
+      }));
+    }, [patient]); 
 
-  const onChange = (name, value) => {
-    setValues(v => ({ ...v, [name]: value }));
-  };
+  // useEffect(() => {
+  //     if (!patient) return;
+  //     setValues(v => ({
+  //       ...v,
+  //       psychiatric_history_autogenerated:
+  //         patient.psychiatric_history || patient.medical_history || "No data available",
+  //       medical_history_autogenerated:
+  //         patient.medical_history || "No data available",
+  //       family_history_autogenerated:
+  //         patient.family_history || patient.family_medical_history || "No data available",
+  //       drug_history_autogenerated:
+  //         patient.medications?.join(", ") || patient.drug_history || "No data available"
+  //     }));
+  //   }, [patient]);
+
+
+    useEffect(() => {
+          if (!storageKey) return;
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            try {
+              setValues(JSON.parse(saved).values || {});
+            } catch {}
+          }
+        }, [storageKey]);
+
+  
+
+  // const onChange = (name, value) => {
+  //   setValues(v => ({ ...v,  [name]: value }));
+  // };
+// const onChange = (name, value) => {
+//   setValues(prev => {
+//     let updatedValue = value;
+
+//     // Apply "None" logic only for specific fields
+//     if (
+//       name === "perceptual_disturbance" ||
+//       name === "thought_content_patient_reported"
+//     ) {
+//       if (Array.isArray(value)) {
+//         // If "none" is selected → keep only "none"
+//         if (value.includes("none")) {
+//           updatedValue = ["none"];
+//         } else {
+//           // If other options selected → remove "none"
+//           updatedValue = value.filter(v => v !== "none");
+//         }
+//       }
+//     }
+
+//     return {
+//       ...prev,
+//       [name]: updatedValue   // ✅ IMPORTANT: correct key assignment
+//     };
+//   });
+// };
+const onChange = (name, value) => {
+  setValues(prev => {
+    let updatedValue = value;
+
+    if (Array.isArray(value)) {
+
+      // ---- CASE 1: "None" logic ----
+      if (
+        name === "perceptual_disturbance" ||
+        name === "thought_content_patient_reported"
+      ) {
+        if (value.includes("none")) {
+          updatedValue = ["none"];
+        } else {
+          updatedValue = value.filter(v => v !== "none");
+        }
+      }
+
+      // ---- CASE 2: "N/A" logic ----
+      if (name === "cognition_orientation") {
+        if (value.includes("na")) {
+          updatedValue = ["na"];
+        } else {
+          updatedValue = value.filter(v => v !== "na");
+        }
+      }
+
+      // ---- CASE 3: "No Risk" logic ----
+      if (name === "risk_assessment") {
+        if (value.includes("no_current_risk")) {
+          updatedValue = ["no_current_risk"];
+        } else {
+          updatedValue = value.filter(v => v !== "no_current_risk");
+        }
+      }
+    }
+
+    return {
+      ...prev,
+      [name]: updatedValue
+    };
+  });
+};
+
+  const problemList = (values) => {
+    var text = ''
+    if(values.perceptual_disturbance){
+      values.perceptual_disturbance.forEach(v => {
+        text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
+      })
+    }
+    if(values.thought_content_patient_reported){
+      values.thought_content_patient_reported.forEach(v => {
+        text += v.charAt(0).toUpperCase() + v.slice(1).replaceAll('_', ' ') + '\n'
+      })
+    }
+    return text
+  }
+
+  const computedValues = {
+    ...values,
+    problem_listings: problemList(values) || ''
+  }
 
   const handleAction = (type) => {
     if (type === "back") onBack?.();
@@ -178,89 +345,12 @@ export default function PsychologyFollowUpAssessment({
   };
 
   const handleSubmit = () => {
-    const status = values.chief_complaint_status
-    const text = values.chief_complaint
-    if (!text && (status === "modified" || status === "new_complaint") ) {
-      alert("Chief Complaint is required")
-      return
-    }
     setSubmitted(true);
     onSubmit?.(values);
     alert("Psychology assessment submitted");
   };
 
- 
-
-  /* ---------------- SIMPLE SCHEMA (OTHER TABS) ---------------- */
-  const EMPTY_SCHEMA = {
-    actions: [
-      { type: "back", label: "Back" },
-      { type: "clear", label: "Clear" },
-      { type: "save", label: "Save" }
-    ],
-    sections: [{ fields: [] }]
-  };
-
-const SESSION_SCHEMA = {
-    sections: [
-      {
-        fields: [
-
-
-          {
-            name: "session_type",
-            label: "Session Type",
-            type: "radio",
-            options: [
-              { label: "Individual", value: "individual" },
-              { label: "Family", value: "family" },
-              { label: "Couple", value: "couple" }
-            ]
-          },
-
-          // {
-          //   name: "attendance_status",
-          //   label: "Attendance Status",
-          //   type: "radio",
-          //   options: [
-          //     { label: "Present", value: "present" },
-          //     { label: "No Show", value: "no_show" },
-          //     { label: "Cancelled", value: "cancelled" }
-          //   ]
-          // },
-
-        {
-  name: "attender_present",
-  label: "Carer Present",
-  type: "radio",
-  options: [
-    { label: "Yes", value: "yes" },
-    { label: "No", value: "no" }
-  ]
-},
-{
-  name: "attender_name", // ✅ unique
-  label: "Specific Name",
-  type: "input",
-  showIf: {
-    field: "attender_present",
-    equals: "yes"
-  }
-},
-{
-  name: "attender_relationship", // ✅ unique
-  label: "Relationship",
-  type: "input",
-  showIf: {
-    field: "attender_present",
-    equals: "yes"
-  }
-},
-        ]
-      }
-    ]
-  };
-
+  /* ===================== SCHEMAS ===================== */
 
   const SUBJECTIVE_SCHEMA = {
     actions: [
@@ -271,537 +361,104 @@ const SESSION_SCHEMA = {
     sections: [
       {
         fields: [
-      
-          {
-  name: "chief_complaint_status",
-  label: "Chief Complaint Status",
-  type: "radio",
-  options: [
-    { label: "No Change", value: "no_change" },
-    { label: "Modified", value: "modified" }
-  ]
-},
-
-/* ✅ READ-ONLY FIELD (NO CHANGE) */
-{
-  name: "chief_complaint_readonly",
-  label: "Chief Complaint",
-  type: "input",
-  placeholder: "No previous complaint available",
-  disabled: true,
-  showIf: {
-    field: "chief_complaint_status",
-    equals: "no_change"
-  }
-},
-
-        
-
-
           {
             name: "chief_complaint",
             label: "Chief Complaint",
-            required: true,
-            type: "textarea",
-            showIf: {
-              field: "chief_complaint_status",
-              oneOf: ["modified", "new_complaint"]
-            }
-          },
-          
-{
-  name: "progress_since_last_session",
-  label: "Progress since last session",
-  type: "input",
-  placeholder: "Enter progress details..."
-},
-          
-          
-
-// MAIN RADIO
-{
-  name: "new_symptoms",
-  label: "New Symptoms / Issues",
-  type: "radio",
-  options: [
-    { label: "None", value: "none" },
-    { label: "Present", value: "present" }
-  ]
-},
-
-// CATEGORY
-{
-  name: "symptoms_category",
-  label: "Symptoms Category",
-  type: "checkbox-group",
-  options: [
-    { label: "Mood", value: "mood" },
-    { label: "Sleep", value: "sleep" },
-    { label: "Appetite", value: "appetite" },
-    { label: "Anxiety", value: "anxiety" },
-    { label: "Psychosis", value: "psychosis" },
-    { label: "Pain", value: "pain" },
-    { label: "Others", value: "others" }
-  ],
-  showIf: {
-    field: "new_symptoms",
-    equals: "present"
-  }
-},
-
-// ---------- MOOD ----------
-{
-  name: "mood_description",
-  label: "Mood - Description",
-  type: "input",
-  showIf: {
-    field: "symptoms_category",
-    includes: "mood"
-  }
-},
-{
-  name: "mood_onset",
-  label: "Mood - Onset",
-  type: "date",
-  showIf: {
-    field: "symptoms_category",
-    includes: "mood"
-  }
-},
-{
-  name: "mood_severity",
-  label: "Mood - Severity",
-  type: "radio",
-  options: [
-    { label: "Mild", value: "mild" },
-    { label: "Moderate", value: "moderate" },
-    { label: "Severe", value: "severe" }
-  ],
-  showIf: {
-    field: "symptoms_category",
-    includes: "mood"
-  }
-},
-
-// ---------- SLEEP ----------
-{
-  name: "sleep_description",
-  label: "Sleep - Description",
-  type: "input",
-  showIf: {
-    field: "symptoms_category",
-    includes: "sleep"
-  }
-},
-{
-  name: "sleep_onset",
-  label: "Sleep - Onset",
-  type: "date",
-  showIf: {
-    field: "symptoms_category",
-    includes: "sleep"
-  }
-},
-{
-  name: "sleep_severity",
-  label: "Sleep - Severity",
-  type: "radio",
-  options: [
-    { label: "Mild", value: "mild" },
-    { label: "Moderate", value: "moderate" },
-    { label: "Severe", value: "severe" }
-  ],
-  showIf: {
-    field: "symptoms_category",
-    includes: "sleep"
-  }
-},
-
-// ---------- OTHERS ----------
-{
-  name: "other_symptom_name",
-  label: "Other Symptom",
-  type: "input",
-  placeholder: "Enter symptom name",
-  showIf: {
-    field: "symptoms_category",
-    includes: "others"
-  }
-},
-{
-  name: "others_description",
-  label: "Others - Description",
-  type: "input",
-  showIf: {
-    field: "symptoms_category",
-    includes: "others"
-  }
-},
-{
-  name: "others_onset",
-  label: "Others - Onset",
-  type: "date",
-  showIf: {
-    field: "symptoms_category",
-    includes: "others"
-  }
-},
-{
-  name: "others_severity",
-  label: "Others - Severity",
-  type: "radio",
-  options: [
-    { label: "Mild", value: "mild" },
-    { label: "Moderate", value: "moderate" },
-    { label: "Severe", value: "severe" }
-  ],
-  showIf: {
-    field: "symptoms_category",
-    includes: "others"
-  }
-},
-          {
-            name: "description",
-            label: "Description",
-            type: "textarea",
-            showIf: {
-              field: "symptoms_category",
-              equals: "others"
-            }
+            type: "input"
           },
           {
-            name: "onset",
-            label: "Onset",
-            type: "date",
-            showIf: {
-              field: "new_symptoms",
-              equals: "present"
-            }
+            name: "hpi",
+            label: "History of Presenting Illness (HPI)",
+            type: "input"
           },
           {
-            name: "severity",
-            label: "Severity",
-            type: "radio",
-            options: [
-              {label: "Mild", value: "mild"},
-              {label: "Moderate", value: "moderate"},
-              {label: "Severe", value: "severe"}
-            ],
-            showIf: {
-              field: "new_symptoms",
-              equals: "present"
-            }
+            type: "subheading",
+            label: "Autogenerated History"
           },
-          
-
-
-// MAIN RADIO
-{
-  name: "medication_adherence",
-  label: "Medication Adherence",
-  type: "checkbox-group",
-  options: [
-    { label: "Fully Adherent", value: "fully_adherent" },
-    { label: "Partially Adherent", value: "partially_adherent" },
-    { label: "Non-Adherent", value: "non_adherent" },
-    { label: "Not Applicable", value: "not_applicable" }
-  ]
-},
-
-// FULLY ADHERENT INPUT
-{
-  name: "fully_adherent_input",
-  label: "Details",
-  type: "input",
-  showIf: {
-    field: "medication_adherence",
-    equals: "fully_adherent"
-  }
-},
-
-// PARTIALLY ADHERENT RADIO
-{
-  name: "partial_reason",
-  label: "Partially Adherent Type",
-  type: "radio",
-  options: [
-    { label: "Irregular", value: "irregular" },
-    { label: "Missed Doses", value: "missed_doses" }
-  ],
-  showIf: {
-    field: "medication_adherence",
-    equals: "partially_adherent"
-  }
-},
-
-
-{
-  name: "non_adherent_reason",
-  label: "Reason",
-  
-  type: "checkbox-group",
-  options: [
-    { label: "Forgot", value: "forgot" },
-    { label: "Side effects", value: "side_effects" },
-    { label: "Cost issues", value: "cost_issues" },
-    { label: "Lack of insight", value: "lack_of_insight" },
-    { label: "Intentional discontinuation", value: "intentional_discontinuation" },
-    { label: "Access issues", value: "access_issues" },
-    { label: "Other", value: "other" }
-  ],
-  showIf: {
-    field: "medication_adherence",
-    equals: "non_adherent"
-  }
-},
-
-// OTHER INPUT (THIS IS WHAT YOU NEEDED)
-{
-  name: "non_adherent_other",
-  label: "Please specify",
-  type: "input",
-  placeholder: "Enter reason...",
-  showIf: {
-    field: "non_adherent_reason",
-    equals: "other"
-  }
-},
-
-
           {
-            name: "description",
-            label: "Description",
+            name: "psychiatric_history_autogenerated",
+            label: "Psychiatric History",
             type: "input",
-            showIf: {
-              field: "reason",
-              equals: "other"
-            }
           },
+          // {
+          //   name: "psychiatric_history_specify",
+          //   label: "Specify",
+          //   type: "input"
+          // },
+          // {
+          //   name: "medical_history_autogenerated",
+          //   label: "Medical History",
+          //   type: "input",
+          // },
+          // {
+          //   name: "family_history_autogenerated",
+          //   label: "Family History",
+          //   type: "input",
+          // },
+          {
+            name: "drug_history_autogenerated",
+            label: "Drug History",
+            type: "input",
+          },
+          // {
+          //   name: "drug_history_specify",
+          //   label: "Specify",
+          //   type: "input"
+          // },
+          {
+            name: "mood_patient_description",
+            label: "Mood (patient description)",
+            type: "input",
+            
+          },
+          {
+            name: "perceptual_disturbance",
+            label: "Perceptual Disturbance (if reported)",
+            type: "checkbox-group",
+            
+            options: [
+              { label: "Auditory hallucinations", value: "auditory_hallucinations" },
+              { label: "Visual hallucinations", value: "visual_hallucinations" },
+              { label: "Derealization", value: "derealization" },
+              { label: "Depersonalization", value: "depersonalization" },
+              { label: "Illusions", value: "illusions" },
+              { label: "None", value: "none" },
+              {label:'Others',value:'others'}
+              
+            ]
+          },
+          {
+  name: "perceptual_disturbance_other",
+  label: "Specify other perceptual disturbance",
+  type: "input",
+  showIf: { field: "perceptual_disturbance", includes: "others" } // ✅ must match value
+},
           
-          /* ---------------- SUBSTANCE USE UPDATE ---------------- */
+          {
+            name: "thought_content_patient_reported",
+            label: "Thought content (patient-reported)",
+            type: "checkbox-group",
+            options: [
+              { label: "Suicidal ideation", value: "suicidal_ideation" },
+              { label: "Homicidal ideation", value: "homicidal_ideation" },
+              { label: "Self-harm thoughts", value: "self_harm_thoughts" },
+              { label: "Paranoia", value: "paranoia" },
+              { label: "Obsessions/Compulsions", value: "obsessions_compulsions" },
+              { label: "Phobias", value: "phobias" },
+              { label: "Rumination", value: "rumination" },
+              { label: "Overvalued ideas", value: "overvalued_ideas" },
+              { label: "None", value: "none" },
+              { label: "Other", value: "other" } 
 
-{
-  name: "substance_use",
-  // label: "Substance Use Update",
-    label: "Drug Review",
-
-  type: "checkbox-group",
-  options: [
-    { label: "No Use", value: "no_use" },
-    { label: "No Change", value: "no_change" },
-    { label: "Increased", value: "increased" },
-    { label: "Reduced", value: "reduced" },
-    { label: "Relapsed", value: "relapsed" },
-    { label: "Abstinent", value: "abstinent" }
-  ]
-},
-
-/* ✅ SHOW DETAILS ONLY WHEN RELEVANT */
-{
-  name: "substance_type",
-  label: "Substance Type",
-  type: "checkbox-group",
-  options: [
-    { label: "Alcohol", value: "alcohol" },
-    { label: "Tobacco", value: "tobacco" },
-    { label: "Cannabis", value: "cannabis" },
-    { label: "Opioids", value: "opioids" },
-    { label: "Others", value: "others" }
-  ],
-  showIf: {
-    field: "substance_use",
-    oneOf: ["increased", "relapsed"]
-  }
-},
-
-/* ---------------- ALCOHOL ---------------- */
-{
-  name: "alcohol_frequency",
-  label: "Alcohol - Frequency",
-  type: "radio",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Occasional", value: "occasional" }
-  ],
-  showIf: {
-    field: "substance_type",
-    includes: "alcohol"
-  }
-},
-{
-  name: "alcohol_quantity",
-  label: "Alcohol - Quantity",
+            ]
+          },
+          {
+  name: "thought_content_other",
+  label: "Specify other thought content",
   type: "input",
-  placeholder: "e.g. 2 drinks/day",
-  showIf: {
-    field: "substance_type",
-    includes: "alcohol"
-  }
+  showIf: { field: "thought_content_patient_reported", includes: "other" } // ✅ show when selected
 },
-{
-  name: "alcohol_last_use",
-  label: "Alcohol - Last Use",
-  type: "date",
-  showIf: {
-    field: "substance_type",
-    includes: "alcohol"
-  }
-},
-
-/* ---------------- TOBACCO ---------------- */
-{
-  name: "tobacco_frequency",
-  label: "Tobacco - Frequency",
-  type: "radio",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Occasional", value: "occasional" }
-  ],
-  showIf: {
-    field: "substance_type",
-    includes: "tobacco"
-  }
-},
-{
-  name: "tobacco_quantity",
-  label: "Tobacco - Quantity",
-  type: "input",
-  placeholder: "e.g. 5 cigarettes/day",
-  showIf: {
-    field: "substance_type",
-    includes: "tobacco"
-  }
-},
-{
-  name: "tobacco_last_use",
-  label: "Tobacco - Last Use",
-  type: "date",
-  showIf: {
-    field: "substance_type",
-    includes: "tobacco"
-  }
-},
-
-/* ---------------- CANNABIS ---------------- */
-{
-  name: "cannabis_frequency",
-  label: "Cannabis - Frequency",
-  type: "radio",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Occasional", value: "occasional" }
-  ],
-  showIf: {
-    field: "substance_type",
-    includes: "cannabis"
-  }
-},
-{
-  name: "cannabis_quantity",
-  label: "Cannabis - Quantity",
-  type: "input",
-  placeholder: "e.g. 5 cigarettes/day",
-  showIf: {
-    field: "substance_type",
-    includes: "cannabis"
-  }
-},
-{
-  name: "cannabis_last_use",
-  label: "Cannabis - Last Use",
-  type: "date",
-  showIf: {
-    field: "substance_type",
-    includes: "cannabis"
-  }
-},
-
-/* ---------------- OPIOIDS ---------------- */
-{
-  name: "opioids_frequency",
-  label: "Opioids - Frequency",
-  type: "radio",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Occasional", value: "occasional" }
-  ],
-  showIf: {
-    field: "substance_type",
-    includes: "opioids"
-  }
-},
-{
-  name: "opioids_quantity",
-  label: "Opioids - Quantity",
-  type: "input",
-  placeholder: "e.g. 5 cigarettes/day",
-  showIf: {
-    field: "substance_type",
-    includes: "opioids"
-  }
-},
-
-{
-  name: "opioids_last_use",
-  label: "Opioids - Last Use",
-  type: "date",
-  showIf: {
-    field: "substance_type",
-    includes: "opioids"
-  }
-},
-
-/* ---------------- OTHERS ---------------- */
-
-{
-  name: "others_frequency",
-  label: "Others - Frequency",
-  type: "radio",
-  layout: "vertical",
-  options: [
-    { label: "Daily", value: "daily" },
-    { label: "Weekly", value: "weekly" },
-    { label: "Occasional", value: "occasional" },
-    { label: "Other", value: "other" }
-  ],
-  showIf: {
-    field: "substance_type",
-    includes: "others" // 👈 changed
-  }
-},
-{
-  name: "others_frequency_other",
-  label: "Please specify",
-  type: "input",
-  placeholder: "Enter frequency",
-  showIf: {
-    field: "others_frequency",
-    equals: "other"
-  }
-},
-{
-  name: "others_quantity",
-  label: "Others - Quantity",
-  type: "input",
-  placeholder: "e.g. amount/day",
-  showIf: {
-    field: "substance_type",
-    includes: "others"
-  }
-},
-{
-  name: "others_last_use",
-  label: "Others - Last Use",
-  type: "date",
-  showIf: {
-    field: "substance_type",
-    includes: "others"
-  }
-}
+          
         ]
       }
     ]
@@ -809,155 +466,21 @@ const SESSION_SCHEMA = {
 
   const PSYCHOLOGY_CONTAINER_SCHEMA = {
     title: "Patient Information",
-    sections: []
+    sections: [
+
+
+    ]
   };
 
-//   const OBJECTIVE_SCHEMA = {
-//     actions: SUBJECTIVE_SCHEMA.actions,
-//     sections: [
-//       {
-//         fields: [
-//           { type: "subheading", label: "Client’s Condition " },
-         
-          
-//               {
-//   name: "mood_affect",
-//   label: "Mood & Affect",
-//   type: "radio",
-//   options: [
-//     { label: "No Change", value: "no_change" },
-//     { label: "Notable Change ", value: "Notable_Change " }
-    
-//   ]
-// },
-// {
-//   name: "mood_affect_details",
-//   label: "Specify Details",
-//   type: "input",
-//   placeholder: "Enter details",
-//   showIf: {
-//     field: "mood_affect",
-//     equals: "Notable_Change " // 👈 trigger here
-//   }
-// },
-
-         
-//          {
-//   name: "thought_process",
-//   label: "Thought Process",
-//   type: "radio", // or keep single-select if you want
-//   options: [
-//     { label: "No Change", value: "no_change" },
-//     { label: "Notable Change ", value: "Notable_Change " },
-    
-//   ]
-// },
-// {
-//   name: "thought_process_details",
-//   label: "Specify Details",
-//   type: "input",
-//   showIf: {
-//     field: "thought_process",
-//     equals: "Notable_Change "
-//   }
-// },
-// {
-//   name: "behavior_functioning",
-//   label: "Behavior / Functioning",
-//   type: "radio",
-//   options: [
-//     { label: "No Change", value: "no_change" },
-//     { label: "Notable Change", value: "Notable_Change" },
-    
-//   ]
-// },
-// {
-//   name: "behavior_functioning_details",
-//   label: " Specify Details",
-//   type: "input",
-//   showIf: {
-//     field: "behavior_functioning",
-//     equals: "Notable_Change",
-//   }
-// },{
-//   name: "medical_condition",
-//   label: "Medical Condition",
-//   type: "radio",
-//   options: [
-//     { label: "No Change", value: "no_change" },
-//     { label: "Notable Change ", value: "Notable_Change " }
-//   ]
-// },
-// {
-//   name: "medical_condition_details",
-//   label: " Specify Details",
-//   type: "input",
-//   showIf: {
-//     field: "medical_condition",
-//     equals: "Notable_Change "
-//   }
-// },
-// {
-//   name: "substance_use",
-//   label: "Substance Use",
-//   type: "radio",
-//   options: [
-//     { label: "No Change", value: "no_change" },
-//     { label: "Notable Change ", value: "Notable_Change " },
-    
-//   ]
-// },
-// {
-//   name: "substance_use_details",
-//   label: " Specify Details",
-//   type: "input",
-//   showIf: {
-//     field: "substance_use",
-//     equals: "Notable_Change "
-//   }
-// },
-//           {type:"subheading", label: "Risk Assessment"},
-//          {
-//             name: "risk_assessment",
-//             label: "Risk Status",
-//             type: "radio",
-//             options: [
-//               { label: "No risk", value: "no_risk" },
-//               { label: "Suicidal Ideation", value: "Suicidal Ideation" },
-//               { label: "Homicidal ideation", value: "homicidal_ideation" },
-//               { label: "Self-harm risk", value: "self_harm_risk" },
-//               { label: "Risk to others", value: "risk_to_others" }
-//             ]
-//           },
-//           {
-//             name: "risk_checkbox",
-//             label: "",
-//             type: "checkbox-group",
-//             options:[
-//               {label: "Ideation", value: "ideation"},
-//               {label: "Plan", value: "plan"},
-//               {label: "Intent", value: "Intent"},
-//               {label: "Attempt", value: "attempt"}
-//             ],
-//             showIf: {
-//               field: "risk_assessment",
-//               oneOf: ["Suicidal Ideation","self_harm_risk", "risk_to_others"]
-//             }
-//           }
-          
-         
-//         ]
-//       }
-//     ]
-//   };
-const OBJECTIVE_SCHEMA = {
+  
+  const OBJECTIVE_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
         fields: [
           {
             type: "subheading",
-            label: "Doctors view to Psycho view"
+            label: "Psychology Assessments’"
           },
           {
             name: "psychology_assessments",
@@ -1202,7 +725,7 @@ const OBJECTIVE_SCHEMA = {
           {
             name: "mood_observed",
             label: "Mood",
-            type: "textarea"
+            type: "input"
           },
           {
             name: "affect_observed",
@@ -1330,206 +853,480 @@ const OBJECTIVE_SCHEMA = {
               { label: "N/A", value: "na" }
             ]
           },
-          {
-  type: "subheading",
-  label: "Additional Comments"
-},
+//           {
+//   type: "subheading",
+//   label: "Additional Comments"
+// },
 {
   name: "additional_comments",
-  label: "Add additional comments (Other/Specify)",
-  type: "textarea",
+  label: "Additional comments",
+  type: "input",
   placeholder: "Enter any overall observations, notes, or summary..."
 },
         ]
       }
     ]
   };
+
   const ASSESSMENT_SCHEMA = {
     actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
         fields: [
-            // { type: "subheading", label: "Clinical Impression"},
+          
           {
-            name: "clinicalImpression",
+            name: "diagnosis_icd10",
             label: "Clinical Impression",
-            type: "textarea"
+            type: "input"
           },
-          // { type: "subheading", label: "Clinical Summary"},
           {
-            name: "clinical_progress_summary",
-            label: "Clinical Progress Summary",
-            type: "textarea"
+            name: "problem_listings",
+            label: "Problem Listings",
+            type: "input"
           },
-          // { type: "subheading", label: "Diagnosis"},
+          // {
+          //   name: "severity",
+          //   label: "Severity",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Mild", value: "mild" },
+          //     { label: "Moderate", value: "moderate" },
+          //     { label: "Severe", value: "severe" }
+          //   ]
+          // },
           {
-            name: "severity",
-            label: "Severity",
-            type: "radio",
+            name: "risk_assessment",
+            label: "Behavioural Risk Assessment",
+            type: "multi-select-dropdown",
             options: [
-              { label: "Mild", value: "mild" },
-              { label: "Moderate", value: "moderate" },
-              { label: "Severe", value: "severe" }
+              { label: "No current risk", value: "no_current_risk" },
+              { label: "Suicidal ideation", value: "suicidal_ideation" },
+              { label: "Homicidal ideation", value: "homicidal_ideation" },
+              { label: "Self-harm risk", value: "self_harm_risk" },
+              { label: "Risk to others", value: "risk_to_others" }
             ]
           },
-          
+          {
+            name: "protective_factors",
+            label: "Protective factors",
+            type: "input"
+          }
         ]
       }
     ]
   };
 
-  /* ---------------- PLAN SCHEMA WITH GOALS ---------------- */
   const PLAN_SCHEMA = {
-    actions: EMPTY_SCHEMA.actions,
+    actions: SUBJECTIVE_SCHEMA.actions,
     sections: [
       {
         fields: [
-          { type: "subheading", label: "Therapeutic Interventions" },
-
-          {
-            name: "continue_same_plan",
-            label: "Continue Same Plan",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
+          //   {
+          //   name: "Short term goal",
+          //   label: "Short term goal",
+          //   type: "input"
+          // },
+          //   {
+          //   name: "Long term goal",
+          //   label: "Long term goal",
+          //   type: "input"
+          // },
+           { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
+        {
+            type: "dynamic-goals",
+            name: "short_term_goals"
           },
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
           {
-            name: "plan_changes",
-            label: "Specify changes",
-            type: "textarea",
-            showIf: {
-              field: "continue_same_plan",
-              equals: "no"
-            }
+            type: "dynamic-goals",
+            name: "long_term_goals"
           },
-
-          {
-            name: "interventions_delivered",
-            label: "Therapeutic Interventions Delivered in Session",
-            type: "textarea"
-          },
-
-          {
-            name: "client_response",
-            label: "Client’s Response / Progress Toward Goals",
-            type: "textarea"
-          },
-
-          {
-            name: "plan_additional_info",
-            label: "Plan / Additional Information (Between sessions)",
-            type: "textarea"
-          },
-
-          { type: "subheading", label: "Risk Management Plan" },
-
-          {
-            name: "safety_plan_initiated",
-            label: "Safety Plan Initiated",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-
-          {
-            name: "family_involvement",
-            label: "Family Involvement",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-
-          {
-            name: "psychiatric_referral",
-            label: "Psychiatric Referral",
-            type: "radio",
-            options: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" }
-            ]
-          },
-
-          {
-            name: "psychiatric_referral_specify",
-            label: "Specify",
-            type: "input",
-            showIf: {
-              field: "psychiatric_referral",
-              equals: "yes"
-            }
-          },
-
-          { type: "subheading", label: "Follow-up" },
-
+          
           {
             name: "follow_up_visit_scheduled",
-            label: "Follow-up Visit Scheduled",
+            label: "Follow-up visit scheduled",
             type: "date"
           },
-
+          {type:'input',label:'Additional Comments',name:'additional_comments'}
           // {
-          //   name: "follow_up_specify",
+          //   name: "psychiatric_referral",
+          //   label: "Psychiatric referral",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Yes", value: "yes" },
+          //     { label: "No", value: "no" }
+          //   ]
+          // },
+          // {
+          //   name: "psychiatric_referral_specify",
           //   label: "Specify",
-          //   type: "textarea"
+          //   type: "input",
+          //   placeholder: "Specify",
+          //   showIf: { field: "psychiatric_referral", equals: "yes" }
+          // },
+          // {
+          //   name: "plan_specify",
+          //   label: "Specify",
+          //   type: "input",
+          //   placeholder: "Specify"
           // }
         ]
       }
     ]
   };
-const tabOrder = ["subjective", "objective", "assessment", "plan"];
-const activeTabIdx = tabOrder.indexOf(activeTab);
+  const tabOrder = ["subjective", "objective", "assessment", "plan"];
+  const activeTabIdx = tabOrder.indexOf(activeTab);
 
- const schemaMap = {
-  subjective: SUBJECTIVE_SCHEMA,
-  objective: OBJECTIVE_SCHEMA,
-  assessment: ASSESSMENT_SCHEMA,
-  plan: PLAN_SCHEMA
-};
+  const schemaMap = {
+    subjective: SUBJECTIVE_SCHEMA,
+    objective: OBJECTIVE_SCHEMA,
+    assessment: ASSESSMENT_SCHEMA,
+    plan: PLAN_SCHEMA
+  };
 
-return (
-  <PatientContext.Provider value={patient}>
-    <div style={mainContent}>
+  const numAge = Number(patient?.age || 0);
 
-      {/* PATIENT INFO */}
-      <CommonFormBuilder
-                schema={{ title: "Patient Information", sections: [] }}
-                values={{}}
-                onChange={() => {}}
-              >
-                <PatientInformationBlock
-                  patient={patient}
-                  patientHistory={patientHistory}
-                  setPatientHistory={setPatientHistory}
-                />
-              
-                <button style={doctorsReportBtn}>
-                  Doctors Reports
-                </button>
-              </CommonFormBuilder>
-      {/* <CommonFormBuilder
-        schema={{ sections: [] }}
-        values={{}}
-        onChange={() => {}}
-      >
-        <PatientCard patient={patient} />
-      </CommonFormBuilder> */}
-{/* ✅ SESSION DETAILS ABOVE TABS */}
-        <CommonFormBuilder
-          schema={SESSION_SCHEMA}
-          values={values}
-          onChange={onChange}
-        />
+  /* ===================== PATIENT INFO ===================== */
+  // function PsychologyPatientInfo({ patient }) {
+  //   if (!patient) return null;
+
+  //   return (
+  //     <div style={section}>
+  //       <div style={patientGrid}>
+  //         <div><b>Name:</b> {patient.name}</div>
+  //         <div><b>IC:</b> {patient.id}</div>
+  //         <div><b>DOB:</b> {
+  // (patient.dob)}</div>
+  //         <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+  //         <div><b>ICD:</b> {patient.icd}</div>
+  //         <div><b>Accommodation:</b> {patient.accommodation || "-"}</div>
+  //         <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+  //         <div><b>Case Manager:</b> {patient.case_manager || patient.cm || "-"}</div>
+  //         <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+//   function PsychologyPatientInfo({
+//   patient,
+//   formData = {},          // ✅ default to avoid undefined
+//   setFormData = () => {}  // ✅ safe default function
+// }) {
+//   if (!patient) return null;
+
+//   const handleDoctorNoteChange = (e) => {
+//     const value = e.target.value;
+
+//     setFormData((prev = {}) => ({
+//       ...prev,
+//       doctor_note: value,
+//       medical_drug_history: value // ✅ auto-generate
+//     }));
+//   };
+
+//   return (
+//     <div style={section}>
+      
+//       {/* ---------------- PATIENT INFO ---------------- */}
+//       <div style={patientGrid}>
+//         <div><b>Name:</b> {patient?.name}</div>
+//         <div><b>IC:</b> {patient?.id}</div>
+//         <div><b>DOB:</b> {localDateTimeString(patient?.dob)}</div>
+//         <div><b>Age / Gender:</b> {patient?.age} / {patient?.sex}</div>
+//         <div><b>ICD:</b> {patient?.icd}</div>
+//         <div><b>Accommodation:</b> {patient?.accommodation || "-"}</div>
+//         <div><b>Occupation:</b> {patient?.occupation || "-"}</div>
+//         <div>
+//           <b>Case Manager:</b>{" "}
+//           {patient?.case_manager || patient?.cm || "-"}
+//         </div>
+//         <div>
+//           <b>Date of Assessment:</b> {localDateTimeString("", true)}
+//         </div>
+//       </div>
+
+//       {/* ---------------- DOCTOR NOTE ---------------- */}
+//       <div style={{ marginTop: "20px" }}>
+//         <b>Doctor's Note</b>
+//         <input
+//           value={formData?.doctor_note || ""}
+//           onChange={handleDoctorNoteChange}
+//           placeholder="Enter clinical notes..."
+//           // style={{ width: "100%", minHeight: "100px" }}
+//         />
+//       </div>
+
+//       {/* ---------------- AUTO GENERATED HISTORY ---------------- */}
+//       <div style={{ marginTop: "20px" }}>
+//         <b>Medical / Drug History</b>
+//         <input
+//           value={formData?.medical_drug_history || ""}
+//           readOnly
+//           placeholder="Auto-generated from doctor's note..."
+//           // style={{
+//           //   width: "100%",
+//           //   minHeight: "100px",
+//           //   background: "#f5f5f5"
+//           // }}
+//         />
+//       </div>
+
+//       {/* ❌ No free text below history (removed as required) */}
+
+//     </div>
+//   );
+// }
+
+const today = new Date();
+
+const formatDate = (d) => (d ? new Date(d).toLocaleDateString() : "-");
+
+// const PsychologyPatientInfo = ({ patient, patientHistory, setPatientHistory }) => {
+//     if (!patient) return null;
+//     return (
+//       <div style={section}>
+//         <div style={patientGrid}>
+//           <div><b>Name:</b> {patient.name}</div>
+//           <div><b>IC:</b> {patient.id}</div>
+//           <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+//           <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
+//           <div><b>ICD:</b> {patient.icd}</div>
+//           <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
+//           <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+//           <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
+//           <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
+//           <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
+//           <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
+//           <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
+//           <div><b>Education Level:</b> {patient.education_background || "-"}</div>
+//           <div><b>Occupation:</b> {patient.occupation || "-"}</div>
+//           <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
+//           <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
+//           <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
+
+//           <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
+//             <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
+
+//             <div style={{ marginBottom: 10 }}>
+//               <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
+//               <input
+//                 value={patientHistory?.past_medical_history ?? ""}
+//                 onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
+//                 style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+//               />
+//             </div>
+
+//             <div style={{ marginBottom: 10 }}>
+//               <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
+//               <input
+//                 value={patientHistory?.past_family_history ?? ""}
+//                 onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
+//                 style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+//               />
+//             </div>
+
+//             <div style={{ marginBottom: 10 }}>
+//               <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
+//               <input
+//                 value={patientHistory?.alerts_and_allergies ?? ""}
+//                 onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
+//                 style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
+//               />
+//             </div>
+
+//             <div style={{ marginBottom: 10 }}>
+//               <button
+//                 type="button"
+//                 onClick={() => { console.log("Alerts button clicked!"); }}
+//                 style={{ marginTop: "10px", padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0, 123, 255)", background: "rgb(0, 123, 255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
+//               >
+//                 🚨 Alerts
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   };
+function PatientInformationBlock({ patient, patientHistory, setPatientHistory }) {
+  if (!patient) return null;
+
+  const safe = (v) => v ?? "-";
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString() : "-";
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 12,
+        fontSize: 14
+      }}>
+        <div><b>Name:</b> {safe(patient.name)}</div>
+        <div><b>IC:</b> {safe(patient.id)}</div>
+        <div><b>DOB:</b> {formatDate(patient.dob)}</div>
+
+        <div><b>Age / Gender:</b> {safe(patient.age)} / {safe(patient.sex)}</div>
+        <div><b>ICD:</b> {safe(patient.icd)}</div>
+        <div><b>Date of Assessment:</b> {new Date().toLocaleDateString()}</div>
+
+        <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
+        <div><b>Duration of Diagnosis:</b> -</div>
+        <div><b>Primary Diagnosis:</b> {safe(patient.diagnosis_history)}</div>
+
+        <div><b>Secondary Diagnosis:</b> {safe(patient.medical_history)}</div>
+        <div><b>Dominant Side:</b> {safe(patient.dominant_side)}</div>
+        <div><b>Language Preference:</b> {safe(patient.language_preference)}</div>
+
+        <div><b>Education Level:</b> {safe(patient.education_background)}</div>
+        <div><b>Occupation:</b> {safe(patient.occupation)}</div>
+        <div><b>Work Status:</b> {safe(patient.employment_status)}</div>
+
+        <div><b>Driving Status:</b> {safe(patient.driving_status)}</div>
+        <div><b>PP/OB:</b> {safe(patient.pp_ob)}</div>
+        <div><b>Weight:</b> {patient.weight ? `${patient.weight} kg` : "-"}</div>
+
+        {/* ===== HISTORY ===== */}
+        <div style={{ gridColumn: "1 / -1", marginTop: 10 }}>
+        
+           <h3>Patient History</h3>
+        
+                  <div>
+                    <b>Past Medical History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_medical_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_medical_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          
+          <div>
+                    <b>Family History</b>
+                    <input
+                      style={input}
+                      value={patientHistory.past_family_history}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          past_family_history: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+        
+           <div>
+                    <b>Allergies</b>
+                    <input
+                      style={input}
+                      value={patientHistory.alerts_and_allergies}
+                      onChange={(e) =>
+                        setPatientHistory(prev => ({
+                          ...prev,
+                          alerts_and_allergies: e.target.value
+                        }))
+                      }
+                    />
+                  </div>
+
+          <button style={alertBtn}>🚨 Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+ 
+
+
+// const INFORMANT_SCHEMA = {
+//     title: "",
+//     sections: [
+//       {
+//         fields: [
+//           {
+//             name: "informant",
+//             label: "Informant",
+//             type: "radio",
+//             options: [
+//               { label: "Mother",    value: "mother"    },
+//               { label: "Father",    value: "father"    },
+//               { label: "Caregiver", value: "caregiver" },
+//               { label: "Teacher",   value: "teacher"   },
+//               { label: "Other",     value: "other"     }
+//             ]
+//           },
+//           {
+//             name: "informant_other",
+//             label: "Specify Other",
+//             type: "input",
+//             placeholder: "Enter informant",
+//             showIf: { field: "informant", equals: "other" }
+//           },
+//           {
+//             name: "reliability",
+//             label: "Reliability of informant",
+//             type: "radio",
+//             options: [
+//               { label: "Good", value: "Good" },
+//               { label: "Fair", value: "Fair" },
+//               { label: "Poor", value: "Poor" }
+//             ]
+//           },
+//           {
+//             name: "discrepancy",
+//             label: "Discrepancy noted",
+//             type: "input",
+//             placeholder: "Enter details"
+//           }
+//         ]
+//       }
+//     ]
+//   };
 
 
 
-      {/* TABS */}
-         <div style={tabBar}>
+  /* ===================== RENDER ===================== */
+
+  return (
+    <PatientContext.Provider value={patient}>
+      <div style={mainContent}>
+        {/* ===== PATIENT INFORMATION CARD ===== */}
+        {/* <CommonFormBuilder
+          schema={PSYCHOLOGY_CONTAINER_SCHEMA}
+          values={{}}
+          onChange={() => {}}
+        >
+          <PsychologyPatientInfo patient={patient} />
+        </CommonFormBuilder> */}
+         <CommonFormBuilder
+          schema={{ title: "Patient Information", sections: [] }}
+          values={{}}
+          onChange={() => {}}
+        >
+          <PatientInformationBlock
+            patient={patient}
+            patientHistory={patientHistory}
+            setPatientHistory={setPatientHistory}
+          />
+        
+          <button style={doctorsReportBtn}>
+            Doctors Reports
+          </button>
+        </CommonFormBuilder>
+         {/* <CommonFormBuilder
+                    schema={INFORMANT_SCHEMA}
+                    values={values}
+                    onChange={onChange}
+                  /> */}
+
+        {/* ===== TABS ===== */}
+        <div style={tabBar}>
           {["subjective", "objective", "assessment", "plan"].map(tab => (
             <div
               key={tab}
@@ -1541,40 +1338,42 @@ return (
           ))}
         </div>
 
-      {/* FORM */}
-      <CommonFormBuilder
-        schema={schemaMap[activeTab]}
-        values={values}
-        onChange={onChange}
-        submitted={submitted}
-        onAction={handleAction}
-      >
-
-       
-
-        {/* SUBMIT */}
-        
-        <div style={submitRow}>
-          {activeTab !== "plan" ? (
-            <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
-              Next
-            </button>
-          ) : (
+        {/* ===== TAB CONTENT ===== */}
+        <CommonFormBuilder
+          schema={schemaMap[activeTab]}
+          values={computedValues}
+          onChange={onChange}
+          submitted={submitted}
+          onAction={handleAction}
+          assessmentRegistry={PSYCHOLOGY_ASSESSMENT_REGISTRY}
+        >
+          
+          {/* Submit button */}
+          {/* <div style={submitRow}>
             <button style={submitBtn} onClick={handleSubmit}>
-               Submit Psychology Assessment
+              Submit Psychology Assessment
             </button>
-          )}
-        </div>
+          </div> */}
+          <div style={submitRow}>
+            {activeTab !== "plan" ? (
+              <button style={submitBtn} onClick={() => setActiveTab(tabOrder[activeTabIdx + 1])}>
+                Next
+              </button>
+            ) : (
+              <button style={submitBtn} onClick={handleSubmit}>
+                Submit Psychology Assessment
+              </button>
+            )}
+          </div>
+        </CommonFormBuilder>
+      </div>
+    </PatientContext.Provider>
+  );
+}
 
-      </CommonFormBuilder>
+/* ===================== STYLES ===================== */
 
-    </div>
-  </PatientContext.Provider>
-);
-};
-/* ---------------- STYLES ---------------- */
-
-const mainContent = { width: "100%" };
+const mainContent = { margin: "0 auto", width: "100%" };
 
 const tabBar = {
   display: "flex",
@@ -1613,15 +1412,19 @@ const submitBtn = {
   fontWeight: 700
 };
 
-
-const section = { marginBottom: 24 };
+const section = {
+  marginBottom: 24
+};
 
 const patientGrid = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12
+  gap: 12,
+  fontSize: 14
 };
-const textarea = {
+
+
+const input = {
           width: "100%",
           minHeight: 90,
           marginTop: 6,
@@ -1642,7 +1445,6 @@ const alertBtn = {
           fontWeight: 600,
           cursor: "pointer"
 };
-
 const doctorsReportBtn = {
   padding: "10px 20px", background: "#2563EB", color: "#fff",
   border: "none", borderRadius: 6, fontSize: 14,

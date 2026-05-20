@@ -64,7 +64,145 @@ function formatToday() {
   const d = new Date();
   return d.toISOString().split("T")[0];
 }
-
+  export const NCSEMG_SCHEMA = {
+    enableLanguageToggle: true,
+    title: { en: "NCS(Nerve conduction studies) & EMG(Electomyography)", ms: "NCS & EMG" },
+    actions: [
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
+    ],
+    sections: [
+      {
+        fields: [
+          
+          {
+            name: "date_of_appointment",
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
+            type: "date",
+            placeholder: { en: "Select date", ms: "Pilih tarikh" }
+          },
+          {
+            name: "type_of_study",
+            label: { en: "Type of Study", ms: "Jenis Kajian" },
+            type: "radio",
+            options: TYPE_OF_STUDY_OPTIONS,
+            labelAbove: true
+          },
+          {
+            name: "trace_old_report",
+            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+            name: "location",
+            label: { en: "Location", ms: "Lokasi" },
+            type: "radio",
+            options: LOCATION_OPTIONS
+          },
+          {
+            name: "location_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "location", equals: "others" }
+          },
+          {
+            name: "study_modality",
+            label: { en: "Type Of Study (Modality)", ms: "Jenis Kajian (Modaliti)" },
+            type: "radio",
+            options: STUDY_MODALITY_OPTIONS,
+            labelAbove: true
+          },
+          {
+            name: "previous_study",
+            label: { en: "Previous Study", ms: "Kajian Sebelumnya" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+  name: "previous_study_upload",
+  label: { en: "Upload Previous NCS/EMG", ms: "Muat naik NCS/EMG Sebelumnya" },
+  type: "attach-file",
+  accept: "image/*,.pdf",
+  showIf: { field: "previous_study", equals: "yes" }
+},
+          {
+            name: "sensitivity",
+            label: { en: "Sensitivity", ms: "Kehasilan" },
+            type: "radio",
+            options: SENSITIVITY_OPTIONS
+          },
+          {
+            name: "sensitivity_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "sensitivity", equals: "others" }
+          },
+          {
+            name: "duration",
+            label: { en: "Duration", ms: "Tempoh" },
+            type: "radio",
+            options: DURATION_OPTIONS
+          },
+          {
+            name: "duration_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "duration", equals: "others" }
+          },
+          {
+            name: "time_base",
+            label: { en: "Time Base", ms: "Asas Masa" },
+            type: "radio",
+            options: TIME_BASE_OPTIONS
+          },
+          {
+            name: "time_base_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "time_base", equals: "others" }
+          },
+          { type: "subheading", label: { en: "Graph", ms: "Graph" } },
+          {
+            type: "row",
+            fields: [
+              {
+                name: "graf_1",
+                label: { en: "Upload", ms: "Muat naik" },
+                title: { en: "Graph 1", ms: "Graph 1" },
+                type: "attach-file",
+                accept: "image/*,.pdf"
+              },
+              {
+                name: "graf_2",
+                label: { en: "Upload", ms: "Muat naik" },
+                title: { en: "Graph 2", ms: "Graph 2" },
+                type: "attach-file",
+                accept: "image/*,.pdf"
+              }
+            ]
+          },
+          {
+            name: "final_report",
+            label: { en: "Final Report", ms: "Laporan Akhir" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
+          {
+            name: "final_report_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", oneOf: ["normal", "abnormal"] }
+          },
+        ]
+      }
+    ]
+  };
 export default function NCSEMGForm({ patient, onBack }) {
   const [language, setLanguage] = useState("en");
   const diagnosis = patient?.icd ?? patient?.diagnosis ?? "-";
@@ -236,146 +374,6 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
     </div>
   );
 }
-
-  const NCSEMG_SCHEMA = {
-    enableLanguageToggle: true,
-    title: { en: "NCS(Nerve conduction studies) & EMG(Electomyography)", ms: "NCS & EMG" },
-    actions: [
-      { type: "toggle-language" },
-      { type: "back", label: { en: "Back", ms: "Kembali" } }
-    ],
-    sections: [
-      {
-        fields: [
-          
-          {
-            name: "date_of_appointment",
-            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
-            type: "date",
-            placeholder: { en: "Select date", ms: "Pilih tarikh" }
-          },
-          {
-            name: "type_of_study",
-            label: { en: "Type of Study", ms: "Jenis Kajian" },
-            type: "radio",
-            options: TYPE_OF_STUDY_OPTIONS,
-            labelAbove: true
-          },
-          {
-            name: "trace_old_report",
-            label: { en: "Trace Old Report", ms: "Jejak Laporan Lama" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "location",
-            label: { en: "Location", ms: "Lokasi" },
-            type: "radio",
-            options: LOCATION_OPTIONS
-          },
-          {
-            name: "location_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "location", equals: "others" }
-          },
-          {
-            name: "study_modality",
-            label: { en: "Type Of Study (Modality)", ms: "Jenis Kajian (Modaliti)" },
-            type: "radio",
-            options: STUDY_MODALITY_OPTIONS,
-            labelAbove: true
-          },
-          {
-            name: "previous_study",
-            label: { en: "Previous Study", ms: "Kajian Sebelumnya" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-  name: "previous_study_upload",
-  label: { en: "Upload Previous NCS/EMG", ms: "Muat naik NCS/EMG Sebelumnya" },
-  type: "attach-file",
-  accept: "image/*,.pdf",
-  showIf: { field: "previous_study", equals: "yes" }
-},
-          {
-            name: "sensitivity",
-            label: { en: "Sensitivity", ms: "Kehasilan" },
-            type: "radio",
-            options: SENSITIVITY_OPTIONS
-          },
-          {
-            name: "sensitivity_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "sensitivity", equals: "others" }
-          },
-          {
-            name: "duration",
-            label: { en: "Duration", ms: "Tempoh" },
-            type: "radio",
-            options: DURATION_OPTIONS
-          },
-          {
-            name: "duration_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "duration", equals: "others" }
-          },
-          {
-            name: "time_base",
-            label: { en: "Time Base", ms: "Asas Masa" },
-            type: "radio",
-            options: TIME_BASE_OPTIONS
-          },
-          {
-            name: "time_base_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "time_base", equals: "others" }
-          },
-          { type: "subheading", label: { en: "Graph", ms: "Graph" } },
-          {
-            type: "row",
-            fields: [
-              {
-                name: "graf_1",
-                label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "Graph 1", ms: "Graph 1" },
-                type: "attach-file",
-                accept: "image/*,.pdf"
-              },
-              {
-                name: "graf_2",
-                label: { en: "Upload", ms: "Muat naik" },
-                title: { en: "Graph 2", ms: "Graph 2" },
-                type: "attach-file",
-                accept: "image/*,.pdf"
-              }
-            ]
-          },
-          {
-            name: "final_report",
-            label: { en: "Final Report", ms: "Laporan Akhir" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
-          {
-            name: "final_report_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", oneOf: ["normal", "abnormal"] }
-          },
-        ]
-      }
-    ]
-  };
 
   return (
     <div>

@@ -354,6 +354,12 @@ field: "ocular_health_sections",
       field: "ocular_health_sections",
       includes: "fundus_camera_posterior"
     }
+  },
+  {
+    type: "button",
+    name: "save",
+    label: "Save",
+    action: "save"
   }
 ]
 };

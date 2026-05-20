@@ -59,13 +59,8 @@ import WandRDepartmentPage from "../features/VocationalRehab/pages/Patientspage"
 import AudiologyPatients from "../features/Audiology/AudiologyPatients";
 import MedicalAssistantPatientspage from "../features/MedicalAssistant/pages/MedicalAssistantPatientspage";
 import GenericDepartmentDashboard from "../features/common/GenericDepartmentDashboard";
-import DepartmentPatients from "../features/common/DepartmentPatients";
-import api from "../shared/api/apiClient"
-import { API_URL } from "../platform/config/api.config";
+import RAP from "../features/Rap/";
 
-
-/* If CRA proxy set to http://127.0.0.1:5000 keep API="". Otherwise set REACT_APP_API. */
-const API = process.env.REACT_APP_API || "";
 
 export default function App() {
   const username = localStorage.getItem("username") || "";
@@ -179,23 +174,6 @@ export default function App() {
   });
   const [patients, setPatients] = useState([]);
   
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try{
-        const res = await api.get(API_URL.PATIENT);
-        const list = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.results)
-            ? res.data.results
-            : [];
-        setPatients(list);
-      } catch(e){
-        setPatients([]);
-      }
-    }
-    fetchPatients();
-  }, [])
-
   function updatePatientInMainList(updatedPatient) {
     setPatients(prev =>
       prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
@@ -262,100 +240,6 @@ export default function App() {
   // Save all key selections for the current patient
   // Put this near where you have access to `form` (personal),
   // `financialState`, `employmentState`, and your ICD/ICF/ICHI/GAS state.
-  async function saveEverything() {
-    try {
-      // 1) Personal — create if missing, else update
-      let pid = patient.patient_id;
-      const personal = {
-        patient_name: patient.patient_name || "",
-        gender: patient.gender || "",
-        marital_status: patient.marital || "",
-        nationality: patient.nationality || "",
-        occupation: patient.occupation || "",
-        // if you have split day/month/year, compose them before saving
-        date_of_birth: patient.date_of_birth || null,
-        date_register_otc: patient.date_register_otc || null,
-      };
-
-      if (!pid) {
-        const r = await fetch(`${API}/patients`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(personal),
-        });
-        if (!r.ok) throw new Error(`Personal create failed (${r.status})`);
-        const out = await r.json();
-        pid = out.patient_id;
-        setPatient((p) => ({ ...p, patient_id: pid })); // <-- this MUST happen
-      } else {
-        const r = await fetch(`${API}/patients/${encodeURIComponent(pid)}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(personal),
-        });
-        if (!r.ok) throw new Error(`Personal update failed (${r.status})`);
-      }
-
-      // 2) Financial (if that tab provided data)
-      if (financialState) {
-        const fin = { ...financialState };
-        const amt = parseFloat(String(fin.amount_rm ?? "").replace(/,/g, ""));
-        fin.amount_rm = Number.isFinite(amt) ? amt : null;
-        if (fin.oku_holder !== "Yes") fin.oku_id = "";
-        const r = await fetch(
-          `${API}/patients/${encodeURIComponent(pid)}/financial`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(fin),
-          }
-        );
-        if (!r.ok) throw new Error(`Financial save failed (${r.status})`);
-      }
-
-      // 3) Employment (if that tab provided data)
-      if (employmentState) {
-        const emp = {
-          ...employmentState,
-          last_drawn_salary_rm:
-            employmentState.last_drawn_salary_rm === ""
-              ? 0.0
-              : Number(employmentState.last_drawn_salary_rm),
-        };
-        const r = await fetch(
-          `${API}/patients/${encodeURIComponent(pid)}/employment`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(emp),
-          }
-        );
-        if (!r.ok) throw new Error(`Employment save failed (${r.status})`);
-      }
-
-      // 4) Clinical selections (ICD/ICF/ICHI/GAS)
-      const clinicalPayload = {
-        icd_path: icdPath,
-        icf_summary: icfSummary,
-        ichi_summary: ichiSummary,
-        gas_summary: gasSummary,
-      };
-      const r4 = await fetch(
-        `${API}/patients/${encodeURIComponent(pid)}/save_summary`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(clinicalPayload),
-        }
-      );
-      if (!r4.ok) throw new Error(`Clinical save failed (${r4.status})`);
-
-      addAudit("Saved: Personal + Financial + Employment + ICD/ICF/ICHI/GAS");
-      alert("All details saved");
-    } catch (e) {
-      alert(e.message);
-    }
-  }
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   // Function to toggle the profile dropdown
@@ -781,17 +665,8 @@ export function MainContent({
       return <GenericDepartmentDashboard departmentName="Medical Assistant Department" patients={patients} updatePatientInMainList={updatePatientInMainList} />;
 
     case "RAP":
-      return (
-        <DepartmentPatients
-          patientsFromApp={patients}
-          showAllPatients
-          hideBack
-          listOnly
-          title="RAP"
-          onBack={() => {}}
-        />
-      );
-
+      return <RAP title="RAP" />
+      
     default:
       return <PatientRegister addPatient={addPatient} />;
   }

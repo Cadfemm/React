@@ -88,7 +88,157 @@ function formatToday() {
   const d = new Date();
   return d.toISOString().split("T")[0];
 }
+  export const EEG_SCHEMA = {
+    enableLanguageToggle: true,
+    title: { en: "EEG(Electroencephalogram)", ms: "EEG" },
+    actions: [
+      { type: "toggle-language" },
+      { type: "back", label: { en: "Back", ms: "Kembali" } }
+    ],
+    sections: [
+      {
+        fields: [
+          {
+            name: "date_of_appointment",
+            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
+            type: "date",
+            placeholder: { en: "Select date", ms: "Pilih tarikh" }
+          },
+          {
+            name: "type_eeg",
+            label: { en: "Type of EEG", ms: "Jenis EEG" },
+            type: "radio",
+            options: TYPE_EEG_OPTIONS,
+            labelAbove: true
+          },
+          {
+            name: "general_appearance",
+            label: { en: "General Appearance & Mental Status", ms: "Penampakan Umum & Status Mental" },
+            type: "textarea",
+            placeholder: { en: "Free text", ms: "Teks bebas" }
+          },
+          {
+            name: "medication",
+            label: { en: "Medication", ms: "Ubatan" },
+            type: "textarea",
+            readOnly: true,
+            placeholder: { en: "Free text", ms: "Teks bebas" }
+          },
+          {
+            name: "sedation",
+            label: { en: "Sedation", ms: "Sedasi" },
+            type: "radio",
+            options: SEDATION_OPTIONS
+          },
+          { type: "subheading", label: { en: "Technical Settings", ms: "Tetapan Teknikal" } },
+          {
+            name: "sensitivity",
+            label: { en: "Sensitivity", ms: "Kehasilan" },
+            type: "radio",
+            options: SENSITIVITY_OPTIONS
+          },
+          {
+            name: "high_freq_filter",
+            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
+            type: "radio",
+            options: HIGH_FREQ_OPTIONS
+          },
+          {
+            name: "low_freq_filter",
+            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
+            type: "radio",
+            options: LOW_FREQ_OPTIONS
+          },
+          {
+            name: "paper_speed",
+            label: { en: "Paper Speed", ms: "Kelajuan Kertas" },
+            type: "radio",
+            options: PAPER_SPEED_OPTIONS
+          },
+          {
+            name: "montages",
+            label: { en: "Montages", ms: "Montages" },
+            type: "radio",
+            options: MONTAGES_OPTIONS
+          },
+          {
+            name: "montages_others",
+            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
+            type: "input",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "montages", equals: "others" }
+          },
+          {
+            name: "electrocardiogram",
+            label: { en: "Electrocardiogram", ms: "Elektrokardiogram" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+            name: "electromyogram",
+            label: { en: "Electromyogram", ms: "Elektromiogram" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+            name: "photic_stimulation",
+            label: { en: "Photic Stimulation", ms: "Rangsangan Fotik" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+            name: "hyperventilation",
+            label: { en: "Hyperventilation", ms: "Hiperventilasi" },
+            type: "radio",
+            options: HYPERVENTILATION_OPTIONS
+          },
 
+  {
+            name: "previous_study",
+            label: { en: " Previous Study", ms: "Muat naik EEG Sebelumnya" },
+            type: "radio",
+            options: YES_NO_OPTIONS
+          },
+          {
+  name: "previous_study_upload",
+  label: { en: "Upload Previous EEG", ms: "Muat naik EEG Sebelumny" },
+  type: "attach-file",
+  accept: "image/*,.pdf",
+  showIf: { field: "previous_study", equals: "yes" }
+},
+          
+          
+          { type: "subheading", label: { en: "Report", ms: "Laporan" } },
+          {
+            name: "graf",
+            title: { en: "Graph (Running Graph Report & Video)", ms: "Graph (Laporan Graph Berjalan & Video)" },
+            type: "attach-file",
+            accept: "image/*,.pdf,video/*"
+          },
+          {
+            name: "final_report",
+            label: { en: "Final Report", ms: "Laporan Akhir" },
+            type: "radio",
+            options: FINAL_REPORT_OPTIONS
+          },
+          {
+            name: "final_report_abnormal",
+            label: { en: "Specify", ms: "Nyatakan" },
+            type: "textarea",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", equals: "abnormal" }
+          },
+          {
+            name: "final_report_borderline",
+            label: { en: "Specify", ms: "Nyatakan" },
+            type: "textarea",
+            placeholder: { en: "Free text", ms: "Teks bebas" },
+            showIf: { field: "final_report", equals: "borderline" }
+          }
+        ]
+      }
+    ]
+  };
 export default function EEGForm({ patient, onBack }) {
   const [language, setLanguage] = useState("en");
   const gender = patient?.sex || patient?.gender || "-";
@@ -262,158 +412,6 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
     </div>
   );
 }
-
-  const EEG_SCHEMA = {
-    enableLanguageToggle: true,
-    title: { en: "EEG(Electroencephalogram)", ms: "EEG" },
-    actions: [
-      { type: "toggle-language" },
-      { type: "back", label: { en: "Back", ms: "Kembali" } }
-    ],
-    sections: [
-      {
-        fields: [
-          {
-            name: "date_of_appointment",
-            label: { en: "Date of Appointment", ms: "Tarikh Temujanji" },
-            type: "date",
-            placeholder: { en: "Select date", ms: "Pilih tarikh" }
-          },
-          {
-            name: "type_eeg",
-            label: { en: "Type of EEG", ms: "Jenis EEG" },
-            type: "radio",
-            options: TYPE_EEG_OPTIONS,
-            labelAbove: true
-          },
-          {
-            name: "general_appearance",
-            label: { en: "General Appearance & Mental Status", ms: "Penampakan Umum & Status Mental" },
-            type: "textarea",
-            placeholder: { en: "Free text", ms: "Teks bebas" }
-          },
-          {
-            name: "medication",
-            label: { en: "Medication", ms: "Ubatan" },
-            type: "textarea",
-            readOnly: true,
-            placeholder: { en: "Free text", ms: "Teks bebas" }
-          },
-          {
-            name: "sedation",
-            label: { en: "Sedation", ms: "Sedasi" },
-            type: "radio",
-            options: SEDATION_OPTIONS
-          },
-          { type: "subheading", label: { en: "Technical Settings", ms: "Tetapan Teknikal" } },
-          {
-            name: "sensitivity",
-            label: { en: "Sensitivity", ms: "Kehasilan" },
-            type: "radio",
-            options: SENSITIVITY_OPTIONS
-          },
-          {
-            name: "high_freq_filter",
-            label: { en: "High Frequency Filter", ms: "Penapis Frekuensi Tinggi" },
-            type: "radio",
-            options: HIGH_FREQ_OPTIONS
-          },
-          {
-            name: "low_freq_filter",
-            label: { en: "Low Frequency Filter", ms: "Penapis Frekuensi Rendah" },
-            type: "radio",
-            options: LOW_FREQ_OPTIONS
-          },
-          {
-            name: "paper_speed",
-            label: { en: "Paper Speed", ms: "Kelajuan Kertas" },
-            type: "radio",
-            options: PAPER_SPEED_OPTIONS
-          },
-          {
-            name: "montages",
-            label: { en: "Montages", ms: "Montages" },
-            type: "radio",
-            options: MONTAGES_OPTIONS
-          },
-          {
-            name: "montages_others",
-            label: { en: "Specify Other", ms: "Nyatakan Lain-lain" },
-            type: "input",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "montages", equals: "others" }
-          },
-          {
-            name: "electrocardiogram",
-            label: { en: "Electrocardiogram", ms: "Elektrokardiogram" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "electromyogram",
-            label: { en: "Electromyogram", ms: "Elektromiogram" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "photic_stimulation",
-            label: { en: "Photic Stimulation", ms: "Rangsangan Fotik" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-            name: "hyperventilation",
-            label: { en: "Hyperventilation", ms: "Hiperventilasi" },
-            type: "radio",
-            options: HYPERVENTILATION_OPTIONS
-          },
-
-  {
-            name: "previous_study",
-            label: { en: " Previous Study", ms: "Muat naik EEG Sebelumnya" },
-            type: "radio",
-            options: YES_NO_OPTIONS
-          },
-          {
-  name: "previous_study_upload",
-  label: { en: "Upload Previous EEG", ms: "Muat naik EEG Sebelumny" },
-  type: "attach-file",
-  accept: "image/*,.pdf",
-  showIf: { field: "previous_study", equals: "yes" }
-},
-          
-          
-          { type: "subheading", label: { en: "Report", ms: "Laporan" } },
-          {
-            name: "graf",
-            title: { en: "Graph (Running Graph Report & Video)", ms: "Graph (Laporan Graph Berjalan & Video)" },
-            type: "attach-file",
-            accept: "image/*,.pdf,video/*"
-          },
-          {
-            name: "final_report",
-            label: { en: "Final Report", ms: "Laporan Akhir" },
-            type: "radio",
-            options: FINAL_REPORT_OPTIONS
-          },
-          {
-            name: "final_report_abnormal",
-            label: { en: "Specify", ms: "Nyatakan" },
-            type: "textarea",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "abnormal" }
-          },
-          {
-            name: "final_report_borderline",
-            label: { en: "Specify", ms: "Nyatakan" },
-            type: "textarea",
-            placeholder: { en: "Free text", ms: "Teks bebas" },
-            showIf: { field: "final_report", equals: "borderline" }
-          }
-        ]
-      }
-    ]
-  };
 
   return (
     <div>

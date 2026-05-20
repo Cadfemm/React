@@ -12,6 +12,7 @@ import EmptyState from "../../../shared/ui/EmptyState";
 import ConfirmModal from "../../../shared/ui/ConfirmModal";
 import Toast from "../../../shared/ui/Toast";
 import ReferralModal from "../../../shared/ui/ReferralModal";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 // ── Lazy-loaded assessment components ──────────────────────────────────────
 const BinocularVisionAssessment   = lazy(() => import("../BinocularVisionAssessment"));
@@ -154,6 +155,12 @@ const BV_QUESTIONNAIRE_SCHEMA = {
             field: "bv_ocular_signs",
             includes: "Other"
           }
+        },
+        {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
         }
       ]
     }
@@ -286,11 +293,6 @@ const ACTIONS_PLAN_ONLY = [
 ];
 
 
-const OPTOMETRY_CONTAINER_SCHEMA = {
-  title: "Patient Information",
-  sections: []
-};
-
 const ACTIONS_WITH_NEXT = [
   { type: "back",  label: "Back"  },
   { type: "clear", label: "Clear" },
@@ -305,153 +307,6 @@ const TAB_META = {
   plan:        { label: "Plan"        },
 };
 
-
-// ── Patient Header Card (light blue hospital grade) ────────────────────────
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient, onReferral, isFollowup, onStart, starting, assessmentId, onCopyLink }) {
-  if (!patient) return null;
-  const initial = (patient.name || patient.email || "P")[0].toUpperCase();
-  const fields = [
-    { label: "Date of Birth",      value: localDateTimeString(patient.date_of_birth) || "—" },
-    { label: "Age / Gender",       value: `${patient.age || "—"} / ${patient.gender || "—"}` },
-    { label: "ICD Code",           value: patient.icd || "—" },
-    { label: "Date of Assessment", value: new Date().toLocaleDateString("en-GB") },
-    { label: "Medical History",    value: patient.medical_history || "No data" },
-    { label: "Allergies",          value: patient.allergies || "None recorded" },
-  ];
-  
-  return (
-    <div style={PI.card}>
-      {/* Blue header strip */}
-      <div style={PI.header}>
-        <div style={PI.headerLeft}>
-          <div style={PI.avatar}>{initial}</div>
-          <div>
-            <div style={PI.name}>{patient.name || patient.email || "Patient"}</div>
-            <div style={PI.metaRow}>
-              <span style={PI.metaChip}>
-                <span style={PI.metaDot} />
-                IC: {patient.id || "—"}
-              </span>
-              <span style={PI.metaDivider} />
-              <span style={PI.metaChip}>
-                <span style={PI.metaDot} />
-                Optometry
-              </span>
-              <span style={PI.metaDivider} />
-              <span style={PI.metaChip}>
-                <span style={PI.metaDot} />
-                {new Date().toLocaleDateString("en-GB")}
-              </span>
-              {isFollowup && (
-                <>
-                  <span style={PI.metaDivider} />
-                  <span style={{ ...PI.metaChip, background: "rgba(255,255,255,0.25)", color: "#fff", fontWeight: 700, borderRadius: 999, padding: "2px 10px" }}>
-                    Follow-up Visit
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-        <div style={PI.headerActions}>
-          <button
-            style={PI.reportBtn}
-            onMouseEnter={e => e.currentTarget.style.background = "#0369a1"}
-            onMouseLeave={e => e.currentTarget.style.background = "#0284c7"}
-            onClick={() => alert("Report will be generating soon")}
-          >
-            Doctors Report
-          </button>
-          {/* ── Start button ── */}
-          <button
-            style={{
-              ...PI.startBtn,
-              opacity: starting ? 0.7 : 1,
-              cursor: starting ? "not-allowed" : "pointer",
-              background: assessmentId ? "rgba(255,255,255,0.20)" : "rgba(255,255,255,0.92)",
-              color: assessmentId ? "#fff" : "#0369a1",
-              border: assessmentId ? "1.5px solid rgba(255,255,255,0.5)" : "none",
-            }}
-            onMouseEnter={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255, 255, 255, 0.75)"; }}
-            onMouseLeave={e => { if (!assessmentId) e.currentTarget.style.background = "rgba(255,255,255,0.92)"; }}
-            onClick={!assessmentId && !starting ? onStart : undefined}
-            disabled={starting || !!assessmentId}
-            title={assessmentId ? `Session active: ${assessmentId}` : "Start a new assessment session"}
-          >
-            {starting ? "Starting…" : assessmentId ? "✓ Started" : "Start"}
-          </button>
-          <button
-            style={PI.referralBtn}
-            onMouseEnter={e => e.currentTarget.style.background = "#0369a1"}
-            onMouseLeave={e => e.currentTarget.style.background = "#0284c7"}
-            onClick={onReferral}
-          >
-            Referral
-          </button>
-        </div>
-      </div>
-
-      {/* ── Session ID banner (shown only after Start) ── */}
-      {assessmentId && (
-        <div style={{
-          display: "flex", alignItems: "center", gap: 10,
-          padding: "6px 20px",
-          background: "#f0fdf4",
-          borderBottom: "1px solid #bbf7d0",
-          flexWrap: "wrap",
-        }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            Session ID
-          </span>
-          <span style={{
-            fontFamily: "monospace", fontSize: 12, fontWeight: 600,
-            color: "#166534", background: "#dcfce7",
-            border: "1px solid #bbf7d0", borderRadius: 4,
-            padding: "2px 8px", letterSpacing: "0.3px",
-            userSelect: "all",
-          }}>
-            {assessmentId}
-          </span>
-          <button
-            title="Copy shareable link with your token — recipient opens directly without login"
-            style={{
-              marginLeft: 4,
-              padding: "2px 10px", borderRadius: 4,
-              background: "#16a34a", color: "#fff",
-              border: "none", fontSize: 11, fontWeight: 700,
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              const token     = localStorage.getItem("access_token") || "";
-              const patientId = patient?.id || "";
-              const url = `${window.location.origin}/optometry/assessment/${assessmentId}?patient_id=${patientId}&token=${token}`;
-              navigator.clipboard.writeText(url).then(() => onCopyLink?.());
-            }}
-          >
-            Copy Link
-          </button>
-          <span style={{ fontSize: 11, color: "#86efac" }}>— share this link; recipient opens directly</span>
-        </div>
-      )}
-
-      <div style={PI.grid}>
-        {fields.map((f, i) => (
-          <div
-            key={f.label}
-            style={{
-              ...PI.field,
-              borderRight: (i + 1) % 3 !== 0 ? "1px solid #f1f5f9" : "none",
-              borderBottom: i < 3 ? "1px solid #f1f5f9" : "none",
-            }}
-          >
-            <div style={PI.fieldLabel}>{f.label}</div>
-            <div style={PI.fieldValue}>{f.value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-});
 
 /* ===================== MAIN COMPONENT ===================== */
 
@@ -503,7 +358,6 @@ export default function OptometryAssessment({
   });
   const [starting,      setStarting]      = useState(false);
   const [tabLoading,    setTabLoading]    = useState(false);
-  const autoSaveTimer = useRef(null);
 
   const isFollowup = false;
 
@@ -1539,20 +1393,6 @@ export default function OptometryAssessment({
         }
       };
 
-      // Debounced auto-save to API (1.5 s after last keystroke)
-      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
-      autoSaveTimer.current = setTimeout(() => {
-        const formDataId = formDataIds[activeTab];
-        if (formDataId && assessmentId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: next[activeTab] })
-            .catch(() => {/* silent — user can still hit Save manually */});
-        }
-        // Always persist draft locally too
-        if (storageKey) {
-          localStorage.setItem(storageKey, JSON.stringify({ values: next, updatedAt: new Date() }));
-        }
-      }, 1500);
-
       return next;
     });
   }, [readOnly, activeTab, formDataIds, assessmentId, storageKey]);
@@ -1622,6 +1462,17 @@ export default function OptometryAssessment({
     if (type === "back") { onBack?.(); return; }
     if (readOnly) return;
     if (type === "next") {
+      const formDataId = formDataIds?.[activeTab] ?? null
+      if (assessmentId && formDataId) {
+        api.patch(
+          API_URL.ASSESSMENT + `data/${formDataId}/`,
+          { data: values[activeTab]}
+        ).then(
+          () => setToast({ message: 'Saved', variant: 'success' })
+        ).then(
+          () => ({ message: 'Failed to save', variant: 'error' })
+        )
+      }
       const idx = TAB_ORDER.indexOf(activeTab);
       if (idx < TAB_ORDER.length - 1) setActiveTab(TAB_ORDER[idx + 1]);
       return;
@@ -1630,24 +1481,6 @@ export default function OptometryAssessment({
       setValues({ subjective: {}, objective: {}, assessment: {}, plan: {} }); 
       setSubmitted(false); 
       localStorage.removeItem(storageKey); 
-    }
-    if (type === "save") {
-      // Persist draft locally
-      localStorage.setItem(storageKey, JSON.stringify({ values, updatedAt: new Date() }));
-
-      // Push to API immediately on explicit Save click
-      if (assessmentId) {
-        const formDataId = formDataIds[activeTab];
-        if (formDataId) {
-          api.patch(API_URL.ASSESSMENT + `data/${formDataId}/`, { data: values[activeTab] })
-            .then(() => setToast({ message: 'Saved successfully', variant: 'success' }))
-            .catch(() => setToast({ message: 'Save failed. Draft kept locally.', variant: 'error' }));
-        } else {
-          setToast({ message: 'Draft saved locally', variant: 'success' });
-        }
-      } else {
-        setToast({ message: 'Draft saved locally (start a session to sync)', variant: 'success' });
-      }
     }
   }, [readOnly, activeTab, storageKey, values, onBack, assessmentId, formDataIds]);
 
@@ -1739,17 +1572,45 @@ export default function OptometryAssessment({
       )}
 
       <div style={S.page}>
+        {/* ── Start / Referral action bar (above patient card) ── */}
+        <div style={S.actionBar}>
+          <button
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 5,
+              borderRadius: 6, padding: "6px 16px", fontSize: 12, fontWeight: 700,
+              transition: "background .15s, opacity .15s",
+              opacity: starting ? 0.7 : 1,
+              cursor: starting ? "not-allowed" : "pointer",
+              background: assessmentId ? "#e0f2fe" : "#0284c7",
+              color: assessmentId ? "#0369a1" : "#fff",
+              border: assessmentId ? "1.5px solid #bae6fd" : "none",
+            }}
+            onMouseEnter={e => { if (!assessmentId) e.currentTarget.style.background = "#0369a1"; }}
+            onMouseLeave={e => { if (!assessmentId) e.currentTarget.style.background = "#0284c7"; }}
+            onClick={!assessmentId && !starting ? handleStart : undefined}
+            disabled={starting || !!assessmentId}
+            title={assessmentId ? `Session active: ${assessmentId}` : "Start a new assessment session"}
+          >
+            {starting ? "Starting…" : assessmentId ? "✓ Started" : "Start"}
+          </button>
+          <button
+            style={{
+              display: "inline-flex", alignItems: "center",
+              background: "#0284c7", border: "none", color: "#fff",
+              borderRadius: 6, padding: "6px 14px", fontSize: 12,
+              fontWeight: 600, cursor: "pointer", transition: "background .15s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "#0369a1"}
+            onMouseLeave={e => e.currentTarget.style.background = "#0284c7"}
+            onClick={() => setShowReferral(true)}
+          >
+            Referral
+          </button>
+        </div>
+
         {/* Patient header */}
         <div style={S.patientCardWrap}>
-          <OptometryPatientInfo
-            patient={patient}
-            onReferral={() => setShowReferral(true)}
-            isFollowup={isFollowup}
-            onStart={handleStart}
-            starting={starting}
-            assessmentId={assessmentId}
-            onCopyLink={() => setToast({ message: "Shareable link copied to clipboard", variant: "success" })}
-          />
+          <PatientCard patient={patient} />
         </div>
 
         {/* SOAP tab shell */}
@@ -1830,7 +1691,7 @@ export default function OptometryAssessment({
                       style={S.submitBtn}
                       onMouseEnter={e => e.currentTarget.style.background = "#1d4ed8"}
                       onMouseLeave={e => e.currentTarget.style.background = "#2563eb"}
-                      onClick={() => setShowConfirm(true)}
+                      onClick={() => {handleAction('next'); setShowConfirm(true)}}
                     >
                       {isFollowup ? "Submit Follow-up Visit" : "Submit Assessment"}
                     </button>
@@ -1852,6 +1713,13 @@ const S = {
     minHeight: "100vh",
     fontFamily: "'Inter', 'Segoe UI', Roboto, sans-serif",
     padding: "16px",
+  },
+
+  actionBar: {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: 8,
+    marginBottom: 10,
   },
 
   patientCardWrap: {
@@ -1951,135 +1819,4 @@ const S = {
 };
 
 /* ── Patient header card styles ─────────────────────────────────────────── */
-const PI = {
-  card: {
-    background: "#fff",
-    overflow: "hidden",
-  },
-
-  /* Sky blue clinical header */
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "14px 20px",
-    background: "#dbeafe",
-    borderBottom: "1px solid #bae6fd",
-  },
-  headerLeft: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-  },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: "50%",
-    background: "#0284c7",
-    border: "2px solid #bae6fd",
-    color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 15,
-    fontWeight: 800,
-    flexShrink: 0,
-  },
-  name: {
-    fontSize: 15,
-    fontWeight: 700,
-    color: "#0c4a6e",
-    marginBottom: 2,
-  },
-  metaRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  metaChip: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 4,
-    fontSize: 11,
-    color: "#0369a1",
-    fontWeight: 500,
-  },
-  metaDot: {
-    width: 4,
-    height: 4,
-    borderRadius: "50%",
-    background: "#0284c7",
-    display: "inline-block",
-  },
-  metaDivider: {
-    width: 1,
-    height: 11,
-    background: "#bae6fd",
-    display: "inline-block",
-  },
-  headerActions: {
-    display: "flex",
-    gap: 8,
-  },
-  reportBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    background: "#0284c7",
-    border: "1.5px solid rgba(255,255,255,0.6)",
-    color: "#fff",
-    borderRadius: 6,
-    padding: "6px 14px",
-    fontSize: 12,
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "background .15s",
-  },
-  startBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 5,
-    borderRadius: 6,
-    padding: "6px 16px",
-    fontSize: 12,
-    fontWeight: 700,
-    transition: "background .15s, opacity .15s",
-  },
-  referralBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    background: "#0284c7",
-    border: "none",
-    color: "#fff",
-    borderRadius: 6,
-    padding: "6px 14px",
-    fontSize: 12,
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "background .15s",
-  },
-
-  /* Info grid — clean white, clinical */
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    background: "#fff",
-  },
-  field: {
-    padding: "10px 20px",
-    minHeight: 52,
-  },
-  fieldLabel: {
-    fontSize: 10,
-    fontWeight: 700,
-    color: "#94a3b8",
-    textTransform: "uppercase",
-    letterSpacing: "0.7px",
-    marginBottom: 3,
-  },
-  fieldValue: {
-    fontSize: 13,
-    fontWeight: 500,
-    color: "#1e293b",
-  },
-};
+// end of file

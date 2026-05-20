@@ -171,7 +171,7 @@ actions: [
         {
           name: "strength_endurance_training_items",
           label: "Strength and Endurance Training",
-          type: "checkboxbox-group",
+          type: "checkbox-group",
           options: [
             { label: "Pushing", value: "pushing" },
             { label: "Pulling", value: "pulling" },
@@ -513,37 +513,18 @@ actions: [
           type: "checkbox-group",
           options: [
             {
-              label: "To continue work hardening targeting / focusing on",
+              label: "Continue work hardening targeting / focusing on",
               value: "continue_work_hardening"
             },
             {
-              label: "To continue FCE assessment targeting / focusing on",
+              label: "Continue assessment targeting / focusing on",
               value: "continue_fce_assessment"
             },
             {
-              label: "To introduce work adaptation / modification strategies",
+              label: "Introduce work adaptation / modification strategies",
               value: "introduce_work_adaptation_modification"
             },
-            {
-              label: "To continue training on work adaptation / modification strategies",
-              value: "continue_training_work_adaptation_modification"
-            },
-            {
-              label: "To provide work simulation activities",
-              value: "provide_work_simulation"
-            },
-            {
-              label: "To discuss and plan for work trial with Case Manager",
-              value: "plan_work_trial_with_case_manager"
-            },
-            {
-              label: "To provide ergonomics education",
-              value: "provide_ergonomics_education"
-            },
-            {
-              label: "To do re-assessment on Work Rehabilitation Questionnaire / Readiness For Return to Work Scale",
-              value: "reassessment_work_rehabilitation_questionnaire"
-            },
+           
             {
               label: "Others",
               value: "others"
@@ -584,61 +565,7 @@ actions: [
           }
         },
 
-        {
-          name: "continue_training_work_adaptation_modification_remarks",
-          label: "Training on Work Adaptation / Modification Strategies",
-          type: "input",
-          placeholder: "Enter training focus",
-          showIf: {
-            field: "plan_items",
-            includes: "continue_training_work_adaptation_modification"
-          }
-        },
-
-        {
-          name: "provide_work_simulation_remarks",
-          label: "Work Simulation Activities",
-          type: "input",
-          placeholder: "Enter work simulation activities",
-          showIf: {
-            field: "plan_items",
-            includes: "provide_work_simulation"
-          }
-        },
-
-        {
-          name: "plan_work_trial_with_case_manager_remarks",
-          label: "Work Trial Plan with Case Manager",
-          type: "input",
-          placeholder: "Enter work trial plan",
-          showIf: {
-            field: "plan_items",
-            includes: "plan_work_trial_with_case_manager"
-          }
-        },
-
-        {
-          name: "provide_ergonomics_education_remarks",
-          label: "Ergonomics Education Plan",
-          type: "input",
-          placeholder: "Enter ergonomics education plan",
-          showIf: {
-            field: "plan_items",
-            includes: "provide_ergonomics_education"
-          }
-        },
-
-        {
-          name: "reassessment_work_rehabilitation_questionnaire_remarks",
-          label: "Re-assessment Plan",
-          type: "input",
-          placeholder: "Enter re-assessment details",
-          showIf: {
-            field: "plan_items",
-            includes: "reassessment_work_rehabilitation_questionnaire"
-          }
-        },
-
+        
         {
           name: "plan_other_details",
           label: "Other Plan Item",
