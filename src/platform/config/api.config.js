@@ -14,6 +14,8 @@ const API_URL = {
 
     // Assessment apis
     ASSESSMENT: BASE_API + 'assessment/',
+    fetchTemplate: (department) => 
+        BASE_API + `assessment/department/${encodeURIComponent(department)}/`,
     patientAssessments: (patientId) =>
         BASE_API + `assessment/patient/${encodeURIComponent(patientId)}/`,
     assessmentFormData: (formDataId) =>
