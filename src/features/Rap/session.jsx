@@ -6,7 +6,7 @@ import { API_URL } from "../../platform/config/api.config";
 import React, { useEffect, useMemo, useState } from "react";
 
 
-const ASSESSMENT_GRID_COLUMNS = "1.5fr 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr";
+const ASSESSMENT_GRID_COLUMNS = "1.5fr 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr 1.2fr";
 
 
 function formatDate(value, { includeTime = false } = {}) {
@@ -163,9 +163,6 @@ function SessionRow({ sessionData, idx, onView }) {
                 {sessionData.visit_type}
             </div>
             <div style={dateCellStyle}>
-                {sessionData?.department || '-'}
-            </div>
-            <div style={dateCellStyle}>
                 {sessionData.is_completed ? 'Yes' : 'No'}
             </div>
             <div style={dateCellStyle}>
@@ -244,7 +241,6 @@ export default function SOAPSession({
             return (
                 String(a.id || '-').includes(q) ||
                 String(a.visit_type || '-').includes(q) ||
-                String(a.department || '-').includes(q) ||
                 String(a.is_completed || '').includes(q) ||
                 String(a.duration || '-').includes(q) ||
                 String(a.total_score || 0).includes(q) ||
@@ -445,7 +441,6 @@ export default function SOAPSession({
                     {[
                         "Session ID",
                         "Visit Type",
-                        "Department",
                         "Completed",
                         "Duration",
                         "Score",
