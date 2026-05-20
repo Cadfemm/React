@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from "react";
-import OptometryAssessment from "./components/OptometryAssessment";
 import OptometryFollowUpAssessment from "./components/OptometryFollowUpAssessment";
 import OptometryFollowUpDashboard from "./components/OptometryFollowUpDashboard";
 import OptometryProgressAssessment from "./components/OptometryProgressAssessment";
@@ -7,6 +6,9 @@ import { ShimmerRow } from "../../shared/ui/Shimmer";
 import EmptyState from "../../shared/ui/EmptyState";
 import api from "../../shared/api/apiClient";
 import { API_URL } from "../../platform/config/api.config";
+
+// Assessment Loader
+import AssessmentLoader from "../../assessment"
 
 /* ── Status palette ─────────────────────────────────────────────────────── */
 const STATUS = {
@@ -119,12 +121,9 @@ export default function OptometryPatients({ onBack, loading = false }) {
   if (selectedPatient && assessmentView === "initial") {
     const saved = submittedAssessments[selectedPatient.id] ?? null;
     return (
-      <OptometryAssessment
+      <AssessmentLoader
+        department="Optometry"
         patient={selectedPatient}
-        savedValues={saved}
-        readOnly={!!saved}
-        onSubmit={handleInitialSubmit}
-        onBack={handleBackToCards}
       />
     );
   }
