@@ -1,11 +1,7 @@
 import React, { useState, useMemo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
-
-const AUDIO_CONTAINER_SCHEMA = {
-  title: "Patient Information",
-  sections: []
-};
+import PatientCard from "../../../shared/cards/PatientCard";
 
 const TAB_ORDER = ["subjective", "objective", "assessment", "plan"];
 
@@ -153,45 +149,11 @@ export default function AudiologyGroupAssessmentForm({ patient, onSubmit, onBack
 },
   }), []);
 
-  /* ── Patient info — identical to AudiologyAdultIA ── */
-  function AudioPatientInfo({ patient }) {
-    if (!patient) return null;
-    return (
-      <div style={section}>
-        <div style={patientGrid}>
-          <div><b>Name:</b> {patient.name}</div>
-          <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {localDateTimeString(patient.dob)}</div>
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
-          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Place of Residence:</b> {patient.residence || patient.place_of_residence || "-"}</div>
-          <div><b>Date of Assessment:</b> {localDateTimeString('', true)}</div>
-          <div style={{ gridColumn: "1 / -1" }}>
-            <button
-              style={doctorsReportBtn}
-              onClick={() => alert("Report will be generating soon")}
-            >
-              Doctors Reports
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   /* ── Render ── */
   return (
     <div style={mainContent}>
       {/* Patient Information Card */}
-      <CommonFormBuilder
-        schema={AUDIO_CONTAINER_SCHEMA}
-        values={{}}
-        onChange={() => {}}
-      >
-        <AudioPatientInfo patient={patient} />
-      </CommonFormBuilder>
+      <PatientCard patient={patient} />
 
       {/* SOAP Tabs */}
       <div style={tabBar}>
@@ -276,25 +238,4 @@ const submitBtn = {
   fontSize: 15,
   fontWeight: 700,
   cursor: "pointer",
-};
-
-const section = { marginBottom: 24 };
-
-const patientGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12,
-  fontSize: 14,
-};
-
-const doctorsReportBtn = {
-  padding: "10px 20px",
-  background: "#2563EB",
-  color: "#fff",
-  border: "none",
-  borderRadius: 6,
-  fontSize: 14,
-  fontWeight: 600,
-  cursor: "pointer",
-  marginTop: 8,
 };

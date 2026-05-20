@@ -1,6 +1,7 @@
 import React, { useState, useMemo, memo } from "react";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
 import { localDateTimeString } from "../../../shared/utils/dateFormatter";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 const ACTIONS_WITH_NEXT = [
   { type: "back",  label: "Back"  },
@@ -16,56 +17,6 @@ const TAB_META = {
   assessment: { label: "Assessment"  },
   plan:       { label: "Plan"        },
 };
-
-/* ── Patient header — matches OptometryAssessment style ── */
-const OptometryPatientInfo = memo(function OptometryPatientInfo({ patient }) {
-  if (!patient) return null;
-  const initial = (patient.name || patient.email || "P")[0].toUpperCase();
-  const fields = [
-    { label: "Date of Birth",      value: localDateTimeString(patient.date_of_birth) || "—" },
-    { label: "Age / Gender",       value: `${patient.age || "—"} / ${patient.gender || "—"}` },
-    { label: "ICD Code",           value: patient.icd || "—" },
-    { label: "Date of Assessment", value: new Date().toLocaleDateString("en-GB") },
-    { label: "Medical History",    value: patient.medical_history || "No data" },
-    { label: "Allergies",          value: patient.allergies || "None recorded" },
-  ];
-
-  return (
-    <div style={PI.card}>
-      <div style={PI.header}>
-        <div style={PI.headerLeft}>
-          <div style={PI.avatar}>{initial}</div>
-          <div>
-            <div style={PI.name}>{patient.name || patient.email || "Patient"}</div>
-            <div style={PI.metaRow}>
-              <span style={PI.metaChip}><span style={PI.metaDot} />IC: {patient.id || "—"}</span>
-              <span style={PI.metaDivider} />
-              <span style={PI.metaChip}><span style={PI.metaDot} />Optometry</span>
-              <span style={PI.metaDivider} />
-              <span style={PI.metaChip}><span style={PI.metaDot} />{new Date().toLocaleDateString("en-GB")}</span>
-              <span style={PI.metaDivider} />
-              <span style={{ ...PI.metaChip, background: "rgba(255,255,255,0.25)", color: "#fff", fontWeight: 700, borderRadius: 999, padding: "2px 10px" }}>
-                Progress Intervention
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style={PI.grid}>
-        {fields.map((f, i) => (
-          <div key={f.label} style={{
-            ...PI.field,
-            borderRight: (i + 1) % 3 !== 0 ? "1px solid #f1f5f9" : "none",
-            borderBottom: i < 3 ? "1px solid #f1f5f9" : "none",
-          }}>
-            <div style={PI.fieldLabel}>{f.label}</div>
-            <div style={PI.fieldValue}>{f.value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-});
 
 /* ── Main component ── */
 export default function OptometryProgressAssessment({ patient, onSubmit, onBack }) {
@@ -210,7 +161,7 @@ export default function OptometryProgressAssessment({ patient, onSubmit, onBack 
     <div style={S.page}>
       {/* Patient header */}
       <div style={S.patientCardWrap}>
-        <OptometryPatientInfo patient={patient} />
+        <PatientCard patient={patient} />
       </div>
 
       {/* SOAP shell */}
