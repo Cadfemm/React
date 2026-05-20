@@ -16,6 +16,7 @@ import SkinAssessment from "./SkinAssessment";
 import ProcedureAssessment from "./ProcedureAssessment";
 import MedicationAssessment from "./MedicationAssessment";
 import CommonFormBuilder from "../../CommonComponenets/FormBuilder";
+import PatientCard from "../../../shared/cards/PatientCard";
 
 /* -------------------------------------------------------------
    MULTISELECT CHECKBOX DROPDOWN  (UI ONLY - NO BUSINESS LOGIC)
@@ -363,141 +364,6 @@ const [SkinAssessmentData, setSkinAssessmentData] = useState(null);
   const section = {
     marginBottom: 24
   };
-  const patientGrid = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: 12,
-    fontSize: 14,
-  };
-
-  // Backward-compat: some hot-reload paths may still reference `patientCard`.
-  // The current patient header is rendered via `CommonFormBuilder`, but keeping this
-  // constant prevents runtime crashes.
-  const patientCard = {
-    border: "1px solid #e5e7eb",
-    borderRadius: 10,
-    padding: 18,
-    marginBottom: 20,
-    background: "#fafafa",
-    width: "100%",
-    boxSizing: "border-box",
-  };
-
-  const NEURO_CONTAINER_SCHEMA = {
-    title: "Patient Information",
-    sections: []
-  };
-
-  function DoctorsPatientInfo({ patient: pt, patientHistory, setPatientHistory }) {
-    if (!pt) return null;
-
-    return (
-      <div style={section}>
-        <div style={patientGrid}>
-          <div><b>Name:</b> {pt.name}</div>
-          <div><b>IC:</b> {pt.id}</div>
-          <div><b>DOB:</b> {formatDate(pt.dob)}</div>
-          <div><b>Age / Gender:</b> {pt.age} / {pt.sex}</div>
-          <div><b>ICD:</b> {pt.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-          <div><b>Date of Onset:</b> {formatDate(pt.date_of_onset)}</div>
-          <div><b>Duration of Diagnosis:</b> {calculateDuration(pt.date_of_onset)}</div>
-          <div><b>Primary Diagnosis:</b> {pt.diagnosis_history || "-"}</div>
-          <div><b>Secondary Diagnosis:</b> {pt.medical_history || "-"}</div>
-          <div><b>Dominant Side:</b> {pt.dominant_side || "-"}</div>
-          <div><b>Language Preference:</b> {pt.language_preference || "-"}</div>
-          <div><b>Education Level:</b> {pt.education_background || "-"}</div>
-          <div><b>Occupation:</b> {pt.occupation || "-"}</div>
-          <div><b>Work Status:</b> {pt.employment_status || "-"}</div>
-          <div><b>Driving Status:</b> {pt.driving_status || "-"}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
-
-          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
-              <textarea
-                value={patientHistory.past_medical_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div>
-
-            <div>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
-              <textarea
-                value={patientHistory.past_family_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div>
-            <div>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
-              <textarea
-                value={patientHistory.alerts_and_allergies}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
-                style={{
-                  width: "100%",
-                  minHeight: 90,
-                  padding: "10px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #d1d5db",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  resize: "vertical",
-                }}
-              />
-            </div> 
-            <div style={{ marginBottom: 10 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  // Your button logic here
-                  console.log("Alerts button clicked!");
-                  // Example: setShowAlertsModal(true);
-                }}
-                style={{
-                  marginTop: "10px",
-                  padding: "10px 20px",
-                  borderRadius: 6,
-                  border: "1.5px solid rgb(0, 123, 255)",
-                  background: "rgb(0, 123, 255)",
-                  color: "rgb(255, 255, 255)",
-                  fontWeight: 600,
-                  fontSize: 14,
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.06)"
-                }}
-              >
-                🚨 Alerts
-              </button>
-            </div>           
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   /* --------- Referral Department Options --------- */
   const departmentOptions = [
@@ -639,13 +505,12 @@ const handleSubmitReferral = () => {
       }}
     >
       {/* ===== PATIENT INFORMATION CARD (above all Doctors tabs) ===== */}
-      <CommonFormBuilder
-        schema={NEURO_CONTAINER_SCHEMA}
-        values={{}}
-        onChange={() => {}}
-      >
-        <DoctorsPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
-      </CommonFormBuilder>
+      <PatientCard
+        patient={patient}
+        patientHistory={patientHistory}
+        setPatientHistory={setPatientHistory}
+        showDoctorsReport={false}
+      />
 
       {/* ------------------ TABS ------------------ */}
       <div style={{ flexShrink: 0, width: "100%", marginBottom: 20 }}>

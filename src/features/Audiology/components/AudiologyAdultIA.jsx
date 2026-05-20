@@ -8,6 +8,7 @@ import { AuditoryAdvancedForm, AuditoryAdvancedFormObj } from "../auditoryassess
 import { VestibularAdvancedForm, VestibularAdvancedFormObj } from "../vestibularassessment";
 import { Hearingaidtrial } from "../hearingaidtrial";
 import { IndustrialAudiometry } from "../industrialaudiometry";
+import PatientCard from "../../../shared/cards/PatientCard";
 /* ===================== OPTIONS ===================== */
 
 const INTACT_IMPAIRED = [
@@ -1631,82 +1632,6 @@ const OBJECTIVE_SCHEMA = {
   };
 
   /* ===================== PATIENT INFO ===================== */
-  const AUDIO_CONTAINER_SCHEMA = {
-    title: "Patient Information",
-    sections: []
-  };
-
-  function AudioPatientInfo({ patient, patientHistory, setPatientHistory }) {
-    if (!patient) return null;
-
-    return (
-      <div style={section}>
-        <div style={patientGrid}>
-          <div><b>Name:</b> {patient.name}</div>
-          <div><b>IC:</b> {patient.id}</div>
-          <div><b>DOB:</b> {formatDate(patient.dob)}</div>
-          <div><b>Age / Gender:</b> {patient.age} / {patient.sex}</div>
-          <div><b>ICD:</b> {patient.icd}</div>
-          <div><b>Date of Assessment:</b> {today.toLocaleDateString()}</div>
-          <div><b>Date of Onset:</b> {formatDate(patient.date_of_onset)}</div>
-          <div><b>Duration of Diagnosis:</b> {calculateDuration(patient.date_of_onset)}</div>
-          <div><b>Primary Diagnosis:</b> {patient.diagnosis_history || "-"}</div>
-          <div><b>Secondary Diagnosis:</b> {patient.medical_history || "-"}</div>
-          <div><b>Dominant Side:</b> {patient.dominant_side || "-"}</div>
-          <div><b>Language Preference:</b> {patient.language_preference || "-"}</div>
-          <div><b>Education Level:</b> {patient.education_background || "-"}</div>
-          <div><b>Occupation:</b> {patient.occupation || "-"}</div>
-          <div><b>Work Status:</b> {patient.employment_status || "-"}</div>
-          <div><b>Driving Status:</b> {patient.driving_status || "-"}</div>
-          <div><b>Marital Status:</b> {patient.marital_status || patient.marital || "-"}</div>
-
-          <div style={{ gridColumn: "1 / -1", marginTop: 8 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>Patient History</div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Past Medical History</div>
-              <textarea
-                value={patientHistory.past_medical_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_medical_history: e.target.value }))}
-                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-              />
-            </div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Family History</div>
-              <textarea
-                value={patientHistory.past_family_history}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, past_family_history: e.target.value }))}
-                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-              />
-            </div>
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Allergies</div>
-              <textarea
-                value={patientHistory.alerts_and_allergies}
-                onChange={(e) => setPatientHistory((prev) => ({ ...prev, alerts_and_allergies: e.target.value }))}
-                style={{ width: "100%", minHeight: 90, padding: "10px 12px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", resize: "vertical" }}
-              />
-            </div>
-            <div style={{ marginBottom: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <button
-                type="button"
-                onClick={() => console.log("Alerts button clicked!")}
-                style={{ marginTop: 10, padding: "10px 20px", borderRadius: 6, border: "1.5px solid rgb(0,123,255)", background: "rgb(0,123,255)", color: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}
-              >
-                🚨 Alerts
-              </button>
-              <button
-                type="button"
-                onClick={() => alert("Report will be generating soon")}
-                style={{ ...doctorsReportBtn, marginTop: 10 }}
-              >
-                Doctors Reports
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
 function AudiometryFrequencyTable({ value = {}, onChange }) {
   const frequencies = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
@@ -1796,13 +1721,11 @@ function AudiometryFrequencyTable({ value = {}, onChange }) {
   return (
 <div style={mainContent}>
   {/* ===== PATIENT INFORMATION CARD ===== */}
-  <CommonFormBuilder
-    schema={AUDIO_CONTAINER_SCHEMA}
-    values={{}}
-    onChange={() => {}}
-  >
-    <AudioPatientInfo patient={patient} patientHistory={patientHistory} setPatientHistory={setPatientHistory} />
-  </CommonFormBuilder>
+  <PatientCard
+    patient={patient}
+    patientHistory={patientHistory}
+    setPatientHistory={setPatientHistory}
+  />
 
   {/* ===== TABS ===== */}
   <div style={tabBar}>
@@ -1917,19 +1840,4 @@ const submitBtn = {
 
 const section = {
   marginBottom: 24
-};const patientGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 12,
-  fontSize: 14
-};const doctorsReportBtn = {
-  padding: "10px 20px",
-  background: "#2563EB",
-  color: "#fff",
-  border: "none",
-  borderRadius: 6,
-  fontSize: 14,
-  fontWeight: 600,
-  cursor: "pointer",
-  marginTop: 8
 };
