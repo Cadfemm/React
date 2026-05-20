@@ -55,6 +55,14 @@ const VSCHEMA = {
         { type: "single-select", name: "drive_stop_why",  label: "Why did you stop driving?",   showIf: { field: "drive_stopped", equals: "Yes" }, options: [{ label: "Poor vision", value: "vision" }, { label: "Other illness", value: "illness" }, { label: "Other reason", value: "other" }] },
       ],
     },
+    {
+      fields: [{
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
+        }]
+    }
   ],
 };
 

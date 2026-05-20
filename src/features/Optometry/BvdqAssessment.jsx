@@ -99,6 +99,16 @@ fields: [
   ]
 }
 ]
+},
+{
+  fields:[
+    {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
+        }
+  ]
 }
 
   ]

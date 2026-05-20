@@ -245,6 +245,16 @@ const OcularHealthAssessmentSchema ={
         },
         { type: "input", name: "cv_impression", label: "Clinical Findings" }
       ]
+    },
+    {
+      fields: [
+        {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
+        }
+      ]
     }
   ]
 }

@@ -88,6 +88,12 @@ const LSCHEMA = {
       { name: "low_vision_prescription",     label: "Low Vision Prescription",       type: "textarea" },
       { name: "low_vision_followup",  label: "Low Vision Follow up", type: "radio", options: YES_NO },
       { name: "low_vision_referral",  label: "Low Vision Referral",  type: "radio", options: YES_NO },
+      {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
+        }
     ],
   }],
 };
