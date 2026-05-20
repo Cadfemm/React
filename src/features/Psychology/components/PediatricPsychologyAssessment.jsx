@@ -493,7 +493,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
         patient.medications || patient.drug_history || "No data available",
 
       // Pre-select the age group matching the patient's age (only if not already set)
-      ...(autoDevKey && !v.dev_age_group ? { dev_age_group: autoDevKey } : {})
+      ...(autoDevKey && !v.dev_age_group ? { dev_age_group: [autoDevKey] } : {})
     }));
   }, [patient]);
 
@@ -544,106 +544,208 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "chief_complaint",
             label: "Chief Complaint",
-            type: "textarea"
+            type: "input"
           },
           {
             name: "hpi",
             label: "History of Presenting Illness (HPI)",
-            type: "textarea"
+            type: "input"
           },
-
+{
+            name: "informant",
+            label: "Informant",
+            type: "radio",
+            options: [
+              { label: "Mother",    value: "mother"    },
+              { label: "Father",    value: "father"    },
+              { label: "Caregiver", value: "caregiver" },
+              { label: "Teacher",   value: "teacher"   },
+              { label: "Other",     value: "other"     }
+            ]
+          },
+          {
+            name: "informant_other",
+            label: "Specify Other",
+            type: "input",
+            placeholder: "Enter informant",
+            showIf: { field: "informant", equals: "other" }
+          },
           /* ===== DEVELOPMENTAL HISTORY SUBHEADING ===== */
           {
             type: "subheading",
             label: "Developmental history   CORE PEDIATRIC COMPONENT"
           },
 
-          /* ===== AGE GROUP SELECTOR ===== */
+          /* ===== AGE GROUP SELECTOR — collapsible multi-select dropdown ===== */
           {
+            type: "custom",
             name: "dev_age_group",
-            label: "Developmental Age Group",
-            type: "single-select",
-            placeholder: "— Select age group (auto-detected from patient age) —",
-            options: [
-              { label: "2–5 Months",   value: "2-5_months"   },
-              { label: "6–9 Months",   value: "6-9_months"   },
-              { label: "12–18 Months", value: "12-18_months" },
-              { label: "2 Years",      value: "2_years"      },
-              { label: "3 Years",      value: "3_years"      },
-              { label: "4 Years",      value: "4_years"      },
-              { label: "5 Years",      value: "5_years"      }
-            ]
+            render: ({ values, onChange: _onChange }) => {
+              const AGE_OPTIONS = [
+                { label: "2–5 Months",   value: "2-5_months"   },
+                { label: "6–9 Months",   value: "6-9_months"   },
+                { label: "12–18 Months", value: "12-18_months" },
+                { label: "2 Years",      value: "2_years"      },
+                { label: "3 Years",      value: "3_years"      },
+                { label: "4 Years",      value: "4_years"      },
+                { label: "5 Years",      value: "5_years"      },
+              ];
+
+              const selected = Array.isArray(values.dev_age_group)
+                ? values.dev_age_group
+                : (values.dev_age_group ? [values.dev_age_group] : []);
+
+              const toggle = (val) => {
+                const next = selected.includes(val)
+                  ? selected.filter(v => v !== val)
+                  : [...selected, val];
+                _onChange("dev_age_group", next);
+              };
+
+              /* Use a details/summary element — no useState needed */
+              const displayText = selected.length === 0
+                ? "Select"
+                : selected.map(v => AGE_OPTIONS.find(o => o.value === v)?.label).filter(Boolean).join(", ");
+
+              return (
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: "block", fontWeight: 600, fontSize: 14, color: "#0f172a", marginBottom: 6 }}>
+                    Developmental Age Group
+                  </label>
+
+                  <details style={{ position: "relative" }}>
+                    {/* Trigger */}
+                    <summary style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "10px 14px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: 8,
+                      background: "#fff",
+                      cursor: "pointer",
+                      fontSize: 14,
+                      color: selected.length === 0 ? "#9ca3af" : "#111827",
+                      listStyle: "none",
+                      userSelect: "none",
+                      minHeight: 42,
+                    }}>
+                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {displayText}
+                      </span>
+                      <span style={{ marginLeft: 8, color: "#6b7280", fontSize: 11, flexShrink: 0 }}>▼</span>
+                    </summary>
+
+                    {/* Dropdown list */}
+                    <div style={{
+                      border: "1px solid #d1d5db",
+                      borderTop: "none",
+                      borderRadius: "0 0 8px 8px",
+                      background: "#fff",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                      zIndex: 100,
+                    }}>
+                      {AGE_OPTIONS.map((opt, idx) => {
+                        const isChecked = selected.includes(opt.value);
+                        return (
+                          <label
+                            key={opt.value}
+                            style={{
+                              display: "flex", alignItems: "center", gap: 12,
+                              padding: "12px 16px",
+                              cursor: "pointer",
+                              background: "#fff",
+                              borderBottom: idx < AGE_OPTIONS.length - 1 ? "1px solid #f1f5f9" : "none",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => toggle(opt.value)}
+                              style={{ width: 18, height: 18, accentColor: "#2563eb", cursor: "pointer", flexShrink: 0 }}
+                            />
+                            <span style={{ fontSize: 15, color: "#1e293b", fontWeight: 400 }}>
+                              {opt.label}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </details>
+                </div>
+              );
+            }
           },
 
-          /* ===== MILESTONE DATA — shown after age group selected ===== */
+          /* ===== MILESTONE DATA — shown for each selected age group ===== */
           {
             type: "custom",
             render: ({ values, onChange }) => {
-              const key = values.dev_age_group;
-              if (!key || !DEVELOPMENT_DATA[key]) return null;
+              const AGE_LABELS = {
+                "2-5_months":   "2–5 Months",
+                "6-9_months":   "6–9 Months",
+                "12-18_months": "12–18 Months",
+                "2_years":      "2 Years",
+                "3_years":      "3 Years",
+                "4_years":      "4 Years",
+                "5_years":      "5 Years",
+              };
 
-              const schema = DEVELOPMENT_DATA[key];
+              const selected = Array.isArray(values.dev_age_group)
+                ? values.dev_age_group
+                : (values.dev_age_group ? [values.dev_age_group] : []);
+
+              if (selected.length === 0) return null;
 
               return (
-                <div style={{
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 10,
-                  overflow: "hidden",
-                  marginBottom: 8
-                }}>
-                  {schema.sections[0].fields.map((field, fi) => {
-                    const selected = values[field.name];
-
+                <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 8 }}>
+                  {selected.map(key => {
+                    const schema = DEVELOPMENT_DATA[key];
+                    if (!schema) return null;
                     return (
-                      <div key={field.name} style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 8,
-                        padding: "10px 14px",
-                        borderBottom: fi < schema.sections[0].fields.length - 1 ? "1px solid #fff" : "none",
-                        background: "#fff"
-                      }}>
-                        {/* Domain label */}
+                      <div key={key} style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
+                        {/* Age group header */}
                         <div style={{
-                          fontWeight: 700,
-                          fontSize: 14,
-                          color: "#0f172a"
+                          // background: "#2563eb", color: "#fff",
+                          padding: "8px 14px", fontWeight: 700, fontSize: 14,
                         }}>
-                          {field.label}
+                          {AGE_LABELS[key]} — Developmental Milestones
                         </div>
-
-                        {/* Radio options */}
-                        <div style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "6px 20px"
-                        }}>
-                          {field.options.map((opt) => {
-                            const isSelected = selected === opt.value;
-                            return (
-                              <label key={opt.value} style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 6,
-                                cursor: "pointer",
-                                fontSize: 14,
-                                color: "#1e293b",
-                                fontWeight: 400,
-                                whiteSpace: "nowrap"
-                              }}>
-                                <input
-                                  type="radio"
-                                  name={field.name}
-                                  value={opt.value}
-                                  checked={isSelected}
-                                  onChange={() => onChange(field.name, opt.value)}
-                                  style={{ cursor: "pointer", width: 15, height: 15, accentColor: "#2451b3" }}
-                                />
-                                {opt.label}
-                              </label>
-                            );
-                          })}
-                        </div>
+                        {schema.sections[0].fields.map((field, fi) => {
+                          const fieldSelected = values[field.name];
+                          return (
+                            <div key={field.name} style={{
+                              display: "flex", flexDirection: "column", gap: 8,
+                              padding: "10px 14px",
+                              borderBottom: fi < schema.sections[0].fields.length - 1 ? "1px solid #f1f5f9" : "none",
+                              background: "#fff",
+                            }}>
+                              <div style={{ fontWeight: 700, fontSize: 14, color: "#0f172a" }}>
+                                {field.label}
+                              </div>
+                              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px" }}>
+                                {field.options.map(opt => {
+                                  const isSelected = fieldSelected === opt.value;
+                                  return (
+                                    <label key={opt.value} style={{
+                                      display: "inline-flex", alignItems: "center", gap: 6,
+                                      cursor: "pointer", fontSize: 14,
+                                      color: "#1e293b", fontWeight: 400, whiteSpace: "nowrap",
+                                    }}>
+                                      <input
+                                        type="radio"
+                                        name={field.name}
+                                        value={opt.value}
+                                        checked={isSelected}
+                                        onChange={() => onChange(field.name, opt.value)}
+                                        style={{ cursor: "pointer", width: 15, height: 15, accentColor: "#2451b3" }}
+                                      />
+                                      {opt.label}
+                                    </label>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -667,7 +769,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "antenatal_details",
             label: "Antenatal complications – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "antenatal_complications", equals: "yes" }
           },
 
@@ -695,7 +797,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
             options: [
               { label: "Normal", value: "normal" },
               { label: "C-section", value: "c_section" },
-              { label: "Assisted", value: "assisted" }
+              { label: "Assisted", value: "assisted" },
             ]
           },
            {
@@ -749,7 +851,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "neonatal_details",
             label: "Neonatal complications – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "neonatal_complications", equals: "yes" }
           },
 
@@ -775,7 +877,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "past_illness_details",
             label: "Past illnesses – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "past_illness", equals: "yes" }
           },
 
@@ -791,13 +893,13 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           // {
           //   name: "current_medications_details",
           //   label: "Current medications – details",
-          //   type: "textarea",
+          //   type: "input",
           //   showIf: { field: "current_medications", equals: "yes" }
           // },
            {
   name: "current_medications",
   label: "Current medications (auto-populated)",
-  type: "textarea",
+  type: "input",
   readOnly: true
 },
 
@@ -814,7 +916,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "previous_therapy_details",
             label: "Previous therapy – type, duration, response",
-            type: "textarea",
+            type: "input",
             showIf: { field: "previous_therapy", equals: "yes" }
           },
 
@@ -830,7 +932,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "family_psych_details",
             label: "Family psychiatric history – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "family_psych_history", equals: "yes" }
           },
 
@@ -846,7 +948,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "genetic_conditions_details",
             label: "Genetic conditions – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "genetic_conditions", equals: "yes" }
           },
 
@@ -863,7 +965,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "family_dynamics_details",
             label: "Family dynamics – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "family_dynamics", equals: "significant" }
           },
 
@@ -906,7 +1008,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "teacher_complaints_details",
             label: "Teacher complaints – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "teacher_complaints", equals: "yes" }
           },
 
@@ -922,72 +1024,145 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "learning_difficulties_details",
             label: "Learning difficulties – details",
-            type: "textarea",
+            type: "input",
             showIf: { field: "learning_difficulties", equals: "yes" }
           },
 
           /* ===== BEHAVIORAL CONCERNS ===== */
+          // { type: "subheading", label: "Behavioral Concerns — Caregiver Report" },
+
+          // {
+          //   name: "hyperactivity",
+          //   label: "Hyperactivity / impulsivity",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
+
+          // {
+          //   name: "aggression",
+          //   label: "Aggression (toward self / others)",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
+
+          // {
+          //   name: "social_withdrawal",
+          //   label: "Social withdrawal",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
+
+          // {
+          //   name: "emotional_dysregulation",
+          //   label: "Emotional dysregulation",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
+
+          // {
+          //   name: "sleep_difficulties",
+          //   label: "Sleep difficulties",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
+
+          // {
+          //   name: "eating_difficulties",
+          //   label: "Eating difficulties",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Present", value: "present" },
+          //     { label: "Absent", value: "absent" }
+          //   ]
+          // },
           { type: "subheading", label: "Behavioral Concerns — Caregiver Report" },
 
-          {
-            name: "hyperactivity",
-            label: "Hyperactivity / impulsivity",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
+{
+  name: "hyperactivity",
+  label: "Hyperactivity / Impulsivity",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
+{
+  name: "aggression",
+  label: "Aggression (toward self / others)",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
+{
+  name: "social_withdrawal",
+  label: "Social Withdrawal",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
+{
+  name: "emotional_dysregulation",
+  label: "Emotional Dysregulation",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
+{
+  name: "sleep_difficulties",
+  label: "Sleep Difficulties",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
+{
+  name: "eating_difficulties",
+  label: "Eating Difficulties",
+  type: "radio",
+  options: [
+    { label: "Present", value: "present" },
+    { label: "Absent", value: "absent" }
+  ]
+},
 
-          {
-            name: "aggression",
-            label: "Aggression (toward self / others)",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
-
-          {
-            name: "social_withdrawal",
-            label: "Social withdrawal",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
-
-          {
-            name: "emotional_dysregulation",
-            label: "Emotional dysregulation",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
-
-          {
-            name: "sleep_difficulties",
-            label: "Sleep difficulties",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
-
-          {
-            name: "eating_difficulties",
-            label: "Eating difficulties",
-            type: "radio",
-            options: [
-              { label: "Present", value: "present" },
-              { label: "Absent", value: "absent" }
-            ]
-          },
+// Show one common description box if ANY concern is marked as Present
+{
+  name: "behavioral_concerns_description",
+  label: "Description",
+  type: "input",
+  showIf: {
+    or: [
+      { field: "hyperactivity", equals: "present" },
+      { field: "aggression", equals: "present" },
+      { field: "social_withdrawal", equals: "present" },
+      { field: "emotional_dysregulation", equals: "present" },
+      { field: "sleep_difficulties", equals: "present" },
+      { field: "eating_difficulties", equals: "present" }
+    ]
+  }
+},
 
           {
             name: "screen_time",
@@ -1000,6 +1175,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
               { label: "> 4 hrs", value: "more_4" }
             ]
           },
+         
 
           /* ===== CHILD SELF-REPORT ===== */
           { type: "subheading", label: "Child Self-Report (Age ≥ 6, adapt language)" },
@@ -1029,7 +1205,7 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
           {
             name: "child_fears_details",
             label: "Fears / worries – describe",
-            type: "textarea",
+            type: "input",
             showIf: { field: "child_fears", equals: "present" }
           },
 
@@ -1050,7 +1226,18 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
             label: "What do you enjoy?",
             type: "input",
             placeholder: "e.g. drawing, football, games"
-          }
+          },
+          
+//             {
+//   type: "subheading",
+//   label: "Additional Comments"
+// },
+{
+  name: "additional_comments",
+  label: "Additional comments",
+  type: "input",
+  placeholder: "Enter any overall observations, notes, or summary..."
+},
         ]
       }
     ]
@@ -1068,50 +1255,51 @@ export default function PediatricPsychologyAssessment({ patient, onSubmit, onBac
   };
 
 
-  const INFORMANT_SCHEMA = {
-    title: "",
-    sections: [
-      {
-        fields: [
-          {
-            name: "informant",
-            label: "Informant",
-            type: "radio",
-            options: [
-              { label: "Mother",    value: "mother"    },
-              { label: "Father",    value: "father"    },
-              { label: "Caregiver", value: "caregiver" },
-              { label: "Teacher",   value: "teacher"   },
-              { label: "Other",     value: "other"     }
-            ]
-          },
-          {
-            name: "informant_other",
-            label: "Specify Other",
-            type: "input",
-            placeholder: "Enter informant",
-            showIf: { field: "informant", equals: "other" }
-          },
-          {
-            name: "reliability",
-            label: "Reliability of informant",
-            type: "radio",
-            options: [
-              { label: "Good", value: "Good" },
-              { label: "Fair", value: "Fair" },
-              { label: "Poor", value: "Poor" }
-            ]
-          },
-          {
-            name: "discrepancy",
-            label: "Discrepancy noted",
-            type: "input",
-            placeholder: "Enter details"
-          }
-        ]
-      }
-    ]
-  };
+  // const INFORMANT_SCHEMA = {
+  //   title: "",
+  //   sections: [
+  //     {
+  //       fields: [
+          // {
+          //   name: "informant",
+          //   label: "Informant",
+          //   type: "radio",
+          //   options: [
+          //     { label: "Mother",    value: "mother"    },
+          //     { label: "Father",    value: "father"    },
+          //     { label: "Caregiver", value: "caregiver" },
+          //     { label: "Teacher",   value: "teacher"   },
+          //     { label: "Other",     value: "other"     }
+          //   ]
+          // },
+          // {
+          //   name: "informant_other",
+          //   label: "Specify Other",
+          //   type: "input",
+          //   placeholder: "Enter informant",
+          //   showIf: { field: "informant", equals: "other" }
+          // },
+  //         {
+  //           name: "reliability",
+  //           label: "Reliability of informant",
+  //           type: "radio",
+  //           options: [
+  //             { label: "Good", value: "Good" },
+  //             { label: "Fair", value: "Fair" },
+  //             { label: "Poor", value: "Poor" }
+  //           ]
+  //         },
+  //         {
+  //           name: "discrepancy",
+  //           label: "Discrepancy noted",
+  //           type: "input",
+  //           placeholder: "Enter details"
+  //         },
+          
+  //       ]
+  //     }
+  //   ]
+  // };
 
 
 const OBJECTIVE_SCHEMA = {
@@ -1346,7 +1534,7 @@ const OBJECTIVE_SCHEMA = {
 {
   name: "attention_context",
   label: "Document context (e.g., sustained 10 min in play, 2 min task)",
-  type: "textarea"
+  type: "input"
 },
 {
   name: "attention_na_reason",
@@ -1652,7 +1840,7 @@ const OBJECTIVE_SCHEMA = {
 {
   name: "thought_content_description",
   label: "Describe abnormal thought content",
-  type: "textarea",
+  type: "input",
   showIf: { field: "thought_content", includes: "abnormal" }
 },
 
@@ -1784,7 +1972,7 @@ const OBJECTIVE_SCHEMA = {
 {
   name: "insight_description",
   label: "Document what the child reports as difficult",
-  type: "textarea",
+  type: "input",
   showIf: { field: "insight", includes: "can_describe" }
 },
 
@@ -1856,7 +2044,7 @@ const OBJECTIVE_SCHEMA = {
 {
   name: "caregiver_discrepancy_details",
   label: "Describe discrepancy between caregiver report and observed behaviour",
-  type: "textarea",
+  type: "input",
   showIf: { field: "caregiver_observation", includes: "discrepancy" }
 },
 
@@ -1884,8 +2072,8 @@ const OBJECTIVE_SCHEMA = {
 },
 {
   name: "additional_comments",
-  label: "Add additional comments(Other/Specifiy)",
-  type: "textarea",
+  label: "Additional comments",
+  type: "input",
   placeholder: "Enter any overall observations, notes, or summary..."
 },
    
@@ -1942,8 +2130,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
         
                   <div>
                     <b>Past Medical History</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.past_medical_history}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -1957,8 +2145,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
           
           <div>
                     <b>Family History</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.past_family_history}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -1972,8 +2160,8 @@ function PatientInformationBlock({ patient, patientHistory, setPatientHistory })
         
            <div>
                     <b>Allergies</b>
-                    <textarea
-                      style={textarea}
+                    <input
+                      style={input}
                       value={patientHistory.alerts_and_allergies}
                       onChange={(e) =>
                         setPatientHistory(prev => ({
@@ -2006,32 +2194,34 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
       fields: [
         /* ================= CLINICAL IMPRESSION ================= */
         { type: "subheading", label: "Clinical Impression" },
-        {
-          name: "developmental_status",
-          label: "Developmental status",
-          type: "textarea",
-          placeholder: "Enter developmental status"
-        },
+        // s
 
         {
           name: "provisional_diagnosis",
-          label: "Provisional diagnosis / working differential",
-          type: "textarea",
+          label: "Clinical Impression",
+          type: "input",
+          placeholder: "Document 2–3 possibilities with reasoning — do not leave blank"
+        },
+           {
+          name: "problem_listing",
+          label: "Problem Listing",
+          type: "input",
           placeholder: "Document 2–3 possibilities with reasoning — do not leave blank"
         },
 
+
         /* ================= SEVERITY ================= */
       
-        {
-          name: "severity",
-          label: "Severity",
-          type: "radio",
-          options: [
-            { label: "Mild", value: "mild" },
-            { label: "Moderate", value: "moderate" },
-            { label: "Severe", value: "severe" }
-          ]
-        },
+        // {
+        //   name: "severity",
+        //   label: "Severity",
+        //   type: "radio",
+        //   options: [
+        //     { label: "Mild", value: "mild" },
+        //     { label: "Moderate", value: "moderate" },
+        //     { label: "Severe", value: "severe" }
+        //   ]
+        // },
 
         /* ================= FUNCTIONAL IMPACT (ONE ROW) ================= */
         
@@ -2126,33 +2316,73 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
     {
       fields: [
         /* ================= INTERVENTION ================= */
+         { type: "subheading", label: "Short-Term Goals (2–4 weeks)" },
         {
-          name: "intervention",
-          label: "Intervention",
+            type: "dynamic-goals",
+            name: "short_term_goals"
+          },
+          { type: "subheading", label: "Long-Term Goals (6–12 weeks)" },
+          {
+            type: "dynamic-goals",
+            name: "long_term_goals"
+          },
+        // {
+        //   name: "intervention",
+        //   label: "Intervention",
           
-          type: "checkbox-group",
-          options: [
-            { label: "Behavioural therapy", value: "behavioural_therapy" },
-            { label: "Parent training", value: "parent_training" },
-            // { label: "Speech therapy", value: "speech_therapy" },
-            // { label: "Occupational therapy", value: "occupational_therapy" },
-            { label: "Psychoeducation", value: "psychoeducation" }
-          ]
-        },
+        //   type: "checkbox-group",
+        //   options: [
+        //     { label: "Behavioural therapy", value: "behavioural_therapy" },
+        //     { label: "Parent training", value: "parent_training" },
+        //     // { label: "Speech therapy", value: "speech_therapy" },
+        //     // { label: "Occupational therapy", value: "occupational_therapy" },
+        //     { label: "Psychoeducation", value: "psychoeducation" }
+        //   ]
+        // },
+        {
+  name: "intervention",
+  label: "Intervention",
+  type: "checkbox-group",
+  options: [
+    { label: "Cognitive-behavioral therapy", value: "cbt" },
+    { label: "Behavioral therapy", value: "behavioral_therapy" },
+    { label: "Social skills training", value: "social_skills_training" },
+    { label: "Interpersonal therapy", value: "interpersonal_therapy" },
+    { label: "Play therapy", value: "play_therapy" },
+    { label: "Family-based intervention", value: "family_based_intervention" },
+    { label: "Expressive art therapy", value: "expressive_art_therapy" },
+    { label: "Psychoeducation", value: "psychoeducation" },
+    { label: "Parent management training", value: "parent_management_training" },
+    { label: "Parent-child interaction therapy", value: "parent_child_interaction_therapy" },
+    { label: "Others", value: "others" } // ✅ important
+  ]
+},
+
+// ✅ Free text field for Others
+{
+  name: "intervention_other",
+  label: "Specify Other Intervention",
+  type: "input",
+  placeholder: "Enter intervention...",
+  showIf: {
+    field: "intervention",
+    includes: "others"
+  }
+},
 
         {
           name: "bt_sessions_per_week",
           label: "Behavioural therapy — sessions/week",
           type: "input",
           placeholder: "e.g. 2",
-          showIf: { field: "intervention", includes: "behavioural_therapy" }
+          showIf: { field: "intervention", includes: "behavioral_therapy" }
         },
         {
           name: "bt_duration_weeks",
           label: "Behavioural therapy — duration (weeks)",
           type: "input",
           placeholder: "e.g. 12",
-          showIf: { field: "intervention", includes: "behavioural_therapy" }
+          showIf: { field: "intervention", includes: "behavioral_therapy" }
         },
 
         {
@@ -2163,21 +2393,7 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
           showIf: { field: "intervention", includes: "parent_training" }
         },
 
-        {
-          name: "psychoeducation_given_to",
-          label: "Psychoeducation — given to",
-          type: "input",
-          placeholder: "e.g. parents",
-          showIf: { field: "intervention", includes: "psychoeducation" }
-        },
-        {
-          name: "psychoeducation_topics",
-          label: "Psychoeducation — topics covered",
-          type: "textarea",
-          placeholder: "Enter topics",
-          showIf: { field: "intervention", includes: "psychoeducation" }
-        },
-
+   
         /* ================= SCHOOL RECOMMENDATIONS ================= */
        
         {
@@ -2194,25 +2410,7 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
 
         /* ================= REFERRALS ================= */
        
-        // {
-        //   name: "referrals",
-        //   label: "Referrals" ,
-          
-        //   type: "checkbox-group",
-        //   options: [
-        //     { label: "Pediatrician", value: "pediatrician" },
-        //     { label: "Child psychiatrist", value: "child_psychiatrist" },
-        //     { label: "Multidisciplinary rehab team", value: "rehab_team" },
-        //     { label: "Other", value: "other" }
-        //   ]
-        // },
-        // {
-        //   name: "referral_other_specify",
-        //   label: "Other referral (specify)",
-        //   type: "input",
-        //   placeholder: "Specify",
-        //   showIf: { field: "referrals", includes: "other" }
-        // },
+       
 
         /* ================= FOLLOW-UP PLAN ================= */
        
@@ -2270,11 +2468,11 @@ const activeTabIdx = tabOrder.indexOf(activeTab);
   </button>
 </CommonFormBuilder>
         {/* ===== INFORMANT / RELIABILITY ===== */}
-        <CommonFormBuilder
+        {/* <CommonFormBuilder
           schema={INFORMANT_SCHEMA}
           values={values}
           onChange={onChange}
-        />
+        /> */}
 
         {/* ===== DISCREPANCY ALERT ===== */}
         {values.discrepancy && values.discrepancy.trim() !== "" && (
@@ -2403,7 +2601,7 @@ const doctorsReportBtn = {
   fontWeight: 600, cursor: "pointer", marginTop: 8
 };
 
-const textarea = {
+const input = {
           width: "100%",
           minHeight: 90,
           marginTop: 6,
