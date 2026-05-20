@@ -66,6 +66,12 @@ const VisionTherapyAssessmentSchema = {
       type: "input",
       name: "impression_management",
       label: "Clinical Findings"
+    },
+    {
+      type: "button",
+      name: "save",
+      label: "Save",
+      action: "save"
     }
   ]
 }

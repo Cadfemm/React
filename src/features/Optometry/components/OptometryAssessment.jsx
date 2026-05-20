@@ -155,6 +155,12 @@ const BV_QUESTIONNAIRE_SCHEMA = {
             field: "bv_ocular_signs",
             includes: "Other"
           }
+        },
+        {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
         }
       ]
     }

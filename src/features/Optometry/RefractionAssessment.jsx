@@ -148,6 +148,12 @@ const RefractionAssessmentSchema = {
           name: "refraction_remark",
           label: "Remark"
         },
+        {
+          type: "button",
+          name: "save",
+          label: "Save",
+          action: "save"
+        }
       ]
     }
   ]
